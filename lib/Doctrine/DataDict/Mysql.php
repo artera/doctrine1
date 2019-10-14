@@ -485,7 +485,7 @@ class Doctrine_DataDict_Mysql extends Doctrine_DataDict
             case 'tinyint':
                 $type[] = 'integer';
                 $type[] = 'boolean';
-                if (preg_match('/^(is|has)/', $field['name'])) {
+                if (preg_match('/\bBOOL\b/', $field['comment']) || preg_match('/^(is|has)/', $field['name'])) {
                     $type = array_reverse($type);
                 }
                 $unsigned = preg_match('/ unsigned/i', $field['type']);

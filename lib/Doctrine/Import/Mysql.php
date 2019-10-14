@@ -42,7 +42,7 @@ class Doctrine_Import_Mysql extends Doctrine_Import
      */
     protected $sql = array(
                             'listDatabases'   => 'SHOW DATABASES',
-                            'listTableFields' => 'DESCRIBE %s',
+                            'listTableFields' => 'SHOW FULL COLUMNS FROM %s',
                             'listSequences'   => 'SHOW TABLES',
                             'listTables'      => 'SHOW TABLES',
                             'listUsers'       => 'SELECT DISTINCT USER FROM USER',
@@ -147,33 +147,33 @@ class Doctrine_Import_Mysql extends Doctrine_Import
      */
     public function listTableColumns($table)
     {
-        $sql    = 'DESCRIBE ' . $this->conn->quoteIdentifier($table, true);
+        $sql    = 'SHOW FULL COLUMNS FROM ' . $this->conn->quoteIdentifier($table, true);
         $result = $this->conn->fetchAssoc($sql);
 
-        $description = array();
-        $columns     = array();
-        foreach ($result as $key => $val) {
+        $description = [];
+        $columns     = [];
+        foreach ($result as $val) {
             $val = array_change_key_case($val, CASE_LOWER);
 
             $decl = $this->conn->dataDict->getPortableDeclaration($val);
 
-            $values         = isset($decl['values']) ? $decl['values'] : array();
+            $values         = isset($decl['values']) ? $decl['values'] : [];
             $val['default'] = $val['default'] == 'CURRENT_TIMESTAMP' ? null : $val['default'];
 
-            $description = array(
-                          'name'          => $val['field'],
-                          'type'          => $decl['type'][0],
-                          'alltypes'      => $decl['type'],
-                          'ntype'         => $val['type'],
-                          'length'        => $decl['length'],
-                          'fixed'         => (bool) $decl['fixed'],
-                          'unsigned'      => (bool) $decl['unsigned'],
-                          'values'        => $values,
-                          'primary'       => (strtolower($val['key']) == 'pri'),
-                          'default'       => $val['default'],
-                          'notnull'       => ($val['null'] != 'YES'),
-                          'autoincrement' => (strpos($val['extra'], 'auto_increment') !== false),
-                          );
+            $description = [
+                'name'          => $val['field'],
+                'type'          => $decl['type'][0],
+                'alltypes'      => $decl['type'],
+                'ntype'         => $val['type'],
+                'length'        => $decl['length'],
+                'fixed'         => (bool) $decl['fixed'],
+                'unsigned'      => (bool) $decl['unsigned'],
+                'values'        => $values,
+                'primary'       => (strtolower($val['key']) == 'pri'),
+                'default'       => $val['default'],
+                'notnull'       => ($val['null'] != 'YES'),
+                'autoincrement' => (strpos($val['extra'], 'auto_increment') !== false),
+            ];
             if (isset($decl['scale'])) {
                 $description['scale'] = $decl['scale'];
             }
