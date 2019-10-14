@@ -62,6 +62,7 @@ class Doctrine_Connection_Mysql_Exception extends Doctrine_Connection_Exception
                                       1216 => Doctrine_Core::ERR_CONSTRAINT,
                                       1217 => Doctrine_Core::ERR_CONSTRAINT,
                                       1451 => Doctrine_Core::ERR_CONSTRAINT,
+                                      1452 => Doctrine_Core::ERR_CONSTRAINT,
                                       );
 
     /**
@@ -76,7 +77,7 @@ class Doctrine_Connection_Mysql_Exception extends Doctrine_Connection_Exception
      */
     public function processErrorInfo(array $errorInfo)
     {
-        $code = $errorInfo[1];
+        $code = isset($errorInfo[1]) ? $errorInfo[1] : (isset($errorInfo[0]) ? $errorInfo[0] : null);
         if (isset(self::$errorCodeMap[$code])) {
             $this->portableCode = self::$errorCodeMap[$code];
             return true;
