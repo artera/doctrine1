@@ -523,12 +523,7 @@ class Doctrine_DataDict_Mysql extends Doctrine_DataDict
             case 'string':
             case 'char':
                 $type[] = 'string';
-                if ($length == '1') {
-                    $type[] = 'boolean';
-                    if (preg_match('/^(is|has)/', $field['name'])) {
-                        $type = array_reverse($type);
-                    }
-                } elseif (strstr($dbType, 'text')) {
+                if (strstr($dbType, 'text')) {
                     $type[] = 'clob';
                     if ($decimal == 'binary') {
                         $type[] = 'blob';
