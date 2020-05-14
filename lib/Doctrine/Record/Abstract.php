@@ -326,7 +326,7 @@ abstract class Doctrine_Record_Abstract extends Doctrine_Access
      *
      * @param string $columnName
      * @param string $option
-     * @param string $value
+     * @param mixed $value
      * @return void
      */
     public function setColumnOption($columnName, $option, $value)
