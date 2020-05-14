@@ -1264,7 +1264,7 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
      *
      * @param string $columnName
      * @param string $option
-     * @param string $value
+     * @param mixed $value
      * @return void
      */
     public function setColumnOption($columnName, $option, $value)
@@ -1274,7 +1274,7 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
                 $this->_identifier = (array) $this->_identifier;
             }
 
-            if ($value &&  ! in_array($columnName, $this->_identifier)) {
+            if ($value && !in_array($columnName, $this->_identifier)) {
                 $this->_identifier[] = $columnName;
             } elseif (!$value && in_array($columnName, $this->_identifier)) {
                 $key = array_search($columnName, $this->_identifier);
