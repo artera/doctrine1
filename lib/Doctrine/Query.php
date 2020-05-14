@@ -272,7 +272,7 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
      *
      * @param mixed[] $params
      *
-     * @return Doctrine_Collection|array<string,mixed>[]
+     * @return array<string,mixed>[]
      */
     public function fetchArray($params = array())
     {
