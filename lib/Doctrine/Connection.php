@@ -1221,7 +1221,7 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
      * }
      * </code>
      *
-     * @return ArrayIterator        SPL ArrayIterator object
+     * @return ArrayIterator<Doctrine_Table>        SPL ArrayIterator object
      */
     public function getIterator()
     {

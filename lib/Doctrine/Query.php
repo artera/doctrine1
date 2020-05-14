@@ -55,6 +55,9 @@
  *              from this tedious task.
  *              This would also largely reduce the currently huge interface of Doctrine_Query(_Abstract)
  *              and better hide all these transformation internals from the public Query API.
+ *
+ * @template T of Doctrine_Record
+ * @implements Doctrine_Query_Abstract<T>
  */
 class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
 {
@@ -183,6 +186,7 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
      * @param string $class              Query class to instantiate
      * @psalm-param class-string $class
      * @return Doctrine_Query
+     * @phpstan-return Doctrine_Query<Doctrine_Record>
      */
     public static function create($conn = null, $class = null)
     {
@@ -229,6 +233,7 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
      * creates a subquery
      *
      * @return Doctrine_Query
+     * @phpstan-return Doctrine_Query<T>
      */
     public function createSubquery()
     {
@@ -265,9 +270,9 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
      * fetchArray
      * Convenience method to execute using array fetching as hydration mode.
      *
-     * @param array $params
+     * @param mixed[] $params
      *
-     * @return Doctrine_Collection|array
+     * @return Doctrine_Collection|array<string,mixed>[]
      */
     public function fetchArray($params = array())
     {
@@ -279,7 +284,7 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
      * Convenience method to execute the query and return the first item
      * of the collection.
      *
-     * @param array $params        Query parameters
+     * @param mixed[] $params        Query parameters
      * @param int $hydrationMode    Hydration mode: see Doctrine_Core::HYDRATE_* constants
      * @return array|Doctrine_Record|false         Array or Doctrine_Record, depending on hydration mode. False if no result.
      */
@@ -1148,7 +1153,7 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
      * builds the sql query from the given parameters and applies things such as
      * column aggregation inheritance and limit subqueries if needed
      *
-     * @param array $params             an array of prepared statement params (needed only in mysql driver
+     * @param mixed[] $params             an array of prepared statement params (needed only in mysql driver
      *                                  when limit subquery algorithm is used)
      * @param bool $limitSubquery Whether or not to try and apply the limit subquery algorithm
      * @return string|false                   the built sql query
@@ -2181,7 +2186,7 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
      *          LEFT JOIN u.Phonenumber p
      *          WHERE p.phonenumber = '123 123'
      *
-     * @param array $params        an array of prepared statement parameters
+     * @param mixed[] $params        an array of prepared statement parameters
      * @return integer             the count of this query
      */
     public function count($params = array())
@@ -2240,8 +2245,11 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
 
     /**
      * Copies a Doctrine_Query object.
-     *
+     * @param Doctrine_Query|null $query
      * @return Doctrine_Query  Copy of the Doctrine_Query instance.
+     * @phpstan-template Tquery
+     * @phpstan-param Tquery|null $query
+     * @phpstan-return Doctrine_Query<Tquery>|Doctrine_Query<T>
      */
     public function copy(Doctrine_Query $query = null)
     {

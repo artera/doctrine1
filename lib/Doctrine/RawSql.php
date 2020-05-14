@@ -35,6 +35,9 @@
  * @since       1.0
  * @version     $Revision: 7490 $
  * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
+ *
+ * @template T of Doctrine_Record
+ * @implements Doctrine_Query_Abstract<T>
  */
 class Doctrine_RawSql extends Doctrine_Query_Abstract
 {
