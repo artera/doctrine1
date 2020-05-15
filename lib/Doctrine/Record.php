@@ -1630,14 +1630,18 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
      * and change it in the database when it is not necessary
      *
      * @param string $type  Doctrine type of the column
-     * @param string|bool|int|float $old   Old value
-     * @param string|bool|int|float|Doctrine_Expression $new   New value
+     * @param string|bool|int|float|null|Doctrine_Null $old   Old value
+     * @param string|bool|int|float|null|Doctrine_Null|Doctrine_Expression $new   New value
      * @return boolean $modified  Whether or not Doctrine considers the value modified
      */
     protected function _isValueModified($type, $old, $new)
     {
         if ($new instanceof Doctrine_Expression) {
             return true;
+        }
+
+        if ($new instanceof Doctrine_Null || $new === null) {
+            return !($old instanceof Doctrine_Null) && $old !== null;
         }
 
         if ($type == 'boolean' && (is_bool($old) || is_numeric($old)) && (is_bool($new) || is_numeric($new)) && $old == $new) {
