@@ -700,6 +700,7 @@ class Doctrine_Import_Builder extends Doctrine_Builder
                     case 'set':
                         $type = 'string[]';
                         break;
+                    case 'json':
                     case 'blob':
                     case 'clob':
                     case 'timestamp':
