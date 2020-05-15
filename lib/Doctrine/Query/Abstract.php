@@ -1032,7 +1032,7 @@ abstract class Doctrine_Query_Abstract
      *
      * @param array $params
      * @param int $hydrationMode
-     * @return Doctrine_Collection|array            the root collection
+     * @return Doctrine_Collection|array|int            the root collection
      */
     public function execute($params = array(), $hydrationMode = null)
     {
