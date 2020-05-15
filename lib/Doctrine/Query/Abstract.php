@@ -1033,6 +1033,7 @@ abstract class Doctrine_Query_Abstract
      * @param array $params
      * @param int $hydrationMode
      * @return Doctrine_Collection|array|int            the root collection
+     * @phpstan-return Doctrine_Collection<T>|array|int
      */
     public function execute($params = array(), $hydrationMode = null)
     {
