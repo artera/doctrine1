@@ -51,7 +51,7 @@
  * @property array $subclasses
  * @property mixed $orderBy
  *
- * @phpstan-template T of Doctrine_Record
+ * @phpstan-template T of Doctrine_Record_Abstract
  */
 class Doctrine_Table extends Doctrine_Configurable implements Countable
 {

@@ -30,6 +30,9 @@
  * @link        www.doctrine-project.org
  * @since       1.0
  * @version     $Revision: 7673 $
+ *
+ * @phpstan-template T
+ * @phpstan-extends Doctrine_Record_Abstract<T>
  */
 abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Countable, IteratorAggregate, Serializable
 {
@@ -201,6 +204,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
      * constructor
      * @param Doctrine_Table|null $table       a Doctrine_Table object or null,
      *                                         if null the table object is retrieved from current connection
+     * @phpstan-param Table<self>|null
      *
      * @param boolean $isNewEntry              whether or not this record is transient
      *
@@ -1182,6 +1186,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
      * returns the table object for this record.
      *
      * @return Doctrine_Table        a Doctrine_Table object
+     * @phpstan-return Table<self>
      */
     public function getTable()
     {
@@ -2546,6 +2551,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
 
     /**
      * @return Doctrine_Table
+     * @phpstan-return Table<self>
      */
     public function unshiftFilter(Doctrine_Record_Filter $filter)
     {

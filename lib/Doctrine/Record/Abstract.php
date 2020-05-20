@@ -29,11 +29,14 @@
  * @link        www.doctrine-project.org
  * @since       1.0
  * @version     $Revision$
+ *
+ * @phpstan-template T of Doctrine_Table
  */
 abstract class Doctrine_Record_Abstract extends Doctrine_Access
 {
     /**
      * @var Doctrine_Table $_table     reference to associated Doctrine_Table instance
+     * @phpstan-var T
      */
     protected $_table;
 
@@ -56,6 +59,7 @@ abstract class Doctrine_Record_Abstract extends Doctrine_Access
      * returns the associated table object
      *
      * @return Doctrine_Table               the associated table object
+     * @phpstan-return T
      */
     public function getTable()
     {
