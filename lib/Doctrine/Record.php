@@ -1884,6 +1884,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
      * @param boolean $old      pick the old values (instead of the new ones)
      * @param boolean $last     pick only lastModified values (@see getLastModified())
      * @return array $a
+     * @phpstan-return array<string, mixed>
      */
     public function getModified($old = false, $last = false)
     {
