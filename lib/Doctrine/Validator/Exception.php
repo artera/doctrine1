@@ -29,6 +29,7 @@
  * @link        www.doctrine-project.org
  * @since       1.0
  * @version     $Revision: 7490 $
+ * @phpstan-implements IteratorAggregate<Doctrine_Record>
  */
 class Doctrine_Validator_Exception extends Doctrine_Exception implements Countable, IteratorAggregate
 {
