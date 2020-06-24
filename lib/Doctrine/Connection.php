@@ -1028,7 +1028,7 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
      * @param string $query
      * @param integer $limit
      * @param integer $offset
-     * @return PDOStatement|Doctrine_Adapter_Statement_Interface
+     * @return PDOStatement|Doctrine_Connection_Statement
      */
     public function select($query, $limit = 0, $offset = 0)
     {
@@ -1044,7 +1044,7 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
      * @param string $query     sql query
      * @param array $params     query parameters
      *
-     * @return PDOStatement|Doctrine_Adapter_Statement_Interface
+     * @return PDOStatement|Doctrine_Connection_Statement
      */
     public function standaloneQuery($query, $params = array())
     {
@@ -1056,7 +1056,7 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
      * @param string $query     sql query
      * @param array $params     query parameters
      *
-     * @return PDOStatement|Doctrine_Adapter_Statement_Interface
+     * @return PDOStatement|Doctrine_Connection_Statement
      */
     public function execute($query, array $params = array())
     {
