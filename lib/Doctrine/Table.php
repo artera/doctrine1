@@ -49,7 +49,7 @@
  * @property   array $subclasses
  * @property   mixed $orderBy
  *
- * @phpstan-template T of Doctrine_Record_Abstract
+ * @phpstan-template T of Doctrine_Record
  */
 class Doctrine_Table extends Doctrine_Configurable implements Countable
 {
@@ -59,9 +59,9 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
     protected $_data = [];
 
     /**
-     * @var string|string[] $_identifier   The field names of all fields that are part of the identifier/primary key
+     * @var string[] $_identifier   The field names of all fields that are part of the identifier/primary key
      */
-    protected $_identifier = [];
+    protected array $_identifier = [];
 
     /**
      * @see Doctrine_Identifier constants
@@ -196,7 +196,7 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
                                      ];
 
     /**
-     * @var Doctrine_Tree $_tree                 tree object associated with this table
+     * @var Doctrine_Tree|null $_tree                 tree object associated with this table
      */
     protected $_tree;
 
@@ -210,20 +210,6 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
      * @var array $_filters                     an array containing all record filters attached to this table
      */
     protected $_filters = [];
-
-    /**
-     * @see Doctrine_Record_Generator
-     * @var Doctrine_Record_Generator[] $_generators                  an array containing all generators attached to this table
-     */
-    protected $_generators = [];
-
-    /**
-     * Generator instance responsible for constructing this table
-     *
-     * @see Doctrine_Record_Generator
-     * @var Doctrine_Record_Generator $_generator
-     */
-    protected $_generator;
 
     /**
      * @var mixed[] $_invokedMethods              method invoker cache
@@ -270,8 +256,9 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
             $this->record->setUp();
 
             // if tree, set up tree
-            if ($this->isTree()) {
-                $this->getTree()->setUp();
+            $tree = $this->getTree();
+            if ($tree !== null) {
+                $tree->setUp();
             }
         } else {
             if (! isset($this->_options['tableName'])) {
@@ -397,8 +384,9 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
         $this->_options['declaringClass'] = $class;
 
         // set the table definition for the given tree implementation
-        if ($this->isTree()) {
-            $this->getTree()->setTableDefinition();
+        $tree = $this->getTree();
+        if ($tree !== null) {
+            $tree->setTableDefinition();
         }
 
         $this->columnCount = count($this->_columns);
@@ -419,111 +407,121 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
      *
      * @return void
      */
-    public function initIdentifier()
+    public function initIdentifier(): void
     {
-        switch (count((array) $this->_identifier)) {
-            case 0:
-                if (! empty($this->_options['joinedParents'])) {
-                    $root = current($this->_options['joinedParents']);
+        $id_count = count($this->_identifier);
 
-                    $table = $this->_conn->getTable($root);
-
-                    $this->_identifier = $table->getIdentifier();
-
-                    $this->_identifierType = ($table->getIdentifierType() !== Doctrine_Core::IDENTIFIER_AUTOINC)
-                                        ? $table->getIdentifierType() : Doctrine_Core::IDENTIFIER_NATURAL;
-
-                    // add all inherited primary keys
-                    foreach ((array) $this->_identifier as $id) {
-                        $definition = $table->getDefinitionOf($id);
-
-                        // inherited primary keys shouldn't contain autoinc
-                        // and sequence definitions
-                        unset($definition['autoincrement']);
-                        unset($definition['sequence']);
-
-                        // add the inherited primary key column
-                        $fullName = $id . ' as ' . $table->getFieldName($id);
-                        $this->setColumn(
-                            $fullName,
-                            $definition['type'],
-                            $definition['length'],
-                            $definition,
-                            true
-                        );
-                    }
-                } else {
-                    $identifierOptions = $this->getAttribute(Doctrine_Core::ATTR_DEFAULT_IDENTIFIER_OPTIONS);
-                    $name              = (isset($identifierOptions['name']) && $identifierOptions['name']) ? $identifierOptions['name']:'id';
-                    $name              = sprintf($name, $this->getTableName());
-
-                    $definition = ['type'          => (isset($identifierOptions['type']) && $identifierOptions['type']) ? $identifierOptions['type']:'integer',
-                                    'length'        => (isset($identifierOptions['length']) && $identifierOptions['length']) ? $identifierOptions['length']:8,
-                                    'autoincrement' => isset($identifierOptions['autoincrement']) ? $identifierOptions['autoincrement']:true,
-                                    'primary'       => isset($identifierOptions['primary']) ? $identifierOptions['primary']:true];
-
-                    unset($identifierOptions['name'], $identifierOptions['type'], $identifierOptions['length']);
-                    foreach ($identifierOptions as $key => $value) {
-                        if (! isset($definition[$key]) || ! $definition[$key]) {
-                            $definition[$key] = $value;
-                        }
-                    }
-
-                    $this->setColumn($name, $definition['type'], $definition['length'], $definition, true);
-                    $this->_identifier     = $name;
-                    $this->_identifierType = Doctrine_Core::IDENTIFIER_AUTOINC;
-                }
-                $this->columnCount++;
-                break;
-            case 1:
-                foreach ($this->_identifier as $pk) {
-                    $e = $this->getDefinitionOf($pk);
-
-                    $found = false;
-
-                    foreach ($e as $option => $value) {
-                        if ($found) {
-                            break;
-                        }
-
-                        $e2 = explode(':', $option);
-
-                        switch (strtolower($e2[0])) {
-                            case 'autoincrement':
-                            case 'autoinc':
-                                if ($value !== false) {
-                                    $this->_identifierType = Doctrine_Core::IDENTIFIER_AUTOINC;
-                                    $found                 = true;
-                                }
-                                break;
-                            case 'seq':
-                            case 'sequence':
-                                $this->_identifierType = Doctrine_Core::IDENTIFIER_SEQUENCE;
-                                $found                 = true;
-
-                                if (is_string($value)) {
-                                    $this->_options['sequenceName'] = $value;
-                                } else {
-                                    if (($sequence = $this->getAttribute(Doctrine_Core::ATTR_DEFAULT_SEQUENCE)) !== null) {
-                                        $this->_options['sequenceName'] = $sequence;
-                                    } else {
-                                        $this->_options['sequenceName'] = $this->_conn->formatter->getSequenceName($this->_options['tableName']);
-                                    }
-                                }
-                                break;
-                        }
-                    }
-                    if (! isset($this->_identifierType)) {
-                        $this->_identifierType = Doctrine_Core::IDENTIFIER_NATURAL;
-                    }
-                }
-
-                $this->_identifier = $pk;
-
-                break;
-            default:
-                $this->_identifierType = Doctrine_Core::IDENTIFIER_COMPOSITE;
+        if ($id_count > 1) {
+            $this->_identifierType = Doctrine_Core::IDENTIFIER_COMPOSITE;
+            return;
         }
+
+        if ($id_count == 1) {
+            foreach ($this->_identifier as $pk) {
+                $e = $this->getDefinitionOf($pk);
+
+                if (!$e) {
+                    continue;
+                }
+
+                $found = false;
+                foreach ($e as $option => $value) {
+                    if ($found) {
+                        break;
+                    }
+
+                    $e2 = explode(':', $option);
+
+                    switch (strtolower($e2[0])) {
+                        case 'autoincrement':
+                        case 'autoinc':
+                            if ($value !== false) {
+                                $this->_identifierType = Doctrine_Core::IDENTIFIER_AUTOINC;
+                                $found                 = true;
+                            }
+                            break;
+                        case 'seq':
+                        case 'sequence':
+                            $this->_identifierType = Doctrine_Core::IDENTIFIER_SEQUENCE;
+                            $found                 = true;
+
+                            if (is_string($value)) {
+                                $this->_options['sequenceName'] = $value;
+                            } else {
+                                if (($sequence = $this->getAttribute(Doctrine_Core::ATTR_DEFAULT_SEQUENCE)) !== null) {
+                                    $this->_options['sequenceName'] = $sequence;
+                                } else {
+                                    $this->_options['sequenceName'] = $this->_conn->formatter->getSequenceName($this->_options['tableName']);
+                                }
+                            }
+                            break;
+                    }
+                }
+                if (! isset($this->_identifierType)) {
+                    $this->_identifierType = Doctrine_Core::IDENTIFIER_NATURAL;
+                }
+            }
+
+            if (isset($pk)) {
+                $this->_identifier = [$pk];
+                return;
+            }
+        }
+
+        if (!empty($this->_options['joinedParents'])) {
+            $root = current($this->_options['joinedParents']);
+
+            $table = $this->_conn->getTable($root);
+
+            $this->_identifier = (array) $table->getIdentifier();
+
+            $this->_identifierType = ($table->getIdentifierType() !== Doctrine_Core::IDENTIFIER_AUTOINC)
+                                ? $table->getIdentifierType() : Doctrine_Core::IDENTIFIER_NATURAL;
+
+            // add all inherited primary keys
+            foreach ($this->_identifier as $id) {
+                $definition = $table->getDefinitionOf($id);
+                if (!$definition) {
+                    continue;
+                }
+
+                // inherited primary keys shouldn't contain autoinc
+                // and sequence definitions
+                unset($definition['autoincrement']);
+                unset($definition['sequence']);
+
+                // add the inherited primary key column
+                $fullName = $id . ' as ' . $table->getFieldName($id);
+                $this->setColumn(
+                    $fullName,
+                    $definition['type'],
+                    $definition['length'],
+                    $definition,
+                    true
+                );
+            }
+        } else {
+            $identifierOptions = $this->getAttribute(Doctrine_Core::ATTR_DEFAULT_IDENTIFIER_OPTIONS);
+            $name              = (isset($identifierOptions['name']) && $identifierOptions['name']) ? $identifierOptions['name']:'id';
+            $name              = sprintf($name, $this->getTableName());
+
+            $definition = ['type'          => (isset($identifierOptions['type']) && $identifierOptions['type']) ? $identifierOptions['type']:'integer',
+                            'length'        => (isset($identifierOptions['length']) && $identifierOptions['length']) ? $identifierOptions['length']:8,
+                            'autoincrement' => isset($identifierOptions['autoincrement']) ? $identifierOptions['autoincrement']:true,
+                            'primary'       => isset($identifierOptions['primary']) ? $identifierOptions['primary']:true];
+
+            unset($identifierOptions['name'], $identifierOptions['type'], $identifierOptions['length']);
+            foreach ($identifierOptions as $key => $value) {
+                if (! isset($definition[$key]) || ! $definition[$key]) {
+                    $definition[$key] = $value;
+                }
+            }
+
+            $this->setColumn($name, $definition['type'], $definition['length'], $definition, true);
+            $this->_identifier = [$name];
+            $this->_identifierType = Doctrine_Core::IDENTIFIER_AUTOINC;
+        }
+        $this->columnCount++;
     }
 
     /**
@@ -557,7 +555,7 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
      */
     public function getRecordInstance()
     {
-        if (! $this->record) {
+        if (!$this->record) {
             $this->record = new $this->_options['name'];
         }
         return $this->record;
@@ -583,10 +581,9 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
      * @param  string $fieldName The field name
      * @return boolean           TRUE if the field is part of the table identifier/primary key field(s),
      */
-    public function isIdentifier($fieldName)
+    public function isIdentifier(string $fieldName): bool
     {
-        return ($fieldName === $this->getIdentifier() ||
-                in_array($fieldName, (array) $this->getIdentifier()));
+        return in_array($fieldName, $this->_identifier);
     }
 
     /**
@@ -857,9 +854,9 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
      * It does not add the constraint to the physical table in the
      * db; @see export().
      *
-     * @param  mixed      $definition
-     * @param  string|int $name       if string used as name for the constraint.
-     *                                Otherwise it is indexed numerically.
+     * @param  mixed $definition
+     * @param  string|int|null $name If string used as name for the constraint.
+     *                               Otherwise it is indexed numerically.
      * @return $this
      */
     public function addCheckConstraint($definition, $name)
@@ -1049,12 +1046,13 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
      */
     public function createQuery($alias = ''): Doctrine_Query
     {
-        if (! empty($alias)) {
+        if (!empty($alias)) {
             $alias = ' ' . trim($alias);
         }
 
         $class = $this->getAttribute(Doctrine_Core::ATTR_QUERY_CLASS);
 
+        /** @phpstan-var Doctrine_Query<T> */
         return Doctrine_Query::create(null, $class)
             ->from($this->getComponentName() . $alias);
     }
@@ -1263,10 +1261,6 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
     public function setColumnOption($columnName, $option, $value)
     {
         if ($option == 'primary') {
-            if (isset($this->_identifier)) {
-                $this->_identifier = (array) $this->_identifier;
-            }
-
             if ($value && !in_array($columnName, $this->_identifier)) {
                 $this->_identifier[] = $columnName;
             } elseif (!$value && in_array($columnName, $this->_identifier)) {
@@ -1275,7 +1269,7 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
             }
         }
 
-        $columnName                           = $this->getColumnName($columnName);
+        $columnName = $this->getColumnName($columnName);
         $this->_columns[$columnName][$option] = $value;
     }
 
@@ -1417,10 +1411,7 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
         }
 
         if (isset($options['primary']) && $options['primary']) {
-            if (isset($this->_identifier)) {
-                $this->_identifier = (array) $this->_identifier;
-            }
-            if (! in_array($fieldName, $this->_identifier)) {
+            if (!in_array($fieldName, $this->_identifier)) {
                 $this->_identifier[] = $fieldName;
             }
         }
@@ -1461,10 +1452,16 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
     /**
      * Returns the definition of the identifier key.
      *
-     * @return string|string[]    can be array if a multi-column primary key is used.
+     * @return string|string[]|null    can be array if a multi-column primary key is used.
      */
     public function getIdentifier()
     {
+        if (empty($this->_identifier)) {
+            return null;
+        }
+        if (count($this->_identifier) == 1) {
+            return $this->_identifier[0];
+        }
         return $this->_identifier;
     }
 
@@ -1554,12 +1551,9 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
      */
     public function create(array $array = []): Doctrine_Record
     {
-        /**
- * @var Doctrine_Record $record
-*/
+        /** @phpstan-var T $record */
         $record = new $this->_options['name']($this, true);
         $record->fromArray($array);
-
         return $record;
     }
 
@@ -1618,9 +1612,8 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
      *                                param is a Database Row ID. Otherwise this argument expect an array of query
      *                                params. Third param: Optional Doctrine_Core::HYDRATE_ARRAY or
      *                                Doctrine_Core::HYDRATE_RECORD if first argument is a NamedQuery
-     * @return         Doctrine_Collection|Doctrine_Record[]|Doctrine_Record|false    Doctrine_Collection, array, Doctrine_Record
-     * @phpstan-return Doctrine_Collection|T[]|T|false
-     *                                                            or false if no result
+     * @return         Doctrine_Collection|Doctrine_Record[]|Doctrine_Record|false    Doctrine_Collection, array, Doctrine_Record or false if no result
+     * @phpstan-return Doctrine_Collection<T>|T[]|T|false
      */
     public function find(...$args)
     {
@@ -1707,6 +1700,7 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
      */
     public function findBySql($dql, $params = [], $hydrationMode = null)
     {
+        /** @phpstan-var Doctrine_Collection<T>|array<string,mixed>[] */
         return $this->createQuery('dctrn_find')
             ->where($dql)->execute($params, $hydrationMode);
     }
@@ -1739,6 +1733,7 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
      */
     public function findBy($fieldName, $value, $hydrationMode = null)
     {
+        /** @phpstan-var Doctrine_Collection<T>|array<string,mixed>[] */
         return $this->createQuery('dctrn_find')
             ->where($this->buildFindByWhere($fieldName), (array) $value)
             ->execute([], $hydrationMode);
@@ -1892,8 +1887,9 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
             if ($found) {
                 $recordName = $this->getComponentName();
                 /**
- * @var Doctrine_Record $record
-**/
+                 * @var Doctrine_Record $record
+                 * @phpstan-var T $record
+                 */
                 $record      = new $recordName($this, true);
                 $this->_data = [];
                 return $record;
@@ -1957,7 +1953,8 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
                     break;
                 }
             }
-            if (! $nomatch) {
+            if (!$nomatch) {
+                /** @phpstan-var class-string<T> */
                 return $table->getComponentName();
             }
         }
@@ -2120,7 +2117,8 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
             $value = $value->getIncremented();
         } elseif ($value instanceof Doctrine_Record && ! $value->exists()) {
             foreach ($this->getRelations() as $relation) {
-                if ($fieldName == $relation->getLocalFieldName() && (get_class($value) == $relation->getClass() || is_subclass_of($value, $relation->getClass()))) {
+                // @phpstan-ignore-next-line
+                if ($fieldName == $relation->getLocalFieldName() && (get_class($value) === $relation->getClass() || is_subclass_of($value, $relation->getClass()))) {
                     return $errorStack;
                 }
             }
@@ -2148,24 +2146,27 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
                     $record->set($fieldName, $value);
                 }
                 // Make sure each set value is valid
-                foreach ($value as $k => $v) {
-                    if (! in_array($v, $values)) {
-                        $errorStack->add($fieldName, 'set');
+                if (is_iterable($value)) {
+                    foreach ($value as $k => $v) {
+                        if (!in_array($v, $values)) {
+                            $errorStack->add($fieldName, 'set');
+                        }
                     }
                 }
             }
         }
 
         // Validate field length, if length validation is enabled
-        if ($this->getAttribute(Doctrine_Core::ATTR_VALIDATE) & Doctrine_Core::VALIDATE_LENGTHS) {
-            if (! Doctrine_Validator::validateLength($value, $dataType, $this->getFieldLength($fieldName))) {
-                $errorStack->add($fieldName, 'length');
-            }
+        if ($this->getAttribute(Doctrine_Core::ATTR_VALIDATE) & Doctrine_Core::VALIDATE_LENGTHS
+            && is_string($value)
+            && !Doctrine_Validator::validateLength($value, $dataType, $this->getFieldLength($fieldName))
+        ) {
+            $errorStack->add($fieldName, 'length');
         }
 
         // Run all custom validators
         foreach ($this->getFieldValidators($fieldName) as $validatorName => $args) {
-            if (! is_string($validatorName)) {
+            if (!is_string($validatorName)) {
                 $validatorName = $args;
                 $args          = [];
             }
@@ -2174,7 +2175,7 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
             $validator->invoker = $record;
             $validator->field   = $fieldName;
             $validator->args    = $args;
-            if (! $validator->validate($value)) {
+            if (!$validator->validate($value)) {
                 $errorStack->add($fieldName, $validator);
             }
         }
@@ -2413,10 +2414,8 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
                     break;
                 case 'set':
                     return $value ? explode(',', $value) : [];
-                break;
                 case 'boolean':
                     return (boolean) $value;
-                break;
                 case 'array':
                 case 'object':
                     if (is_string($value)) {
@@ -2445,12 +2444,12 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
      * This method returns the associated Tree object (if any exists).
      * Normally implemented by NestedSet behavior.
      *
-     * @return false|Doctrine_Tree false if not a tree
+     * @return null|Doctrine_Tree false if not a tree
      */
-    public function getTree()
+    public function getTree(): ?Doctrine_Tree
     {
         if (isset($this->_options['treeImpl'])) {
-            if (! $this->_tree) {
+            if (!$this->_tree) {
                 $options     = isset($this->_options['treeOptions']) ? $this->_options['treeOptions'] : [];
                 $this->_tree = Doctrine_Tree::factory(
                     $this,
@@ -2460,7 +2459,7 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
             }
             return $this->_tree;
         }
-        return false;
+        return null;
     }
 
     /**
@@ -2501,93 +2500,9 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
      *
      * @return boolean  if tree return true, otherwise returns false
      */
-    public function isTree()
+    public function isTree(): bool
     {
-        return (! is_null($this->_options['treeImpl'])) ? true : false;
-    }
-
-    /**
-     * Gets all the generators for this table.
-     *
-     * @return array $generators
-     */
-    public function getGenerators()
-    {
-        return $this->_generators;
-    }
-
-    /**
-     * Gets generator instance for a passed name.
-     *
-     * @param  string $generator
-     * @return Doctrine_Record_Generator $generator
-     */
-    public function getGenerator($generator)
-    {
-        if (! isset($this->_generators[$generator])) {
-            throw new Doctrine_Table_Exception('Generator ' . $generator . ' not loaded');
-        }
-
-        return $this->_generators[$generator];
-    }
-
-    /**
-     * Checks if a generator name exists.
-     *
-     * @param  string $generator
-     * @return bool
-     */
-    public function hasGenerator($generator)
-    {
-        return isset($this->_generators[$generator]);
-    }
-
-    /**
-     * Adds a generate to the table instance.
-     *
-     * @param  Doctrine_Record_Generator $generator
-     * @param  string                    $name
-     * @return $this
-     */
-    public function addGenerator(Doctrine_Record_Generator $generator, $name = null)
-    {
-        if ($name === null) {
-            $this->_generators[] = $generator;
-        } else {
-            $this->_generators[$name] = $generator;
-        }
-        return $this;
-    }
-
-    /**
-     * Set the generator responsible for creating this table
-     *
-     * @param  Doctrine_Record_Generator $generator
-     * @return void
-     */
-    public function setGenerator(Doctrine_Record_Generator $generator)
-    {
-        $this->_generator = $generator;
-    }
-
-    /**
-     * Check whether this table was created by a record generator or not
-     *
-     * @return boolean
-     */
-    public function isGenerator()
-    {
-        return isset($this->_generator) ? true : false;
-    }
-
-    /**
-     * Get the parent generator responsible for this table instance
-     *
-     * @return Doctrine_Record_Generator
-     */
-    public function getParentGenerator()
-    {
-        return $this->_generator;
+        return !is_null($this->_options['treeImpl']);
     }
 
     /**
@@ -2870,7 +2785,7 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
             } else {
                 $hydrationMode = null;
             }
-            if ($this->hasField($fieldName)) {
+            if ($fieldName !== false && $this->hasField($fieldName)) {
                 return $this->$method($fieldName, $arguments[0], $hydrationMode);
             } elseif ($this->hasRelation($by)) {
                 $relation = $this->getRelation($by);
@@ -2887,6 +2802,7 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
 
         // Forward the method on to the record instance and see if it has anything or one of its behaviors
         try {
+            // @phpstan-ignore-next-line
             return call_user_func_array([$this->getRecordInstance(), $method . 'TableProxy'], $arguments);
         } catch (Doctrine_Record_UnknownPropertyException $e) {
         }

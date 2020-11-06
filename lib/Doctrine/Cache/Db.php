@@ -88,7 +88,7 @@ class Doctrine_Cache_Db extends Doctrine_Cache_Driver
             return false;
         }
 
-        return unserialize($this->_hex2bin($result[0][0]));
+        return unserialize($this->hex2bin($result[0][0]));
     }
 
     /**
@@ -199,18 +199,13 @@ class Doctrine_Cache_Db extends Doctrine_Cache_Driver
      * it is returned as is.
      *
      * @param  string $hex
-     * @return string|null $binary
+     * @return string $binary
      */
-    protected function _hex2bin($hex)
+    private function hex2bin(string $hex): string
     {
-        if (! is_string($hex)) {
-            return null;
-        }
-
-        if (! ctype_xdigit($hex)) {
+        if (!ctype_xdigit($hex)) {
             return $hex;
         }
-
         return pack('H*', $hex);
     }
 

@@ -126,7 +126,6 @@ $test->addTestCase($data_types);
 // Behaviors Testing
 $behaviors = new GroupTest('Behaviors Tests', 'behaviors');
 $behaviors->addTestCase(new Doctrine_Hook_TestCase());
-$behaviors->addTestCase(new Doctrine_Record_Generator_TestCase());
 $test->addTestCase($behaviors);
 
 // Core Tests

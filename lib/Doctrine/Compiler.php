@@ -95,7 +95,15 @@ class Doctrine_Compiler
             $refl = new ReflectionClass($class);
             $file = $refl->getFileName();
 
+            if ($file === false) {
+                continue;
+            }
+
             $lines = file($file);
+
+            if ($lines === false) {
+                continue;
+            }
 
             $start = $refl->getStartLine() - 1;
             $end   = $refl->getEndLine();

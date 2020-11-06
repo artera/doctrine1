@@ -136,18 +136,13 @@ abstract class Doctrine_Task
 
     /**
      * ask
-     *
+     * @param mixed[] $args
      * @return string
      */
-    public function ask()
+    public function ask(...$args)
     {
-        $args = func_get_args();
-
         call_user_func_array([$this, 'notify'], $args);
-
-        $answer = strtolower(trim(fgets(STDIN)));
-
-        return $answer;
+        return strtolower(trim(fgets(STDIN) ?: ''));
     }
 
     /**

@@ -37,7 +37,7 @@ class Doctrine_Adapter_Mock implements Doctrine_Adapter_Interface, Countable
      *
      * @var string
      */
-    private $_name;
+    private string $_name;
 
     /**
      * Array of queries executed through this instance of the mock adapter
@@ -70,7 +70,7 @@ class Doctrine_Adapter_Mock implements Doctrine_Adapter_Interface, Countable
      * @param  string $name
      * @return void
      */
-    public function __construct($name = null)
+    public function __construct(string $name)
     {
         $this->_name = $name;
     }
@@ -80,7 +80,7 @@ class Doctrine_Adapter_Mock implements Doctrine_Adapter_Interface, Countable
      *
      * @return string $name Name of the dbms
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->_name;
     }
@@ -103,7 +103,7 @@ class Doctrine_Adapter_Mock implements Doctrine_Adapter_Interface, Countable
      * @param  integer $code    Code of the exception
      * @return void
      */
-    public function forceException($name, $message = '', $code = 0)
+    public function forceException($name, $message = '', $code = 0): void
     {
         $this->_exception = [$name, $message, $code];
     }
@@ -114,7 +114,7 @@ class Doctrine_Adapter_Mock implements Doctrine_Adapter_Interface, Countable
      * @param  string $query Query to prepare
      * @return Doctrine_Adapter_Statement_Mock $mock Mock prepared statement
      */
-    public function prepare($query)
+    public function prepare($query): Doctrine_Adapter_Statement_Mock
     {
         $mock              = new Doctrine_Adapter_Statement_Mock($this);
         $mock->queryString = $query;
@@ -128,7 +128,7 @@ class Doctrine_Adapter_Mock implements Doctrine_Adapter_Interface, Countable
      * @param  string $query
      * @return void
      */
-    public function addQuery($query)
+    public function addQuery($query): void
     {
         $this->_queries[] = $query;
     }
@@ -139,7 +139,7 @@ class Doctrine_Adapter_Mock implements Doctrine_Adapter_Interface, Countable
      * @param  string $query
      * @return Doctrine_Adapter_Statement_Mock $stmt
      */
-    public function query($query)
+    public function query($query): Doctrine_Adapter_Statement_Mock
     {
         $this->_queries[] = $query;
 
@@ -150,15 +150,13 @@ class Doctrine_Adapter_Mock implements Doctrine_Adapter_Interface, Countable
 
             $this->_exception = [];
 
-            /**
- * @var Exception $exception
-*/
+            /** @var Exception $exception */
             $exception = new $name($e[1], $e[2]);
 
             throw $exception;
         }
 
-        $stmt              = new Doctrine_Adapter_Statement_Mock($this);
+        $stmt = new Doctrine_Adapter_Statement_Mock($this);
         $stmt->queryString = $query;
 
         return $stmt;
@@ -180,7 +178,7 @@ class Doctrine_Adapter_Mock implements Doctrine_Adapter_Interface, Countable
      * @param  string $input
      * @return string $quoted
      */
-    public function quote($input)
+    public function quote($input): string
     {
         return "'" . addslashes($input) . "'";
     }
@@ -191,7 +189,7 @@ class Doctrine_Adapter_Mock implements Doctrine_Adapter_Interface, Countable
      * @param  string $statement
      * @return int
      */
-    public function exec($statement)
+    public function exec($statement): int
     {
         $this->_queries[] = $statement;
 
@@ -202,9 +200,7 @@ class Doctrine_Adapter_Mock implements Doctrine_Adapter_Interface, Countable
 
             $this->_exception = [];
 
-            /**
- * @var Exception $exception
-*/
+            /** @var Exception $exception */
             $exception = new $name($e[1], $e[2]);
 
             throw $exception;
@@ -219,7 +215,7 @@ class Doctrine_Adapter_Mock implements Doctrine_Adapter_Interface, Countable
      * @param  boolean $fail
      * @return void
      */
-    public function forceLastInsertIdFail($fail = true)
+    public function forceLastInsertIdFail($fail = true): void
     {
         if ($fail) {
             $this->_lastInsertIdFail = true;
@@ -248,7 +244,7 @@ class Doctrine_Adapter_Mock implements Doctrine_Adapter_Interface, Countable
      *
      * @return integer $count
      */
-    public function count()
+    public function count(): int
     {
         return count($this->_queries);
     }

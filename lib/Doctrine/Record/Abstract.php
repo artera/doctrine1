@@ -52,13 +52,12 @@ abstract class Doctrine_Record_Abstract extends Doctrine_Access
     }
 
     /**
-     * getTable
      * returns the associated table object
      *
-     * @return         Doctrine_Table               the associated table object
+     * @return Doctrine_Table the associated table object
      * @phpstan-return T
      */
-    public function getTable()
+    public function getTable(): Doctrine_Table
     {
         return $this->_table;
     }
@@ -112,11 +111,11 @@ abstract class Doctrine_Record_Abstract extends Doctrine_Access
      */
     public function index($name, array $definition = [])
     {
-        if (! $definition) {
+        if (!$definition) {
             return $this->_table->getIndex($name);
-        } else {
-            return $this->_table->addIndex($name, $definition);
         }
+
+        $this->_table->addIndex($name, $definition);
     }
 
     /**
@@ -347,16 +346,6 @@ abstract class Doctrine_Record_Abstract extends Doctrine_Access
         $this->_table->bindQueryParts($queryParts);
 
         return $this;
-    }
-
-    /**
-     * @return void
-     */
-    public function loadGenerator(Doctrine_Record_Generator $generator)
-    {
-        $generator->initialize($this->_table);
-
-        $this->_table->addGenerator($generator, get_class($generator));
     }
 
     /**

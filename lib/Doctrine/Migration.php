@@ -55,7 +55,7 @@ class Doctrine_Migration
     protected $_migrationClassesDirectory = '';
 
     /**
-     * @var array
+     * @var array<int, string>
      */
     protected $_migrationClasses = [];
 
@@ -214,6 +214,7 @@ class Doctrine_Migration
      * to be loaded.
      *
      * @param  string $name
+     * @phpstan-param class-string $name
      * @param  string $path
      * @return false|null
      */
@@ -363,13 +364,13 @@ class Doctrine_Migration
 
         $this->_connection->beginTransaction();
 
-        try {
-            // If nothing specified then lets assume we are migrating from
-            // the current version to the latest version
-            if ($to === null) {
-                $to = $this->getLatestVersion();
-            }
+        // If nothing specified then lets assume we are migrating from
+        // the current version to the latest version
+        if ($to === null) {
+            $to = $this->getLatestVersion();
+        }
 
+        try {
             $this->_doMigrate($to);
         } catch (Exception $e) {
             $this->addError($e);

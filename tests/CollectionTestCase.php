@@ -231,24 +231,6 @@ class Doctrine_Collection_TestCase extends Doctrine_UnitTestCase
         $this->assertEqual($coll->count(), 1);
     }
 
-    public function testGenerator()
-    {
-        $coll = new Doctrine_Collection($this->objTable);
-        $coll->setKeyColumn('name');
-
-        $user       = new User();
-        $user->name = 'name';
-        $coll->add($user);
-
-        $this->assertTrue($coll['name'] === $user);
-
-        $this->connection->getTable('email')->setAttribute(Doctrine_Core::ATTR_COLL_KEY, 'address');
-        $emails = $this->connection->getTable('email')->findAll();
-        foreach ($emails as $k => $v) {
-            $this->assertTrue(gettype($k), 'string');
-        }
-    }
-
     public function testFetchCollectionWithIdAsIndex()
     {
         $user = new User();

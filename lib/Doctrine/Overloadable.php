@@ -30,6 +30,9 @@
  * @since      1.0
  * @version    $Revision: 7490 $
  * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
+ *
+ * @template T
+ * @mixin T
  */
 interface Doctrine_Overloadable
 {

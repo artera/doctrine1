@@ -160,11 +160,11 @@ class Doctrine_Adapter_Statement_Mock implements Doctrine_Adapter_Statement_Inte
      * Fetch the SQLSTATE associated with the last operation on the statement handle
      *
      * @see    Doctrine_Adapter_Interface::errorCode()
-     * @return array
+     * @return string|null
      */
-    public function errorCode()
+    public function errorCode(): ?string
     {
-        return [];
+        return null;
     }
 
     /**

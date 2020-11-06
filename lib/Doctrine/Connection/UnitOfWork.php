@@ -70,78 +70,76 @@ class Doctrine_Connection_UnitOfWork extends Doctrine_Connection_Module
 
             $isValid = true;
 
-            if (! $event->skipOperation) {
-                $this->saveRelatedLocalKeys($record);
+            $this->saveRelatedLocalKeys($record);
 
-                switch ($state) {
-                    case Doctrine_Record::STATE_TDIRTY:
-                    case Doctrine_Record::STATE_TCLEAN:
-                        if ($replace) {
-                            $isValid = $this->replace($record);
-                        } else {
-                            $isValid = $this->insert($record);
-                        }
-                        break;
-                    case Doctrine_Record::STATE_DIRTY:
-                    case Doctrine_Record::STATE_PROXY:
-                        if ($replace) {
-                            $isValid = $this->replace($record);
-                        } else {
-                            $isValid = $this->update($record);
-                        }
-                        break;
-                    case Doctrine_Record::STATE_CLEAN:
-                        // do nothing
-                        break;
+            switch ($state) {
+                case Doctrine_Record::STATE_TDIRTY:
+                case Doctrine_Record::STATE_TCLEAN:
+                    if ($replace) {
+                        $isValid = $this->replace($record);
+                    } else {
+                        $isValid = $this->insert($record);
+                    }
+                    break;
+                case Doctrine_Record::STATE_DIRTY:
+                case Doctrine_Record::STATE_PROXY:
+                    if ($replace) {
+                        $isValid = $this->replace($record);
+                    } else {
+                        $isValid = $this->update($record);
+                    }
+                    break;
+                case Doctrine_Record::STATE_CLEAN:
+                    // do nothing
+                    break;
+            }
+
+            $aliasesUnlinkInDb = [];
+
+            if ($isValid) {
+                // NOTE: what about referential integrity issues?
+                foreach ($record->getPendingDeletes() as $pendingDelete) {
+                    $pendingDelete->delete();
                 }
 
-                $aliasesUnlinkInDb = [];
-
-                if ($isValid) {
-                    // NOTE: what about referential integrity issues?
-                    foreach ($record->getPendingDeletes() as $pendingDelete) {
-                        $pendingDelete->delete();
+                foreach ($record->getPendingUnlinks() as $alias => $ids) {
+                    if ($ids === false) {
+                        $record->unlinkInDb($alias, []);
+                        $aliasesUnlinkInDb[] = $alias;
+                    } elseif ($ids) {
+                        $record->unlinkInDb($alias, array_keys($ids));
+                        $aliasesUnlinkInDb[] = $alias;
                     }
+                }
+                $record->resetPendingUnlinks();
 
-                    foreach ($record->getPendingUnlinks() as $alias => $ids) {
-                        if ($ids === false) {
-                            $record->unlinkInDb($alias, []);
-                            $aliasesUnlinkInDb[] = $alias;
-                        } elseif ($ids) {
-                            $record->unlinkInDb($alias, array_keys($ids));
-                            $aliasesUnlinkInDb[] = $alias;
+                $record->invokeSaveHooks('post', 'save', $event);
+            } else {
+                $conn->transaction->addInvalid($record);
+            }
+
+            $state = $record->state();
+
+            $record->state($record->exists() ? Doctrine_Record::STATE_LOCKED : Doctrine_Record::STATE_TLOCKED);
+
+            if ($isValid) {
+                $saveLater = $this->saveRelatedForeignKeys($record);
+                foreach ($saveLater as $fk) {
+                    $alias = $fk->getAlias();
+
+                    if ($record->hasReference($alias)) {
+                        $obj = $record->$alias;
+
+                        // check that the related object is not an instance of Doctrine_Null
+                        if ($obj && ! ($obj instanceof Doctrine_Null)) {
+                            $processDiff = !in_array($alias, $aliasesUnlinkInDb);
+                            $obj->save($conn, $processDiff);
                         }
                     }
-                    $record->resetPendingUnlinks();
-
-                    $record->invokeSaveHooks('post', 'save', $event);
-                } else {
-                    $conn->transaction->addInvalid($record);
                 }
 
-                $state = $record->state();
-
-                $record->state($record->exists() ? Doctrine_Record::STATE_LOCKED : Doctrine_Record::STATE_TLOCKED);
-
-                if ($isValid) {
-                    $saveLater = $this->saveRelatedForeignKeys($record);
-                    foreach ($saveLater as $fk) {
-                        $alias = $fk->getAlias();
-
-                        if ($record->hasReference($alias)) {
-                            $obj = $record->$alias;
-
-                            // check that the related object is not an instance of Doctrine_Null
-                            if ($obj && ! ($obj instanceof Doctrine_Null)) {
-                                $processDiff = !in_array($alias, $aliasesUnlinkInDb);
-                                $obj->save($conn, $processDiff);
-                            }
-                        }
-                    }
-
-                    // save the MANY-TO-MANY associations
-                    $this->saveAssociations($record);
-                }
+                // save the MANY-TO-MANY associations
+                $this->saveAssociations($record);
             }
 
             $record->state($state);
@@ -479,16 +477,12 @@ class Doctrine_Connection_UnitOfWork extends Doctrine_Connection_Module
 
     /**
      * Invokes preDelete event listeners.
-     *
-     * @return boolean  Whether a listener has used it's veto (don't delete!).
      */
-    private function _preDelete(Doctrine_Record $record)
+    private function _preDelete(Doctrine_Record $record): void
     {
         $event = new Doctrine_Event($record, Doctrine_Event::RECORD_DELETE);
         $record->preDelete($event);
         $record->getTable()->getRecordListener()->preDelete($event);
-
-        return $event->skipOperation;
     }
 
     /**
@@ -496,7 +490,7 @@ class Doctrine_Connection_UnitOfWork extends Doctrine_Connection_Module
      *
      * @return void
      */
-    private function _postDelete(Doctrine_Record $record)
+    private function _postDelete(Doctrine_Record $record): void
     {
         $event = new Doctrine_Event($record, Doctrine_Event::RECORD_DELETE);
         $record->postDelete($event);
@@ -530,25 +524,21 @@ class Doctrine_Connection_UnitOfWork extends Doctrine_Connection_Module
      * @param  Doctrine_Record $record record to be updated
      * @return boolean                  whether or not the update was successful
      */
-    public function update(Doctrine_Record $record)
+    public function update(Doctrine_Record $record): bool
     {
         $event = $record->invokeSaveHooks('pre', 'update');
-        ;
 
         if ($record->isValid(false, false)) {
             $table = $record->getTable();
-            if (! $event->skipOperation) {
-                $identifier = $record->identifier();
-                if ($table->getOption('joinedParents')) {
-                    // currrently just for bc!
-                    $this->_updateCTIRecord($table, $record);
-                    //--
-                } else {
-                    $array = $record->getPrepared();
-                    $this->conn->update($table, $array, $identifier);
-                }
-                $record->assignIdentifier(true);
+            $identifier = $record->identifier();
+            if ($table->getOption('joinedParents')) {
+                // currrently just for bc!
+                $this->_updateCTIRecord($table, $record);
+            } else {
+                $array = $record->getPrepared();
+                $this->conn->update($table, $array, $identifier);
             }
+            $record->assignIdentifier(true);
 
             $record->invokeSaveHooks('post', 'update', $event);
 
@@ -569,21 +559,19 @@ class Doctrine_Connection_UnitOfWork extends Doctrine_Connection_Module
      * @param  Doctrine_Record $record
      * @return boolean                  false if record is not valid
      */
-    public function insert(Doctrine_Record $record)
+    public function insert(Doctrine_Record $record): bool
     {
         $event = $record->invokeSaveHooks('pre', 'insert');
 
         if ($record->isValid(false, false)) {
             $table = $record->getTable();
 
-            if (! $event->skipOperation) {
-                if ($table->getOption('joinedParents')) {
-                    // just for bc!
-                    $this->_insertCTIRecord($table, $record);
-                    //--
-                } else {
-                    $this->processSingleInsert($record);
-                }
+            if ($table->getOption('joinedParents')) {
+                // just for bc!
+                $this->_insertCTIRecord($table, $record);
+                //--
+            } else {
+                $this->processSingleInsert($record);
             }
 
             $table->addRecord($record);

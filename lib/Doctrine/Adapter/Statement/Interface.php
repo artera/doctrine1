@@ -112,9 +112,9 @@ interface Doctrine_Adapter_Statement_Interface
      * Fetch the SQLSTATE associated with the last operation on the statement handle
      *
      * @see    Doctrine_Adapter_Interface::errorCode()
-     * @return string       error code string
+     * @return string|null error code string
      */
-    public function errorCode();
+    public function errorCode(): ?string;
 
     /**
      * Fetch extended error information associated with the last operation on the statement handle

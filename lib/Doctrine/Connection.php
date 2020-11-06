@@ -62,7 +62,6 @@
  * @property   Doctrine_Export $export
  * @property   Doctrine_Import $import
  * @property   Doctrine_Sequence $sequence
- * @property   Doctrine_Util $util
  *
  * From $properties array
  * @property   array $identifier_quoting
@@ -78,7 +77,7 @@
 abstract class Doctrine_Connection extends Doctrine_Configurable implements Countable, IteratorAggregate, Serializable
 {
     /**
-     * @var PDO|Doctrine_Adapter_Interface $dbh                                the database handler
+     * @var PDO|Doctrine_Adapter_Interface $dbh the database handler
      */
     protected $dbh;
 
@@ -226,13 +225,11 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
      *
      * @param Doctrine_Manager                     $manager the manager object
      * @param PDO|Doctrine_Adapter_Interface|array $adapter database driver
-     * @param string                               $user
-     * @param string                               $pass
      */
-    public function __construct(Doctrine_Manager $manager, $adapter, $user = null, $pass = null)
+    public function __construct(Doctrine_Manager $manager, $adapter)
     {
         if (is_object($adapter)) {
-            if (! ($adapter instanceof PDO) && ! in_array('Doctrine_Adapter_Interface', class_implements($adapter))) {
+            if (!$adapter instanceof PDO && !in_array('Doctrine_Adapter_Interface', class_implements($adapter) ?: [])) {
                 throw new Doctrine_Connection_Exception('First argument should be an instance of PDO or implement Doctrine_Adapter_Interface');
             }
             $this->dbh = $adapter;
@@ -974,17 +971,10 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
 
         try {
             $event = new Doctrine_Event($this, Doctrine_Event::CONN_PREPARE, $statement);
-
             $this->getAttribute(Doctrine_Core::ATTR_LISTENER)->prePrepare($event);
-
-            $stmt = false;
-
-            if (! $event->skipOperation) {
-                $stmt = $this->dbh->prepare($statement);
-            }
-
+            /** @var Doctrine_Adapter_Statement_Interface|PDOStatement */
+            $stmt = $this->dbh->prepare($statement);
             $this->getAttribute(Doctrine_Core::ATTR_LISTENER)->postPrepare($event);
-
             return new Doctrine_Connection_Statement($this, $stmt);
         } catch (Doctrine_Adapter_Exception $e) {
         } catch (PDOException $e) {
@@ -1069,19 +1059,14 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
             if (! empty($params)) {
                 $stmt = $this->prepare($query);
                 $stmt->execute($params);
-
                 return $stmt;
             } else {
                 $event = new Doctrine_Event($this, Doctrine_Event::CONN_QUERY, $query, $params);
-
                 $this->getAttribute(Doctrine_Core::ATTR_LISTENER)->preQuery($event);
-
-                if (! $event->skipOperation) {
-                    $stmt = $this->dbh->query($query);
-                    $this->incrementQueryCount();
-                }
+                /** @var Doctrine_Connection_Statement|PDOStatement */
+                $stmt = $this->dbh->query($query);
+                $this->incrementQueryCount();
                 $this->getAttribute(Doctrine_Core::ATTR_LISTENER)->postQuery($event);
-
                 return $stmt;
             }
         } catch (Doctrine_Adapter_Exception $e) {
@@ -1111,14 +1096,11 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
                 return $stmt->rowCount();
             } else {
                 $event = new Doctrine_Event($this, Doctrine_Event::CONN_EXEC, $query, $params);
-
                 $this->getAttribute(Doctrine_Core::ATTR_LISTENER)->preExec($event);
-                if (! $event->skipOperation) {
-                    $count = $this->dbh->exec($query);
-                    $this->incrementQueryCount();
-                }
+                /** @var int */
+                $count = $this->dbh->exec($query);
+                $this->incrementQueryCount();
                 $this->getAttribute(Doctrine_Core::ATTR_LISTENER)->postExec($event);
-
                 return $count;
             }
         } catch (Doctrine_Adapter_Exception $e) {
@@ -1136,7 +1118,7 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
      * @param  PDOException|Doctrine_Adapter_Exception $e
      * @param  mixed                                   $invoker
      * @param  string                                  $query
-     * @return void
+     * @return never
      */
     public function rethrowException(Exception $e, $invoker, $query = null)
     {
@@ -1188,7 +1170,7 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
         $class = sprintf($this->getAttribute(Doctrine_Core::ATTR_TABLE_CLASS_FORMAT), $name);
 
         if (class_exists($class, $this->getAttribute(Doctrine_Core::ATTR_AUTOLOAD_TABLE_CLASSES))
-            && in_array('Doctrine_Table', class_parents($class))
+            && in_array('Doctrine_Table', class_parents($class) ?: [])
         ) {
             /**
  * @var Doctrine_Table $table
@@ -1689,9 +1671,9 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
     public function generateUniqueRelationForeignKeyName(Doctrine_Relation $relation)
     {
         $parts = [
-            $relation['localTable']->getTableName(),
+            $relation->getLocalTableName(),
             $relation->getLocalColumnName(),
-            $relation['table']->getTableName(),
+            $relation->getForeignTableName(),
             $relation->getForeignColumnName(),
         ];
         $key    = implode('_', array_merge($parts, [$relation['onDelete']], [$relation['onUpdate']]));

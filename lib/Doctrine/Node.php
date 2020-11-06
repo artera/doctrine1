@@ -29,11 +29,14 @@
  * @since      1.0
  * @version    $Revision: 7490 $
  * @author     Joe Simms <joe.simms@websites4.com>
+ *
+ * @phpstan-template T of Doctrine_Table
  */
 class Doctrine_Node implements IteratorAggregate
 {
     /**
      * @var Doctrine_Record    $record   reference to associated Doctrine_Record instance
+     * @phpstan-var Doctrine_Record<T> $record
      */
     protected $record;
 
@@ -55,7 +58,7 @@ class Doctrine_Node implements IteratorAggregate
     /**
      * The tree to which the node belongs.
      *
-     * @var Doctrine_Tree|false
+     * @var Doctrine_Tree|null
      */
     protected $_tree;
 
@@ -64,6 +67,7 @@ class Doctrine_Node implements IteratorAggregate
      *
      * @param Doctrine_Record $record  instance of Doctrine_Record
      * @param array           $options options
+     * @phpstan-param Doctrine_Record<T> $record
      */
     public function __construct(Doctrine_Record $record, $options)
     {
@@ -78,8 +82,11 @@ class Doctrine_Node implements IteratorAggregate
         if ($thisTable->getOption('inheritanceMap')) {
             // Move up the hierarchy until we find the "subclasses" option. This option
             // MUST be set on the root class of the user's hierarchy that uses STI.
-            while (! $subclasses = $table->getOption('subclasses')) {
+            while ($class && !$subclasses = $table->getOption('subclasses')) {
                 $class           = get_parent_class($class);
+                if (!$class) {
+                    break;
+                }
                 $reflectionClass = new ReflectionClass($class);
                 if ($reflectionClass->isAbstract()) {
                     continue;

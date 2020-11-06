@@ -370,6 +370,7 @@ class Doctrine_Cli
      * Returns TRUE if the specified class is a Task, or FALSE otherwise
      *
      * @param  string $className
+     * @phpstan-param class-string $className
      * @return bool
      */
     protected function classIsTask($className)
@@ -420,10 +421,8 @@ class Doctrine_Cli
     {
         $formatter = $this->getFormatter();
 
-        echo(
-            $formatter->format($this->getTaskInstance()->getTaskName(), 'INFO') . ' - ' .
-            $formatter->format($notification, $style) . "\n"
-        );
+        echo $formatter->format($this->getTaskInstance()->getTaskName() ?? '', 'INFO') . ' - ' .
+            $formatter->format($notification ?? '', $style) . "\n";
     }
 
     /**
@@ -500,15 +499,14 @@ class Doctrine_Cli
     protected function _run(array $args)
     {
         $this->_scriptName = $args[0];
+        $requestedTaskName = $args[1] ?? null;
 
-        $requestedTaskName = isset($args[1]) ? $args[1] : null;
-
-        if (! $requestedTaskName || $requestedTaskName == 'help') {
+        if (!$requestedTaskName || $requestedTaskName == 'help') {
             $this->printTasks(null, $requestedTaskName == 'help' ? true : false);
             return;
         }
 
-        if ($requestedTaskName && isset($args[2]) && $args[2] === 'help') {
+        if (isset($args[2]) && $args[2] === 'help') {
             $this->printTasks($requestedTaskName, true);
             return;
         }

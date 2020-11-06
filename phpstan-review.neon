@@ -1,0 +1,822 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Return type \\(int\\) of method Doctrine_Adapter_Statement_Mock\\:\\:fetchColumn\\(\\) should be compatible with return type \\(string\\) of method Doctrine_Adapter_Statement_Interface\\:\\:fetchColumn\\(\\)$#"
+			count: 1
+			path: lib/Doctrine/Adapter/Statement/Mock.php
+
+		-
+			message: "#^Return type \\(int\\) of method Doctrine_Cache_Db\\:\\:_doSave\\(\\) should be compatible with return type \\(bool\\) of method Doctrine_Cache_Driver\\:\\:_doSave\\(\\)$#"
+			count: 1
+			path: lib/Doctrine/Cache/Db.php
+
+		-
+			message: "#^Return type \\(int\\) of method Doctrine_Cache_Db\\:\\:_doDelete\\(\\) should be compatible with return type \\(bool\\) of method Doctrine_Cache_Driver\\:\\:_doDelete\\(\\)$#"
+			count: 1
+			path: lib/Doctrine/Cache/Db.php
+
+		-
+			message: "#^Parameter \\#4 \\$expire of method MemcachePool\\:\\:set\\(\\) expects int, int\\|null given\\.$#"
+			count: 1
+			path: lib/Doctrine/Cache/Memcache.php
+
+		-
+			message: "#^Constant XC_TYPE_VAR not found\\.$#"
+			count: 2
+			path: lib/Doctrine/Cache/Xcache.php
+
+		-
+			message: "#^Call to sprintf contains 1 placeholder, 2 values given\\.$#"
+			count: 1
+			path: lib/Doctrine/Cli/Formatter.php
+
+		-
+			message: "#^Call to an undefined method Doctrine_Collection\\:\\:expand\\(\\)\\.$#"
+			count: 1
+			path: lib/Doctrine/Collection/Iterator/Expandable.php
+
+		-
+			message: "#^Return type \\(Doctrine_Collection_Iterator_Expandable\\) of method Doctrine_Collection_Offset\\:\\:getIterator\\(\\) should be compatible with return type \\(ArrayIterator\\<mixed, Doctrine_Record\\>\\) of method Doctrine_Collection\\<Doctrine_Record\\>\\:\\:getIterator\\(\\)$#"
+			count: 1
+			path: lib/Doctrine/Collection/Offset.php
+
+		-
+			message: "#^Constructor of class Doctrine_Connection_Mock has an unused parameter \\$adapter\\.$#"
+			count: 1
+			path: lib/Doctrine/Connection/Mock.php
+
+		-
+			message: "#^Constructor of class Doctrine_Connection_Mock has an unused parameter \\$manager\\.$#"
+			count: 1
+			path: lib/Doctrine/Connection/Mock.php
+
+		-
+			message: "#^Offset 2 does not exist on array\\(\\)\\.$#"
+			count: 1
+			path: lib/Doctrine/Connection/Pgsql.php
+
+		-
+			message: "#^Offset 3 does not exist on array\\(\\)\\.$#"
+			count: 1
+			path: lib/Doctrine/Connection/Pgsql.php
+
+		-
+			message: "#^Property Doctrine_Event\\:\\:\\$cursorOffset \\(int\\) does not accept int\\|null\\.$#"
+			count: 1
+			path: lib/Doctrine/Connection/Statement.php
+
+		-
+			message: "#^Result of method Doctrine_EventListener_Interface\\:\\:preFetch\\(\\) \\(void\\) is used\\.$#"
+			count: 1
+			path: lib/Doctrine/Connection/Statement.php
+
+		-
+			message: "#^Property Doctrine_Event\\:\\:\\$columnIndex \\(int\\) does not accept int\\|null\\.$#"
+			count: 1
+			path: lib/Doctrine/Connection/Statement.php
+
+		-
+			message: "#^Method Doctrine_Connection_Statement\\:\\:getColumnMeta\\(\\) should return array but returns array\\|false\\.$#"
+			count: 1
+			path: lib/Doctrine/Connection/Statement.php
+
+		-
+			message: "#^Parameter \\#2 \\$arg1 \\(string\\) of method Doctrine_Connection_Statement\\:\\:setFetchMode\\(\\) should be compatible with parameter \\$arg1 \\(int\\) of method Doctrine_Adapter_Statement_Interface\\:\\:setFetchMode\\(\\)$#"
+			count: 1
+			path: lib/Doctrine/Connection/Statement.php
+
+		-
+			message: "#^Parameter \\#2 \\$arg1 of method Doctrine_Adapter_Statement_Interface\\:\\:setFetchMode\\(\\) expects int\\|null, string\\|null given\\.$#"
+			count: 1
+			path: lib/Doctrine/Connection/Statement.php
+
+		-
+			message: "#^Parameter \\#1 \\$state of method Doctrine_Record\\<Doctrine_Table\\>\\:\\:state\\(\\) expects int\\|string\\|null, int\\|void given\\.$#"
+			count: 3
+			path: lib/Doctrine/Connection/UnitOfWork.php
+
+		-
+			message: "#^Result of method Doctrine_Connection_UnitOfWork\\:\\:_preDelete\\(\\) \\(void\\) is used\\.$#"
+			count: 1
+			path: lib/Doctrine/Connection/UnitOfWork.php
+
+		-
+			message: "#^Negated boolean expression is always true\\.$#"
+			count: 1
+			path: lib/Doctrine/Connection/UnitOfWork.php
+
+		-
+			message: "#^Call to an undefined method Doctrine_EventListener_Interface\\|Doctrine_Overloadable\\<Doctrine_EventListener_Interface\\>\\:\\:preDelete\\(\\)\\.$#"
+			count: 1
+			path: lib/Doctrine/Connection/UnitOfWork.php
+
+		-
+			message: "#^Call to an undefined method Doctrine_EventListener_Interface\\|Doctrine_Overloadable\\<Doctrine_EventListener_Interface\\>\\:\\:postDelete\\(\\)\\.$#"
+			count: 1
+			path: lib/Doctrine/Connection/UnitOfWork.php
+
+		-
+			message: "#^Parameter \\#2 \\$offset of function array_splice expects int, int\\|false given\\.$#"
+			count: 2
+			path: lib/Doctrine/Connection/UnitOfWork.php
+
+		-
+			message: "#^Variable \\$rootRecord might not be defined\\.$#"
+			count: 1
+			path: lib/Doctrine/Connection/UnitOfWork.php
+
+		-
+			message: "#^Possibly invalid array key type array\\<string\\>\\|string\\|null\\.$#"
+			count: 1
+			path: lib/Doctrine/Connection/UnitOfWork.php
+
+		-
+			message: "#^Parameter \\#1 \\$fieldName of method Doctrine_Table\\<Doctrine_Record\\>\\:\\:getColumnName\\(\\) expects array\\<string\\>\\|string, string\\|null given\\.$#"
+			count: 1
+			path: lib/Doctrine/Connection/UnitOfWork.php
+
+		-
+			message: "#^Cannot call method count\\(\\) on array\\|Doctrine_Collection\\<Doctrine_Record\\>\\|int\\.$#"
+			count: 1
+			path: lib/Doctrine/Data/Export.php
+
+		-
+			message: "#^Parameter \\#1 \\$componentName of static method Doctrine_Core\\:\\:getTable\\(\\) expects string, int\\|string given\\.$#"
+			count: 1
+			path: lib/Doctrine/Data/Export.php
+
+		-
+			message: "#^Parameter \\#1 \\$filename of function is_dir expects string, string\\|null given\\.$#"
+			count: 1
+			path: lib/Doctrine/Data/Export.php
+
+		-
+			message: "#^Parameter \\#1 \\$filename of function is_file expects string, string\\|null given\\.$#"
+			count: 1
+			path: lib/Doctrine/Data/Export.php
+
+		-
+			message: "#^Parameter \\#1 \\$path of function dirname expects string, string\\|null given\\.$#"
+			count: 1
+			path: lib/Doctrine/Data/Export.php
+
+		-
+			message: "#^Parameter \\#1 \\$filename of function is_dir expects string, array\\|string\\|null given\\.$#"
+			count: 1
+			path: lib/Doctrine/Data/Export.php
+
+		-
+			message: "#^Binary operation \"\\.\\=\" between array\\|string\\|null and string results in an error\\.$#"
+			count: 1
+			path: lib/Doctrine/Data/Export.php
+
+		-
+			message: "#^Parameter \\#1 \\$haystack of function strstr expects string, string\\|false given\\.$#"
+			count: 1
+			path: lib/Doctrine/DataDict/Mysql.php
+
+		-
+			message: "#^Return type \\(bool\\|null\\) of method Doctrine_Export_Mysql\\:\\:createSequence\\(\\) should be compatible with return type \\(Doctrine_Adapter_Statement_Interface\\|PDOStatement\\) of method Doctrine_Export\\:\\:createSequence\\(\\)$#"
+			count: 1
+			path: lib/Doctrine/Export/Mysql.php
+
+		-
+			message: "#^Return type \\(array\\|true\\) of method Doctrine_Export_Pgsql\\:\\:alterTableSql\\(\\) should be compatible with return type \\(string\\) of method Doctrine_Export\\:\\:alterTableSql\\(\\)$#"
+			count: 1
+			path: lib/Doctrine/Export/Pgsql.php
+
+		-
+			message: "#^Argument of an invalid type array\\|true supplied for foreach, only iterables are supported\\.$#"
+			count: 1
+			path: lib/Doctrine/Export/Pgsql.php
+
+		-
+			message: "#^Return type \\(bool\\) of method Doctrine_Export_Sqlite\\:\\:createSequence\\(\\) should be compatible with return type \\(Doctrine_Adapter_Statement_Interface\\|PDOStatement\\) of method Doctrine_Export\\:\\:createSequence\\(\\)$#"
+			count: 1
+			path: lib/Doctrine/Export/Sqlite.php
+
+		-
+			message: "#^Return type \\(false\\) of method Doctrine_Export_Sqlite\\:\\:createForeignKey\\(\\) should be compatible with return type \\(Doctrine_Adapter_Statement_Interface\\|PDOStatement\\) of method Doctrine_Export\\:\\:createForeignKey\\(\\)$#"
+			count: 1
+			path: lib/Doctrine/Export/Sqlite.php
+
+		-
+			message: "#^Call to an undefined method Doctrine_Connection\\:\\:escape\\(\\)\\.$#"
+			count: 1
+			path: lib/Doctrine/Expression/Mysql.php
+
+		-
+			message: "#^Call to an undefined method Doctrine_Connection\\:\\:escapePattern\\(\\)\\.$#"
+			count: 1
+			path: lib/Doctrine/Expression/Mysql.php
+
+		-
+			message: "#^Call to an undefined method Doctrine_Expression_Mysql\\:\\:patternEscapeString\\(\\)\\.$#"
+			count: 1
+			path: lib/Doctrine/Expression/Mysql.php
+
+		-
+			message: "#^Call to an undefined method Doctrine_Connection\\:\\:escape\\(\\)\\.$#"
+			count: 1
+			path: lib/Doctrine/Expression/Pgsql.php
+
+		-
+			message: "#^Call to an undefined method Doctrine_Connection\\:\\:escapePattern\\(\\)\\.$#"
+			count: 1
+			path: lib/Doctrine/Expression/Pgsql.php
+
+		-
+			message: "#^Call to an undefined method Doctrine_Expression_Pgsql\\:\\:patternEscapeString\\(\\)\\.$#"
+			count: 1
+			path: lib/Doctrine/Expression/Pgsql.php
+
+		-
+			message: "#^Parameter \\#1 \\$queryComponents of method Doctrine_Hydrator_Abstract\\:\\:setQueryComponents\\(\\) expects array, array\\|null given\\.$#"
+			count: 1
+			path: lib/Doctrine/Hydrator/Abstract.php
+
+		-
+			message: "#^Parameter \\#1 \\$tableAliases of method Doctrine_Hydrator_Abstract\\:\\:setTableAliases\\(\\) expects array, array\\|null given\\.$#"
+			count: 1
+			path: lib/Doctrine/Hydrator/Abstract.php
+
+		-
+			message: "#^Parameter \\#1 \\$array of function end expects array, array\\|Doctrine_Collection given\\.$#"
+			count: 2
+			path: lib/Doctrine/Hydrator/ArrayDriver.php
+
+		-
+			message: "#^Parameter \\#1 \\$array of function key expects array, array\\|Doctrine_Collection given\\.$#"
+			count: 2
+			path: lib/Doctrine/Hydrator/ArrayDriver.php
+
+		-
+			message: "#^Strict comparison using \\=\\=\\= between array\\|Doctrine_Collection and null will always evaluate to false\\.$#"
+			count: 1
+			path: lib/Doctrine/Hydrator/ArrayDriver.php
+
+		-
+			message: "#^Property Doctrine_Hydrator_Graph\\:\\:\\$_rootAlias \\(string\\|null\\) does not accept int\\|string\\|null\\.$#"
+			count: 1
+			path: lib/Doctrine/Hydrator/Graph.php
+
+		-
+			message: "#^Parameter \\#1 \\$alias of method Doctrine_Hydrator_Graph\\:\\:_getCustomIndexField\\(\\) expects string, int\\|string\\|null given\\.$#"
+			count: 2
+			path: lib/Doctrine/Hydrator/Graph.php
+
+		-
+			message: "#^Variable \\$activeRootIdentifier might not be defined\\.$#"
+			count: 1
+			path: lib/Doctrine/Hydrator/Graph.php
+
+		-
+			message: "#^Parameter \\#4 \\$dqlAlias of method Doctrine_Hydrator_Graph\\:\\:setLastElement\\(\\) expects string, int\\|string\\|null given\\.$#"
+			count: 1
+			path: lib/Doctrine/Hydrator/Graph.php
+
+		-
+			message: "#^Parameter \\#1 \\$table of static method Doctrine_Collection\\<Doctrine_Record\\>\\:\\:create\\(\\) expects class\\-string\\<Doctrine_Record\\>\\|Doctrine_Table\\<Doctrine_Record\\>, string given\\.$#"
+			count: 1
+			path: lib/Doctrine/Hydrator/RecordDriver.php
+
+		-
+			message: "#^Offset int does not exist on array\\|null\\.$#"
+			count: 1
+			path: lib/Doctrine/Hydrator/RecordDriver.php
+
+		-
+			message: "#^Offset string does not exist on array\\|null\\.$#"
+			count: 2
+			path: lib/Doctrine/Hydrator/RecordDriver.php
+
+		-
+			message: "#^Strict comparison using \\=\\=\\= between Doctrine_Collection and Doctrine_Null will always evaluate to false\\.$#"
+			count: 1
+			path: lib/Doctrine/Hydrator/RecordDriver.php
+
+		-
+			message: "#^Argument of an invalid type array\\|null supplied for foreach, only iterables are supported\\.$#"
+			count: 1
+			path: lib/Doctrine/Hydrator/RecordDriver.php
+
+		-
+			message: "#^Parameter \\#1 \\$objectOrClass of class ReflectionClass constructor expects class\\-string\\<T of object\\>\\|T of object, string given\\.$#"
+			count: 1
+			path: lib/Doctrine/Import/Builder.php
+
+		-
+			message: "#^Parameter \\#2 \\$string of function explode expects string, array\\|string given\\.$#"
+			count: 1
+			path: lib/Doctrine/Import/Pgsql.php
+
+		-
+			message: "#^Parameter \\#1 \\$path of method Doctrine_Import_Builder\\:\\:setTargetPath\\(\\) expects string, string\\|null given\\.$#"
+			count: 1
+			path: lib/Doctrine/Import/Schema.php
+
+		-
+			message: "#^Call to an undefined method Doctrine_Connection\\:\\:fixSequenceName\\(\\)\\.$#"
+			count: 1
+			path: lib/Doctrine/Import/Sqlite.php
+
+		-
+			message: "#^Parameter \\#1 \\$string of function strtolower expects string, string\\|null given\\.$#"
+			count: 1
+			path: lib/Doctrine/Import/Sqlite.php
+
+		-
+			message: "#^Cannot call method bindParam\\(\\) on Doctrine_Adapter_Statement_Interface\\|PDOStatement\\|false\\.$#"
+			count: 17
+			path: lib/Doctrine/Locking/Manager/Pessimistic.php
+
+		-
+			message: "#^Cannot call method execute\\(\\) on Doctrine_Adapter_Statement_Interface\\|PDOStatement\\|false\\.$#"
+			count: 5
+			path: lib/Doctrine/Locking/Manager/Pessimistic.php
+
+		-
+			message: "#^Cannot call method rowCount\\(\\) on Doctrine_Adapter_Statement_Interface\\|PDOStatement\\|false\\.$#"
+			count: 2
+			path: lib/Doctrine/Locking/Manager/Pessimistic.php
+
+		-
+			message: "#^Method Doctrine_Locking_Manager_Pessimistic\\:\\:_getLockingUserIdent\\(\\) never returns float so it can be removed from the return typehint\\.$#"
+			count: 1
+			path: lib/Doctrine/Locking/Manager/Pessimistic.php
+
+		-
+			message: "#^Cannot call method fetchColumn\\(\\) on Doctrine_Adapter_Statement_Interface\\|PDOStatement\\|false\\.$#"
+			count: 1
+			path: lib/Doctrine/Locking/Manager/Pessimistic.php
+
+		-
+			message: "#^Variable \\$autoincrementColumn might not be defined\\.$#"
+			count: 1
+			path: lib/Doctrine/Migration/Base.php
+
+		-
+			message: "#^Variable \\$autoincrementLength might not be defined\\.$#"
+			count: 1
+			path: lib/Doctrine/Migration/Base.php
+
+		-
+			message: "#^Variable \\$autoincrementOptions might not be defined\\.$#"
+			count: 1
+			path: lib/Doctrine/Migration/Base.php
+
+		-
+			message: "#^Variable \\$autoincrementType might not be defined\\.$#"
+			count: 1
+			path: lib/Doctrine/Migration/Base.php
+
+		-
+			message: "#^Parameter \\#1 \\$tableName of method Doctrine_Migration_Builder\\:\\:buildCreateForeignKey\\(\\) expects string, int\\|string given\\.$#"
+			count: 1
+			path: lib/Doctrine/Migration/Builder.php
+
+		-
+			message: "#^Parameter \\#1 \\$tableName of method Doctrine_Migration_Builder\\:\\:buildDropForeignKey\\(\\) expects string, int\\|string given\\.$#"
+			count: 1
+			path: lib/Doctrine/Migration/Builder.php
+
+		-
+			message: "#^Parameter \\#1 \\$name of method Doctrine_Migration\\:\\:loadMigrationClass\\(\\) expects class\\-string, string given\\.$#"
+			count: 2
+			path: lib/Doctrine/Migration/Builder.php
+
+		-
+			message: "#^Binary operation \"\\.\" between array\\|string and string results in an error\\.$#"
+			count: 1
+			path: lib/Doctrine/Migration/Diff.php
+
+		-
+			message: "#^Cannot access offset 0 on array\\<int, string\\>\\|false\\.$#"
+			count: 1
+			path: lib/Doctrine/Migration/Diff.php
+
+		-
+			message: "#^Offset 'extension' does not exist on array\\('dirname' \\=\\> string, 'basename' \\=\\> string, 'filename' \\=\\> string, \\?'extension' \\=\\> string\\)\\.$#"
+			count: 1
+			path: lib/Doctrine/Migration/Diff.php
+
+		-
+			message: "#^Constructor of class Doctrine_Node_MaterializedPath_LevelOrderIterator has an unused parameter \\$node\\.$#"
+			count: 1
+			path: lib/Doctrine/Node/MaterializedPath/LevelOrderIterator.php
+
+		-
+			message: "#^Constructor of class Doctrine_Node_MaterializedPath_LevelOrderIterator has an unused parameter \\$opts\\.$#"
+			count: 1
+			path: lib/Doctrine/Node/MaterializedPath/LevelOrderIterator.php
+
+		-
+			message: "#^Constructor of class Doctrine_Node_MaterializedPath_PostOrderIterator has an unused parameter \\$node\\.$#"
+			count: 1
+			path: lib/Doctrine/Node/MaterializedPath/PostOrderIterator.php
+
+		-
+			message: "#^Constructor of class Doctrine_Node_MaterializedPath_PostOrderIterator has an unused parameter \\$opts\\.$#"
+			count: 1
+			path: lib/Doctrine/Node/MaterializedPath/PostOrderIterator.php
+
+		-
+			message: "#^Constructor of class Doctrine_Node_MaterializedPath_PreOrderIterator has an unused parameter \\$node\\.$#"
+			count: 1
+			path: lib/Doctrine/Node/MaterializedPath/PreOrderIterator.php
+
+		-
+			message: "#^Constructor of class Doctrine_Node_MaterializedPath_PreOrderIterator has an unused parameter \\$opts\\.$#"
+			count: 1
+			path: lib/Doctrine/Node/MaterializedPath/PreOrderIterator.php
+
+		-
+			message: "#^Cannot call method getBaseAlias\\(\\) on Doctrine_Tree_NestedSet\\|null\\.$#"
+			count: 9
+			path: lib/Doctrine/Node/NestedSet.php
+
+		-
+			message: "#^Cannot call method getBaseQuery\\(\\) on Doctrine_Tree_NestedSet\\|null\\.$#"
+			count: 9
+			path: lib/Doctrine/Node/NestedSet.php
+
+		-
+			message: "#^Cannot call method returnQueryWithRootId\\(\\) on Doctrine_Tree_NestedSet\\|null\\.$#"
+			count: 17
+			path: lib/Doctrine/Node/NestedSet.php
+
+		-
+			message: "#^Parameter \\#1 \\$value of function count expects array\\|Countable, array\\|Doctrine_Collection\\<Doctrine_Record\\>\\|int given\\.$#"
+			count: 10
+			path: lib/Doctrine/Node/NestedSet.php
+
+		-
+			message: "#^Variable \\$sibling might not be defined\\.$#"
+			count: 2
+			path: lib/Doctrine/Node/NestedSet.php
+
+		-
+			message: "#^Cannot call method getChildren\\(\\) on Doctrine_Node\\|false\\.$#"
+			count: 1
+			path: lib/Doctrine/Node/NestedSet.php
+
+		-
+			message: "#^Variable \\$child might not be defined\\.$#"
+			count: 2
+			path: lib/Doctrine/Node/NestedSet.php
+
+		-
+			message: "#^Variable \\$parent might not be defined\\.$#"
+			count: 1
+			path: lib/Doctrine/Node/NestedSet.php
+
+		-
+			message: "#^Argument of an invalid type array\\|Doctrine_Collection\\<Doctrine_Record\\>\\|int\\<min, \\-1\\>\\|int\\<1, max\\> supplied for foreach, only iterables are supported\\.$#"
+			count: 1
+			path: lib/Doctrine/Node/NestedSet.php
+
+		-
+			message: "#^Cannot call method isRoot\\(\\) on Doctrine_Node\\|false\\.$#"
+			count: 1
+			path: lib/Doctrine/Node/NestedSet.php
+
+		-
+			message: "#^Cannot call method getLeftValue\\(\\) on Doctrine_Node\\|false\\.$#"
+			count: 14
+			path: lib/Doctrine/Node/NestedSet.php
+
+		-
+			message: "#^Cannot call method getRightValue\\(\\) on Doctrine_Node\\|false\\.$#"
+			count: 15
+			path: lib/Doctrine/Node/NestedSet.php
+
+		-
+			message: "#^Cannot call method getRootValue\\(\\) on Doctrine_Node\\|false\\.$#"
+			count: 14
+			path: lib/Doctrine/Node/NestedSet.php
+
+		-
+			message: "#^Cannot call method getLevel\\(\\) on Doctrine_Node\\|false\\.$#"
+			count: 1
+			path: lib/Doctrine/Node/NestedSet.php
+
+		-
+			message: "#^Cannot call method getBaseComponent\\(\\) on Doctrine_Tree_NestedSet\\|null\\.$#"
+			count: 8
+			path: lib/Doctrine/Node/NestedSet.php
+
+		-
+			message: "#^Cannot call method getAttribute\\(\\) on Doctrine_Tree_NestedSet\\|null\\.$#"
+			count: 7
+			path: lib/Doctrine/Node/NestedSet.php
+
+		-
+			message: "#^Cannot call method insertAsLastChildOf\\(\\) on Doctrine_Node\\|false\\.$#"
+			count: 1
+			path: lib/Doctrine/Node/NestedSet.php
+
+		-
+			message: "#^Cannot call method delete\\(\\) on array\\|Doctrine_Collection\\<Doctrine_Record\\>\\|int\\.$#"
+			count: 1
+			path: lib/Doctrine/Node/NestedSet.php
+
+		-
+			message: "#^Call to an undefined method Doctrine_Node_NestedSet\\:\\:setLevel\\(\\)\\.$#"
+			count: 1
+			path: lib/Doctrine/Node/NestedSet/PreOrderIterator.php
+
+		-
+			message: "#^Parameter \\#1 \\$data of method Doctrine_Parser\\:\\:doDump\\(\\) expects string, string\\|false given\\.$#"
+			count: 1
+			path: lib/Doctrine/Parser/Json.php
+
+		-
+			message: "#^Parameter \\#1 \\$qualifiedName of method SimpleXMLElement\\:\\:addChild\\(\\) expects string, string\\|null given\\.$#"
+			count: 2
+			path: lib/Doctrine/Parser/Xml.php
+
+		-
+			message: "#^Call to function is_int\\(\\) with string\\|null will always evaluate to false\\.$#"
+			count: 1
+			path: lib/Doctrine/Parser/Xml.php
+
+		-
+			message: "#^Parameter \\#1 \\$simpleXml of method Doctrine_Parser_Xml\\:\\:prepareData\\(\\) expects SimpleXMLElement\\|string, SimpleXMLElement\\|false given\\.$#"
+			count: 1
+			path: lib/Doctrine/Parser/Xml.php
+
+		-
+			message: "#^Array \\(array\\<string, array\\>\\) does not accept array\\|bool\\|int\\.$#"
+			count: 2
+			path: lib/Doctrine/Query/Abstract.php
+
+		-
+			message: "#^Parameter \\#1 \\$params of method Doctrine_Query_Abstract\\<T of Doctrine_Record_Abstract\\>\\:\\:getSqlQuery\\(\\) expects array, array\\|bool\\|int given\\.$#"
+			count: 2
+			path: lib/Doctrine/Query/Abstract.php
+
+		-
+			message: "#^Parameter \\#1 \\$customComponent of method Doctrine_Query_Abstract\\<T of Doctrine_Record_Abstract\\>\\:\\:getCachedForm\\(\\) expects array\\|Doctrine_Collection\\|string\\|null, string\\|false given\\.$#"
+			count: 1
+			path: lib/Doctrine/Query/Abstract.php
+
+		-
+			message: "#^Parameter \\#1 \\$query of method Doctrine_Connection\\:\\:exec\\(\\) expects string, array\\|string\\|false given\\.$#"
+			count: 1
+			path: lib/Doctrine/Query/Abstract.php
+
+		-
+			message: "#^Parameter \\#1 \\$query of method Doctrine_Connection\\:\\:execute\\(\\) expects string, array\\|string\\|false given\\.$#"
+			count: 1
+			path: lib/Doctrine/Query/Abstract.php
+
+		-
+			message: "#^Type Doctrine_Record_Abstract in generic type Doctrine_Collection\\<Doctrine_Record_Abstract\\> in PHPDoc tag @return is not subtype of template type T of Doctrine_Record of class Doctrine_Collection\\.$#"
+			count: 1
+			path: lib/Doctrine/Query/Abstract.php
+
+		-
+			message: "#^Parameter \\#1 \\$stmt of method Doctrine_Hydrator\\:\\:hydrateResultSet\\(\\) expects Doctrine_Adapter_Statement_Interface\\|PDOStatement, Doctrine_Adapter_Statement_Interface\\|int\\|PDOStatement given\\.$#"
+			count: 1
+			path: lib/Doctrine/Query/Abstract.php
+
+		-
+			message: "#^Call to an undefined method Doctrine_Hydrator\\|Doctrine_Hydrator_Abstract\\:\\:getHydratorDriver\\(\\)\\.$#"
+			count: 1
+			path: lib/Doctrine/Query/Abstract.php
+
+		-
+			message: "#^Call to an undefined method Doctrine_Query_Abstract\\<T of Doctrine_Record_Abstract\\>\\:\\:isSubquery\\(\\)\\.$#"
+			count: 1
+			path: lib/Doctrine/Query/Abstract.php
+
+		-
+			message: "#^Call to an undefined method Doctrine_Query_Abstract\\<T of Doctrine_Record_Abstract\\>\\:\\:copy\\(\\)\\.$#"
+			count: 1
+			path: lib/Doctrine/Query/Abstract.php
+
+		-
+			message: "#^Offset 'table' does not exist on array\\('parent' \\=\\> string, \\?'relation' \\=\\> mixed, \\?'table' \\=\\> mixed, \\?'agg' \\=\\> mixed, \\?'map' \\=\\> mixed\\)\\.$#"
+			count: 1
+			path: lib/Doctrine/Query/Abstract.php
+
+		-
+			message: "#^Offset 'relation' does not exist on array\\('parent' \\=\\> string, \\?'relation' \\=\\> mixed, \\?'table' \\=\\> mixed, \\?'agg' \\=\\> mixed, \\?'map' \\=\\> mixed\\)\\.$#"
+			count: 1
+			path: lib/Doctrine/Query/Abstract.php
+
+		-
+			message: "#^Property Doctrine_Query_Abstract\\<T of Doctrine_Record_Abstract\\>\\:\\:\\$_queryComponents \\(array\\<string, mixed\\>\\) does not accept array\\<int\\|string, array\\<string, mixed\\>\\>\\.$#"
+			count: 1
+			path: lib/Doctrine/Query/Abstract.php
+
+		-
+			message: "#^Result of && is always false\\.$#"
+			count: 2
+			path: lib/Doctrine/Query/Abstract.php
+
+		-
+			message: "#^Property Doctrine_Query_Abstract\\<T of Doctrine_Record_Abstract\\>\\:\\:\\$_resultCacheHash \\(string\\) does not accept string\\|null\\.$#"
+			count: 1
+			path: lib/Doctrine/Query/Abstract.php
+
+		-
+			message: "#^Strict comparison using \\=\\=\\= between int\\|string and null will always evaluate to false\\.$#"
+			count: 1
+			path: lib/Doctrine/Query/Abstract.php
+
+		-
+			message: "#^Call to an undefined method Doctrine_Query_Part\\:\\:parse\\(\\)\\.$#"
+			count: 1
+			path: lib/Doctrine/Query/Abstract.php
+
+		-
+			message: "#^Variable \\$func might not be defined\\.$#"
+			count: 1
+			path: lib/Doctrine/Query/Check.php
+
+		-
+			message: "#^Call to an undefined method Doctrine_Query_Condition\\:\\:load\\(\\)\\.$#"
+			count: 1
+			path: lib/Doctrine/Query/Condition.php
+
+		-
+			message: "#^Result of && is always true\\.$#"
+			count: 1
+			path: lib/Doctrine/Query/Groupby.php
+
+		-
+			message: "#^Result of && is always true\\.$#"
+			count: 1
+			path: lib/Doctrine/Query/Orderby.php
+
+		-
+			message: "#^Call to an undefined method Doctrine_Query_Set\\:\\:parseLiteralValue\\(\\)\\.$#"
+			count: 1
+			path: lib/Doctrine/Query/Set.php
+
+		-
+			message: "#^Argument of an invalid type array\\<int, string\\>\\|false supplied for foreach, only iterables are supported\\.$#"
+			count: 2
+			path: lib/Doctrine/Query/Tokenizer.php
+
+		-
+			message: "#^Parameter \\#1 \\$listener of method Doctrine_Configurable\\:\\:addRecordListener\\(\\) expects Doctrine_EventListener_Interface\\|Doctrine_Overloadable\\<Doctrine_EventListener_Interface\\>, Doctrine_EventListener_Interface\\|Doctrine_Overloadable\\|Doctrine_Record_Listener_Interface given\\.$#"
+			count: 1
+			path: lib/Doctrine/Record/Abstract.php
+
+		-
+			message: "#^Parameter \\#1 \\$listener of method Doctrine_Configurable\\:\\:setRecordListener\\(\\) expects Doctrine_EventListener_Interface\\|Doctrine_Overloadable\\<Doctrine_EventListener_Interface\\>, Doctrine_EventListener_Interface\\|Doctrine_Overloadable\\|Doctrine_Record_Listener_Interface given\\.$#"
+			count: 1
+			path: lib/Doctrine/Record/Abstract.php
+
+		-
+			message: "#^Return type \\(void\\) of method Doctrine_Record_Filter_Standard\\:\\:filterSet\\(\\) should be compatible with return type \\(Doctrine_Record\\) of method Doctrine_Record_Filter\\:\\:filterSet\\(\\)$#"
+			count: 1
+			path: lib/Doctrine/Record/Filter/Standard.php
+
+		-
+			message: "#^Property Doctrine_Record_Listener\\:\\:\\$_options \\(array\\) does not accept array\\|false\\.$#"
+			count: 1
+			path: lib/Doctrine/Record/Listener.php
+
+		-
+			message: "#^Property Doctrine_Record_Listener_Chain\\:\\:\\$_options \\(array\\) does not accept array\\|false\\.$#"
+			count: 1
+			path: lib/Doctrine/Record/Listener/Chain.php
+
+		-
+			message: "#^Parameter \\#1 \\$str of method Doctrine_Formatter\\:\\:quoteIdentifier\\(\\) expects string, string\\|null given\\.$#"
+			count: 1
+			path: lib/Doctrine/Relation/Nest.php
+
+		-
+			message: "#^Cannot call method getFieldName\\(\\) on array\\|null\\.$#"
+			count: 1
+			path: lib/Doctrine/Relation/Parser.php
+
+		-
+			message: "#^Cannot call method isIdentifier\\(\\) on array\\|null\\.$#"
+			count: 1
+			path: lib/Doctrine/Relation/Parser.php
+
+		-
+			message: "#^Cannot call method addIndex\\(\\) on array\\|null\\.$#"
+			count: 1
+			path: lib/Doctrine/Relation/Parser.php
+
+		-
+			message: "#^Variable \\$rel in isset\\(\\) always exists and is not nullable\\.$#"
+			count: 1
+			path: lib/Doctrine/Relation/Parser.php
+
+		-
+			message: "#^Parameter \\#1 \\$fieldName of method Doctrine_Table\\<Doctrine_Record\\>\\:\\:getColumnName\\(\\) expects array\\<string\\>\\|string, string\\|null given\\.$#"
+			count: 1
+			path: lib/Doctrine/Relation/Parser.php
+
+		-
+			message: "#^Variable \\$table might not be defined\\.$#"
+			count: 1
+			path: lib/Doctrine/Relation/Parser.php
+
+		-
+			message: "#^Cannot access offset 'type' on array\\<string, mixed\\>\\|false\\.$#"
+			count: 2
+			path: lib/Doctrine/Relation/Parser.php
+
+		-
+			message: "#^Cannot access offset 'length' on array\\<string, mixed\\>\\|false\\.$#"
+			count: 2
+			path: lib/Doctrine/Relation/Parser.php
+
+		-
+			message: "#^Cannot access offset 'autoincrement' on array\\<string, mixed\\>\\|false\\.$#"
+			count: 1
+			path: lib/Doctrine/Relation/Parser.php
+
+		-
+			message: "#^Cannot access offset 'sequence' on array\\<string, mixed\\>\\|false\\.$#"
+			count: 1
+			path: lib/Doctrine/Relation/Parser.php
+
+		-
+			message: "#^Cannot access offset 'primary' on array\\<string, mixed\\>\\|false\\.$#"
+			count: 1
+			path: lib/Doctrine/Relation/Parser.php
+
+		-
+			message: "#^Method Doctrine_Sequence_Mysql\\:\\:lastInsertId\\(\\) should return int\\|string but returns int\\|string\\|false\\.$#"
+			count: 1
+			path: lib/Doctrine/Sequence/Mysql.php
+
+		-
+			message: "#^Method Doctrine_Sequence_Sqlite\\:\\:nextId\\(\\) should return int\\|string but returns int\\|string\\|false\\.$#"
+			count: 1
+			path: lib/Doctrine/Sequence/Sqlite.php
+
+		-
+			message: "#^Method Doctrine_Sequence_Sqlite\\:\\:lastInsertId\\(\\) should return int\\|string but returns int\\|string\\|false\\.$#"
+			count: 1
+			path: lib/Doctrine/Sequence/Sqlite.php
+
+		-
+			message: "#^Cannot call method getConfig\\(\\) on Doctrine_Cli\\|null\\.$#"
+			count: 1
+			path: lib/Doctrine/Task/GenerateModelsDb.php
+
+		-
+			message: "#^Cannot call method getRootValue\\(\\) on Doctrine_Node\\|false\\.$#"
+			count: 2
+			path: lib/Doctrine/Tree/NestedSet.php
+
+		-
+			message: "#^Cannot call method setRootValue\\(\\) on Doctrine_Node\\|false\\.$#"
+			count: 1
+			path: lib/Doctrine/Tree/NestedSet.php
+
+		-
+			message: "#^Parameter \\#1 \\$value of function count expects array\\|Countable, array\\|Doctrine_Collection\\<Doctrine_Record\\>\\|int given\\.$#"
+			count: 2
+			path: lib/Doctrine/Tree/NestedSet.php
+
+		-
+			message: "#^Cannot access offset 'level' on Doctrine_Record\\|false\\.$#"
+			count: 1
+			path: lib/Doctrine/Tree/NestedSet.php
+
+		-
+			message: "#^Unable to resolve the template type Tquery in call to method Doctrine_Query\\<Doctrine_Record\\>\\:\\:copy\\(\\)$#"
+			count: 1
+			path: lib/Doctrine/Tree/NestedSet.php
+
+		-
+			message: "#^Parameter \\#1 \\$key of function array_key_exists expects int\\|string, bool\\|float\\|int\\|string\\|null given\\.$#"
+			count: 1
+			path: lib/Doctrine/Validator/ErrorStack.php
+
+		-
+			message: "#^Comparison operation \"\\<\" between int\\<0, max\\> and array results in an error\\.$#"
+			count: 1
+			path: lib/Doctrine/Validator/Minlength.php
+
+		-
+			message: "#^Strict comparison using \\=\\=\\= between mixed and null will always evaluate to false\\.$#"
+			count: 1
+			path: lib/Doctrine/Validator/Nospace.php
+
+		-
+			message: "#^Parameter \\#1 \\$key of function array_key_exists expects int\\|string, array\\|string given\\.$#"
+			count: 1
+			path: lib/Doctrine/Validator/Readonly.php
+
+		-
+			message: "#^Else branch is unreachable because previous condition is always true\\.$#"
+			count: 1
+			path: lib/Doctrine/Validator/Regexp.php
+
+		-
+			message: "#^Unreachable statement \\- code above always terminates\\.$#"
+			count: 1
+			path: lib/Doctrine/Validator/Regexp.php
+

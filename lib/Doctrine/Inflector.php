@@ -45,7 +45,7 @@ class Doctrine_Inflector
      */
     public static function tableize($word)
     {
-        return strtolower(preg_replace('~(?<=\\w)([A-Z])~', '_$1', $word));
+        return strtolower(preg_replace('~(?<=\\w)([A-Z])~', '_$1', $word) ?? $word);
     }
 
     /**
@@ -59,7 +59,7 @@ class Doctrine_Inflector
         static $cache = [];
 
         if (!isset($cache[$word])) {
-            $word         = preg_replace('/[$]/', '', $word);
+            $word         = preg_replace('/[$]/', '', $word) ?? $word;
             $classify     = preg_replace_callback('~(_?)([-_])([\w])~', ['Doctrine_Inflector', 'classifyCallback'], ucfirst(strtolower($word)));
             $cache[$word] = $classify;
         }
@@ -90,23 +90,17 @@ class Doctrine_Inflector
         for ($i = 0; $i < strlen($string); $i++) {
             if (ord($string[$i]) < 0x80) {
                 continue;
-            } // 0bbbbbbb
-            elseif ((ord($string[$i]) & 0xE0) == 0xC0) {
+            } elseif ((ord($string[$i]) & 0xE0) == 0xC0) {
                 $n = 1;
-            } // 110bbbbb
-            elseif ((ord($string[$i]) & 0xF0) == 0xE0) {
+            } elseif ((ord($string[$i]) & 0xF0) == 0xE0) {
                 $n = 2;
-            } // 1110bbbb
-            elseif ((ord($string[$i]) & 0xF8) == 0xF0) {
+            } elseif ((ord($string[$i]) & 0xF8) == 0xF0) {
                 $n = 3;
-            } // 11110bbb
-            elseif ((ord($string[$i]) & 0xFC) == 0xF8) {
+            } elseif ((ord($string[$i]) & 0xFC) == 0xF8) {
                 $n = 4;
-            } // 111110bb
-            elseif ((ord($string[$i]) & 0xFE) == 0xFC) {
+            } elseif ((ord($string[$i]) & 0xFE) == 0xFC) {
                 $n = 5;
-            } // 1111110b
-            else {
+            } else {
                 return false;
             } // Does not match any model
             for ($j = 0; $j < $n; $j++) { // n bytes matching 10bbbbbb follow ?
@@ -279,24 +273,11 @@ class Doctrine_Inflector
         }
 
         // Remove all none word characters
-        $text = preg_replace('/\W/', ' ', $text);
+        $text = preg_replace('/\W/', ' ', $text) ?? $text;
 
         // More stripping. Replace spaces with dashes
-        $text = strtolower(
-            preg_replace(
-                '/[^A-Z^a-z^0-9^\/]+/',
-                '-',
-                preg_replace(
-                    '/([a-z\d])([A-Z])/',
-                    '\1_\2',
-                    preg_replace(
-                        '/([A-Z]+)([A-Z][a-z])/',
-                        '\1_\2',
-                        preg_replace('/::/', '/', $text)
-                    )
-                )
-            )
-        );
+        $text = preg_replace('/::/', '/', $text) ?? $text;
+        $text = preg_replace('/[^a-z0-9\/]+/', '-', $text) ?? $text;
 
         return trim($text, '-');
     }

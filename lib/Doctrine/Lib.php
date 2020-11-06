@@ -259,7 +259,7 @@ class Doctrine_Lib
     public static function removeDirectories($folderPath)
     {
         if (is_dir($folderPath)) {
-            foreach (scandir($folderPath) as $value) {
+            foreach (scandir($folderPath) ?: [] as $value) {
                 if ($value != '.' && $value != '..') {
                     $value = $folderPath . '/' . $value;
 
@@ -301,7 +301,11 @@ class Doctrine_Lib
 
         // Loop through the folder
         $dir = dir($source);
-        while (false !== $entry = $dir->read()) {
+        if (!$dir) {
+            return true;
+        }
+
+        while ($entry = $dir->read()) {
             // Skip pointers
             if ($entry == '.' || $entry == '..') {
                 continue;

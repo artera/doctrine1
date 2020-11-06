@@ -130,38 +130,36 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
         if (! $this->_initialized) {
             $this->_initialized = true;
             $attributes         = [
-                        // These first two keys have the same value in Doctrine_Core (150)
-                        Doctrine_Core::ATTR_CACHE                      => null,
-                        Doctrine_Core::ATTR_RESULT_CACHE               => null,
-                        Doctrine_Core::ATTR_QUERY_CACHE                => null,
-                        Doctrine_Core::ATTR_LOAD_REFERENCES            => true,
-                        Doctrine_Core::ATTR_LISTENER                   => new Doctrine_EventListener(),
-                        Doctrine_Core::ATTR_RECORD_LISTENER            => new Doctrine_Record_Listener(),
-                        Doctrine_Core::ATTR_VALIDATE                   => Doctrine_Core::VALIDATE_NONE,
-                        Doctrine_Core::ATTR_QUERY_LIMIT                => Doctrine_Core::LIMIT_RECORDS,
-                        Doctrine_Core::ATTR_IDXNAME_FORMAT             => '%s_idx',
-                        Doctrine_Core::ATTR_SEQNAME_FORMAT             => '%s_seq',
-                        Doctrine_Core::ATTR_TBLNAME_FORMAT             => '%s',
-                        Doctrine_Core::ATTR_FKNAME_FORMAT              => '%s',
-                        Doctrine_Core::ATTR_QUOTE_IDENTIFIER           => false,
-                        Doctrine_Core::ATTR_SEQCOL_NAME                => 'id',
-                        Doctrine_Core::ATTR_PORTABILITY                => Doctrine_Core::PORTABILITY_NONE,
-                        Doctrine_Core::ATTR_EXPORT                     => Doctrine_Core::EXPORT_ALL,
-                        Doctrine_Core::ATTR_DECIMAL_PLACES             => 2,
-                        Doctrine_Core::ATTR_DEFAULT_PARAM_NAMESPACE    => 'doctrine',
-                        Doctrine_Core::ATTR_AUTOLOAD_TABLE_CLASSES     => false,
-                        Doctrine_Core::ATTR_USE_DQL_CALLBACKS          => false,
-                        Doctrine_Core::ATTR_AUTO_ACCESSOR_OVERRIDE     => false,
-                        Doctrine_Core::ATTR_AUTO_FREE_QUERY_OBJECTS    => false,
-                        Doctrine_Core::ATTR_DEFAULT_IDENTIFIER_OPTIONS => [],
-                        Doctrine_Core::ATTR_DEFAULT_COLUMN_OPTIONS     => [],
-                        Doctrine_Core::ATTR_HYDRATE_OVERWRITE          => true,
-                        Doctrine_Core::ATTR_QUERY_CLASS                => 'Doctrine_Query',
-                        Doctrine_Core::ATTR_COLLECTION_CLASS           => 'Doctrine_Collection',
-                        Doctrine_Core::ATTR_TABLE_CLASS                => 'Doctrine_Table',
-                        Doctrine_Core::ATTR_CASCADE_SAVES              => true,
-                        Doctrine_Core::ATTR_TABLE_CLASS_FORMAT         => '%sTable'
-                        ];
+                Doctrine_Core::ATTR_CACHE                      => null,
+                Doctrine_Core::ATTR_QUERY_CACHE                => null,
+                Doctrine_Core::ATTR_LOAD_REFERENCES            => true,
+                Doctrine_Core::ATTR_LISTENER                   => new Doctrine_EventListener(),
+                Doctrine_Core::ATTR_RECORD_LISTENER            => new Doctrine_Record_Listener(),
+                Doctrine_Core::ATTR_VALIDATE                   => Doctrine_Core::VALIDATE_NONE,
+                Doctrine_Core::ATTR_QUERY_LIMIT                => Doctrine_Core::LIMIT_RECORDS,
+                Doctrine_Core::ATTR_IDXNAME_FORMAT             => '%s_idx',
+                Doctrine_Core::ATTR_SEQNAME_FORMAT             => '%s_seq',
+                Doctrine_Core::ATTR_TBLNAME_FORMAT             => '%s',
+                Doctrine_Core::ATTR_FKNAME_FORMAT              => '%s',
+                Doctrine_Core::ATTR_QUOTE_IDENTIFIER           => false,
+                Doctrine_Core::ATTR_SEQCOL_NAME                => 'id',
+                Doctrine_Core::ATTR_PORTABILITY                => Doctrine_Core::PORTABILITY_NONE,
+                Doctrine_Core::ATTR_EXPORT                     => Doctrine_Core::EXPORT_ALL,
+                Doctrine_Core::ATTR_DECIMAL_PLACES             => 2,
+                Doctrine_Core::ATTR_DEFAULT_PARAM_NAMESPACE    => 'doctrine',
+                Doctrine_Core::ATTR_AUTOLOAD_TABLE_CLASSES     => false,
+                Doctrine_Core::ATTR_USE_DQL_CALLBACKS          => false,
+                Doctrine_Core::ATTR_AUTO_ACCESSOR_OVERRIDE     => false,
+                Doctrine_Core::ATTR_AUTO_FREE_QUERY_OBJECTS    => false,
+                Doctrine_Core::ATTR_DEFAULT_IDENTIFIER_OPTIONS => [],
+                Doctrine_Core::ATTR_DEFAULT_COLUMN_OPTIONS     => [],
+                Doctrine_Core::ATTR_HYDRATE_OVERWRITE          => true,
+                Doctrine_Core::ATTR_QUERY_CLASS                => 'Doctrine_Query',
+                Doctrine_Core::ATTR_COLLECTION_CLASS           => 'Doctrine_Collection',
+                Doctrine_Core::ATTR_TABLE_CLASS                => 'Doctrine_Table',
+                Doctrine_Core::ATTR_CASCADE_SAVES              => true,
+                Doctrine_Core::ATTR_TABLE_CLASS_FORMAT         => '%sTable'
+            ];
             foreach ($attributes as $attribute => $value) {
                 $old = $this->getAttribute($attribute);
                 if ($old === null) {
@@ -279,7 +277,7 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
     public function openConnection($adapter, $name = null, $setCurrent = true)
     {
         if (is_object($adapter)) {
-            if (! ($adapter instanceof PDO) && ! in_array('Doctrine_Adapter_Interface', class_implements($adapter))) {
+            if (!$adapter instanceof PDO && !in_array('Doctrine_Adapter_Interface', class_implements($adapter) ?: [])) {
                 throw new Doctrine_Manager_Exception('First argument should be an instance of PDO or implement Doctrine_Adapter_Interface');
             }
 
@@ -404,7 +402,7 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
         // fix sqlite dsn so that it will parse correctly
         $dsn = str_replace('////', '/', $dsn);
         $dsn = str_replace('\\', '/', $dsn);
-        $dsn = preg_replace("/\/\/\/(.*):\//", '//$1:/', $dsn);
+        $dsn = preg_replace("/\/\/\/(.*):\//", '//$1:/', $dsn) ?? $dsn;
 
         // silence any warnings
         $parts = @parse_url($dsn);

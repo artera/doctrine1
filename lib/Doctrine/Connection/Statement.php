@@ -55,10 +55,6 @@ class Doctrine_Connection_Statement implements Doctrine_Adapter_Statement_Interf
     {
         $this->_conn = $conn;
         $this->_stmt = $stmt;
-
-        if ($stmt === false) {
-            throw new Doctrine_Exception('Unknown statement object given.');
-        }
     }
 
     /**
@@ -199,9 +195,9 @@ class Doctrine_Connection_Statement implements Doctrine_Adapter_Statement_Interf
      * Fetch the SQLSTATE associated with the last operation on the statement handle
      *
      * @see    Doctrine_Adapter_Interface::errorCode()
-     * @return string       error code string
+     * @return string|null error code string
      */
-    public function errorCode()
+    public function errorCode(): ?string
     {
         return $this->_stmt->errorCode();
     }
@@ -232,40 +228,36 @@ class Doctrine_Connection_Statement implements Doctrine_Adapter_Statement_Interf
      *                       bound parameters in the SQL statement being executed.
      * @return boolean                  Returns TRUE on success or FALSE on failure.
      */
-    public function execute($params = null)
+    public function execute($params = [])
     {
         try {
             $event = new Doctrine_Event($this, Doctrine_Event::STMT_EXECUTE, $this->getQuery(), $params);
             $this->_conn->getListener()->preStmtExecute($event);
 
-            $result = true;
-            if (! $event->skipOperation) {
-                if ($this->_conn->getAttribute(Doctrine_Core::ATTR_PORTABILITY) & Doctrine_Core::PORTABILITY_EMPTY_TO_NULL) {
-                    foreach ($params as $key => $value) {
-                        if ($value === '') {
-                            $params[$key] = null;
-                        }
+            if ($this->_conn->getAttribute(Doctrine_Core::ATTR_PORTABILITY) & Doctrine_Core::PORTABILITY_EMPTY_TO_NULL) {
+                foreach ($params as $key => $value) {
+                    if ($value === '') {
+                        $params[$key] = null;
                     }
                 }
-
-                if ($params) {
-                    $pos = 0;
-                    foreach ($params as $key => $value) {
-                        $pos++;
-                        $param = is_numeric($key) ?  $pos : $key;
-                        if (is_resource($value)) {
-                            $this->_stmt->bindParam($param, $params[$key], Doctrine_Core::PARAM_LOB);
-                        } else {
-                            $this->_stmt->bindParam($param, $params[$key]);
-                        }
-                    }
-                }
-
-                $result = $this->_stmt->execute();
-
-                $this->_conn->incrementQueryCount();
             }
 
+            if ($params) {
+                $pos = 0;
+                foreach ($params as $key => $value) {
+                    $pos++;
+                    $param = is_numeric($key) ?  $pos : $key;
+                    if (is_resource($value)) {
+                        $this->_stmt->bindParam($param, $params[$key], Doctrine_Core::PARAM_LOB);
+                    } else {
+                        $this->_stmt->bindParam($param, $params[$key]);
+                    }
+                }
+            }
+
+            $result = $this->_stmt->execute();
+
+            $this->_conn->incrementQueryCount();
             $this->_conn->getListener()->postStmtExecute($event);
 
             return $result;
@@ -274,8 +266,6 @@ class Doctrine_Connection_Statement implements Doctrine_Adapter_Statement_Interf
         }
 
         $this->_conn->rethrowException($e, $this);
-
-        return false;
     }
 
     /**
@@ -319,11 +309,7 @@ class Doctrine_Connection_Statement implements Doctrine_Adapter_Statement_Interf
         $event->cursorOffset      = $cursorOffset;
 
         $data = $this->_conn->getListener()->preFetch($event);
-
-        if (! $event->skipOperation) {
-            $data = $this->_stmt->fetch($fetchMode, $cursorOrientation, $cursorOffset);
-        }
-
+        $data = $this->_stmt->fetch($fetchMode, $cursorOrientation, $cursorOffset);
         $this->_conn->getListener()->postFetch($event);
 
         return $data;
@@ -352,17 +338,13 @@ class Doctrine_Connection_Statement implements Doctrine_Adapter_Statement_Interf
         $data               = [];
 
         $this->_conn->getListener()->preFetchAll($event);
-
-        if (! $event->skipOperation) {
-            if ($columnIndex !== null) {
-                $data = $this->_stmt->fetchAll($fetchMode, $columnIndex);
-            } else {
-                $data = $this->_stmt->fetchAll($fetchMode);
-            }
-
-            $event->data = $data;
+        if ($columnIndex !== null) {
+            $data = $this->_stmt->fetchAll($fetchMode, $columnIndex);
+        } else {
+            $data = $this->_stmt->fetchAll($fetchMode);
         }
 
+        $event->data = $data;
         $this->_conn->getListener()->postFetchAll($event);
 
         return $data;

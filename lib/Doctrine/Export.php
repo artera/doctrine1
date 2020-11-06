@@ -241,10 +241,7 @@ class Doctrine_Export extends Doctrine_Connection_Module
         if (isset($options['indexes']) && ! empty($options['indexes'])) {
             foreach ($options['indexes'] as $index => $definition) {
                 $indexDeclaration = $this->getIndexDeclaration($index, $definition);
-                // append only created index declarations
-                if (! is_null($indexDeclaration)) {
-                    $queryFields .= ', ' . $indexDeclaration;
-                }
+                $queryFields .= ', ' . $indexDeclaration;
             }
         }
 
@@ -386,7 +383,7 @@ class Doctrine_Export extends Doctrine_Connection_Module
 
         $fields = [];
         foreach (array_keys($definition['fields']) as $field) {
-            $fields[] = $this->conn->quoteIdentifier($field, true);
+            $fields[] = $this->conn->quoteIdentifier((string) $field, true);
         }
         $query .= ' (' . implode(', ', $fields) . ')';
 
@@ -649,6 +646,8 @@ class Doctrine_Export extends Doctrine_Connection_Module
             if (method_exists($this->conn->dataDict, $method)) {
                 return $this->conn->dataDict->$method($name, $field);
             } else {
+                // if getNativeDeclaration does not exist on specific dataDict, let it throw an exception
+                // @phpstan-ignore-next-line
                 $dec = $this->conn->dataDict->getNativeDeclaration($field);
             }
 
@@ -759,7 +758,7 @@ class Doctrine_Export extends Doctrine_Connection_Module
             }
         }
 
-        if (! isset($definition['fields']) || ! is_array($definition['fields'])) {
+        if (!isset($definition['fields']) || !is_array($definition['fields'])) {
             throw new Doctrine_Export_Exception('No columns given for index ' . $name);
         }
 
@@ -1162,9 +1161,7 @@ class Doctrine_Export extends Doctrine_Connection_Module
 
             foreach ($parents as $parent) {
                 $data = $table->getConnection()->getTable($parent)->getExportableFormat();
-
                 $query = $this->conn->export->createTableSql($data['tableName'], $data['columns'], $data['options']);
-
                 $sql = array_merge($sql, (array) $query);
             }
 
@@ -1176,16 +1173,7 @@ class Doctrine_Export extends Doctrine_Connection_Module
             $data = $table->getExportableFormat();
 
             $query = $this->conn->export->createTableSql($data['tableName'], $data['columns'], $data['options']);
-
-            if (is_array($query)) {
-                $sql = array_merge($sql, $query);
-            } else {
-                $sql[] = $query;
-            }
-
-            if ($table->getAttribute(Doctrine_Core::ATTR_EXPORT) & Doctrine_Core::EXPORT_PLUGINS) {
-                $sql = array_merge($sql, $this->exportGeneratorsSql($table));
-            }
+            $sql = array_merge($sql, $query);
 
             // DC-474: Remove dummy $record from repository to not pollute it during export
             $table->getRepository()->evict($record->getOid());
@@ -1195,60 +1183,6 @@ class Doctrine_Export extends Doctrine_Connection_Module
         $sql = array_unique($sql);
 
         rsort($sql);
-
-        return $sql;
-    }
-
-    /**
-     * fetches all generators recursively for given table
-     *
-     * @param  Doctrine_Table $table table object to retrieve the generators from
-     * @return array                    an array of Doctrine_Record_Generator objects
-     */
-    public function getAllGenerators(Doctrine_Table $table)
-    {
-        $generators = [];
-
-        foreach ($table->getGenerators() as $name => $generator) {
-            if ($generator === null) {
-                continue;
-            }
-
-            $generators[] = $generator;
-
-            $generatorTable = $generator->getTable();
-
-            if ($generatorTable instanceof Doctrine_Table) {
-                $generators = array_merge($generators, $this->getAllGenerators($generatorTable));
-            }
-        }
-
-        return $generators;
-    }
-
-    /**
-     * exportGeneratorsSql
-     * exports plugin tables for given table
-     *
-     * @param  Doctrine_Table $table the table in which the generators belong to
-     * @return array                    an array of sql strings
-     */
-    public function exportGeneratorsSql(Doctrine_Table $table)
-    {
-        $sql = [];
-
-        foreach ($this->getAllGenerators($table) as $name => $generator) {
-            $table = $generator->getTable();
-
-            // Make sure plugin has a valid table
-            if ($table instanceof Doctrine_Table) {
-                $data = $table->getExportableFormat();
-
-                $query = $this->conn->export->createTableSql($data['tableName'], $data['columns'], $data['options']);
-
-                $sql = array_merge($sql, (array) $query);
-            }
-        }
 
         return $sql;
     }
@@ -1291,7 +1225,6 @@ class Doctrine_Export extends Doctrine_Connection_Module
     {
         try {
             $data = $table->getExportableFormat();
-
             $this->conn->export->createTable($data['tableName'], $data['columns'], $data['options']);
         } catch (Doctrine_Connection_Exception $e) {
             // we only want to silence table already exists errors

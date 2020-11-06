@@ -36,7 +36,7 @@ class Doctrine_Node_NestedSet extends Doctrine_Node implements Doctrine_Node_Int
     /**
      * The tree to which the node belongs.
      *
-     * @var Doctrine_Tree_NestedSet|false
+     * @var Doctrine_Tree_NestedSet|null
      */
     protected $_tree;
 

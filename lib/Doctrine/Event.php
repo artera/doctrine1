@@ -26,7 +26,6 @@
  * @link       www.doctrine-project.org
  * @since      1.0
  * @version    $Revision$
- * @property   bool $skipOperation
  * @property   int $fetchMode
  * @property   int $cursorOrientation
  * @property   int $cursorOffset
@@ -237,20 +236,6 @@ class Doctrine_Event
         }
 
         return $this->_options[$option];
-    }
-
-    /**
-     * skipOperation
-     * skips the next operation
-     * an alias for __set('skipOperation', true)
-     *
-     * @return $this   this object
-     */
-    public function skipOperation()
-    {
-        $this->_options['skipOperation'] = true;
-
-        return $this;
     }
 
     /**

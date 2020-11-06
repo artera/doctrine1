@@ -31,7 +31,7 @@
  * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
  * @todo       See {@link Doctrine_Query}
  *
- * @template T of Doctrine_Record
+ * @template T of Doctrine_Record_Abstract
  */
 abstract class Doctrine_Query_Abstract
 {
@@ -817,10 +817,9 @@ abstract class Doctrine_Query_Abstract
      */
     public function getRootAlias()
     {
-        if (! $this->_queryComponents) {
+        if (!$this->_queryComponents) {
             $this->getSqlQuery([], false);
         }
-
         return $this->_rootAlias;
     }
 

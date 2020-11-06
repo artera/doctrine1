@@ -386,15 +386,11 @@ class Doctrine_Data_Import extends Doctrine_Data
 
             if (! $parent) {
                 $record->save(); // save, so that createRoot can do: root id = id
-                /**
- * @var Doctrine_Tree_NestedSet $tree
-*/
+                /** @var Doctrine_Tree_NestedSet $tree */
                 $tree = Doctrine_Core::getTable($model)->getTree();
                 $tree->createRoot($record);
             } else {
-                /**
- * @var Doctrine_Node_NestedSet $node
-*/
+                /** @var Doctrine_Node_NestedSet $node */
                 $node = $parent->getNode();
                 $node->addChild($record);
             }

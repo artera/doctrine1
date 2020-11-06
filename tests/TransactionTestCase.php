@@ -40,9 +40,13 @@ class Doctrine_Transaction_TestCase extends Doctrine_UnitTestCase
 
     public function testCreateSavepointListenersGetInvoked()
     {
+        if ($this->driverName === 'Sqlite') {
+            $this->skip();
+            return;
+        }
+
         try {
             $this->transaction->beginTransaction('point');
-
             $this->pass();
         } catch (Doctrine_Transaction_Exception $e) {
             $this->fail();
@@ -54,9 +58,13 @@ class Doctrine_Transaction_TestCase extends Doctrine_UnitTestCase
 
     public function testCommitSavepointListenersGetInvoked()
     {
+        if ($this->driverName === 'Sqlite') {
+            $this->skip();
+            return;
+        }
+
         try {
             $this->transaction->commit('point');
-
             $this->pass();
         } catch (Doctrine_Transaction_Exception $e) {
             $this->fail();
@@ -69,6 +77,11 @@ class Doctrine_Transaction_TestCase extends Doctrine_UnitTestCase
 
     public function testNestedSavepoints()
     {
+        if ($this->driverName === 'Sqlite') {
+            $this->skip();
+            return;
+        }
+
         $this->assertEqual($this->transaction->getTransactionLevel(), 0);
         $this->transaction->beginTransaction();
         $this->assertEqual($this->transaction->getTransactionLevel(), 1);
@@ -86,10 +99,14 @@ class Doctrine_Transaction_TestCase extends Doctrine_UnitTestCase
 
     public function testRollbackSavepointListenersGetInvoked()
     {
+        if ($this->driverName === 'Sqlite') {
+            $this->skip();
+            return;
+        }
+
         try {
             $this->transaction->beginTransaction('point');
             $this->transaction->rollback('point');
-
             $this->pass();
         } catch (Doctrine_Transaction_Exception $e) {
             $this->fail();
@@ -107,6 +124,11 @@ class Doctrine_Transaction_TestCase extends Doctrine_UnitTestCase
 
     public function testCreateSavepointIsOnlyImplementedAtDriverLevel()
     {
+        if ($this->driverName !== 'Sqlite') {
+            $this->skip();
+            return;
+        }
+
         try {
             $this->transaction->beginTransaction('savepoint');
             $this->fail();
@@ -117,6 +139,11 @@ class Doctrine_Transaction_TestCase extends Doctrine_UnitTestCase
 
     public function testReleaseSavepointIsOnlyImplementedAtDriverLevel()
     {
+        if ($this->driverName !== 'Sqlite') {
+            $this->skip();
+            return;
+        }
+
         try {
             $this->transaction->commit('savepoint');
             $this->fail();
@@ -127,6 +154,11 @@ class Doctrine_Transaction_TestCase extends Doctrine_UnitTestCase
 
     public function testRollbackSavepointIsOnlyImplementedAtDriverLevel()
     {
+        if ($this->driverName !== 'Sqlite') {
+            $this->skip();
+            return;
+        }
+
         try {
             $this->transaction->rollback('savepoint');
             $this->fail();
@@ -137,6 +169,11 @@ class Doctrine_Transaction_TestCase extends Doctrine_UnitTestCase
 
     public function testSetIsolationIsOnlyImplementedAtDriverLevel()
     {
+        if ($this->driverName !== 'Sqlite') {
+            $this->skip();
+            return;
+        }
+
         try {
             $this->transaction->setIsolation('READ UNCOMMITTED');
             $this->fail();
@@ -147,6 +184,11 @@ class Doctrine_Transaction_TestCase extends Doctrine_UnitTestCase
 
     public function testGetIsolationIsOnlyImplementedAtDriverLevel()
     {
+        if ($this->driverName !== 'Sqlite') {
+            $this->skip();
+            return;
+        }
+
         try {
             $this->transaction->GetIsolation('READ UNCOMMITTED');
             $this->fail();
@@ -274,6 +316,7 @@ class Doctrine_Transaction_TestCase extends Doctrine_UnitTestCase
         $this->assertEqual(1, count($transaction->getInvalid()));
     }
 }
+
 class TransactionListener extends Doctrine_EventListener
 {
     protected $_messages = [];
@@ -281,8 +324,6 @@ class TransactionListener extends Doctrine_EventListener
     public function preTransactionCommit(Doctrine_Event $event)
     {
         $this->_messages[] = __FUNCTION__;
-
-        $event->skipOperation();
     }
     public function postTransactionCommit(Doctrine_Event $event)
     {
@@ -292,8 +333,6 @@ class TransactionListener extends Doctrine_EventListener
     public function preTransactionRollback(Doctrine_Event $event)
     {
         $this->_messages[] = __FUNCTION__;
-
-        $event->skipOperation();
     }
     public function postTransactionRollback(Doctrine_Event $event)
     {
@@ -303,8 +342,6 @@ class TransactionListener extends Doctrine_EventListener
     public function preTransactionBegin(Doctrine_Event $event)
     {
         $this->_messages[] = __FUNCTION__;
-
-        $event->skipOperation();
     }
     public function postTransactionBegin(Doctrine_Event $event)
     {
@@ -315,8 +352,6 @@ class TransactionListener extends Doctrine_EventListener
     public function preSavepointCommit(Doctrine_Event $event)
     {
         $this->_messages[] = __FUNCTION__;
-
-        $event->skipOperation();
     }
     public function postSavepointCommit(Doctrine_Event $event)
     {
@@ -326,8 +361,6 @@ class TransactionListener extends Doctrine_EventListener
     public function preSavepointRollback(Doctrine_Event $event)
     {
         $this->_messages[] = __FUNCTION__;
-
-        $event->skipOperation();
     }
     public function postSavepointRollback(Doctrine_Event $event)
     {
@@ -337,8 +370,6 @@ class TransactionListener extends Doctrine_EventListener
     public function preSavepointCreate(Doctrine_Event $event)
     {
         $this->_messages[] = __FUNCTION__;
-
-        $event->skipOperation();
     }
 
     public function postSavepointCreate(Doctrine_Event $event)

@@ -187,9 +187,10 @@ abstract class Doctrine_Configurable extends Doctrine_Locator_Injectable
     /**
      * addRecordListener
      *
-     * @param  Doctrine_EventListener_Interface|Doctrine_Overloadable $listener
-     * @param  string                                                 $name
-     * @return $this        this object
+     * @param Doctrine_EventListener_Interface|Doctrine_Overloadable $listener
+     * @phpstan-param Doctrine_EventListener_Interface|Doctrine_Overloadable<Doctrine_EventListener_Interface> $listener
+     * @param string $name
+     * @return $this this object
      */
     public function addRecordListener($listener, $name = null)
     {
@@ -206,7 +207,8 @@ abstract class Doctrine_Configurable extends Doctrine_Locator_Injectable
     /**
      * getListener
      *
-     * @return Doctrine_EventListener_Interface|Doctrine_Overloadable|null
+     * @return Doctrine_EventListener_Interface|Doctrine_Overloadable
+     * @phpstan-return Doctrine_EventListener_Interface|Doctrine_Overloadable<Doctrine_EventListener_Interface>
      */
     public function getRecordListener()
     {
@@ -214,7 +216,7 @@ abstract class Doctrine_Configurable extends Doctrine_Locator_Injectable
             if (isset($this->parent)) {
                 return $this->parent->getRecordListener();
             }
-            return null;
+            throw new Doctrine_EventListener_Exception('Could not get a listener');
         }
         return $this->attributes[Doctrine_Core::ATTR_RECORD_LISTENER];
     }
@@ -222,7 +224,8 @@ abstract class Doctrine_Configurable extends Doctrine_Locator_Injectable
     /**
      * setListener
      *
-     * @param  Doctrine_EventListener_Interface|Doctrine_Overloadable $listener
+     * @param Doctrine_EventListener_Interface|Doctrine_Overloadable $listener
+     * @phpstan-param Doctrine_EventListener_Interface|Doctrine_Overloadable<Doctrine_EventListener_Interface> $listener
      * @return $this        this object
      */
     public function setRecordListener($listener)
@@ -240,7 +243,8 @@ abstract class Doctrine_Configurable extends Doctrine_Locator_Injectable
     /**
      * addListener
      *
-     * @param  Doctrine_EventListener_Interface|Doctrine_Overloadable $listener
+     * @param Doctrine_EventListener_Interface|Doctrine_Overloadable $listener
+     * @phpstan-param Doctrine_EventListener_Interface|Doctrine_Overloadable<Doctrine_EventListener_Interface> $listener
      * @param  string                                                 $name
      * @return $this    this object
      */
@@ -259,15 +263,16 @@ abstract class Doctrine_Configurable extends Doctrine_Locator_Injectable
     /**
      * getListener
      *
-     * @return Doctrine_EventListener_Interface|Doctrine_Overloadable|null
+     * @return Doctrine_EventListener_Interface|Doctrine_Overloadable
+     * @phpstan-return Doctrine_EventListener_Interface|Doctrine_Overloadable<Doctrine_EventListener_Interface>
      */
     public function getListener()
     {
-        if (! isset($this->attributes[Doctrine_Core::ATTR_LISTENER])) {
+        if (!isset($this->attributes[Doctrine_Core::ATTR_LISTENER])) {
             if (isset($this->parent)) {
                 return $this->parent->getListener();
             }
-            return null;
+            throw new Doctrine_EventListener_Exception('Could not get a listener');
         }
         return $this->attributes[Doctrine_Core::ATTR_LISTENER];
     }
@@ -275,13 +280,15 @@ abstract class Doctrine_Configurable extends Doctrine_Locator_Injectable
     /**
      * setListener
      *
-     * @param  Doctrine_EventListener_Interface|Doctrine_Overloadable $listener
+     * @param Doctrine_EventListener_Interface|Doctrine_Overloadable $listener
+     * @phpstan-param Doctrine_EventListener_Interface|Doctrine_Overloadable<Doctrine_EventListener_Interface> $listener
      * @return $this        this object
      */
     public function setListener($listener)
     {
-        if (! ($listener instanceof Doctrine_EventListener_Interface)
-            && ! ($listener instanceof Doctrine_Overloadable)
+        // @phpstan-ignore-next-line
+        if (!$listener instanceof Doctrine_EventListener_Interface
+            && !$listener instanceof Doctrine_Overloadable
         ) {
             throw new Doctrine_EventListener_Exception("Couldn't set eventlistener. EventListeners should implement either Doctrine_EventListener_Interface or Doctrine_Overloadable");
         }

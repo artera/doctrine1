@@ -34,12 +34,13 @@
 class Doctrine_Column extends Doctrine_Access implements IteratorAggregate, Countable
 {
     /**
-     * @var array $_definition  @see getDefinition()
+     * @var array $_definition
+     * @see getDefinition()
      */
     protected $_definition = [
-                                'type'   => null,
-                                'length' => 0,
-                                ];
+        'type'   => null,
+        'length' => 0,
+    ];
 
     /**
      * @var array $definition  @see getDefinition()

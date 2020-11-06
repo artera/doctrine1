@@ -52,26 +52,28 @@ abstract class Doctrine_Relation implements ArrayAccess
     /**
      * @var array $definition   @see __construct()
      */
-    protected $definition = ['alias'                 => true,
-                                  'foreign'               => true,
-                                  'local'                 => true,
-                                  'class'                 => true,
-                                  'type'                  => true,
-                                  'table'                 => true,
-                                  'localTable'            => true,
-                                  'name'                  => null,
-                                  'refTable'              => null,
-                                  'onDelete'              => null,
-                                  'onUpdate'              => null,
-                                  'deferred'              => null,
-                                  'deferrable'            => null,
-                                  'constraint'            => null,
-                                  'equal'                 => false,
-                                  'cascade'               => [], // application-level cascades
-                                  'owningSide'            => false, // whether this is the owning side
-                                  'refClassRelationAlias' => null,
-                                  'foreignKeyName'        => null,
-                                  'orderBy'               => null];
+    protected $definition = [
+        'alias'                 => true,
+        'foreign'               => true,
+        'local'                 => true,
+        'class'                 => true,
+        'type'                  => true,
+        'table'                 => true,
+        'localTable'            => true,
+        'name'                  => null,
+        'refTable'              => null,
+        'onDelete'              => null,
+        'onUpdate'              => null,
+        'deferred'              => null,
+        'deferrable'            => null,
+        'constraint'            => null,
+        'equal'                 => false,
+        'cascade'               => [], // application-level cascades
+        'owningSide'            => false, // whether this is the owning side
+        'refClassRelationAlias' => null,
+        'foreignKeyName'        => null,
+        'orderBy'               => null,
+    ];
     /**
      * @var bool|null
      */
@@ -298,6 +300,16 @@ abstract class Doctrine_Relation implements ArrayAccess
     }
 
     /**
+     * getLocalTableName
+     *
+     * @return string
+     */
+    final public function getLocalTableName(): string
+    {
+        return $this->definition['localTable']->getTableName();
+    }
+
+    /**
      * getLocalFieldName
      * returns the field name of the local column
      *
@@ -329,6 +341,16 @@ abstract class Doctrine_Relation implements ArrayAccess
     final public function getForeign()
     {
         return $this->definition['foreign'];
+    }
+
+    /**
+     * getForeignTableName
+     *
+     * @return string
+     */
+    final public function getForeignTableName(): string
+    {
+        return $this->definition['table']->getTableName();
     }
 
     /**

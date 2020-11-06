@@ -44,6 +44,7 @@ class Doctrine_Validator_Unique extends Doctrine_Validator_Driver
             return true;
         }
 
+        /** @var Doctrine_Table */
         $table = $this->invoker->getTable();
         $conn  = $table->getConnection();
         $pks   = $table->getIdentifierColumnNames();
@@ -87,6 +88,7 @@ class Doctrine_Validator_Unique extends Doctrine_Validator_Driver
             $sql .= ' AND ' . $this->args['where'];
         }
 
+        /** @var PDOStatement|Doctrine_Adapter_Statement_Interface */
         $stmt = $table->getConnection()->getDbh()->prepare($sql);
         $stmt->execute($values);
 

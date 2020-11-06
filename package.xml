@@ -281,7 +281,6 @@ requiring needless code duplication.</description>
       <file name="Abstract.php" role="php" />
       <file name="Exception.php" role="php" />
       <file name="Filter.php" role="php" />
-      <file name="Generator.php" role="php" />
       <file name="Iterator.php" role="php" />
       <file name="Listener.php" role="php" />
       <file name="UnknownPropertyException.php" role="php" />
@@ -833,7 +832,6 @@ requiring needless code duplication.</description>
      <file name="CascadingDeleteTestCase.php" role="test" />
      <file name="FilterTestCase.php" role="test" />
      <file name="FromArrayTestCase.php" role="test" />
-     <file name="GeneratorTestCase.php" role="test" />
      <file name="HookTestCase.php" role="test" />
      <file name="InheritanceTestCase.php" role="test" />
      <file name="LockTestCase.php" role="test" />

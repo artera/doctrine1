@@ -44,6 +44,7 @@ class Doctrine_Tree
 
     /**
      * @var string
+     * @phpstan-var class-string
      */
     protected $_baseComponent;
 
@@ -61,12 +62,12 @@ class Doctrine_Tree
         $class                = $this->_baseComponent;
         if ($table->getOption('inheritanceMap')) {
             $subclasses = $table->getOption('subclasses');
-            while (in_array($class, $subclasses)) {
+            while ($class && in_array($class, $subclasses)) {
                 $class = get_parent_class($class);
             }
+            assert($class !== false);
             $this->_baseComponent = $class;
         }
-        //echo $this->_baseComponent;
     }
 
     /**

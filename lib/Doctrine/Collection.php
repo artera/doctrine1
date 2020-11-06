@@ -179,7 +179,6 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
         unset($vars['relation']);
         unset($vars['expandable']);
         unset($vars['expanded']);
-        unset($vars['generator']);
 
         $vars['_table'] = $vars['_table']->getComponentName();
 
@@ -241,8 +240,8 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
     /**
      * Get all the records as an array
      *
-     * @return         Doctrine_Record[]
-     * @phpstan-return T[]
+     * @return (Doctrine_Record|Doctrine_Null)[]
+     * @phpstan-return (T|Doctrine_Null)[]
      */
     public function getData()
     {
@@ -390,14 +389,9 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
         if (! isset($this->data[$key])) {
             $record = $this->_table->create();
 
-            if (isset($this->referenceField)) {
+            if (isset($this->referenceField) && $this->reference !== null) {
                 $value = $this->reference->get($this->relation->getLocalFieldName());
-
-                if ($value !== null) {
-                    $record->set($this->referenceField, $value, false);
-                } else {
-                    $record->set($this->referenceField, $this->reference, false);
-                }
+                $record->set($this->referenceField, $value ?? $this->reference, false);
             }
             if ($key === null) {
                 $this->data[] = $record;
@@ -426,6 +420,7 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
         $name = $this->_table->getIdentifier();
 
         foreach ($this->data as $record) {
+            // @phpstan-ignore-next-line
             if (is_array($record) && isset($record[$name])) {
                 $list[] = $record[$name];
             } else {
@@ -483,14 +478,12 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
      */
     public function add($record, $key = null)
     {
-        if (isset($this->referenceField)) {
+        if (isset($this->referenceField) && $this->reference !== null) {
             $value = $this->reference->get($this->relation->getLocalFieldName());
-            if ($value !== null) {
-                $record->set($this->referenceField, $value, false);
-            } else {
-                $record->set($this->referenceField, $this->reference, false);
-            }
-            $relations = $this->relation['table']->getRelations();
+            $record->set($this->referenceField, $value ?? $this->reference, false);
+            /** @var Doctrine_Table */
+            $table = $this->relation['table'];
+            $relations = $table->getRelations();
             foreach ($relations as $relation) {
                 if ($this->relation['class'] == $relation['localTable']->getOption('name') && $relation->getLocal() == $this->relation->getForeignFieldName()) {
                     $record->{$relation['alias']} = $this->reference;
@@ -542,12 +535,15 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
         $localBase = $this->getTable()->getComponentName();
         $otherBase = $coll->getTable()->getComponentName();
 
+        // @phpstan-ignore-next-line
         if ($otherBase != $localBase && !is_subclass_of($otherBase, $localBase)) {
             throw new Doctrine_Collection_Exception("Can't merge collections with incompatible record types");
         }
 
         foreach ($coll->getData() as $record) {
-            $this->add($record);
+            if (!$record instanceof Doctrine_Null) {
+                $this->add($record);
+            }
         }
 
         return $this;
@@ -875,41 +871,6 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
     }
 
     /**
-     * Export a Doctrine_Collection to one of the supported Doctrine_Parser formats
-     *
-     * @param string $type
-     * @param bool   $deep
-     *
-     * @return ((array|false|int|mixed|null)[]|false)[]|false|int|string
-     *
-     * @psalm-return array<array-key|mixed, array<array-key|array, array|false|int|mixed|null>|false>|false|int|string
-     */
-    public function exportTo($type, $deep = true)
-    {
-        if ($type == 'array') {
-            return $this->toArray($deep);
-        } else {
-            return Doctrine_Parser::dump($this->toArray($deep, true), $type);
-        }
-    }
-
-    /**
-     * Import data to a Doctrine_Collection from one of the supported Doctrine_Parser formats
-     *
-     * @param  string       $type
-     * @param  string|array $data
-     * @return void
-     */
-    public function importFrom($type, $data)
-    {
-        if ($type == 'array') {
-            $this->fromArray($data);
-        } else {
-            $this->fromArray(Doctrine_Parser::load($data, $type));
-        }
-    }
-
-    /**
      * Perform a delete diff between the last snapshot and the current data
      *
      * @return         \Doctrine_Record[] $diff
@@ -972,8 +933,10 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
                 $this->processDiff();
             }
 
-            foreach ($this->getData() as $key => $record) {
-                $record->save($conn);
+            foreach ($this->getData() as $record) {
+                if (!$record instanceof Doctrine_Null) {
+                    $record->save($conn);
+                }
             }
 
             $conn->commit();
@@ -1008,8 +971,10 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
                 $this->processDiff();
             }
 
-            foreach ($this->getData() as $key => $record) {
-                $record->replace($conn);
+            foreach ($this->getData() as $record) {
+                if (!$record instanceof Doctrine_Null) {
+                    $record->replace($conn);
+                }
             }
 
             $conn->commit();
@@ -1076,7 +1041,7 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
     public function free($deep = false)
     {
         foreach ($this->getData() as $key => $record) {
-            if (! ($record instanceof Doctrine_Null)) {
+            if (!$record instanceof Doctrine_Null) {
                 $record->free($deep);
             }
         }

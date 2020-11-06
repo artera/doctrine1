@@ -36,8 +36,8 @@
  * @version    $Revision: 7490 $
  * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
  *
- * @template   T of Doctrine_Record
- * @implements Doctrine_Query_Abstract<T>
+ * @template T of Doctrine_Record
+ * @extends Doctrine_Query_Abstract<T>
  */
 class Doctrine_RawSql extends Doctrine_Query_Abstract
 {
@@ -276,6 +276,10 @@ class Doctrine_RawSql extends Doctrine_Query_Abstract
         reset($this->_queryComponents);
         $componentAlias = key($this->_queryComponents);
 
+        if ($componentAlias === null) {
+            throw new Doctrine_RawSql_Exception('Missing component alias.');
+        }
+
         $this->_rootAlias = $componentAlias;
 
         $q .= implode(', ', $select[$componentAlias]);
@@ -320,6 +324,10 @@ class Doctrine_RawSql extends Doctrine_Query_Abstract
         //This is not correct, if the result is not hydrated by doctrine, but it mimics the behaviour of Doctrine_Query::getCountQuery
         reset($this->_queryComponents);
         $componentAlias = key($this->_queryComponents);
+
+        if ($componentAlias === null) {
+            throw new Doctrine_RawSql_Exception('Missing component alias.');
+        }
 
         $this->_rootAlias = $componentAlias;
 
@@ -414,6 +422,7 @@ class Doctrine_RawSql extends Doctrine_Query_Abstract
 
         $table = null;
 
+        $parent = '';
         $currPath = '';
 
         if (isset($this->_queryComponents[$e[0]])) {
@@ -446,9 +455,11 @@ class Doctrine_RawSql extends Doctrine_Query_Abstract
             } else {
                 $relation = $table->getRelation($component);
 
-                $this->_queryComponents[$componentAlias] = ['table' => $relation->getTable(),
-                                                          'parent'       => $parent,
-                                                          'relation'     => $relation];
+                $this->_queryComponents[$componentAlias] = [
+                    'table' => $relation->getTable(),
+                    'parent' => $parent,
+                    'relation' => $relation,
+                ];
             }
             $this->addSqlTableAlias($tableAlias, $componentAlias);
 

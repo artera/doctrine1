@@ -87,6 +87,16 @@ abstract class Doctrine_Hydrator_Abstract extends Doctrine_Locator_Injectable
     }
 
     /**
+     * Get the hydration mode
+     *
+     * @return mixed $hydrationMode One of the Doctrine_Core::HYDRATE_* constants
+     */
+    public function getHydrationMode()
+    {
+        return $this->_hydrationMode;
+    }
+
+    /**
      * Set the hydration mode
      *
      * @param  mixed $hydrationMode One of the Doctrine_Core::HYDRATE_* constants or

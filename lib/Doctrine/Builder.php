@@ -20,7 +20,7 @@
  */
 
 /**
- * Base class for any code builders/generators for Doctrine
+ * Base class for any code builders for Doctrine
  *
  * @package    Doctrine
  * @subpackage Builder

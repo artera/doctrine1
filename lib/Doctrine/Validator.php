@@ -74,6 +74,7 @@ class Doctrine_Validator extends Doctrine_Locator_Injectable
      */
     public function validateRecord(Doctrine_Record $record)
     {
+        /** @phpstan-var Doctrine_Table */
         $table = $record->getTable();
 
         // if record is transient all fields will be validated
@@ -190,21 +191,15 @@ class Doctrine_Validator extends Doctrine_Locator_Injectable
             case 'boolean':
                 return is_bool($var) || (is_numeric($var) && ($var == 0 || $var == 1));
             case 'timestamp':
-                /**
-     * @var Doctrine_Validator_Timestamp $validator
-*/
+                /** @var Doctrine_Validator_Timestamp $validator */
                 $validator = self::getValidator('timestamp');
                 return $validator->validate($var);
             case 'time':
-                /**
-     * @var Doctrine_Validator_Time $validator
-*/
+                /** @var Doctrine_Validator_Time $validator */
                 $validator = self::getValidator('time');
                 return $validator->validate($var);
             case 'date':
-                /**
-     * @var Doctrine_Validator_Date $validator
-*/
+                /** @var Doctrine_Validator_Date $validator */
                 $validator = self::getValidator('date');
                 return $validator->validate($var);
             case 'enum':
