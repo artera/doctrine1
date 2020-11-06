@@ -122,23 +122,23 @@ class Doctrine_DataDict_Mysql_TestCase extends Doctrine_UnitTestCase
                                         'unsigned' => null,
                                         'fixed'    => false));
 
-        $type = $this->dataDict->getPortableDeclaration(array('type' => 'char(1)'));
+        $type = $this->dataDict->getPortableDeclaration(array('type' => 'tinyint', 'comment' => 'BOOL'));
 
-        $this->assertEqual($type, array('type'     => array('string', 'boolean'),
+        $this->assertEqual($type, array('type'     => array('boolean', 'integer'),
+                                        'length'   => 1,
+                                        'unsigned' => false,
+                                        'fixed'    => null));
+
+        $type = $this->dataDict->getPortableDeclaration(array('type' => 'tinyint', 'field' => 'hascontent'));
+
+        $this->assertEqual($type, array('type'     => array('boolean', 'integer'),
                                         'length'   => 1,
                                         'unsigned' => null,
-                                        'fixed'    => true));
+                                        'fixed'    => null));
 
-        $type = $this->dataDict->getPortableDeclaration(array('type' => 'char(1)', 'field' => 'hascontent'));
+        $type = $this->dataDict->getPortableDeclaration(array('type' => 'tinyint'));
 
-        $this->assertEqual($type, array('type'     => array('boolean', 'string'),
-                                        'length'   => 1,
-                                        'unsigned' => null,
-                                        'fixed'    => true));
-
-        $type = $this->dataDict->getPortableDeclaration(array('type' => 'varchar(1)'));
-
-        $this->assertEqual($type, array('type'     => array('string', 'boolean'),
+        $this->assertEqual($type, array('type'     => array('integer', 'boolean'),
                                         'length'   => 1,
                                         'unsigned' => null,
                                         'fixed'    => false));

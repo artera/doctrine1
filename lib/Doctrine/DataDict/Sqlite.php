@@ -162,30 +162,30 @@ class Doctrine_DataDict_Sqlite extends Doctrine_DataDict
                 if (preg_match('/^(is|has)/', $field['name'])) {
                     $type = array_reverse($type);
                 }
-                $unsigned = preg_match('/ unsigned/i', $field['type']);
+                $unsigned = (bool) preg_match('/ unsigned/i', $field['type']);
                 $length   = 1;
                 break;
             case 'smallint':
                 $type[]   = 'integer';
-                $unsigned = preg_match('/ unsigned/i', $field['type']);
+                $unsigned = (bool) preg_match('/ unsigned/i', $field['type']);
                 $length   = 2;
                 break;
             case 'mediumint':
                 $type[]   = 'integer';
-                $unsigned = preg_match('/ unsigned/i', $field['type']);
+                $unsigned = (bool) preg_match('/ unsigned/i', $field['type']);
                 $length   = 3;
                 break;
             case 'int':
             case 'integer':
             case 'serial':
                 $type[]   = 'integer';
-                $unsigned = preg_match('/ unsigned/i', $field['type']);
+                $unsigned = (bool) preg_match('/ unsigned/i', $field['type']);
                 $length   = 4;
                 break;
             case 'bigint':
             case 'bigserial':
                 $type[]   = 'integer';
-                $unsigned = preg_match('/ unsigned/i', $field['type']);
+                $unsigned = (bool) preg_match('/ unsigned/i', $field['type']);
                 $length   = 8;
                 break;
             case 'clob':

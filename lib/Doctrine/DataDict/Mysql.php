@@ -488,28 +488,28 @@ class Doctrine_DataDict_Mysql extends Doctrine_DataDict
                 if ((isset($field['comment']) && preg_match('/\bBOOL\b/', $field['comment'])) || preg_match('/^(is|has)/', $field['name'])) {
                     $type = array_reverse($type);
                 }
-                $unsigned = preg_match('/ unsigned/i', $field['type']);
+                $unsigned = (bool) preg_match('/ unsigned/i', $field['type']);
                 $length   = 1;
             break;
             case 'smallint':
                 $type[]   = 'integer';
-                $unsigned = preg_match('/ unsigned/i', $field['type']);
+                $unsigned = (bool) preg_match('/ unsigned/i', $field['type']);
                 $length   = 2;
             break;
             case 'mediumint':
                 $type[]   = 'integer';
-                $unsigned = preg_match('/ unsigned/i', $field['type']);
+                $unsigned = (bool) preg_match('/ unsigned/i', $field['type']);
                 $length   = 3;
             break;
             case 'int':
             case 'integer':
                 $type[]   = 'integer';
-                $unsigned = preg_match('/ unsigned/i', $field['type']);
+                $unsigned = (bool) preg_match('/ unsigned/i', $field['type']);
                 $length   = 4;
             break;
             case 'bigint':
                 $type[]   = 'integer';
-                $unsigned = preg_match('/ unsigned/i', $field['type']);
+                $unsigned = (bool) preg_match('/ unsigned/i', $field['type']);
                 $length   = 8;
             break;
             case 'tinytext':
@@ -576,7 +576,7 @@ class Doctrine_DataDict_Mysql extends Doctrine_DataDict
             case 'double':
             case 'real':
                 $type[]   = 'float';
-                $unsigned = preg_match('/ unsigned/i', $field['type']);
+                $unsigned = (bool) preg_match('/ unsigned/i', $field['type']);
             break;
             case 'unknown':
             case 'decimal':
@@ -586,7 +586,7 @@ class Doctrine_DataDict_Mysql extends Doctrine_DataDict
                 // no break
             case 'numeric':
                 $type[]   = 'decimal';
-                $unsigned = preg_match('/ unsigned/i', $field['type']);
+                $unsigned = (bool) preg_match('/ unsigned/i', $field['type']);
             break;
             case 'tinyblob':
             case 'mediumblob':
