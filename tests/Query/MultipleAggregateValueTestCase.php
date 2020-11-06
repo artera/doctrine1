@@ -19,14 +19,14 @@
 /**
  * Doctrine_Query_MultipleAggregateValue_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @author      Jonathan H. Wage <jonwage@gmail.com>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @author   Jonathan H. Wage <jonwage@gmail.com>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Query_MultipleAggregateValue_TestCase extends Doctrine_UnitTestCase
 {
@@ -78,7 +78,7 @@ class Doctrine_Query_MultipleAggregateValue_TestCase extends Doctrine_UnitTestCa
         $query->where("u.name = 'jon'");
         $query->limit(1);
 
-        $users = $query->execute(array(), Doctrine_Core::HYDRATE_ARRAY);
+        $users = $query->execute([], Doctrine_Core::HYDRATE_ARRAY);
 
         try {
             $name       = $users[0]['name'];

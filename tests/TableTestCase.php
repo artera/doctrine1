@@ -19,13 +19,13 @@
 /**
  * Doctrine_Table_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Table_TestCase extends Doctrine_UnitTestCase
 {
@@ -51,14 +51,14 @@ class Doctrine_Table_TestCase extends Doctrine_UnitTestCase
         $t->someColumn = 'abc';
         $t->someEnum   = 'php';
         $t->someInt    = 1;
-        $t->someArray  = array();
+        $t->someArray  = [];
         $obj           = new StdClass();
         $t->someObject = $obj;
 
         $this->assertEqual($t->someColumn, 'abc');
         $this->assertEqual($t->someEnum, 'php');
         $this->assertEqual($t->someInt, 1);
-        $this->assertEqual($t->someArray, array());
+        $this->assertEqual($t->someArray, []);
         $this->assertEqual($t->someObject, $obj);
 
         $t->save();
@@ -66,7 +66,7 @@ class Doctrine_Table_TestCase extends Doctrine_UnitTestCase
         $this->assertEqual($t->someColumn, 'abc');
         $this->assertEqual($t->someEnum, 'php');
         $this->assertEqual($t->someInt, 1);
-        $this->assertEqual($t->someArray, array());
+        $this->assertEqual($t->someArray, []);
         $this->assertEqual($t->someObject, $obj);
 
         $t->refresh();
@@ -74,7 +74,7 @@ class Doctrine_Table_TestCase extends Doctrine_UnitTestCase
         $this->assertEqual($t->someColumn, 'abc');
         $this->assertEqual($t->someEnum, 'php');
         $this->assertEqual($t->someInt, 1);
-        $this->assertEqual($t->someArray, array());
+        $this->assertEqual($t->someArray, []);
         $this->assertEqual($t->someObject, $obj);
 
         $this->connection->clear();
@@ -84,7 +84,7 @@ class Doctrine_Table_TestCase extends Doctrine_UnitTestCase
         $this->assertEqual($t->someColumn, 'abc');
         $this->assertEqual($t->someEnum, 'php');
         $this->assertEqual($t->someInt, 1);
-        $this->assertEqual($t->someArray, array());
+        $this->assertEqual($t->someArray, []);
         $this->assertEqual($t->someObject, $obj);
 
         $this->dbh->setAttribute(PDO::ATTR_CASE, PDO::CASE_NATURAL);
@@ -131,7 +131,7 @@ class Doctrine_Table_TestCase extends Doctrine_UnitTestCase
 
     public function testGetData()
     {
-        $this->assertTrue($this->objTable->getData() == array());
+        $this->assertTrue($this->objTable->getData() == []);
     }
 
     public function testSetSequenceName()

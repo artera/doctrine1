@@ -22,30 +22,30 @@
 /**
  * Doctrine_Query
  *
- * @package     Doctrine
- * @subpackage  Query
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 7490 $
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @package    Doctrine
+ * @subpackage Query
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 7490 $
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
 class Doctrine_Query_Set extends Doctrine_Query_Part
 {
     /**
-     * @param string $dql
+     * @param  string $dql
      * @return string
      */
     public function parse($dql)
     {
         $terms            = $this->_tokenizer->sqlExplode($dql, ' ');
-        $termsTranslation = array();
+        $termsTranslation = [];
 
         foreach ($terms as $term) {
             $termOriginal = $term;
 
             // We need to check for agg functions here
-            $matches          = array();
+            $matches          = [];
             $hasAggExpression = $this->_processPossibleAggExpression($term, $matches);
 
             $lftExpr = (($hasAggExpression) ? $matches[1] . '(' : '');
@@ -54,7 +54,7 @@ class Doctrine_Query_Set extends Doctrine_Query_Part
             preg_match_all("/^([a-zA-Z0-9_]+[\.[a-zA-Z0-9_]+]*)(\sAS\s[a-zA-Z0-9_]+)?/i", $term, $m, PREG_SET_ORDER);
 
             if (isset($m[0])) {
-                $processed = array();
+                $processed = [];
 
                 foreach ($m as $piece) {
                     $part = $piece[1];
@@ -83,11 +83,11 @@ class Doctrine_Query_Set extends Doctrine_Query_Part
 
 
     /**
-     * @param string $expr
-     * @param array $matches
+     * @param  string $expr
+     * @param  array  $matches
      * @return int|false
      */
-    protected function _processPossibleAggExpression(& $expr, & $matches = array())
+    protected function _processPossibleAggExpression(&$expr, &$matches = [])
     {
         $hasAggExpr = preg_match('/(.*[^\s\(\=])\(([^\)]*)\)(.*)/', $expr, $matches);
 
@@ -98,7 +98,7 @@ class Doctrine_Query_Set extends Doctrine_Query_Part
             if (substr(trim($matches[3]), 0, 1) == ',') {
                 $xplod = $this->_tokenizer->sqlExplode(trim($matches[3], ' )'), ',');
 
-                $matches[3] = array();
+                $matches[3] = [];
 
                 foreach ($xplod as $part) {
                     if ($part != '') {

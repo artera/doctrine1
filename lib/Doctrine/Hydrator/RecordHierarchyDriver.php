@@ -19,18 +19,18 @@
 /**
  * Builds result sets in to the hierarchy graph using php arrays
  *
- * @package     Doctrine
- * @subpackage  Hydrate
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.2
- * @version     $Revision$
- * @author      Guilherme Blanco <guilhermeblanco@hotmail.com>
+ * @package    Doctrine
+ * @subpackage Hydrate
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.2
+ * @version    $Revision$
+ * @author     Guilherme Blanco <guilhermeblanco@hotmail.com>
  */
 class Doctrine_Hydrator_RecordHierarchyDriver extends Doctrine_Hydrator_RecordDriver
 {
     /**
-     * @param Doctrine_Adapter_Statement_Interface|PDOStatement $stmt
+     * @param  Doctrine_Adapter_Statement_Interface|PDOStatement $stmt
      * @return Doctrine_Collection
      */
     public function hydrateResultSet($stmt)

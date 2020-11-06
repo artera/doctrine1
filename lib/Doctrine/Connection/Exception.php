@@ -22,20 +22,20 @@
 /**
  * Doctrine_Exception
  *
- * @package     Doctrine
- * @subpackage  Connection
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 7490 $
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @package    Doctrine
+ * @subpackage Connection
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 7490 $
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
 class Doctrine_Connection_Exception extends Doctrine_Exception
 {
     /**
      * @var array $errorMessages        an array containing messages for portable error codes
      */
-    protected static $errorMessages = array(
+    protected static $errorMessages = [
                 Doctrine_Core::ERR                     => 'unknown error',
                 Doctrine_Core::ERR_ALREADY_EXISTS      => 'already exists',
                 Doctrine_Core::ERR_CANNOT_CREATE       => 'can not create',
@@ -67,12 +67,12 @@ class Doctrine_Connection_Exception extends Doctrine_Exception
                 Doctrine_Core::ERR_LOADMODULE          => 'error while including on demand module',
                 Doctrine_Core::ERR_TRUNCATED           => 'truncated',
                 Doctrine_Core::ERR_DEADLOCK            => 'deadlock detected',
-                );
+                ];
 
     /**
-     * @see Doctrine_Core::ERR_* constants
+     * @see   Doctrine_Core::ERR_* constants
      * @since 1.0
-     * @var integer $portableCode           portable error code
+     * @var   integer $portableCode           portable error code
      */
     protected $portableCode;
 
@@ -101,10 +101,12 @@ class Doctrine_Connection_Exception extends Doctrine_Exception
     /**
      * Return a textual error message for a Doctrine error code
      *
-     * @param   int  $value integer error code,
-     *                           null to get the current error code-message map
+     * @param int $value integer error code,
+     *                   null to get the
+     *                   current error
+     *                   code-message map
      *
-     * @return  string  error message, or false if the error code was
+     * @return string  error message, or false if the error code was
      *                  not recognized
      */
     public function errorMessage($value = null)
@@ -118,8 +120,8 @@ class Doctrine_Connection_Exception extends Doctrine_Exception
      * converted into a portable code and then adds this
      * portable error code to $portableCode field
      *
-     * @param array $errorInfo      error info array
-     * @since 1.0
+     * @param  array $errorInfo error info array
+     * @since  1.0
      * @return boolean              whether or not the error info processing was successfull
      *                              (the process is successfull if portable error code was found)
      */

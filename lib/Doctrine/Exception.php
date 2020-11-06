@@ -22,20 +22,20 @@
 /**
  * Doctrine_Exception
  *
- * @package     Doctrine
- * @subpackage  Exception
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 7490 $
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @package    Doctrine
+ * @subpackage Exception
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 7490 $
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
 class Doctrine_Exception extends Exception
 {
     /**
      * @var array $_errorMessages       an array of error messages
      */
-    protected static $_errorMessages = array(
+    protected static $_errorMessages = [
                 Doctrine_Core::ERR                     => 'unknown error',
                 Doctrine_Core::ERR_ALREADY_EXISTS      => 'already exists',
                 Doctrine_Core::ERR_CANNOT_CREATE       => 'can not create',
@@ -67,16 +67,16 @@ class Doctrine_Exception extends Exception
                 Doctrine_Core::ERR_LOADMODULE          => 'error while including on demand module',
                 Doctrine_Core::ERR_TRUNCATED           => 'truncated',
                 Doctrine_Core::ERR_DEADLOCK            => 'deadlock detected',
-            );
+            ];
 
     /**
      * Return a textual error message for a Doctrine error code
      *
-     * @param   int $value integer error code,
-     *                           null to get the current error code-message map,
-     *                           or an array with a new error code-message map
+     * @param int $value integer error code,
+     *                   null to get the current error code-message map,
+     *                   or an array with a new error code-message map
      *
-     * @return  string|array  error message
+     * @return string|array  error message
      */
     public function errorMessage($value = null)
     {

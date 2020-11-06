@@ -19,13 +19,13 @@
 /**
  * Doctrine_Ticket_1636_TestCase
  *
- * @package     Doctrine
- * @author      Eugene Janusov <esycat@gmail.com>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Eugene Janusov <esycat@gmail.com>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Ticket_1636_TestCase extends Doctrine_UnitTestCase
 {
@@ -33,7 +33,7 @@ class Doctrine_Ticket_1636_TestCase extends Doctrine_UnitTestCase
 
     public function prepareTables()
     {
-        $this->tables   = array();
+        $this->tables   = [];
         $this->tables[] = 'Ticket_1636_File';
         $this->tables[] = 'Ticket_1636_FileType';
         parent::prepareTables();
@@ -75,11 +75,11 @@ class Doctrine_Ticket_1636_TestCase extends Doctrine_UnitTestCase
 
         // Execute query first time.
         // Results should be placed into memcache.
-        $files = $query->execute(array(1));
+        $files = $query->execute([1]);
 
         // Execute query second time.
         // Results should be getted from memcache.
-        $files = $query->execute(array(1));
+        $files = $query->execute([1]);
 
         if (count($files)) {
             foreach ($files as $file) {
@@ -105,21 +105,21 @@ class Ticket_1636_FileType extends Doctrine_Record
 {
     public function setTableDefinition()
     {
-        static $columns = array(
-            'id' => array(
+        static $columns = [
+            'id' => [
                 'type'     => 'integer',
                 'length'   => 4,
                 'unsigned' => true,
                 'notnull'  => true,
                 'primary'  => true,
                 'autoinc'  => true
-            ),
-            'name' => array(
+            ],
+            'name' => [
                 'type'    => 'string',
                 'length'  => 32,
                 'notnull' => true
-            )
-        );
+            ]
+        ];
 
         $this->setTableName('files_types');
         $this->hasColumns($columns);
@@ -127,10 +127,13 @@ class Ticket_1636_FileType extends Doctrine_Record
 
     public function setUp()
     {
-        $this->hasMany('Ticket_1636_File as files', array(
+        $this->hasMany(
+            'Ticket_1636_File as files',
+            [
             'local'   => 'id',
             'foreign' => 'type_id'
-        ));
+            ]
+        );
     }
 }
 
@@ -138,26 +141,26 @@ class Ticket_1636_File extends Doctrine_Record
 {
     public function setTableDefinition()
     {
-        static $columns = array(
-            'id' => array(
+        static $columns = [
+            'id' => [
                 'type'     => 'integer',
                 'length'   => 10,
                 'unsigned' => true,
                 'notnull'  => true,
                 'primary'  => true,
                 'autoinc'  => true
-            ),
-            'type_id' => array(
+            ],
+            'type_id' => [
                 'type'    => 'integer',
                 'length'  => 4,
                 'notnull' => true
-            ),
-            'filename' => array(
+            ],
+            'filename' => [
                 'type'    => 'string',
                 'length'  => 255,
                 'notnull' => true
-            )
-        );
+            ]
+        ];
 
         $this->setTableName('files');
         $this->hasColumns($columns);
@@ -165,9 +168,12 @@ class Ticket_1636_File extends Doctrine_Record
 
     public function setUp()
     {
-        $this->hasOne('Ticket_1636_FileType as type', array(
+        $this->hasOne(
+            'Ticket_1636_FileType as type',
+            [
             'local'   => 'type_id',
             'foreign' => 'id'
-        ));
+            ]
+        );
     }
 }

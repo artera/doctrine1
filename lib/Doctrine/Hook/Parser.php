@@ -22,13 +22,13 @@
 /**
  * Doctrine_Hook_Parser
  *
- * @package     Doctrine
- * @subpackage  Hook
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 7490 $
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @package    Doctrine
+ * @subpackage Hook
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 7490 $
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
 abstract class Doctrine_Hook_Parser
 {
@@ -40,7 +40,7 @@ abstract class Doctrine_Hook_Parser
     /**
      * @var array
      */
-    protected $params = array();
+    protected $params = [];
 
     /**
      * @return string
@@ -68,9 +68,9 @@ abstract class Doctrine_Hook_Parser
      * prepared statement conditions (conditions that use
      * placeholders instead of literal values).
      *
-     * @param string $alias     component alias
-     * @param string $field     the field name
-     * @param mixed $value      the value of the field
+     * @param  string $alias component alias
+     * @param  string $field the field name
+     * @param  mixed  $value the value of the field
      * @return void
      */
     abstract public function parse($alias, $field, $value);

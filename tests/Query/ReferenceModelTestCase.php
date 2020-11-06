@@ -19,19 +19,19 @@
 /**
  * Doctrine_Query_ReferenceModel_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Query_ReferenceModel_TestCase extends Doctrine_UnitTestCase
 {
     public function prepareTables()
     {
-        $this->tables   = array();
+        $this->tables   = [];
         $this->tables[] = 'Forum_Category';
         $this->tables[] = 'Forum_Entry';
         $this->tables[] = 'Forum_Board';

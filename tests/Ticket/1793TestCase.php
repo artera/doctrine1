@@ -19,13 +19,13 @@
 /**
  * Doctrine_Ticket_1793_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Ticket_1793_TestCase extends Doctrine_UnitTestCase
 {
@@ -52,7 +52,7 @@ class Doctrine_Ticket_1793_TestCase extends Doctrine_UnitTestCase
 
     public function prepareTables()
     {
-        $this->tables = array('Ticket_1793_Order', 'Ticket_1793_OrdersNew', 'Ticket_1793_OrdersCompleted');
+        $this->tables = ['Ticket_1793_Order', 'Ticket_1793_OrdersNew', 'Ticket_1793_OrdersCompleted'];
         parent::prepareTables();
     }
 
@@ -115,10 +115,10 @@ class Ticket_1793_Order extends Doctrine_Record
     public function setTableDefinition()
     {
         $this->setTableName('ticket_1793_orders');
-        $this->hasColumn('id', 'integer', 4, array('type' => 'integer', 'unsigned' => '1', 'primary' => true, 'autoincrement' => true, 'length' => '4'));
-        $this->hasColumn('status', 'enum', null, array('type' => 'enum', 'values' => array(0 => 'new', 1 => 'completed', 2 => 'shipped')));
+        $this->hasColumn('id', 'integer', 4, ['type' => 'integer', 'unsigned' => '1', 'primary' => true, 'autoincrement' => true, 'length' => '4']);
+        $this->hasColumn('status', 'enum', null, ['type' => 'enum', 'values' => [0 => 'new', 1 => 'completed', 2 => 'shipped']]);
 
-        $this->setSubClasses(array('Ticket_1793_OrdersNew' => array('status' => 'new'), 'Ticket_1793_OrdersCompleted' => array('status' => 'completed')));
+        $this->setSubClasses(['Ticket_1793_OrdersNew' => ['status' => 'new'], 'Ticket_1793_OrdersCompleted' => ['status' => 'completed']]);
     }
 }
 

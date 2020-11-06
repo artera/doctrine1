@@ -20,18 +20,18 @@
 /**
  * Doctrine_Validator_Readonly
  *
- * @package     Doctrine
- * @subpackage  Validator
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @author      Adam Huttler <ahuttler@geminisbs.com>
+ * @package    Doctrine
+ * @subpackage Validator
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @author     Adam Huttler <ahuttler@geminisbs.com>
  */
 class Doctrine_Validator_Readonly extends Doctrine_Validator_Driver
 {
     /**
      * checks if value has been modified
      *
-     * @param mixed $value
+     * @param  mixed $value
      * @return boolean
      */
     public function validate($value)

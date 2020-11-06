@@ -19,25 +19,25 @@
 /**
  * Doctrine_Query_Filter_Chain
  *
- * @package     Doctrine
- * @subpackage  Query
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @package    Doctrine
+ * @subpackage Query
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision$
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
 class Doctrine_Query_Filter_Chain
 {
     /**
      * @var array $_filters         an array of Doctrine_Query_Filter objects
      */
-    protected $_filters = array();
+    protected $_filters = [];
 
     /**
      * add
      *
-     * @param Doctrine_Query_Filter $filter
+     * @param  Doctrine_Query_Filter $filter
      * @return void
      */
     public function add(Doctrine_Query_Filter $filter)
@@ -49,7 +49,7 @@ class Doctrine_Query_Filter_Chain
      * returns a Doctrine_Query_Filter on success
      * and null on failure
      *
-     * @param mixed $key
+     * @param  mixed $key
      * @return mixed
      */
     public function get($key)
@@ -63,8 +63,8 @@ class Doctrine_Query_Filter_Chain
     /**
      * set
      *
-     * @param mixed $key
-     * @param Doctrine_Query_Filter $listener
+     * @param  mixed                 $key
+     * @param  Doctrine_Query_Filter $listener
      * @return void
      */
     public function set($key, Doctrine_Query_Filter $listener)

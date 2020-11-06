@@ -19,18 +19,18 @@
 /**
  * Builds result sets in to the hierarchy graph using php arrays
  *
- * @package     Doctrine
- * @subpackage  Hydrate
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.2
- * @version     $Revision$
- * @author      Guilherme Blanco <guilhermeblanco@hotmail.com>
+ * @package    Doctrine
+ * @subpackage Hydrate
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.2
+ * @version    $Revision$
+ * @author     Guilherme Blanco <guilhermeblanco@hotmail.com>
  */
 class Doctrine_Hydrator_ArrayHierarchyDriver extends Doctrine_Hydrator_ArrayDriver
 {
     /**
-     * @param Doctrine_Adapter_Statement_Interface|PDOStatement $stmt
+     * @param  Doctrine_Adapter_Statement_Interface|PDOStatement $stmt
      * @return array
      */
     public function hydrateResultSet($stmt)
@@ -44,17 +44,17 @@ class Doctrine_Hydrator_ArrayHierarchyDriver extends Doctrine_Hydrator_ArrayDriv
         }
 
         // Trees mapped
-        $trees = array();
+        $trees = [];
         $l     = 0;
 
         if (count($collection) > 0) {
             // Node Stack. Used to help building the hierarchy
-            $stack = array();
+            $stack = [];
 
             foreach ($collection as $child) {
                 $item = $child;
 
-                $item['__children'] = array();
+                $item['__children'] = [];
 
                 // Number of stack items
                 $l = count($stack);

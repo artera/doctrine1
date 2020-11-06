@@ -19,13 +19,13 @@
 /**
  * Doctrine_Ticket_1383_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Ticket_1383_TestCase extends Doctrine_UnitTestCase
 {
@@ -60,14 +60,16 @@ class Ticket_1383_Image extends Doctrine_Record
 {
     public function setTableDefinition()
     {
-        $this->hasColumn('id', 'integer', null, array('primary' => true, 'autoincrement' => true));
-        $this->hasColumn('owner_id', 'integer', null, array('notnull' => true));
-        $this->hasColumn('owner_type', 'integer', 5, array('notnull' => true));
-        $this->hasColumn('name', 'string', 128, array('notnull' => true, 'unique' => true));
+        $this->hasColumn('id', 'integer', null, ['primary' => true, 'autoincrement' => true]);
+        $this->hasColumn('owner_id', 'integer', null, ['notnull' => true]);
+        $this->hasColumn('owner_type', 'integer', 5, ['notnull' => true]);
+        $this->hasColumn('name', 'string', 128, ['notnull' => true, 'unique' => true]);
 
-        $this->setSubclasses(array(
-            'Ticket_1383_Brand_Image' => array('owner_type' => 0)
-        ));
+        $this->setSubclasses(
+            [
+            'Ticket_1383_Brand_Image' => ['owner_type' => 0]
+            ]
+        );
     }
 }
 
@@ -79,18 +81,18 @@ class Ticket_1383_Brand extends Doctrine_Record
 {
     public function setTableDefinition()
     {
-        $this->hasColumn('id', 'integer', null, array('primary' => true, 'autoincrement' => true));
-        $this->hasColumn('name', 'string', 255, array('notnull' => true));
+        $this->hasColumn('id', 'integer', null, ['primary' => true, 'autoincrement' => true]);
+        $this->hasColumn('name', 'string', 255, ['notnull' => true]);
     }
 
     public function setUp()
     {
         $this->hasMany(
             'Ticket_1383_Brand_Image',
-            array(
+            [
                 'local'   => 'id',
                 'foreign' => 'owner_id'
-            )
+            ]
         );
     }
 }

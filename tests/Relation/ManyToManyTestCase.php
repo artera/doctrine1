@@ -7,7 +7,7 @@ class Doctrine_Relation_ManyToMany_TestCase extends Doctrine_UnitTestCase
     }
     public function prepareTables()
     {
-        $this->tables = array('JC1', 'JC2', 'JC3', 'RTC1', 'RTC2', 'M2MTest', 'M2MTest2');
+        $this->tables = ['JC1', 'JC2', 'JC3', 'RTC1', 'RTC2', 'M2MTest', 'M2MTest2'];
         parent::prepareTables();
     }
 

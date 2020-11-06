@@ -22,13 +22,13 @@
 /**
  * Doctrine_Relation_Association_Self
  *
- * @package     Doctrine
- * @subpackage  Relation
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 1434 $
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @package    Doctrine
+ * @subpackage Relation
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 1434 $
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
 class Doctrine_Relation_Nest extends Doctrine_Relation_Association
 {
@@ -68,8 +68,8 @@ class Doctrine_Relation_Nest extends Doctrine_Relation_Association
                 $joinCondition[] = $formatter->quoteIdentifier($tableName) . '.' . $identifier . ' = ' . $formatter->quoteIdentifier($assocTable) . '.' . $formatter->quoteIdentifier($this->getLocalRefColumnName());
             }
             $q->select('{' . $tableName . '.*}, {' . $assocTable . '.*}')
-              ->from($formatter->quoteIdentifier($tableName) . ' INNER JOIN ' . $formatter->quoteIdentifier($assocTable) . ' ON ' . implode(' OR ', $joinCondition))
-              ->where(implode(' OR ', $condition));
+                ->from($formatter->quoteIdentifier($tableName) . ' INNER JOIN ' . $formatter->quoteIdentifier($assocTable) . ' ON ' . implode(' OR ', $joinCondition))
+                ->where(implode(' OR ', $condition));
             if ($orderBy = $this->getOrderByStatement($tableName, true)) {
                 $q->addOrderBy($orderBy);
             } else {
@@ -83,9 +83,11 @@ class Doctrine_Relation_Nest extends Doctrine_Relation_Association
             }
             $q->addComponent($assocTable, $path);
 
-            $params = ($this->definition['equal']) ? array($id, $id) : array($id);
+            $params = ($this->definition['equal']) ? [$id, $id] : [$id];
 
-            /** @var Doctrine_Collection $res No hydration parameter passed */
+            /**
+ * @var Doctrine_Collection $res No hydration parameter passed
+*/
             $res = $q->execute($params);
 
             return $res;

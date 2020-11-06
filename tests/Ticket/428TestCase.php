@@ -3,13 +3,13 @@
 /**
  * Doctrine_Ticket_428_TestCase
  *
- * @package     Doctrine
- * @author      Tamcy <7am.online@gmail.com>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Tamcy <7am.online@gmail.com>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Ticket_428_TestCase extends Doctrine_UnitTestCase
 {

@@ -13,9 +13,12 @@ class App_User extends Doctrine_Record
     }
     public function setUp()
     {
-        $this->hasMany('App', array(
+        $this->hasMany(
+            'App',
+            [
             'local'   => 'id',
             'foreign' => 'user_id'
-        ));
+            ]
+        );
     }
 }

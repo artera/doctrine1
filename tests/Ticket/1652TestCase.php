@@ -19,19 +19,19 @@
 /**
  * Doctrine_Ticket_1652_TestCase
  *
- * @package     Doctrine
- * @author      floriank
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.1
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   floriank
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.1
+ * @version  $Revision$
  */
 class Doctrine_Ticket_1652_TestCase extends Doctrine_UnitTestCase
 {
     public function prepareTables()
     {
-        $this->tables   = array();
+        $this->tables   = [];
         $this->tables[] = 'Ticket_1652_User';
         parent::prepareTables();
     }
@@ -79,7 +79,7 @@ class Ticket_1652_User extends Doctrine_Record
 {
     public function setTableDefinition()
     {
-        $this->hasColumn('id', 'integer', null, array('primary' => true, 'autoincrement' => true));
+        $this->hasColumn('id', 'integer', null, ['primary' => true, 'autoincrement' => true]);
         $this->hasColumn('name', 'string', 30);
     }
 

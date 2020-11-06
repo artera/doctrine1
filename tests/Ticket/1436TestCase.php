@@ -19,13 +19,13 @@
 /**
  * Doctrine_Ticket_1436_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Ticket_1436_TestCase extends Doctrine_UnitTestCase
 {
@@ -40,7 +40,7 @@ class Doctrine_Ticket_1436_TestCase extends Doctrine_UnitTestCase
         $user->name = 'John';
         $user->save();
 
-        # Create existing groups
+        // Create existing groups
         $group       = new Group();
         $group->name = 'Group One';
         $group->save();
@@ -60,12 +60,12 @@ class Doctrine_Ticket_1436_TestCase extends Doctrine_UnitTestCase
     public function testSynchronizeAddMNLinks()
     {
         $user      = Doctrine_Query::create()->from('User u')->fetchOne();
-        $userArray = array(
-            'Group' => array(
+        $userArray = [
+            'Group' => [
                 $this->group_one,
                 $this->group_two
-            )
-        );
+            ]
+        ];
 
         $user->synchronizeWithArray($userArray);
 
@@ -85,12 +85,12 @@ class Doctrine_Ticket_1436_TestCase extends Doctrine_UnitTestCase
     public function testSynchronizeChangeMNLinks()
     {
         $user      = Doctrine_Query::create()->from('User u, u.Group g')->fetchOne();
-        $userArray = array(
-            'Group' => array(
+        $userArray = [
+            'Group' => [
                 $this->group_two,
                 $this->group_three
-            )
-        );
+            ]
+        ];
 
         $user->synchronizeWithArray($userArray);
 
@@ -113,7 +113,7 @@ class Doctrine_Ticket_1436_TestCase extends Doctrine_UnitTestCase
     public function testFromArray()
     {
         $user      = new User();
-        $userArray = array('Group' => array($this->group_two, $this->group_three));
+        $userArray = ['Group' => [$this->group_two, $this->group_three]];
         $user->fromArray($userArray);
         $this->assertEqual($user->Group[0]->name, 'Group Two');
         $this->assertEqual($user->Group[1]->name, 'Group Three');

@@ -19,13 +19,13 @@
 /**
  * Doctrine_Ticket_1674_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Ticket_1674_TestCase extends Doctrine_UnitTestCase
 {
@@ -46,8 +46,11 @@ class Doctrine_Ticket_1674_TestCase extends Doctrine_UnitTestCase
         $doc->loadXML($xml);
         $xml = $doc->saveXML(null, LIBXML_NOEMPTYTAG);
 
-        $this->assertEqual($xml, '<?xml version="1.0" encoding="utf-8"?>
+        $this->assertEqual(
+            $xml,
+            '<?xml version="1.0" encoding="utf-8"?>
 <data><User id="4" type="0" email_id="1"><name>zYne</name><loginname></loginname><password></password><created></created><updated></updated><Phonenumber><Phonenumber id="2" entity_id="4"><phonenumber>123 123</phonenumber><Entity></Entity></Phonenumber></Phonenumber></User></data>
-');
+'
+        );
     }
 }

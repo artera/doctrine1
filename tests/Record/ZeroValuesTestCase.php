@@ -19,13 +19,13 @@
 /**
  * Doctrine_Record_State_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Record_ZeroValues_TestCase extends Doctrine_UnitTestCase
 {
@@ -57,7 +57,7 @@ class Doctrine_Record_ZeroValues_TestCase extends Doctrine_UnitTestCase
     {
         $q = new Doctrine_Query();
         $q->from('ZeroValueTest');
-        $users = $q->execute(array(), Doctrine_Core::HYDRATE_ARRAY);
+        $users = $q->execute([], Doctrine_Core::HYDRATE_ARRAY);
 
         $this->assertIdentical($users[0]['is_super_admin'], false);
         // check for aggregate bug

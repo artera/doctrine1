@@ -19,13 +19,13 @@
 /**
  * Doctrine_Ticket_DC95_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Ticket_DC95_TestCase extends Doctrine_UnitTestCase
 {
@@ -42,13 +42,15 @@ class Doctrine_Ticket_DC95_TestCase extends Doctrine_UnitTestCase
         Doctrine_Core::setModelsDirectory(dirname(__FILE__) . '/DC95/models');
 
         $import = new Doctrine_Import_Schema();
-        $import->setOptions(array(
+        $import->setOptions(
+            [
             'pearStyle'            => true,
             'baseClassesDirectory' => null,
             'baseClassPrefix'      => 'Base_',
             'classPrefix'          => 'DC95_',
             'classPrefixFiles'     => true
-        ));
+            ]
+        );
         $modelsPath = dirname(__FILE__) . '/DC95/models';
         $import->importSchema(dirname(__FILE__) . '/DC95/schema.yml', 'yml', $modelsPath);
 

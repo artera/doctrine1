@@ -20,23 +20,23 @@
 /**
  * Doctrine_Locator
  *
- * @package     Doctrine
- * @subpackage  Doctrine_Locator
- * @category    Locator
- * @license     http://www.gnu.org/licenses/lgpl.txt LGPL
- * @link        http://www.doctrine-project.org
- * @author      Janne Vanhala <jpvanhal@cc.hut.fi>
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @author      Eevert Saukkokoski <dmnEe0@gmail.com>
- * @version     $Revision$
- * @since       1.0
+ * @package    Doctrine
+ * @subpackage Doctrine_Locator
+ * @category   Locator
+ * @license    http://www.gnu.org/licenses/lgpl.txt LGPL
+ * @link       http://www.doctrine-project.org
+ * @author     Janne Vanhala <jpvanhal@cc.hut.fi>
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @author     Eevert Saukkokoski <dmnEe0@gmail.com>
+ * @version    $Revision$
+ * @since      1.0
  */
 class Doctrine_Locator implements Countable, IteratorAggregate
 {
     /**
      * @var array $_resources       an array of bound resources
      */
-    protected $_resources = array();
+    protected $_resources = [];
 
     /**
      * @var string $_classPrefix    the default class prefix
@@ -46,12 +46,12 @@ class Doctrine_Locator implements Countable, IteratorAggregate
     /**
      * @var array $_instances       a pool of this object's instances
      */
-    protected static $_instances = array();
+    protected static $_instances = [];
 
     /**
      * Constructor. Provide an array of resources to set initial contents.
      *
-     * @param array $defaults
+     * @param  array $defaults
      * @return void
      */
     public function __construct(array $defaults = null)
@@ -106,7 +106,7 @@ class Doctrine_Locator implements Countable, IteratorAggregate
      * contains
      * checks if a resource exists under the given name
      *
-     * @param string $name
+     * @param  string $name
      * @return boolean      whether or not given resource name exists
      */
     public function contains($name)
@@ -118,8 +118,8 @@ class Doctrine_Locator implements Countable, IteratorAggregate
      * bind
      * binds a resource to a name
      *
-     * @param string $name      the name of the resource to bind
-     * @param mixed $value      the value of the resource
+     * @param  string $name  the name of the resource to bind
+     * @param  mixed  $value the value of the resource
      * @return $this   this object
      */
     public function bind($name, $value)
@@ -134,7 +134,7 @@ class Doctrine_Locator implements Countable, IteratorAggregate
      * locates a resource by given name and returns it
      *
      * @throws Doctrine_Locator_Exception     if the resource could not be found
-     * @param string $name      the name of the resource
+     * @param  string $name the name of the resource
      * @return mixed            the located resource
      */
     public function locate($name)
@@ -172,7 +172,7 @@ class Doctrine_Locator implements Countable, IteratorAggregate
      * returns the number of bound resources associated with
      * this object
      *
-     * @see Countable interface
+     * @see    Countable interface
      * @return integer              the number of resources
      */
     public function count()

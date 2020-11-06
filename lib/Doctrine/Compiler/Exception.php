@@ -22,13 +22,13 @@
 /**
  * Doctrine_Compiler_Exception
  *
- * @package     Doctrine
- * @subpackage  Compiler
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 7490 $
+ * @package    Doctrine
+ * @subpackage Compiler
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 7490 $
  */
 class Doctrine_Compiler_Exception extends Doctrine_Exception
 {

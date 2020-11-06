@@ -21,13 +21,13 @@
  *
  * This test case tests many-many relationship with non-autoincrement, alias primary key
  *
- * @package     Doctrine
- * @author      Tamcy <7am.online@gmail.com>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Tamcy <7am.online@gmail.com>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 
 class Doctrine_Ticket_424C_TestCase extends Doctrine_UnitTestCase
@@ -38,7 +38,7 @@ class Doctrine_Ticket_424C_TestCase extends Doctrine_UnitTestCase
 
     public function prepareTables()
     {
-        $this->tables = array('mmrUser_C', 'mmrGroup_C', 'mmrGroupUser_C');
+        $this->tables = ['mmrUser_C', 'mmrGroup_C', 'mmrGroupUser_C'];
         parent::prepareTables();
     }
 
@@ -69,9 +69,9 @@ class Doctrine_Ticket_424C_TestCase extends Doctrine_UnitTestCase
         $groupB = $this->newGroup(2, 'Group B');
         $groupC = $this->newGroup(3, 'Group C');
 
-        $john  = $this->newUser(1, 'John', array($groupA, $groupB));
-        $peter = $this->newUser(2, 'Peter', array($groupA, $groupC));
-        $alan  = $this->newUser(3, 'Alan', array($groupB, $groupC));
+        $john  = $this->newUser(1, 'John', [$groupA, $groupB]);
+        $peter = $this->newUser(2, 'Peter', [$groupA, $groupC]);
+        $alan  = $this->newUser(3, 'Alan', [$groupB, $groupC]);
 
         $q  = Doctrine_Query::create();
         $gu = $q->from('mmrGroupUser_C')->execute();
@@ -85,7 +85,7 @@ class Doctrine_Ticket_424C_TestCase extends Doctrine_UnitTestCase
         // Query by join
         $q = Doctrine_Query::create()
             ->from('mmrUser_C u, u.Group g')
-            ->where('g.name = ?', array($groupA->name));
+            ->where('g.name = ?', [$groupA->name]);
 
         $userOfGroupAByName = $q->execute();
 

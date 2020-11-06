@@ -8,6 +8,6 @@ class CategoryWithPosition extends Doctrine_Record
     }
     public function setUp()
     {
-        $this->hasMany('BoardWithPosition as Boards', array('local' => 'id' , 'foreign' => 'category_id'));
+        $this->hasMany('BoardWithPosition as Boards', ['local' => 'id' , 'foreign' => 'category_id']);
     }
 }

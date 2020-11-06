@@ -19,13 +19,13 @@
 /**
  * Doctrine_Transaction_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Transaction_TestCase extends Doctrine_UnitTestCase
 {
@@ -276,7 +276,7 @@ class Doctrine_Transaction_TestCase extends Doctrine_UnitTestCase
 }
 class TransactionListener extends Doctrine_EventListener
 {
-    protected $_messages = array();
+    protected $_messages = [];
 
     public function preTransactionCommit(Doctrine_Event $event)
     {

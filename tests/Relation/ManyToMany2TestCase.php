@@ -19,13 +19,13 @@
 /**
  * Doctrine_Relation_Parser_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Relation_ManyToMany2_TestCase extends Doctrine_UnitTestCase
 {
@@ -35,7 +35,7 @@ class Doctrine_Relation_ManyToMany2_TestCase extends Doctrine_UnitTestCase
 
     public function prepareTables()
     {
-        $this->tables = array('TestUser', 'TestMovie', 'TestMovieUserBookmark', 'TestMovieUserVote');
+        $this->tables = ['TestUser', 'TestMovie', 'TestMovieUserBookmark', 'TestMovieUserVote'];
         parent::prepareTables();
     }
 
@@ -56,9 +56,9 @@ class Doctrine_Relation_ManyToMany2_TestCase extends Doctrine_UnitTestCase
 
         $q       = new Doctrine_Query();
         $newdata = $q->select('m.*')
-                      ->from('TestMovie m')
-                      ->execute()
-                      ->getFirst();
+            ->from('TestMovie m')
+            ->execute()
+            ->getFirst();
         $newdata['name'] = 'movie2';
         try {
             $newdata->save(); //big failure here
@@ -71,9 +71,9 @@ class Doctrine_Relation_ManyToMany2_TestCase extends Doctrine_UnitTestCase
     {
         $q       = new Doctrine_Query();
         $newdata = $q->select('d.*, i.*, u.*, c.*')
-                       ->from('TestMovie d, d.MovieBookmarks i, i.UserVotes u, u.User c')
-                       ->execute()
-                       ->getFirst();
+            ->from('TestMovie d, d.MovieBookmarks i, i.UserVotes u, u.User c')
+            ->execute()
+            ->getFirst();
         $newdata['MovieBookmarks'][0]['UserVotes'][0]['User']['name'] = 'user2';
         try {
             $newdata->save();

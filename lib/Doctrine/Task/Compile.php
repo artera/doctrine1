@@ -22,13 +22,13 @@
 /**
  * Doctrine_Task_Compile
  *
- * @package     Doctrine
- * @subpackage  Task
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 2761 $
- * @author      Jonathan H. Wage <jwage@mac.com>
+ * @package    Doctrine
+ * @subpackage Task
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 2761 $
+ * @author     Jonathan H. Wage <jwage@mac.com>
  */
 class Doctrine_Task_Compile extends Doctrine_Task
 {
@@ -40,17 +40,17 @@ class Doctrine_Task_Compile extends Doctrine_Task
     /**
      * @var array
      */
-    public $requiredArguments = array();
+    public $requiredArguments = [];
 
     /**
      * @var array
      */
-    public $optionalArguments = array('drivers'            => 'Specify list of drivers you wish to compile. Ex: mysql|sqlite',
-                                           'compiled_path' => 'The path where you want to write the compiled doctrine libs.');
+    public $optionalArguments = ['drivers'            => 'Specify list of drivers you wish to compile. Ex: mysql|sqlite',
+                                           'compiled_path' => 'The path where you want to write the compiled doctrine libs.'];
 
     public function execute()
     {
-        $compiledPath = Doctrine_Core::compile($this->getArgument('compiled_path'), $this->getArgument('drivers', array()));
+        $compiledPath = Doctrine_Core::compile($this->getArgument('compiled_path'), $this->getArgument('drivers', []));
 
         $this->notify('Compiled Doctrine successfully to: ' . $compiledPath);
     }

@@ -10,7 +10,7 @@ class Groupuser extends Doctrine_Record
 
     public function setUp()
     {
-        $this->hasOne('Group', array('local' => 'group_id', 'foreign' => 'id'));
-        $this->hasOne('User', array('local' => 'user_id', 'foreign' => 'id'));
+        $this->hasOne('Group', ['local' => 'group_id', 'foreign' => 'id']);
+        $this->hasOne('User', ['local' => 'user_id', 'foreign' => 'id']);
     }
 }

@@ -6,7 +6,7 @@ class Doctrine_RecordFilter_TestCase extends Doctrine_UnitTestCase
     }
     public function prepareTables()
     {
-        $this->tables = array('RecordFilterTest');
+        $this->tables = ['RecordFilterTest'];
 
         parent::prepareTables();
     }

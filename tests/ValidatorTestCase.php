@@ -22,13 +22,13 @@
  *
  * @todo More tests to cover the full interface of Doctrine_Validator_ErrorStack.
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Validator_TestCase extends Doctrine_UnitTestCase
 {
@@ -97,7 +97,7 @@ class Doctrine_Validator_TestCase extends Doctrine_UnitTestCase
         $this->assertFalse(Doctrine_Validator::isValidType($var, 'array'));
         $this->assertFalse(Doctrine_Validator::isValidType($var, 'object'));
 
-        $var = array();
+        $var = [];
         $this->assertFalse(Doctrine_Validator::isValidType($var, 'string'));
         $this->assertFalse(Doctrine_Validator::isValidType($var, 'integer'));
         $this->assertFalse(Doctrine_Validator::isValidType($var, 'float'));
@@ -140,10 +140,10 @@ class Doctrine_Validator_TestCase extends Doctrine_UnitTestCase
         $this->manager->setAttribute(Doctrine_Core::ATTR_VALIDATE, Doctrine_Core::VALIDATE_ALL);
         $user = $this->connection->getTable('User')->find(4);
 
-        $set = array('password'  => 'this is an example of too long password',
+        $set = ['password'  => 'this is an example of too long password',
                      'loginname' => 'this is an example of too long loginname',
                      'name'      => 'valid name',
-                     'created'   => 'invalid');
+                     'created'   => 'invalid'];
         $user->setArray($set);
         $email          = $user->Email;
         $email->address = 'zYne@invalid';

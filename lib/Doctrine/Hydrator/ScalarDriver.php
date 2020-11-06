@@ -19,24 +19,24 @@
 /**
  * Builds result sets in to a scalar php array
  *
- * @package     Doctrine
- * @subpackage  Hydrate
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @package    Doctrine
+ * @subpackage Hydrate
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision$
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
 class Doctrine_Hydrator_ScalarDriver extends Doctrine_Hydrator_Abstract
 {
     /**
-     * @param Doctrine_Connection_Statement $stmt
+     * @param  Doctrine_Connection_Statement $stmt
      * @return array
      */
     public function hydrateResultSet($stmt)
     {
-        $cache  = array();
-        $result = array();
+        $cache  = [];
+        $result = [];
 
         while ($data = $stmt->fetch(Doctrine_Core::FETCH_ASSOC)) {
             $result[] = $this->_gatherRowData($data, $cache);
@@ -46,14 +46,14 @@ class Doctrine_Hydrator_ScalarDriver extends Doctrine_Hydrator_Abstract
     }
 
     /**
-     * @param array $data
-     * @param array $cache
-     * @param bool $aliasPrefix
+     * @param  array $data
+     * @param  array $cache
+     * @param  bool  $aliasPrefix
      * @return array
      */
     protected function _gatherRowData($data, &$cache, $aliasPrefix = true)
     {
-        $rowData = array();
+        $rowData = [];
         foreach ($data as $key => $value) {
             // Parse each column name only once. Cache the results.
             if (! isset($cache[$key])) {

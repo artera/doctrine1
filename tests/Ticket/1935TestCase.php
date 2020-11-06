@@ -24,7 +24,7 @@ class Doctrine_Ticket_1935_TestCase extends Doctrine_UnitTestCase
 
     public function prepareTables()
     {
-        $this->tables = array('Ticket_1935_Article');
+        $this->tables = ['Ticket_1935_Article'];
         parent::prepareTables();
     }
 
@@ -35,8 +35,7 @@ class Doctrine_Ticket_1935_TestCase extends Doctrine_UnitTestCase
         try {
             $q = Doctrine_Query::create()->select('COUNT(a.id) as num_records')
                 ->from('Ticket_1935_Article a')
-                ->having('num_records > 1')
-                ;
+                ->having('num_records > 1');
             //$results = $q->execute();
             $this->assertEqual($q->getSqlQuery(), 'SELECT COUNT(`t`.`id`) AS `t__0` FROM `ticket_1935_article` `t` HAVING `t__0` > 1');
         } catch (Exception $e) {
@@ -52,6 +51,6 @@ class Ticket_1935_Article extends Doctrine_Record
     public function setTableDefinition()
     {
         $this->setTableName('ticket_1935_article');
-        $this->hasColumn('title', 'string', 255, array('type' => 'string', 'length' => '255'));
+        $this->hasColumn('title', 'string', 255, ['type' => 'string', 'length' => '255']);
     }
 }

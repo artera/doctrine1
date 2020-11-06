@@ -19,13 +19,13 @@
 /**
  * Doctrine_Parser_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Parser_TestCase extends Doctrine_UnitTestCase
 {
@@ -42,10 +42,10 @@ class Doctrine_Parser_TestCase extends Doctrine_UnitTestCase
 
     public function testFacadeLoadAndDump()
     {
-        Doctrine_Parser::dump(array('test' => 'good job', 'test2' => true, array('testing' => false)), 'yml', 'test.yml');
+        Doctrine_Parser::dump(['test' => 'good job', 'test2' => true, ['testing' => false]], 'yml', 'test.yml');
         $array = Doctrine_Parser::load('test.yml', 'yml');
 
-        $this->assertEqual($array, array('test' => 'good job', 'test2' => true, array('testing' => false)));
+        $this->assertEqual($array, ['test' => 'good job', 'test2' => true, ['testing' => false]]);
         unlink('test.yml');
     }
 
@@ -62,7 +62,7 @@ w00t: not now
 
         $array = $parser->loadData($data);
 
-        $this->assertEqual($array, array('test' => 'good job', 'test2' => true, 'testing' => false, 'w00t' => 'not now'));
+        $this->assertEqual($array, ['test' => 'good job', 'test2' => true, 'testing' => false, 'w00t' => 'not now']);
     }
 
     public function testParserWritingToDisk()
@@ -93,6 +93,6 @@ w00t: not now
 
         $array = Doctrine_Parser::load($yml, 'yml');
 
-        $this->assertEqual($array, array('test' => 'good job', 'test2' => true, 'testing' => false, 'w00t' => 'not now'));
+        $this->assertEqual($array, ['test' => 'good job', 'test2' => true, 'testing' => false, 'w00t' => 'not now']);
     }
 }

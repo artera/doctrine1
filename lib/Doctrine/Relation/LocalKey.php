@@ -23,13 +23,13 @@
  * Doctrine_Relation_LocalKey
  * This class represents a local key relation
  *
- * @package     Doctrine
- * @subpackage  Relation
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 7490 $
+ * @package    Doctrine
+ * @subpackage Relation
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 7490 $
  */
 class Doctrine_Relation_LocalKey extends Doctrine_Relation
 {
@@ -38,7 +38,7 @@ class Doctrine_Relation_LocalKey extends Doctrine_Relation
      *
      * fetches a component related to given record
      *
-     * @param Doctrine_Record $record
+     * @param  Doctrine_Record $record
      * @return Doctrine_Record|Doctrine_Collection
      */
     public function fetchRelatedFor(Doctrine_Record $record)
@@ -59,9 +59,9 @@ class Doctrine_Relation_LocalKey extends Doctrine_Relation
                  . ' WHERE ' . $this->getCondition() . $this->getOrderBy(null, false);
 
             $related = $this->getTable()
-                            ->getConnection()
-                            ->query($dql, array($id))
-                            ->getFirst();
+                ->getConnection()
+                ->query($dql, [$id])
+                ->getFirst();
 
             if (! $related || empty($related)) {
                 $related = $this->getTable()->create();

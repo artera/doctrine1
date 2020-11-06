@@ -1,6 +1,6 @@
 <?php
 
-require_once('Entity.php');
+require_once 'Entity.php';
 
 // UserTable doesn't extend Doctrine_Table -> Doctrine_Connection
 // won't initialize grouptable when Doctrine_Connection->getTable('User') is called
@@ -13,26 +13,37 @@ class User extends Entity
     public function setUp()
     {
         parent::setUp();
-        $this->hasMany('Address', array(
+        $this->hasMany(
+            'Address',
+            [
             'local'    => 'user_id',
             'foreign'  => 'address_id',
             'refClass' => 'EntityAddress',
-        ));
-        $this->hasMany('Address as Addresses', array(
+            ]
+        );
+        $this->hasMany(
+            'Address as Addresses',
+            [
             'local'    => 'user_id',
             'foreign'  => 'address_id',
             'refClass' => 'EntityAddress',
-        ));
-        $this->hasMany('Album', array('local' => 'id', 'foreign' => 'user_id'));
-        $this->hasMany('Book', array('local' => 'id', 'foreign' => 'user_id'));
-        $this->hasMany('Group', array(
+            ]
+        );
+        $this->hasMany('Album', ['local' => 'id', 'foreign' => 'user_id']);
+        $this->hasMany('Book', ['local' => 'id', 'foreign' => 'user_id']);
+        $this->hasMany(
+            'Group',
+            [
             'local'    => 'user_id',
             'foreign'  => 'group_id',
             'refClass' => 'Groupuser',
-        ));
+            ]
+        );
     }
 
-    /** Custom validation */
+    /**
+     * Custom validation
+     */
     public function validate()
     {
         // Allow only one name!

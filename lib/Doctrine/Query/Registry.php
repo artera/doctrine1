@@ -19,24 +19,24 @@
 /**
  * Doctrine_Query_Registry
  *
- * @package     Doctrine
- * @subpackage  Query
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package    Doctrine
+ * @subpackage Query
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision$
  */
 class Doctrine_Query_Registry
 {
     /**
      * @var array
      */
-    protected $_queries = array();
+    protected $_queries = [];
 
     /**
-     * @param string $key
-     * @param Doctrine_Query|string $query
+     * @param  string                $key
+     * @param  Doctrine_Query|string $query
      * @return void
      */
     public function add($key, $query)
@@ -85,8 +85,8 @@ class Doctrine_Query_Registry
 
 
     /**
-     * @param string $key
-     * @param string $namespace
+     * @param  string $key
+     * @param  string $namespace
      * @return bool
      */
     public function has($key, $namespace = null)

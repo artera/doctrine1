@@ -19,13 +19,13 @@
 /**
  * Doctrine_Hydrate_Scalar_TestCase
  *
- * @package     Doctrine
- * @author      Roman Borschel <roman@code-factory.org>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.1
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Roman Borschel <roman@code-factory.org>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.1
+ * @version  $Revision$
  */
 class Doctrine_Hydrate_Performance_TestCase extends Doctrine_UnitTestCase
 {

@@ -22,20 +22,20 @@
 /**
  * Doctrine_Validator_Usstate
  *
- * @package     Doctrine
- * @subpackage  Validator
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 7490 $
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @package    Doctrine
+ * @subpackage Validator
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 7490 $
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
 class Doctrine_Validator_Usstate extends Doctrine_Validator_Driver
 {
     /**
      * @var bool[]
      */
-    private static $states = array(
+    private static $states = [
                 'AK' => true,
                 'AL' => true,
                 'AR' => true,
@@ -89,7 +89,7 @@ class Doctrine_Validator_Usstate extends Doctrine_Validator_Driver
                 'WI' => true,
                 'WV' => true,
                 'WY' => true
-            );
+            ];
     /**
      * @return bool[]
      */
@@ -101,7 +101,7 @@ class Doctrine_Validator_Usstate extends Doctrine_Validator_Driver
     /**
      * checks if given value is a valid US state code
      *
-     * @param string|null $value
+     * @param  string|null $value
      * @return boolean
      */
     public function validate($value)

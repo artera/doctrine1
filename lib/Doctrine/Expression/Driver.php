@@ -19,13 +19,13 @@
 /**
  * Doctrine_Expression_Driver
  *
- * @package     Doctrine
- * @subpackage  Expression
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @package    Doctrine
+ * @subpackage Expression
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision$
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
 class Doctrine_Expression_Driver extends Doctrine_Connection_Module
 {
@@ -61,7 +61,7 @@ class Doctrine_Expression_Driver extends Doctrine_Connection_Module
     /**
      * Returns the average value of a column
      *
-     * @param string $column    the column to use
+     * @param  string $column the column to use
      * @return string           generated sql including an AVG aggregate function
      */
     public function avg($column)
@@ -76,7 +76,7 @@ class Doctrine_Expression_Driver extends Doctrine_Connection_Module
      * If a '*' is used instead of a column the number of selected rows
      * is returned.
      *
-     * @param string|integer $column    the column to use
+     * @param  string|integer $column the column to use
      * @return string                   generated sql including a COUNT aggregate function
      */
     public function count($column)
@@ -88,7 +88,7 @@ class Doctrine_Expression_Driver extends Doctrine_Connection_Module
     /**
      * Returns the highest value of a column
      *
-     * @param string $column    the column to use
+     * @param  string $column the column to use
      * @return string           generated sql including a MAX aggregate function
      */
     public function max($column)
@@ -100,7 +100,7 @@ class Doctrine_Expression_Driver extends Doctrine_Connection_Module
     /**
      * Returns the lowest value of a column
      *
-     * @param string $column the column to use
+     * @param  string $column the column to use
      * @return string
      */
     public function min($column)
@@ -112,7 +112,7 @@ class Doctrine_Expression_Driver extends Doctrine_Connection_Module
     /**
      * Returns the total sum of a column
      *
-     * @param string $column the column to use
+     * @param  string $column the column to use
      * @return string
      */
     public function sum($column)
@@ -128,7 +128,7 @@ class Doctrine_Expression_Driver extends Doctrine_Connection_Module
      *
      * Note: Not SQL92, but common functionality
      *
-     * @param string $column
+     * @param  string $column
      * @return string
      */
     public function md5($column)
@@ -140,7 +140,7 @@ class Doctrine_Expression_Driver extends Doctrine_Connection_Module
     /**
      * Returns the length of a text field.
      *
-     * @param string $column
+     * @param  string $column
      * @return string
      */
     public function length($column)
@@ -152,8 +152,8 @@ class Doctrine_Expression_Driver extends Doctrine_Connection_Module
     /**
      * Rounds a numeric field to the number of decimals specified.
      *
-     * @param string $column
-     * @param int    $decimals
+     * @param  string $column
+     * @param  int    $decimals
      * @return string
      */
     public function round($column, $decimals = 0)
@@ -167,8 +167,8 @@ class Doctrine_Expression_Driver extends Doctrine_Connection_Module
      * Returns the remainder of the division operation
      * $expression1 / $expression2.
      *
-     * @param string $expression1
-     * @param string $expression2
+     * @param  string $expression1
+     * @param  string $expression2
      * @return string
      */
     public function mod($expression1, $expression2)
@@ -182,7 +182,7 @@ class Doctrine_Expression_Driver extends Doctrine_Connection_Module
      * trim
      * returns the string $str with leading and proceeding space characters removed
      *
-     * @param string $str       literal string or column name
+     * @param  string $str literal string or column name
      * @return string
      */
     public function trim($str)
@@ -194,7 +194,7 @@ class Doctrine_Expression_Driver extends Doctrine_Connection_Module
      * rtrim
      * returns the string $str with proceeding space characters removed
      *
-     * @param string $str       literal string or column name
+     * @param  string $str literal string or column name
      * @return string
      */
     public function rtrim($str)
@@ -206,7 +206,7 @@ class Doctrine_Expression_Driver extends Doctrine_Connection_Module
      * ltrim
      * returns the string $str with leading space characters removed
      *
-     * @param string $str       literal string or column name
+     * @param  string $str literal string or column name
      * @return string
      */
     public function ltrim($str)
@@ -219,7 +219,7 @@ class Doctrine_Expression_Driver extends Doctrine_Connection_Module
      * Returns the string $str with all characters changed to
      * uppercase according to the current character set mapping.
      *
-     * @param string $str       literal string or column name
+     * @param  string $str literal string or column name
      * @return string
      */
     public function upper($str)
@@ -232,7 +232,7 @@ class Doctrine_Expression_Driver extends Doctrine_Connection_Module
      * Returns the string $str with all characters changed to
      * lowercase according to the current character set mapping.
      *
-     * @param string $str       literal string or column name
+     * @param  string $str literal string or column name
      * @return string
      */
     public function lower($str)
@@ -244,8 +244,8 @@ class Doctrine_Expression_Driver extends Doctrine_Connection_Module
      * locate
      * returns the position of the first occurrence of substring $substr in string $str
      *
-     * @param string $substr    literal string to find
-     * @param string $str       literal string
+     * @param  string $substr literal string to find
+     * @param  string $str    literal string
      * @return string
      */
     public function locate($str, $substr)
@@ -270,7 +270,7 @@ class Doctrine_Expression_Driver extends Doctrine_Connection_Module
      *
      * The string "?000" is returned if the argument is NULL.
      *
-     * @param string $value
+     * @param  string $value
      * @return string   SQL soundex function with given parameter
      */
     public function soundex($value)
@@ -285,9 +285,9 @@ class Doctrine_Expression_Driver extends Doctrine_Connection_Module
      *
      * SQLite only supports the 2 parameter variant of this function
      *
-     * @param string $value         an sql string literal or column name/alias
-     * @param integer $from     where to start the substring portion
-     * @param integer $len       the substring portion length
+     * @param  string  $value an sql string literal or column name/alias
+     * @param  integer $from  where to start the substring portion
+     * @param  integer $len   the substring portion length
      * @return string               SQL substring function with given parameters
      */
     public function substring($value, $from, $len = null)
@@ -318,7 +318,8 @@ class Doctrine_Expression_Driver extends Doctrine_Connection_Module
 
     /**
      * Returns the SQL for a logical not.
-     * @param string $expression
+     *
+     * @param  string $expression
      * @return string a logical expression
      */
     public function not($expression)
@@ -335,8 +336,8 @@ class Doctrine_Expression_Driver extends Doctrine_Connection_Module
      * must contain a value or an expression or an array with values or
      * expressions.
      *
-     * @param string $type the type of operation, can be '+', '-', '*' or '/'.
-     * @param array $args
+     * @param  string $type the type of operation, can be '+', '-', '*' or '/'.
+     * @param  array  $args
      * @return string an expression
      */
     private function basicMath($type, array $args)
@@ -359,7 +360,7 @@ class Doctrine_Expression_Driver extends Doctrine_Connection_Module
      * must contain a value or an expression or an array with values or
      * expressions.
      *
-     * @param array $args
+     * @param  array $args
      * @return string an expression
      */
     public function add(array $args)
@@ -374,7 +375,7 @@ class Doctrine_Expression_Driver extends Doctrine_Connection_Module
      * must contain a value or an expression or an array with values or
      * expressions.
      *
-     * @param array $args
+     * @param  array $args
      * @return string an expression
      */
     public function sub(array $args)
@@ -389,7 +390,7 @@ class Doctrine_Expression_Driver extends Doctrine_Connection_Module
      * must contain a value or an expression or an array with values or
      * expressions.
      *
-     * @param array $args
+     * @param  array $args
      * @return string an expression
      */
     public function mul(array $args)
@@ -404,7 +405,7 @@ class Doctrine_Expression_Driver extends Doctrine_Connection_Module
      * must contain a value or an expression or an array with values or
      * expressions.
      *
-     * @param array $args
+     * @param  array $args
      * @return string an expression
      */
     public function div(array $args)
@@ -415,8 +416,8 @@ class Doctrine_Expression_Driver extends Doctrine_Connection_Module
     /**
      * Returns the SQL to check if two values are equal.
      *
-     * @param string $value1 logical expression to compare
-     * @param string $value2 logical expression to compare with
+     * @param  string $value1 logical expression to compare
+     * @param  string $value2 logical expression to compare with
      * @return string logical expression
      */
     public function eq($value1, $value2)
@@ -429,8 +430,8 @@ class Doctrine_Expression_Driver extends Doctrine_Connection_Module
     /**
      * Returns the SQL to check if two values are unequal.
      *
-     * @param string $value1 logical expression to compare
-     * @param string $value2 logical expression to compare with
+     * @param  string $value1 logical expression to compare
+     * @param  string $value2 logical expression to compare with
      * @return string logical expression
      */
     public function neq($value1, $value2)
@@ -443,8 +444,8 @@ class Doctrine_Expression_Driver extends Doctrine_Connection_Module
     /**
      * Returns the SQL to check if one value is greater than another value.
      *
-     * @param string $value1 logical expression to compare
-     * @param string $value2 logical expression to compare with
+     * @param  string $value1 logical expression to compare
+     * @param  string $value2 logical expression to compare with
      * @return string logical expression
      */
     public function gt($value1, $value2)
@@ -458,8 +459,8 @@ class Doctrine_Expression_Driver extends Doctrine_Connection_Module
      * Returns the SQL to check if one value is greater than or equal to
      * another value.
      *
-     * @param string $value1 logical expression to compare
-     * @param string $value2 logical expression to compare with
+     * @param  string $value1 logical expression to compare
+     * @param  string $value2 logical expression to compare with
      * @return string logical expression
      */
     public function gte($value1, $value2)
@@ -472,8 +473,8 @@ class Doctrine_Expression_Driver extends Doctrine_Connection_Module
     /**
      * Returns the SQL to check if one value is less than another value.
      *
-     * @param string $value1        logical expression to compare
-     * @param string $value2        logical expression to compare with
+     * @param  string $value1 logical expression to compare
+     * @param  string $value2 logical expression to compare with
      * @return string logical expression
      */
     public function lt($value1, $value2)
@@ -487,8 +488,8 @@ class Doctrine_Expression_Driver extends Doctrine_Connection_Module
      * Returns the SQL to check if one value is less than or equal to
      * another value.
      *
-     * @param string $value1        logical expression to compare
-     * @param string $value2        logical expression to compare with
+     * @param  string $value1 logical expression to compare
+     * @param  string $value2 logical expression to compare with
      * @return string logical expression
      */
     public function lte($value1, $value2)
@@ -507,14 +508,14 @@ class Doctrine_Expression_Driver extends Doctrine_Connection_Module
      * must contain a logical expression or an array with logical expressions.
      * These expressions will be matched against the first parameter.
      *
-     * @param string $column        the value that should be matched against
-     * @param string|string[] $values  values that will be matched against $column
+     * @param  string          $column the value that should be matched against
+     * @param  string|string[] $values values that will be matched against $column
      * @return string logical expression
      */
     public function in($column, $values)
     {
         if (! is_array($values)) {
-            $values = array($values);
+            $values = [$values];
         }
         $values = $this->getIdentifiers($values);
         $column = $this->getIdentifier($column);
@@ -528,7 +529,7 @@ class Doctrine_Expression_Driver extends Doctrine_Connection_Module
     /**
      * Returns SQL that checks if a expression is null.
      *
-     * @param string $expression the expression that should be compared to null
+     * @param  string $expression the expression that should be compared to null
      * @return string logical expression
      */
     public function isNull($expression)
@@ -540,7 +541,7 @@ class Doctrine_Expression_Driver extends Doctrine_Connection_Module
     /**
      * Returns SQL that checks if a expression is not null.
      *
-     * @param string $expression the expression that should be compared to null
+     * @param  string $expression the expression that should be compared to null
      * @return string logical expression
      */
     public function isNotNull($expression)
@@ -559,9 +560,9 @@ class Doctrine_Expression_Driver extends Doctrine_Connection_Module
      * http://www.w3schools.com/sql/sql_between.asp. If you want complete database
      * independence you should avoid using between().
      *
-     * @param string $expression the value to compare to
-     * @param string $value1 the lower value to compare with
-     * @param string $value2 the higher value to compare with
+     * @param  string $expression the value to compare to
+     * @param  string $value1     the lower value to compare with
+     * @param  string $value2     the higher value to compare with
      * @return string logical expression
      */
     public function between($expression, $value1, $value2)
@@ -584,7 +585,8 @@ class Doctrine_Expression_Driver extends Doctrine_Connection_Module
 
     /**
      * returns arcus cosine SQL string
-     * @param string $value
+     *
+     * @param  string $value
      * @return string
      */
     public function acos($value)
@@ -595,7 +597,7 @@ class Doctrine_Expression_Driver extends Doctrine_Connection_Module
     /**
      * sin
      *
-     * @param string $value
+     * @param  string $value
      * @return string
      */
     public function sin($value)
@@ -616,7 +618,7 @@ class Doctrine_Expression_Driver extends Doctrine_Connection_Module
     /**
      * cos
      *
-     * @param string $value
+     * @param  string $value
      * @return string
      */
     public function cos($value)
@@ -640,8 +642,9 @@ class Doctrine_Expression_Driver extends Doctrine_Connection_Module
      * __call
      *
      * for all native RDBMS functions the function name itself is returned
-     * @param string $m
-     * @param array $a
+     *
+     * @param  string $m
+     * @param  array  $a
      * @return string
      */
     public function __call($m, $a)

@@ -19,13 +19,13 @@
 /**
  * Doctrine_Relation_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Relation_TestCase extends Doctrine_UnitTestCase
 {
@@ -34,7 +34,7 @@ class Doctrine_Relation_TestCase extends Doctrine_UnitTestCase
     }
     public function prepareTables()
     {
-        $this->tables = array('RelationTest', 'RelationTestChild', 'Group', 'Groupuser', 'User', 'Email', 'Account', 'Phonenumber');
+        $this->tables = ['RelationTest', 'RelationTestChild', 'Group', 'Groupuser', 'User', 'Email', 'Account', 'Phonenumber'];
 
         parent::prepareTables();
     }
@@ -59,13 +59,13 @@ class Doctrine_Relation_TestCase extends Doctrine_UnitTestCase
 
     public function testUnlinkSupportsManyToManyRelations()
     {
-        $users = Doctrine_Query::create()->from('User u')->where('u.name = ?', array('zYne'))->execute();
+        $users = Doctrine_Query::create()->from('User u')->where('u.name = ?', ['zYne'])->execute();
 
         $user = $users[0];
 
         $this->assertEqual($user->Group->count(), 3);
 
-        $user->unlink('Group', array(2, 3, 4), true);
+        $user->unlink('Group', [2, 3, 4], true);
 
         $this->assertEqual($user->Group->count(), 0);
 
@@ -84,13 +84,13 @@ class Doctrine_Relation_TestCase extends Doctrine_UnitTestCase
     {
         $this->conn->clear();
 
-        $users = Doctrine_Query::create()->from('User u')->where('u.name = ?', array('zYne'))->execute();
+        $users = Doctrine_Query::create()->from('User u')->where('u.name = ?', ['zYne'])->execute();
 
         $user = $users[0];
 
         $this->assertEqual($user->Phonenumber->count(), 3);
 
-        $user->unlink('Phonenumber', array(1, 2, 3), true);
+        $user->unlink('Phonenumber', [1, 2, 3], true);
 
         $this->assertEqual($user->Phonenumber->count(), 0);
 

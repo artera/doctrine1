@@ -8,6 +8,6 @@ class BarRecord extends Doctrine_Record
     }
     public function setUp()
     {
-        $this->hasMany('FooRecord as Foo', array('local' => 'barId', 'foreign' => 'fooId', 'refClass' => 'FooBarRecord'));
+        $this->hasMany('FooRecord as Foo', ['local' => 'barId', 'foreign' => 'fooId', 'refClass' => 'FooBarRecord']);
     }
 }

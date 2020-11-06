@@ -12,7 +12,7 @@ class Forum_Entry extends Doctrine_Record
     }
     public function setUp()
     {
-        $this->hasOne('Forum_Entry as Parent', array('local' => 'id', 'foreign' => 'parent_entry_id'));
-        $this->hasOne('Forum_Thread as Thread', array('local' => 'thread_id', 'foreign' => 'id', 'onDelete' => 'CASCADE'));
+        $this->hasOne('Forum_Entry as Parent', ['local' => 'id', 'foreign' => 'parent_entry_id']);
+        $this->hasOne('Forum_Thread as Thread', ['local' => 'thread_id', 'foreign' => 'id', 'onDelete' => 'CASCADE']);
     }
 }

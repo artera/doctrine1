@@ -8,20 +8,20 @@
  * and as new inheritance-related features get added to Doctrine it seems to
  * be an area where subtle breakage can sneak in.
  *
- * @package     Doctrine
- * @author      David Brewer <dbrewer@secondstory.com>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   David Brewer <dbrewer@secondstory.com>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 
 class Doctrine_Record_Inheritance_TestCase extends Doctrine_UnitTestCase
 {
     public function prepareTables()
     {
-        $this->tables = array_merge($this->tables, array('SymfonyRecord'));
+        $this->tables = array_merge($this->tables, ['SymfonyRecord']);
         parent::prepareTables();
     }
     public function prepareData()
@@ -41,7 +41,7 @@ class Doctrine_Record_Inheritance_TestCase extends Doctrine_UnitTestCase
         // load our record
         $record = Doctrine_Query::create()->query(
             'SELECT * FROM SymfonyRecord r',
-            array()
+            []
         )->getFirst();
 
         // did we get a record object?

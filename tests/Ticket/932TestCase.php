@@ -34,7 +34,7 @@ class UserNoAutoIncrement extends Doctrine_Record
 {
     public function setTableDefinition()
     {
-        $this->hasColumn('id', 'integer', 4, array('primary' => true, 'autoincrement' => false, 'notnull' => true));
-        $this->hasColumn('display_name', 'string', 255, array('notnull' => true));
+        $this->hasColumn('id', 'integer', 4, ['primary' => true, 'autoincrement' => false, 'notnull' => true]);
+        $this->hasColumn('display_name', 'string', 255, ['notnull' => true]);
     }
 }

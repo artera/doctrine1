@@ -22,20 +22,20 @@
 /**
  * Doctrine_Data_Export
  *
- * @package     Doctrine
- * @subpackage  Data
- * @author      Jonathan H. Wage <jwage@mac.com>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 2552 $
+ * @package    Doctrine
+ * @subpackage Data
+ * @author     Jonathan H. Wage <jwage@mac.com>
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 2552 $
  */
 class Doctrine_Data_Export extends Doctrine_Data
 {
     /**
      * constructor
      *
-     * @param string $directory
+     * @param  string $directory
      * @return void
      */
     public function __construct($directory)
@@ -62,7 +62,7 @@ class Doctrine_Data_Export extends Doctrine_Data
         $models          = Doctrine_Core::getLoadedModels();
         $specifiedModels = $this->getModels();
 
-        $data = array();
+        $data = [];
 
         // for situation when the $models array is empty, but the $specifiedModels array isn't
         if (empty($models)) {
@@ -72,7 +72,7 @@ class Doctrine_Data_Export extends Doctrine_Data
         $models = Doctrine_Core::initializeModels($models);
 
         // temporarily disable indexBy query parts of selected and related tables
-        $originalIndexBy = array();
+        $originalIndexBy = [];
         foreach ($models as $name) {
             $table = Doctrine_Core::getTable($name);
             if (!is_null($indexBy = $table->getBoundQueryPart('indexBy'))) {
@@ -108,7 +108,7 @@ class Doctrine_Data_Export extends Doctrine_Data
      *
      * Dump the prepared data to the fixtures files
      *
-     * @param array $data
+     * @param  array $data
      * @return int|false|string|null
      */
     public function dumpData(array $data)
@@ -125,7 +125,7 @@ class Doctrine_Data_Export extends Doctrine_Data
 
             foreach ($data as $className => $classData) {
                 if (! empty($classData)) {
-                    Doctrine_Parser::dump(array($className => $classData), $format, $directory . DIRECTORY_SEPARATOR . $className . '.' . $format);
+                    Doctrine_Parser::dump([$className => $classData], $format, $directory . DIRECTORY_SEPARATOR . $className . '.' . $format);
                 }
             }
         } else {
@@ -146,20 +146,20 @@ class Doctrine_Data_Export extends Doctrine_Data
      *
      * Prepare the raw data to be exported with the parser
      *
-     * @param array $data
+     * @param  array $data
      * @return array
      */
     public function prepareData($data)
     {
-        $preparedData = array();
+        $preparedData = [];
 
         foreach ($data as $className => $classData) {
-            $preparedData[$className] = array();
+            $preparedData[$className] = [];
             $keyType                  = $classData->getTable()->getIdentifierType();
             foreach ($classData as $record) {
                 $className                            = get_class($record);
                 $recordKey                            = $className . '_' . implode('_', $record->identifier());
-                $preparedData[$className][$recordKey] = array();
+                $preparedData[$className][$recordKey] = [];
 
                 // skip single primary keys, we need to maintain composite primary keys
                 $keys = $record->getTable()->getIdentifier();
@@ -168,7 +168,7 @@ class Doctrine_Data_Export extends Doctrine_Data
 
                 foreach ($recordData as $key => $value) {
                     if (! is_array($keys)) {
-                        $keys = array($keys);
+                        $keys = [$keys];
                     }
 
                     if ($keyType !== Doctrine_Core::IDENTIFIER_NATURAL && count($keys) <= 1 && in_array($key, $keys)) {

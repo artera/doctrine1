@@ -22,13 +22,13 @@
 /**
  * Doctrine_Tree
  *
- * @package     Doctrine
- * @subpackage  Tree
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 7490 $
- * @author      Joe Simms <joe.simms@websites4.com>
+ * @package    Doctrine
+ * @subpackage Tree
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 7490 $
+ * @author     Joe Simms <joe.simms@websites4.com>
  */
 class Doctrine_Tree
 {
@@ -40,7 +40,7 @@ class Doctrine_Tree
     /**
      * @var array $options
      */
-    protected $options = array();
+    protected $options = [];
 
     /**
      * @var string
@@ -50,8 +50,8 @@ class Doctrine_Tree
     /**
      * constructor, creates tree with reference to table and any options
      *
-     * @param Doctrine_Table $table                     instance of Doctrine_Table
-     * @param array $options                    options
+     * @param Doctrine_Table $table   instance of Doctrine_Table
+     * @param array          $options options
      */
     public function __construct(Doctrine_Table $table, $options)
     {
@@ -96,13 +96,13 @@ class Doctrine_Tree
      * This is a factory method that returns a tree instance based upon
      * chosen implementation.
      *
-     * @param Doctrine_Table $table                     instance of Doctrine_Table
-     * @param string $implName                   implementation (NestedSet, AdjacencyList, MaterializedPath)
-     * @param array $options                    options
+     * @param  Doctrine_Table $table    instance of Doctrine_Table
+     * @param  string         $implName implementation (NestedSet, AdjacencyList, MaterializedPath)
+     * @param  array          $options  options
      * @return Doctrine_Tree
      * @throws Doctrine_Exception               if class $implName does not extend Doctrine_Tree
      */
-    public static function factory(Doctrine_Table $table, $implName, $options = array())
+    public static function factory(Doctrine_Table $table, $implName, $options = [])
     {
         $class = 'Doctrine_Tree_' . $implName;
         if (! class_exists($class)) {
@@ -113,7 +113,8 @@ class Doctrine_Tree
 
     /**
      * gets tree attribute value
-     * @param string $name
+     *
+     * @param  string $name
      * @return null|mixed
      */
     public function getAttribute($name)
@@ -124,7 +125,7 @@ class Doctrine_Tree
     /**
      * sets tree attribute value
      *
-     * @param mixed $value
+     * @param mixed  $value
      * @param string $name
      *
      * @return void
@@ -136,6 +137,7 @@ class Doctrine_Tree
 
     /**
      * Returns the base tree component.
+     *
      * @return string
      */
     public function getBaseComponent()

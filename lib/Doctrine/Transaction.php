@@ -23,14 +23,14 @@
  * Doctrine_Transaction
  * Handles transaction savepoint and isolation abstraction
  *
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @author      Lukas Smith <smith@pooteeweet.org> (PEAR MDB2 library)
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @package     Doctrine
- * @subpackage  Transaction
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 7651 $
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @author     Lukas Smith <smith@pooteeweet.org> (PEAR MDB2 library)
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @package    Doctrine
+ * @subpackage Transaction
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 7651 $
  */
 class Doctrine_Transaction extends Doctrine_Connection_Module
 {
@@ -67,20 +67,20 @@ class Doctrine_Transaction extends Doctrine_Connection_Module
     protected $_internalNestingLevel = 0;
 
     /**
-     * @var array $invalid                  an array containing all invalid records within this transaction
+     * @var  array $invalid                  an array containing all invalid records within this transaction
      * @todo What about a more verbose name? $invalidRecords?
      */
-    protected $invalid = array();
+    protected $invalid = [];
 
     /**
      * @var array $savePoints               an array containing all savepoints
      */
-    protected $savePoints = array();
+    protected $savePoints = [];
 
     /**
      * @var array $_collections             an array of Doctrine_Collection objects that were affected during the Transaction
      */
-    protected $_collections = array();
+    protected $_collections = [];
 
     /**
      * addCollection
@@ -90,7 +90,7 @@ class Doctrine_Transaction extends Doctrine_Connection_Module
      * of every collection Doctrine then takes a snapshot in order
      * to keep the collections up to date with the database
      *
-     * @param Doctrine_Collection $coll     a collection to be added
+     * @param  Doctrine_Collection $coll a collection to be added
      * @return $this         this object
      */
     public function addCollection(Doctrine_Collection $coll)
@@ -104,7 +104,7 @@ class Doctrine_Transaction extends Doctrine_Connection_Module
      * getState
      * returns the state of this transaction module.
      *
-     * @see Doctrine_Connection_Transaction::STATE_* constants
+     * @see    Doctrine_Connection_Transaction::STATE_* constants
      * @return integer          the connection state
      */
     public function getState()
@@ -123,7 +123,7 @@ class Doctrine_Transaction extends Doctrine_Connection_Module
      * addInvalid
      * adds record into invalid records list
      *
-     * @param Doctrine_Record $record
+     * @param  Doctrine_Record $record
      * @return boolean        false if record already existed in invalid records list,
      *                        otherwise true
      */
@@ -178,7 +178,7 @@ class Doctrine_Transaction extends Doctrine_Connection_Module
      *
      * Listeners: onPreTransactionBegin, onTransactionBegin
      *
-     * @param string $savepoint                 name of a savepoint to set
+     * @param  string $savepoint name of a savepoint to set
      * @throws Doctrine_Transaction_Exception   if the transaction fails at database level
      * @return integer                          current transaction nesting level
      */
@@ -229,7 +229,7 @@ class Doctrine_Transaction extends Doctrine_Connection_Module
      *
      * Listeners: preTransactionCommit, postTransactionCommit
      *
-     * @param string $savepoint                 name of a savepoint to release
+     * @param  string $savepoint name of a savepoint to release
      * @throws Doctrine_Transaction_Exception   if the transaction fails at database level
      * @throws Doctrine_Validator_Exception     if the transaction fails due to record validations
      * @return boolean                          false if commit couldn't be performed, true otherwise
@@ -261,7 +261,7 @@ class Doctrine_Transaction extends Doctrine_Connection_Module
                 if (! empty($this->invalid)) {
                     if ($this->_internalNestingLevel == 1) {
                         $tmp           = $this->invalid;
-                        $this->invalid = array();
+                        $this->invalid = [];
                         throw new Doctrine_Validator_Exception($tmp);
                     }
                 }
@@ -270,7 +270,7 @@ class Doctrine_Transaction extends Doctrine_Connection_Module
                     foreach ($this->_collections as $coll) {
                         $coll->takeSnapshot();
                     }
-                    $this->_collections = array();
+                    $this->_collections = [];
 
                     $event = new Doctrine_Event($this, Doctrine_Event::TX_COMMIT);
 
@@ -303,10 +303,10 @@ class Doctrine_Transaction extends Doctrine_Connection_Module
      * this method can be listened with onPreTransactionRollback and onTransactionRollback
      * eventlistener methods
      *
-     * @param string $savepoint                 name of a savepoint to rollback to
+     * @param  string $savepoint name of a savepoint to rollback to
      * @throws Doctrine_Transaction_Exception   if the rollback operation fails at database level
      * @return boolean                          false if rollback couldn't be performed, true otherwise
-     * @todo Shouldnt this method only commit a rollback if the transactionLevel is 1
+     * @todo   Shouldnt this method only commit a rollback if the transactionLevel is 1
      *       (STATE_ACTIVE)? Explanation: Otherwise a rollback that is triggered from inside doctrine
      *       in an (emulated) nested transaction would lead to a complete database level
      *       rollback even though the client code did not yet want to do that.
@@ -369,7 +369,7 @@ class Doctrine_Transaction extends Doctrine_Connection_Module
      * releaseSavePoint
      * creates a new savepoint
      *
-     * @param string $savepoint     name of a savepoint to create
+     * @param  string $savepoint name of a savepoint to create
      * @return PDOStatement|Doctrine_Adapter_Statement_Interface
      */
     protected function createSavePoint($savepoint)
@@ -381,7 +381,7 @@ class Doctrine_Transaction extends Doctrine_Connection_Module
      * releaseSavePoint
      * releases given savepoint
      *
-     * @param string $savepoint     name of a savepoint to release
+     * @param  string $savepoint name of a savepoint to release
      * @return PDOStatement|Doctrine_Adapter_Statement_Interface
      */
     protected function releaseSavePoint($savepoint)
@@ -393,7 +393,7 @@ class Doctrine_Transaction extends Doctrine_Connection_Module
      * rollbackSavePoint
      * releases given savepoint
      *
-     * @param string $savepoint     name of a savepoint to rollback to
+     * @param  string $savepoint name of a savepoint to rollback to
      * @return PDOStatement|Doctrine_Adapter_Statement_Interface
      */
     protected function rollbackSavePoint($savepoint)
@@ -436,7 +436,7 @@ class Doctrine_Transaction extends Doctrine_Connection_Module
      * removes a savepoint from the internal savePoints array of this transaction object
      * and all its children savepoints
      *
-     * @param string $savepoint      name of the savepoint to remove
+     * @param  string $savepoint name of the savepoint to remove
      * @return integer              removed savepoints
      */
     private function removeSavePoints($savepoint)
@@ -473,11 +473,15 @@ class Doctrine_Transaction extends Doctrine_Connection_Module
      * $tx->setIsolation('READ UNCOMMITTED');
      * </code>
      *
-     * @param   string  $isolation standard isolation level
-     *                  READ UNCOMMITTED (allows dirty reads)
-     *                  READ COMMITTED (prevents dirty reads)
-     *                  REPEATABLE READ (prevents nonrepeatable reads)
-     *                  SERIALIZABLE (prevents phantom reads)
+     * @param string $isolation standard isolation level
+     *                          READ UNCOMMITTED (allows
+     *                          dirty reads) READ
+     *                          COMMITTED (prevents
+     *                          dirty reads) REPEATABLE
+     *                          READ (prevents
+     *                          nonrepeatable reads)
+     *                          SERIALIZABLE (prevents
+     *                          phantom reads)
      *
      * @throws Doctrine_Transaction_Exception           if the feature is not supported by the driver
      * @throws PDOException                             if something fails at the PDO level
@@ -510,7 +514,8 @@ class Doctrine_Transaction extends Doctrine_Connection_Module
      *
      * This method must only be used by Doctrine itself to initiate transactions.
      * Userland-code must use {@link beginTransaction()}.
-     * @param string $savepoint
+     *
+     * @param  string $savepoint
      * @return int
      */
     public function beginInternalTransaction($savepoint = null)

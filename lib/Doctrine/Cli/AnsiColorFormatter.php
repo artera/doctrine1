@@ -35,47 +35,47 @@
  * @subpackage Cli
  * @author     Fabien Potencier <fabien.potencier@symfony-project.com>
  * @author     Jonathan H. Wage <jonwage@gmail.com>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 4252 $
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 4252 $
  */
 class Doctrine_Cli_AnsiColorFormatter extends Doctrine_Cli_Formatter
 {
     /**
      * @var array
      */
-    protected $_styles = array(
-            'HEADER'  => array('fg' => 'black', 'bold' => true),
-            'ERROR'   => array('bg' => 'red', 'fg' => 'white', 'bold' => true),
-            'INFO'    => array('fg' => 'green', 'bold' => true),
-            'COMMENT' => array('fg' => 'yellow'),
-        );
+    protected $_styles = [
+            'HEADER'  => ['fg' => 'black', 'bold' => true],
+            'ERROR'   => ['bg' => 'red', 'fg' => 'white', 'bold' => true],
+            'INFO'    => ['fg' => 'green', 'bold' => true],
+            'COMMENT' => ['fg' => 'yellow'],
+        ];
 
     /**
      * @var array
      */
-    protected $_options = array('bold' => 1, 'underscore' => 4, 'blink' => 5, 'reverse' => 7, 'conceal' => 8);
+    protected $_options = ['bold' => 1, 'underscore' => 4, 'blink' => 5, 'reverse' => 7, 'conceal' => 8];
 
     /**
      * @var array
      */
-    protected $_foreground = array('black' => 30, 'red' => 31, 'green' => 32, 'yellow' => 33, 'blue' => 34, 'magenta' => 35, 'cyan' => 36, 'white' => 37);
+    protected $_foreground = ['black' => 30, 'red' => 31, 'green' => 32, 'yellow' => 33, 'blue' => 34, 'magenta' => 35, 'cyan' => 36, 'white' => 37];
 
     /**
      * @var array
      */
-    protected $_background = array('black' => 40, 'red' => 41, 'green' => 42, 'yellow' => 43, 'blue' => 44, 'magenta' => 45, 'cyan' => 46, 'white' => 47);
+    protected $_background = ['black' => 40, 'red' => 41, 'green' => 42, 'yellow' => 43, 'blue' => 44, 'magenta' => 45, 'cyan' => 46, 'white' => 47];
 
     /**
      * Sets a new style.
      *
-     * @param string $name The style name
+     * @param string $name    The style name
      * @param array  $options An array of options
      *
      * @return void
      */
-    public function setStyle($name, $options = array())
+    public function setStyle($name, $options = [])
     {
         $this->_styles[$name] = $options;
     }
@@ -83,13 +83,13 @@ class Doctrine_Cli_AnsiColorFormatter extends Doctrine_Cli_Formatter
     /**
      * Formats a text according to the given style or parameters.
      *
-     * @param  string $text The test to style
-     * @param  mixed  $parameters An array of options or a style name
+     * @param string   $text       The test to style
+     * @param mixed    $parameters An array of options or a style name
      * @param resource $stream
      *
      * @return string The styled text
      */
-    public function format($text = '', $parameters = array(), $stream = STDOUT)
+    public function format($text = '', $parameters = [], $stream = STDOUT)
     {
         if (! $this->supportsColors($stream)) {
             return $text;
@@ -103,7 +103,7 @@ class Doctrine_Cli_AnsiColorFormatter extends Doctrine_Cli_Formatter
             $parameters = $this->_styles[$parameters];
         }
 
-        $codes = array();
+        $codes = [];
         if (isset($parameters['fg'])) {
             $codes[] = $this->_foreground[$parameters['fg']];
         }
@@ -125,8 +125,8 @@ class Doctrine_Cli_AnsiColorFormatter extends Doctrine_Cli_Formatter
      * Formats a message within a section.
      *
      * @param string  $section The section name
-     * @param string  $text  The text message
-     * @param integer $size The maximum size allowed for a line (65 by default)
+     * @param string  $text    The text message
+     * @param integer $size    The maximum size allowed for a line (65 by default)
      *
      * @return string
      */
@@ -168,7 +168,7 @@ class Doctrine_Cli_AnsiColorFormatter extends Doctrine_Cli_Formatter
      *  -  windows
      *  -  non tty consoles
      *
-     * @param  mixed $stream A stream
+     * @param mixed $stream A stream
      *
      * @return bool true if the stream supports colorization, false otherwise
      */

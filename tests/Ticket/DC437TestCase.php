@@ -19,13 +19,13 @@
 /**
  * Doctrine_Ticket_DC437_TestCase
  *
- * @package     Doctrine
- * @author      Eugene Janusov <esycat@gmail.com>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Eugene Janusov <esycat@gmail.com>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Ticket_DC437_TestCase extends Doctrine_UnitTestCase
 {
@@ -46,7 +46,7 @@ class Doctrine_Ticket_DC437_TestCase extends Doctrine_UnitTestCase
         // Don't see any better place to perform connection preparation
         $this->prepareConnections();
 
-        $this->tables   = array();
+        $this->tables   = [];
         $this->tables[] = 'Doctrine_Ticket_DC437_Record';
 
         /* Export classes for each of the existing connections.
@@ -54,7 +54,7 @@ class Doctrine_Ticket_DC437_TestCase extends Doctrine_UnitTestCase
          * To trick Doctrine_Export::exportClasses() implementation to use
          * a proper connection, we need to manually re-bind all the components.
          */
-        foreach (array('conn1', 'conn2') as $dbConnName) {
+        foreach (['conn1', 'conn2'] as $dbConnName) {
             $dbConn = $this->manager->getConnection($dbConnName);
             foreach ($this->tables as $componentName) {
                 $this->manager->bindComponent($componentName, $dbConn->getName());
@@ -107,12 +107,17 @@ class Doctrine_Ticket_DC437_Record extends Doctrine_Record
     {
         $this->setTableName('dc437records');
 
-        $this->hasColumn('id', 'integer', 5, array(
+        $this->hasColumn(
+            'id',
+            'integer',
+            5,
+            [
             'unsigned'      => true,
             'notnull'       => true,
             'primary'       => true,
             'autoincrement' => true
-        ));
+            ]
+        );
 
         $this->hasColumn('test', 'string');
     }

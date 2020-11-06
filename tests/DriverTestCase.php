@@ -3,9 +3,9 @@ class AdapterMock implements Doctrine_Adapter_Interface
 {
     private $name;
 
-    private $queries = array();
+    private $queries = [];
 
-    private $exception = array();
+    private $exception = [];
 
     private $lastInsertIdFail = false;
 
@@ -26,7 +26,7 @@ class AdapterMock implements Doctrine_Adapter_Interface
 
     public function forceException($name, $message = '', $code = 0)
     {
-        $this->exception = array($name, $message, $code);
+        $this->exception = [$name, $message, $code];
     }
 
     public function prepare($query)
@@ -48,7 +48,7 @@ class AdapterMock implements Doctrine_Adapter_Interface
         if (! empty($e)) {
             $name = $e[0];
 
-            $this->exception = array();
+            $this->exception = [];
 
             throw new $name($e[1], $e[2]);
         }
@@ -75,7 +75,7 @@ class AdapterMock implements Doctrine_Adapter_Interface
         if (! empty($e)) {
             $name = $e[0];
 
-            $this->exception = array();
+            $this->exception = [];
 
             throw new $name($e[1], $e[2]);
         }
@@ -151,12 +151,12 @@ class AdapterStatementMock
 
     public function fetch($fetchMode)
     {
-        return array();
+        return [];
     }
 
     public function fetchAll($fetchMode)
     {
-        return array();
+        return [];
     }
 
     public function execute()
@@ -192,14 +192,14 @@ class Doctrine_Driver_UnitTestCase extends UnitTestCase
     {
         $dec = $this->getDeclaration($type);
         if (! is_array($type2)) {
-            $type2 = array($type2);
+            $type2 = [$type2];
         }
         $this->assertEqual($dec[0], $type2);
     }
 
     public function getDeclaration($type)
     {
-        return $this->dataDict->getPortableDeclaration(array('type' => $type, 'name' => 'colname', 'length' => 1, 'fixed' => true));
+        return $this->dataDict->getPortableDeclaration(['type' => $type, 'name' => 'colname', 'length' => 1, 'fixed' => true]);
     }
 
     public function setDriverName($driverName)

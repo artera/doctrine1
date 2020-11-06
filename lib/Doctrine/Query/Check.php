@@ -22,13 +22,13 @@
 /**
  * Doctrine_Query_Check
  *
- * @package     Doctrine
- * @subpackage  Query
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 1080 $
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @package    Doctrine
+ * @subpackage Query
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 1080 $
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
 class Doctrine_Query_Check
 {
@@ -49,14 +49,14 @@ class Doctrine_Query_Check
     protected $_tokenizer;
 
     /**
-     * @param Doctrine_Table|string $table  Doctrine_Table object
+     * @param Doctrine_Table|string $table Doctrine_Table object
      */
     public function __construct($table)
     {
         if (! ($table instanceof Doctrine_Table)) {
             $table = Doctrine_Manager::getInstance()
-                        ->getCurrentConnection()
-                        ->getTable($table);
+                ->getCurrentConnection()
+                ->getTable($table);
         }
         $this->table      = $table;
         $this->_tokenizer = new Doctrine_Query_Tokenizer();
@@ -76,7 +76,7 @@ class Doctrine_Query_Check
     /**
      * parse
      *
-     * @param string $dql       DQL CHECK constraint definition
+     * @param  string $dql DQL CHECK constraint definition
      * @return void
      */
     public function parse($dql)
@@ -86,7 +86,8 @@ class Doctrine_Query_Check
 
     /**
      * parseClause
-     * @param string $dql
+     *
+     * @param  string $dql
      * @return string
      */
     public function parseClause($dql)
@@ -94,7 +95,7 @@ class Doctrine_Query_Check
         $parts = $this->_tokenizer->sqlExplode($dql, ' AND ');
 
         if (count($parts) > 1) {
-            $ret = array();
+            $ret = [];
             foreach ($parts as $part) {
                 $ret[] = $this->parseSingle($part);
             }
@@ -103,7 +104,7 @@ class Doctrine_Query_Check
         } else {
             $parts = $this->_tokenizer->quoteExplode($dql, ' OR ');
             if (count($parts) > 1) {
-                $ret = array();
+                $ret = [];
                 foreach ($parts as $part) {
                     $ret[] = $this->parseClause($part);
                 }
@@ -118,7 +119,7 @@ class Doctrine_Query_Check
     }
 
     /**
-     * @param string $part
+     * @param  string $part
      * @return string
      */
     public function parseSingle($part)
@@ -133,8 +134,7 @@ class Doctrine_Query_Check
             case '=':
             case '!=':
             case '<>':
-
-            break;
+                break;
             default:
                 throw new Doctrine_Query_Exception('Unknown operator ' . $e[1]);
         }

@@ -19,19 +19,19 @@
 /**
  * Doctrine_Ticket_894_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Ticket_894_TestCase extends Doctrine_UnitTestCase
 {
     public function prepareTables()
     {
-        $this->tables   = array();
+        $this->tables   = [];
         $this->tables[] = 'T894_Day';
         parent::prepareTables();
     }
@@ -47,8 +47,8 @@ class Doctrine_Ticket_894_TestCase extends Doctrine_UnitTestCase
         $beginNumber = 1;
         $endNumber   = 3;
         $query       = Doctrine_Query::create()
-                ->from('T894_Day d')
-                ->where('d.number BETWEEN ? AND ?', array($beginNumber, $endNumber));
+            ->from('T894_Day d')
+            ->where('d.number BETWEEN ? AND ?', [$beginNumber, $endNumber]);
         $this->assertEqual(' FROM T894_Day d WHERE d.number BETWEEN ? AND ?', $query->getDql());
         $this->assertTrue(strstr($query->getSqlQuery(), 'BETWEEN ? AND ?'));
     }
@@ -60,7 +60,7 @@ class T894_Day extends Doctrine_Record
     public function setTableDefinition()
     {
         $this->setTableName('t894_days');
-        $this->hasColumn('id', 'integer', 3, array('autoincrement' => true, 'unsigned' => true, 'primary' => true, 'notnull' => true));
+        $this->hasColumn('id', 'integer', 3, ['autoincrement' => true, 'unsigned' => true, 'primary' => true, 'notnull' => true]);
         $this->hasColumn('number', 'integer');
     }
 }

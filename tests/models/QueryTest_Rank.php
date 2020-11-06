@@ -10,26 +10,29 @@ class QueryTest_Rank extends Doctrine_Record
             'title as title',
             'string',
             100,
-            array('notnull')
+            ['notnull']
         );
         $this->hasColumn(
             'color as color',
             'string',
             20,
-            array('notnull', 'regexp' => '/^[a-zA-Z\-]{3,}|#[0-9a-fA-F]{6}$/D')
+            ['notnull', 'regexp' => '/^[a-zA-Z\-]{3,}|#[0-9a-fA-F]{6}$/D']
         );
         $this->hasColumn(
             'icon as icon',
             'string',
             50,
-            array('notnull', 'default' => ' ', 'regexp' => '/^[a-zA-Z0-9_\-]+\.(jpg|gif|png)$/D')
+            ['notnull', 'default' => ' ', 'regexp' => '/^[a-zA-Z0-9_\-]+\.(jpg|gif|png)$/D']
         );
     }
 
     public function setUp()
     {
-        $this->hasMany('QueryTest_User as users', array(
+        $this->hasMany(
+            'QueryTest_User as users',
+            [
             'local' => 'rankId', 'foreign' => 'userId', 'refClass' => 'QueryTest_UserRank'
-        ));
+            ]
+        );
     }
 }

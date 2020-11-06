@@ -19,13 +19,13 @@
 /**
  * Doctrine_Ticket_DDC47_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Ticket_DC112_TestCase extends Doctrine_UnitTestCase
 {
@@ -78,9 +78,11 @@ class Doctrine_Ticket_DC112_TestCase extends Doctrine_UnitTestCase
 
     public function testDeleteByRegex()
     {
-        $cacheDriver = new Doctrine_Cache_Array(array(
+        $cacheDriver = new Doctrine_Cache_Array(
+            [
             'prefix' => 'test_'
-        ));
+            ]
+        );
 
         Doctrine_Query::create()
             ->from('User u')
@@ -100,9 +102,11 @@ class Doctrine_Ticket_DC112_TestCase extends Doctrine_UnitTestCase
 
     public function testDeleteByPrefix()
     {
-        $cacheDriver = new Doctrine_Cache_Array(array(
+        $cacheDriver = new Doctrine_Cache_Array(
+            [
             'prefix' => 'test_'
-        ));
+            ]
+        );
 
         Doctrine_Query::create()
             ->from('User u')

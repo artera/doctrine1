@@ -10,12 +10,18 @@ class Record_City extends Doctrine_Record
 
     public function setUp()
     {
-        $this->hasOne('Record_Country as Country', array(
+        $this->hasOne(
+            'Record_Country as Country',
+            [
             'local' => 'country_id', 'foreign' => 'id'
-        ));
+            ]
+        );
 
-        $this->hasOne('Record_District as District', array(
+        $this->hasOne(
+            'Record_District as District',
+            [
             'local' => 'district_id', 'foreign' => 'id'
-        ));
+            ]
+        );
     }
 }

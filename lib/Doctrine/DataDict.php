@@ -22,14 +22,14 @@
 /**
  * Doctrine_DataDict
  *
- * @package     Doctrine
- * @subpackage  DataDict
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 7490 $
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @author      Lukas Smith <smith@pooteeweet.org> (PEAR MDB2 library)
+ * @package    Doctrine
+ * @subpackage DataDict
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 7490 $
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @author     Lukas Smith <smith@pooteeweet.org> (PEAR MDB2 library)
  */
 class Doctrine_DataDict extends Doctrine_Connection_Module
 {
@@ -38,7 +38,7 @@ class Doctrine_DataDict extends Doctrine_Connection_Module
      * parses a literal boolean value and returns
      * proper sql equivalent
      *
-     * @param string $value     boolean value to be parsed
+     * @param  string $value boolean value to be parsed
      * @return int|string           parsed boolean value
      */
     public function parseBoolean($value)

@@ -19,13 +19,13 @@
 /**
  * Doctrine_Ticket_2015_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Ticket_2015_TestCase extends Doctrine_UnitTestCase
 {
@@ -51,11 +51,11 @@ class Doctrine_Ticket_2015_TestCase extends Doctrine_UnitTestCase
 
     public function prepareTables()
     {
-        $this->tables = array(
+        $this->tables = [
             'mkNode',
             'mkOrganism',
             'mkAnimal'
-        );
+        ];
 
         parent::prepareTables();
     }
@@ -66,24 +66,26 @@ class mkNode extends Doctrine_Record
     public function setTableDefinition()
     {
         $this->setTableName('mk_node');
-        $this->hasColumn('id', 'integer', 4, array('type' => 'integer', 'autoincrement' => true, 'primary' => true, 'length' => 4));
+        $this->hasColumn('id', 'integer', 4, ['type' => 'integer', 'autoincrement' => true, 'primary' => true, 'length' => 4]);
         $this->hasColumn('title', 'string', 255);
         $this->hasColumn('type', 'string', 50);
         $this->hasColumn('sub_type', 'string', 50);
 
-        $this->setSubclasses(array(
-            'mkOrganism' => array(
+        $this->setSubclasses(
+            [
+            'mkOrganism' => [
                 'type' => 'organism'
-            ),
-            'mkAnimal' => array(
+            ],
+            'mkAnimal' => [
                 'type'     => 'organism',
                 'sub_type' => 'animal'
-            ),
-            'mkPlant' => array(
+            ],
+            'mkPlant' => [
                 'type'     => 'organism',
                 'sub_type' => 'plant'
-            )
-        ));
+            ]
+            ]
+        );
     }
 }
 
@@ -93,16 +95,18 @@ class mkOrganism extends mkNode
     {
         parent::setTableDefinition();
 
-        $this->setSubclasses(array(
-            'mkAnimal' => array(
+        $this->setSubclasses(
+            [
+            'mkAnimal' => [
                 'type'     => 'organism',
                 'sub_type' => 'animal'
-            ),
-            'mkPlant' => array(
+            ],
+            'mkPlant' => [
                 'type'     => 'organism',
                 'sub_type' => 'plant'
-            )
-        ));
+            ]
+            ]
+        );
     }
 }
 

@@ -19,13 +19,13 @@
 /**
  * Doctrine_DataType_Enum_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_DataType_Enum_TestCase extends Doctrine_UnitTestCase
 {
@@ -34,7 +34,7 @@ class Doctrine_DataType_Enum_TestCase extends Doctrine_UnitTestCase
     }
     public function prepareTables()
     {
-        $this->tables = array('EnumTest', 'EnumTest2', 'EnumTest3');
+        $this->tables = ['EnumTest', 'EnumTest2', 'EnumTest3'];
         parent::prepareTables();
     }
 
@@ -91,7 +91,7 @@ class Doctrine_DataType_Enum_TestCase extends Doctrine_UnitTestCase
         try {
             $query = new Doctrine_Query($this->connection);
             $ret   = $query->parseDqlQuery("FROM EnumTest WHERE EnumTest.status = 'open'")
-              ->count();
+                ->count();
             $this->assertEqual($ret, 1);
         } catch (Exception $e) {
             $this->fail();
@@ -100,7 +100,7 @@ class Doctrine_DataType_Enum_TestCase extends Doctrine_UnitTestCase
         try {
             $query = new Doctrine_Query($this->connection);
             $ret   = $query->parseDqlQuery('FROM EnumTest WHERE EnumTest.status = ?')
-              ->count(array('open'));
+                ->count(['open']);
             $this->assertEqual($ret, 1);
         } catch (Exception $e) {
             $this->fail($e->getMessage());
@@ -216,9 +216,9 @@ class Doctrine_DataType_Enum_TestCase extends Doctrine_UnitTestCase
     {
         $q = new Doctrine_Query();
         $q->select('e.*')
-          ->from('EnumTest e')
-          ->limit(1);
-        $ret = $q->execute(array(), Doctrine_Core::HYDRATE_ARRAY);
+            ->from('EnumTest e')
+            ->limit(1);
+        $ret = $q->execute([], Doctrine_Core::HYDRATE_ARRAY);
 
         if (is_numeric($ret[0]['status'])) {
             $this->fail();
@@ -229,11 +229,11 @@ class Doctrine_DataType_Enum_TestCase extends Doctrine_UnitTestCase
     {
         $q = new Doctrine_Query($this->connection);
         $q->addSelect('e.*')
-          ->addSelect('e3.*')
-          ->from('EnumTest e')
-          ->leftJoin('e.Enum3 e3')
-          ->where("e.status = 'verified'")
-          ->execute();
+            ->addSelect('e3.*')
+            ->from('EnumTest e')
+            ->leftJoin('e.Enum3 e3')
+            ->where("e.status = 'verified'")
+            ->execute();
 
         $this->assertEqual($q->getSqlQuery(), "SELECT e.id AS e__id, e.status AS e__status, e.text AS e__text, e2.text AS e2__text FROM enum_test e LEFT JOIN enum_test3 e2 ON e.text = e2.text WHERE (e.status = 'verified')");
     }

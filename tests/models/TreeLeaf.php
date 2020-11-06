@@ -9,12 +9,18 @@ class TreeLeaf extends Doctrine_Record
 
     public function setUp()
     {
-        $this->hasOne('TreeLeaf as Parent', array(
+        $this->hasOne(
+            'TreeLeaf as Parent',
+            [
             'local' => 'parent_id', 'foreign' => 'id'
-        ));
+            ]
+        );
 
-        $this->hasMany('TreeLeaf as Children', array(
+        $this->hasMany(
+            'TreeLeaf as Children',
+            [
             'local' => 'id', 'foreign' => 'parent_id'
-        ));
+            ]
+        );
     }
 }

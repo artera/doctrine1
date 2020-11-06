@@ -19,13 +19,13 @@
 /**
  * Doctrine_Ticket_2355_TestCase
  *
- * @package     Doctrine
- * @author      Jacek Dębowczyk <j.debowczyk@diface.com>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.1
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Jacek Dębowczyk <j.debowczyk@diface.com>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.1
+ * @version  $Revision$
  */
 class Doctrine_Ticket_2377_TestCase extends Doctrine_UnitTestCase
 {
@@ -66,19 +66,19 @@ class Ticket_2377_Author extends Doctrine_Record
             'id',
             'integer',
             2,
-            array('type' => 'integer', 'primary' => true, 'autoincrement' => true, 'length' => '2')
+            ['type' => 'integer', 'primary' => true, 'autoincrement' => true, 'length' => '2']
         );
         $this->hasColumn(
             'name',
             'string',
             2,
-            array('type' => 'string', 'length' => '100')
+            ['type' => 'string', 'length' => '100']
         );
     }
 
     public function setUp()
     {
-        $this->hasMany('Ticket_2377_Article as Article', array('local' => 'id', 'foreign' => 'author_id'));
+        $this->hasMany('Ticket_2377_Article as Article', ['local' => 'id', 'foreign' => 'author_id']);
     }
 }
 
@@ -91,24 +91,24 @@ class Ticket_2377_Article extends Doctrine_Record
             'id',
             'integer',
             2,
-            array('type' => 'integer', 'primary' => true, 'autoincrement' => true, 'length' => '2')
+            ['type' => 'integer', 'primary' => true, 'autoincrement' => true, 'length' => '2']
         );
         $this->hasColumn(
             'author_id',
             'integer',
             2,
-            array('type' => 'integer', 'unsigned' => true, 'length' => '2')
+            ['type' => 'integer', 'unsigned' => true, 'length' => '2']
         );
         $this->hasColumn(
             'content',
             'string',
             100,
-            array('type' => 'string', 'length' => '100')
+            ['type' => 'string', 'length' => '100']
         );
     }
 
     public function setUp()
     {
-        $this->hasOne('Ticket_2377_Author as Author', array('local' => 'author_id', 'foreign' => 'id'));
+        $this->hasOne('Ticket_2377_Author as Author', ['local' => 'author_id', 'foreign' => 'id']);
     }
 }

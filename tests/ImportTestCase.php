@@ -19,13 +19,13 @@
 /**
  * Doctrine_Import_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Import_TestCase extends Doctrine_UnitTestCase
 {
@@ -44,7 +44,7 @@ class Doctrine_Import_TestCase extends Doctrine_UnitTestCase
 
         $this->conn = Doctrine_Manager::connection($this->dbh, 'tmp123');
 
-        $this->conn->import->importSchema('Import/_files', array('tmp123'));
+        $this->conn->import->importSchema('Import/_files', ['tmp123']);
 
         $this->assertTrue(file_exists('Import/_files/ImportTestUser.php'));
         $this->assertTrue(file_exists('Import/_files/generated/BaseImportTestUser.php'));

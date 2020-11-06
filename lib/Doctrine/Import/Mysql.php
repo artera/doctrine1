@@ -20,14 +20,14 @@
  */
 
 /**
- * @package     Doctrine
- * @subpackage  Import
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @author      Lukas Smith <smith@pooteeweet.org> (PEAR MDB2 library)
- * @version     $Revision: 7644 $
- * @link        www.doctrine-project.org
- * @since       1.0
+ * @package    Doctrine
+ * @subpackage Import
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @author     Lukas Smith <smith@pooteeweet.org> (PEAR MDB2 library)
+ * @version    $Revision: 7644 $
+ * @link       www.doctrine-project.org
+ * @since      1.0
  */
 class Doctrine_Import_Mysql extends Doctrine_Import
 {
@@ -40,19 +40,19 @@ class Doctrine_Import_Mysql extends Doctrine_Import
     /**
      * @var array
      */
-    protected $sql = array(
+    protected $sql = [
                             'listDatabases'   => 'SHOW DATABASES',
                             'listTableFields' => 'SHOW FULL COLUMNS FROM %s',
                             'listSequences'   => 'SHOW TABLES',
                             'listTables'      => 'SHOW TABLES',
                             'listUsers'       => 'SELECT DISTINCT USER FROM USER',
                             'listViews'       => "SHOW FULL TABLES %s WHERE Table_type = 'VIEW'",
-                            );
+                            ];
 
     /**
      * lists all database sequences
      *
-     * @param string|null $database
+     * @param  string|null $database
      * @return array
      */
     public function listSequences($database = null)
@@ -63,13 +63,13 @@ class Doctrine_Import_Mysql extends Doctrine_Import
         }
         $tableNames = $this->conn->fetchColumn($query);
 
-        return array_map(array($this->conn->formatter, 'fixSequenceName'), $tableNames);
+        return array_map([$this->conn->formatter, 'fixSequenceName'], $tableNames);
     }
 
     /**
      * lists table constraints
      *
-     * @param string $table     database table name
+     * @param  string $table database table name
      * @return array
      */
     public function listTableConstraints($table)
@@ -90,7 +90,7 @@ class Doctrine_Import_Mysql extends Doctrine_Import
         $query   = 'SHOW INDEX FROM ' . $table;
         $indexes = $this->conn->fetchAssoc($query);
 
-        $result = array();
+        $result = [];
         foreach ($indexes as $indexData) {
             if (! $indexData[$nonUnique]) {
                 if ($indexData[$keyName] !== 'PRIMARY') {
@@ -122,19 +122,19 @@ class Doctrine_Import_Mysql extends Doctrine_Import
      *     )
      * )
      *
-     * @param string $tableName     database table name
+     * @param  string $tableName database table name
      * @return array
      */
     public function listTableRelations($tableName)
     {
-        $relations = array();
+        $relations = [];
         $sql       = "SELECT column_name, REFERENCED_TABLE_NAME, REFERENCED_COLUMN_NAME FROM information_schema.key_column_usage WHERE table_name = '" . $tableName . "' AND table_schema = '" . $this->conn->getDatabaseName() . "' and REFERENCED_COLUMN_NAME is not NULL";
         $results   = $this->conn->fetchAssoc($sql);
         foreach ($results as $result) {
             $result      = array_change_key_case($result, CASE_LOWER);
-            $relations[] = array('table'   => $result['referenced_table_name'],
+            $relations[] = ['table'   => $result['referenced_table_name'],
                                  'local'   => $result['column_name'],
-                                 'foreign' => $result['referenced_column_name']);
+                                 'foreign' => $result['referenced_column_name']];
         }
         return $relations;
     }
@@ -142,7 +142,7 @@ class Doctrine_Import_Mysql extends Doctrine_Import
     /**
      * lists table constraints
      *
-     * @param string $table     database table name
+     * @param  string $table database table name
      * @return array
      */
     public function listTableColumns($table)
@@ -186,7 +186,7 @@ class Doctrine_Import_Mysql extends Doctrine_Import
     /**
      * lists table constraints
      *
-     * @param string $table     database table name
+     * @param  string $table database table name
      * @return array
      */
     public function listTableIndexes($table)
@@ -208,7 +208,7 @@ class Doctrine_Import_Mysql extends Doctrine_Import
         $indexes = $this->conn->fetchAssoc($query);
 
 
-        $result = array();
+        $result = [];
         foreach ($indexes as $indexData) {
             if ($indexData[$nonUnique] && ($index = $this->conn->formatter->fixIndexName($indexData[$keyName]))) {
                 $result[] = $index;
@@ -220,7 +220,7 @@ class Doctrine_Import_Mysql extends Doctrine_Import
     /**
      * lists tables
      *
-     * @param string|null $database
+     * @param  string|null $database
      * @return array
      */
     public function listTables($database = null)
@@ -231,7 +231,7 @@ class Doctrine_Import_Mysql extends Doctrine_Import
     /**
      * lists database views
      *
-     * @param string|null $database
+     * @param  string|null $database
      * @return array
      */
     public function listViews($database = null)

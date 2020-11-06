@@ -5,8 +5,8 @@ class BookmarkUser extends Doctrine_Record
     {
         $this->hasMany(
             'Bookmark as Bookmarks',
-            array('local'               => 'id',
-                              'foreign' => 'user_id')
+            ['local'               => 'id',
+                              'foreign' => 'user_id']
         );
     }
     public function setTableDefinition()

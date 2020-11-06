@@ -22,14 +22,14 @@
 /**
  * Doctrine_Connection_Mysql_Exception
  *
- * @package     Doctrine
- * @subpackage  Connection
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @author      Lukas Smith <smith@pooteeweet.org> (PEAR MDB2 library)
- * @since       1.0
- * @version     $Revision: 7490 $
- * @link        www.doctrine-project.org
+ * @package    Doctrine
+ * @subpackage Connection
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @author     Lukas Smith <smith@pooteeweet.org> (PEAR MDB2 library)
+ * @since      1.0
+ * @version    $Revision: 7490 $
+ * @link       www.doctrine-project.org
  */
 class Doctrine_Connection_Mysql_Exception extends Doctrine_Connection_Exception
 {
@@ -37,7 +37,7 @@ class Doctrine_Connection_Mysql_Exception extends Doctrine_Connection_Exception
      * @var array $errorCodeMap         an array that is used for determining portable
      *                                  error code from a native database error code
      */
-    protected static $errorCodeMap = array(
+    protected static $errorCodeMap = [
                                       1004 => Doctrine_Core::ERR_CANNOT_CREATE,
                                       1005 => Doctrine_Core::ERR_CANNOT_CREATE,
                                       1006 => Doctrine_Core::ERR_CANNOT_CREATE,
@@ -63,15 +63,15 @@ class Doctrine_Connection_Mysql_Exception extends Doctrine_Connection_Exception
                                       1217 => Doctrine_Core::ERR_CONSTRAINT,
                                       1451 => Doctrine_Core::ERR_CONSTRAINT,
                                       1452 => Doctrine_Core::ERR_CONSTRAINT,
-                                      );
+                                      ];
 
     /**
      * This method checks if native error code/message can be
      * converted into a portable code and then adds this
      * portable error code to $portableCode field
      *
-     * @param array $errorInfo      error info array
-     * @since 1.0
+     * @param  array $errorInfo error info array
+     * @since  1.0
      * @return boolean              whether or not the error info processing was successfull
      *                              (the process is successfull if portable error code was found)
      */

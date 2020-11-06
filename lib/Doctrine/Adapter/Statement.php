@@ -22,21 +22,21 @@
 /**
  * Doctrine_Adapter_Statement
  *
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @package     Doctrine
- * @subpackage  Adapter
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 7490 $
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @package    Doctrine
+ * @subpackage Adapter
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 7490 $
  */
 abstract class Doctrine_Adapter_Statement
 {
     /**
      * bindValue
      *
-     * @param string $no
-     * @param string $value
+     * @param  string $no
+     * @param  string $value
      * @return void
      */
     public function bindValue($no, $value)
@@ -46,7 +46,7 @@ abstract class Doctrine_Adapter_Statement
     /**
      * fetch
      *
-     * @see Doctrine_Core::FETCH_* constants
+     * @see    Doctrine_Core::FETCH_* constants
      * @return void
      */
     public function fetch()
@@ -101,7 +101,7 @@ abstract class Doctrine_Adapter_Statement
     /**
      * setFetchMode
      *
-     * @param string $mode
+     * @param  string $mode
      * @return void
      */
     public function setFetchMode($mode)

@@ -19,17 +19,17 @@
 /**
  * Doctrine_Export_Schema_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Export_Schema_TestCase extends Doctrine_UnitTestCase
 {
-    public $tables = array('Entity',
+    public $tables = ['Entity',
                       'EntityReference',
                       'EntityAddress',
                       'Email',
@@ -48,7 +48,7 @@ class Doctrine_Export_Schema_TestCase extends Doctrine_UnitTestCase
                       'Resource',
                       'Assignment',
                       'ResourceType',
-                      'ResourceReference');
+                      'ResourceReference'];
 
     public function testYmlExport()
     {

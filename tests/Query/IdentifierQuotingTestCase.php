@@ -22,19 +22,19 @@
  * This test case is used for testing DQL API quotes all identifiers properly
  * if idenfitier quoting is turned on
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Query_IdentifierQuoting_TestCase extends Doctrine_UnitTestCase
 {
     public function prepareTables()
     {
-        $this->tables = array('Entity', 'Phonenumber');
+        $this->tables = ['Entity', 'Phonenumber'];
 
         parent::prepareTables();
     }

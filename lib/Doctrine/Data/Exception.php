@@ -22,13 +22,13 @@
 /**
  * Doctrine_Data_Exception
  *
- * @package     Doctrine
- * @subpackage  Data
- * @author      Jonathan H. Wage <jwage@mac.com>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 2552 $
+ * @package    Doctrine
+ * @subpackage Data
+ * @author     Jonathan H. Wage <jwage@mac.com>
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 2552 $
  */
 class Doctrine_Data_Exception extends Doctrine_Exception
 {

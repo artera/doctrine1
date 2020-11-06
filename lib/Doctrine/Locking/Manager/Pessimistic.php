@@ -24,15 +24,15 @@
  * a time-consuming task on a record or many records, which is spread over several
  * page requests can't be interfered by other users.
  *
- * @package     Doctrine
- * @subpackage  Locking
- * @link        www.doctrine-project.org
- * @author      Roman Borschel <roman@code-factory.org>
- * @author      Pierre Minnieur <pm@pierre-minnieur.de>
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @since       1.0
- * @version     $Revision: 7490 $
+ * @package    Doctrine
+ * @subpackage Locking
+ * @link       www.doctrine-project.org
+ * @author     Roman Borschel <roman@code-factory.org>
+ * @author     Pierre Minnieur <pm@pierre-minnieur.de>
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @since      1.0
+ * @version    $Revision: 7490 $
  */
 class Doctrine_Locking_Manager_Pessimistic
 {
@@ -63,26 +63,26 @@ class Doctrine_Locking_Manager_Pessimistic
         $this->conn = $conn;
 
         if ($this->conn->getAttribute(Doctrine_Core::ATTR_EXPORT) & Doctrine_Core::EXPORT_TABLES) {
-            $columns                = array();
-            $columns['object_type'] = array('type'           => 'string',
+            $columns                = [];
+            $columns['object_type'] = ['type'           => 'string',
                                                    'length'  => 50,
                                                    'notnull' => true,
-                                                   'primary' => true);
+                                                   'primary' => true];
 
-            $columns['object_key'] = array('type'            => 'string',
+            $columns['object_key'] = ['type'            => 'string',
                                                    'length'  => 250,
                                                    'notnull' => true,
-                                                   'primary' => true);
+                                                   'primary' => true];
 
-            $columns['user_ident'] = array('type'            => 'string',
+            $columns['user_ident'] = ['type'            => 'string',
                                                    'length'  => 50,
-                                                   'notnull' => true);
+                                                   'notnull' => true];
 
-            $columns['timestamp_obtained'] = array('type'    => 'integer',
+            $columns['timestamp_obtained'] = ['type'    => 'integer',
                                                    'length'  => 10,
-                                                   'notnull' => true);
+                                                   'notnull' => true];
 
-            $options = array('primary' => array('object_type', 'object_key'));
+            $options = ['primary' => ['object_type', 'object_key']];
             try {
                 $this->conn->export->createTable($this->_lockTable, $columns, $options);
             } catch (Exception $e) {
@@ -93,8 +93,8 @@ class Doctrine_Locking_Manager_Pessimistic
     /**
      * Obtains a lock on a {@link Doctrine_Record}
      *
-     * @param  Doctrine_Record $record     The record that has to be locked
-     * @param  mixed           $userIdent  A unique identifier of the locking user
+     * @param  Doctrine_Record $record    The record that has to be locked
+     * @param  mixed           $userIdent A unique identifier of the locking user
      * @return boolean  TRUE if the locking was successful, FALSE if another user
      *                  holds a lock on this record
      * @throws Doctrine_Locking_Exception  If the locking failed due to database errors
@@ -116,9 +116,11 @@ class Doctrine_Locking_Manager_Pessimistic
             $dbh = $this->conn->getDbh();
             $this->conn->beginTransaction();
 
-            $stmt = $dbh->prepare('INSERT INTO ' . $this->_lockTable
+            $stmt = $dbh->prepare(
+                'INSERT INTO ' . $this->_lockTable
                                   . ' (object_type, object_key, user_ident, timestamp_obtained)'
-                                  . ' VALUES (:object_type, :object_key, :user_ident, :ts_obtained)');
+                . ' VALUES (:object_type, :object_key, :user_ident, :ts_obtained)'
+            );
 
             $stmt->bindParam(':object_type', $objectType);
             $stmt->bindParam(':object_key', $key);
@@ -139,11 +141,13 @@ class Doctrine_Locking_Manager_Pessimistic
                 if ($lockingUserIdent !== null && $lockingUserIdent == $userIdent) {
                     $gotLock = true; // The requesting user already has a lock
                     // Update timestamp
-                    $stmt = $dbh->prepare('UPDATE ' . $this->_lockTable
+                    $stmt = $dbh->prepare(
+                        'UPDATE ' . $this->_lockTable
                                           . ' SET timestamp_obtained = :ts'
                                           . ' WHERE object_type = :object_type AND'
                                           . ' object_key  = :object_key  AND'
-                                          . ' user_ident  = :user_ident');
+                        . ' user_ident  = :user_ident'
+                    );
                     $stmt->bindParam(':ts', $time);
                     $stmt->bindParam(':object_type', $objectType);
                     $stmt->bindParam(':object_key', $key);
@@ -180,10 +184,12 @@ class Doctrine_Locking_Manager_Pessimistic
 
         try {
             $dbh  = $this->conn->getDbh();
-            $stmt = $dbh->prepare("DELETE FROM $this->_lockTable WHERE
+            $stmt = $dbh->prepare(
+                "DELETE FROM $this->_lockTable WHERE
                                         object_type = :object_type AND
                                         object_key  = :object_key  AND
-                                        user_ident  = :user_ident");
+                                        user_ident  = :user_ident"
+            );
             $stmt->bindParam(':object_type', $objectType);
             $stmt->bindParam(':object_key', $key);
             $stmt->bindParam(':user_ident', $userIdent);
@@ -200,8 +206,8 @@ class Doctrine_Locking_Manager_Pessimistic
     /**
      * Gets the unique user identifier of a lock
      *
-     * @param string $objectType  The type of the object (component name)
-     * @param mixed  $key         The unique key of the object. Can be string or array
+     * @param string $objectType The type of the object (component name)
+     * @param mixed  $key        The unique key of the object. Can be string or array
      *
      * @return null|scalar The unique user identifier for the specified lock
      *
@@ -216,8 +222,10 @@ class Doctrine_Locking_Manager_Pessimistic
 
         try {
             $dbh  = $this->conn->getDbh();
-            $stmt = $dbh->prepare('SELECT user_ident FROM ' . $this->_lockTable
-                                  . ' WHERE object_type = :object_type AND object_key = :object_key');
+            $stmt = $dbh->prepare(
+                'SELECT user_ident FROM ' . $this->_lockTable
+                . ' WHERE object_type = :object_type AND object_key = :object_key'
+            );
             $stmt->bindParam(':object_type', $objectType);
             $stmt->bindParam(':object_key', $key);
             $success = $stmt->execute();
@@ -238,7 +246,7 @@ class Doctrine_Locking_Manager_Pessimistic
      * Gets the identifier that identifies the owner of the lock on the given
      * record.
      *
-     * @param Doctrine_Record $lockedRecord  The record.
+     * @param  Doctrine_Record $lockedRecord The record.
      * @return mixed The unique user identifier that identifies the owner of the lock.
      */
     public function getLockOwner($lockedRecord)
@@ -253,9 +261,9 @@ class Doctrine_Locking_Manager_Pessimistic
      *
      * When called without parameters all locks older than 15 minutes are released.
      *
-     * @param  integer $age  The maximum valid age of locks in seconds
-     * @param  string  $objectType  The type of the object (component name)
-     * @param  mixed   $userIdent The unique identifier of the locking user
+     * @param  integer $age        The maximum valid age of locks in seconds
+     * @param  string  $objectType The type of the object (component name)
+     * @param  mixed   $userIdent  The unique identifier of the locking user
      * @return integer The number of locks that have been released
      * @throws Doctrine_Locking_Exception If the release process failed due to database errors
      */

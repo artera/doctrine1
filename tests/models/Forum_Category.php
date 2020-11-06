@@ -10,19 +10,28 @@ class Forum_Category extends Doctrine_Record
     }
     public function setUp()
     {
-        $this->hasMany('Forum_Category as Subcategory', array(
+        $this->hasMany(
+            'Forum_Category as Subcategory',
+            [
             'local'   => 'id',
             'foreign' => 'parent_category_id'
-        ));
+            ]
+        );
 
-        $this->hasOne('Forum_Category as Parent', array(
+        $this->hasOne(
+            'Forum_Category as Parent',
+            [
             'local'   => 'parent_category_id',
             'foreign' => 'id'
-        ));
+            ]
+        );
 
-        $this->hasOne('Forum_Category as Rootcategory', array(
+        $this->hasOne(
+            'Forum_Category as Rootcategory',
+            [
             'local'   => 'root_category_id',
             'foreign' => 'id'
-        ));
+            ]
+        );
     }
 }

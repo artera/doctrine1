@@ -20,15 +20,15 @@
 /**
  * APC Cache Driver
  *
- * @package     Doctrine
- * @subpackage  Cache
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 7490 $
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @author      Jonathan H. Wage <jonwage@gmail.com>
- * @author      Ross Motley <ross.motley@gmail.com>
+ * @package    Doctrine
+ * @subpackage Cache
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 7490 $
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @author     Jonathan H. Wage <jonwage@gmail.com>
+ * @author     Ross Motley <ross.motley@gmail.com>
  */
 class Doctrine_Cache_Apcu extends Doctrine_Cache_Driver
 {
@@ -37,7 +37,7 @@ class Doctrine_Cache_Apcu extends Doctrine_Cache_Driver
      *
      * @throws Doctrine_Cache_Exception
      */
-    public function __construct($options = array())
+    public function __construct($options = [])
     {
         if (!function_exists('apcu_fetch')) {
             throw new Doctrine_Cache_Exception('The apcu extension must be loaded for using this backend !');
@@ -64,7 +64,9 @@ class Doctrine_Cache_Apcu extends Doctrine_Cache_Driver
             $lifeTime = 0;
         }
 
-        /** @var bool $result */
+        /**
+ * @var bool $result
+*/
         $result = apcu_store($id, $data, $lifeTime);
 
         return $result;
@@ -72,7 +74,9 @@ class Doctrine_Cache_Apcu extends Doctrine_Cache_Driver
 
     protected function _doDelete($id)
     {
-        /** @var bool $result */
+        /**
+ * @var bool $result
+*/
         $result = apcu_delete($id);
 
         return $result;
@@ -81,7 +85,7 @@ class Doctrine_Cache_Apcu extends Doctrine_Cache_Driver
     protected function _getCacheKeys()
     {
         $ci   = apcu_cache_info();
-        $keys = array();
+        $keys = [];
 
         foreach ($ci['cache_list'] as $entry) {
             $keys[] = $entry['info'];

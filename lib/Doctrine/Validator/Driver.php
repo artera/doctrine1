@@ -22,13 +22,13 @@
 /**
  * Doctrine_Validator_Driver
  *
- * @package     Doctrine
- * @subpackage  Validator
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 1080 $
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @package    Doctrine
+ * @subpackage Validator
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 1080 $
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
 class Doctrine_Validator_Driver
 {
@@ -51,7 +51,7 @@ class Doctrine_Validator_Driver
      * __get
      * an alias for getOption
      *
-     * @param string $arg
+     * @param  string $arg
      * @return mixed
      */
     public function __get($arg)
@@ -75,8 +75,8 @@ class Doctrine_Validator_Driver
     /**
      * sets given value to an argument
      *
-     * @param string $arg          the name of the option to be changed
-     * @param mixed $value        the value of the option
+     * @param  string $arg   the name of the option to be changed
+     * @param  mixed  $value the value of the option
      * @return $this    this object
      */
     public function __set($arg, $value)
@@ -89,13 +89,13 @@ class Doctrine_Validator_Driver
     /**
      * returns the value of an argument
      *
-     * @param string $arg          the name of the option to retrieve
+     * @param  string $arg the name of the option to retrieve
      * @return mixed        the value of the option
      */
     public function getArg($arg)
     {
         if (! isset($this->args[$arg])) {
-            throw new Doctrine_Validator_Exception(array('Unknown option ' . $arg));
+            throw new Doctrine_Validator_Exception(['Unknown option ' . $arg]);
         }
 
         return $this->args[$arg];
@@ -104,8 +104,8 @@ class Doctrine_Validator_Driver
     /**
      * sets given value to an argument
      *
-     * @param string $arg          the name of the option to be changed
-     * @param mixed $value        the value of the option
+     * @param  string $arg   the name of the option to be changed
+     * @param  mixed  $value the value of the option
      * @return $this    this object
      */
     public function setArg($arg, $value)

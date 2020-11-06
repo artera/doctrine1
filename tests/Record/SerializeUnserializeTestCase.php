@@ -19,13 +19,13 @@
 /**
  * Doctrine_Record_SerializeUnserialize_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Record_SerializeUnserialize_TestCase extends Doctrine_UnitTestCase
 {
@@ -48,7 +48,7 @@ class Doctrine_Record_SerializeUnserialize_TestCase extends Doctrine_UnitTestCas
         $object->integertest   = 13;
         $object->floattest     = 0.13;
         $object->stringtest    = 'string';
-        $object->arraytest     = array(1, 2, 3);
+        $object->arraytest     = [1, 2, 3];
         $object->objecttest    = new TestObject(13);
         $object->enumtest      = 'java';
         $object->blobtest      = 'blobtest';

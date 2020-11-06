@@ -20,13 +20,13 @@
  * Doctrine_Query_SelectExpression_TestCase
  * This test case is used for testing DQL SELECT expressions functionality
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Query_SelectExpression_TestCase extends Doctrine_UnitTestCase
 {
@@ -35,7 +35,7 @@ class Doctrine_Query_SelectExpression_TestCase extends Doctrine_UnitTestCase
     }
     public function prepareTables()
     {
-        $this->tables = array('User');
+        $this->tables = ['User'];
         parent::prepareTables();
     }
     public function testAdditionExpression()

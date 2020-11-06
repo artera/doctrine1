@@ -24,13 +24,13 @@
  *
  * Used for exporting a schema to a yaml file
  *
- * @package     Doctrine
- * @subpackage  Export
- * @link        www.doctrine-project.org
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @version     $Revision: 1838 $
- * @author      Nicolas Bérard-Nault <nicobn@gmail.com>
- * @author      Jonathan H. Wage <jwage@mac.com>
+ * @package    Doctrine
+ * @subpackage Export
+ * @link       www.doctrine-project.org
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @version    $Revision: 1838 $
+ * @author     Nicolas Bérard-Nault <nicobn@gmail.com>
+ * @author     Jonathan H. Wage <jwage@mac.com>
  */
 class Doctrine_Export_Schema
 {
@@ -39,12 +39,12 @@ class Doctrine_Export_Schema
      *
      * Build schema array that can be dumped to file
      *
-     * @param string $directory  The directory of models to build the schema from
-     * @param array $models      The array of model names to build the schema for
-     * @param integer $modelLoading The model loading strategy to use to load the models from the passed directory
+     * @param  string  $directory    The directory of models to build the schema from
+     * @param  array   $models       The array of model names to build the schema for
+     * @param  integer $modelLoading The model loading strategy to use to load the models from the passed directory
      * @return array
      */
-    public function buildSchema($directory = null, $models = array(), $modelLoading = null)
+    public function buildSchema($directory = null, $models = [], $modelLoading = null)
     {
         if ($directory !== null) {
             $loadedModels = Doctrine_Core::filterInvalidModels(Doctrine_Core::loadModels($directory, $modelLoading));
@@ -52,12 +52,12 @@ class Doctrine_Export_Schema
             $loadedModels = Doctrine_Core::getLoadedModels();
         }
 
-        $array = array();
+        $array = [];
 
         $parent = new ReflectionClass('Doctrine_Record');
 
-        $sql = array();
-        $fks = array();
+        $sql = [];
+        $fks = [];
 
         // we iterate through the diff of previously declared classes
         // and currently declared classes
@@ -70,9 +70,9 @@ class Doctrine_Export_Schema
 
             $data = $recordTable->getExportableFormat();
 
-            $table               = array();
+            $table               = [];
             $table['connection'] = $recordTable->getConnection()->getName();
-            $remove              = array('ptype', 'ntype', 'alltypes');
+            $remove              = ['ptype', 'ntype', 'alltypes'];
             // Fix explicit length in schema, concat it to type in this format: type(length)
             foreach ($data['columns'] as $name => $column) {
                 if (isset($column['length']) && $column['length'] && isset($column['scale']) && $column['scale']) {
@@ -135,14 +135,14 @@ class Doctrine_Export_Schema
     /**
      * exportSchema
      *
-     * @param string $schema
-     * @param string $format
-     * @param string $directory
-     * @param array $models
-     * @param integer $modelLoading The model loading strategy to use to load the models from the passed directory
+     * @param  string  $schema
+     * @param  string  $format
+     * @param  string  $directory
+     * @param  array   $models
+     * @param  integer $modelLoading The model loading strategy to use to load the models from the passed directory
      * @return int|false|string
      */
-    public function exportSchema($schema, $format = 'yml', $directory = null, $models = array(), $modelLoading = null)
+    public function exportSchema($schema, $format = 'yml', $directory = null, $models = [], $modelLoading = null)
     {
         $array = $this->buildSchema($directory, $models, $modelLoading);
 

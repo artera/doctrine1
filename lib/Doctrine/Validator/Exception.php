@@ -22,13 +22,13 @@
 /**
  * Doctrine_Validator_Exception
  *
- * @package     Doctrine
- * @subpackage  Validator
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 7490 $
+ * @package            Doctrine
+ * @subpackage         Validator
+ * @author             Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license            http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link               www.doctrine-project.org
+ * @since              1.0
+ * @version            $Revision: 7490 $
  * @phpstan-implements IteratorAggregate<Doctrine_Record>
  */
 class Doctrine_Validator_Exception extends Doctrine_Exception implements Countable, IteratorAggregate
@@ -36,7 +36,7 @@ class Doctrine_Validator_Exception extends Doctrine_Exception implements Countab
     /**
      * @var array $invalid
      */
-    private $invalid = array();
+    private $invalid = [];
 
     /**
      * @param array $invalid
@@ -87,7 +87,7 @@ class Doctrine_Validator_Exception extends Doctrine_Exception implements Countab
      * to tall errorstack objects in the exception
      *
      * @param callable $function Either string with function name or array with object,
-     * functionname. See call_user_func in php manual for more inforamtion
+     *                           functionname. See call_user_func in php manual for more inforamtion
      *
      * @return void
      */

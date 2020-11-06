@@ -1,11 +1,11 @@
 <?php
 class RecordHookTest extends Doctrine_Record
 {
-    protected $_messages = array();
+    protected $_messages = [];
 
     public function setTableDefinition()
     {
-        $this->hasColumn('name', 'string', null, array('primary' => true));
+        $this->hasColumn('name', 'string', null, ['primary' => true]);
     }
     public function preSave($event)
     {

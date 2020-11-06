@@ -8,6 +8,6 @@ class Auth extends Doctrine_Record
     }
     public function setUp()
     {
-        $this->hasOne('Role', array('local' => 'roleid', 'foreign' => 'id'));
+        $this->hasOne('Role', ['local' => 'roleid', 'foreign' => 'id']);
     }
 }

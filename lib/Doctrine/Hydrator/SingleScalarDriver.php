@@ -19,23 +19,23 @@
 /**
  * Returns the first row and first column single scalar value
  *
- * @package     Doctrine
- * @subpackage  Hydrate
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @package    Doctrine
+ * @subpackage Hydrate
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision$
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
 class Doctrine_Hydrator_SingleScalarDriver extends Doctrine_Hydrator_Abstract
 {
     /**
-     * @param Doctrine_Connection_Statement $stmt
+     * @param  Doctrine_Connection_Statement $stmt
      * @return array|scalar
      */
     public function hydrateResultSet($stmt)
     {
-        $result = array();
+        $result = [];
         while (($val = $stmt->fetchColumn()) !== false) {
             $result[] = $val;
         }

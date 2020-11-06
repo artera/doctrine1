@@ -22,14 +22,14 @@
 /**
  * Doctrine_Connection_Mysql
  *
- * @package     Doctrine
- * @subpackage  Connection
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @author      Lukas Smith <smith@pooteeweet.org> (PEAR MDB2 library)
- * @version     $Revision: 7490 $
- * @link        www.doctrine-project.org
- * @since       1.0
+ * @package    Doctrine
+ * @subpackage Connection
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @author     Lukas Smith <smith@pooteeweet.org> (PEAR MDB2 library)
+ * @version    $Revision: 7490 $
+ * @link       www.doctrine-project.org
+ * @since      1.0
  *
  * @property Doctrine_DataDict_Mysql $dataDict
  */
@@ -43,13 +43,13 @@ class Doctrine_Connection_Mysql extends Doctrine_Connection_Common
     /**
      * the constructor
      *
-     * @param Doctrine_Manager $manager
-     * @param PDO|Doctrine_Adapter_Interface $adapter     database handler
+     * @param Doctrine_Manager               $manager
+     * @param PDO|Doctrine_Adapter_Interface $adapter database handler
      */
     public function __construct(Doctrine_Manager $manager, $adapter)
     {
         $this->setAttribute(Doctrine_Core::ATTR_DEFAULT_TABLE_TYPE, 'INNODB');
-        $this->supported = array(
+        $this->supported = [
                           'sequences'            => 'emulated',
                           'indexes'              => true,
                           'affected_rows'        => true,
@@ -68,22 +68,22 @@ class Doctrine_Connection_Mysql extends Doctrine_Connection_Common
                           'prepared_statements'  => 'emulated',
                           'identifier_quoting'   => true,
                           'pattern_escaping'     => true
-                          );
+                          ];
 
-        $this->properties['string_quoting'] = array('start'          => "'",
+        $this->properties['string_quoting'] = ['start'          => "'",
                                                     'end'            => "'",
                                                     'escape'         => '\\',
-                                                    'escape_pattern' => '\\');
+                                                    'escape_pattern' => '\\'];
 
-        $this->properties['identifier_quoting'] = array('start'  => '`',
+        $this->properties['identifier_quoting'] = ['start'  => '`',
                                                         'end'    => '`',
-                                                        'escape' => '`');
+                                                        'escape' => '`'];
 
-        $this->properties['sql_comments'] = array(
-                                            array('start' => '-- ', 'end' => "\n", 'escape' => false),
-                                            array('start' => '#', 'end' => "\n", 'escape' => false),
-                                            array('start' => '/*', 'end' => '*/', 'escape' => false),
-                                            );
+        $this->properties['sql_comments'] = [
+                                            ['start' => '-- ', 'end' => "\n", 'escape' => false],
+                                            ['start' => '#', 'end' => "\n", 'escape' => false],
+                                            ['start' => '/*', 'end' => '*/', 'escape' => false],
+                                            ];
 
         $this->properties['varchar_max_length'] = 255;
 
@@ -95,7 +95,7 @@ class Doctrine_Connection_Mysql extends Doctrine_Connection_Common
      * PDO emulate prepares is required to avoid bugs on mysql < 5.1
      * when trying to prepare DROP DATABASE or CREATE DATABASE statements
      *
-     * @see Doctrine_Connection :: connect();
+     * @see    Doctrine_Connection :: connect();
      * @return boolean connected
      */
     public function connect()
@@ -120,7 +120,7 @@ class Doctrine_Connection_Mysql extends Doctrine_Connection_Common
     /**
      * Set the charset on the current connection
      *
-     * @param string    $charset
+     * @param string $charset
      *
      * @return void
      */
@@ -144,54 +144,40 @@ class Doctrine_Connection_Mysql extends Doctrine_Connection_Common
      *
      * @access public
      *
-     * @param Doctrine_Table $table name of the table on which the REPLACE query will
-     *  be executed.
-     * @param array $fields associative array that describes the fields and the
-     *  values that will be inserted or updated in the specified table. The
-     *  indexes of the array are the names of all the fields of the table. The
-     *  values of the array are also associative arrays that describe the
-     *  values and other properties of the table fields.
-     *
-     *  Here follows a list of field properties that need to be specified:
-     *
-     *    value:
-     *          Value to be assigned to the specified field. This value may be
-     *          of specified in database independent type format as this
-     *          function can perform the necessary datatype conversions.
-     *
-     *    Default:
-     *          this property is required unless the Null property
-     *          is set to 1.
-     *
-     *    type
-     *          Name of the type of the field. Currently, all types Metabase
-     *          are supported except for clob and blob.
-     *
-     *    Default: no type conversion
-     *
-     *    null
-     *          Boolean property that indicates that the value for this field
-     *          should be set to null.
-     *
-     *          The default value for fields missing in INSERT queries may be
-     *          specified the definition of a table. Often, the default value
-     *          is already null, but since the REPLACE may be emulated using
-     *          an UPDATE query, make sure that all fields of the table are
-     *          listed in this function argument array.
-     *
-     *    Default: 0
-     *
-     *    key
-     *          Boolean property that indicates that this field should be
-     *          handled as a primary key or at least as part of the compound
-     *          unique index of the table that will determine the row that will
-     *          updated if it exists or inserted a new row otherwise.
-     *
-     *          This function will fail if no key field is specified or if the
-     *          value of a key field is set to null because fields that are
-     *          part of unique index they may not be null.
-     *
-     *    Default: 0
+     * @param Doctrine_Table $table  name of the table on which the REPLACE query will
+     *                               be executed.
+     * @param array          $fields associative array that describes the fields and the
+     *                               values that will be inserted or updated in the
+     *                               specified table. The indexes of the array are the
+     *                               names of all the fields of the table. The values of
+     *                               the array are also associative arrays that describe
+     *                               the values and other properties of the table
+     *                               fields. Here follows a list of field properties
+     *                               that need to be specified: value: Value to be
+     *                               assigned to the specified field. This value may be
+     *                               of specified in database independent type format as
+     *                               this function can perform the necessary datatype
+     *                               conversions. Default: this property is required
+     *                               unless the Null property is set to 1. type Name of
+     *                               the type of the field. Currently, all types
+     *                               Metabase are supported except for clob and blob.
+     *                               Default: no type conversion null Boolean property
+     *                               that indicates that the value for this field should
+     *                               be set to null. The default value for fields
+     *                               missing in INSERT queries may be specified the
+     *                               definition of a table. Often, the default value is
+     *                               already null, but since the REPLACE may be emulated
+     *                               using an UPDATE query, make sure that all fields of
+     *                               the table are listed in this function argument
+     *                               array. Default: 0 key Boolean property that
+     *                               indicates that this field should be handled as a
+     *                               primary key or at least as part of the compound
+     *                               unique index of the table that will determine the
+     *                               row that will updated if it exists or inserted a
+     *                               new row otherwise. This function will fail if no
+     *                               key field is specified or if the value of a key
+     *                               field is set to null because fields that are part
+     *                               of unique index they may not be null. Default: 0
      *
      * @return integer      the number of affected rows
      */
@@ -201,9 +187,9 @@ class Doctrine_Connection_Mysql extends Doctrine_Connection_Common
             throw new Doctrine_Connection_Exception('Not specified which fields are keys');
         }
 
-        $columns = array();
-        $values  = array();
-        $params  = array();
+        $columns = [];
+        $values  = [];
+        $params  = [];
         foreach ($fields as $fieldName => $value) {
             $columns[] = $table->getColumnName($fieldName);
             $values[]  = '?';

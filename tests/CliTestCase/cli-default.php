@@ -5,10 +5,10 @@
  * @author Dan Bettles <danbettles@yahoo.co.uk>
  */
 
-require_once(dirname(__FILE__, 3) . '/lib/Doctrine.php');
-spl_autoload_register(array('Doctrine', 'autoload'));
+require_once dirname(__FILE__, 3) . '/lib/Doctrine.php';
+spl_autoload_register(['Doctrine', 'autoload']);
 
-require_once(dirname(__FILE__) . '/TestTask02.php');
+require_once dirname(__FILE__) . '/TestTask02.php';
 
 $cli = new Doctrine_Cli();
 $cli->run($_SERVER['argv']);

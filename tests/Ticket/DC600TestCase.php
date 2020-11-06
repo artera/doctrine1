@@ -19,13 +19,13 @@
 /**
  * Doctrine_Ticket_DC600_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Ticket_DC600_TestCase extends Doctrine_UnitTestCase
 {
@@ -54,7 +54,7 @@ class Doctrine_Ticket_DC600_TestCase extends Doctrine_UnitTestCase
         $this->_conn = Doctrine_Manager::connection();
 
         // Set up the DB cache (uses same connection as rest of queries)
-        $this->_cacheDriver = new Doctrine_Cache_Db(array('connection' => $this->_conn, 'tableName' => 'dc600_cache'));
+        $this->_cacheDriver = new Doctrine_Cache_Db(['connection' => $this->_conn, 'tableName' => 'dc600_cache']);
 
         // We need a profiler in order to look at the executed queries and their bound parameters
         $this->_profiler = new Doctrine_Connection_Profiler();
@@ -72,20 +72,20 @@ class Doctrine_Ticket_DC600_TestCase extends Doctrine_UnitTestCase
      */
     public function testQueryCacheKeyNotModifiedForInWhereWithShrinkingArray()
     {
-        $array = array(1, 2, 3, 4);
+        $array = [1, 2, 3, 4];
 
         $query = Doctrine_Query::create()
             ->from('DC600Model d')
-            ->where('d.some_id IN ?', array($array));
+            ->where('d.some_id IN ?', [$array]);
         // Running this query will seed the cache
         $query->execute();
 
         // Change the number of elements in the array
-        $array = array(1, 2, 3);
+        $array = [1, 2, 3];
 
         $query = Doctrine_Query::create()
             ->from('DC600Model d')
-            ->where('d.some_id IN ?', array($array));
+            ->where('d.some_id IN ?', [$array]);
         // This query should fetch the assembled query from the query cache (even though the paramter count is different)
         // When using the Mysql adapter, this particular query will throw a PDO exception, this apparently doesn't happen in sqlite though
         $query->execute();
@@ -115,20 +115,20 @@ class Doctrine_Ticket_DC600_TestCase extends Doctrine_UnitTestCase
      */
     public function testQueryCacheKeyNotModifiedForInWhereWithGrowingArray()
     {
-        $array = array(1, 2, 3, 4);
+        $array = [1, 2, 3, 4];
 
         $query = Doctrine_Query::create()
             ->from('DC600Model d')
-            ->where('d.some_id IN ?', array($array));
+            ->where('d.some_id IN ?', [$array]);
         // Running this query will seed the cache
         $query->execute();
 
         // Change the number of elements in the array
-        $array = array(1, 2, 3, 4, 5);
+        $array = [1, 2, 3, 4, 5];
 
         $query = Doctrine_Query::create()
             ->from('DC600Model d')
-            ->where('d.some_id IN ?', array($array));
+            ->where('d.some_id IN ?', [$array]);
         // This query should fetch the assembled query from the query cache (even though the paramter count is different)
         // this throws an exception in sqlite as well (whereas the shrinking array test above does not)
         $query->execute();
@@ -142,17 +142,17 @@ class Doctrine_Ticket_DC600_TestCase extends Doctrine_UnitTestCase
     {
         $query = Doctrine_Query::create();
 
-        $array = array(
-            array(1, 2, 3, 4),
-            array(1, 2, 3, 4, 5)
-        );
+        $array = [
+            [1, 2, 3, 4],
+            [1, 2, 3, 4, 5]
+        ];
 
         $hash = $query->calculateQueryCacheHash($array);
 
-        $array = array(
-            array(9, 8, 7, 6),
-            array(5, 4, 3, 2, 1)
-        );
+        $array = [
+            [9, 8, 7, 6],
+            [5, 4, 3, 2, 1]
+        ];
 
         $this->assertEqual($hash, $query->calculateQueryCacheHash($array));
     }
@@ -165,39 +165,39 @@ class Doctrine_Ticket_DC600_TestCase extends Doctrine_UnitTestCase
     {
         $query = Doctrine_Query::create();
 
-        $array = array(
-            array(1, 2, 3, 4),
-            array(1, 2, 3, 4, 5)
-        );
+        $array = [
+            [1, 2, 3, 4],
+            [1, 2, 3, 4, 5]
+        ];
 
         $hash = $query->calculateQueryCacheHash($array);
 
-        $array = array(
-            array(1, 2, 3, 4, 5),
-            array(1, 2, 3, 4)
-        );
+        $array = [
+            [1, 2, 3, 4, 5],
+            [1, 2, 3, 4]
+        ];
 
         $this->assertNotEqual($hash, $query->calculateQueryCacheHash($array));
     }
 
     public function testQueryCacheKeyNotModifiedForInWhereWithMultipleInClausesWithGrowingArray()
     {
-        $array = array(1, 2, 3, 4);
+        $array = [1, 2, 3, 4];
 
         $query = Doctrine_Query::create()
             ->from('DC600Model d')
-            ->where('d.some_id IN ?', array($array))
-            ->andWhere('d.id IN ?', array($array));
+            ->where('d.some_id IN ?', [$array])
+            ->andWhere('d.id IN ?', [$array]);
         // Running this query will seed the cache
         $query->execute();
 
         // Change the number of elements in the array
-        $array = array(1, 2, 3, 4, 5);
+        $array = [1, 2, 3, 4, 5];
 
         $query = Doctrine_Query::create()
             ->from('DC600Model d')
-            ->where('d.some_id IN ?', array($array))
-            ->andWhere('d.id IN ?', array($array));
+            ->where('d.some_id IN ?', [$array])
+            ->andWhere('d.id IN ?', [$array]);
         // This query should fetch the assembled query from the query cache (even though the paramter count is different)
         // this throws an exception in sqlite as well (whereas the shrinking array test above does not)
         $query->execute();
@@ -212,15 +212,24 @@ class DC600Model extends Doctrine_Record
     public function setTableDefinition()
     {
         $this->setTableName('dc600_model');
-        $this->hasColumn('id', 'integer', 8, array(
+        $this->hasColumn(
+            'id',
+            'integer',
+            8,
+            [
              'type'          => 'integer',
              'fixed'         => 0,
              'unsigned'      => true,
              'primary'       => true,
              'autoincrement' => true,
              'length'        => '8',
-             ));
-        $this->hasColumn('some_id', 'integer', 8, array(
+            ]
+        );
+        $this->hasColumn(
+            'some_id',
+            'integer',
+            8,
+            [
              'type'          => 'integer',
              'fixed'         => 0,
              'unsigned'      => true,
@@ -228,7 +237,8 @@ class DC600Model extends Doctrine_Record
              'notnull'       => true,
              'autoincrement' => false,
              'length'        => '8',
-             ));
+            ]
+        );
     }
 
     public function setUp()
@@ -245,23 +255,37 @@ class DC600Cache extends Doctrine_Record
     public function setTableDefinition()
     {
         $this->setTableName('dc600_cache');
-        $this->hasColumn('id', 'string', 64, array(
+        $this->hasColumn(
+            'id',
+            'string',
+            64,
+            [
              'type'          => 'string',
              'fixed'         => 0,
              'unsigned'      => false,
              'primary'       => true,
              'autoincrement' => false,
              'length'        => '64',
-             ));
-        $this->hasColumn('data', 'string', 3000, array(
+            ]
+        );
+        $this->hasColumn(
+            'data',
+            'string',
+            3000,
+            [
              'type'          => 'string',
              'fixed'         => 0,
              'unsigned'      => false,
              'primary'       => false,
              'autoincrement' => false,
              'length'        => '3000',
-             ));
-        $this->hasColumn('expire', 'timestamp', 25, array(
+            ]
+        );
+        $this->hasColumn(
+            'expire',
+            'timestamp',
+            25,
+            [
              'type'          => 'timestamp',
              'fixed'         => 0,
              'unsigned'      => false,
@@ -269,7 +293,8 @@ class DC600Cache extends Doctrine_Record
              'notnull'       => false,
              'autoincrement' => false,
              'length'        => '25',
-             ));
+            ]
+        );
     }
 
     public function setUp()

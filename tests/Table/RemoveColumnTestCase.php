@@ -19,13 +19,13 @@
 /**
  * Doctrine_TableRemoveColumn_TestCase
  *
- * @package     Doctrine
- * @author      Dennis Verspuij <dennis.verspuij@gmail.com>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Dennis Verspuij <dennis.verspuij@gmail.com>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Table_RemoveColumn_TestCase extends Doctrine_UnitTestCase
 {
@@ -74,7 +74,7 @@ class RemoveColumnTest extends Doctrine_Record
 {
     public function setTableDefinition()
     {
-        $this->hasColumn('AA', 'integer', null, array('primary' => true));
+        $this->hasColumn('AA', 'integer', null, ['primary' => true]);
         $this->hasColumn('bb', 'integer');
         $this->hasColumn('CC', 'string', 10);
         $this->hasColumn('dd', 'string', 10);

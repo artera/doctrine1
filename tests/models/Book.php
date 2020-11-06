@@ -3,10 +3,13 @@ class Book extends Doctrine_Record
 {
     public function setUp()
     {
-        $this->hasMany('Author', array('local' => 'id', 'foreign' => 'book_id'));
-        $this->hasOne('User', array('local'    => 'user_id',
+        $this->hasMany('Author', ['local' => 'id', 'foreign' => 'book_id']);
+        $this->hasOne(
+            'User',
+            ['local'    => 'user_id',
                                     'foreign'  => 'id',
-                                    'onDelete' => 'CASCADE'));
+            'onDelete' => 'CASCADE']
+        );
     }
     public function setTableDefinition()
     {

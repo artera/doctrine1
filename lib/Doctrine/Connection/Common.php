@@ -22,23 +22,23 @@
 /**
  * standard connection, the parent of pgsql, mysql and sqlite
  *
- * @package     Doctrine
- * @subpackage  Connection
- * @link        www.doctrine-project.org
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @since       1.0
- * @version     $Revision: 7490 $
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @package    Doctrine
+ * @subpackage Connection
+ * @link       www.doctrine-project.org
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @since      1.0
+ * @version    $Revision: 7490 $
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
 class Doctrine_Connection_Common extends Doctrine_Connection
 {
     /**
      * Adds an driver-specific LIMIT clause to the query
      *
-     * @param string $query
-     * @param mixed $limit
-     * @param mixed $offset
-     * @param bool $isManip
+     * @param  string $query
+     * @param  mixed  $limit
+     * @param  mixed  $offset
+     * @param  bool   $isManip
      * @return string
      */
     public function modifyLimitQuery($query, $limit = false, $offset = false, $isManip = false)

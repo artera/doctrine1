@@ -8,8 +8,11 @@ class CascadeDeleteRelatedTest2 extends Doctrine_Record
     }
     public function setUp()
     {
-        $this->hasOne('CascadeDeleteRelatedTest', array('local'    => 'cscd_id',
+        $this->hasOne(
+            'CascadeDeleteRelatedTest',
+            ['local'    => 'cscd_id',
                                                         'foreign'  => 'id',
-                                                        'onDelete' => 'SET NULL'));
+            'onDelete' => 'SET NULL']
+        );
     }
 }

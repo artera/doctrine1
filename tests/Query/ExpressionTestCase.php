@@ -19,13 +19,13 @@
 /**
  * Doctrine_Query_Expression_TestCase
  *
- * @package     Doctrine
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @version     $Revision$
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
+ * @package  Doctrine
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @version  $Revision$
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
  */
 class Doctrine_Query_Expression_TestCase extends Doctrine_UnitTestCase
 {
@@ -122,12 +122,12 @@ class Doctrine_Query_Expression_TestCase extends Doctrine_UnitTestCase
         $radius = '33';
 
         $query->select("l.*, GeoDistKM(l.lat, l.lon, $lat, $lon) distance")
-              ->from('Location l')
-              ->where('l.id <> ? AND l.lat > ?', array(1, 0))
-              ->having("distance < $radius")
-              ->orderby('distance ASC')
-              ->groupby('l.id')
-              ->limit(5);
+            ->from('Location l')
+            ->where('l.id <> ? AND l.lat > ?', [1, 0])
+            ->having("distance < $radius")
+            ->orderby('distance ASC')
+            ->groupby('l.id')
+            ->limit(5);
 
         $this->assertEqual($query->getSqlQuery(), 'SELECT l.id AS l__id, l.lat AS l__lat, l.lon AS l__lon, GeoDistKM(l.lat, l.lon, 13.23, 33.23) AS l__0 FROM location l WHERE (l.id <> ? AND l.lat > ?) GROUP BY l.id HAVING l__0 < 33 ORDER BY l__0 ASC LIMIT 5');
 

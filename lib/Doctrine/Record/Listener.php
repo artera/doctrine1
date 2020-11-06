@@ -19,27 +19,27 @@
 /**
  * Doctrine_Record_Listener
  *
- * @package     Doctrine
- * @subpackage  Record
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package    Doctrine
+ * @subpackage Record
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision$
  */
 class Doctrine_Record_Listener implements Doctrine_Record_Listener_Interface
 {
     /**
      * @var array $_options        an array containing options
      */
-    protected $_options = array('disabled' => false);
+    protected $_options = ['disabled' => false];
 
     /**
      * setOption
      * sets an option in order to allow flexible listener
      *
-     * @param mixed $name              the name of the option to set
-     * @param mixed $value              the value of the option
+     * @param mixed $name  the name of the option to set
+     * @param mixed $value the value of the option
      *
      * @return void
      */
@@ -67,7 +67,7 @@ class Doctrine_Record_Listener implements Doctrine_Record_Listener_Interface
      * getOption
      * returns the value of given option
      *
-     * @param string $name  the name of the option
+     * @param  string $name the name of the option
      * @return mixed        the value of given option
      */
     public function getOption($name)

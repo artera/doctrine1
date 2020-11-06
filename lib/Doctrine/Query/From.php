@@ -22,13 +22,13 @@
 /**
  * Doctrine_Query_From
  *
- * @package     Doctrine
- * @subpackage  Query
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 7490 $
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @package    Doctrine
+ * @subpackage Query
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 7490 $
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
 class Doctrine_Query_From extends Doctrine_Query_Part
 {
@@ -36,8 +36,8 @@ class Doctrine_Query_From extends Doctrine_Query_Part
      * DQL FROM PARSER
      * parses the FROM part of the query string
      *
-     * @param string $str
-     * @param boolean $return if to return the parsed FROM and skip load()
+     * @param  string  $str
+     * @param  boolean $return if to return the parsed FROM and skip load()
      * @return array|null
      */
     public function parse($str, $return = false)
@@ -45,7 +45,7 @@ class Doctrine_Query_From extends Doctrine_Query_Part
         $str   = trim($str);
         $parts = $this->_tokenizer->bracketExplode($str, 'JOIN ');
 
-        $from = $return ? array() : null;
+        $from = $return ? [] : null;
 
         $operator = false;
 
@@ -55,7 +55,7 @@ class Doctrine_Query_From extends Doctrine_Query_Part
                 // no break
             case 'LEFT':
                 array_shift($parts);
-            break;
+                break;
         }
 
         $last = '';

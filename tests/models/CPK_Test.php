@@ -7,10 +7,13 @@ class CPK_Test extends Doctrine_Record
     }
     public function setUp()
     {
-        $this->hasMany('CPK_Test2 as Test', array(
+        $this->hasMany(
+            'CPK_Test2 as Test',
+            [
             'local'    => 'test1_id',
             'foreign'  => 'test2_id',
             'refClass' => 'CPK_Association'
-        ));
+            ]
+        );
     }
 }

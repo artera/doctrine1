@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<!-- as much as I would like to use pure PSR-2 some of the rules are a little pedantic. -->
+<ruleset name="PSR2-custom">
+  <description>Custom PSR-2 based ruleset</description>
+
+  <exclude-pattern>*/vendor/*</exclude-pattern>
+
+  <rule ref="Generic.Arrays.DisallowLongArraySyntax" />
+  <rule ref="Squiz.PHP.CommentedOutCode" />
+
+  <rule ref="Generic.Commenting.Todo">
+    <severity>3</severity>
+  </rule>
+
+  <rule ref="Generic.PHP.ForbiddenFunctions">
+    <properties>
+      <property name="forbiddenFunctions" type="array" extend="true">
+        <element key="print_r" value="null"/>
+        <element key="var_dump" value="null"/>
+        <element key="die" value="exit"/>
+        <element key="print" value="echo"/>
+      </property>
+    </properties>
+  </rule>
+
+  <rule ref="PSR2">
+    <exclude name="PSR1.Classes.ClassDeclaration.MissingNamespace"/>
+    <exclude name="PSR2.Classes.PropertyDeclaration.Underscore"/>
+    <exclude name="Squiz.Functions.MultiLineFunctionDeclaration.BraceOnSameLine"/>
+    <exclude name="Squiz.Classes.ValidClassName.NotCamelCaps"/>
+    <exclude name="Generic.Files.LineLength"/>
+    <exclude name="Generic.WhiteSpace.DisallowTabIndent"/>
+  </rule>
+</ruleset>

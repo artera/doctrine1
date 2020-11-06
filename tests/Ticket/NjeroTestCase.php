@@ -2,13 +2,13 @@
 /**
  * Doctrine_Ticket_Njero_TestCase
  *
- * @package     Doctrine
- * @author      Jeff Rafter <lists@jeffrafter.com>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Jeff Rafter <lists@jeffrafter.com>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 
 class Doctrine_Ticket_Njero_TestCase extends Doctrine_UnitTestCase
@@ -41,7 +41,7 @@ class Doctrine_Ticket_Njero_TestCase extends Doctrine_UnitTestCase
         $coverage_code->save();
 
         $coverage_code              = new CoverageCodeN();
-        $coverage_code->code        = 3; # note we skip 2
+        $coverage_code->code        = 3; // note we skip 2
         $coverage_code->description = 'Partial Coverage';
         $coverage_code->save();
 
@@ -64,27 +64,27 @@ class Doctrine_Ticket_Njero_TestCase extends Doctrine_UnitTestCase
 
         $q = new Doctrine_Query();
 
-        # If I use
-        # $p = $q->from('PolicyN p')
-        # this test passes, but there is another issue just not reflected in this test yet, see "in my app" note below
+        // If I use
+        // $p = $q->from('PolicyN p')
+        // this test passes, but there is another issue just not reflected in this test yet, see "in my app" note below
 
         $q->from('PolicyN p, p.RateN r, r.PolicyCodeN y, r.CoverageCodeN c, r.LiabilityCodeN l')
-        ->where('(p.id = ?)', array('1'));
+            ->where('(p.id = ?)', ['1']);
 
         $p = $q->execute()->getFirst();
 
         $this->assertEqual($p->rate_id, 1);
         $this->assertEqual($p->RateN->id, 1);
         $this->assertEqual($p->RateN->policy_code, 1);
-        $this->assertEqual($p->RateN->coverage_code, 3); # fail
+        $this->assertEqual($p->RateN->coverage_code, 3); // fail
         $this->assertEqual($p->RateN->liability_code, 1);
 
         $c  = $p->RateN->coverage_code;
         $c2 = $p->RateN->CoverageCodeN->code;
         $c3 = $p->RateN->coverage_code;
 
-        $this->assertEqual($c, $c2); # fail
-      $this->assertEqual($c, $c3); # in my app this fails as well, but I can't reproduce this
-      #echo "Values " . serialize(array($c, $c2, $c3));
+        $this->assertEqual($c, $c2); // fail
+        $this->assertEqual($c, $c3); // in my app this fails as well, but I can't reproduce this
+        // echo "Values " . serialize(array($c, $c2, $c3));
     }
 }

@@ -19,13 +19,13 @@
 /**
  * Doctrine_CascadingDelete_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Record_CascadingDelete_TestCase extends Doctrine_UnitTestCase
 {
@@ -34,7 +34,7 @@ class Doctrine_Record_CascadingDelete_TestCase extends Doctrine_UnitTestCase
     }
     public function prepareTables()
     {
-        $this->tables   = array();
+        $this->tables   = [];
         $this->tables[] = 'ForeignKeyTest';
         $this->tables[] = 'CascadeDelete_HouseOwner';
         $this->tables[] = 'CascadeDelete_House';
@@ -227,14 +227,17 @@ class CascadeDelete_HouseOwner extends Doctrine_Record
 {
     public function setTableDefinition()
     {
-        $this->hasColumn('id', 'integer', 4, array('primary' => true, 'autoincrement' => true));
+        $this->hasColumn('id', 'integer', 4, ['primary' => true, 'autoincrement' => true]);
         $this->hasColumn('name', 'string', 50);
     }
     public function setUp()
     {
-        $this->hasOne('CascadeDelete_House as house', array(
+        $this->hasOne(
+            'CascadeDelete_House as house',
+            [
                 'local'   => 'id', 'foreign' => 'owner_id',
-                'cascade' => array('delete')));
+            'cascade' => ['delete']]
+        );
     }
 }
 
@@ -242,15 +245,18 @@ class CascadeDelete_House extends Doctrine_Record
 {
     public function setTableDefinition()
     {
-        $this->hasColumn('id', 'integer', 4, array('primary' => true, 'autoincrement' => true));
+        $this->hasColumn('id', 'integer', 4, ['primary' => true, 'autoincrement' => true]);
         $this->hasColumn('bathrooms', 'integer', 1);
         $this->hasColumn('owner_id', 'integer', 4);
     }
     public function setUp()
     {
-        $this->hasOne('CascadeDelete_HouseOwner as owner', array(
+        $this->hasOne(
+            'CascadeDelete_HouseOwner as owner',
+            [
                 'local'   => 'owner_id', 'foreign' => 'id',
-                'cascade' => array('delete')));
+            'cascade' => ['delete']]
+        );
     }
 }
 
@@ -263,8 +269,8 @@ class CascadeDelete_CompositeKeyItem extends Doctrine_Record
 {
     public function setTableDefinition()
     {
-        $this->hasColumn('id1', 'integer', 4, array('primary' => true));
-        $this->hasColumn('id2', 'integer', 4, array('primary' => true));
+        $this->hasColumn('id1', 'integer', 4, ['primary' => true]);
+        $this->hasColumn('id2', 'integer', 4, ['primary' => true]);
     }
 }
 
@@ -277,21 +283,27 @@ class CascadeDelete_ManyManySideA extends Doctrine_Record
 {
     public function setTableDefinition()
     {
-        $this->hasColumn('id', 'integer', 4, array('primary' => true, 'autoincrement' => true));
+        $this->hasColumn('id', 'integer', 4, ['primary' => true, 'autoincrement' => true]);
         $this->hasColumn('name', 'string', 4);
     }
     public function setUp()
     {
-        $this->hasMany('CascadeDelete_ManyManySideB as Bs', array(
+        $this->hasMany(
+            'CascadeDelete_ManyManySideB as Bs',
+            [
                 'local'    => 'a_id', 'foreign' => 'b_id',
                 'refClass' => 'CascadeDelete_ManyManyAToB',
-                'cascade'  => array('delete')));
+            'cascade'  => ['delete']]
+        );
 
         // overrides the doctrine-generated relation to the association class
         // in order to apply the app-level cascade
-        $this->hasMany('CascadeDelete_ManyManyAToB as assocsA', array(
+        $this->hasMany(
+            'CascadeDelete_ManyManyAToB as assocsA',
+            [
                 'local'   => 'id', 'foreign' => 'a_id',
-                'cascade' => array('delete')));
+            'cascade' => ['delete']]
+        );
     }
 }
 
@@ -299,21 +311,27 @@ class CascadeDelete_ManyManySideB extends Doctrine_Record
 {
     public function setTableDefinition()
     {
-        $this->hasColumn('id', 'integer', 4, array('primary' => true, 'autoincrement' => true));
+        $this->hasColumn('id', 'integer', 4, ['primary' => true, 'autoincrement' => true]);
         $this->hasColumn('name', 'string', 4);
     }
     public function setUp()
     {
-        $this->hasMany('CascadeDelete_ManyManySideA as As', array(
+        $this->hasMany(
+            'CascadeDelete_ManyManySideA as As',
+            [
                 'local'    => 'b_id', 'foreign' => 'a_id',
                 'refClass' => 'CascadeDelete_ManyManyAToB',
-                'cascade'  => array('delete')));
+            'cascade'  => ['delete']]
+        );
 
         // overrides the doctrine-generated relation to the association class
         // in order to apply the app-level cascade
-        $this->hasMany('CascadeDelete_ManyManyAToB as assocsB', array(
+        $this->hasMany(
+            'CascadeDelete_ManyManyAToB as assocsB',
+            [
                 'local'   => 'id', 'foreign' => 'b_id',
-                'cascade' => array('delete')));
+            'cascade' => ['delete']]
+        );
     }
 }
 
@@ -321,7 +339,7 @@ class CascadeDelete_ManyManyAToB extends Doctrine_Record
 {
     public function setTableDefinition()
     {
-        $this->hasColumn('a_id', 'integer', 4, array('primary' => true));
-        $this->hasColumn('b_id', 'integer', 4, array('primary' => true));
+        $this->hasColumn('a_id', 'integer', 4, ['primary' => true]);
+        $this->hasColumn('b_id', 'integer', 4, ['primary' => true]);
     }
 }

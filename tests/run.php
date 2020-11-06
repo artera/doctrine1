@@ -12,13 +12,13 @@ $test = new DoctrineTest();
 // Ticket Tests
 $tickets = new GroupTest('Tickets Tests', 'tickets');
 
-$excludeTickets = array(
+$excludeTickets = [
     '1830', // MySQL specific error
     '1876b', // MySQL specific
     '1935', // MySQL specific
     'DC356', // Causing a fatal error right now, bailing rest of test suite
     'DC521' // PostgreSQL specific error
-);
+];
 
 $ticketTestCases = glob(dirname(__FILE__) . '/Ticket/*TestCase.php');
 

@@ -22,14 +22,14 @@
 /**
  * Doctrine_Export_Pgsql
  *
- * @package     Doctrine
- * @subpackage  Export
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @author      Lukas Smith <smith@pooteeweet.org> (PEAR MDB2 library)
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 7680 $
+ * @package    Doctrine
+ * @subpackage Export
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @author     Lukas Smith <smith@pooteeweet.org> (PEAR MDB2 library)
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 7680 $
  */
 class Doctrine_Export_Pgsql extends Doctrine_Export
 {
@@ -47,7 +47,7 @@ class Doctrine_Export_Pgsql extends Doctrine_Export
     /**
      * createDatabaseSql
      *
-     * @param string $name
+     * @param  string $name
      * @return string
      */
     public function createDatabaseSql($name)
@@ -60,7 +60,7 @@ class Doctrine_Export_Pgsql extends Doctrine_Export
     /**
      * drop an existing database
      *
-     * @param string $name name of the database that should be dropped
+     * @param  string $name name of the database that should be dropped
      * @throws PDOException
      * @access public
      * @return string
@@ -77,7 +77,7 @@ class Doctrine_Export_Pgsql extends Doctrine_Export
      * Return the FOREIGN KEY query section dealing with non-standard options
      * as MATCH, INITIALLY DEFERRED, ON UPDATE, ...
      *
-     * @param array $definition         foreign key definition
+     * @param  array $definition foreign key definition
      * @return string
      * @access protected
      */
@@ -109,12 +109,12 @@ class Doctrine_Export_Pgsql extends Doctrine_Export
     /**
      * generates the sql for altering an existing table on postgresql
      *
-     * @param string $name          name of the table that is intended to be changed.
-     * @param array $changes        associative array that contains the details of each type      *
-     * @param boolean $check        indicates whether the function should just check if the DBMS driver
-     *                              can perform the requested table alterations if the value is true or
-     *                              actually perform them otherwise.
-     * @see Doctrine_Export::alterTable()
+     * @param  string  $name    name of the table that is intended to be changed.
+     * @param  array   $changes associative array that contains the details of each type      *
+     * @param  boolean $check   indicates whether the function should just check if the DBMS driver
+     *                          can perform the requested table alterations if the value is true or
+     *                          actually perform them otherwise.
+     * @see    Doctrine_Export::alterTable()
      * @return array|true
      */
     public function alterTableSql($name, array $changes, $check = false)
@@ -136,7 +136,7 @@ class Doctrine_Export_Pgsql extends Doctrine_Export
             return true;
         }
 
-        $sql = array();
+        $sql = [];
 
         if (isset($changes['add']) && is_array($changes['add'])) {
             foreach ($changes['add'] as $fieldName => $field) {
@@ -195,89 +195,51 @@ class Doctrine_Export_Pgsql extends Doctrine_Export
     /**
      * alter an existing table
      *
-     * @param string $name         name of the table that is intended to be changed.
-     * @param array $changes     associative array that contains the details of each type
-     *                             of change that is intended to be performed. The types of
-     *                             changes that are currently supported are defined as follows:
+     * @param string  $name    name of the table that is intended to be changed.
+     * @param array   $changes associative array that contains the details of each type
+     *                         of change that is intended to be performed. The types of
+     *                         changes that are currently supported are defined as
+     *                         follows: name New name for the table. add Associative
+     *                         array with the names of fields to be added as indexes of
+     *                         the array. The value of each entry of the array should
+     *                         be set to another associative array with the properties
+     *                         of the fields to be added. The properties of the fields
+     *                         should be the same as defined by the Metabase parser.
+     *                         remove Associative array with the names of fields to be
+     *                         removed as indexes of the array. Currently the values
+     *                         assigned to each entry are ignored. An empty array
+     *                         should be used for future compatibility. rename
+     *                         Associative array with the names of fields to be renamed
+     *                         as indexes of the array. The value of each entry of the
+     *                         array should be set to another associative array with
+     *                         the entry named name with the new field name and the
+     *                         entry named Declaration that is expected to contain the
+     *                         portion of the field declaration already in DBMS
+     *                         specific SQL code as it is used in the CREATE TABLE
+     *                         statement. change Associative array with the names of
+     *                         the fields to be changed as indexes of the array. Keep
+     *                         in mind that if it is intended to change either the name
+     *                         of a field and any other properties, the change array
+     *                         entries should have the new names of the fields as array
+     *                         indexes. The value of each entry of the array should be
+     *                         set to another associative array with the properties of
+     *                         the fields to that are meant to be changed as array
+     *                         entries. These entries should be assigned to the new
+     *                         values of the respective properties. The properties of
+     *                         the fields should be the same as defined by the Metabase
+     *                         parser. Example array( 'name' => 'userlist', 'add' =>
+     *                         array( 'quota' => array( 'type' => 'integer', 'unsigned'
+     *                         => 1 ) ), 'remove' => array( 'file_limit' => array(),
+     *                         'time_limit' => array() ), 'change' => array( 'name' =>
+     *                         array( 'length' => '20', 'definition' => array( 'type'
+     *                         => 'text', 'length' => 20, ), ) ), 'rename' => array(
+     *                         'sex' => array( 'name' => 'gender', 'definition' =>
+     *                         array( 'type' => 'text', 'length' => 1, 'default' =>
+     *                         'M', ), ) ) )
      *
-     *                             name
-     *
-     *                                New name for the table.
-     *
-     *                            add
-     *
-     *                                Associative array with the names of fields to be added as
-     *                                 indexes of the array. The value of each entry of the array
-     *                                 should be set to another associative array with the properties
-     *                                 of the fields to be added. The properties of the fields should
-     *                                 be the same as defined by the Metabase parser.
-     *
-     *
-     *                            remove
-     *
-     *                                Associative array with the names of fields to be removed as indexes
-     *                                 of the array. Currently the values assigned to each entry are ignored.
-     *                                 An empty array should be used for future compatibility.
-     *
-     *                            rename
-     *
-     *                                Associative array with the names of fields to be renamed as indexes
-     *                                 of the array. The value of each entry of the array should be set to
-     *                                 another associative array with the entry named name with the new
-     *                                 field name and the entry named Declaration that is expected to contain
-     *                                 the portion of the field declaration already in DBMS specific SQL code
-     *                                 as it is used in the CREATE TABLE statement.
-     *
-     *                            change
-     *
-     *                                Associative array with the names of the fields to be changed as indexes
-     *                                 of the array. Keep in mind that if it is intended to change either the
-     *                                 name of a field and any other properties, the change array entries
-     *                                 should have the new names of the fields as array indexes.
-     *
-     *                                The value of each entry of the array should be set to another associative
-     *                                 array with the properties of the fields to that are meant to be changed as
-     *                                 array entries. These entries should be assigned to the new values of the
-     *                                 respective properties. The properties of the fields should be the same
-     *                                 as defined by the Metabase parser.
-     *
-     *                            Example
-     *                                array(
-     *                                    'name' => 'userlist',
-     *                                    'add' => array(
-     *                                        'quota' => array(
-     *                                            'type' => 'integer',
-     *                                            'unsigned' => 1
-     *                                        )
-     *                                    ),
-     *                                    'remove' => array(
-     *                                        'file_limit' => array(),
-     *                                        'time_limit' => array()
-     *                                    ),
-     *                                    'change' => array(
-     *                                        'name' => array(
-     *                                            'length' => '20',
-     *                                            'definition' => array(
-     *                                                'type' => 'text',
-     *                                                'length' => 20,
-     *                                            ),
-     *                                        )
-     *                                    ),
-     *                                    'rename' => array(
-     *                                        'sex' => array(
-     *                                            'name' => 'gender',
-     *                                            'definition' => array(
-     *                                                'type' => 'text',
-     *                                                'length' => 1,
-     *                                                'default' => 'M',
-     *                                            ),
-     *                                        )
-     *                                    )
-     *                                )
-     *
-     * @param boolean $check     indicates whether the function should just check if the DBMS driver
-     *                             can perform the requested table alterations if the value is true or
-     *                             actually perform them otherwise.
+     * @param  boolean $check   indicates whether the function should just check if the DBMS driver
+     *                          can perform the requested table alterations if the value is true or
+     *                          actually perform them otherwise.
      * @throws Doctrine_Connection_Exception
      * @return true|array
      */
@@ -299,17 +261,15 @@ class Doctrine_Export_Pgsql extends Doctrine_Export
      * return RDBMS specific create sequence statement
      *
      * @throws Doctrine_Connection_Exception     if something fails at database level
-     * @param string     $sequenceName        name of the sequence to be created
-     * @param string|int $start          start value of the sequence; default is 1
-     * @param array      $options  An associative array of table options:
-     *                          array(
-     *                              'comment' => 'Foo',
-     *                              'charset' => 'utf8',
-     *                              'collate' => 'utf8_unicode_ci',
-     *                          );
+     * @param  string     $sequenceName name of the sequence to be created
+     * @param  string|int $start        start value of the sequence; default is 1
+     * @param  array      $options      An associative array of table options:
+     *                                  array( 'comment' => 'Foo', 'charset'
+     *                                  => 'utf8', 'collate' =>
+     *                                  'utf8_unicode_ci', );
      * @return string
      */
-    public function createSequenceSql($sequenceName, $start = 1, array $options = array())
+    public function createSequenceSql($sequenceName, $start = 1, array $options = [])
     {
         $sequenceName = $this->conn->quoteIdentifier($this->conn->formatter->getSequenceName($sequenceName), true);
         return 'CREATE SEQUENCE ' . $sequenceName . ' INCREMENT 1' .
@@ -319,7 +279,7 @@ class Doctrine_Export_Pgsql extends Doctrine_Export
     /**
      * drop existing sequence
      *
-     * @param string $sequenceName name of the sequence to be dropped
+     * @param  string $sequenceName name of the sequence to be dropped
      * @return string
      */
     public function dropSequenceSql($sequenceName)
@@ -331,12 +291,12 @@ class Doctrine_Export_Pgsql extends Doctrine_Export
     /**
      * Creates a table.
      *
-     * @param string $name
-     * @param array $fields
-     * @param array $options
+     * @param  string $name
+     * @param  array  $fields
+     * @param  array  $options
      * @return array
      */
-    public function createTableSql($name, array $fields, array $options = array())
+    public function createTableSql($name, array $fields, array $options = [])
     {
         if (! $name) {
             throw new Doctrine_Export_Exception('no valid table name specified');
@@ -351,7 +311,7 @@ class Doctrine_Export_Pgsql extends Doctrine_Export
 
         if (isset($options['primary']) && ! empty($options['primary'])) {
             $keyColumns = array_values($options['primary']);
-            $keyColumns = array_map(array($this->conn, 'quoteIdentifier'), $keyColumns);
+            $keyColumns = array_map([$this->conn, 'quoteIdentifier'], $keyColumns);
             $queryFields .= ', PRIMARY KEY(' . implode(', ', $keyColumns) . ')';
         }
 
@@ -389,14 +349,14 @@ class Doctrine_Export_Pgsql extends Doctrine_Export
     }
 
     /**
-    * Get the stucture of a field into an array.
-    *
-    * @param string    $table         name of the table on which the index is to be created
-    * @param string    $name          name of the index to be created
-    * @param array     $definition    associative array that defines properties of the index to be created.
-    * @see Doctrine_Export::createIndex()
-    * @return string
-    */
+     * Get the stucture of a field into an array.
+     *
+     * @param  string $table      name of the table on which the index is to be created
+     * @param  string $name       name of the index to be created
+     * @param  array  $definition associative array that defines properties of the index to be created.
+     * @see    Doctrine_Export::createIndex()
+     * @return string
+     */
     public function createIndexSql($table, $name, array $definition)
     {
         $query = parent::createIndexSql($table, $name, $definition);

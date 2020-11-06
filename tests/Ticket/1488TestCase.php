@@ -19,13 +19,13 @@
 /**
  * Doctrine_Ticket_1488_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Ticket_1488_TestCase extends Doctrine_UnitTestCase
 {
@@ -48,9 +48,12 @@ class T1488_Class1 extends Doctrine_Record
 
     public function setUp()
     {
-        $this->hasMany('T1488_Class2 as Classes2', array('local'       => 'c1_id',
+        $this->hasMany(
+            'T1488_Class2 as Classes2',
+            ['local'       => 'c1_id',
                                                             'foreign'  => 'c2_id',
-                                                            'refClass' => 'T1488_Relation'));
+            'refClass' => 'T1488_Relation']
+        );
     }
 }
 
@@ -63,9 +66,12 @@ class T1488_Class2 extends Doctrine_Record
 
     public function setUp()
     {
-        $this->hasMany('T1488_Class1 as Classes1', array('local'     => 'c2_id',
+        $this->hasMany(
+            'T1488_Class1 as Classes1',
+            ['local'     => 'c2_id',
                                                           'foreign'  => 'c1_id',
-                                                          'refClass' => 'T1488_Relation'));
+            'refClass' => 'T1488_Relation']
+        );
     }
 }
 

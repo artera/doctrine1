@@ -22,20 +22,20 @@
 /**
  * Doctrine_Expression_Sqlite
  *
- * @package     Doctrine
- * @subpackage  Expression
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 7490 $
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @package    Doctrine
+ * @subpackage Expression
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 7490 $
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
 class Doctrine_Expression_Sqlite extends Doctrine_Expression_Driver
 {
     /**
      * Returns the md5 sum of the data that SQLite's md5() function receives.
      *
-     * @param mixed $data
+     * @param  mixed $data
      * @return string
      */
     public static function md5Impl($data)
@@ -46,8 +46,8 @@ class Doctrine_Expression_Sqlite extends Doctrine_Expression_Driver
     /**
      * Returns the modules of the data that SQLite's mod() function receives.
      *
-     * @param integer $dividend
-     * @param integer $divisor
+     * @param  integer $dividend
+     * @param  integer $divisor
      * @return int
      */
     public static function modImpl($dividend, $divisor)
@@ -71,8 +71,8 @@ class Doctrine_Expression_Sqlite extends Doctrine_Expression_Driver
      * returns the position of the first occurrence of substring $substr in string $str that
      * SQLite's locate() function receives
      *
-     * @param string $substr    literal string to find
-     * @param string $str       literal string
+     * @param  string $substr literal string to find
+     * @param  string $str    literal string
      * @return int|false
      */
     public static function locateImpl($substr, $str)
@@ -81,7 +81,7 @@ class Doctrine_Expression_Sqlite extends Doctrine_Expression_Driver
     }
 
     /**
-     * @param string $str
+     * @param  string $str
      * @return string
      */
     public static function sha1Impl($str)
@@ -90,7 +90,7 @@ class Doctrine_Expression_Sqlite extends Doctrine_Expression_Driver
     }
 
     /**
-     * @param string $str
+     * @param  string $str
      * @return string
      */
     public static function ltrimImpl($str)
@@ -99,7 +99,7 @@ class Doctrine_Expression_Sqlite extends Doctrine_Expression_Driver
     }
 
     /**
-     * @param string $str
+     * @param  string $str
      * @return string
      */
     public static function rtrimImpl($str)
@@ -108,7 +108,7 @@ class Doctrine_Expression_Sqlite extends Doctrine_Expression_Driver
     }
 
     /**
-     * @param string $str
+     * @param  string $str
      * @return string
      */
     public static function trimImpl($str)
@@ -141,7 +141,7 @@ class Doctrine_Expression_Sqlite extends Doctrine_Expression_Driver
      *
      * The string "?000" is returned if the argument is NULL.
      *
-     * @param string $value
+     * @param  string $value
      * @return string   SQL soundex function with given parameter
      */
     public function soundex($value)
@@ -153,7 +153,7 @@ class Doctrine_Expression_Sqlite extends Doctrine_Expression_Driver
      * Return string to call a variable with the current timestamp inside an SQL statement
      * There are three special variables for current date and time.
      *
-     * @param string $type
+     * @param  string $type
      * @return string       sqlite function as string
      */
     public function now($type = 'timestamp')
@@ -186,9 +186,9 @@ class Doctrine_Expression_Sqlite extends Doctrine_Expression_Driver
      *
      * SQLite only supports the 2 parameter variant of this function
      *
-     * @param string $value         an sql string literal or column name/alias
-     * @param integer $position     where to start the substring portion
-     * @param integer $length       the substring portion length
+     * @param  string  $value    an sql string literal or column name/alias
+     * @param  integer $position where to start the substring portion
+     * @param  integer $length   the substring portion length
      * @return string               SQL substring function with given parameters
      */
     public function substring($value, $position, $length = null)

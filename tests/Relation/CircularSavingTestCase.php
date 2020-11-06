@@ -19,14 +19,14 @@
 /**
  * Doctrine_Relation_CircularSaving_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @author      Jan Schaefer <tanken@gmx.de>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @author   Jan Schaefer <tanken@gmx.de>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Relation_CircularSaving_TestCase extends Doctrine_UnitTestCase
 {
@@ -35,7 +35,7 @@ class Doctrine_Relation_CircularSaving_TestCase extends Doctrine_UnitTestCase
     }
     public function prepareTables()
     {
-        $this->tables = array('NestTest', 'NestReference');
+        $this->tables = ['NestTest', 'NestReference'];
 
         parent::prepareTables();
     }
@@ -98,7 +98,7 @@ class Doctrine_Relation_CircularSaving_TestCase extends Doctrine_UnitTestCase
         $n2->save();
 
         $q    = new Doctrine_Query();
-        $coll = $q->from('NestReference')->execute(array(), Doctrine_Core::HYDRATE_ARRAY);
+        $coll = $q->from('NestReference')->execute([], Doctrine_Core::HYDRATE_ARRAY);
 
         $this->assertEqual(count($coll), 1);
     }

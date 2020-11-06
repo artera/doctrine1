@@ -4,7 +4,7 @@ require_once dirname(__FILE__) . '/../lib/Doctrine.php';
 
 error_reporting(E_ALL);
 
-spl_autoload_register(array('Doctrine', 'autoload'));
+spl_autoload_register(['Doctrine', 'autoload']);
 require_once 'classes.php';
 require_once dirname(__FILE__) . '/../models/location.php';
 

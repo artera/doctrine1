@@ -19,17 +19,17 @@ class Doctrine_Relation_Access_TestCase extends Doctrine_UnitTestCase
         $o1->Data_File->filename = 'file4';
 
         // multiple left join branches test
-        $us          = array();
+        $us          = [];
         $us[1]       = new MyUser();
         $us[1]->name = 'user1';
         $this->connection->flush();
         // OneThings
-        $onethings_gs = array(
-            array(6,1)
-        );
+        $onethings_gs = [
+            [6,1]
+        ];
         $count = 1;
         foreach ($onethings_gs as $onething_g) {
-            for ($i = $count;$i < $count + $onething_g[0];$i++) {
+            for ($i = $count; $i < $count + $onething_g[0]; $i++) {
                 $d       = new MyOneThing();
                 $d->name = 'onething' . $i;
                 if ($onething_g[1]) {
@@ -39,7 +39,7 @@ class Doctrine_Relation_Access_TestCase extends Doctrine_UnitTestCase
             $count += $onething_g[0];
         }
         // OtherThings
-        for ($i = 0;$i < 6;$i++) {
+        for ($i = 0; $i < 6; $i++) {
             $o       = new MyOtherThing();
             $o->name = 'otherthing' . $i;
             $us[1]->MyOtherThing->add($o);
@@ -74,11 +74,11 @@ class Doctrine_Relation_Access_TestCase extends Doctrine_UnitTestCase
 
     public function prepareTables()
     {
-        $this->tables = array('Data_File', 'File_Owner','MyUser',
+        $this->tables = ['Data_File', 'File_Owner','MyUser',
             'MyOneThing',
             'MyUserOneThing',
             'MyOtherThing',
-            'MyUserOtherThing');
+            'MyUserOtherThing'];
         parent::prepareTables();
     }
 
@@ -145,19 +145,19 @@ class Doctrine_Relation_Access_TestCase extends Doctrine_UnitTestCase
     {
         $query  = 'FROM MyUserOtherThing';
         $other  = $this->connection->query($query);
-        $check1 = array();
+        $check1 = [];
         foreach ($other as $oth) {
             if (! isset($check1[$oth->other_thing_id])) {
-                $check1[$oth->other_thing_id] = array();
+                $check1[$oth->other_thing_id] = [];
             }
             $check1[$oth->other_thing_id][$oth->id] = $oth;
         }
         $query  = 'FROM MyUserOneThing';
         $ones   = $this->connection->query($query);
-        $check2 = array();
+        $check2 = [];
         foreach ($ones as $one) {
             if (! isset($check2[$one->one_thing_id])) {
-                $check2[$one->one_thing_id] = array();
+                $check2[$one->one_thing_id] = [];
             }
             $check2[$one->one_thing_id][$one->id] = $one;
         }

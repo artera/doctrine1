@@ -19,13 +19,13 @@
 /**
  * Doctrine_Ticket_1986_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Ticket_1986_TestCase extends Doctrine_UnitTestCase
 {
@@ -35,7 +35,7 @@ class Doctrine_Ticket_1986_TestCase extends Doctrine_UnitTestCase
 
     public function prepareTables()
     {
-        $this->tables = array('Testing_Ticket_1986_1','Testing_Ticket_1986_2','Testing_Ticket_1986Link');
+        $this->tables = ['Testing_Ticket_1986_1','Testing_Ticket_1986_2','Testing_Ticket_1986Link'];
         parent::prepareTables();
     }
 
@@ -66,11 +66,11 @@ class Testing_Ticket_1986_1 extends Doctrine_Record
     public function setTableDefinition()
     {
         $this->setTableName('testing_ticket_1986_1');
-        $this->hasColumn('name', 'string', 64, array());
+        $this->hasColumn('name', 'string', 64, []);
     }
     public function setUp()
     {
-        $this->hasMany('Testing_Ticket_1986_2 as others', array('refClass' => 'Testing_Ticket_1986Link', 'local' => 'id_1', 'foreign' => 'id_2'));
+        $this->hasMany('Testing_Ticket_1986_2 as others', ['refClass' => 'Testing_Ticket_1986Link', 'local' => 'id_1', 'foreign' => 'id_2']);
     }
 }
 
@@ -79,12 +79,12 @@ class Testing_Ticket_1986_2 extends Doctrine_Record
     public function setTableDefinition()
     {
         $this->setTableName('testing_ticket_1986_2');
-        $this->hasColumn('value', 'string', 64, array());
+        $this->hasColumn('value', 'string', 64, []);
     }
 
     public function setUp()
     {
-        $this->hasMany('Testing_Ticket_1986_1', array('refClass' => 'Testing_Ticket_1986Link', 'local' => 'id_2', 'foreign' => 'id_1'));
+        $this->hasMany('Testing_Ticket_1986_1', ['refClass' => 'Testing_Ticket_1986Link', 'local' => 'id_2', 'foreign' => 'id_1']);
     }
 }
 
@@ -93,14 +93,14 @@ class Testing_Ticket_1986Link extends Doctrine_Record
     public function setTableDefinition()
     {
         $this->setTableName('testing_ticket_1986_link');
-        $this->hasColumn('id_1', 'integer', null, array());
-        $this->hasColumn('id_2', 'integer', null, array());
+        $this->hasColumn('id_1', 'integer', null, []);
+        $this->hasColumn('id_2', 'integer', null, []);
     }
 
     public function setUp()
     {
         // setup relations
-        $this->hasOne('Testing_Ticket_1986_1 as rel1', array('local' => 'id_1', 'foreign' => 'id', 'onDelete' => 'CASCADE'));
-        $this->hasOne('Testing_Ticket_1986_2 as rel2', array('local' => 'id_2', 'foreign' => 'id', 'onDelete' => 'CASCADE'));
+        $this->hasOne('Testing_Ticket_1986_1 as rel1', ['local' => 'id_1', 'foreign' => 'id', 'onDelete' => 'CASCADE']);
+        $this->hasOne('Testing_Ticket_1986_2 as rel2', ['local' => 'id_2', 'foreign' => 'id', 'onDelete' => 'CASCADE']);
     }
 }

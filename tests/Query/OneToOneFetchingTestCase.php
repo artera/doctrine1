@@ -19,13 +19,13 @@
 /**
  * Doctrine_Query_MultiJoin2_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Query_OneToOneFetching_TestCase extends Doctrine_UnitTestCase
 {
@@ -99,12 +99,12 @@ class Doctrine_Query_OneToOneFetching_TestCase extends Doctrine_UnitTestCase
         $query = new Doctrine_Query($this->connection);
         try {
             $categories = $query->select('c.*, b.*, le.*, a.username, vr.title, vr.color, vr.icon')
-                    ->from('QueryTest_Category c')
-                    ->leftJoin('c.boards b')
-                    ->leftJoin('b.lastEntry le')
-                    ->leftJoin('le.author a')
-                    ->leftJoin('a.visibleRank vr')
-                    ->execute(array(), Doctrine_Core::HYDRATE_ARRAY);
+                ->from('QueryTest_Category c')
+                ->leftJoin('c.boards b')
+                ->leftJoin('b.lastEntry le')
+                ->leftJoin('le.author a')
+                ->leftJoin('a.visibleRank vr')
+                ->execute([], Doctrine_Core::HYDRATE_ARRAY);
 
             // --> currently quits here with a fatal error! <--
 
@@ -139,13 +139,13 @@ class Doctrine_Query_OneToOneFetching_TestCase extends Doctrine_UnitTestCase
     }
 
     /**
-    * Tests that one-one relations are correctly loaded with array fetching
-    * when the related records DONT EXIST.
-    */
+     * Tests that one-one relations are correctly loaded with array fetching
+     * when the related records DONT EXIST.
+     */
     public function testOneToOneArrayFetchingWithEmptyRelations()
     {
         // temporarily remove the relation to fake a non-existant one
-        $board              = $this->connection->query('FROM QueryTest_Board b WHERE b.name = ?', array('Testboard'))->getFirst();
+        $board              = $this->connection->query('FROM QueryTest_Board b WHERE b.name = ?', ['Testboard'])->getFirst();
         $lastEntryId        = $board->lastEntryId;
         $board->lastEntryId = 0;
         $board->save();
@@ -153,12 +153,12 @@ class Doctrine_Query_OneToOneFetching_TestCase extends Doctrine_UnitTestCase
         $query = new Doctrine_Query($this->connection);
         try {
             $categories = $query->select('c.*, b.*, le.*, a.username, vr.title, vr.color, vr.icon')
-                    ->from('QueryTest_Category c')
-                    ->leftJoin('c.boards b')
-                    ->leftJoin('b.lastEntry le')
-                    ->leftJoin('le.author a')
-                    ->leftJoin('a.visibleRank vr')
-                    ->execute(array(), Doctrine_Core::HYDRATE_ARRAY);
+                ->from('QueryTest_Category c')
+                ->leftJoin('c.boards b')
+                ->leftJoin('b.lastEntry le')
+                ->leftJoin('le.author a')
+                ->leftJoin('a.visibleRank vr')
+                ->execute([], Doctrine_Core::HYDRATE_ARRAY);
 
 
             // check boards/categories
@@ -185,12 +185,12 @@ class Doctrine_Query_OneToOneFetching_TestCase extends Doctrine_UnitTestCase
         $query = new Doctrine_Query($this->connection);
         try {
             $categories = $query->select('c.*, b.*, le.date, a.username, vr.title, vr.color, vr.icon')
-                    ->from('QueryTest_Category c')
-                    ->leftJoin('c.boards b')
-                    ->leftJoin('b.lastEntry le')
-                    ->leftJoin('le.author a')
-                    ->leftJoin('a.visibleRank vr')
-                    ->execute();
+                ->from('QueryTest_Category c')
+                ->leftJoin('c.boards b')
+                ->leftJoin('b.lastEntry le')
+                ->leftJoin('le.author a')
+                ->leftJoin('a.visibleRank vr')
+                ->execute();
 
             // check boards/categories
             $this->assertEqual(1, count($categories));
@@ -220,7 +220,7 @@ class Doctrine_Query_OneToOneFetching_TestCase extends Doctrine_UnitTestCase
     public function testOneToOneRecordFetchingWithEmptyRelations()
     {
         // temporarily remove the relation to fake a non-existant one
-        $board              = $this->connection->query('FROM QueryTest_Board b WHERE b.name = ?', array('Testboard'))->getFirst();
+        $board              = $this->connection->query('FROM QueryTest_Board b WHERE b.name = ?', ['Testboard'])->getFirst();
         $lastEntryId        = $board->lastEntryId;
         $board->lastEntryId = null;
         $board->lastEntry   = null;
@@ -229,12 +229,12 @@ class Doctrine_Query_OneToOneFetching_TestCase extends Doctrine_UnitTestCase
         $query = new Doctrine_Query($this->connection);
         try {
             $categories = $query->select('c.*, b.*, le.*, a.username, vr.title, vr.color, vr.icon')
-                    ->from('QueryTest_Category c')
-                    ->leftJoin('c.boards b')
-                    ->leftJoin('b.lastEntry le')
-                    ->leftJoin('le.author a')
-                    ->leftJoin('a.visibleRank vr')
-                    ->execute();
+                ->from('QueryTest_Category c')
+                ->leftJoin('c.boards b')
+                ->leftJoin('b.lastEntry le')
+                ->leftJoin('le.author a')
+                ->leftJoin('a.visibleRank vr')
+                ->execute();
 
             // check boards/categories
             $this->assertEqual(1, count($categories));

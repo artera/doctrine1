@@ -22,13 +22,13 @@
 /**
  * Doctrine_Query_Groupby
  *
- * @package     Doctrine
- * @subpackage  Query
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 7490 $
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @package    Doctrine
+ * @subpackage Query
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 7490 $
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
 class Doctrine_Query_Groupby extends Doctrine_Query_Part
 {
@@ -36,13 +36,13 @@ class Doctrine_Query_Groupby extends Doctrine_Query_Part
      * DQL GROUP BY PARSER
      * parses the group by part of the query string
      *
-     * @param string $clause
-     * @param bool $append
+     * @param  string $clause
+     * @param  bool   $append
      * @return string
      */
     public function parse($clause, $append = false)
     {
-        $terms = $this->_tokenizer->clauseExplode($clause, array(' ', '+', '-', '*', '/', '<', '>', '=', '>=', '<='));
+        $terms = $this->_tokenizer->clauseExplode($clause, [' ', '+', '-', '*', '/', '<', '>', '=', '>=', '<=']);
         $str   = '';
 
         foreach ($terms as $term) {
@@ -109,9 +109,10 @@ class Doctrine_Query_Groupby extends Doctrine_Query_Part
                             }
                         }
                     } else {
-                        if (! empty($term[0]) &&
-                             ! is_numeric($term[0]) &&
-                            $term[0] !== '?' && substr($term[0], 0, 1) !== ':') {
+                        if (! empty($term[0])
+                            && ! is_numeric($term[0])
+                            && $term[0] !== '?' && substr($term[0], 0, 1) !== ':'
+                        ) {
                             $componentAlias = $this->query->getRootAlias();
 
                             $found = false;
@@ -122,8 +123,9 @@ class Doctrine_Query_Groupby extends Doctrine_Query_Part
                                 $hasComma = true;
                             }
 
-                            if ($componentAlias !== false &&
-                                $componentAlias !== null) {
+                            if ($componentAlias !== false
+                                && $componentAlias !== null
+                            ) {
                                 $queryComponent = $this->query->getQueryComponent($componentAlias);
 
                                 $table = $queryComponent['table'];

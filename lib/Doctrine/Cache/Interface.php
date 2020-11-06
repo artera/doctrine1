@@ -22,22 +22,22 @@
 /**
  * Doctrine cache driver interface
  *
- * @package     Doctrine
- * @subpackage  Cache
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 7490 $
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @author      Jonathan H. Wage <jonwage@gmail.com>
+ * @package    Doctrine
+ * @subpackage Cache
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 7490 $
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @author     Jonathan H. Wage <jonwage@gmail.com>
  */
 interface Doctrine_Cache_Interface
 {
     /**
      * Fetch a cache record from this cache driver instance
      *
-     * @param string $id cache id
-     * @param boolean $testCacheValidity        if set to false, the cache validity won't be tested
+     * @param  string  $id                cache id
+     * @param  boolean $testCacheValidity if set to false, the cache validity won't be tested
      * @return mixed  Returns either the cached data or false
      */
     public function fetch($id, $testCacheValidity = true);
@@ -45,7 +45,7 @@ interface Doctrine_Cache_Interface
     /**
      * Test if a cache record exists for the passed id
      *
-     * @param string $id cache id
+     * @param  string $id cache id
      * @return mixed false (a cache is not available) or "last modified" timestamp (int) of the available cache record
      */
     public function contains($id);
@@ -53,9 +53,9 @@ interface Doctrine_Cache_Interface
     /**
      * Save a cache record and add the key to the index of cached keys
      *
-     * @param string $id        cache id
-     * @param string $data      data to cache
-     * @param int|false $lifeTime     if != false, set a specific lifetime for this cache record (null => infinite lifeTime)
+     * @param  string    $id       cache id
+     * @param  string    $data     data to cache
+     * @param  int|false $lifeTime if != false, set a specific lifetime for this cache record (null => infinite lifeTime)
      * @return boolean true if no problem
      */
     public function save($id, $data, $lifeTime = false);
@@ -63,7 +63,7 @@ interface Doctrine_Cache_Interface
     /**
      * Remove a cache record
      *
-     * @param string $id cache id
+     * @param  string $id cache id
      * @return boolean true if no problem
      */
     public function delete($id);

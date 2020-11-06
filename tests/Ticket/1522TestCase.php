@@ -19,21 +19,21 @@
 /**
  * Doctrine_Ticket_1522_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Ticket_1522_TestCase extends Doctrine_UnitTestCase
 {
     public function testTest()
     {
         $user = new Ticket_1522_User();
-        $user->fromArray(array('username' => 'jwage', 'encrypted_password' => 'changeme'));
-        $this->assertEqual($user->toArray(), array('id' => null, 'username' => 'jwage', 'password' => md5('changeme'), 'use_encrypted_password' => true));
+        $user->fromArray(['username' => 'jwage', 'encrypted_password' => 'changeme']);
+        $this->assertEqual($user->toArray(), ['id' => null, 'username' => 'jwage', 'password' => md5('changeme'), 'use_encrypted_password' => true]);
     }
 }
 

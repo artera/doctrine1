@@ -22,13 +22,13 @@
 /**
  * Doctrine_Ticket_2251_TestCase
  *
- * @package         Doctrine
- * @author          Daniel Cousineau <dcousineau@gmail.com>
- * @license         http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category        Object Relational Mapping
- * @link            www.doctrine-project.org
- * @since           1.0
- * @version         $Revision$
+ * @package  Doctrine
+ * @author   Daniel Cousineau <dcousineau@gmail.com>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Ticket_2251_TestCase extends Doctrine_UnitTestCase
 {
@@ -40,24 +40,24 @@ class Doctrine_Ticket_2251_TestCase extends Doctrine_UnitTestCase
 
     public function testEmptyStringLengthSQLExport()
     {
-        $drivers = array(
+        $drivers = [
             'mysql',
             'sqlite',
             'pgsql',
-        );
+        ];
 
-        $expected = array(
+        $expected = [
             'mysql'  => 'CREATE TABLE test_string_length (id BIGINT AUTO_INCREMENT, test_string TEXT, PRIMARY KEY(id)) ENGINE = INNODB',
             'sqlite' => 'CREATE TABLE test_string_length (id INTEGER PRIMARY KEY AUTOINCREMENT, test_string TEXT)',
             'pgsql'  => 'CREATE TABLE test_string_length (id BIGSERIAL, test_string TEXT, PRIMARY KEY(id))',
-        );
+        ];
 
         foreach ($drivers as $driver) {
             $dbh = new Doctrine_Adapter_Mock($driver);
 
             $conn = Doctrine_Manager::getInstance()->connection($dbh, $driver);
 
-            list($sql) = $conn->export->exportSortedClassesSql(array('Ticket_2251_TestStringLength'), false);
+            list($sql) = $conn->export->exportSortedClassesSql(['Ticket_2251_TestStringLength'], false);
 
             $this->assertEqual($sql, $expected[$driver]);
 

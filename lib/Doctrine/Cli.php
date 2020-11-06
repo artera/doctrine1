@@ -24,13 +24,13 @@
  *
  * Interface for easily executing Doctrine_Task classes from a command line interface
  *
- * @package     Doctrine
- * @subpackage  Cli
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 2761 $
- * @author      Jonathan H. Wage <jwage@mac.com>
+ * @package    Doctrine
+ * @subpackage Cli
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 2761 $
+ * @author     Jonathan H. Wage <jwage@mac.com>
  */
 class Doctrine_Cli
 {
@@ -61,7 +61,7 @@ class Doctrine_Cli
      *
      * @var array
      */
-    private $_registeredTask = array();
+    private $_registeredTask = [];
 
     /**
      * @var Doctrine_Task
@@ -71,10 +71,10 @@ class Doctrine_Cli
     /**
      * __construct
      *
-     * @param array $config
+     * @param array                       $config
      * @param Doctrine_Cli_Formatter|null $formatter Doctrine_Cli_Formatter
      */
-    public function __construct(array $config = array(), Doctrine_Cli_Formatter $formatter = null)
+    public function __construct(array $config = [], Doctrine_Cli_Formatter $formatter = null)
     {
         $this->setConfig($config);
         $this->setFormatter($formatter ? $formatter : new Doctrine_Cli_AnsiColorFormatter());
@@ -120,7 +120,7 @@ class Doctrine_Cli
     /**
      * Returns the specified value from the config, or the default value, if specified
      *
-     * @param string $name
+     * @param  string $name
      * @return mixed
      * @throws OutOfBoundsException If the element does not exist in the config
      */
@@ -145,9 +145,9 @@ class Doctrine_Cli
      *
      * For strict checking, set $strict to TRUE - the default is FALSE
      *
-     * @param string $name
-     * @param mixed $value
-     * @param bool $strict
+     * @param  string $name
+     * @param  mixed  $value
+     * @param  bool   $strict
      * @return bool
      */
     public function hasConfigValue($name, $value = null, $strict = false)
@@ -192,7 +192,7 @@ class Doctrine_Cli
     /**
      * Returns TRUE if the specified Task-class is registered, or FALSE otherwise
      *
-     * @param string $className
+     * @param  string $className
      * @return bool
      */
     public function taskClassIsRegistered($className)
@@ -205,10 +205,10 @@ class Doctrine_Cli
      *
      * If a matching task is found, $className is set with the name of the implementing class
      *
-     * @param string $taskName
-     * @param string|null $className
+     * @param       string      $taskName
+     * @param       string|null $className
      * @psalm-param class-string|null $className
-     * @return bool
+     * @return      bool
      */
     public function taskNameIsRegistered($taskName, &$className = null)
     {
@@ -293,7 +293,7 @@ class Doctrine_Cli
      * This means that a file called "Foo.php", say, will be expected to contain a Task class called
      * "Doctrine_Task_Foo".  Hence the method's name, "include*Doctrine*TaskClasses".
      *
-     * @param string $directory
+     * @param  string $directory
      * @return array $taskClassesIncluded
      * @throws InvalidArgumentException If the directory does not exist
      */
@@ -303,7 +303,7 @@ class Doctrine_Cli
             throw new InvalidArgumentException("The directory \"{$directory}\" does not exist");
         }
 
-        $taskClassesIncluded = array();
+        $taskClassesIncluded = [];
 
         $iterator = new RecursiveIteratorIterator(
             new RecursiveDirectoryIterator($directory),
@@ -326,7 +326,7 @@ class Doctrine_Cli
             $expectedClassName = self::TASK_BASE_CLASS . '_' . $matches[1];
 
             if (! class_exists($expectedClassName)) {
-                require_once($file->getPathName());
+                include_once $file->getPathName();
             }
 
             //So was the expected class included, and is it a task?  If so, we'll let the calling function know.
@@ -369,7 +369,7 @@ class Doctrine_Cli
     /**
      * Returns TRUE if the specified class is a Task, or FALSE otherwise
      *
-     * @param string $className
+     * @param  string $className
      * @return bool
      */
     protected function classIsTask($className)
@@ -383,10 +383,10 @@ class Doctrine_Cli
      *
      * Displays a message, and returns FALSE, if there were problems instantiating the class
      *
-     * @param string $className
+     * @param       string       $className
      * @psalm-param class-string $className
-     * @param Doctrine_Cli $cli Doctrine_Cli
-     * @return Doctrine_Task
+     * @param       Doctrine_Cli $cli       Doctrine_Cli
+     * @return      Doctrine_Task
      */
     protected function createTaskInstance($className, Doctrine_Cli $cli)
     {
@@ -412,8 +412,8 @@ class Doctrine_Cli
     /**
      * Notify the formatter of a message
      *
-     * @param string $notification  The notification message
-     * @param string $style         Style to format the notification with(INFO, ERROR)
+     * @param  string $notification The notification message
+     * @param  string $style        Style to format the notification with(INFO, ERROR)
      * @return void
      */
     public function notify($notification = null, $style = 'HEADER')
@@ -463,7 +463,7 @@ class Doctrine_Cli
      * @param  array $args
      * @return void
      * @throws Doctrine_Cli_Exception
-     * @todo Should know more about what we're attempting to run so feedback can be improved. Continue refactoring.
+     * @todo   Should know more about what we're attempting to run so feedback can be improved. Continue refactoring.
      */
     public function run(array $args)
     {
@@ -473,7 +473,9 @@ class Doctrine_Cli
             //Do not rethrow exceptions by default
             if ($this->getConfigValue('rethrow_exceptions', false)) {
                 $exceptionClass = get_class($exception);
-                /** @var Exception $exception */
+                /**
+ * @var Exception $exception
+*/
                 $exception = new $exceptionClass($this->formatExceptionMessage($exception));
                 throw $exception;
             }
@@ -493,7 +495,7 @@ class Doctrine_Cli
      * @param  array $args Array of arguments for this task being executed
      * @return void
      * @throws Doctrine_Cli_Exception If the requested task has not been registered or if required arguments are missing
-     * @todo Continue refactoring for testing
+     * @todo   Continue refactoring for testing
      */
     protected function _run(array $args)
     {
@@ -523,8 +525,8 @@ class Doctrine_Cli
     /**
      * Executes the task with the specified _prepared_ arguments
      *
-     * @param Doctrine_Task $task Doctrine_Task
-     * @param array $preparedArguments
+     * @param Doctrine_Task $task              Doctrine_Task
+     * @param array         $preparedArguments
      *
      * @throws Doctrine_Cli_Exception If required arguments are missing
      *
@@ -545,9 +547,9 @@ class Doctrine_Cli
      * Prepare the raw arguments for execution. Combines with the required and optional argument
      * list in order to determine a complete array of arguments for the task
      *
-     * @param  array $args      Array of raw arguments
+     * @param  array $args Array of raw arguments
      * @return array $prepared  Array of prepared arguments
-     * @todo Continue refactoring for testing
+     * @todo   Continue refactoring for testing
      */
     protected function prepareArgs(array $args)
     {
@@ -556,7 +558,7 @@ class Doctrine_Cli
         $args = array_values($args);
 
         // First lets load populate an array with all the possible arguments. required and optional
-        $prepared = array();
+        $prepared = [];
 
         $requiredArguments = $taskInstance->getRequiredArguments();
         foreach ($requiredArguments as $key => $arg) {
@@ -592,7 +594,7 @@ class Doctrine_Cli
      * Prints an index of all the available tasks in the CLI instance
      *
      * @param string|null $taskName
-     * @param bool $full
+     * @param bool        $full
      *
      * @todo Continue refactoring for testing
      *
@@ -631,9 +633,9 @@ class Doctrine_Cli
     }
 
     /**
-     * @param array $argumentsDescriptions
-     * @param array $config
-     * @param Doctrine_Cli_Formatter $formatter Doctrine_Cli_Formatter
+     * @param  array                  $argumentsDescriptions
+     * @param  array                  $config
+     * @param  Doctrine_Cli_Formatter $formatter             Doctrine_Cli_Formatter
      * @return string
      */
     protected function assembleArgumentList(array $argumentsDescriptions, array $config, Doctrine_Cli_Formatter $formatter)
@@ -659,12 +661,12 @@ class Doctrine_Cli
      * Used by Doctrine_Cli::loadTasks() and Doctrine_Cli::getLoadedTasks() to re-create their pre-refactoring behaviour
      *
      * @ignore
-     * @param array $registeredTask
+     * @param  array $registeredTask
      * @return array
      */
     private function createOldStyleTaskList(array $registeredTask)
     {
-        $taskNames = array();
+        $taskNames = [];
 
         foreach ($registeredTask as $className => $task) {
             $taskName             = $task->getTaskName();

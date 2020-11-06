@@ -24,13 +24,13 @@
  *
  * this class represents a database view
  *
- * @package     Doctrine
- * @subpackage  Migration
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 1080 $
- * @author      Jonathan H. Wage <jwage@mac.com>
+ * @package    Doctrine
+ * @subpackage Migration
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 1080 $
+ * @author     Jonathan H. Wage <jwage@mac.com>
  */
 class Doctrine_Migration
 {
@@ -57,7 +57,7 @@ class Doctrine_Migration
     /**
      * @var array
      */
-    protected $_migrationClasses = array();
+    protected $_migrationClasses = [];
 
     /**
      * @var ReflectionClass
@@ -67,7 +67,7 @@ class Doctrine_Migration
     /**
      * @var array
      */
-    protected $_errors = array();
+    protected $_errors = [];
 
     /**
      * @var Doctrine_Migration_Process
@@ -77,15 +77,15 @@ class Doctrine_Migration
     /**
      * @var array
      */
-    protected static $_migrationClassesForDirectories = array();
+    protected static $_migrationClassesForDirectories = [];
 
     /**
      * Specify the path to the directory with the migration classes.
      * The classes will be loaded and the migration table will be created if it
      * does not already exist
      *
-     * @param string $directory The path to your migrations directory
-     * @param mixed $connection The connection name or instance to use for this migration
+     * @param  string $directory  The path to your migrations directory
+     * @param  mixed  $connection The connection name or instance to use for this migration
      * @return void
      */
     public function __construct($directory = null, $connection = null)
@@ -151,27 +151,27 @@ class Doctrine_Migration
     /**
      * Set the table name for storing the version number for this migration instance
      *
-     * @param string $tableName
+     * @param  string $tableName
      * @return void
      */
     public function setTableName($tableName)
     {
         $this->_migrationTableName = $this->_connection
-                ->formatter->getTableName($tableName);
+            ->formatter->getTableName($tableName);
     }
 
     /**
      * Load migration classes from the passed directory. Any file found with a .php
      * extension will be passed to the loadMigrationClass()
      *
-     * @param string $directory  Directory to load migration classes from
+     * @param  string $directory Directory to load migration classes from
      * @return void
      */
     public function loadMigrationClassesFromDirectory($directory = null)
     {
         $directory = $directory ? $directory:$this->_migrationClassesDirectory;
 
-        $classesToLoad = array();
+        $classesToLoad = [];
         $classes       = get_declared_classes();
         foreach ((array) $directory as $dir) {
             $it = new RecursiveIteratorIterator(
@@ -188,7 +188,7 @@ class Doctrine_Migration
             foreach ($it as $file) {
                 $info = pathinfo($file->getFileName());
                 if (isset($info['extension']) && $info['extension'] == 'php') {
-                    require_once($file->getPathName());
+                    include_once $file->getPathName();
 
                     $array     = array_diff(get_declared_classes(), $classes);
                     $className = end($array);
@@ -197,7 +197,7 @@ class Doctrine_Migration
                         $e         = explode('_', $file->getFileName());
                         $timestamp = $e[0];
 
-                        $classesToLoad[$timestamp] = array('className' => $className, 'path' => $file->getPathName());
+                        $classesToLoad[$timestamp] = ['className' => $className, 'path' => $file->getPathName()];
                     }
                 }
             }
@@ -213,8 +213,8 @@ class Doctrine_Migration
      * migration classes to execute. It must be a child of Doctrine_Migration in order
      * to be loaded.
      *
-     * @param string $name
-     * @param string $path
+     * @param  string $name
+     * @param  string $path
      * @return false|null
      */
     public function loadMigrationClass($name, $path = null)
@@ -264,7 +264,7 @@ class Doctrine_Migration
     /**
      * Set the current version of the database
      *
-     * @param integer $number
+     * @param  integer $number
      * @return void
      */
     public function setCurrentVersion($number)
@@ -349,8 +349,8 @@ class Doctrine_Migration
      * migrate to. It will automatically know whether you are migrating up or down
      * based on the current version of the database.
      *
-     * @param integer $to       Version to migrate to
-     * @param boolean $dryRun   Whether or not to run the migrate process as a dry run
+     * @param integer $to     Version to migrate to
+     * @param boolean $dryRun Whether or not to run the migrate process as a dry run
      *
      * @return false|int|null $to Version number migrated to
      *
@@ -405,7 +405,7 @@ class Doctrine_Migration
      * Run the migration process but rollback at the very end. Returns true or
      * false for whether or not the migration can be ran
      *
-     * @param  int  $to
+     * @param  int $to
      * @return boolean|int $success
      */
     public function migrateDryRun($to = null)
@@ -440,13 +440,13 @@ class Doctrine_Migration
      */
     public function clearErrors()
     {
-        $this->_errors = array();
+        $this->_errors = [];
     }
 
     /**
      * Add an error to the stack. Excepts some type of Exception
      *
-     * @param Exception $e
+     * @param  Exception $e
      * @return void
      */
     public function addError(Exception $e)
@@ -491,7 +491,7 @@ class Doctrine_Migration
      */
     protected function _throwErrorsException()
     {
-        $messages = array();
+        $messages = [];
         $num      = 0;
         foreach ($this->getErrors() as $error) {
             $num++;
@@ -540,8 +540,8 @@ class Doctrine_Migration
      * Perform a single migration step. Executes a single migration class and
      * processes the changes
      *
-     * @param string $direction Direction to go, 'up' or 'down'
-     * @param integer $num
+     * @param  string  $direction Direction to go, 'up' or 'down'
+     * @param  integer $num
      * @return void
      */
     protected function _doMigrateStep($direction, $num)
@@ -601,7 +601,7 @@ class Doctrine_Migration
         $this->_migrationTableCreated = true;
 
         try {
-            $this->_connection->export->createTable($this->_migrationTableName, array('version' => array('type' => 'integer', 'size' => 11)));
+            $this->_connection->export->createTable($this->_migrationTableName, ['version' => ['type' => 'integer', 'size' => 11]]);
 
             return true;
         } catch (Exception $e) {

@@ -19,13 +19,13 @@
 /**
  * Doctrine_Hydrate_CollectionInitialization_TestCase
  *
- * @package     Doctrine
- * @author      Roman Borschel <roman@code-factory.org>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Roman Borschel <roman@code-factory.org>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Hydrate_CollectionInitialization_TestCase extends Doctrine_UnitTestCase
 {
@@ -42,7 +42,7 @@ class Doctrine_Hydrate_CollectionInitialization_TestCase extends Doctrine_UnitTe
 
     public function prepareTables()
     {
-        $this->tables = array('Entity', 'Phonenumber');
+        $this->tables = ['Entity', 'Phonenumber'];
         parent::prepareTables();
     }
 
@@ -51,7 +51,7 @@ class Doctrine_Hydrate_CollectionInitialization_TestCase extends Doctrine_UnitTe
         // query for user with first phonenumber.
         $q = Doctrine_Query::create();
         $q->select('u.*, p.*')->from('User u')->innerJoin('u.Phonenumber p')
-                ->where("p.phonenumber = '112'");
+            ->where("p.phonenumber = '112'");
 
         $users = $q->execute();
         $this->assertEqual(1, count($users));
@@ -61,7 +61,7 @@ class Doctrine_Hydrate_CollectionInitialization_TestCase extends Doctrine_UnitTe
         // now query again. this time for the other phonenumber. collection should be re-initialized.
         $q = Doctrine_Query::create();
         $q->select('u.*, p.*')->from('User u')->innerJoin('u.Phonenumber p')
-                ->where("p.phonenumber = '110'");
+            ->where("p.phonenumber = '110'");
         $users = $q->execute();
         $this->assertEqual(1, count($users));
         $this->assertEqual(1, count($users[0]->Phonenumber));

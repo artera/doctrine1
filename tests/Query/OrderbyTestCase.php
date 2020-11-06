@@ -19,13 +19,13 @@
 /**
  * Doctrine_Query_Orderby_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Query_Orderby_TestCase extends Doctrine_UnitTestCase
 {
@@ -34,8 +34,8 @@ class Doctrine_Query_Orderby_TestCase extends Doctrine_UnitTestCase
         $q = new Doctrine_Query();
 
         $q->select('u.name, RANDOM() rand')
-          ->from('User u')
-          ->orderby('rand DESC');
+            ->from('User u')
+            ->orderby('rand DESC');
 
         $this->assertEqual($q->getSqlQuery(), 'SELECT e.id AS e__id, e.name AS e__name, ((RANDOM() + 2147483648) / 4294967296) AS e__0 FROM entity e WHERE (e.type = 0) ORDER BY e__0 DESC');
     }
@@ -45,9 +45,9 @@ class Doctrine_Query_Orderby_TestCase extends Doctrine_UnitTestCase
         $q = new Doctrine_Query();
 
         $q->select('u.name, COUNT(p.phonenumber) count')
-          ->from('User u')
-          ->leftJoin('u.Phonenumber p')
-          ->orderby('count DESC');
+            ->from('User u')
+            ->leftJoin('u.Phonenumber p')
+            ->orderby('count DESC');
 
         $this->assertEqual($q->getSqlQuery(), 'SELECT e.id AS e__id, e.name AS e__name, COUNT(p.phonenumber) AS p__0 FROM entity e LEFT JOIN phonenumber p ON e.id = p.entity_id WHERE (e.type = 0) ORDER BY p__0 DESC');
     }
@@ -59,8 +59,8 @@ class Doctrine_Query_Orderby_TestCase extends Doctrine_UnitTestCase
             $q = new Doctrine_Query();
 
             $q->select('u.name')
-              ->from('User u')
-              ->orderby('COALESCE(u.id, u.name) DESC');
+                ->from('User u')
+                ->orderby('COALESCE(u.id, u.name) DESC');
             // nonsense results expected, but query is syntatically ok.
             $this->assertEqual($q->getSqlQuery(), 'SELECT e.id AS e__id, e.name AS e__name FROM entity e WHERE (e.type = 0) ORDER BY COALESCE(e.id, e.name) DESC');
             $this->pass();
@@ -75,8 +75,8 @@ class Doctrine_Query_Orderby_TestCase extends Doctrine_UnitTestCase
             $q = new Doctrine_Query();
 
             $q->select('u.name')
-              ->from('User u')
-              ->orderby('COALESCE(u.id, u.name) DESC, COALESCE(u.name, u.id) ASC');
+                ->from('User u')
+                ->orderby('COALESCE(u.id, u.name) DESC, COALESCE(u.name, u.id) ASC');
             // nonsense results expected, but query is syntatically ok.
             $this->assertEqual($q->getSqlQuery(), 'SELECT e.id AS e__id, e.name AS e__name FROM entity e WHERE (e.type = 0) ORDER BY COALESCE(e.id, e.name) DESC, COALESCE(e.name, e.id) ASC');
             $this->pass();
@@ -91,8 +91,8 @@ class Doctrine_Query_Orderby_TestCase extends Doctrine_UnitTestCase
             $q = new Doctrine_Query();
 
             $q->select('u.name')
-              ->from('User u')
-              ->orderby('u.id ASC, u.name DESC');
+                ->from('User u')
+                ->orderby('u.id ASC, u.name DESC');
             // nonsense results expected, but query is syntatically ok.
             $this->assertEqual($q->getSqlQuery(), 'SELECT e.id AS e__id, e.name AS e__name FROM entity e WHERE (e.type = 0) ORDER BY e.id ASC, e.name DESC');
             $this->pass();

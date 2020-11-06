@@ -19,13 +19,13 @@
 /**
  * Doctrine_NewCore_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_NewCore_TestCase extends Doctrine_UnitTestCase
 {
@@ -35,11 +35,11 @@ class Doctrine_NewCore_TestCase extends Doctrine_UnitTestCase
 
         $q->load('User u', true);
 
-        $this->assertEqual($q->getSqlQueryPart('from'), array('entity e'));
+        $this->assertEqual($q->getSqlQueryPart('from'), ['entity e']);
         $this->assertEqual(count($q->getQueryComponents()), 1);
 
         $q->load('u.Phonenumber p', false);
 
-        $this->assertEqual($q->getSqlQueryPart('from'), array('entity e', 'p' => 'LEFT JOIN phonenumber p ON e.id = p.entity_id'));
+        $this->assertEqual($q->getSqlQueryPart('from'), ['entity e', 'p' => 'LEFT JOIN phonenumber p ON e.id = p.entity_id']);
     }
 }

@@ -18,18 +18,18 @@ class Doctrine_Cache_Query_SqliteTestCase extends Doctrine_UnitTestCase
 
     public function testStore()
     {
-        $this->cache->store('SELECT * FROM user', array(array('name' => 'Jack Daniels')), 60);
+        $this->cache->store('SELECT * FROM user', [['name' => 'Jack Daniels']], 60);
         $this->assertEqual($this->cache->count(), 1);
 
-        $this->cache->store('SELECT * FROM group', array(array('name' => 'Drinkers club')), 60);
+        $this->cache->store('SELECT * FROM group', [['name' => 'Drinkers club']], 60);
 
         $md5    = md5('SELECT * FROM user');
         $result = $this->cache->fetch($md5);
-        $this->assertEqual($result, array(array('name' => 'Jack Daniels')));
+        $this->assertEqual($result, [['name' => 'Jack Daniels']]);
 
         $md5    = md5('SELECT * FROM group');
         $result = $this->cache->fetch($md5);
-        $this->assertEqual($result, array(array('name' => 'Drinkers club')));
+        $this->assertEqual($result, [['name' => 'Drinkers club']]);
 
         $this->assertEqual($this->cache->count(), 2);
 

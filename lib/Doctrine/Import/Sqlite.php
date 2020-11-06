@@ -20,14 +20,14 @@
  */
 
 /**
- * @package     Doctrine
- * @subpackage  Import
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @author      Lukas Smith <smith@pooteeweet.org> (PEAR MDB2 library)
- * @version     $Revision: 7644 $
- * @link        www.doctrine-project.org
- * @since       1.0
+ * @package    Doctrine
+ * @subpackage Import
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @author     Lukas Smith <smith@pooteeweet.org> (PEAR MDB2 library)
+ * @version    $Revision: 7644 $
+ * @link       www.doctrine-project.org
+ * @since      1.0
  */
 class Doctrine_Import_Sqlite extends Doctrine_Import
 {
@@ -38,7 +38,7 @@ class Doctrine_Import_Sqlite extends Doctrine_Import
      */
     public function listDatabases()
     {
-        return array();
+        return [];
     }
 
     /**
@@ -48,24 +48,24 @@ class Doctrine_Import_Sqlite extends Doctrine_Import
      */
     public function listFunctions()
     {
-        return array();
+        return [];
     }
 
     /**
      * lists all database triggers
      *
-     * @param string|null $database
+     * @param  string|null $database
      * @return array
      */
     public function listTriggers($database = null)
     {
-        return array();
+        return [];
     }
 
     /**
      * lists all database sequences
      *
-     * @param string|null $database
+     * @param  string|null $database
      * @return array
      */
     public function listSequences($database = null)
@@ -73,7 +73,7 @@ class Doctrine_Import_Sqlite extends Doctrine_Import
         $query      = "SELECT name FROM sqlite_master WHERE type='table' AND sql NOT NULL ORDER BY name";
         $tableNames = $this->conn->fetchColumn($query);
 
-        $result = array();
+        $result = [];
         foreach ($tableNames as $tableName) {
             if ($sqn = $this->conn->fixSequenceName($tableName, true)) {
                 $result[] = $sqn;
@@ -88,7 +88,7 @@ class Doctrine_Import_Sqlite extends Doctrine_Import
     /**
      * lists table constraints
      *
-     * @param string $table     database table name
+     * @param  string $table database table name
      * @return array
      */
     public function listTableConstraints($table)
@@ -105,7 +105,7 @@ class Doctrine_Import_Sqlite extends Doctrine_Import
         $query .= ' AND sql NOT NULL ORDER BY name';
         $indexes = $this->conn->fetchColumn($query);
 
-        $result = array();
+        $result = [];
         foreach ($indexes as $sql) {
             if (preg_match('/^create unique index ([^ ]+) on /i', $sql, $tmp)) {
                 $index = $this->conn->formatter->fixIndexName($tmp[1]);
@@ -124,7 +124,7 @@ class Doctrine_Import_Sqlite extends Doctrine_Import
     /**
      * lists table constraints
      *
-     * @param string $table     database table name
+     * @param  string $table database table name
      * @return array
      */
     public function listTableColumns($table)
@@ -132,15 +132,17 @@ class Doctrine_Import_Sqlite extends Doctrine_Import
         $sql    = 'PRAGMA table_info(' . $table . ')';
         $result = $this->conn->fetchAll($sql);
 
-        $description = array();
-        $columns     = array();
+        $description = [];
+        $columns     = [];
         foreach ($result as $key => $val) {
             $val = array_change_key_case($val, CASE_LOWER);
-            /** @var Doctrine_DataDict_Sqlite $dataDict */
+            /**
+ * @var Doctrine_DataDict_Sqlite $dataDict
+*/
             $dataDict = $this->conn->dataDict;
             $decl     = $dataDict->getPortableDeclaration($val);
 
-            $description = array(
+            $description = [
                     'name'          => $val['name'],
                     'ntype'         => $val['type'],
                     'type'          => $decl['type'][0],
@@ -153,7 +155,7 @@ class Doctrine_Import_Sqlite extends Doctrine_Import
                     'precision'     => null,
                     'unsigned'      => null,
                     'autoincrement' => ($val['pk'] == 1 && $decl['type'][0] == 'integer'),
-                    );
+                    ];
             $columns[$val['name']] = $description;
         }
         return $columns;
@@ -162,7 +164,7 @@ class Doctrine_Import_Sqlite extends Doctrine_Import
     /**
      * lists table constraints
      *
-     * @param string $table     database table name
+     * @param  string $table database table name
      * @return array
      */
     public function listTableIndexes($table)
@@ -173,7 +175,7 @@ class Doctrine_Import_Sqlite extends Doctrine_Import
     /**
      * lists tables
      *
-     * @param string|null $database
+     * @param  string|null $database
      * @return array
      */
     public function listTables($database = null)
@@ -188,18 +190,18 @@ class Doctrine_Import_Sqlite extends Doctrine_Import
     /**
      * lists table triggers
      *
-     * @param string $table     database table name
+     * @param  string $table database table name
      * @return array
      */
     public function listTableTriggers($table)
     {
-        return array();
+        return [];
     }
 
     /**
      * lists table views
      *
-     * @param string $table     database table name
+     * @param  string $table database table name
      * @return array
      */
     public function listTableViews($table)
@@ -207,7 +209,7 @@ class Doctrine_Import_Sqlite extends Doctrine_Import
         $query = "SELECT name, sql FROM sqlite_master WHERE type='view' AND sql NOT NULL";
         $views = $this->conn->fetchAll($query);
 
-        $result = array();
+        $result = [];
         foreach ($views as $row) {
             if (preg_match("/^create view .* \bfrom\b\s+\b{$table}\b /i", $row['sql'])) {
                 if (! empty($row['name'])) {
@@ -225,13 +227,13 @@ class Doctrine_Import_Sqlite extends Doctrine_Import
      */
     public function listUsers()
     {
-        return array();
+        return [];
     }
 
     /**
      * lists database views
      *
-     * @param string|null $database
+     * @param  string|null $database
      * @return array
      */
     public function listViews($database = null)

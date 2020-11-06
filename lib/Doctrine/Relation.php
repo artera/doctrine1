@@ -23,13 +23,13 @@
  * Doctrine_Relation
  * This class represents a relation between components
  *
- * @package     Doctrine
- * @subpackage  Relation
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 7490 $
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @package    Doctrine
+ * @subpackage Relation
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 7490 $
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
 abstract class Doctrine_Relation implements ArrayAccess
 {
@@ -52,7 +52,7 @@ abstract class Doctrine_Relation implements ArrayAccess
     /**
      * @var array $definition   @see __construct()
      */
-    protected $definition = array('alias'                 => true,
+    protected $definition = ['alias'                 => true,
                                   'foreign'               => true,
                                   'local'                 => true,
                                   'class'                 => true,
@@ -67,11 +67,11 @@ abstract class Doctrine_Relation implements ArrayAccess
                                   'deferrable'            => null,
                                   'constraint'            => null,
                                   'equal'                 => false,
-                                  'cascade'               => array(), // application-level cascades
+                                  'cascade'               => [], // application-level cascades
                                   'owningSide'            => false, // whether this is the owning side
                                   'refClassRelationAlias' => null,
                                   'foreignKeyName'        => null,
-                                  'orderBy'               => null);
+                                  'orderBy'               => null];
     /**
      * @var bool|null
      */
@@ -80,55 +80,51 @@ abstract class Doctrine_Relation implements ArrayAccess
     /**
      * constructor
      *
-     * @param array $definition         an associative array with the following structure:
-     *          name                    foreign key constraint name
-     *
-     *          local                   the local field(s)
-     *
-     *          foreign                 the foreign reference field(s)
-     *
-     *          table                   the foreign table object
-     *
-     *          localTable              the local table object
-     *
-     *          refTable                the reference table object (if any)
-     *
-     *          onDelete                referential delete action
-     *
-     *          onUpdate                referential update action
-     *
-     *          deferred                deferred constraint checking
-     *
-     *          alias                   relation alias
-     *
-     *          type                    the relation type, either Doctrine_Relation::ONE or Doctrine_Relation::MANY
-     *
-     *          constraint              boolean value, true if the relation has an explicit referential integrity constraint
-     *
-     *          foreignKeyName          the name of the dbms foreign key to create. Optional, if left blank Doctrine will generate one for you
-     *
-     * The onDelete and onUpdate keys accept the following values:
-     *
-     * CASCADE: Delete or update the row from the parent table and automatically delete or
-     *          update the matching rows in the child table. Both ON DELETE CASCADE and ON UPDATE CASCADE are supported.
-     *          Between two tables, you should not define several ON UPDATE CASCADE clauses that act on the same column
-     *          in the parent table or in the child table.
-     *
-     * SET NULL: Delete or update the row from the parent table and set the foreign key column or columns in the
-     *          child table to NULL. This is valid only if the foreign key columns do not have the NOT NULL qualifier
-     *          specified. Both ON DELETE SET NULL and ON UPDATE SET NULL clauses are supported.
-     *
-     * NO ACTION: In standard SQL, NO ACTION means no action in the sense that an attempt to delete or update a primary
-     *           key value is not allowed to proceed if there is a related foreign key value in the referenced table.
-     *
-     * RESTRICT: Rejects the delete or update operation for the parent table. NO ACTION and RESTRICT are the same as
-     *           omitting the ON DELETE or ON UPDATE clause.
-     *
-     * SET DEFAULT
+     * @param array $definition an associative array with the following structure:
+     *                          name                    foreign key constraint
+     *                          name local                   the local field(s)
+     *                          foreign                 the foreign reference
+     *                          field(s) table                   the foreign table
+     *                          object localTable              the local table
+     *                          object refTable                the reference table
+     *                          object (if any) onDelete
+     *                          referential delete action onUpdate
+     *                          referential update action deferred
+     *                          deferred constraint checking alias
+     *                          relation alias type                    the
+     *                          relation type, either Doctrine_Relation::ONE or
+     *                          Doctrine_Relation::MANY constraint
+     *                          boolean value, true if the relation has an
+     *                          explicit referential integrity constraint
+     *                          foreignKeyName          the name of the dbms
+     *                          foreign key to create. Optional, if left blank
+     *                          Doctrine will generate one for you The onDelete
+     *                          and onUpdate keys accept the following values:
+     *                          CASCADE: Delete or update the row from the parent
+     *                          table and automatically delete or update the
+     *                          matching rows in the child table. Both ON DELETE
+     *                          CASCADE and ON UPDATE CASCADE are supported.
+     *                          Between two tables, you should not define several
+     *                          ON UPDATE CASCADE clauses that act on the same
+     *                          column in the parent table or in the child table.
+     *                          SET NULL: Delete or update the row from the parent
+     *                          table and set the foreign key column or columns in
+     *                          the child table to NULL. This is valid only if the
+     *                          foreign key columns do not have the NOT NULL
+     *                          qualifier specified. Both ON DELETE SET NULL and
+     *                          ON UPDATE SET NULL clauses are supported. NO
+     *                          ACTION: In standard SQL, NO ACTION means no action
+     *                          in the sense that an attempt to delete or update a
+     *                          primary key value is not allowed to proceed if
+     *                          there is a related foreign key value in the
+     *                          referenced table. RESTRICT: Rejects the delete or
+     *                          update operation for the parent table. NO ACTION
+     *                          and RESTRICT are the same as omitting the ON
+     *                          DELETE or ON UPDATE clause. SET DEFAULT
      */
     public function __construct(array $definition)
     {
-        $def = array();
+        $def = [];
         foreach ($this->definition as $key => $val) {
             if (! isset($definition[$key]) && $val) {
                 throw new Doctrine_Exception($key . ' is required!');
@@ -180,7 +176,7 @@ abstract class Doctrine_Relation implements ArrayAccess
     }
 
     /**
-     * @param mixed $offset
+     * @param  mixed $offset
      * @return bool
      */
     public function offsetExists($offset)
@@ -189,7 +185,7 @@ abstract class Doctrine_Relation implements ArrayAccess
     }
 
     /**
-     * @param mixed $offset
+     * @param  mixed $offset
      * @return null|array
      */
     public function offsetGet($offset)
@@ -202,8 +198,8 @@ abstract class Doctrine_Relation implements ArrayAccess
     }
 
     /**
-     * @param mixed $offset
-     * @param mixed $value
+     * @param  mixed $offset
+     * @param  mixed $value
      * @return void
      */
     public function offsetSet($offset, $value)
@@ -214,7 +210,7 @@ abstract class Doctrine_Relation implements ArrayAccess
     }
 
     /**
-     * @param mixed $offset
+     * @param  mixed $offset
      * @return void
      */
     public function offsetUnset($offset)
@@ -247,7 +243,7 @@ abstract class Doctrine_Relation implements ArrayAccess
      * getType
      * returns the relation type, either 0 or 1
      *
-     * @see Doctrine_Relation MANY_* and ONE_* constants
+     * @see    Doctrine_Relation MANY_* and ONE_* constants
      * @return integer
      */
     final public function getType()
@@ -275,8 +271,8 @@ abstract class Doctrine_Relation implements ArrayAccess
     final public function getTable()
     {
         return Doctrine_Manager::getInstance()
-               ->getConnectionForComponent($this->definition['class'])
-               ->getTable($this->definition['class']);
+            ->getConnectionForComponent($this->definition['class'])
+            ->getTable($this->definition['class']);
     }
 
     /**
@@ -304,6 +300,7 @@ abstract class Doctrine_Relation implements ArrayAccess
     /**
      * getLocalFieldName
      * returns the field name of the local column
+     *
      * @return string
      */
     final public function getLocalFieldName()
@@ -337,6 +334,7 @@ abstract class Doctrine_Relation implements ArrayAccess
     /**
      * getLocalFieldName
      * returns the field name of the foreign column
+     *
      * @return string
      */
     final public function getForeignFieldName()
@@ -369,7 +367,7 @@ abstract class Doctrine_Relation implements ArrayAccess
     /**
      * getRelationDql
      *
-     * @param integer $count
+     * @param  integer $count
      * @return string
      */
     public function getRelationDql($count)
@@ -389,7 +387,7 @@ abstract class Doctrine_Relation implements ArrayAccess
      *
      * fetches a component related to given record
      *
-     * @param Doctrine_Record $record
+     * @param  Doctrine_Record $record
      * @return Doctrine_Record|Doctrine_Collection
      */
     abstract public function fetchRelatedFor(Doctrine_Record $record);
@@ -410,8 +408,8 @@ abstract class Doctrine_Relation implements ArrayAccess
     /**
      * Get the relationship orderby SQL/DQL
      *
-     * @param string $alias        The alias to use
-     * @param boolean $columnNames Whether or not to use column names instead of field names
+     * @param  string  $alias       The alias to use
+     * @param  boolean $columnNames Whether or not to use column names instead of field names
      * @return string|null $orderBy
      */
     public function getOrderBy($alias = null, $columnNames = false)
@@ -430,8 +428,8 @@ abstract class Doctrine_Relation implements ArrayAccess
     /**
      * Get the relationship orderby statement
      *
-     * @param string $alias        The alias to use
-     * @param boolean $columnNames Whether or not to use column names instead of field names
+     * @param  string  $alias       The alias to use
+     * @param  boolean $columnNames Whether or not to use column names instead of field names
      * @return string|null $orderByStatement
      */
     public function getOrderByStatement($alias = null, $columnNames = false)

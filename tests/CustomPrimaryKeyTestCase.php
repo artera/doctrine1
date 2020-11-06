@@ -19,13 +19,13 @@
 /**
  * Doctrine_CustomPrimaryKey_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_CustomPrimaryKey_TestCase extends Doctrine_UnitTestCase
 {
@@ -35,7 +35,7 @@ class Doctrine_CustomPrimaryKey_TestCase extends Doctrine_UnitTestCase
 
     public function prepareTables()
     {
-        $this->tables = array('CustomPK');
+        $this->tables = ['CustomPK'];
 
         parent::prepareTables();
     }
@@ -46,14 +46,14 @@ class Doctrine_CustomPrimaryKey_TestCase extends Doctrine_UnitTestCase
         $this->assertTrue($c instanceof Doctrine_Record);
 
         $c->name = 'custom pk test';
-        $this->assertEqual($c->identifier(), array());
+        $this->assertEqual($c->identifier(), []);
 
         $c->save();
-        $this->assertEqual($c->identifier(), array('uid' => 1));
+        $this->assertEqual($c->identifier(), ['uid' => 1]);
         $this->connection->clear();
 
         $c = $this->connection->getTable('CustomPK')->find(1);
 
-        $this->assertEqual($c->identifier(), array('uid' => 1));
+        $this->assertEqual($c->identifier(), ['uid' => 1]);
     }
 }

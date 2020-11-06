@@ -19,27 +19,27 @@
 /**
  * Builds result sets in to the object graph using php arrays
  *
- * @package     Doctrine
- * @subpackage  Hydrate
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @package    Doctrine
+ * @subpackage Hydrate
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision$
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
 class Doctrine_Hydrator_ArrayDriver extends Doctrine_Hydrator_Graph
 {
     /**
-     * @param string $component
+     * @param  string $component
      * @return array
      */
     public function getElementCollection($component)
     {
-        return array();
+        return [];
     }
 
     /**
-     * @param string $component
+     * @param  string $component
      * @return array
      */
     public function getElement(array $data, $component)
@@ -48,7 +48,7 @@ class Doctrine_Hydrator_ArrayDriver extends Doctrine_Hydrator_Graph
     }
 
     /**
-     * @param array|Doctrine_Collection $coll
+     * @param  array|Doctrine_Collection $coll
      * @return void
      */
     public function registerCollection($coll)
@@ -56,15 +56,15 @@ class Doctrine_Hydrator_ArrayDriver extends Doctrine_Hydrator_Graph
     }
 
     /**
-     * @param Doctrine_Record $record
-     * @param string $name
-     * @param string $keyColumn
+     * @param  Doctrine_Record $record
+     * @param  string          $name
+     * @param  string          $keyColumn
      * @return true
      */
     public function initRelated(&$record, $name, $keyColumn = null)
     {
         if (! isset($record[$name])) {
-            $record[$name] = array();
+            $record[$name] = [];
         }
         return true;
     }
@@ -88,11 +88,11 @@ class Doctrine_Hydrator_ArrayDriver extends Doctrine_Hydrator_Graph
     }
 
     /**
-     * @param array $prev
-     * @param array|Doctrine_Collection $coll
-     * @param int|bool $index
-     * @param string $dqlAlias
-     * @param bool $oneToOne
+     * @param  array                     $prev
+     * @param  array|Doctrine_Collection $coll
+     * @param  int|bool                  $index
+     * @param  string                    $dqlAlias
+     * @param  bool                      $oneToOne
      * @return void
      */
     public function setLastElement(&$prev, &$coll, $index, $dqlAlias, $oneToOne)

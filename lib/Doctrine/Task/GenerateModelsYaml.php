@@ -22,13 +22,13 @@
 /**
  * Doctrine_Task_GenerateModelsYaml
  *
- * @package     Doctrine
- * @subpackage  Task
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 2761 $
- * @author      Jonathan H. Wage <jwage@mac.com>
+ * @package    Doctrine
+ * @subpackage Task
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 2761 $
+ * @author     Jonathan H. Wage <jwage@mac.com>
  */
 class Doctrine_Task_GenerateModelsYaml extends Doctrine_Task
 {
@@ -40,16 +40,16 @@ class Doctrine_Task_GenerateModelsYaml extends Doctrine_Task
     /**
      * @var array
      */
-    public $requiredArguments = array('yaml_schema_path' => 'Specify the complete directory path to your yaml schema files.',
-                                           'models_path' => 'Specify complete path to your Doctrine_Record definitions.');
+    public $requiredArguments = ['yaml_schema_path' => 'Specify the complete directory path to your yaml schema files.',
+                                           'models_path' => 'Specify complete path to your Doctrine_Record definitions.'];
     /**
      * @var array
      */
-    public $optionalArguments = array('generate_models_options' => 'Array of options for generating models');
+    public $optionalArguments = ['generate_models_options' => 'Array of options for generating models'];
 
     public function execute()
     {
-        Doctrine_Core::generateModelsFromYaml($this->getArgument('yaml_schema_path'), $this->getArgument('models_path'), $this->getArgument('generate_models_options', array()));
+        Doctrine_Core::generateModelsFromYaml($this->getArgument('yaml_schema_path'), $this->getArgument('models_path'), $this->getArgument('generate_models_options', []));
 
         $this->notify('Generated models successfully from YAML schema');
     }

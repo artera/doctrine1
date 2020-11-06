@@ -19,19 +19,19 @@
 /**
  * Doctrine_Record_Listener
  *
- * @package     Doctrine
- * @subpackage  Record
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package    Doctrine
+ * @subpackage Record
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision$
  */
 interface Doctrine_Record_Listener_Interface
 {
     /**
-     * @param string $name
-     * @param mixed $value
+     * @param  string $name
+     * @param  mixed  $value
      * @return void
      */
     public function setOption($name, $value = null);
@@ -42,7 +42,7 @@ interface Doctrine_Record_Listener_Interface
     public function getOptions();
 
     /**
-     * @param string $name
+     * @param  string $name
      * @return mixed
      */
     public function getOption($name);

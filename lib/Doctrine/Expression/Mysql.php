@@ -22,13 +22,13 @@
 /**
  * Doctrine_Expression_Mysql
  *
- * @package     Doctrine
- * @subpackage  Expression
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 7490 $
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @package    Doctrine
+ * @subpackage Expression
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 7490 $
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
 class Doctrine_Expression_Mysql extends Doctrine_Expression_Driver
 {
@@ -62,10 +62,10 @@ class Doctrine_Expression_Mysql extends Doctrine_Expression_Driver
      *
      * @access public
      *
-     * @param array $pattern even keys are strings, odd are patterns (% and _)
+     * @param array  $pattern  even keys are strings, odd are patterns (% and _)
      * @param string $operator optional pattern operator (LIKE, ILIKE and maybe others in the future)
-     * @param string $field optional field name that is being matched against
-     *                  (might be required when emulating ILIKE)
+     * @param string $field    optional field name that is being matched against
+     *                         (might be required when emulating ILIKE)
      *
      * @return string SQL pattern
      */
@@ -114,7 +114,7 @@ class Doctrine_Expression_Mysql extends Doctrine_Expression_Driver
     /**
      * Returns the year from dbms
      *
-     * @param string $column
+     * @param  string $column
      * @return string to get year from dbms
      */
     public function year($column)
@@ -126,7 +126,7 @@ class Doctrine_Expression_Mysql extends Doctrine_Expression_Driver
     /**
      * Returns the month from dbms
      *
-     * @param string $column
+     * @param  string $column
      * @return string to get month from dbms
      */
     public function month($column)
@@ -138,7 +138,7 @@ class Doctrine_Expression_Mysql extends Doctrine_Expression_Driver
     /**
      * Returns day from dbms
      *
-     * @param string $column
+     * @param  string $column
      * @return string to get day from dbms
      */
     public function day($column)
@@ -150,7 +150,7 @@ class Doctrine_Expression_Mysql extends Doctrine_Expression_Driver
     /**
      * Returns soundex from dbms
      *
-     * @param string $column
+     * @param  string $column
      * @return string to get soundex from dbms
      */
     public function soundex($column)

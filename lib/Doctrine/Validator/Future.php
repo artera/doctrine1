@@ -19,20 +19,20 @@
 /**
  * Doctrine_Validator_Future
  *
- * @package     Doctrine
- * @subpackage  Validator
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
- * @author      Roman Borschel <roman@code-factory.org>
+ * @package    Doctrine
+ * @subpackage Validator
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision$
+ * @author     Roman Borschel <roman@code-factory.org>
  */
 class Doctrine_Validator_Future extends Doctrine_Validator_Driver
 {
     /**
      * checks if the given value is a valid date in the future.
      *
-     * @param mixed $value
+     * @param  mixed $value
      * @return boolean
      */
     public function validate($value)

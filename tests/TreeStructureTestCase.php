@@ -19,20 +19,20 @@
 /**
  * Doctrine_TreeStructure_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_TreeStructure_TestCase extends Doctrine_UnitTestCase
 {
     public function prepareTables()
     {
         // we don't need the standard tables here
-        $this->tables = array('TreeLeaf');
+        $this->tables = ['TreeLeaf'];
         parent::prepareTables();
     }
 
@@ -114,9 +114,9 @@ class Doctrine_TreeStructure_TestCase extends Doctrine_UnitTestCase
     {
         $q = new Doctrine_Query();
         $q->select('l.*, c.*')
-          ->from('TreeLeaf l, l.Children c')
-          ->where('l.parent_id IS NULL')
-          ->groupby('l.id, c.id');
+            ->from('TreeLeaf l, l.Children c')
+            ->where('l.parent_id IS NULL')
+            ->groupby('l.id, c.id');
 
         $coll = $q->execute();
     }

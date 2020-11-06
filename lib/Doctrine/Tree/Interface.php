@@ -22,13 +22,13 @@
 /**
  * Doctrine_Tree_Interface
  *
- * @package     Doctrine
- * @subpackage  Tree
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 7490 $
- * @author      Joe Simms <joe.simms@websites4.com>
+ * @package    Doctrine
+ * @subpackage Tree
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 7490 $
+ * @author     Joe Simms <joe.simms@websites4.com>
  */
 interface Doctrine_Tree_Interface
 {
@@ -36,7 +36,7 @@ interface Doctrine_Tree_Interface
     /**
      * creates root node from given record or from a new record
      *
-     * @param Doctrine_Record $record                    instance of Doctrine_Record
+     * @param  Doctrine_Record $record instance of Doctrine_Record
      * @return Doctrine_Record
      */
     public function createRoot(Doctrine_Record $record = null);
@@ -44,7 +44,7 @@ interface Doctrine_Tree_Interface
     /**
      * returns root node
      *
-     * @param int $root_id
+     * @param  int $root_id
      * @return Doctrine_Record|false
      */
     public function fetchRoot($root_id = 1);
@@ -52,19 +52,19 @@ interface Doctrine_Tree_Interface
     /**
      * optimised method to returns iterator for traversal of the entire tree from root
      *
-     * @param array $options                    options
-     * @param integer $hydrationMode            One of the Doctrine_Core::HYDRATE_* constants.
+     * @param  array   $options       options
+     * @param  integer $hydrationMode One of the Doctrine_Core::HYDRATE_* constants.
      * @return Traversable|false|array          instance of Doctrine_Node_<Implementation>_PreOrderIterator
      */
-    public function fetchTree($options = array(), $hydrationMode = null);
+    public function fetchTree($options = [], $hydrationMode = null);
 
     /**
      * optimised method that returns iterator for traversal of the tree from the given record primary key
      *
-     * @param mixed $pk                         primary key as used by table::find() to locate node to traverse tree from
-     * @param array $options                    options
-     * @param integer $hydrationMode            One of the Doctrine_Core::HYDRATE_* constants.
+     * @param  mixed   $pk            primary key as used by table::find() to locate node to traverse tree from
+     * @param  array   $options       options
+     * @param  integer $hydrationMode One of the Doctrine_Core::HYDRATE_* constants.
      * @return Traversable|false|array          instance of Doctrine_Node_<Implementation>_PreOrderIterator
      */
-    public function fetchBranch($pk, $options = array(), $hydrationMode = null);
+    public function fetchBranch($pk, $options = [], $hydrationMode = null);
 }

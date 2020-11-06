@@ -31,14 +31,14 @@
  * Doctrine_Cli_Formatter provides methods to format text to be displayed on a console.
  * This class was taken from the symfony-project source
  *
- * @package     Doctrine
- * @subpackage  Cli
- * @author      Fabien Potencier <fabien.potencier@symfony-project.com>
- * @author      Jonathan H. Wage <jonwage@gmail.com>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 2761 $
+ * @package    Doctrine
+ * @subpackage Cli
+ * @author     Fabien Potencier <fabien.potencier@symfony-project.com>
+ * @author     Jonathan H. Wage <jonwage@gmail.com>
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 2761 $
  */
 class Doctrine_Cli_Formatter
 {
@@ -50,7 +50,7 @@ class Doctrine_Cli_Formatter
     /**
      * __construct
      *
-     * @param int $maxLineSize
+     * @param  int $maxLineSize
      * @return void
      */
     public function __construct($maxLineSize = 65)
@@ -61,13 +61,13 @@ class Doctrine_Cli_Formatter
     /**
      * Formats a text according to the given parameters.
      *
-     * @param  string $text The text to style
-     * @param  array|string  $parameters An array of parameters
-     * @param  resource $stream A stream (default to STDOUT)
+     * @param string       $text       The text to style
+     * @param array|string $parameters An array of parameters
+     * @param resource     $stream     A stream (default to STDOUT)
      *
      * @return string The formatted text
      */
-    public function format($text = '', $parameters = array(), $stream = STDOUT)
+    public function format($text = '', $parameters = [], $stream = STDOUT)
     {
         return $text;
     }
@@ -76,8 +76,8 @@ class Doctrine_Cli_Formatter
      * Formats a message within a section.
      *
      * @param string  $section The section name
-     * @param string  $text The text message
-     * @param integer $size The maximum size allowed for a line (65 by default)
+     * @param string  $text    The text message
+     * @param integer $size    The maximum size allowed for a line (65 by default)
      *
      * @return string
      */
@@ -112,7 +112,7 @@ class Doctrine_Cli_Formatter
     /**
      * Sets the maximum line size.
      *
-     * @param integer $size  The maximum line size for a message
+     * @param integer $size The maximum line size for a message
      *
      * @return void
      */

@@ -10,12 +10,18 @@ class MyUserOtherThing extends Doctrine_Record
 
     public function setUp()
     {
-        $this->hasOne('MyUser', array(
+        $this->hasOne(
+            'MyUser',
+            [
             'local' => 'user_id', 'foreign' => 'id'
-        ));
+            ]
+        );
 
-        $this->hasOne('MyOtherThing', array(
+        $this->hasOne(
+            'MyOtherThing',
+            [
             'local' => 'other_thing_id', 'foreign' => 'id'
-        ));
+            ]
+        );
     }
 }

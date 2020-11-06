@@ -19,19 +19,19 @@
 /**
  * Doctrine_Cli_TestCase
  *
- * @package     Doctrine
- * @author      Dan Bettles <danbettles@yahoo.co.uk>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Dan Bettles <danbettles@yahoo.co.uk>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Cli_TestCase extends Doctrine_UnitTestCase
 {
     /**
      * @ignore
-     * @var string
+     * @var    string
      */
     protected $fixturesPath;
 
@@ -39,13 +39,13 @@ class Doctrine_Cli_TestCase extends Doctrine_UnitTestCase
      * The names of some of the Doctrine Task classes
      *
      * @ignore
-     * @var array
+     * @var    array
      */
-    protected $doctrineTaskClassName = array(
+    protected $doctrineTaskClassName = [
         'Doctrine_Task_CreateDb'         => 'create-db',
         'Doctrine_Task_Migrate'          => 'migrate',
         'Doctrine_Task_GenerateModelsDb' => 'generate-models-db',
-    );
+    ];
 
     /**
      * @ignore
@@ -75,7 +75,7 @@ class Doctrine_Cli_TestCase extends Doctrine_UnitTestCase
 
     public function testGetconfigReturnsTheArrayUsedToConstructTheInstance()
     {
-        $config = array('foo' => 'bar', 'baz' => 'bip');
+        $config = ['foo' => 'bar', 'baz' => 'bip'];
         $cli    = new Doctrine_Cli_TestCase_PassiveCli($config);
         $this->assertEqual($config, $cli->getConfig());
     }
@@ -83,16 +83,16 @@ class Doctrine_Cli_TestCase extends Doctrine_UnitTestCase
     public function testIsConstructedWithAnEmptyConfigArrayByDefault()
     {
         $cli = new Doctrine_Cli_TestCase_PassiveCli();
-        $this->assertEqual(array(), $cli->getConfig());
+        $this->assertEqual([], $cli->getConfig());
     }
 
     public function testGetconfigReturnsTheArraySetWithSetconfig()
     {
         $cli = new Doctrine_Cli_TestCase_PassiveCli();
 
-        $this->assertEqual(array(), $cli->getConfig());
+        $this->assertEqual([], $cli->getConfig());
 
-        $config = array('foo' => 'bar', 'baz' => 'bip');
+        $config = ['foo' => 'bar', 'baz' => 'bip'];
         $cli->setConfig($config);
         $this->assertEqual($config, $cli->getConfig());
     }
@@ -100,7 +100,7 @@ class Doctrine_Cli_TestCase extends Doctrine_UnitTestCase
     public function testGetformatterReturnsTheFormatterUsedToConstructTheInstance()
     {
         $formatter = new Doctrine_Cli_Formatter();
-        $cli       = new Doctrine_Cli_TestCase_PassiveCli(array(), $formatter);
+        $cli       = new Doctrine_Cli_TestCase_PassiveCli([], $formatter);
         $this->assertIdentical($formatter, $cli->getFormatter());
     }
 
@@ -120,7 +120,7 @@ class Doctrine_Cli_TestCase extends Doctrine_UnitTestCase
 
     public function testHasconfigvalueReturnsTrueIfTheElementInTheConfigHasTheSpecifiedValue()
     {
-        $cli = new Doctrine_Cli_TestCase_PassiveCli(array('foo' => 'bar', 'true' => true));
+        $cli = new Doctrine_Cli_TestCase_PassiveCli(['foo' => 'bar', 'true' => true]);
 
         $this->assertTrue($cli->hasConfigValue('foo', 'bar'));
         $this->assertFalse($cli->hasConfigValue('foo', 'baz'));
@@ -135,14 +135,14 @@ class Doctrine_Cli_TestCase extends Doctrine_UnitTestCase
 
     public function testHasconfigvalueReturnsTrueIfTheElementInTheConfigIsSetAndAValueWasNotSpecified()
     {
-        $cli = new Doctrine_Cli_TestCase_PassiveCli(array('foo' => 'bar'));
+        $cli = new Doctrine_Cli_TestCase_PassiveCli(['foo' => 'bar']);
         $this->assertTrue($cli->hasConfigValue('foo'));
         $this->assertFalse($cli->hasConfigValue('baz'));
     }
 
     public function testGetconfigvalueReturnsTheValueOfTheSpecifiedElementInTheConfig()
     {
-        $cli = new Doctrine_Cli_TestCase_PassiveCli(array('foo' => 'bar'));
+        $cli = new Doctrine_Cli_TestCase_PassiveCli(['foo' => 'bar']);
         $this->assertEqual('bar', $cli->getConfigValue('foo'));
     }
 
@@ -174,9 +174,9 @@ class Doctrine_Cli_TestCase extends Doctrine_UnitTestCase
     {
         $cli = new Doctrine_Cli_TestCase_PassiveCli();
 
-        $this->assertEqual(array(), $cli->getRegisteredTasks());
+        $this->assertEqual([], $cli->getRegisteredTasks());
 
-        $registeredTask = array('Doctrine_Task_CreateDb' => 'anything');
+        $registeredTask = ['Doctrine_Task_CreateDb' => 'anything'];
         $cli->setRegisteredTasks($registeredTask);
         $this->assertEqual($registeredTask, $cli->getRegisteredTasks());
     }
@@ -188,7 +188,7 @@ class Doctrine_Cli_TestCase extends Doctrine_UnitTestCase
         $this->assertFalse($cli->taskClassIsRegistered('Doctrine_Task_CreateDb'));
         $this->assertFalse($cli->taskClassIsRegistered('Doctrine_Task_DropDb'));
 
-        $cli->setRegisteredTasks(array('Doctrine_Task_CreateDb' => 'anything'));
+        $cli->setRegisteredTasks(['Doctrine_Task_CreateDb' => 'anything']);
         $this->assertTrue($cli->taskClassIsRegistered('Doctrine_Task_CreateDb'));
         $this->assertFalse($cli->taskClassIsRegistered('Doctrine_Task_DropDb'));
     }
@@ -203,7 +203,7 @@ class Doctrine_Cli_TestCase extends Doctrine_UnitTestCase
 
         $this->assertFalse($cli->taskNameIsRegistered($expectedTaskName));
 
-        $cli->setRegisteredTasks(array($expectedClassName => $task));
+        $cli->setRegisteredTasks([$expectedClassName => $task]);
         $this->assertTrue($cli->taskNameIsRegistered($expectedTaskName, $actualClassName));
         $this->assertEqual($expectedClassName, $actualClassName);
     }
@@ -218,7 +218,7 @@ class Doctrine_Cli_TestCase extends Doctrine_UnitTestCase
     //Apologies for this cheap, non-atomic test - this area needs some more work once this round of refactoring's done
     public function testAutomaticallyIncludesAndRegistersDoctrineTasks()
     {
-        $cli = new Doctrine_Cli_TestCase_EmptyCli(array('autoregister_custom_tasks' => false));
+        $cli = new Doctrine_Cli_TestCase_EmptyCli(['autoregister_custom_tasks' => false]);
 
         //Make sure those Doctrine core Tasks are loaded
         foreach ($this->doctrineTaskClassName as $className => $taskName) {
@@ -242,7 +242,7 @@ class Doctrine_Cli_TestCase extends Doctrine_UnitTestCase
 
         $this->assertFalse($cli->taskClassIsRegistered('Doctrine_Cli_TestCase_TestTask02'));
 
-        require_once($this->getFixturesPath() . '/TestTask02.php');
+        include_once $this->getFixturesPath() . '/TestTask02.php';
         $cli->registerTaskClass('Doctrine_Cli_TestCase_TestTask02');
         $this->assertTrue($cli->taskClassIsRegistered('Doctrine_Cli_TestCase_TestTask02'));
 
@@ -313,10 +313,10 @@ class Doctrine_Cli_TestCase extends Doctrine_UnitTestCase
     {
         $cli = new Doctrine_Cli_TestCase_PassiveCli();
 
-        $this->assertEqual(array(), $cli->getRegisteredTasks());
+        $this->assertEqual([], $cli->getRegisteredTasks());
 
         $loadedTaskName   = $cli->loadTasks($this->getFixturesPath() . '/' . __FUNCTION__);
-        $expectedTaskName = array('doctrine-style-task' => 'doctrine-style-task');
+        $expectedTaskName = ['doctrine-style-task' => 'doctrine-style-task'];
         $this->assertEqual($expectedTaskName, $loadedTaskName);
 
         $registeredTasks = $cli->getRegisteredTasks();
@@ -355,7 +355,7 @@ class Doctrine_Cli_TestCase extends Doctrine_UnitTestCase
     public function test_gettaskclassfromargsReturnsTheNameOfTheClassAssociatedWithTheSpecifiedTask()
     {
         $cli = new Doctrine_Cli_TestCase_PassiveCli02();
-        $this->assertEqual('Doctrine_Task_TaskName', $cli->_getTaskClassFromArgs(array('scriptName', 'task-name')));
+        $this->assertEqual('Doctrine_Task_TaskName', $cli->_getTaskClassFromArgs(['scriptName', 'task-name']));
     }
 
     public function testRunByDefaultDoesNotThrowExceptions()
@@ -364,15 +364,15 @@ class Doctrine_Cli_TestCase extends Doctrine_UnitTestCase
         ob_start();
 
         $cli = new Doctrine_Cli_TestCase_NoisyCli();
-        $cli->run(array());
+        $cli->run([]);
         $this->pass();
 
-        $cli = new Doctrine_Cli_TestCase_NoisyCli(array('rethrow_exceptions' => false));
-        $cli->run(array());
+        $cli = new Doctrine_Cli_TestCase_NoisyCli(['rethrow_exceptions' => false]);
+        $cli->run([]);
         $this->pass();
 
-        $cli = new Doctrine_Cli_TestCase_NoisyCli(array('rethrow_exceptions' => 0));
-        $cli->run(array());
+        $cli = new Doctrine_Cli_TestCase_NoisyCli(['rethrow_exceptions' => 0]);
+        $cli->run([]);
         $this->pass();
 
         ob_end_clean();
@@ -383,10 +383,10 @@ class Doctrine_Cli_TestCase extends Doctrine_UnitTestCase
         //Hide printed output from the CLI
         ob_start();
 
-        $cli = new Doctrine_Cli_TestCase_NoisyCli(array('rethrow_exceptions' => 1));
+        $cli = new Doctrine_Cli_TestCase_NoisyCli(['rethrow_exceptions' => 1]);
 
         try {
-            $cli->run(array());
+            $cli->run([]);
             //The same exception must be re-thrown...
         } catch (Doctrine_Cli_TestCase_Exception $e) {
             //...And it must be formatted

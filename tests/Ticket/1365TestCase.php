@@ -20,12 +20,12 @@
 /**
  * Doctrine_Ticket_1365_TestCase
  *
- * @package     Doctrine
- * @author      David Stendardi <david.stendardi@adenclassifieds.com>
- * @category    Query
- * @link        www.doctrine-project.org
- * @since       0.10.4
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   David Stendardi <david.stendardi@adenclassifieds.com>
+ * @category Query
+ * @link     www.doctrine-project.org
+ * @since    0.10.4
+ * @version  $Revision$
  */
 class Doctrine_Ticket_1365_TestCase extends Doctrine_UnitTestCase
 {
@@ -44,7 +44,7 @@ class Doctrine_Ticket_1365_TestCase extends Doctrine_UnitTestCase
 
     public function prepareTables()
     {
-        $this->tables   = array();
+        $this->tables   = [];
         $this->tables[] = 'T1365_Person';
         $this->tables[] = 'T1365_Skill';
         $this->tables[] = 'T1365_PersonHasSkill';
@@ -82,7 +82,7 @@ class T1365_Person extends Doctrine_Record
 
     public function setUp()
     {
-        $this->hasMany('T1365_PersonHasSkill', array('local' => 'id', 'foreign' => 'fk_person_id'));
+        $this->hasMany('T1365_PersonHasSkill', ['local' => 'id', 'foreign' => 'fk_person_id']);
     }
 }
 
@@ -98,7 +98,7 @@ class T1365_Skill extends Doctrine_Record
 
     public function setUp()
     {
-        $this->hasMany('T1365_PersonHasSkill', array('local' => 'id', 'foreign' => 'fk_skill_id'));
+        $this->hasMany('T1365_PersonHasSkill', ['local' => 'id', 'foreign' => 'fk_skill_id']);
     }
 }
 
@@ -109,30 +109,50 @@ class T1365_PersonHasSkill extends Doctrine_Record
     {
         $this->setTableName('la__person_has_skill');
 
-        $this->hasColumn('fk_person_id', 'integer', 8, array(
+        $this->hasColumn(
+            'fk_person_id',
+            'integer',
+            8,
+            [
             'type' => 'integer', 'length' => '8'
-        ));
+            ]
+        );
 
-        $this->hasColumn('fk_skill_id', 'integer', 8, array(
+        $this->hasColumn(
+            'fk_skill_id',
+            'integer',
+            8,
+            [
             'type' => 'integer', 'length' => '8'
-        ));
+            ]
+        );
 
-        $this->hasColumn('value0', 'enum', 3, array(
-            'type' => 'enum', 'values' => array(
+        $this->hasColumn(
+            'value0',
+            'enum',
+            3,
+            [
+            'type' => 'enum', 'values' => [
                 0 => '0', 1 => '1', 2 => '2', 3 => '3'
-            ), 'default' => 0, 'notnull' => true, 'length' => '3'
-        ));
+            ], 'default' => 0, 'notnull' => true, 'length' => '3'
+            ]
+        );
 
-        $this->hasColumn('value1', 'enum', 3, array(
-            'type' => 'enum', 'values' => array(
+        $this->hasColumn(
+            'value1',
+            'enum',
+            3,
+            [
+            'type' => 'enum', 'values' => [
                 0 => '0', 1 => '1', 2 => '2', 3 => '3'
-            ), 'default' => 0, 'notnull' => true, 'length' => '3'
-        ));
+            ], 'default' => 0, 'notnull' => true, 'length' => '3'
+            ]
+        );
     }
 
     public function setUp()
     {
-        $this->hasOne('T1365_Person', array('local' => 'fk_person_id', 'foreign' => 'id'));
-        $this->hasOne('T1365_Skill', array('local' => 'fk_skill_id', 'foreign' => 'id'));
+        $this->hasOne('T1365_Person', ['local' => 'fk_person_id', 'foreign' => 'id']);
+        $this->hasOne('T1365_Skill', ['local' => 'fk_skill_id', 'foreign' => 'id']);
     }
 }

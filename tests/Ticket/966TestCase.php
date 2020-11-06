@@ -7,7 +7,7 @@ class Doctrine_Ticket_966_TestCase extends Doctrine_UnitTestCase
 {
     public function prepareTables()
     {
-        $this->tables = array('Semester', 'Course', 'Weekday', 'CourseWeekday');
+        $this->tables = ['Semester', 'Course', 'Weekday', 'CourseWeekday'];
         parent::prepareTables();
     }
 
@@ -17,7 +17,7 @@ class Doctrine_Ticket_966_TestCase extends Doctrine_UnitTestCase
         $semester['name'] = 'Semester';
         $semester->save();
 
-        foreach (array('Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday') as $name) {
+        foreach (['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'] as $name) {
             $weekday         = new Weekday();
             $weekday['name'] = $name;
             $weekday->save();
@@ -40,11 +40,11 @@ class Doctrine_Ticket_966_TestCase extends Doctrine_UnitTestCase
     public function testArrayHydration()
     {
         $query = Doctrine_Query::create()
-      ->from('Semester s')
-      ->leftJoin('s.Courses c')
-      ->leftJoin('c.Weekdays cw');
+            ->from('Semester s')
+            ->leftJoin('s.Courses c')
+            ->leftJoin('c.Weekdays cw');
 
-        $semesters = $query->execute(array(), Doctrine_Core::HYDRATE_ARRAY);
+        $semesters = $query->execute([], Doctrine_Core::HYDRATE_ARRAY);
         $semester  = $semesters[0];
 
         $this->assertAllWeekdaysArePopulated($semester);
@@ -53,13 +53,13 @@ class Doctrine_Ticket_966_TestCase extends Doctrine_UnitTestCase
     public function testObjectHydration()
     {
         $query = Doctrine_Query::create()
-      ->from('Semester s')
-      ->leftJoin('s.Courses c')
-      ->leftJoin('c.Weekdays cw');
+            ->from('Semester s')
+            ->leftJoin('s.Courses c')
+            ->leftJoin('c.Weekdays cw');
 
         $semester = $query->execute()->getFirst();
 
-        $weekdayOids = array();
+        $weekdayOids = [];
         foreach ($semester->Courses as $course) {
             foreach ($course->Weekdays as $weekday) {
                 if (! in_array($weekday->getOid(), $weekdayOids)) {
@@ -109,14 +109,14 @@ class Semester extends Doctrine_Record
     public function setTableDefinition()
     {
         $this->setTableName('semester');
-        $this->hasColumn('id', 'integer', 4, array('primary' => 'true', 'autoincrement' => 'true'));
-        $this->hasColumn('name', 'string', 255, array('notnull' => true));
+        $this->hasColumn('id', 'integer', 4, ['primary' => 'true', 'autoincrement' => 'true']);
+        $this->hasColumn('name', 'string', 255, ['notnull' => true]);
     }
 
     public function setUp()
     {
         parent::setUp();
-        $this->hasMany('Course as Courses', array('local' => 'id', 'foreign' => 'semester_id'));
+        $this->hasMany('Course as Courses', ['local' => 'id', 'foreign' => 'semester_id']);
     }
 }
 
@@ -125,8 +125,8 @@ class Weekday extends Doctrine_Record
     public function setTableDefinition()
     {
         $this->setTableName('weekday');
-        $this->hasColumn('id', 'integer', 4, array('primary' => true, 'autoincrement' => true));
-        $this->hasColumn('name', 'string', 9, array('notnull' => true, 'unique' => true));
+        $this->hasColumn('id', 'integer', 4, ['primary' => true, 'autoincrement' => true]);
+        $this->hasColumn('name', 'string', 9, ['notnull' => true, 'unique' => true]);
     }
 
     public function setUp()
@@ -136,7 +136,7 @@ class Weekday extends Doctrine_Record
         // set up unidirectional. this is true for all many-many relations.
         $this->hasMany(
             'Course as courses',
-            array('refClass' => 'CourseWeekday', 'local' => 'weekday_id', 'foreign' => 'course_id')
+            ['refClass' => 'CourseWeekday', 'local' => 'weekday_id', 'foreign' => 'course_id']
         );
     }
 }
@@ -146,20 +146,23 @@ class Course extends Doctrine_Record
     public function setTableDefinition()
     {
         $this->setTableName('course');
-        $this->hasColumn('id', 'integer', 4, array('primary' => 'true', 'autoincrement' => 'true'));
-        $this->hasColumn('semester_id', 'integer', 4, array('notnull' => true));
-        $this->hasColumn('name', 'string', 255, array('notnull' => true));
+        $this->hasColumn('id', 'integer', 4, ['primary' => 'true', 'autoincrement' => 'true']);
+        $this->hasColumn('semester_id', 'integer', 4, ['notnull' => true]);
+        $this->hasColumn('name', 'string', 255, ['notnull' => true]);
     }
 
     public function setUp()
     {
         parent::setUp();
-        $this->hasOne('Semester', array('local' => 'semester_id',
+        $this->hasOne(
+            'Semester',
+            ['local' => 'semester_id',
                                     'foreign'   => 'id',
-                                    'onDelete'  => 'CASCADE'));
+            'onDelete'  => 'CASCADE']
+        );
         $this->hasMany(
             'Weekday as Weekdays',
-            array('refClass' => 'CourseWeekday', 'local' => 'course_id', 'foreign' => 'weekday_id')
+            ['refClass' => 'CourseWeekday', 'local' => 'course_id', 'foreign' => 'weekday_id']
         );
     }
 }
@@ -169,16 +172,16 @@ class CourseWeekday extends Doctrine_Record
     public function setTableDefinition()
     {
         $this->setTableName('course_weekday');
-        # Poor form to have an id on a join table, but that's what we were doing
-        $this->hasColumn('id', 'integer', 4, array('primary' => true, 'autoincrement' => true));
-        $this->hasColumn('course_id', 'integer', 4, array('notnull' => true));
-        $this->hasColumn('weekday_id', 'integer', 4, array('notnull' => true));
+        // Poor form to have an id on a join table, but that's what we were doing
+        $this->hasColumn('id', 'integer', 4, ['primary' => true, 'autoincrement' => true]);
+        $this->hasColumn('course_id', 'integer', 4, ['notnull' => true]);
+        $this->hasColumn('weekday_id', 'integer', 4, ['notnull' => true]);
     }
 
     public function setUp()
     {
         parent::setUp();
-        $this->hasOne('Course', array('local' => 'course_id', 'foreign' => 'id', 'onDelete' => 'CASCADE'));
-        $this->hasOne('Weekday', array('local' => 'weekday_id', 'foreign' => 'id', 'onDelete' => 'CASCADE'));
+        $this->hasOne('Course', ['local' => 'course_id', 'foreign' => 'id', 'onDelete' => 'CASCADE']);
+        $this->hasOne('Weekday', ['local' => 'weekday_id', 'foreign' => 'id', 'onDelete' => 'CASCADE']);
     }
 }

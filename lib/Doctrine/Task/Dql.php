@@ -22,13 +22,13 @@
 /**
  * Doctrine_Task_Dql
  *
- * @package     Doctrine
- * @subpackage  Task
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 2761 $
- * @author      Jonathan H. Wage <jwage@mac.com>
+ * @package    Doctrine
+ * @subpackage Task
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 2761 $
+ * @author     Jonathan H. Wage <jwage@mac.com>
  */
 class Doctrine_Task_Dql extends Doctrine_Task
 {
@@ -40,13 +40,13 @@ class Doctrine_Task_Dql extends Doctrine_Task
     /**
      * @var array
      */
-    public $requiredArguments = array('models_path'    => 'Specify path to your Doctrine_Record definitions.',
-                                           'dql_query' => 'Specify the complete dql query to execute.');
+    public $requiredArguments = ['models_path'    => 'Specify path to your Doctrine_Record definitions.',
+                                           'dql_query' => 'Specify the complete dql query to execute.'];
 
     /**
      * @var array
      */
-    public $optionalArguments = array('params' => 'Comma separated list of the params to replace the ? tokens in the dql');
+    public $optionalArguments = ['params' => 'Comma separated list of the params to replace the ? tokens in the dql'];
 
     public function execute()
     {
@@ -57,7 +57,7 @@ class Doctrine_Task_Dql extends Doctrine_Task
         $query = Doctrine_Query::create();
 
         $params = $this->getArgument('params');
-        $params = $params ? explode(',', $params):array();
+        $params = $params ? explode(',', $params):[];
 
         $this->notify('executing: "' . $dql . '" (' . implode(', ', $params) . ')');
 
@@ -67,7 +67,7 @@ class Doctrine_Task_Dql extends Doctrine_Task
     }
 
     /**
-     * @param array $array
+     * @param  array $array
      * @return void
      */
     protected function _printResults($array)

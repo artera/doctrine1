@@ -24,19 +24,19 @@ class Doctrine_Ticket_2298_TestCase extends Doctrine_UnitTestCase
     public function testEscapedQuotes()
     {
         $tokenizer  = new Doctrine_Query_Tokenizer();
-        $delimiters = array(' ', '+', '-', '*', '/', '<', '>', '=', '>=', '<=', '&', '|');
+        $delimiters = [' ', '+', '-', '*', '/', '<', '>', '=', '>=', '<=', '&', '|'];
 
         $res = $tokenizer->bracketExplode("'a string with AND in the middle'", ' AND ');
-        $this->assertEqual($res, array("'a string with AND in the middle'"));
+        $this->assertEqual($res, ["'a string with AND in the middle'"]);
 
         $res = $tokenizer->bracketExplode("'o\' AND string'", ' AND ');
-        $this->assertEqual($res, array("'o\' AND string'"));
+        $this->assertEqual($res, ["'o\' AND string'"]);
 
         $res = $tokenizer->sqlExplode("('John O\'Connor (West) as name'+' ') + 'b'", $delimiters);
-        $this->assertEqual($res, array("('John O\'Connor (West) as name'+' ')", '', '', "'b'"));
+        $this->assertEqual($res, ["('John O\'Connor (West) as name'+' ')", '', '', "'b'"]);
 
         $res = $tokenizer->sqlExplode("'(Word) and' term", $delimiters);
-        $this->assertEqual($res, array("'(Word) and'", 'term'));
+        $this->assertEqual($res, ["'(Word) and'", 'term']);
     }
 
 
@@ -45,18 +45,18 @@ class Doctrine_Ticket_2298_TestCase extends Doctrine_UnitTestCase
         // These tests all pass with the old tokenizer, they were developed wile
         // working on the patch
         $tokenizer  = new Doctrine_Query_Tokenizer();
-        $delimiters = array(' ', '+', '-', '*', '/', '<', '>', '=', '>=', '<=', '&', '|');
+        $delimiters = [' ', '+', '-', '*', '/', '<', '>', '=', '>=', '<=', '&', '|'];
 
         $res = $tokenizer->bracketExplode("(age < 20 AND age > 18) AND email LIKE 'John@example.com'", ' AND ', '(', ')');
-        $this->assertEqual($res, array('(age < 20 AND age > 18)',"email LIKE 'John@example.com'"));
+        $this->assertEqual($res, ['(age < 20 AND age > 18)',"email LIKE 'John@example.com'"]);
 
         $res = $tokenizer->sqlExplode("sentence OR 'term'", ' OR ');
-        $this->assertEqual($res, array('sentence', "'term'"));
+        $this->assertEqual($res, ['sentence', "'term'"]);
 
         $res = $tokenizer->clauseExplode("'a + b'+c", $delimiters);
-        $this->assertEqual($res, array(array("'a + b'",'+'), array('c', '')));
+        $this->assertEqual($res, [["'a + b'",'+'], ['c', '']]);
 
         $res = $tokenizer->quoteExplode('"a"."b"', ' ');
-        $this->assertEqual($res, array('"a"."b"'));
+        $this->assertEqual($res, ['"a"."b"']);
     }
 }

@@ -21,14 +21,14 @@
 
 /**
  *
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @author      Lukas Smith <smith@pooteeweet.org> (PEAR MDB2 library)
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @package     Doctrine
- * @subpackage  Transaction
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 7490 $
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @author     Lukas Smith <smith@pooteeweet.org> (PEAR MDB2 library)
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @package    Doctrine
+ * @subpackage Transaction
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 7490 $
  */
 class Doctrine_Transaction_Mysql extends Doctrine_Transaction
 {
@@ -36,7 +36,7 @@ class Doctrine_Transaction_Mysql extends Doctrine_Transaction
      * createSavepoint
      * creates a new savepoint
      *
-     * @param string $savepoint     name of a savepoint to set
+     * @param  string $savepoint name of a savepoint to set
      * @return PDOStatement|Doctrine_Adapter_Statement_Interface
      */
     protected function createSavePoint($savepoint)
@@ -50,7 +50,7 @@ class Doctrine_Transaction_Mysql extends Doctrine_Transaction
      * releaseSavePoint
      * releases given savepoint
      *
-     * @param string $savepoint     name of a savepoint to release
+     * @param  string $savepoint name of a savepoint to release
      * @return PDOStatement|Doctrine_Adapter_Statement_Interface
      */
     protected function releaseSavePoint($savepoint)
@@ -64,7 +64,7 @@ class Doctrine_Transaction_Mysql extends Doctrine_Transaction
      * rollbackSavePoint
      * releases given savepoint
      *
-     * @param string $savepoint     name of a savepoint to rollback to
+     * @param  string $savepoint name of a savepoint to rollback to
      * @return PDOStatement|Doctrine_Adapter_Statement_Interface
      */
     protected function rollbackSavePoint($savepoint)
@@ -77,11 +77,15 @@ class Doctrine_Transaction_Mysql extends Doctrine_Transaction
     /**
      * Set the transacton isolation level.
      *
-     * @param   string  $isolation standard isolation level
-     *                  READ UNCOMMITTED (allows dirty reads)
-     *                  READ COMMITTED (prevents dirty reads)
-     *                  REPEATABLE READ (prevents nonrepeatable reads)
-     *                  SERIALIZABLE (prevents phantom reads)
+     * @param string $isolation standard isolation level
+     *                          READ UNCOMMITTED (allows
+     *                          dirty reads) READ
+     *                          COMMITTED (prevents
+     *                          dirty reads) REPEATABLE
+     *                          READ (prevents
+     *                          nonrepeatable reads)
+     *                          SERIALIZABLE (prevents
+     *                          phantom reads)
      *
      * @throws Doctrine_Transaction_Exception           if using unknown isolation level
      * @throws PDOException                             if something fails at the PDO level

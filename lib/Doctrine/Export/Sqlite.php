@@ -22,14 +22,14 @@
 /**
  * Doctrine_Export_Sqlite
  *
- * @package     Doctrine
- * @subpackage  Export
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @author      Lukas Smith <smith@pooteeweet.org> (PEAR MDB2 library)
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 7490 $
+ * @package    Doctrine
+ * @subpackage Export
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @author     Lukas Smith <smith@pooteeweet.org> (PEAR MDB2 library)
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 7490 $
  */
 class Doctrine_Export_Sqlite extends Doctrine_Export
 {
@@ -38,7 +38,7 @@ class Doctrine_Export_Sqlite extends Doctrine_Export
      *
      * drop an existing database
      *
-     * @param string $databaseFile          Path of the database that should be dropped
+     * @param  string $databaseFile Path of the database that should be dropped
      * @throws Doctrine_Export_Exception    if the database file does not exist
      * @throws Doctrine_Export_Exception    if something failed during the removal of the database file
      * @return void
@@ -61,7 +61,7 @@ class Doctrine_Export_Sqlite extends Doctrine_Export
      *
      * Create sqlite database file
      *
-     * @param string $databaseFile  Path of the database that should be dropped
+     * @param  string $databaseFile Path of the database that should be dropped
      * @return PDO
      */
     public function createDatabase($databaseFile)
@@ -72,31 +72,21 @@ class Doctrine_Export_Sqlite extends Doctrine_Export
     /**
      * Get the stucture of a field into an array
      *
-     * @param string    $table         name of the table on which the index is to be created
-     * @param string    $name         name of the index to be created
-     * @param array     $definition        associative array that defines properties of the index to be created.
-     *                                 Currently, only one property named FIELDS is supported. This property
-     *                                 is also an associative with the names of the index fields as array
-     *                                 indexes. Each entry of this array is set to another type of associative
-     *                                 array that specifies properties of the index that are specific to
-     *                                 each field.
-     *
-     *                                Currently, only the sorting property is supported. It should be used
-     *                                 to define the sorting direction of the index. It may be set to either
-     *                                 ascending or descending.
-     *
-     *                                Not all DBMS support index sorting direction configuration. The DBMS
-     *                                 drivers of those that do not support it ignore this property. Use the
-     *                                 function support() to determine whether the DBMS driver can manage indexes.
-     *                                 Example
-     *                                    array(
-     *                                        'fields' => array(
-     *                                            'user_name' => array(
-     *                                                'sorting' => 'ascending'
-     *                                            ),
-     *                                            'last_login' => array()
-     *                                        )
-     *                                    )
+     * @param  string $table      name of the table on which the index is to be created
+     * @param  string $name       name of the index to be created
+     * @param  array  $definition associative array that defines properties of the index to be created.
+     *                            Currently, only one property named FIELDS is supported. This property
+     *                            is also an associative with the names of the index fields as array
+     *                            indexes. Each entry of this array is set to another type of
+     *                            associative array that specifies properties of the index that are
+     *                            specific to each field. Currently, only the sorting property is
+     *                            supported. It should be used to define the sorting direction of the
+     *                            index. It may be set to either ascending or descending. Not all DBMS
+     *                            support index sorting direction configuration. The DBMS drivers of
+     *                            those that do not support it ignore this property. Use the function
+     *                            support() to determine whether the DBMS driver can manage indexes.
+     *                            Example array( 'fields' => array( 'user_name' => array( 'sorting' =>
+     *                            'ascending' ), 'last_login' => array() ) )
      * @throws PDOException
      * @return string
      */
@@ -110,7 +100,7 @@ class Doctrine_Export_Sqlite extends Doctrine_Export
             switch (strtolower($definition['type'])) {
                 case 'unique':
                     $type = strtoupper($definition['type']) . ' ';
-                break;
+                    break;
                 default:
                     throw new Doctrine_Export_Exception(
                         'Unknown type ' . $definition['type'] . ' for index ' . $name . ' in table ' . $table
@@ -133,7 +123,7 @@ class Doctrine_Export_Sqlite extends Doctrine_Export
      */
     public function getIndexFieldDeclarationList(array $fields)
     {
-        $declFields = array();
+        $declFields = [];
 
         foreach ($fields as $fieldName => $field) {
             $fieldString = $this->conn->quoteIdentifier($fieldName);
@@ -161,32 +151,19 @@ class Doctrine_Export_Sqlite extends Doctrine_Export
     /**
      * create a new table
      *
-     * @param string $name   Name of the database that should be created
-     * @param array $fields  Associative array that contains the definition of each field of the new table
-     *                       The indexes of the array entries are the names of the fields of the table an
-     *                       the array entry values are associative arrays like those that are meant to be
-     *                       passed with the field definitions to get[Type]Declaration() functions.
-     *                          array(
-     *                              'id' => array(
-     *                                  'type' => 'integer',
-     *                                  'unsigned' => 1
-     *                                  'notnull' => 1
-     *                                  'default' => 0
-     *                              ),
-     *                              'name' => array(
-     *                                  'type' => 'text',
-     *                                  'length' => 12
-     *                              ),
-     *                              'password' => array(
-     *                                  'type' => 'text',
-     *                                  'length' => 12
-     *                              )
-     *                          );
-     * @param array $options  An associative array of table options:
+     * @param string $name    Name of the database that should be created
+     * @param array  $fields  Associative array that contains the definition of each field of the new table
+     *                        The indexes of the array entries are the names of the fields of the table an
+     *                        the array entry values are associative arrays like those that are meant to be
+     *                        passed with the field definitions to get[Type]Declaration() functions. array(
+     *                        'id' => array( 'type' => 'integer', 'unsigned' => 1 'notnull' => 1 'default'
+     *                        => 0 ), 'name' => array( 'type' => 'text', 'length' => 12 ), 'password' =>
+     *                        array( 'type' => 'text', 'length' => 12 ) );
+     * @param array  $options An associative array of table options:
      *
      * @return array
      */
-    public function createTableSql($name, array $fields, array $options = array())
+    public function createTableSql($name, array $fields, array $options = [])
     {
         if (! $name) {
             throw new Doctrine_Export_Exception('no valid table name specified');
@@ -199,8 +176,9 @@ class Doctrine_Export_Sqlite extends Doctrine_Export
 
         $autoinc = false;
         foreach ($fields as $field) {
-            if (isset($field['autoincrement']) && $field['autoincrement'] ||
-              (isset($field['autoinc']) && $field['autoinc'])) {
+            if (isset($field['autoincrement']) && $field['autoincrement']
+                || (isset($field['autoinc']) && $field['autoinc'])
+            ) {
                 $autoinc = true;
                 break;
             }
@@ -208,7 +186,7 @@ class Doctrine_Export_Sqlite extends Doctrine_Export
 
         if (! $autoinc && isset($options['primary']) && ! empty($options['primary'])) {
             $keyColumns = array_values($options['primary']);
-            $keyColumns = array_map(array($this->conn, 'quoteIdentifier'), $keyColumns);
+            $keyColumns = array_map([$this->conn, 'quoteIdentifier'], $keyColumns);
             $queryFields .= ', PRIMARY KEY(' . implode(', ', $keyColumns) . ')';
         }
 
@@ -241,7 +219,7 @@ class Doctrine_Export_Sqlite extends Doctrine_Export
      * Return the FOREIGN KEY query section dealing with non-standard options
      * as MATCH, INITIALLY DEFERRED, ON UPDATE, ...
      *
-     * @param array $definition         foreign key definition
+     * @param  array $definition foreign key definition
      * @return string
      * @access protected
      */
@@ -273,17 +251,15 @@ class Doctrine_Export_Sqlite extends Doctrine_Export
     /**
      * create sequence
      *
-     * @param string    $seqName        name of the sequence to be created
-     * @param int       $start          start value of the sequence; default is 1
-     * @param array     $options  An associative array of table options:
-     *                          array(
-     *                              'comment' => 'Foo',
-     *                              'charset' => 'utf8',
-     *                              'collate' => 'utf8_unicode_ci',
-     *                          );
+     * @param  string $seqName name of the sequence to be created
+     * @param  int    $start   start value of the sequence; default is 1
+     * @param  array  $options An associative array of table options:
+     *                         array( 'comment' => 'Foo', 'charset'
+     *                         => 'utf8', 'collate' =>
+     *                         'utf8_unicode_ci', );
      * @return boolean
      */
-    public function createSequence($seqName, $start = 1, array $options = array())
+    public function createSequence($seqName, $start = 1, array $options = [])
     {
         $sequenceName = $this->conn->quoteIdentifier($this->conn->formatter->getSequenceName($seqName), true);
         $seqcolName   = $this->conn->quoteIdentifier($this->conn->getAttribute(Doctrine_Core::ATTR_SEQCOL_NAME), true);
@@ -313,7 +289,7 @@ class Doctrine_Export_Sqlite extends Doctrine_Export
     /**
      * drop existing sequence
      *
-     * @param string $sequenceName      name of the sequence to be dropped
+     * @param  string $sequenceName name of the sequence to be dropped
      * @return string
      */
     public function dropSequenceSql($sequenceName)
@@ -325,7 +301,7 @@ class Doctrine_Export_Sqlite extends Doctrine_Export
 
     /**
      * @param  string $name
-     * @param  bool $check
+     * @param  bool   $check
      * @return string|bool
      */
     public function alterTableSql($name, array $changes, $check = false)
@@ -364,7 +340,7 @@ class Doctrine_Export_Sqlite extends Doctrine_Export
             }
         }
 
-        $rename = array();
+        $rename = [];
         if (! empty($changes['rename']) && is_array($changes['rename'])) {
             foreach ($changes['rename'] as $fieldName => $field) {
                 $rename[$field['name']] = $fieldName;
@@ -415,8 +391,8 @@ class Doctrine_Export_Sqlite extends Doctrine_Export
      * Sqlite does not support foreign keys so we are not even going to do anything if this function is called
      * to avoid any sql errors if a user tries to use this on sqlite
      *
-     * @param string    $table         name of the table on which the foreign key is to be created
-     * @param array     $definition    associative array that defines properties of the foreign key to be created.
+     * @param  string $table      name of the table on which the foreign key is to be created
+     * @param  array  $definition associative array that defines properties of the foreign key to be created.
      * @return false
      */
     public function createForeignKey($table, array $definition)

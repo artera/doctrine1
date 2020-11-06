@@ -2,12 +2,12 @@
 /**
  * Doctrine_Ticket_697_TestCase
  *
- * @package     Doctrine
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 
 class Doctrine_Ticket_697_TestCase extends Doctrine_UnitTestCase
@@ -18,7 +18,7 @@ class Doctrine_Ticket_697_TestCase extends Doctrine_UnitTestCase
 
     public function prepareTables()
     {
-        $this->tables = array('T697_Person', 'T697_User');
+        $this->tables = ['T697_Person', 'T697_User'];
         parent::prepareTables();
     }
 

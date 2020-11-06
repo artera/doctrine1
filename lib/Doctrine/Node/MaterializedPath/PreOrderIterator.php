@@ -22,13 +22,13 @@
 /**
  * Doctrine_Node_MaterializedPath_PreOrderIterator
  *
- * @package     Doctrine
- * @subpackage  Node
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 7490 $
- * @author      Joe Simms <joe.simms@websites4.com>
+ * @package    Doctrine
+ * @subpackage Node
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 7490 $
+ * @author     Joe Simms <joe.simms@websites4.com>
  */
 class Doctrine_Node_MaterializedPath_PreOrderIterator implements Iterator
 {
@@ -44,7 +44,7 @@ class Doctrine_Node_MaterializedPath_PreOrderIterator implements Iterator
 
     /**
      * @param Doctrine_Node $node
-     * @param array $opts
+     * @param array         $opts
      */
     public function __construct($node, $opts)
     {

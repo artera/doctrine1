@@ -19,13 +19,13 @@
 /**
  * Doctrine_Ticket_1500_TestCase
  *
- * @package     Doctrine
- * @author      David Zülke <david.zuelke@bitextender.com>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    ?
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   David Zülke <david.zuelke@bitextender.com>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category ?
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Ticket_1507_TestCase extends Doctrine_UnitTestCase
 {
@@ -37,7 +37,7 @@ class Doctrine_Ticket_1507_TestCase extends Doctrine_UnitTestCase
         $this->assertEqual(null, $c->getParam('foo', 'bar'));
         $this->assertEqual(null, $c->getParams());
         $this->assertEqual(null, $c->getParams('bar'));
-        $this->assertEqual(array(), $c->getParamNamespaces());
+        $this->assertEqual([], $c->getParamNamespaces());
     }
 
     public function testSetGetParamWithNamespace()
@@ -46,10 +46,10 @@ class Doctrine_Ticket_1507_TestCase extends Doctrine_UnitTestCase
 
         $c->setParam('foo', 'bar', 'namespace');
 
-        $this->assertEqual(array('foo' => 'bar'), $c->getParams('namespace'));
+        $this->assertEqual(['foo' => 'bar'], $c->getParams('namespace'));
         $this->assertEqual('bar', $c->getParam('foo', 'namespace'));
 
-        $this->assertEqual(array('namespace'), $c->getParamNamespaces());
+        $this->assertEqual(['namespace'], $c->getParamNamespaces());
     }
 
     public function testSetGetParamWithoutNamespace()
@@ -58,10 +58,10 @@ class Doctrine_Ticket_1507_TestCase extends Doctrine_UnitTestCase
 
         $c->setParam('foo', 'bar');
 
-        $this->assertEqual(array('foo' => 'bar'), $c->getParams());
+        $this->assertEqual(['foo' => 'bar'], $c->getParams());
         $this->assertEqual('bar', $c->getParam('foo'));
 
-        $this->assertEqual(array($c->getAttribute(Doctrine_Core::ATTR_DEFAULT_PARAM_NAMESPACE)), $c->getParamNamespaces());
+        $this->assertEqual([$c->getAttribute(Doctrine_Core::ATTR_DEFAULT_PARAM_NAMESPACE)], $c->getParamNamespaces());
     }
 
     public function testSetGetParamWithNamespaceParent()

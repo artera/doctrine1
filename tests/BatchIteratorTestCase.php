@@ -19,19 +19,19 @@
 /**
  * Doctrine_BatchIterator_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_BatchIterator_TestCase extends Doctrine_UnitTestCase
 {
     public function prepareTables()
     {
-        $this->tables = array('EntityAddress', 'Entity', 'User', 'Group', 'Address', 'Email', 'Phonenumber');
+        $this->tables = ['EntityAddress', 'Entity', 'User', 'Group', 'Address', 'Email', 'Phonenumber'];
         parent::prepareTables();
     }
 
@@ -64,7 +64,7 @@ class Doctrine_BatchIterator_TestCase extends Doctrine_UnitTestCase
         foreach ($user->Address as $address) {
             $a[] = $address->address;
         }
-        $this->assertEqual($a, array('street 1', 'street 2'));
+        $this->assertEqual($a, ['street 1', 'street 2']);
 
         $user->save();
 
@@ -74,11 +74,11 @@ class Doctrine_BatchIterator_TestCase extends Doctrine_UnitTestCase
         $this->assertEqual($user->Address[1]->address, 'street 2');
 
         $user = $user->getTable()->find($user->id);
-        $a    = array();
+        $a    = [];
         foreach ($user->Address as $address) {
             $a[] = $address->address;
         }
-        $this->assertEqual($a, array('street 1', 'street 2'));
+        $this->assertEqual($a, ['street 1', 'street 2']);
 
 
         $user = $graph->query('FROM User');

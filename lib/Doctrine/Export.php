@@ -22,21 +22,21 @@
 /**
  * Doctrine_Export
  *
- * @package     Doctrine
- * @subpackage  Export
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @author      Lukas Smith <smith@pooteeweet.org> (PEAR MDB2 library)
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 7653 $
+ * @package    Doctrine
+ * @subpackage Export
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @author     Lukas Smith <smith@pooteeweet.org> (PEAR MDB2 library)
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 7653 $
  */
 class Doctrine_Export extends Doctrine_Connection_Module
 {
     /**
      * @var array
      */
-    protected $valid_default_values = array(
+    protected $valid_default_values = [
         'text'      => '',
         'boolean'   => true,
         'integer'   => 0,
@@ -48,13 +48,13 @@ class Doctrine_Export extends Doctrine_Connection_Module
         'clob'      => '',
         'blob'      => '',
         'string'    => ''
-    );
+    ];
 
     /**
      * drop an existing database
      * (this method is implemented by the drivers)
      *
-     * @param string $database name of the database that should be dropped
+     * @param  string $database name of the database that should be dropped
      * @return void
      */
     public function dropDatabase($database)
@@ -68,7 +68,7 @@ class Doctrine_Export extends Doctrine_Connection_Module
      * drop an existing database
      * (this method is implemented by the drivers)
      *
-     * @param string $database name of the database that should be dropped
+     * @param  string $database name of the database that should be dropped
      * @return string|array
      */
     public function dropDatabaseSql($database)
@@ -80,7 +80,7 @@ class Doctrine_Export extends Doctrine_Connection_Module
      * dropTableSql
      * drop an existing table
      *
-     * @param string $table           name of table that should be dropped from the database
+     * @param  string $table name of table that should be dropped from the database
      * @return string
      */
     public function dropTableSql($table)
@@ -92,7 +92,7 @@ class Doctrine_Export extends Doctrine_Connection_Module
      * dropTable
      * drop an existing table
      *
-     * @param string $table           name of table that should be dropped from the database
+     * @param  string $table name of table that should be dropped from the database
      * @return void
      */
     public function dropTable($table)
@@ -103,8 +103,8 @@ class Doctrine_Export extends Doctrine_Connection_Module
     /**
      * drop existing index
      *
-     * @param string    $table        name of table that should be used in method
-     * @param string    $name         name of the index to be dropped
+     * @param  string $table name of table that should be used in method
+     * @param  string $name  name of the index to be dropped
      * @return int
      */
     public function dropIndex($table, $name)
@@ -115,8 +115,8 @@ class Doctrine_Export extends Doctrine_Connection_Module
     /**
      * dropIndexSql
      *
-     * @param string    $table        name of table that should be used in method
-     * @param string    $name         name of the index to be dropped
+     * @param  string $table name of table that should be used in method
+     * @param  string $name  name of the index to be dropped
      * @return string                 SQL that is used for dropping an index
      */
     public function dropIndexSql($table, $name)
@@ -129,9 +129,9 @@ class Doctrine_Export extends Doctrine_Connection_Module
     /**
      * drop existing constraint
      *
-     * @param string    $table        name of table that should be used in method
-     * @param string    $name         name of the constraint to be dropped
-     * @param bool    $primary      hint if the constraint is primary
+     * @param  string $table   name of table that should be used in method
+     * @param  string $name    name of the constraint to be dropped
+     * @param  bool   $primary hint if the constraint is primary
      * @return int
      */
     public function dropConstraint($table, $name, $primary = false)
@@ -145,8 +145,8 @@ class Doctrine_Export extends Doctrine_Connection_Module
     /**
      * drop existing foreign key
      *
-     * @param string    $table        name of table that should be used in method
-     * @param string    $name         name of the foreign key to be dropped
+     * @param  string $table name of table that should be used in method
+     * @param  string $name  name of the foreign key to be dropped
      * @return int
      */
     public function dropForeignKey($table, $name)
@@ -160,7 +160,7 @@ class Doctrine_Export extends Doctrine_Connection_Module
      * (this method is implemented by the drivers)
      *
      * @throws Doctrine_Connection_Exception     if something fails at database level
-     * @param string $sequenceName      name of the sequence to be dropped
+     * @param  string $sequenceName name of the sequence to be dropped
      * @return void
      */
     public function dropSequence($sequenceName)
@@ -173,7 +173,7 @@ class Doctrine_Export extends Doctrine_Connection_Module
      * drop existing sequence
      *
      * @throws Doctrine_Connection_Exception     if something fails at database level
-     * @param string $sequenceName name of the sequence to be dropped
+     * @param  string $sequenceName name of the sequence to be dropped
      * @return string
      */
     public function dropSequenceSql($sequenceName)
@@ -185,7 +185,7 @@ class Doctrine_Export extends Doctrine_Connection_Module
      * create a new database
      * (this method is implemented by the drivers)
      *
-     * @param string $database name of the database that should be created
+     * @param  string $database name of the database that should be created
      * @return void
      */
     public function createDatabase($database)
@@ -197,7 +197,7 @@ class Doctrine_Export extends Doctrine_Connection_Module
      * create a new database
      * (this method is implemented by the drivers)
      *
-     * @param string $database name of the database that should be created
+     * @param  string $database name of the database that should be created
      * @return string
      */
     public function createDatabaseSql($database)
@@ -208,32 +208,19 @@ class Doctrine_Export extends Doctrine_Connection_Module
     /**
      * create a new table
      *
-     * @param string $name   Name of the database that should be created
-     * @param array $fields  Associative array that contains the definition of each field of the new table
-     *                       The indexes of the array entries are the names of the fields of the table an
-     *                       the array entry values are associative arrays like those that are meant to be
-     *                       passed with the field definitions to get[Type]Declaration() functions.
-     *                          array(
-     *                              'id' => array(
-     *                                  'type' => 'integer',
-     *                                  'unsigned' => 1
-     *                                  'notnull' => 1
-     *                                  'default' => 0
-     *                              ),
-     *                              'name' => array(
-     *                                  'type' => 'text',
-     *                                  'length' => 12
-     *                              ),
-     *                              'password' => array(
-     *                                  'type' => 'text',
-     *                                  'length' => 12
-     *                              )
-     *                          );
-     * @param array $options  An associative array of table options:
+     * @param string $name    Name of the database that should be created
+     * @param array  $fields  Associative array that contains the definition of each field of the new table
+     *                        The indexes of the array entries are the names of the fields of the table an
+     *                        the array entry values are associative arrays like those that are meant to be
+     *                        passed with the field definitions to get[Type]Declaration() functions. array(
+     *                        'id' => array( 'type' => 'integer', 'unsigned' => 1 'notnull' => 1 'default'
+     *                        => 0 ), 'name' => array( 'type' => 'text', 'length' => 12 ), 'password' =>
+     *                        array( 'type' => 'text', 'length' => 12 ) );
+     * @param array  $options An associative array of table options:
      *
      * @return array
      */
-    public function createTableSql($name, array $fields, array $options = array())
+    public function createTableSql($name, array $fields, array $options = [])
     {
         if (! $name) {
             throw new Doctrine_Export_Exception('no valid table name specified');
@@ -247,7 +234,7 @@ class Doctrine_Export extends Doctrine_Connection_Module
 
 
         if (isset($options['primary']) && ! empty($options['primary'])) {
-            $primaryKeys = array_map(array($this->conn, 'quoteIdentifier'), array_values($options['primary']));
+            $primaryKeys = array_map([$this->conn, 'quoteIdentifier'], array_values($options['primary']));
             $queryFields .= ', PRIMARY KEY(' . implode(', ', $primaryKeys) . ')';
         }
 
@@ -286,14 +273,14 @@ class Doctrine_Export extends Doctrine_Connection_Module
     /**
      * create a new table
      *
-     * @param string $name   Name of the database that should be created
-     * @param array $fields  Associative array that contains the definition of each field of the new table
-     * @param array $options  An associative array of table options:
-     * @see Doctrine_Export::createTableSql()
+     * @param string $name    Name of the database that should be created
+     * @param array  $fields  Associative array that contains the definition of each field of the new table
+     * @param array  $options An associative array of table options:
+     * @see   Doctrine_Export::createTableSql()
      *
      * @return void
      */
-    public function createTable($name, array $fields, array $options = array())
+    public function createTable($name, array $fields, array $options = [])
     {
         // Build array of the primary keys if any of the individual field definitions
         // specify primary => true
@@ -301,7 +288,7 @@ class Doctrine_Export extends Doctrine_Connection_Module
         foreach ($fields as $fieldName => $field) {
             if (isset($field['primary']) && $field['primary']) {
                 if ($count == 0) {
-                    $options['primary'] = array();
+                    $options['primary'] = [];
                 }
                 $count++;
                 $options['primary'][] = $fieldName;
@@ -319,17 +306,15 @@ class Doctrine_Export extends Doctrine_Connection_Module
      * create sequence
      *
      * @throws Doctrine_Connection_Exception     if something fails at database level
-     * @param string    $seqName        name of the sequence to be created
-     * @param int    $start          start value of the sequence; default is 1
-     * @param array     $options  An associative array of table options:
-     *                          array(
-     *                              'comment' => 'Foo',
-     *                              'charset' => 'utf8',
-     *                              'collate' => 'utf8_unicode_ci',
-     *                          );
+     * @param  string $seqName name of the sequence to be created
+     * @param  int    $start   start value of the sequence; default is 1
+     * @param  array  $options An associative array of table options:
+     *                         array( 'comment' => 'Foo', 'charset'
+     *                         => 'utf8', 'collate' =>
+     *                         'utf8_unicode_ci', );
      * @return Doctrine_Adapter_Statement_Interface|PDOStatement
      */
-    public function createSequence($seqName, $start = 1, array $options = array())
+    public function createSequence($seqName, $start = 1, array $options = [])
     {
         return $this->conn->execute($this->createSequenceSql($seqName, $start = 1, $options));
     }
@@ -339,17 +324,15 @@ class Doctrine_Export extends Doctrine_Connection_Module
      * (this method is implemented by the drivers)
      *
      * @throws Doctrine_Connection_Exception     if something fails at database level
-     * @param string    $seqName        name of the sequence to be created
-     * @param int    $start          start value of the sequence; default is 1
-     * @param array     $options  An associative array of table options:
-     *                          array(
-     *                              'comment' => 'Foo',
-     *                              'charset' => 'utf8',
-     *                              'collate' => 'utf8_unicode_ci',
-     *                          );
+     * @param  string $seqName name of the sequence to be created
+     * @param  int    $start   start value of the sequence; default is 1
+     * @param  array  $options An associative array of table options:
+     *                         array( 'comment' => 'Foo', 'charset'
+     *                         => 'utf8', 'collate' =>
+     *                         'utf8_unicode_ci', );
      * @return string
      */
-    public function createSequenceSql($seqName, $start = 1, array $options = array())
+    public function createSequenceSql($seqName, $start = 1, array $options = [])
     {
         throw new Doctrine_Export_Exception('Create sequence not supported by this driver.');
     }
@@ -357,22 +340,15 @@ class Doctrine_Export extends Doctrine_Connection_Module
     /**
      * create a constraint on a table
      *
-     * @param string    $table         name of the table on which the constraint is to be created
-     * @param string    $name          name of the constraint to be created
-     * @param array     $definition    associative array that defines properties of the constraint to be created.
-     *                                 Currently, only one property named FIELDS is supported. This property
-     *                                 is also an associative with the names of the constraint fields as array
-     *                                 constraints. Each entry of this array is set to another type of associative
-     *                                 array that specifies properties of the constraint that are specific to
-     *                                 each field.
-     *
-     *                                 Example
-     *                                    array(
-     *                                        'fields' => array(
-     *                                            'user_name' => array(),
-     *                                            'last_login' => array()
-     *                                        )
-     *                                    )
+     * @param  string $table      name of the table on which the constraint is to be created
+     * @param  string $name       name of the constraint to be created
+     * @param  array  $definition associative array that defines properties of the constraint to be created.
+     *                            Currently, only one property named FIELDS is supported. This property is
+     *                            also an associative with the names of the constraint fields as array
+     *                            constraints. Each entry of this array is set to another type of
+     *                            associative array that specifies properties of the constraint that are
+     *                            specific to each field. Example array( 'fields' => array( 'user_name' =>
+     *                            array(), 'last_login' => array() ) )
      * @return int
      */
     public function createConstraint($table, $name, $definition)
@@ -385,22 +361,15 @@ class Doctrine_Export extends Doctrine_Connection_Module
     /**
      * create a constraint on a table
      *
-     * @param string    $table         name of the table on which the constraint is to be created
-     * @param string    $name          name of the constraint to be created
-     * @param array     $definition    associative array that defines properties of the constraint to be created.
-     *                                 Currently, only one property named FIELDS is supported. This property
-     *                                 is also an associative with the names of the constraint fields as array
-     *                                 constraints. Each entry of this array is set to another type of associative
-     *                                 array that specifies properties of the constraint that are specific to
-     *                                 each field.
-     *
-     *                                 Example
-     *                                    array(
-     *                                        'fields' => array(
-     *                                            'user_name' => array(),
-     *                                            'last_login' => array()
-     *                                        )
-     *                                    )
+     * @param  string $table      name of the table on which the constraint is to be created
+     * @param  string $name       name of the constraint to be created
+     * @param  array  $definition associative array that defines properties of the constraint to be created.
+     *                            Currently, only one property named FIELDS is supported. This property is
+     *                            also an associative with the names of the constraint fields as array
+     *                            constraints. Each entry of this array is set to another type of
+     *                            associative array that specifies properties of the constraint that are
+     *                            specific to each field. Example array( 'fields' => array( 'user_name' =>
+     *                            array(), 'last_login' => array() ) )
      * @return string
      */
     public function createConstraintSql($table, $name, $definition)
@@ -415,7 +384,7 @@ class Doctrine_Export extends Doctrine_Connection_Module
             $query .= ' UNIQUE';
         }
 
-        $fields = array();
+        $fields = [];
         foreach (array_keys($definition['fields']) as $field) {
             $fields[] = $this->conn->quoteIdentifier($field, true);
         }
@@ -427,32 +396,21 @@ class Doctrine_Export extends Doctrine_Connection_Module
     /**
      * Get the stucture of a field into an array
      *
-     * @param string    $table         name of the table on which the index is to be created
-     * @param string    $name          name of the index to be created
-     * @param array     $definition    associative array that defines properties of the index to be created.
-     *                                 Currently, only one property named FIELDS is supported. This property
-     *                                 is also an associative with the names of the index fields as array
-     *                                 indexes. Each entry of this array is set to another type of associative
-     *                                 array that specifies properties of the index that are specific to
-     *                                 each field.
-     *
-     *                                 Currently, only the sorting property is supported. It should be used
-     *                                 to define the sorting direction of the index. It may be set to either
-     *                                 ascending or descending.
-     *
-     *                                 Not all DBMS support index sorting direction configuration. The DBMS
-     *                                 drivers of those that do not support it ignore this property. Use the
-     *                                 function supports() to determine whether the DBMS driver can manage indexes.
-     *
-     *                                 Example
-     *                                    array(
-     *                                        'fields' => array(
-     *                                            'user_name' => array(
-     *                                                'sorting' => 'ascending'
-     *                                            ),
-     *                                            'last_login' => array()
-     *                                        )
-     *                                    )
+     * @param  string $table      name of the table on which the index is to be created
+     * @param  string $name       name of the index to be created
+     * @param  array  $definition associative array that defines properties of the index to be created.
+     *                            Currently, only one property named FIELDS is supported. This property
+     *                            is also an associative with the names of the index fields as array
+     *                            indexes. Each entry of this array is set to another type of
+     *                            associative array that specifies properties of the index that are
+     *                            specific to each field. Currently, only the sorting property is
+     *                            supported. It should be used to define the sorting direction of the
+     *                            index. It may be set to either ascending or descending. Not all DBMS
+     *                            support index sorting direction configuration. The DBMS drivers of
+     *                            those that do not support it ignore this property. Use the function
+     *                            supports() to determine whether the DBMS driver can manage indexes.
+     *                            Example array( 'fields' => array( 'user_name' => array( 'sorting' =>
+     *                            'ascending' ), 'last_login' => array() ) )
      * @return Doctrine_Adapter_Statement_Interface|PDOStatement
      */
     public function createIndex($table, $name, array $definition)
@@ -463,10 +421,10 @@ class Doctrine_Export extends Doctrine_Connection_Module
     /**
      * Get the stucture of a field into an array
      *
-     * @param string    $table         name of the table on which the index is to be created
-     * @param string    $name          name of the index to be created
-     * @param array     $definition    associative array that defines properties of the index to be created.
-     * @see Doctrine_Export::createIndex()
+     * @param  string $table      name of the table on which the index is to be created
+     * @param  string $name       name of the index to be created
+     * @param  array  $definition associative array that defines properties of the index to be created.
+     * @see    Doctrine_Export::createIndex()
      * @return string
      */
     public function createIndexSql($table, $name, array $definition)
@@ -479,7 +437,7 @@ class Doctrine_Export extends Doctrine_Connection_Module
             switch (strtolower($definition['type'])) {
                 case 'unique':
                     $type = strtoupper($definition['type']) . ' ';
-                break;
+                    break;
                 default:
                     throw new Doctrine_Export_Exception(
                         'Unknown type ' . $definition['type'] . ' for index ' . $name . ' in table ' . $table
@@ -489,7 +447,7 @@ class Doctrine_Export extends Doctrine_Connection_Module
 
         $query = 'CREATE ' . $type . 'INDEX ' . $name . ' ON ' . $table;
 
-        $fields = array();
+        $fields = [];
         foreach ($definition['fields'] as $field) {
             $fields[] = $this->conn->quoteIdentifier($field);
         }
@@ -500,8 +458,8 @@ class Doctrine_Export extends Doctrine_Connection_Module
     /**
      * createForeignKeySql
      *
-     * @param string    $table         name of the table on which the foreign key is to be created
-     * @param array     $definition    associative array that defines properties of the foreign key to be created.
+     * @param  string $table      name of the table on which the foreign key is to be created
+     * @param  array  $definition associative array that defines properties of the foreign key to be created.
      * @return string
      */
     public function createForeignKeySql($table, array $definition)
@@ -515,8 +473,8 @@ class Doctrine_Export extends Doctrine_Connection_Module
     /**
      * createForeignKey
      *
-     * @param string    $table         name of the table on which the foreign key is to be created
-     * @param array     $definition    associative array that defines properties of the foreign key to be created.
+     * @param  string $table      name of the table on which the foreign key is to be created
+     * @param  array  $definition associative array that defines properties of the foreign key to be created.
      * @return Doctrine_Adapter_Statement_Interface|PDOStatement
      */
     public function createForeignKey($table, array $definition)
@@ -530,89 +488,51 @@ class Doctrine_Export extends Doctrine_Connection_Module
      * alter an existing table
      * (this method is implemented by the drivers)
      *
-     * @param string $name         name of the table that is intended to be changed.
-     * @param array $changes     associative array that contains the details of each type
-     *                             of change that is intended to be performed. The types of
-     *                             changes that are currently supported are defined as follows:
+     * @param string  $name    name of the table that is intended to be changed.
+     * @param array   $changes associative array that contains the details of each type
+     *                         of change that is intended to be performed. The types of
+     *                         changes that are currently supported are defined as
+     *                         follows: name New name for the table. add Associative
+     *                         array with the names of fields to be added as indexes of
+     *                         the array. The value of each entry of the array should
+     *                         be set to another associative array with the properties
+     *                         of the fields to be added. The properties of the fields
+     *                         should be the same as defined by the MDB2 parser. remove
+     *                         Associative array with the names of fields to be removed
+     *                         as indexes of the array. Currently the values assigned
+     *                         to each entry are ignored. An empty array should be used
+     *                         for future compatibility. rename Associative array with
+     *                         the names of fields to be renamed as indexes of the
+     *                         array. The value of each entry of the array should be
+     *                         set to another associative array with the entry named
+     *                         name with the new field name and the entry named
+     *                         Declaration that is expected to contain the portion of
+     *                         the field declaration already in DBMS specific SQL code
+     *                         as it is used in the CREATE TABLE statement. change
+     *                         Associative array with the names of the fields to be
+     *                         changed as indexes of the array. Keep in mind that if it
+     *                         is intended to change either the name of a field and any
+     *                         other properties, the change array entries should have
+     *                         the new names of the fields as array indexes. The value
+     *                         of each entry of the array should be set to another
+     *                         associative array with the properties of the fields to
+     *                         that are meant to be changed as array entries. These
+     *                         entries should be assigned to the new values of the
+     *                         respective properties. The properties of the fields
+     *                         should be the same as defined by the MDB2 parser.
+     *                         Example array( 'name' => 'userlist', 'add' => array(
+     *                         'quota' => array( 'type' => 'integer', 'unsigned' => 1 )
+     *                         ), 'remove' => array( 'file_limit' => array(),
+     *                         'time_limit' => array() ), 'change' => array( 'name' =>
+     *                         array( 'length' => '20', 'definition' => array( 'type'
+     *                         => 'text', 'length' => 20, ), ) ), 'rename' => array(
+     *                         'sex' => array( 'name' => 'gender', 'definition' =>
+     *                         array( 'type' => 'text', 'length' => 1, 'default' =>
+     *                         'M', ), ) ) )
      *
-     *                             name
-     *
-     *                                New name for the table.
-     *
-     *                            add
-     *
-     *                                Associative array with the names of fields to be added as
-     *                                 indexes of the array. The value of each entry of the array
-     *                                 should be set to another associative array with the properties
-     *                                 of the fields to be added. The properties of the fields should
-     *                                 be the same as defined by the MDB2 parser.
-     *
-     *
-     *                            remove
-     *
-     *                                Associative array with the names of fields to be removed as indexes
-     *                                 of the array. Currently the values assigned to each entry are ignored.
-     *                                 An empty array should be used for future compatibility.
-     *
-     *                            rename
-     *
-     *                                Associative array with the names of fields to be renamed as indexes
-     *                                 of the array. The value of each entry of the array should be set to
-     *                                 another associative array with the entry named name with the new
-     *                                 field name and the entry named Declaration that is expected to contain
-     *                                 the portion of the field declaration already in DBMS specific SQL code
-     *                                 as it is used in the CREATE TABLE statement.
-     *
-     *                            change
-     *
-     *                                Associative array with the names of the fields to be changed as indexes
-     *                                 of the array. Keep in mind that if it is intended to change either the
-     *                                 name of a field and any other properties, the change array entries
-     *                                 should have the new names of the fields as array indexes.
-     *
-     *                                The value of each entry of the array should be set to another associative
-     *                                 array with the properties of the fields to that are meant to be changed as
-     *                                 array entries. These entries should be assigned to the new values of the
-     *                                 respective properties. The properties of the fields should be the same
-     *                                 as defined by the MDB2 parser.
-     *
-     *                            Example
-     *                                array(
-     *                                    'name' => 'userlist',
-     *                                    'add' => array(
-     *                                        'quota' => array(
-     *                                            'type' => 'integer',
-     *                                            'unsigned' => 1
-     *                                        )
-     *                                    ),
-     *                                    'remove' => array(
-     *                                        'file_limit' => array(),
-     *                                        'time_limit' => array()
-     *                                    ),
-     *                                    'change' => array(
-     *                                        'name' => array(
-     *                                            'length' => '20',
-     *                                            'definition' => array(
-     *                                                'type' => 'text',
-     *                                                'length' => 20,
-     *                                            ),
-     *                                        )
-     *                                    ),
-     *                                    'rename' => array(
-     *                                        'sex' => array(
-     *                                            'name' => 'gender',
-     *                                            'definition' => array(
-     *                                                'type' => 'text',
-     *                                                'length' => 1,
-     *                                                'default' => 'M',
-     *                                            ),
-     *                                        )
-     *                                    )
-     *                                )
-     *
-     * @param boolean $check     indicates whether the function should just check if the DBMS driver
-     *                             can perform the requested table alterations if the value is true or
-     *                             actually perform them otherwise.
+     * @param  boolean $check   indicates whether the function should just check if the DBMS driver
+     *                          can perform the requested table alterations if the value is true or
+     *                          actually perform them otherwise.
      * @return void
      */
     public function alterTable($name, array $changes, $check = false)
@@ -628,12 +548,12 @@ class Doctrine_Export extends Doctrine_Connection_Module
      * generates the sql for altering an existing table
      * (this method is implemented by the drivers)
      *
-     * @param string $name          name of the table that is intended to be changed.
-     * @param array $changes        associative array that contains the details of each type      *
-     * @param boolean $check        indicates whether the function should just check if the DBMS driver
-     *                              can perform the requested table alterations if the value is true or
-     *                              actually perform them otherwise.
-     * @see Doctrine_Export::alterTable()
+     * @param  string  $name    name of the table that is intended to be changed.
+     * @param  array   $changes associative array that contains the details of each type      *
+     * @param  boolean $check   indicates whether the function should just check if the DBMS driver
+     *                          can perform the requested table alterations if the value is true or
+     *                          actually perform them otherwise.
+     * @see    Doctrine_Export::alterTable()
      * @return string
      */
     public function alterTableSql($name, array $changes, $check = false)
@@ -644,35 +564,34 @@ class Doctrine_Export extends Doctrine_Connection_Module
     /**
      * Get declaration of a number of field in bulk
      *
-     * @param array $fields  a multidimensional associative array.
-     *      The first dimension determines the field name, while the second
-     *      dimension is keyed with the name of the properties
-     *      of the field being declared as array indexes. Currently, the types
-     *      of supported field properties are as follows:
-     *
-     *      length
-     *          Integer value that determines the maximum length of the text
-     *          field. If this argument is missing the field should be
-     *          declared to have the longest length allowed by the DBMS.
-     *
-     *      default
-     *          Text value to be used as default for this field.
-     *
-     *      notnull
-     *          Boolean flag that indicates whether this field is constrained
-     *          to not be set to null.
-     *      charset
-     *          Text value with the default CHARACTER SET for this field.
-     *      collation
-     *          Text value with the default COLLATION for this field.
-     *      unique
-     *          unique constraint
+     * @param array $fields a multidimensional associative array.
+     *                      The first dimension determines the
+     *                      field name, while the second
+     *                      dimension is keyed with the name of
+     *                      the properties of the field being
+     *                      declared as array indexes. Currently,
+     *                      the types of supported field
+     *                      properties are as follows: length
+     *                      Integer value that determines the
+     *                      maximum length of the text field. If
+     *                      this argument is missing the field
+     *                      should be declared to have the
+     *                      longest length allowed by the DBMS.
+     *                      default Text value to be used as
+     *                      default for this field. notnull
+     *                      Boolean flag that indicates whether
+     *                      this field is constrained to not be
+     *                      set to null. charset Text value with
+     *                      the default CHARACTER SET for this
+     *                      field. collation Text value with the
+     *                      default COLLATION for this field.
+     *                      unique unique constraint
      *
      * @return string
      */
     public function getFieldDeclarationList(array $fields)
     {
-        $queryFields = array();
+        $queryFields = [];
 
         foreach ($fields as $fieldName => $field) {
             $query = $this->getDeclaration($fieldName, $field);
@@ -686,34 +605,22 @@ class Doctrine_Export extends Doctrine_Connection_Module
      * Obtain DBMS specific SQL code portion needed to declare a generic type
      * field to be used in statements like CREATE TABLE.
      *
-     * @param string $name   name the field to be declared.
-     * @param array  $field  associative array with the name of the properties
-     *      of the field being declared as array indexes. Currently, the types
-     *      of supported field properties are as follows:
-     *
-     *      length
-     *          Integer value that determines the maximum length of the text
-     *          field. If this argument is missing the field should be
-     *          declared to have the longest length allowed by the DBMS.
-     *
-     *      default
-     *          Text value to be used as default for this field.
-     *
-     *      notnull
-     *          Boolean flag that indicates whether this field is constrained
-     *          to not be set to null.
-     *
-     *      charset
-     *          Text value with the default CHARACTER SET for this field.
-     *
-     *      collation
-     *          Text value with the default COLLATION for this field.
-     *
-     *      unique
-     *          unique constraint
-     *
-     *      check
-     *          column check constraint
+     * @param string $name  name the field to be declared.
+     * @param array  $field associative array with the name of the properties
+     *                      of the field being declared as array indexes.
+     *                      Currently, the types of supported field
+     *                      properties are as follows: length Integer value
+     *                      that determines the maximum length of the text
+     *                      field. If this argument is missing the field
+     *                      should be declared to have the longest length
+     *                      allowed by the DBMS. default Text value to be
+     *                      used as default for this field. notnull Boolean
+     *                      flag that indicates whether this field is
+     *                      constrained to not be set to null. charset Text
+     *                      value with the default CHARACTER SET for this
+     *                      field. collation Text value with the default
+     *                      COLLATION for this field. unique unique
+     *                      constraint check column check constraint
      *
      * @return string  DBMS specific SQL code portion that should be used to
      *      declare the specified field.
@@ -757,7 +664,7 @@ class Doctrine_Export extends Doctrine_Connection_Module
      * Obtain DBMS specific SQL code portion needed to set a default value
      * declaration to be used in statements like CREATE TABLE.
      *
-     * @param array $field      field definition array
+     * @param  array $field field definition array
      * @return string           DBMS specific SQL code portion needed to set a default value
      */
     public function getDefaultFieldDeclaration($field)
@@ -769,8 +676,9 @@ class Doctrine_Export extends Doctrine_Connection_Module
                 $field['default'] = empty($field['notnull'])
                     ? null : $this->valid_default_values[$field['type']];
 
-                if ($field['default'] === '' &&
-                   ($this->conn->getAttribute(Doctrine_Core::ATTR_PORTABILITY) & Doctrine_Core::PORTABILITY_EMPTY_TO_NULL)) {
+                if ($field['default'] === ''
+                    && ($this->conn->getAttribute(Doctrine_Core::ATTR_PORTABILITY) & Doctrine_Core::PORTABILITY_EMPTY_TO_NULL)
+                ) {
                     $field['default'] = null;
                 }
             }
@@ -792,7 +700,7 @@ class Doctrine_Export extends Doctrine_Connection_Module
      * Obtain DBMS specific SQL code portion needed to set a NOT NULL
      * declaration to be used in statements like CREATE TABLE.
      *
-     * @param array $definition      field definition array
+     * @param  array $definition field definition array
      * @return string           DBMS specific SQL code portion needed to set a default value
      */
     public function getNotNullFieldDeclaration(array $definition)
@@ -805,12 +713,12 @@ class Doctrine_Export extends Doctrine_Connection_Module
      * Obtain DBMS specific SQL code portion needed to set a CHECK constraint
      * declaration to be used in statements like CREATE TABLE.
      *
-     * @param array $definition     check definition
+     * @param  array $definition check definition
      * @return string               DBMS specific SQL code portion needed to set a CHECK constraint
      */
     public function getCheckDeclaration(array $definition)
     {
-        $constraints = array();
+        $constraints = [];
         foreach ($definition as $field => $def) {
             if (is_string($def)) {
                 $constraints[] = 'CHECK (' . $def . ')';
@@ -832,8 +740,8 @@ class Doctrine_Export extends Doctrine_Connection_Module
      * Obtain DBMS specific SQL code portion needed to set an index
      * declaration to be used in statements like CREATE TABLE.
      *
-     * @param string $name          name of the index
-     * @param array $definition     index definition
+     * @param  string $name       name of the index
+     * @param  array  $definition index definition
      * @return string               DBMS specific SQL code portion needed to set an index
      */
     public function getIndexDeclaration($name, array $definition)
@@ -871,7 +779,7 @@ class Doctrine_Export extends Doctrine_Connection_Module
      */
     public function getIndexFieldDeclarationList(array $fields)
     {
-        $ret = array();
+        $ret = [];
         foreach ($fields as $field => $definition) {
             if (is_array($definition)) {
                 $ret[] = $this->conn->quoteIdentifier($field);
@@ -906,39 +814,37 @@ class Doctrine_Export extends Doctrine_Connection_Module
      * Obtain DBMS specific SQL code portion needed to set the FOREIGN KEY constraint
      * of a field declaration to be used in statements like CREATE TABLE.
      *
-     * @param array $definition         an associative array with the following structure:
-     *          name                    optional constraint name
-     *
-     *          local                   the local field(s)
-     *
-     *          foreign                 the foreign reference field(s)
-     *
-     *          foreignTable            the name of the foreign table
-     *
-     *          onDelete                referential delete action
-     *
-     *          onUpdate                referential update action
-     *
-     *          deferred                deferred constraint checking
-     *
-     * The onDelete and onUpdate keys accept the following values:
-     *
-     * CASCADE: Delete or update the row from the parent table and automatically delete or
-     *          update the matching rows in the child table. Both ON DELETE CASCADE and ON UPDATE CASCADE are supported.
-     *          Between two tables, you should not define several ON UPDATE CASCADE clauses that act on the same column
-     *          in the parent table or in the child table.
-     *
-     * SET NULL: Delete or update the row from the parent table and set the foreign key column or columns in the
-     *          child table to NULL. This is valid only if the foreign key columns do not have the NOT NULL qualifier
-     *          specified. Both ON DELETE SET NULL and ON UPDATE SET NULL clauses are supported.
-     *
-     * NO ACTION: In standard SQL, NO ACTION means no action in the sense that an attempt to delete or update a primary
-     *           key value is not allowed to proceed if there is a related foreign key value in the referenced table.
-     *
-     * RESTRICT: Rejects the delete or update operation for the parent table. NO ACTION and RESTRICT are the same as
-     *           omitting the ON DELETE or ON UPDATE clause.
-     *
-     * SET DEFAULT
+     * @param array $definition an associative array with the following structure:
+     *                          name                    optional constraint name
+     *                          local                   the local field(s) foreign
+     *                          the foreign reference field(s)
+     *                          foreignTable            the name of the foreign
+     *                          table onDelete                referential delete
+     *                          action onUpdate                referential update
+     *                          action deferred                deferred constraint
+     *                          checking The onDelete and onUpdate keys accept the
+     *                          following values: CASCADE: Delete or update the
+     *                          row from the parent table and automatically delete
+     *                          or update the matching rows in the child table.
+     *                          Both ON DELETE CASCADE and ON UPDATE CASCADE are
+     *                          supported. Between two tables, you should not
+     *                          define several ON UPDATE CASCADE clauses that act
+     *                          on the same column in the parent table or in the
+     *                          child table. SET NULL: Delete or update the row
+     *                          from the parent table and set the foreign key
+     *                          column or columns in the child table to NULL. This
+     *                          is valid only if the foreign key columns do not
+     *                          have the NOT NULL qualifier specified. Both ON
+     *                          DELETE SET NULL and ON UPDATE SET NULL clauses are
+     *                          supported. NO ACTION: In standard SQL, NO ACTION
+     *                          means no action in the sense that an attempt to
+     *                          delete or update a primary key value is not
+     *                          allowed to proceed if there is a related foreign
+     *                          key value in the referenced table. RESTRICT:
+     *                          Rejects the delete or update operation for the
+     *                          parent table. NO ACTION and RESTRICT are the same
+     *                          as omitting the ON DELETE or ON UPDATE clause. SET
+     *                          DEFAULT
      *
      * @return string  DBMS specific SQL code portion needed to set the FOREIGN KEY constraint
      *                 of a field declaration.
@@ -956,7 +862,7 @@ class Doctrine_Export extends Doctrine_Connection_Module
      * Return the FOREIGN KEY query section dealing with non-standard options
      * as MATCH, INITIALLY DEFERRED, ON UPDATE, ...
      *
-     * @param array $definition     foreign key definition
+     * @param  array $definition foreign key definition
      * @return string
      */
     public function getAdvancedForeignKeyOptions(array $definition)
@@ -979,7 +885,7 @@ class Doctrine_Export extends Doctrine_Connection_Module
      *
      * @throws Doctrine_Export_Exception     if unknown referential action given
      *
-     * @param string $action    foreign key referential action
+     * @param string $action foreign key referential action
      *
      * @return string
      */
@@ -1003,7 +909,7 @@ class Doctrine_Export extends Doctrine_Connection_Module
      * Obtain DBMS specific SQL code portion needed to set the FOREIGN KEY constraint
      * of a field declaration to be used in statements like CREATE TABLE.
      *
-     * @param array $definition
+     * @param  array $definition
      * @return string
      */
     public function getForeignKeyBaseDeclaration(array $definition)
@@ -1025,16 +931,16 @@ class Doctrine_Export extends Doctrine_Connection_Module
         }
 
         if (! is_array($definition['local'])) {
-            $definition['local'] = array($definition['local']);
+            $definition['local'] = [$definition['local']];
         }
         if (! is_array($definition['foreign'])) {
-            $definition['foreign'] = array($definition['foreign']);
+            $definition['foreign'] = [$definition['foreign']];
         }
 
-        $sql .= implode(', ', array_map(array($this->conn, 'quoteIdentifier'), $definition['local']))
+        $sql .= implode(', ', array_map([$this->conn, 'quoteIdentifier'], $definition['local']))
               . ') REFERENCES '
               . $this->conn->quoteIdentifier($definition['foreignTable']) . '('
-              . implode(', ', array_map(array($this->conn, 'quoteIdentifier'), $definition['foreign'])) . ')';
+              . implode(', ', array_map([$this->conn, 'quoteIdentifier'], $definition['foreign'])) . ')';
 
         return $sql;
     }
@@ -1055,7 +961,7 @@ class Doctrine_Export extends Doctrine_Connection_Module
      * Obtain DBMS specific SQL code portion needed to set the CHARACTER SET
      * of a field declaration to be used in statements like CREATE TABLE.
      *
-     * @param string $charset   name of the charset
+     * @param  string $charset name of the charset
      * @return string  DBMS specific SQL code portion needed to set the CHARACTER SET
      *                 of a field declaration.
      */
@@ -1068,7 +974,7 @@ class Doctrine_Export extends Doctrine_Connection_Module
      * Obtain DBMS specific SQL code portion needed to set the COLLATION
      * of a field declaration to be used in statements like CREATE TABLE.
      *
-     * @param string $collation   name of the collation
+     * @param  string $collation name of the collation
      * @return string  DBMS specific SQL code portion needed to set the COLLATION
      *                 of a field declaration.
      */
@@ -1089,7 +995,7 @@ class Doctrine_Export extends Doctrine_Connection_Module
      *
      * @throws Doctrine_Connection_Exception    if some error other than Doctrine_Core::ERR_ALREADY_EXISTS
      *                                          occurred during the create table operation
-     * @param string $directory     optional directory parameter
+     * @param  string $directory optional directory parameter
      * @return void
      */
     public function exportSchema($directory = null)
@@ -1104,28 +1010,28 @@ class Doctrine_Export extends Doctrine_Connection_Module
     }
 
     /**
-     * @param array $classes
-     * @param bool $groupByConnection
+     * @param  array $classes
+     * @param  bool  $groupByConnection
      * @return array
      */
     public function exportSortedClassesSql($classes, $groupByConnection = true)
     {
-        $connections = array();
+        $connections = [];
         foreach ($classes as $class) {
             $connection     = Doctrine_Manager::getInstance()->getConnectionForComponent($class);
             $connectionName = $connection->getName();
 
             if (! isset($connections[$connectionName])) {
-                $connections[$connectionName] = array(
-                     'create_tables'    => array(),
-                     'create_sequences' => array(),
-                     'create_indexes'   => array(),
-                     'alters'           => array(),
-                     'create_triggers'  => array(),
-                 );
+                $connections[$connectionName] = [
+                     'create_tables'    => [],
+                     'create_sequences' => [],
+                     'create_indexes'   => [],
+                     'alters'           => [],
+                     'create_triggers'  => [],
+                 ];
             }
 
-            $sql = $connection->export->exportClassesSql(array($class));
+            $sql = $connection->export->exportClassesSql([$class]);
 
             // Build array of all the creates
             // We need these to happen first
@@ -1147,7 +1053,7 @@ class Doctrine_Export extends Doctrine_Connection_Module
                 }
 
                 // If create index statement
-                if (preg_grep('/CREATE ([^ ]* )?INDEX/', array($query))) {
+                if (preg_grep('/CREATE ([^ ]* )?INDEX/', [$query])) {
                     $connections[$connectionName]['create_indexes'][] = $query;
 
                     unset($sql[$key]);
@@ -1156,7 +1062,8 @@ class Doctrine_Export extends Doctrine_Connection_Module
 
                 // If alter table statement
                 if (substr($query, 0, strlen('ALTER TABLE')) == 'ALTER TABLE'
-                       || substr($query, 0, strlen('DECLARE')) == 'DECLARE') {
+                    || substr($query, 0, strlen('DECLARE')) == 'DECLARE'
+                ) {
                     $connections[$connectionName]['alters'][] = $query;
 
                     unset($sql[$key]);
@@ -1182,13 +1089,13 @@ class Doctrine_Export extends Doctrine_Connection_Module
         }
 
         // Loop over all the sql again to merge everything together so it is in the correct order
-        $build = array();
+        $build = [];
         foreach ($connections as $connectionName => $sql) {
             $build[$connectionName] = array_unique(array_merge($sql['create_tables'], $sql['create_sequences'], $sql['create_indexes'], $sql['alters'], $sql['create_triggers']));
         }
 
         if (! $groupByConnection) {
-            $new = array();
+            $new = [];
             foreach ($build as $connectionname => $sql) {
                 $new = array_unique(array_merge($new, $sql));
             }
@@ -1205,7 +1112,7 @@ class Doctrine_Export extends Doctrine_Connection_Module
      *
      * @throws Doctrine_Connection_Exception    if some error other than Doctrine_Core::ERR_ALREADY_EXISTS
      *                                          occurred during the create table operation
-     * @param array $classes
+     * @param  array $classes
      * @return void
      */
     public function exportClasses(array $classes)
@@ -1239,14 +1146,14 @@ class Doctrine_Export extends Doctrine_Connection_Module
      *
      * @throws Doctrine_Connection_Exception    if some error other than Doctrine_Core::ERR_ALREADY_EXISTS
      *                                          occurred during the create table operation
-     * @param array $classes
+     * @param  array $classes
      * @return array
      */
     public function exportClassesSql(array $classes)
     {
         $models = Doctrine_Core::filterInvalidModels($classes);
 
-        $sql = array();
+        $sql = [];
 
         foreach ($models as $name) {
             $record  = new $name();
@@ -1295,12 +1202,12 @@ class Doctrine_Export extends Doctrine_Connection_Module
     /**
      * fetches all generators recursively for given table
      *
-     * @param Doctrine_Table $table     table object to retrieve the generators from
+     * @param  Doctrine_Table $table table object to retrieve the generators from
      * @return array                    an array of Doctrine_Record_Generator objects
      */
     public function getAllGenerators(Doctrine_Table $table)
     {
-        $generators = array();
+        $generators = [];
 
         foreach ($table->getGenerators() as $name => $generator) {
             if ($generator === null) {
@@ -1323,12 +1230,12 @@ class Doctrine_Export extends Doctrine_Connection_Module
      * exportGeneratorsSql
      * exports plugin tables for given table
      *
-     * @param Doctrine_Table $table     the table in which the generators belong to
+     * @param  Doctrine_Table $table the table in which the generators belong to
      * @return array                    an array of sql strings
      */
     public function exportGeneratorsSql(Doctrine_Table $table)
     {
-        $sql = array();
+        $sql = [];
 
         foreach ($this->getAllGenerators($table) as $name => $generator) {
             $table = $generator->getTable();
@@ -1358,7 +1265,7 @@ class Doctrine_Export extends Doctrine_Connection_Module
      *
      * @throws Doctrine_Connection_Exception    if some error other than Doctrine_Core::ERR_ALREADY_EXISTS
      *                                          occurred during the create table operation
-     * @param string $directory     optional directory parameter
+     * @param  string $directory optional directory parameter
      * @return array
      */
     public function exportSql($directory = null)

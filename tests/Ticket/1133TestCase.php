@@ -19,13 +19,13 @@
 /**
  * Doctrine_Ticket_1133_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Ticket_1133_TestCase extends Doctrine_UnitTestCase
 {
@@ -44,9 +44,9 @@ class Doctrine_Ticket_1133_TestCase extends Doctrine_UnitTestCase
         $foo->save();
 
         $q = Doctrine_Query::create()
-                ->from('Ticket_1133_Foo f')
-                ->innerJoin('f.Bar b ON b.id = ?', $foo->Bar->id)
-                ->addWhere('f.name = ?', 'test');
+            ->from('Ticket_1133_Foo f')
+            ->innerJoin('f.Bar b ON b.id = ?', $foo->Bar->id)
+            ->addWhere('f.name = ?', 'test');
 
         $this->assertEqual($q->count(), 1);
     }
@@ -59,11 +59,11 @@ class Doctrine_Ticket_1133_TestCase extends Doctrine_UnitTestCase
         $foo->save();
 
         $q = Doctrine_Query::create()
-                ->from('Ticket_1133_Foo f')
-                ->innerJoin('f.Bar b')
-                ->addWhere('b.name = ?', 'test2')
-                ->limit(1)
-                ->offset(1);
+            ->from('Ticket_1133_Foo f')
+            ->innerJoin('f.Bar b')
+            ->addWhere('b.name = ?', 'test2')
+            ->limit(1)
+            ->offset(1);
 
         $this->assertEqual($q->count(), 2);
         $this->assertEqual($q->execute()->count(), 1);
@@ -80,7 +80,7 @@ class Ticket_1133_Foo extends Doctrine_Record
 
     public function setUp()
     {
-        $this->hasOne('Ticket_1133_Bar as Bar', array('local' => 'bar_id', 'foreign' => 'id'));
+        $this->hasOne('Ticket_1133_Bar as Bar', ['local' => 'bar_id', 'foreign' => 'id']);
     }
 }
 

@@ -19,19 +19,19 @@
 /**
  * Doctrine_Ticket_486_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Ticket_486_TestCase extends Doctrine_UnitTestCase
 {
     public function prepareTables()
     {
-        $this->tables = array('Country', 'State', 'Resort');
+        $this->tables = ['Country', 'State', 'Resort'];
         parent::prepareTables();
     }
 
@@ -133,7 +133,7 @@ class Country extends Doctrine_Record
 
     public function setUp()
     {
-        $this->hasMany('State', array('local' => 'id', 'foreign' => 'country_id'));
+        $this->hasMany('State', ['local' => 'id', 'foreign' => 'country_id']);
     }
 }
 
@@ -149,8 +149,8 @@ class State extends Doctrine_Record
 
     public function setUp()
     {
-        $this->hasOne('Country', array('local' => 'country_id', 'foreign' => 'id'));
-        $this->hasMany('Resort', array('local' => 'id', 'foreign' => 'state_id'));
+        $this->hasOne('Country', ['local' => 'country_id', 'foreign' => 'id']);
+        $this->hasMany('Resort', ['local' => 'id', 'foreign' => 'state_id']);
     }
 }
 
@@ -166,6 +166,6 @@ class Resort extends Doctrine_Record
 
     public function setUp()
     {
-        $this->hasOne('State', array('local' => 'state_id', 'foreign' => 'id'));
+        $this->hasOne('State', ['local' => 'state_id', 'foreign' => 'id']);
     }
 }

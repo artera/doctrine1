@@ -3,20 +3,20 @@
 /**
  * Doctrine_Ticket_587_TestCase
  *
- * @package     Doctrine
- * @author      Joaquin Bravo <jackbravo@gmail.com>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Joaquin Bravo <jackbravo@gmail.com>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 
 class Doctrine_Ticket_583_TestCase extends Doctrine_UnitTestCase
 {
     public function prepareTables()
     {
-        $this->tables = array('Entity');
+        $this->tables = ['Entity'];
         parent::prepareTables();
     }
 

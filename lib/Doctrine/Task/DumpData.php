@@ -22,13 +22,13 @@
 /**
  * Doctrine_Task_DumpData
  *
- * @package     Doctrine
- * @subpackage  Task
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 2761 $
- * @author      Jonathan H. Wage <jwage@mac.com>
+ * @package    Doctrine
+ * @subpackage Task
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 2761 $
+ * @author     Jonathan H. Wage <jwage@mac.com>
  */
 class Doctrine_Task_DumpData extends Doctrine_Task
 {
@@ -40,13 +40,13 @@ class Doctrine_Task_DumpData extends Doctrine_Task
     /**
      * @var array
      */
-    public $requiredArguments = array('data_fixtures_path' => 'Specify path to write the yaml data fixtures file to.',
-                                           'models_path'   => 'Specify path to your Doctrine_Record definitions.');
+    public $requiredArguments = ['data_fixtures_path' => 'Specify path to write the yaml data fixtures file to.',
+                                           'models_path'   => 'Specify path to your Doctrine_Record definitions.'];
 
     /**
      * @var array
      */
-    public $optionalArguments = array();
+    public $optionalArguments = [];
 
     public function execute()
     {

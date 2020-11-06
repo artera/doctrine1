@@ -22,13 +22,13 @@
 /**
  * Doctrine_Validator_Unsigned
  *
- * @package     Doctrine
- * @subpackage  Validator
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 1080 $
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @package    Doctrine
+ * @subpackage Validator
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 1080 $
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
 class Doctrine_Validator_Unsigned extends Doctrine_Validator_Driver
 {
@@ -38,7 +38,7 @@ class Doctrine_Validator_Unsigned extends Doctrine_Validator_Driver
      * valid values: null, '', 5, '5', 5.9, '5.9'
      * invalid values: -5, '-5', 'five', -5.9, '-5.9', '5.5.5'
      *
-     * @param mixed $value
+     * @param  mixed $value
      * @return boolean
      */
     public function validate($value)

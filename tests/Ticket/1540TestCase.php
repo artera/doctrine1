@@ -19,13 +19,13 @@
 /**
  * Doctrine_Ticket_1540_TestCase
  *
- * @package     Doctrine
- * @author      Andrea Baron <andrea@bhweb.it>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0.2
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Andrea Baron <andrea@bhweb.it>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0.2
+ * @version  $Revision$
  */
 class Doctrine_Ticket_1540_TestCase extends Doctrine_UnitTestCase
 {
@@ -56,7 +56,7 @@ class Ticket_1540_TableName extends Doctrine_Record
 {
     public function setTableDefinition()
     {
-        $this->hasColumn('id', 'integer', 4, array('primary' => true, 'autoincrement' => true));
+        $this->hasColumn('id', 'integer', 4, ['primary' => true, 'autoincrement' => true]);
     }
 
     public function setUp()

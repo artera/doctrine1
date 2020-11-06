@@ -19,19 +19,19 @@
 /**
  * Doctrine_Ticket_1621_TestCase
  *
- * @package     Doctrine
- * @author      floriank
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.1
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   floriank
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.1
+ * @version  $Revision$
  */
 class Doctrine_Ticket_1621_TestCase extends Doctrine_UnitTestCase
 {
     public function prepareTables()
     {
-        $this->tables   = array();
+        $this->tables   = [];
         $this->tables[] = 'Ticket_1621_User';
         $this->tables[] = 'Ticket_1621_UserReference';
         $this->tables[] = 'Ticket_1621_UserReferenceFriends';
@@ -111,7 +111,7 @@ class Ticket_1621_User extends Doctrine_Record
 {
     public function setTableDefinition()
     {
-        $this->hasColumn('id', 'integer', null, array('primary' => true, 'autoincrement' => true));
+        $this->hasColumn('id', 'integer', null, ['primary' => true, 'autoincrement' => true]);
         $this->hasColumn('name', 'string', 30);
     }
 
@@ -119,37 +119,40 @@ class Ticket_1621_User extends Doctrine_Record
     {
         $this->hasMany(
             'Ticket_1621_User as parents',
-            array('local'                                               => 'parentId',
+            ['local'                                               => 'parentId',
                                                 'refClass'              => 'Ticket_1621_UserReference',
                                                 'foreign'               => 'childId',
                                                 'refClassRelationAlias' => 'childrenLinks'
-                                                )
+                                                ]
         );
 
         $this->hasMany(
             'Ticket_1621_User as children',
-            array('local'                                                => 'childId',
+            ['local'                                                => 'childId',
                                                  'foreign'               => 'parentId',
                                                  'refClass'              => 'Ticket_1621_UserReference',
                                                  'refClassRelationAlias' => 'parentLinks'
-                                                 )
+                                                 ]
         );
 
         $this->hasMany(
             'Ticket_1621_User as friends',
-            array('local'                                                => 'leftId',
+            ['local'                                                => 'leftId',
                                                  'foreign'               => 'rightId',
                                                  'equal'                 => 'true',
                                                  'refClass'              => 'Ticket_1621_UserReferenceFriends',
                                                  'refClassRelationAlias' => 'friendLinks'
-                                                 )
+                                                 ]
         );
 
-        $this->hasMany('Ticket_1621_EmailAdresses as emailAddresses', array('local' => 'id', 'foreign' => 'userId'));
+        $this->hasMany('Ticket_1621_EmailAdresses as emailAddresses', ['local' => 'id', 'foreign' => 'userId']);
 
-        $this->hasMany('Ticket_1621_Group as groups', array('local' => 'userId',
+        $this->hasMany(
+            'Ticket_1621_Group as groups',
+            ['local' => 'userId',
                                      'foreign'                      => 'groupId',
-                                     'refClass'                     => 'Ticket_1621_GroupUser'));
+            'refClass'                     => 'Ticket_1621_GroupUser']
+        );
     }
 }
 
@@ -157,8 +160,8 @@ class Ticket_1621_UserReference extends Doctrine_Record
 {
     public function setTableDefinition()
     {
-        $this->hasColumn('parent_id as parentId', 'integer', null, array('primary' => true));
-        $this->hasColumn('child_id as childId', 'integer', null, array('primary' => true));
+        $this->hasColumn('parent_id as parentId', 'integer', null, ['primary' => true]);
+        $this->hasColumn('child_id as childId', 'integer', null, ['primary' => true]);
     }
 }
 
@@ -166,8 +169,8 @@ class Ticket_1621_UserReferenceFriends extends Doctrine_Record
 {
     public function setTableDefinition()
     {
-        $this->hasColumn('left_id as leftId', 'integer', null, array('primary' => true));
-        $this->hasColumn('right_id as rightId', 'integer', null, array('primary' => true));
+        $this->hasColumn('left_id as leftId', 'integer', null, ['primary' => true]);
+        $this->hasColumn('right_id as rightId', 'integer', null, ['primary' => true]);
     }
 }
 
@@ -185,7 +188,7 @@ class Ticket_1621_EmailAdresses extends Doctrine_Record
 
     public function setUp()
     {
-        $this->hasOne('Ticket_1621_User as user', array('local' => 'userId', 'foreign' => 'id'));
+        $this->hasOne('Ticket_1621_User as user', ['local' => 'userId', 'foreign' => 'id']);
     }
 }
 
@@ -198,9 +201,12 @@ class Ticket_1621_Group extends Doctrine_Record
 
     public function setUp()
     {
-        $this->hasMany('Ticket_1621_User as users', array('local' => 'groupId',
+        $this->hasMany(
+            'Ticket_1621_User as users',
+            ['local' => 'groupId',
                                      'foreign'                    => 'userId',
-                                     'refClass'                   => 'Ticket_1621_GroupUser'));
+            'refClass'                   => 'Ticket_1621_GroupUser']
+        );
 
         $this->setTableName('my_group');
     }
@@ -210,7 +216,7 @@ class Ticket_1621_GroupUser extends Doctrine_Record
 {
     public function setTableDefinition()
     {
-        $this->hasColumn('user_id as userId', 'integer', null, array('primary' => true));
-        $this->hasColumn('group_id as groupId', 'integer', null, array('primary' => true));
+        $this->hasColumn('user_id as userId', 'integer', null, ['primary' => true]);
+        $this->hasColumn('group_id as groupId', 'integer', null, ['primary' => true]);
     }
 }

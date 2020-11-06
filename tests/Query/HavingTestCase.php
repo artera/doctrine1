@@ -19,13 +19,13 @@
 /**
  * Doctrine_Query_Having_TestCase
  *
- * @package     Doctrine
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @version     $Revision$
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
+ * @package  Doctrine
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @version  $Revision$
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
  */
 class Doctrine_Query_Having_TestCase extends Doctrine_UnitTestCase
 {

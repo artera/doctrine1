@@ -4,7 +4,7 @@ class Doctrine_Ticket_1323b2_TestCase extends Doctrine_UnitTestCase
 {
     public function prepareTables()
     {
-        $this->tables   = array();
+        $this->tables   = [];
         $this->tables[] = 'Concept';
         $this->tables[] = 'ConceptRelation';
         parent::prepareTables();
@@ -24,11 +24,11 @@ class Doctrine_Ticket_1323b2_TestCase extends Doctrine_UnitTestCase
         $q = Doctrine_Query::create();
         $q->delete()->from('Concept')->execute();
 
-        $concepts = array('Woodworking', 'Metalworking',
+        $concepts = ['Woodworking', 'Metalworking',
                         'Submetalworking 1', 'Submetalworking 2',
                         'Subwoodworking 1', 'Subwoodworking 2',
                         'Surfaceworking',
-                        'drilled', 'welded', 'turned');
+                        'drilled', 'welded', 'turned'];
 
         foreach ($concepts as $concept) {
             $c                     = new Concept();
@@ -138,14 +138,14 @@ class BaseConcept extends Doctrine_Record
     public function setTableDefinition()
     {
         $this->setTableName('concepts');
-        $this->hasColumn('id', 'integer', 4, array('primary' => true, 'autoincrement' => true, 'type' => 'integer', 'length' => '4'));
-        $this->hasColumn('vok_id as vokId', 'integer', 4, array('type' => 'integer', 'length' => '4'));
-        $this->hasColumn('identifier', 'string', 255, array('notnull' => true, 'type' => 'string', 'length' => '255'));
-        $this->hasColumn('status', 'string', 20, array('notnull' => true, 'type' => 'string', 'length' => '20'));
-        $this->hasColumn('source', 'string', 255, array('notnull' => true, 'type' => 'string', 'length' => '255'));
-        $this->hasColumn('created_on as created', 'string', 255, array('notnull' => true, 'type' => 'string', 'length' => '255'));
-        $this->hasColumn('creator', 'string', 255, array('notnull' => true, 'type' => 'string', 'length' => '255'));
-        $this->hasColumn('creation_identifier as creationIdentifier', 'string', 255, array('notnull' => true, 'type' => 'string', 'length' => '255'));
+        $this->hasColumn('id', 'integer', 4, ['primary' => true, 'autoincrement' => true, 'type' => 'integer', 'length' => '4']);
+        $this->hasColumn('vok_id as vokId', 'integer', 4, ['type' => 'integer', 'length' => '4']);
+        $this->hasColumn('identifier', 'string', 255, ['notnull' => true, 'type' => 'string', 'length' => '255']);
+        $this->hasColumn('status', 'string', 20, ['notnull' => true, 'type' => 'string', 'length' => '20']);
+        $this->hasColumn('source', 'string', 255, ['notnull' => true, 'type' => 'string', 'length' => '255']);
+        $this->hasColumn('created_on as created', 'string', 255, ['notnull' => true, 'type' => 'string', 'length' => '255']);
+        $this->hasColumn('creator', 'string', 255, ['notnull' => true, 'type' => 'string', 'length' => '255']);
+        $this->hasColumn('creation_identifier as creationIdentifier', 'string', 255, ['notnull' => true, 'type' => 'string', 'length' => '255']);
 
         $this->option('type', 'INNODB');
         $this->option('collate', 'utf8_unicode_ci');
@@ -154,16 +154,22 @@ class BaseConcept extends Doctrine_Record
 
     public function setUp()
     {
-        $this->hasMany('Concept as broaderConcepts', array('refClass'          => 'ConceptRelation',
+        $this->hasMany(
+            'Concept as broaderConcepts',
+            ['refClass'          => 'ConceptRelation',
                                                        'local'                 => 'concept_id',
                                                        'foreign'               => 'parent_concept_id',
-                                                       'refClassRelationAlias' => 'broaderLinks'));
+            'refClassRelationAlias' => 'broaderLinks']
+        );
 
 
-        $this->hasMany('Concept as narrowerConcepts', array('refClass'          => 'ConceptRelation',
+        $this->hasMany(
+            'Concept as narrowerConcepts',
+            ['refClass'          => 'ConceptRelation',
                                                         'local'                 => 'parent_concept_id',
                                                         'foreign'               => 'concept_id',
-                                                        'refClassRelationAlias' => 'narrowerLinks'));
+            'refClassRelationAlias' => 'narrowerLinks']
+        );
     }
 }
 
@@ -175,8 +181,8 @@ class BaseConceptRelation extends Doctrine_Record
     public function setTableDefinition()
     {
         $this->setTableName('concepts_x_concepts');
-        $this->hasColumn('concept_id as conceptId', 'integer', 4, array('type' => 'integer', 'notnull' => true, 'length' => '4', 'primary' => true));
-        $this->hasColumn('parent_concept_id as conceptIdParent', 'integer', 4, array('type' => 'integer', 'notnull' => true, 'length' => '4', 'primary' => true));
+        $this->hasColumn('concept_id as conceptId', 'integer', 4, ['type' => 'integer', 'notnull' => true, 'length' => '4', 'primary' => true]);
+        $this->hasColumn('parent_concept_id as conceptIdParent', 'integer', 4, ['type' => 'integer', 'notnull' => true, 'length' => '4', 'primary' => true]);
 
         $this->option('type', 'INNODB');
         $this->option('collate', 'utf8_unicode_ci');
@@ -185,11 +191,17 @@ class BaseConceptRelation extends Doctrine_Record
 
     public function setUp()
     {
-        $this->hasOne('Concept as concept', array('local' => 'concept_id',
-                                              'foreign'   => 'id'));
+        $this->hasOne(
+            'Concept as concept',
+            ['local' => 'concept_id',
+            'foreign'   => 'id']
+        );
 
-        $this->hasOne('Concept as broaderConcept', array('local' => 'parent_concept_id',
-                                             'foreign'           => 'id'));
+        $this->hasOne(
+            'Concept as broaderConcept',
+            ['local' => 'parent_concept_id',
+            'foreign'           => 'id']
+        );
     }
 }
 

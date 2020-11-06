@@ -19,13 +19,13 @@
 /**
  * Doctrine_Ticket_1077_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Ticket_1077_TestCase extends Doctrine_UnitTestCase
 {
@@ -89,8 +89,11 @@ class Ticket_1077_User extends Doctrine_Record
 
     public function setUp()
     {
-        $this->hasMany('Ticket_1077_Phonenumber as Phonenumbers', array('local'   => 'id',
-                                                                        'foreign' => 'user_id'));
+        $this->hasMany(
+            'Ticket_1077_Phonenumber as Phonenumbers',
+            ['local'   => 'id',
+            'foreign' => 'user_id']
+        );
     }
 
     public function usernameAccessor()
@@ -140,7 +143,10 @@ class Ticket_1077_Phonenumber extends Doctrine_Record
 
     public function setUp()
     {
-        $this->hasOne('Ticket_1077_User as User', array('local'   => 'user_id',
-                                                        'foreign' => 'id'));
+        $this->hasOne(
+            'Ticket_1077_User as User',
+            ['local'   => 'user_id',
+            'foreign' => 'id']
+        );
     }
 }

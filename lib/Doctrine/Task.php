@@ -24,13 +24,13 @@
  *
  * Abstract class used for writing Doctrine Tasks
  *
- * @package     Doctrine
- * @subpackage  Task
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 2761 $
- * @author      Jonathan H. Wage <jwage@mac.com>
+ * @package    Doctrine
+ * @subpackage Task
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 2761 $
+ * @author     Jonathan H. Wage <jwage@mac.com>
  */
 abstract class Doctrine_Task
 {
@@ -52,24 +52,25 @@ abstract class Doctrine_Task
     /**
      * @var array
      */
-    public $arguments = array();
+    public $arguments = [];
 
     /**
      * @var array
      */
-    public $requiredArguments = array();
+    public $requiredArguments = [];
 
     /**
      * @var array
      */
-    public $optionalArguments = array();
+    public $optionalArguments = [];
 
     /**
      * __construct
      *
      * Since this is an abstract classes that extend this must follow a patter of Doctrine_Task_{TASK_NAME}
      * This is what determines the task name for executing it.
-     * @param Doctrine_Cli $dispatcher
+     *
+     * @param  Doctrine_Cli $dispatcher
      * @return void
      */
     public function __construct($dispatcher = null)
@@ -98,7 +99,7 @@ abstract class Doctrine_Task
      * This is public so we can easily test its reactions to fully-qualified class names, without having to add
      * PHP 5.3-specific test code
      *
-     * @param string $className
+     * @param  string $className
      * @return string
      */
     public static function deriveTaskName($className)
@@ -117,7 +118,7 @@ abstract class Doctrine_Task
     /**
      * notify
      *
-     * @param string $notification
+     * @param  string $notification
      * @return false|string
      */
     public function notify($notification = null)
@@ -125,7 +126,7 @@ abstract class Doctrine_Task
         if (is_object($this->dispatcher) && method_exists($this->dispatcher, 'notify')) {
             $args = func_get_args();
 
-            return call_user_func_array(array($this->dispatcher, 'notify'), $args);
+            return call_user_func_array([$this->dispatcher, 'notify'], $args);
         } elseif ($notification !== null) {
             return $notification;
         } else {
@@ -142,7 +143,7 @@ abstract class Doctrine_Task
     {
         $args = func_get_args();
 
-        call_user_func_array(array($this, 'notify'), $args);
+        call_user_func_array([$this, 'notify'], $args);
 
         $answer = strtolower(trim(fgets(STDIN)));
 
@@ -154,7 +155,7 @@ abstract class Doctrine_Task
      *
      * Override with each task class
      *
-     * @return void
+     * @return   void
      * @abstract
      */
     abstract public function execute();
@@ -182,8 +183,8 @@ abstract class Doctrine_Task
     /**
      * addArgument
      *
-     * @param string $name
-     * @param string $value
+     * @param  string $name
+     * @param  string $value
      * @return void
      */
     public function addArgument($name, $value)
@@ -194,8 +195,8 @@ abstract class Doctrine_Task
     /**
      * getArgument
      *
-     * @param string $name
-     * @param mixed $default
+     * @param  string $name
+     * @param  mixed  $default
      * @return mixed
      */
     public function getArgument($name, $default = null)
@@ -220,7 +221,7 @@ abstract class Doctrine_Task
     /**
      * setArguments
      *
-     * @param array $args
+     * @param  array $args
      * @return void
      */
     public function setArguments(array $args)
@@ -231,7 +232,7 @@ abstract class Doctrine_Task
     /**
      * Returns TRUE if the specified task name is valid, or FALSE otherwise
      *
-     * @param string $taskName
+     * @param  string $taskName
      * @return bool
      */
     protected static function validateTaskName($taskName)

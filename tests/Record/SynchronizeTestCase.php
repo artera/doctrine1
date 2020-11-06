@@ -19,13 +19,13 @@
 /**
  * Doctrine_Record_State_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Record_Synchronize_TestCase extends Doctrine_UnitTestCase
 {
@@ -43,7 +43,7 @@ class Doctrine_Record_Synchronize_TestCase extends Doctrine_UnitTestCase
         $user->Phonenumber[1]->phonenumber = '555 448';
         $user->save();
 
-        # Create an existing group
+        // Create an existing group
         $group       = new Group();
         $group->name = 'Group One';
         $group->save();
@@ -64,9 +64,9 @@ class Doctrine_Record_Synchronize_TestCase extends Doctrine_UnitTestCase
         array_pop($userArray['Phonenumber']);
 
         // add group
-        $userArray['Group'][]['name'] = 'New Group'; # This is a n-m relationship
+        $userArray['Group'][]['name'] = 'New Group'; // This is a n-m relationship
         // add a group which exists
-        $userArray['Group'][1]['_identifier'] = $this->previous_group; # This is a n-m relationship where the group was made in prepareData
+        $userArray['Group'][1]['_identifier'] = $this->previous_group; // This is a n-m relationship where the group was made in prepareData
 
         $user->synchronizeWithArray($userArray);
         $this->assertEqual($user->Phonenumber->count(), 1);
@@ -110,7 +110,7 @@ class Doctrine_Record_Synchronize_TestCase extends Doctrine_UnitTestCase
     {
         $user                       = Doctrine_Query::create()->from('User u, u.Email, u.Phonenumber')->fetchOne();
         $userArray                  = $user->toArray(true);
-        $userArray['Phonenumber'][] = array('phonenumber' => '333 238');
+        $userArray['Phonenumber'][] = ['phonenumber' => '333 238'];
 
         $user->synchronizeWithArray($userArray);
 
@@ -122,7 +122,7 @@ class Doctrine_Record_Synchronize_TestCase extends Doctrine_UnitTestCase
     public function testSynchronizeAfterAddRecord()
     {
         $user   = Doctrine_Query::create()->from('User u, u.Email, u.Phonenumber')->fetchOne();
-        $phones = array();
+        $phones = [];
 
         $this->assertEqual($user->Phonenumber->count(), 2);
         foreach ($user->Phonenumber as $phone) {

@@ -19,13 +19,13 @@
 /**
  * Doctrine_Ticket_DC141_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Ticket_DC141_TestCase extends Doctrine_UnitTestCase
 {
@@ -33,7 +33,7 @@ class Doctrine_Ticket_DC141_TestCase extends Doctrine_UnitTestCase
     {
         $q = Doctrine::getTable('User')
             ->createQuery('u')
-            ->where('u.name LIKE :name OR u.email_id = :email_id', array(':email_id' => 2, ':name' => '%zYne%'));
+            ->where('u.name LIKE :name OR u.email_id = :email_id', [':email_id' => 2, ':name' => '%zYne%']);
         $users = $q->fetchArray();
         $this->assertEqual(count($users), 2);
     }

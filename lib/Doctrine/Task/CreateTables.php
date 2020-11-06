@@ -22,13 +22,13 @@
 /**
  * Doctrine_Task_CreateTables
  *
- * @package     Doctrine
- * @subpackage  Task
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 2761 $
- * @author      Jonathan H. Wage <jwage@mac.com>
+ * @package    Doctrine
+ * @subpackage Task
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 2761 $
+ * @author     Jonathan H. Wage <jwage@mac.com>
  */
 class Doctrine_Task_CreateTables extends Doctrine_Task
 {
@@ -40,12 +40,12 @@ class Doctrine_Task_CreateTables extends Doctrine_Task
     /**
      * @var array
      */
-    public $requiredArguments = array('models_path' => 'Specify path to your models directory.');
+    public $requiredArguments = ['models_path' => 'Specify path to your models directory.'];
 
     /**
      * @var array
      */
-    public $optionalArguments = array();
+    public $optionalArguments = [];
 
     public function execute()
     {

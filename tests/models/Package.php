@@ -8,6 +8,6 @@ class Package extends Doctrine_Record
 
     public function setUp()
     {
-        $this->hasMany('PackageVersion as Version', array('local' => 'id', 'foreign' => 'package_id', 'onDelete' => 'CASCADE'));
+        $this->hasMany('PackageVersion as Version', ['local' => 'id', 'foreign' => 'package_id', 'onDelete' => 'CASCADE']);
     }
 }

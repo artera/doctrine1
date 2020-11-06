@@ -24,33 +24,34 @@
  * this class represents a chain of different listeners,
  * useful for having multiple listeners listening the events at the same time
  *
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @package     Doctrine
- * @subpackage  EventListener
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 7490 $
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @package    Doctrine
+ * @subpackage EventListener
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 7490 $
  */
 class Doctrine_EventListener_Chain extends Doctrine_Access implements Doctrine_EventListener_Interface
 {
     /**
      * @var array $_listeners        an array containing all listeners
      */
-    protected $_listeners = array();
+    protected $_listeners = [];
 
     /**
      * add
      * adds a listener to the chain of listeners
      *
-     * @param object $listener
-     * @param string $name
+     * @param  object $listener
+     * @param  string $name
      * @return void
      */
     public function add($listener, $name = null)
     {
-        if (! ($listener instanceof Doctrine_EventListener_Interface) &&
-             ! ($listener instanceof Doctrine_Overloadable)) {
+        if (! ($listener instanceof Doctrine_EventListener_Interface)
+            && ! ($listener instanceof Doctrine_Overloadable)
+        ) {
             throw new Doctrine_EventListener_Exception("Couldn't add eventlistener. EventListeners should implement either Doctrine_EventListener_Interface or Doctrine_Overloadable");
         }
         if ($name === null) {
@@ -64,7 +65,7 @@ class Doctrine_EventListener_Chain extends Doctrine_Access implements Doctrine_E
      * returns a Doctrine_EventListener on success
      * and null on failure
      *
-     * @param mixed $key
+     * @param  mixed $key
      * @return mixed
      */
     public function get($key)
@@ -78,8 +79,8 @@ class Doctrine_EventListener_Chain extends Doctrine_Access implements Doctrine_E
     /**
      * set
      *
-     * @param mixed $key
-     * @param Doctrine_EventListener $listener
+     * @param  mixed                  $key
+     * @param  Doctrine_EventListener $listener
      * @return void
      */
     public function set($key, $listener)
@@ -91,7 +92,7 @@ class Doctrine_EventListener_Chain extends Doctrine_Access implements Doctrine_E
      * onLoad
      * an event invoked when Doctrine_Record is being loaded from database
      *
-     * @param Doctrine_Record $record
+     * @param  Doctrine_Record $record
      * @return void
      */
     public function onLoad(Doctrine_Record $record)
@@ -106,7 +107,7 @@ class Doctrine_EventListener_Chain extends Doctrine_Access implements Doctrine_E
      * an event invoked when Doctrine_Record is being loaded
      * from database but not yet initialized
      *
-     * @param Doctrine_Record $record
+     * @param  Doctrine_Record $record
      * @return void
      */
     public function onPreLoad(Doctrine_Record $record)
@@ -120,7 +121,7 @@ class Doctrine_EventListener_Chain extends Doctrine_Access implements Doctrine_E
      * onSleep
      * an event invoked when Doctrine_Record is serialized
      *
-     * @param Doctrine_Record $record
+     * @param  Doctrine_Record $record
      * @return void
      */
     public function onSleep(Doctrine_Record $record)
@@ -134,7 +135,7 @@ class Doctrine_EventListener_Chain extends Doctrine_Access implements Doctrine_E
      * onWakeUp
      * an event invoked when Doctrine_Record is unserialized
      *
-     * @param Doctrine_Record $record
+     * @param  Doctrine_Record $record
      * @return void
      */
     public function onWakeUp(Doctrine_Record $record)
@@ -148,7 +149,7 @@ class Doctrine_EventListener_Chain extends Doctrine_Access implements Doctrine_E
      * postClose
      * an event invoked after Doctrine_Connection is closed
      *
-     * @param Doctrine_Event $event
+     * @param  Doctrine_Event $event
      * @return void
      */
     public function postClose(Doctrine_Event $event)
@@ -162,7 +163,7 @@ class Doctrine_EventListener_Chain extends Doctrine_Access implements Doctrine_E
      * preClose
      * an event invoked before Doctrine_Connection is closed
      *
-     * @param Doctrine_Event $event
+     * @param  Doctrine_Event $event
      * @return void
      */
     public function preClose(Doctrine_Event $event)
@@ -176,7 +177,7 @@ class Doctrine_EventListener_Chain extends Doctrine_Access implements Doctrine_E
      * onOpen
      * an event invoked after Doctrine_Connection is opened
      *
-     * @param Doctrine_Connection $connection
+     * @param  Doctrine_Connection $connection
      * @return void
      */
     public function onOpen(Doctrine_Connection $connection)
@@ -190,7 +191,7 @@ class Doctrine_EventListener_Chain extends Doctrine_Access implements Doctrine_E
      * onTransactionCommit
      * an event invoked after a Doctrine_Connection transaction is committed
      *
-     * @param Doctrine_Event $event
+     * @param  Doctrine_Event $event
      * @return void
      */
     public function postTransactionCommit(Doctrine_Event $event)
@@ -204,7 +205,7 @@ class Doctrine_EventListener_Chain extends Doctrine_Access implements Doctrine_E
      * onPreTransactionCommit
      * an event invoked before a Doctrine_Connection transaction is committed
      *
-     * @param Doctrine_Event $event
+     * @param  Doctrine_Event $event
      * @return void
      */
     public function preTransactionCommit(Doctrine_Event $event)
@@ -218,7 +219,7 @@ class Doctrine_EventListener_Chain extends Doctrine_Access implements Doctrine_E
      * onTransactionRollback
      * an event invoked after a Doctrine_Connection transaction is being rolled back
      *
-     * @param Doctrine_Event $event
+     * @param  Doctrine_Event $event
      * @return void
      */
     public function postTransactionRollback(Doctrine_Event $event)
@@ -232,7 +233,7 @@ class Doctrine_EventListener_Chain extends Doctrine_Access implements Doctrine_E
      * onPreTransactionRollback
      * an event invoked before a Doctrine_Connection transaction is being rolled back
      *
-     * @param Doctrine_Event $event
+     * @param  Doctrine_Event $event
      * @return void
      */
     public function preTransactionRollback(Doctrine_Event $event)
@@ -246,7 +247,7 @@ class Doctrine_EventListener_Chain extends Doctrine_Access implements Doctrine_E
      * onTransactionBegin
      * an event invoked after a Doctrine_Connection transaction has been started
      *
-     * @param Doctrine_Event $event
+     * @param  Doctrine_Event $event
      * @return void
      */
     public function postTransactionBegin(Doctrine_Event $event)
@@ -260,7 +261,7 @@ class Doctrine_EventListener_Chain extends Doctrine_Access implements Doctrine_E
      * onTransactionBegin
      * an event invoked before a Doctrine_Connection transaction is being started
      *
-     * @param Doctrine_Event $event
+     * @param  Doctrine_Event $event
      * @return void
      */
     public function preTransactionBegin(Doctrine_Event $event)
@@ -275,7 +276,7 @@ class Doctrine_EventListener_Chain extends Doctrine_Access implements Doctrine_E
      * an event invoked after a Doctrine_Connection transaction with savepoint
      * is committed
      *
-     * @param Doctrine_Event $event
+     * @param  Doctrine_Event $event
      * @return void
      */
     public function postSavepointCommit(Doctrine_Event $event)
@@ -290,7 +291,7 @@ class Doctrine_EventListener_Chain extends Doctrine_Access implements Doctrine_E
      * an event invoked before a Doctrine_Connection transaction with savepoint
      * is committed
      *
-     * @param Doctrine_Event $event
+     * @param  Doctrine_Event $event
      * @return void
      */
     public function preSavepointCommit(Doctrine_Event $event)
@@ -305,7 +306,7 @@ class Doctrine_EventListener_Chain extends Doctrine_Access implements Doctrine_E
      * an event invoked after a Doctrine_Connection transaction with savepoint
      * is being rolled back
      *
-     * @param Doctrine_Event $event
+     * @param  Doctrine_Event $event
      * @return void
      */
     public function postSavepointRollback(Doctrine_Event $event)
@@ -320,7 +321,7 @@ class Doctrine_EventListener_Chain extends Doctrine_Access implements Doctrine_E
      * an event invoked before a Doctrine_Connection transaction with savepoint
      * is being rolled back
      *
-     * @param Doctrine_Event $event
+     * @param  Doctrine_Event $event
      * @return void
      */
     public function preSavepointRollback(Doctrine_Event $event)
@@ -335,7 +336,7 @@ class Doctrine_EventListener_Chain extends Doctrine_Access implements Doctrine_E
      * an event invoked after a Doctrine_Connection transaction with savepoint
      * has been started
      *
-     * @param Doctrine_Event $event
+     * @param  Doctrine_Event $event
      * @return void
      */
     public function postSavepointCreate(Doctrine_Event $event)
@@ -350,7 +351,7 @@ class Doctrine_EventListener_Chain extends Doctrine_Access implements Doctrine_E
      * an event invoked before a Doctrine_Connection transaction with savepoint
      * is being started
      *
-     * @param Doctrine_Event $event
+     * @param  Doctrine_Event $event
      * @return void
      */
     public function preSavepointCreate(Doctrine_Event $event)
@@ -365,7 +366,7 @@ class Doctrine_EventListener_Chain extends Doctrine_Access implements Doctrine_E
      * onCollectionDelete
      * an event invoked after a Doctrine_Collection is being deleted
      *
-     * @param Doctrine_Collection $collection
+     * @param  Doctrine_Collection $collection
      * @return void
      */
     public function onCollectionDelete(Doctrine_Collection $collection)
@@ -379,7 +380,7 @@ class Doctrine_EventListener_Chain extends Doctrine_Access implements Doctrine_E
      * onCollectionDelete
      * an event invoked after a Doctrine_Collection is being deleted
      *
-     * @param Doctrine_Collection $collection
+     * @param  Doctrine_Collection $collection
      * @return void
      */
     public function onPreCollectionDelete(Doctrine_Collection $collection)

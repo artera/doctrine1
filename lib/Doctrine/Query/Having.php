@@ -22,20 +22,20 @@
 /**
  * Doctrine_Query_Having
  *
- * @package     Doctrine
- * @subpackage  Query
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 7666 $
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @package    Doctrine
+ * @subpackage Query
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 7666 $
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
 class Doctrine_Query_Having extends Doctrine_Query_Condition
 {
     /**
      * DQL Aggregate Function parser
      *
-     * @param string $func
+     * @param  string $func
      * @return mixed
      */
     private function parseAggregateFunction($func)
@@ -53,7 +53,7 @@ class Doctrine_Query_Having extends Doctrine_Query_Condition
         }
 
         if ($pos !== false) {
-            $funcs = array();
+            $funcs = [];
 
             $name   = substr($func, 0, $pos);
             $func   = substr($func, ($pos + 1), -1);
@@ -75,7 +75,7 @@ class Doctrine_Query_Having extends Doctrine_Query_Condition
      * _parseAliases
      * Processes part of the query not being an aggregate function
      *
-     * @param mixed $value
+     * @param  mixed $value
      * @return string
      */
     final private function _parseAliases($value)
@@ -104,7 +104,7 @@ class Doctrine_Query_Having extends Doctrine_Query_Condition
      * load
      * returns the parsed query part
      *
-     * @param string $having
+     * @param  string $having
      * @return string
      */
     final public function load($having)

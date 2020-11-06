@@ -22,13 +22,13 @@
 /**
  * Doctrine_Query_Where
  *
- * @package     Doctrine
- * @subpackage  Query
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 7672 $
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @package    Doctrine
+ * @subpackage Query
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 7672 $
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
 class Doctrine_Query_Where extends Doctrine_Query_Condition
 {
@@ -58,7 +58,7 @@ class Doctrine_Query_Where extends Doctrine_Query_Condition
         }
 
         if (count($terms) < 3) {
-            $terms = $this->_tokenizer->sqlExplode($where, array('=', '<', '<>', '>', '!='));
+            $terms = $this->_tokenizer->sqlExplode($where, ['=', '<', '<>', '>', '!=']);
         }
 
         if (count($terms) > 1) {
@@ -90,9 +90,9 @@ class Doctrine_Query_Where extends Doctrine_Query_Condition
     }
 
     /**
-     * @param string $leftExpr
-     * @param string $operator
-     * @param string $rightExpr
+     * @param  string $leftExpr
+     * @param  string $operator
+     * @param  string $rightExpr
      * @return string
      */
     protected function _buildSql($leftExpr, $operator, $rightExpr)
@@ -133,13 +133,13 @@ class Doctrine_Query_Where extends Doctrine_Query_Condition
 
 
     /**
-     * @param string $rightExpr
+     * @param  string $rightExpr
      * @return string
      */
     protected function _buildWhereInArraySqlPart($rightExpr)
     {
         $params = $this->query->getInternalParams();
-        $value  = array();
+        $value  = [];
 
         for ($i = 0, $l = count($params); $i < $l; $i++) {
             if (is_array($params[$i])) {
@@ -156,8 +156,8 @@ class Doctrine_Query_Where extends Doctrine_Query_Condition
     /**
      * parses an EXISTS expression
      *
-     * @param string $where         query where part to be parsed
-     * @param boolean $negation     whether or not to use the NOT keyword
+     * @param  string  $where    query where part to be parsed
+     * @param  boolean $negation whether or not to use the NOT keyword
      * @return string
      */
     public function parseExists($where, $negation)

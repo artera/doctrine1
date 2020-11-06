@@ -19,13 +19,13 @@
 /**
  * Doctrine_Validator_FutureTestCase
  *
- * @package     Doctrine
- * @author      Roman Borschel <roman@code-factory.org>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Roman Borschel <roman@code-factory.org>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Validator_Past_TestCase extends Doctrine_UnitTestCase
 {

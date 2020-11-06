@@ -22,13 +22,13 @@
 /**
  * Doctrine_Node
  *
- * @package     Doctrine
- * @subpackage  Node
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 7490 $
- * @author      Joe Simms <joe.simms@websites4.com>
+ * @package    Doctrine
+ * @subpackage Node
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 7490 $
+ * @author     Joe Simms <joe.simms@websites4.com>
  */
 class Doctrine_Node implements IteratorAggregate
 {
@@ -62,8 +62,8 @@ class Doctrine_Node implements IteratorAggregate
     /**
      * contructor, creates node with reference to record and any options
      *
-     * @param Doctrine_Record $record                    instance of Doctrine_Record
-     * @param array $options                    options
+     * @param Doctrine_Record $record  instance of Doctrine_Record
+     * @param array           $options options
      */
     public function __construct(Doctrine_Record $record, $options)
     {
@@ -85,10 +85,12 @@ class Doctrine_Node implements IteratorAggregate
                     continue;
                 }
                 if ($class == 'Doctrine_Record') {
-                    throw new Doctrine_Node_Exception('No subclasses specified. You are '
+                    throw new Doctrine_Node_Exception(
+                        'No subclasses specified. You are '
                             . 'using Single Table Inheritance with NestedSet but you have '
                             . 'not specified the subclasses correctly. Make sure you use '
-                            . 'setSubclasses() in the root class of your hierarchy.');
+                        . 'setSubclasses() in the root class of your hierarchy.'
+                    );
                 }
                 $table = $table->getConnection()->getTable($class);
             }
@@ -106,13 +108,13 @@ class Doctrine_Node implements IteratorAggregate
      * This is a factory method that returns node instance based upon chosen
      * implementation.
      *
-     * @param Doctrine_Record $record                    instance of Doctrine_Record
-     * @param string $implName                  implementation (NestedSet, AdjacencyList, MaterializedPath)
-     * @param array $options                    options
+     * @param  Doctrine_Record $record   instance of Doctrine_Record
+     * @param  string          $implName implementation (NestedSet, AdjacencyList, MaterializedPath)
+     * @param  array           $options  options
      * @return Doctrine_Node
      * @throws Doctrine_Node_Exception          if $implName is not a valid class
      */
-    public static function factory(Doctrine_Record $record, $implName, $options = array())
+    public static function factory(Doctrine_Record $record, $implName, $options = [])
     {
         $class = 'Doctrine_Node_' . $implName;
 
@@ -126,7 +128,7 @@ class Doctrine_Node implements IteratorAggregate
     /**
      * setter for record attribute
      *
-     * @param Doctrine_Record $record                    instance of Doctrine_Record
+     * @param Doctrine_Record $record instance of Doctrine_Record
      *
      * @return void
      */
@@ -148,12 +150,12 @@ class Doctrine_Node implements IteratorAggregate
     /**
      * convenience function for getIterator
      *
-     * @param string $type                      type of iterator (Pre | Post | Level)
-     * @param array $options                    options
+     * @param string $type    type of iterator (Pre | Post | Level)
+     * @param array  $options options
      *
      * @return Traversable
      */
-    public function traverse($type = 'Pre', $options = array())
+    public function traverse($type = 'Pre', $options = [])
     {
         return $this->getIterator($type, $options);
     }
@@ -161,8 +163,8 @@ class Doctrine_Node implements IteratorAggregate
     /**
      * get iterator
      *
-     * @param string $type                      type of iterator (Pre | Post | Level)
-     * @param array $options                    options
+     * @param  string $type    type of iterator (Pre | Post | Level)
+     * @param  array  $options options
      * @return Iterator
      */
     public function getIterator($type = null, $options = null)
@@ -172,11 +174,13 @@ class Doctrine_Node implements IteratorAggregate
         }
 
         if ($options === null) {
-            $options = (isset($this->iteratorOptions) ? $this->iteratorOptions : array());
+            $options = (isset($this->iteratorOptions) ? $this->iteratorOptions : []);
         }
 
         $implName = $this->record->getTable()->getOption('treeImpl');
-        /** @psalm-var class-string $iteratorClass */
+        /**
+ * @psalm-var class-string $iteratorClass
+*/
         $iteratorClass = 'Doctrine_Node_' . $implName . '_' . ucfirst(strtolower($type)) . 'OrderIterator';
 
         return new $iteratorClass($this->record, $options);

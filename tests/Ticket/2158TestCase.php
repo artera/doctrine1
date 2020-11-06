@@ -48,10 +48,10 @@ class T2158_Model2 extends Doctrine_Record
     {
         $this->hasMany(
             'T2158_Model1 as Relation',
-            array(
+            [
                 'local'   => 'id',
                 'foreign' => 'm2_id'
-            )
+            ]
         );
     }
 }

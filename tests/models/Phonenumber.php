@@ -8,16 +8,25 @@ class Phonenumber extends Doctrine_Record
     }
     public function setUp()
     {
-        $this->hasOne('Entity', array('local'    => 'entity_id',
+        $this->hasOne(
+            'Entity',
+            ['local'    => 'entity_id',
                                       'foreign'  => 'id',
-                                      'onDelete' => 'CASCADE'));
+            'onDelete' => 'CASCADE']
+        );
 
-        $this->hasOne('Group', array('local'     => 'entity_id',
+        $this->hasOne(
+            'Group',
+            ['local'     => 'entity_id',
                                       'foreign'  => 'id',
-                                      'onDelete' => 'CASCADE'));
+            'onDelete' => 'CASCADE']
+        );
 
-        $this->hasOne('User', array('local'    => 'entity_id',
+        $this->hasOne(
+            'User',
+            ['local'    => 'entity_id',
                                     'foreign'  => 'id',
-                                    'onDelete' => 'CASCADE'));
+            'onDelete' => 'CASCADE']
+        );
     }
 }

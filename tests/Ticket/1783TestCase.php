@@ -24,6 +24,6 @@ class Ticket_1783 extends Doctrine_Record
 {
     public function setTableDefinition()
     {
-        $this->hasColumn('bigint', 'integer', null, array('type' => 'integer', 'unsigned' => true));
+        $this->hasColumn('bigint', 'integer', null, ['type' => 'integer', 'unsigned' => true]);
     }
 }

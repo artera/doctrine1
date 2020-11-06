@@ -19,13 +19,13 @@
 /**
  * Doctrine_Ticket_1467_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Ticket_1467_TestCase extends Doctrine_UnitTestCase
 {
@@ -53,17 +53,23 @@ class T1467_Item extends Doctrine_Record
 
     public function setUp()
     {
-        $this->hasMany('T1467_Picture as Pictures', array(
+        $this->hasMany(
+            'T1467_Picture as Pictures',
+            [
             'refClass' => 'T1467_ItemPicture',
             'local'    => 'item_id',
             'foreign'  => 'picture_id'
-        ));
+            ]
+        );
 
-        $this->hasMany('T1467_Puzzle as Puzzles', array(
+        $this->hasMany(
+            'T1467_Puzzle as Puzzles',
+            [
             'refClass' => 'T1467_ItemPuzzle',
             'local'    => 'item_id',
             'foreign'  => 'puzzle_id'
-        ));
+            ]
+        );
     }
 }
 
@@ -77,11 +83,14 @@ class T1467_Picture extends Doctrine_Record
 
     public function setUp()
     {
-        $this->hasMany('T1467_Item as Items', array(
+        $this->hasMany(
+            'T1467_Item as Items',
+            [
             'refClass' => 'T1467_ItemPicture',
             'local'    => 'picture_id',
             'foreign'  => 'item_id'
-        ));
+            ]
+        );
     }
 }
 
@@ -95,11 +104,14 @@ class T1467_Puzzle extends Doctrine_Record
 
     public function setUp()
     {
-        $this->hasMany('T1467_Item as Items', array(
+        $this->hasMany(
+            'T1467_Item as Items',
+            [
             'refClass' => 'T1467_ItemPicture',
             'local'    => 'puzzle_id',
             'foreign'  => 'item_id'
-        ));
+            ]
+        );
     }
 }
 
@@ -108,8 +120,8 @@ class T1467_ItemPicture extends Doctrine_Record
 {
     public function setTableDefinition()
     {
-        $this->hasColumn('item_id', 'integer', null, array('primary' => true));
-        $this->hasColumn('picture_id', 'integer', null, array('primary' => true));
+        $this->hasColumn('item_id', 'integer', null, ['primary' => true]);
+        $this->hasColumn('picture_id', 'integer', null, ['primary' => true]);
     }
 }
 
@@ -118,7 +130,7 @@ class T1467_ItemPuzzle extends Doctrine_Record
 {
     public function setTableDefinition()
     {
-        $this->hasColumn('item_id', 'integer', null, array('primary' => true));
-        $this->hasColumn('puzzle_id', 'integer', null, array('primary' => true));
+        $this->hasColumn('item_id', 'integer', null, ['primary' => true]);
+        $this->hasColumn('puzzle_id', 'integer', null, ['primary' => true]);
     }
 }

@@ -5,8 +5,8 @@ class Page extends Doctrine_Record
     {
         $this->hasMany(
             'Bookmark as Bookmarks',
-            array('local'               => 'id',
-                              'foreign' => 'page_id')
+            ['local'               => 'id',
+                              'foreign' => 'page_id']
         );
     }
 

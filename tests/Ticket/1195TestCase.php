@@ -9,7 +9,7 @@ class Doctrine_Ticket_1195_TestCase extends Doctrine_UnitTestCase
 {
     public function prepareTables()
     {
-        $this->tables   = array();
+        $this->tables   = [];
         $this->tables[] = 'T1195_Item';
         $this->tables[] = 'T1195_Ref';
 
@@ -53,10 +53,10 @@ class Doctrine_Ticket_1195_TestCase extends Doctrine_UnitTestCase
 
         $query = new Doctrine_RawSql();
         $q     = $query->select('{i.*}')
-                ->addComponent('i', 'T1195_Item i')
-                ->from('items i')
-                ->addWhere('i.col1 = ?', 'a')
-                ->addWhere('i.col2 = ?', 'a');
+            ->addComponent('i', 'T1195_Item i')
+            ->from('items i')
+            ->addWhere('i.col1 = ?', 'a')
+            ->addWhere('i.col2 = ?', 'a');
 
         $res = $q->execute();
 
@@ -67,16 +67,16 @@ class Doctrine_Ticket_1195_TestCase extends Doctrine_UnitTestCase
     {
         $q = new Doctrine_RawSql();
         $q = $q->select('{i.*}')
-                ->addComponent('i', 'T1195_Item i')
-                ->from('ref r')
-                ->leftJoin('items i ON r.item_id=i.id');
+            ->addComponent('i', 'T1195_Item i')
+            ->from('ref r')
+            ->leftJoin('items i ON r.item_id=i.id');
 
 
-        $res = $q->execute(array(), Doctrine_Core::HYDRATE_ARRAY);
+        $res = $q->execute([], Doctrine_Core::HYDRATE_ARRAY);
         $this->assertEqual(sizeof($res), 2);
 
         $q->distinct();
-        $res = $q->execute(array(), Doctrine_Core::HYDRATE_ARRAY);
+        $res = $q->execute([], Doctrine_Core::HYDRATE_ARRAY);
         $this->assertEqual(sizeof($res), 1);
     }
 
@@ -84,8 +84,8 @@ class Doctrine_Ticket_1195_TestCase extends Doctrine_UnitTestCase
     {
         $q = new Doctrine_RawSql();
         $q = $q->select('{i.*}')
-                ->addComponent('i', 'T1195_Item i')
-                ->from('items i');
+            ->addComponent('i', 'T1195_Item i')
+            ->from('items i');
 
         if (!method_exists($q, 'count')) {
             $this->fail("The query doesn't have a count() method");
@@ -102,7 +102,7 @@ class T1195_Item extends Doctrine_Record
     public function setTableDefinition()
     {
         $this->setTableName('items');
-        $this->hasColumn('id', 'integer', null, array('autoincrement' => true, 'primary' => true, 'notnull' => true));
+        $this->hasColumn('id', 'integer', null, ['autoincrement' => true, 'primary' => true, 'notnull' => true]);
         $this->hasColumn('col1', 'string', 10);
         $this->hasColumn('col2', 'string', 10);
     }
@@ -113,12 +113,12 @@ class T1195_Ref extends Doctrine_Record
     public function setTableDefinition()
     {
         $this->setTableName('ref');
-        $this->hasColumn('id', 'integer', null, array('autoincrement' => true, 'primary' => true, 'notnull' => true));
+        $this->hasColumn('id', 'integer', null, ['autoincrement' => true, 'primary' => true, 'notnull' => true]);
         $this->hasColumn('item_id', 'integer', null);
     }
 
     public function setUp()
     {
-        $this->hasOne('T1195_Item as Item', array('local' => 'item_id', 'foreign' => 'id'));
+        $this->hasOne('T1195_Item as Item', ['local' => 'item_id', 'foreign' => 'id']);
     }
 }

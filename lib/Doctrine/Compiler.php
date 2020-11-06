@@ -23,13 +23,13 @@
  * Doctrine_Compiler
  * This class can be used for compiling the entire Doctrine framework into a single file
  *
- * @package     Doctrine
- * @subpackage  Compiler
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpllicense.php LGPL
- * @link        www.phpdoctrine.
- * @since       1.0
- * @version     $Revision: 7677 $
+ * @package    Doctrine
+ * @subpackage Compiler
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license    http://www.opensource.org/licenses/lgpllicense.php LGPL
+ * @link       www.phpdoctrine.
+ * @since      1.0
+ * @version    $Revision: 7677 $
  */
 class Doctrine_Compiler
 {
@@ -39,23 +39,23 @@ class Doctrine_Compiler
      * cases dozens of files) can improve performance by an order of magnitude
      *
      * @throws Doctrine_Compiler_Exception      if something went wrong during the compile operation
-     * @param string $target
-     * @param array $includedDrivers
+     * @param  string $target
+     * @param  array  $includedDrivers
      * @return string $target Path the compiled file was written to
      */
-    public static function compile($target = null, $includedDrivers = array())
+    public static function compile($target = null, $includedDrivers = [])
     {
         if (! is_array($includedDrivers)) {
-            $includedDrivers = array($includedDrivers);
+            $includedDrivers = [$includedDrivers];
         }
 
-        $excludedDrivers = array();
+        $excludedDrivers = [];
 
         // If we have an array of specified drivers then lets determine which drivers we should exclude
         if (! empty($includedDrivers)) {
-            $drivers = array('mysql',
+            $drivers = ['mysql',
                              'pgsql',
-                             'sqlite');
+                             'sqlite'];
 
             $excludedDrivers = array_diff($drivers, $includedDrivers);
         }
@@ -66,13 +66,13 @@ class Doctrine_Compiler
         foreach ($it as $file) {
             $e = explode('.', $file->getFileName());
             if (end($e) === 'php') {
-                require_once $file->getPathName();
+                include_once $file->getPathName();
             }
         }
 
         $classes = array_merge(get_declared_classes(), get_declared_interfaces());
 
-        $ret = array();
+        $ret = [];
 
         foreach ($classes as $class) {
             $e = explode('_', $class);

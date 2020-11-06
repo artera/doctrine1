@@ -23,13 +23,13 @@
  * Doctrine_Record_Filter_Standard
  * Filters the record getters and setters
  *
- * @package     Doctrine
- * @subpackage  Record
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 1298 $
+ * @package    Doctrine
+ * @subpackage Record
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 1298 $
  */
 class Doctrine_Record_Filter_Standard extends Doctrine_Record_Filter
 {
@@ -37,7 +37,7 @@ class Doctrine_Record_Filter_Standard extends Doctrine_Record_Filter
      * filterSet
      * defines an implementation for filtering the set() method of Doctrine_Record
      *
-     * @param mixed $name                       name of the property or related component
+     * @param mixed $name  name of the property or related component
      * @param mixed $value
      *
      * @return void
@@ -51,7 +51,7 @@ class Doctrine_Record_Filter_Standard extends Doctrine_Record_Filter
      * filterGet
      * defines an implementation for filtering the get() method of Doctrine_Record
      *
-     * @param mixed $name                       name of the property or related component
+     * @param mixed $name name of the property or related component
      *
      * @return void
      */

@@ -19,18 +19,18 @@
 /**
  * Doctrine_Ticket_1015_TestCase
  *
- * @package     Doctrine
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Ticket_1015_TestCase extends Doctrine_UnitTestCase
 {
     public function prepareTables()
     {
-        $this->tables   = array();
+        $this->tables   = [];
         $this->tables[] = 'T1015_Person';
         $this->tables[] = 'T1015_Points';
 
@@ -50,10 +50,10 @@ class Doctrine_Ticket_1015_TestCase extends Doctrine_UnitTestCase
     {
         $q = new Doctrine_Query();
         $q->select('person.id, points.total')
-        ->from('T1015_Person person')
-        ->innerJoin('person.T1015_Points points WITH person.id = 1');
+            ->from('T1015_Person person')
+            ->innerJoin('person.T1015_Points points WITH person.id = 1');
 
-        $results = $q->execute(array(), Doctrine_Core::HYDRATE_ARRAY);
+        $results = $q->execute([], Doctrine_Core::HYDRATE_ARRAY);
         //var_dump($results);
         $person = $results[0];
 
@@ -65,11 +65,11 @@ class Doctrine_Ticket_1015_TestCase extends Doctrine_UnitTestCase
     {
         $q = new Doctrine_RawSql();
         $q->select('{person.id}, {points.total}')
-        ->from('person person INNER JOIN points points ON person.id = points.person_id AND person.id=1')
-        ->addComponent('person', 'T1015_Person person')
-        ->addComponent('points', 'person.T1015_Points points');
+            ->from('person person INNER JOIN points points ON person.id = points.person_id AND person.id=1')
+            ->addComponent('person', 'T1015_Person person')
+            ->addComponent('points', 'person.T1015_Points points');
 
-        $results = $q->execute(array(), Doctrine_Core::HYDRATE_ARRAY);
+        $results = $q->execute([], Doctrine_Core::HYDRATE_ARRAY);
         //var_dump($results);
         $person = $results[0];
 
@@ -83,14 +83,14 @@ class T1015_Person extends Doctrine_Record
     public function setTableDefinition()
     {
         $this->setTableName('person');
-        $this->hasColumn('id', 'integer', 15, array('autoincrement' => true, 'unsigned' => true, 'primary' => true, 'notnull' => true));
+        $this->hasColumn('id', 'integer', 15, ['autoincrement' => true, 'unsigned' => true, 'primary' => true, 'notnull' => true]);
         $this->hasColumn('name', 'string', 50);
     }
 
     public function setUp()
     {
         parent :: setUp();
-        $this->hasOne('T1015_Points', array('local' => 'id', 'foreign' => 'person_id'));
+        $this->hasOne('T1015_Points', ['local' => 'id', 'foreign' => 'person_id']);
     }
 }
 
@@ -99,13 +99,13 @@ class T1015_Points extends Doctrine_Record
     public function setTableDefinition()
     {
         $this->setTableName('points');
-        $this->hasColumn('person_id', 'integer', 15, array('primary' => true, 'notnull' => true));
+        $this->hasColumn('person_id', 'integer', 15, ['primary' => true, 'notnull' => true]);
         $this->hasColumn('total', 'integer', 3);
     }
 
     public function setUp()
     {
         parent :: setUp();
-        $this->hasOne('T1015_Person', array('local' => 'person_id', 'foreign' => 'id'));
+        $this->hasOne('T1015_Person', ['local' => 'person_id', 'foreign' => 'id']);
     }
 }

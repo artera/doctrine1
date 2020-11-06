@@ -7,6 +7,6 @@ class File_Owner extends Doctrine_Record
     }
     public function setUp()
     {
-        $this->hasOne('Data_File', array('local' => 'id', 'foreign' => 'file_owner_id'));
+        $this->hasOne('Data_File', ['local' => 'id', 'foreign' => 'file_owner_id']);
     }
 }

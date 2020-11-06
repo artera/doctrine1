@@ -19,13 +19,13 @@
 /**
  * Doctrine_Export_Sqlite_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Export_Sqlite_TestCase extends Doctrine_UnitTestCase
 {
@@ -45,7 +45,7 @@ class Doctrine_Export_Sqlite_TestCase extends Doctrine_UnitTestCase
     {
         $name = 'mytable';
 
-        $fields = array('id' => array('type' => 'integer', 'unsigned' => 1, 'autoincrement' => true));
+        $fields = ['id' => ['type' => 'integer', 'unsigned' => 1, 'autoincrement' => true]];
 
         $this->export->createTable($name, $fields);
 
@@ -54,11 +54,11 @@ class Doctrine_Export_Sqlite_TestCase extends Doctrine_UnitTestCase
     public function testCreateTableSupportsDefaultAttribute()
     {
         $name   = 'mytable';
-        $fields = array('name'  => array('type' => 'char', 'length' => 10, 'default' => 'def'),
-                         'type' => array('type' => 'integer', 'length' => 3, 'default' => 12)
-                         );
+        $fields = ['name'  => ['type' => 'char', 'length' => 10, 'default' => 'def'],
+                         'type' => ['type' => 'integer', 'length' => 3, 'default' => 12]
+                         ];
 
-        $options = array('primary' => array('name', 'type'));
+        $options = ['primary' => ['name', 'type']];
         $this->export->createTable($name, $fields, $options);
 
         $this->assertEqual($this->adapter->pop(), 'CREATE TABLE mytable (name CHAR(10) DEFAULT \'def\', type INTEGER DEFAULT 12, PRIMARY KEY(name, type))');
@@ -66,23 +66,23 @@ class Doctrine_Export_Sqlite_TestCase extends Doctrine_UnitTestCase
     public function testCreateTableSupportsMultiplePks()
     {
         $name   = 'mytable';
-        $fields = array('name'  => array('type' => 'char', 'length' => 10),
-                         'type' => array('type' => 'integer', 'length' => 3));
+        $fields = ['name'  => ['type' => 'char', 'length' => 10],
+                         'type' => ['type' => 'integer', 'length' => 3]];
 
-        $options = array('primary' => array('name', 'type'));
+        $options = ['primary' => ['name', 'type']];
         $this->export->createTable($name, $fields, $options);
 
         $this->assertEqual($this->adapter->pop(), 'CREATE TABLE mytable (name CHAR(10), type INTEGER, PRIMARY KEY(name, type))');
     }
     public function testCreateTableSupportsIndexes()
     {
-        $fields = array('id'    => array('type' => 'integer', 'unsigned' => 1, 'autoincrement' => true, 'unique' => true),
-                         'name' => array('type' => 'string', 'length' => 4),
-                         );
+        $fields = ['id'    => ['type' => 'integer', 'unsigned' => 1, 'autoincrement' => true, 'unique' => true],
+                         'name' => ['type' => 'string', 'length' => 4],
+                         ];
 
-        $options = array('primary' => array('id'),
-                         'indexes' => array('myindex' => array('fields' => array('id', 'name')))
-                         );
+        $options = ['primary' => ['id'],
+                         'indexes' => ['myindex' => ['fields' => ['id', 'name']]]
+                         ];
 
         $this->export->createTable('sometable', $fields, $options);
 
@@ -98,13 +98,13 @@ class Doctrine_Export_Sqlite_TestCase extends Doctrine_UnitTestCase
     {
         $this->conn->setAttribute(Doctrine_Core::ATTR_QUOTE_IDENTIFIER, true);
 
-        $fields = array('id'    => array('type' => 'integer', 'unsigned' => 1, 'autoincrement' => true, 'unique' => true),
-                         'name' => array('type' => 'string', 'length' => 4),
-                         );
+        $fields = ['id'    => ['type' => 'integer', 'unsigned' => 1, 'autoincrement' => true, 'unique' => true],
+                         'name' => ['type' => 'string', 'length' => 4],
+                         ];
 
-        $options = array('primary' => array('id'),
-                         'indexes' => array('myindex' => array('fields' => array('id', 'name')))
-                         );
+        $options = ['primary' => ['id'],
+                         'indexes' => ['myindex' => ['fields' => ['id', 'name']]]
+                         ];
 
         $this->export->createTable('sometable', $fields, $options);
 
@@ -123,10 +123,10 @@ class Doctrine_Export_Sqlite_TestCase extends Doctrine_UnitTestCase
         $this->conn->setAttribute(Doctrine_Core::ATTR_QUOTE_IDENTIFIER, true);
 
         $name   = 'mytable';
-        $fields = array('name'  => array('type' => 'char', 'length' => 10),
-                         'type' => array('type' => 'integer', 'length' => 3));
+        $fields = ['name'  => ['type' => 'char', 'length' => 10],
+                         'type' => ['type' => 'integer', 'length' => 3]];
 
-        $options = array('primary' => array('name', 'type'));
+        $options = ['primary' => ['name', 'type']];
         $this->export->createTable($name, $fields, $options);
 
         $this->assertEqual($this->adapter->pop(), 'CREATE TABLE "mytable" ("name" CHAR(10), "type" INTEGER, PRIMARY KEY("name", "type"))');
@@ -135,8 +135,8 @@ class Doctrine_Export_Sqlite_TestCase extends Doctrine_UnitTestCase
     }
     public function testUnknownIndexSortingAttributeThrowsException()
     {
-        $fields = array('id'   => array('sorting' => 'ASC'),
-                        'name' => array('sorting' => 'unknown'));
+        $fields = ['id'   => ['sorting' => 'ASC'],
+                        'name' => ['sorting' => 'unknown']];
 
         try {
             $this->export->getIndexFieldDeclarationList($fields);
@@ -147,23 +147,23 @@ class Doctrine_Export_Sqlite_TestCase extends Doctrine_UnitTestCase
     }
     public function testCreateTableSupportsIndexesWithCustomSorting()
     {
-        $fields = array('id'    => array('type' => 'integer', 'unsigned' => 1, 'autoincrement' => true, 'unique' => true),
-                         'name' => array('type' => 'string', 'length' => 4),
-                         );
+        $fields = ['id'    => ['type' => 'integer', 'unsigned' => 1, 'autoincrement' => true, 'unique' => true],
+                         'name' => ['type' => 'string', 'length' => 4],
+                         ];
 
-        $options = array('primary' => array('id'),
-                         'indexes' => array('myindex' => array(
-                                                    'fields' => array(
-                                                            'id'   => array('sorting' => 'ASC'),
-                                                            'name' => array('sorting' => 'DESC')
-                                                                )
-                                                            ))
-                         );
+        $options = ['primary' => ['id'],
+                         'indexes' => ['myindex' => [
+                                                    'fields' => [
+                                                            'id'   => ['sorting' => 'ASC'],
+                                                            'name' => ['sorting' => 'DESC']
+                                                                ]
+                                                            ]]
+                         ];
 
         $this->export->createTable('sometable', $fields, $options);
 
         //removed this assertion and inserted the two below
-//        $this->assertEqual($this->adapter->pop(), 'CREATE TABLE sometable (id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(4), INDEX myindex (id ASC, name DESC))');
+        //        $this->assertEqual($this->adapter->pop(), 'CREATE TABLE sometable (id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(4), INDEX myindex (id ASC, name DESC))');
 
         $this->assertEqual($this->adapter->pop(), 'CREATE INDEX myindex_idx ON sometable (id ASC, name DESC)');
 

@@ -22,13 +22,13 @@
 /**
  * Doctrine mock connection adapter. This class is used for special testing purposes.
  *
- * @package     Doctrine
- * @subpackage  Adapter
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 7490 $
+ * @package    Doctrine
+ * @subpackage Adapter
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 7490 $
  */
 class Doctrine_Adapter_Mock implements Doctrine_Adapter_Interface, Countable
 {
@@ -44,14 +44,14 @@ class Doctrine_Adapter_Mock implements Doctrine_Adapter_Interface, Countable
      *
      * @var array $_queries
      */
-    private $_queries = array();
+    private $_queries = [];
 
     /**
      * Array of exceptions thrown
      *
      * @var array $_exception
      */
-    private $_exception = array();
+    private $_exception = [];
 
     /**
      * Bool true/false variable for whether or not the last insert failed
@@ -67,7 +67,7 @@ class Doctrine_Adapter_Mock implements Doctrine_Adapter_Interface, Countable
      * $conn = new Doctrine_Adapter_Mock('mysql');
      * </code>
      *
-     * @param string $name
+     * @param  string $name
      * @return void
      */
     public function __construct($name = null)
@@ -98,20 +98,20 @@ class Doctrine_Adapter_Mock implements Doctrine_Adapter_Interface, Countable
     /**
      * Force an exception in to the array of exceptions
      *
-     * @param string $name     Name of exception
-     * @param string $message  Message for the exception
-     * @param integer $code    Code of the exception
+     * @param  string  $name    Name of exception
+     * @param  string  $message Message for the exception
+     * @param  integer $code    Code of the exception
      * @return void
      */
     public function forceException($name, $message = '', $code = 0)
     {
-        $this->_exception = array($name, $message, $code);
+        $this->_exception = [$name, $message, $code];
     }
 
     /**
      * Prepare a query statement
      *
-     * @param string $query   Query to prepare
+     * @param  string $query Query to prepare
      * @return Doctrine_Adapter_Statement_Mock $mock Mock prepared statement
      */
     public function prepare($query)
@@ -125,7 +125,7 @@ class Doctrine_Adapter_Mock implements Doctrine_Adapter_Interface, Countable
     /**
      * Add query to the stack of executed queries
      *
-     * @param string $query
+     * @param  string $query
      * @return void
      */
     public function addQuery($query)
@@ -136,7 +136,7 @@ class Doctrine_Adapter_Mock implements Doctrine_Adapter_Interface, Countable
     /**
      * Fake the execution of query and add it to the stack of executed queries
      *
-     * @param string $query
+     * @param  string $query
      * @return Doctrine_Adapter_Statement_Mock $stmt
      */
     public function query($query)
@@ -148,9 +148,11 @@ class Doctrine_Adapter_Mock implements Doctrine_Adapter_Interface, Countable
         if (! empty($e)) {
             $name = $e[0];
 
-            $this->_exception = array();
+            $this->_exception = [];
 
-            /** @var Exception $exception */
+            /**
+ * @var Exception $exception
+*/
             $exception = new $name($e[1], $e[2]);
 
             throw $exception;
@@ -175,7 +177,7 @@ class Doctrine_Adapter_Mock implements Doctrine_Adapter_Interface, Countable
     /**
      * Quote a value for the dbms
      *
-     * @param string $input
+     * @param  string $input
      * @return string $quoted
      */
     public function quote($input)
@@ -186,7 +188,7 @@ class Doctrine_Adapter_Mock implements Doctrine_Adapter_Interface, Countable
     /**
      * Execute a raw sql statement
      *
-     * @param string $statement
+     * @param  string $statement
      * @return int
      */
     public function exec($statement)
@@ -198,9 +200,11 @@ class Doctrine_Adapter_Mock implements Doctrine_Adapter_Interface, Countable
         if (! empty($e)) {
             $name = $e[0];
 
-            $this->_exception = array();
+            $this->_exception = [];
 
-            /** @var Exception $exception */
+            /**
+ * @var Exception $exception
+*/
             $exception = new $name($e[1], $e[2]);
 
             throw $exception;
@@ -212,7 +216,7 @@ class Doctrine_Adapter_Mock implements Doctrine_Adapter_Interface, Countable
     /**
      * Force last insert to be failed
      *
-     * @param boolean $fail
+     * @param  boolean $fail
      * @return void
      */
     public function forceLastInsertIdFail($fail = true)
@@ -286,7 +290,7 @@ class Doctrine_Adapter_Mock implements Doctrine_Adapter_Interface, Countable
     }
 
     /**
-     * @param string|int $attribute
+     * @param  string|int $attribute
      * @return string|null
      */
     public function getAttribute($attribute)
@@ -315,8 +319,8 @@ class Doctrine_Adapter_Mock implements Doctrine_Adapter_Interface, Countable
     }
 
     /**
-     * @param string|int $attribute
-     * @param mixed $value
+     * @param  string|int $attribute
+     * @param  mixed      $value
      * @return bool
      */
     public function setAttribute($attribute, $value)

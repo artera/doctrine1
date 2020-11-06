@@ -7,6 +7,6 @@ class FilterTest extends Doctrine_Record
     }
     public function setUp()
     {
-        $this->hasMany('FilterTest2 as filtered', array('local' => 'id', 'foreign' => 'test1_id', 'onDelete' => 'CASCADE'));
+        $this->hasMany('FilterTest2 as filtered', ['local' => 'id', 'foreign' => 'test1_id', 'onDelete' => 'CASCADE']);
     }
 }

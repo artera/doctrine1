@@ -20,16 +20,16 @@
 /**
  * Doctrine_Locator_Injectable
  *
- * @package     Doctrine
- * @subpackage  Doctrine_Locator
- * @category    Locator
- * @license     http://www.gnu.org/licenses/lgpl.txt LGPL
- * @link        http://www.doctrine-project.org
- * @author      Janne Vanhala <jpvanhal@cc.hut.fi>
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @author      Eevert Saukkokoski <dmnEe0@gmail.com>
- * @version     $Revision$
- * @since       1.0
+ * @package    Doctrine
+ * @subpackage Doctrine_Locator
+ * @category   Locator
+ * @license    http://www.gnu.org/licenses/lgpl.txt LGPL
+ * @link       http://www.doctrine-project.org
+ * @author     Janne Vanhala <jpvanhal@cc.hut.fi>
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @author     Eevert Saukkokoski <dmnEe0@gmail.com>
+ * @version    $Revision$
+ * @since      1.0
  */
 class Doctrine_Locator_Injectable
 {
@@ -41,7 +41,7 @@ class Doctrine_Locator_Injectable
     /**
      * @var array               an array of bound resources
      */
-    protected $_resources = array();
+    protected $_resources = [];
 
     /**
      * @var Doctrine_Null $_null     Doctrine_Null object, used for extremely fast null value checking
@@ -52,7 +52,7 @@ class Doctrine_Locator_Injectable
      * setLocator
      * this method can be used for setting the locator object locally
      *
-     * @param Doctrine_Locator   $locator             the locator object
+     * @param  Doctrine_Locator $locator the locator object
      * @return Doctrine_Locator_Injectable    this instance
      */
     public function setLocator(Doctrine_Locator $locator)
@@ -85,9 +85,9 @@ class Doctrine_Locator_Injectable
      * if the resource cannot be found locally this method tries
      * to use the global locator for finding the resource
      *
-     * @see Doctrine_Locator::locate()
+     * @see    Doctrine_Locator::locate()
      * @throws Doctrine_Locator_Exception     if the resource could not be found
-     * @param string $name                  the name of the resource
+     * @param  string $name the name of the resource
      * @return mixed                        the located resource
      */
     public function locate($name)
@@ -110,8 +110,8 @@ class Doctrine_Locator_Injectable
      * bind
      * binds a resource to a name
      *
-     * @param string $name      the name of the resource to bind
-     * @param mixed $resource      the value of the resource
+     * @param  string $name     the name of the resource to bind
+     * @param  mixed  $resource the value of the resource
      * @return $this   this object
      */
     public function bind($name, $resource)
@@ -125,7 +125,7 @@ class Doctrine_Locator_Injectable
      * initNullObject
      * initializes the null object
      *
-     * @param Doctrine_Null $null
+     * @param  Doctrine_Null $null
      * @return void
      */
     public static function initNullObject(Doctrine_Null $null)

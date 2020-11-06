@@ -19,13 +19,13 @@
 /**
  * Doctrine_Ticket_DC794_TestCase
  *
- * @package     Doctrine
- * @author      Enrico Stahn <mail@enricostahn.com>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Enrico Stahn <mail@enricostahn.com>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Ticket_DC794_TestCase extends Doctrine_UnitTestCase
 {
@@ -49,12 +49,17 @@ class Ticket_DC794_Model extends Doctrine_Record
 {
     public function setTableDefinition()
     {
-        $this->hasColumn('id', 'integer', null, array(
+        $this->hasColumn(
+            'id',
+            'integer',
+            null,
+            [
             'type'          => 'integer',
             'unsigned'      => false,
             'primary'       => true,
             'autoincrement' => true,
-        ));
+            ]
+        );
         $this->hasColumn('idOrigenOportunidadCliente', 'string', 255);
         $this->hasColumn('Username', 'string', 255);
         $this->hasColumn('password', 'string', 255);

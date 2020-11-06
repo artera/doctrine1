@@ -23,13 +23,13 @@
  * Doctrine_Overloadable
  * a very generic overloading interface
  *
- * @package     Doctrine
- * @subpackage  Overloadable
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 7490 $
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @package    Doctrine
+ * @subpackage Overloadable
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 7490 $
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
 interface Doctrine_Overloadable
 {
@@ -37,8 +37,8 @@ interface Doctrine_Overloadable
      * __call
      * method overloader
      *
-     * @param string $m     the name of the method
-     * @param array $a      method arguments
+     * @param  string $m the name of the method
+     * @param  array  $a method arguments
      * @return mixed        return value of the method
      */
     public function __call($m, $a);

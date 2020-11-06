@@ -19,20 +19,20 @@
 /**
  * Doctrine_Query_JoinCondition_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Query_Join_TestCase extends Doctrine_UnitTestCase
 {
     public function prepareTables()
     {
-        $this->tables = array('Record_Country', 'Record_City', 'Record_District', 'Entity',
-                              'User', 'Group', 'Email', 'Phonenumber', 'Groupuser', 'Account');
+        $this->tables = ['Record_Country', 'Record_City', 'Record_District', 'Entity',
+                              'User', 'Group', 'Email', 'Phonenumber', 'Groupuser', 'Account'];
 
         parent::prepareTables();
     }
@@ -66,8 +66,8 @@ class Doctrine_Query_Join_TestCase extends Doctrine_UnitTestCase
         $q = new Doctrine_Query();
 
         $q->select('c.*, c2.*, d.*')
-          ->from('Record_Country c')->innerJoin('c.City c2 ON c2.id = 2')
-          ->where('c.id = ?', array(1));
+            ->from('Record_Country c')->innerJoin('c.City c2 ON c2.id = 2')
+            ->where('c.id = ?', [1]);
 
         $this->assertEqual($q->getSqlQuery(), 'SELECT r.id AS r__id, r.name AS r__name, r2.id AS r2__id, r2.name AS r2__name, r2.country_id AS r2__country_id, r2.district_id AS r2__district_id FROM record__country r INNER JOIN record__city r2 ON (r2.id = 2) WHERE (r.id = ?)');
     }
@@ -78,9 +78,9 @@ class Doctrine_Query_Join_TestCase extends Doctrine_UnitTestCase
         $q = new Doctrine_Query();
 
         $q->select('c.*, c2.*, d.*')
-          ->from('Record_Country c')
-          ->innerJoin('c.City c2 WITH LOWER(c2.name) LIKE LOWER(?)', array('city 1'))
-          ->where('c.id = ?', array(1));
+            ->from('Record_Country c')
+            ->innerJoin('c.City c2 WITH LOWER(c2.name) LIKE LOWER(?)', ['city 1'])
+            ->where('c.id = ?', [1]);
 
         $this->assertEqual($q->getSqlQuery(), 'SELECT r.id AS r__id, r.name AS r__name, r2.id AS r2__id, r2.name AS r2__name, r2.country_id AS r2__country_id, r2.district_id AS r2__district_id FROM record__country r INNER JOIN record__city r2 ON r.id = r2.country_id AND (LOWER(r2.name) LIKE LOWER(?)) WHERE (r.id = ?)');
     }
@@ -91,7 +91,7 @@ class Doctrine_Query_Join_TestCase extends Doctrine_UnitTestCase
             $q = new Doctrine_Query();
 
             $q->from('Record_Country c')
-              ->innerJoin('c.City c2 WITH (c2.name = ? OR c2.id IN (SELECT c3.id FROM Record_City c3 WHERE c3.id = ? OR c3.id = ?))');
+                ->innerJoin('c.City c2 WITH (c2.name = ? OR c2.id IN (SELECT c3.id FROM Record_City c3 WHERE c3.id = ? OR c3.id = ?))');
             $sql = $q->getSqlQuery();
             $this->assertEqual($sql, 'SELECT r.id AS r__id, r.name AS r__name, r2.id AS r2__id, r2.name AS r2__name, r2.country_id AS r2__country_id, r2.district_id AS r2__district_id FROM record__country r INNER JOIN record__city r2 ON r.id = r2.country_id AND ((r2.name = ? OR r2.id IN (SELECT r3.id AS r3__id FROM record__city r3 WHERE (r3.id = ? OR r3.id = ?))))');
 
@@ -106,9 +106,9 @@ class Doctrine_Query_Join_TestCase extends Doctrine_UnitTestCase
         $q = new Doctrine_Query();
 
         $q->select('c.*, c2.*, d.*')
-          ->from('Record_Country c')
-          ->innerJoin('c.City c2 WITH LOWER(UPPER(c2.name)) LIKE LOWER(?)', array('city 1'))
-          ->where('c.id = ?', array(1));
+            ->from('Record_Country c')
+            ->innerJoin('c.City c2 WITH LOWER(UPPER(c2.name)) LIKE LOWER(?)', ['city 1'])
+            ->where('c.id = ?', [1]);
 
         $this->assertEqual($q->getSqlQuery(), 'SELECT r.id AS r__id, r.name AS r__name, r2.id AS r2__id, r2.name AS r2__name, r2.country_id AS r2__country_id, r2.district_id AS r2__district_id FROM record__country r INNER JOIN record__city r2 ON r.id = r2.country_id AND (LOWER(UPPER(r2.name)) LIKE LOWER(?)) WHERE (r.id = ?)');
     }
@@ -119,9 +119,9 @@ class Doctrine_Query_Join_TestCase extends Doctrine_UnitTestCase
         $q = new Doctrine_Query();
 
         $q->select('c.*, c2.*, d.*')
-          ->from('Record_Country c')
-          ->innerJoin('c.City c2 WITH LOWER(UPPER(c2.name)) LIKE CONCAT(UPPER(?), UPPER(c2.name))', array('city 1'))
-          ->where('c.id = ?', array(1));
+            ->from('Record_Country c')
+            ->innerJoin('c.City c2 WITH LOWER(UPPER(c2.name)) LIKE CONCAT(UPPER(?), UPPER(c2.name))', ['city 1'])
+            ->where('c.id = ?', [1]);
 
         $this->assertEqual($q->getSqlQuery(), 'SELECT r.id AS r__id, r.name AS r__name, r2.id AS r2__id, r2.name AS r2__name, r2.country_id AS r2__country_id, r2.district_id AS r2__district_id FROM record__country r INNER JOIN record__city r2 ON r.id = r2.country_id AND (LOWER(UPPER(r2.name)) LIKE CONCAT(UPPER(?), UPPER(r2.name))) WHERE (r.id = ?)');
     }
@@ -132,9 +132,9 @@ class Doctrine_Query_Join_TestCase extends Doctrine_UnitTestCase
         $q = new Doctrine_Query();
 
         $q->select('c.*, c2.*, d.*')
-          ->from('Record_Country c')
-          ->innerJoin('c.City c2 WITH CONCAT(UPPER(c2.name), c2.name) LIKE UPPER(?)', array('CITY 1city 1'))
-          ->where('c.id = ?', array(1));
+            ->from('Record_Country c')
+            ->innerJoin('c.City c2 WITH CONCAT(UPPER(c2.name), c2.name) LIKE UPPER(?)', ['CITY 1city 1'])
+            ->where('c.id = ?', [1]);
 
         $this->assertEqual($q->getSqlQuery(), 'SELECT r.id AS r__id, r.name AS r__name, r2.id AS r2__id, r2.name AS r2__name, r2.country_id AS r2__country_id, r2.district_id AS r2__district_id FROM record__country r INNER JOIN record__city r2 ON r.id = r2.country_id AND (CONCAT(UPPER(r2.name), r2.name) LIKE UPPER(?)) WHERE (r.id = ?)');
     }
@@ -145,9 +145,9 @@ class Doctrine_Query_Join_TestCase extends Doctrine_UnitTestCase
         $q = new Doctrine_Query();
 
         $q->select('c.*, c2.*, d.*')
-          ->from('Record_Country c')
-          ->innerJoin('c.City c2 WITH c2.id IN (?, ?)', array(1, 2))
-          ->where('c.id = ?', array(1));
+            ->from('Record_Country c')
+            ->innerJoin('c.City c2 WITH c2.id IN (?, ?)', [1, 2])
+            ->where('c.id = ?', [1]);
 
         $this->assertEqual($q->getSqlQuery(), 'SELECT r.id AS r__id, r.name AS r__name, r2.id AS r2__id, r2.name AS r2__name, r2.country_id AS r2__country_id, r2.district_id AS r2__district_id FROM record__country r INNER JOIN record__city r2 ON r.id = r2.country_id AND (r2.id IN (?, ?)) WHERE (r.id = ?)');
     }
@@ -158,8 +158,8 @@ class Doctrine_Query_Join_TestCase extends Doctrine_UnitTestCase
         $q = new Doctrine_Query();
 
         $q->select('c.*, c2.*, d.*')
-          ->from('Record_Country c')->innerJoin('c.City c2 WITH c2.id = 2')
-          ->where('c.id = ?', array(1));
+            ->from('Record_Country c')->innerJoin('c.City c2 WITH c2.id = 2')
+            ->where('c.id = ?', [1]);
 
         $this->assertEqual($q->getSqlQuery(), 'SELECT r.id AS r__id, r.name AS r__name, r2.id AS r2__id, r2.name AS r2__name, r2.country_id AS r2__country_id, r2.district_id AS r2__district_id FROM record__country r INNER JOIN record__city r2 ON r.id = r2.country_id AND (r2.id = 2) WHERE (r.id = ?)');
     }
@@ -169,10 +169,10 @@ class Doctrine_Query_Join_TestCase extends Doctrine_UnitTestCase
         $q = new Doctrine_Query();
 
         $q->select('c.*, c2.*, d.*')
-          ->from('Record_Country c')->leftJoin('c.City c2')->leftJoin('c2.District d')
-          ->where('c.id = ?', array(1));
+            ->from('Record_Country c')->leftJoin('c.City c2')->leftJoin('c2.District d')
+            ->where('c.id = ?', [1]);
 
-        $countries = $q->execute(array(), Doctrine_Core::HYDRATE_ARRAY);
+        $countries = $q->execute([], Doctrine_Core::HYDRATE_ARRAY);
 
         $c = $countries[0];
         $this->assertEqual($c['City'][0]['name'], 'City 1');
@@ -188,8 +188,8 @@ class Doctrine_Query_Join_TestCase extends Doctrine_UnitTestCase
         $q = new Doctrine_Query();
 
         $q->select('c.*, c2.*, d.*')
-          ->from('Record_Country c')->leftJoin('c.City c2')->leftJoin('c2.District d')
-          ->where('c.id = ?', array(1));
+            ->from('Record_Country c')->leftJoin('c.City c2')->leftJoin('c2.District d')
+            ->where('c.id = ?', [1]);
 
         $this->assertEqual($q->getSqlQuery(), 'SELECT r.id AS r__id, r.name AS r__name, r2.id AS r2__id, r2.name AS r2__name, r2.country_id AS r2__country_id, r2.district_id AS r2__district_id, r3.id AS r3__id, r3.name AS r3__name FROM record__country r LEFT JOIN record__city r2 ON r.id = r2.country_id LEFT JOIN record__district r3 ON r2.district_id = r3.id WHERE (r.id = ?)');
 
@@ -226,7 +226,7 @@ class Doctrine_Query_Join_TestCase extends Doctrine_UnitTestCase
     {
         $q = new Doctrine_Query();
         $q->select('u.id, g.id, e.id')->from('User u')
-          ->leftJoin('u.Group g')->leftJoin('g.Email e');
+            ->leftJoin('u.Group g')->leftJoin('g.Email e');
 
         $this->assertEqual($q->getSqlQuery(), 'SELECT e.id AS e__id, e2.id AS e2__id, e3.id AS e3__id FROM entity e LEFT JOIN groupuser g ON (e.id = g.user_id) LEFT JOIN entity e2 ON e2.id = g.group_id AND e2.type = 1 LEFT JOIN email e3 ON e2.email_id = e3.id WHERE (e.type = 0)');
         try {
@@ -241,7 +241,7 @@ class Doctrine_Query_Join_TestCase extends Doctrine_UnitTestCase
     {
         $q = new Doctrine_Query();
         $q->select('u.id, g.id, e.id')->from('Group g')
-          ->leftJoin('g.User u')->leftJoin('u.Account a');
+            ->leftJoin('g.User u')->leftJoin('u.Account a');
 
         $this->assertEqual($q->getSqlQuery(), 'SELECT e.id AS e__id, e2.id AS e2__id FROM entity e LEFT JOIN groupuser g ON (e.id = g.group_id) LEFT JOIN entity e2 ON e2.id = g.user_id AND e2.type = 0 LEFT JOIN account a ON e2.id = a.entity_id WHERE (e.type = 1)');
         try {

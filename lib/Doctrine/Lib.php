@@ -22,13 +22,13 @@
 /**
  * Doctrine_Lib has not commonly used static functions, mostly for debugging purposes
  *
- * @package     Doctrine
- * @subpackage  Lib
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 7490 $
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @package    Doctrine
+ * @subpackage Lib
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 7490 $
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
 class Doctrine_Lib
 {
@@ -37,9 +37,10 @@ class Doctrine_Lib
      *
      * This method translates a Doctrine_Record state (integer constant)
      * in an english string.
+     *
      * @see Doctrine_Record::STATE_* constants
      *
-     * @param integer $state    the state of record
+     * @param  integer $state the state of record
      * @return string|null           description of given state
      */
     public static function getRecordStateAsString($state)
@@ -66,7 +67,7 @@ class Doctrine_Lib
      * This method returns an html representation of a given
      * record, containing keys, state and data.
      *
-     * @param Doctrine_Record $record
+     * @param  Doctrine_Record $record
      * @return string
      */
     public static function getRecordAsString(Doctrine_Record $record)
@@ -88,8 +89,9 @@ class Doctrine_Lib
      *
      * This method translates a Doctrine_Connection state (integer constant)
      * in a english description.
-     * @see Doctrine_Transaction::STATE_* constants
-     * @param integer $state    state of the connection as a string
+     *
+     * @see    Doctrine_Transaction::STATE_* constants
+     * @param  integer $state state of the connection as a string
      * @return string|null
      */
     public static function getConnectionStateAsString($state)
@@ -112,7 +114,7 @@ class Doctrine_Lib
      * This method returns an html dump of a connection, containing state, open
      * transactions and loaded tables.
      *
-     * @param Doctrine_Connection $connection
+     * @param  Doctrine_Connection $connection
      * @return string
      */
     public static function getConnectionAsString(Doctrine_Connection $connection)
@@ -133,7 +135,8 @@ class Doctrine_Lib
      *
      * This method returns an html dump of a table, containing component name
      * and table physical name.
-     * @param Doctrine_Table $table
+     *
+     * @param  Doctrine_Table $table
      * @return string
      */
     public static function getTableAsString(Doctrine_Table $table)
@@ -152,8 +155,8 @@ class Doctrine_Lib
      * This methods parses a plain text query and generates the html needed
      * for visual formatting.
      *
-     * @todo: What about creating a config varialbe for the color?
-     * @param string $sql   plain text query
+     * @todo:  What about creating a config varialbe for the color?
+     * @param  string $sql plain text query
      * @return string       the formatted sql code
      */
     public static function formatSql($sql)
@@ -184,7 +187,7 @@ class Doctrine_Lib
      * This method returns an html dump of a collection of records, containing
      * all data.
      *
-     * @param Doctrine_Collection $collection
+     * @param  Doctrine_Collection $collection
      * @return string
      */
     public static function getCollectionAsString(Doctrine_Collection $collection)
@@ -219,18 +222,19 @@ class Doctrine_Lib
      *
      * Different from array_merge
      *  If string keys have arrays for values, these arrays will merge recursively.
+     *
      * @return array|false
      */
     public static function arrayDeepMerge()
     {
         switch (func_num_args()) {
-             case 0:
+            case 0:
                 return false;
-             case 1:
+            case 1:
                 return func_get_arg(0);
-             case 2:
+            case 2:
                 $args    = func_get_args();
-                $args[2] = array();
+                $args[2] = [];
 
                 if (is_array($args[0]) && is_array($args[1])) {
                     foreach (array_unique(array_merge(array_keys($args[0]), array_keys($args[1]))) as $key) {
@@ -252,13 +256,13 @@ class Doctrine_Lib
                 } else {
                     return $args[1];
                 }
-                // no break
+                 // no break
             default:
                 $args    = func_get_args();
                 $args[1] = self::arrayDeepMerge($args[0], $args[1]);
                 array_shift($args);
 
-                return call_user_func_array(array('Doctrine_Lib', 'arrayDeepMerge'), $args);
+                return call_user_func_array(['Doctrine_Lib', 'arrayDeepMerge'], $args);
         }
     }
 
@@ -268,9 +272,9 @@ class Doctrine_Lib
      * This method creates a given path issuing mkdir commands for all folders
      * that do not exist yet. Equivalent to 'mkdir -p'.
      *
-     * @param string $path
-     * @param integer $mode     an integer (octal) chmod parameter for the
-     *                          created directories
+     * @param  string  $path
+     * @param  integer $mode an integer (octal) chmod parameter for the
+     *                       created directories
      * @return boolean  true if succeeded
      */
     public static function makeDirectories($path, $mode = 0777)
@@ -292,7 +296,7 @@ class Doctrine_Lib
      * This method recursively removes a directory and all its descendants.
      * Equivalent to 'rm -rf'.
      *
-     * @param string $folderPath
+     * @param  string $folderPath
      * @return boolean  success of the operation
      */
     public static function removeDirectories($folderPath)
@@ -322,8 +326,8 @@ class Doctrine_Lib
      * This method recursively copies all $source files and subdirs in $dest.
      * If $source is a file, only it will be copied in $dest.
      *
-     * @param string $source    a directory path
-     * @param string $dest      a directory path
+     * @param  string $source a directory path
+     * @param  string $dest   a directory path
      * @return bool
      */
     public static function copyDirectory($source, $dest)
@@ -365,7 +369,7 @@ class Doctrine_Lib
      * and for Doctrine coding standards. $className must use camel case naming
      * and underscores for directory separation.
      *
-     * @param string $className
+     * @param  string $className
      * @return boolean
      */
     public static function isValidClassName($className)

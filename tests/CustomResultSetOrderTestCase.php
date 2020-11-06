@@ -19,13 +19,13 @@
 /**
  * Doctrine_CustomResultSetOrder_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_CustomResultSetOrder_TestCase extends Doctrine_UnitTestCase
 {
@@ -36,7 +36,6 @@ class Doctrine_CustomResultSetOrder_TestCase extends Doctrine_UnitTestCase
      * 1st category: 3 Boards
      * 2nd category: 1 Board
      * 3rd category: 0 boards
-     *
      */
     public function prepareData()
     {
@@ -103,10 +102,10 @@ class Doctrine_CustomResultSetOrder_TestCase extends Doctrine_UnitTestCase
         $q = new Doctrine_Query($this->connection);
 
         $categories = $q->select('c.*, b.*')
-                ->from('CategoryWithPosition c')
-                ->leftJoin('c.Boards b')
-                ->orderBy('c.position ASC, b.position ASC')
-                ->execute(array(), Doctrine_Core::HYDRATE_ARRAY);
+            ->from('CategoryWithPosition c')
+            ->leftJoin('c.Boards b')
+            ->orderBy('c.position ASC, b.position ASC')
+            ->execute([], Doctrine_Core::HYDRATE_ARRAY);
 
         $this->assertEqual(3, count($categories), 'Some categories were doubled!');
 
@@ -117,16 +116,17 @@ class Doctrine_CustomResultSetOrder_TestCase extends Doctrine_UnitTestCase
                     // The first category should have 3 boards, right?
                     // It has only 1! The other two slipped to the 2nd category!
                     $this->assertEqual(3, count($category['Boards']));
-                break;
+                    break;
                 case 'Second':
                     // The second category should have 1 board, but it got 3 now
-                    $this->assertEqual(1, count($category['Boards']));;
-                break;
+                    $this->assertEqual(1, count($category['Boards']));
+                    ;
+                    break;
                 case 'Third':
                     // The third has no boards as expected.
                     //print $category->Boards[0]->position;
                     $this->assertEqual(0, count($category['Boards']));
-                break;
+                    break;
             }
         }
     }
@@ -147,10 +147,10 @@ class Doctrine_CustomResultSetOrder_TestCase extends Doctrine_UnitTestCase
     {
         $q          = new Doctrine_Query($this->connection);
         $categories = $q->select('c.*, b.*')
-                ->from('CategoryWithPosition c')
-                ->leftJoin('c.Boards b')
-                ->orderBy('c.position ASC, b.position ASC')
-                ->execute();
+            ->from('CategoryWithPosition c')
+            ->leftJoin('c.Boards b')
+            ->orderBy('c.position ASC, b.position ASC')
+            ->execute();
 
         $this->assertEqual(3, $categories->count(), 'Some categories were doubled!');
 
@@ -161,17 +161,17 @@ class Doctrine_CustomResultSetOrder_TestCase extends Doctrine_UnitTestCase
                     // The first category should have 3 boards
 
                     $this->assertEqual(3, $category->Boards->count());
-                break;
+                    break;
                 case 'Second':
                     // The second category should have 1 board
 
                     $this->assertEqual(1, $category->Boards->count());
-                break;
+                    break;
                 case 'Third':
                     // The third has no boards as expected.
                     //print $category->Boards[0]->position;
                     $this->assertEqual(0, $category->Boards->count());
-                break;
+                    break;
             }
         }
     }

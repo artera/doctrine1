@@ -19,13 +19,13 @@
 /**
  * Doctrine_Ticket_969_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Ticket_969_TestCase extends Doctrine_UnitTestCase
 {
@@ -50,7 +50,7 @@ class Doctrine_Ticket_969_TestCase extends Doctrine_UnitTestCase
 
     public function prepareTables()
     {
-        $this->tables   = array();
+        $this->tables   = [];
         $this->tables[] = 'T1';
         $this->tables[] = 'T2';
         $this->tables[] = 'T3';
@@ -62,11 +62,11 @@ class Doctrine_Ticket_969_TestCase extends Doctrine_UnitTestCase
     {
         $q      = new Doctrine_Query;
         $result = $q->select('a.*, b.*, c.*')
-                ->from('T1 a')
-                ->leftJoin('a.T2 b')
-                ->leftJoin('b.T3 c')
-                ->setHydrationMode(Doctrine_Core::HYDRATE_ARRAY)
-                ->fetchOne();
+            ->from('T1 a')
+            ->leftJoin('a.T2 b')
+            ->leftJoin('b.T3 c')
+            ->setHydrationMode(Doctrine_Core::HYDRATE_ARRAY)
+            ->fetchOne();
 
         // there are 10 rows in T3, and they all have hello_id = 10, so we should have 10 rows here
         $this->assertEqual(10, count($result['T2']['T3']));
@@ -74,10 +74,10 @@ class Doctrine_Ticket_969_TestCase extends Doctrine_UnitTestCase
         // now with object hydration.
         $q      = new Doctrine_Query;
         $result = $q->select('a.*, b.*, c.*')
-                ->from('T1 a')
-                ->leftJoin('a.T2 b')
-                ->leftJoin('b.T3 c')
-                ->fetchOne();
+            ->from('T1 a')
+            ->leftJoin('a.T2 b')
+            ->leftJoin('b.T3 c')
+            ->fetchOne();
 
         // test that no additional queries are executed when accessing the relations (lazy-loading).
         $queryCountBefore = $this->conn->count();
@@ -92,14 +92,14 @@ class T1 extends Doctrine_Record
     public function setTableDefinition()
     {
         $this->setTableName('t1');
-        $this->hasColumn('t1_id', 'integer', 3, array('autoincrement' => true, 'unsigned' => true, 'primary' => true, 'notnull' => true));
+        $this->hasColumn('t1_id', 'integer', 3, ['autoincrement' => true, 'unsigned' => true, 'primary' => true, 'notnull' => true]);
         $this->hasColumn('t2_id', 'integer', 3);
     }
 
     public function setUp()
     {
         parent :: setUp();
-        $this->hasOne('T2', array('local' => 't2_id', 'foreign' => 't2_id'));
+        $this->hasOne('T2', ['local' => 't2_id', 'foreign' => 't2_id']);
     }
 }
 
@@ -108,14 +108,14 @@ class T2 extends Doctrine_Record
     public function setTableDefinition()
     {
         $this->setTableName('t2');
-        $this->hasColumn('t2_id', 'integer', 3, array('autoincrement' => true, 'unsigned' => true, 'primary' => true, 'notnull' => true));
+        $this->hasColumn('t2_id', 'integer', 3, ['autoincrement' => true, 'unsigned' => true, 'primary' => true, 'notnull' => true]);
         $this->hasColumn('hello_id', 'integer', 3);
     }
 
     public function setUp()
     {
         parent :: setUp();
-        $this->hasMany('T3', array('local' => 'hello_id', 'foreign' => 'hello_id'));
+        $this->hasMany('T3', ['local' => 'hello_id', 'foreign' => 'hello_id']);
     }
 }
 
@@ -124,7 +124,7 @@ class T3 extends Doctrine_Record
     public function setTableDefinition()
     {
         $this->setTableName('t3');
-        $this->hasColumn('t3_id', 'integer', 3, array('autoincrement' => true, 'unsigned' => true, 'primary' => true, 'notnull' => true));
+        $this->hasColumn('t3_id', 'integer', 3, ['autoincrement' => true, 'unsigned' => true, 'primary' => true, 'notnull' => true]);
         $this->hasColumn('hello_id', 'integer', 3);
     }
 

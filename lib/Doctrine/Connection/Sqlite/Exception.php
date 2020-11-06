@@ -22,14 +22,14 @@
 /**
  * Doctrine_Connection_Sqlite_Exception
  *
- * @package     Doctrine
- * @subpackage  Connection
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @author      Lukas Smith <smith@pooteeweet.org> (PEAR MDB2 library)
- * @since       1.0
- * @version     $Revision: 7490 $
- * @link        www.doctrine-project.org
+ * @package    Doctrine
+ * @subpackage Connection
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @author     Lukas Smith <smith@pooteeweet.org> (PEAR MDB2 library)
+ * @since      1.0
+ * @version    $Revision: 7490 $
+ * @link       www.doctrine-project.org
  */
 class Doctrine_Connection_Sqlite_Exception extends Doctrine_Connection_Exception
 {
@@ -37,7 +37,7 @@ class Doctrine_Connection_Sqlite_Exception extends Doctrine_Connection_Exception
      * @var array $errorRegexps         an array that is used for determining portable
      *                                  error code from a native database error message
      */
-    protected static $errorRegexps = array(
+    protected static $errorRegexps = [
                               '/^no such table:/'                    => Doctrine_Core::ERR_NOSUCHTABLE,
                               '/^no such index:/'                    => Doctrine_Core::ERR_NOT_FOUND,
                               '/^(table|index) .* already exists$/'  => Doctrine_Core::ERR_ALREADY_EXISTS,
@@ -50,17 +50,17 @@ class Doctrine_Connection_Sqlite_Exception extends Doctrine_Connection_Exception
                               '/column not present in both tables/i' => Doctrine_Core::ERR_NOSUCHFIELD,
                               '/^near ".*": syntax error$/'          => Doctrine_Core::ERR_SYNTAX,
                               '/[0-9]+ values for [0-9]+ columns/i'  => Doctrine_Core::ERR_VALUE_COUNT_ON_ROW,
-                              );
+                              ];
 
     /**
      * This method checks if native error code/message can be
      * converted into a portable code and then adds this
      * portable error code to $portableCode field
      *
-     * @param array $errorInfo      error info array
-     * @since 1.0
-     * @see Doctrine_Core::ERR_* constants
-     * @see Doctrine_Connection::$portableCode
+     * @param  array $errorInfo error info array
+     * @since  1.0
+     * @see    Doctrine_Core::ERR_* constants
+     * @see    Doctrine_Connection::$portableCode
      * @return boolean              whether or not the error info processing was successfull
      *                              (the process is successfull if portable error code was found)
      */

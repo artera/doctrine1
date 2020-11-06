@@ -9,8 +9,8 @@ class CascadeDeleteTest extends Doctrine_Record
     {
         $this->hasMany(
             'CascadeDeleteRelatedTest as Related',
-            array('local'               => 'id',
-                              'foreign' => 'cscd_id')
+            ['local'               => 'id',
+                              'foreign' => 'cscd_id']
         );
     }
 }

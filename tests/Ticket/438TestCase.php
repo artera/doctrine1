@@ -19,13 +19,13 @@
 /**
  * Doctrine_Ticket_438_TestCase
  *
- * @package     Doctrine
- * @author      Tamcy <7am.online@gmail.com>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Tamcy <7am.online@gmail.com>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Ticket_438_TestCase extends Doctrine_UnitTestCase
 {
@@ -35,7 +35,7 @@ class Doctrine_Ticket_438_TestCase extends Doctrine_UnitTestCase
 
     public function prepareTables()
     {
-        $this->tables = array('T438_Student', 'T438_Course', 'T438_StudentCourse');
+        $this->tables = ['T438_Student', 'T438_Course', 'T438_StudentCourse'];
         parent::prepareTables();
     }
 
@@ -79,7 +79,7 @@ class Doctrine_Ticket_438_TestCase extends Doctrine_UnitTestCase
         // 1. Fetch relationship on demand (multiple queries)
         $q = new Doctrine_Query();
         $q->from('T438_StudentCourse sc')
-        ->where('sc.student_id = ? AND sc.course_id = ?', array('07090002', 'MATH001'));
+            ->where('sc.student_id = ? AND sc.course_id = ?', ['07090002', 'MATH001']);
 
         $record = $q->execute()->getFirst();
         $this->assertEqual($record->student_id, '07090002');
@@ -91,9 +91,9 @@ class Doctrine_Ticket_438_TestCase extends Doctrine_UnitTestCase
         // 2. Fetch relationship in single query
         $q    = new Doctrine_Query();
         $coll = $q->select('sc.*, s.*, c.*')
-        ->from('T438_StudentCourse sc, sc.Student s, sc.Course c')
-        ->where('sc.student_id = ? AND sc.course_id = ?', array('07090002', 'MATH001'))
-        ->execute();
+            ->from('T438_StudentCourse sc, sc.Student s, sc.Course c')
+            ->where('sc.student_id = ? AND sc.course_id = ?', ['07090002', 'MATH001'])
+            ->execute();
 
         $record = $coll->getFirst();
         $this->assertEqual($record->student_id, '07090002');
@@ -111,13 +111,13 @@ class T438_Student extends Doctrine_Record
     {
         $this->setTableName('t438_student_record');
 
-        $this->hasColumn('s_id as id', 'varchar', 30, array(  'primary' => true,));
-        $this->hasColumn('s_name as name', 'varchar', 50, array());
+        $this->hasColumn('s_id as id', 'varchar', 30, [  'primary' => true,]);
+        $this->hasColumn('s_name as name', 'varchar', 50, []);
     }
 
     public function setUp()
     {
-        $this->hasMany('T438_Course as StudyCourses', array('refClass' => 'T438_StudentCourse', 'local' => 'sc_student_id', 'foreign' => 'sc_course_id'));
+        $this->hasMany('T438_Course as StudyCourses', ['refClass' => 'T438_StudentCourse', 'local' => 'sc_student_id', 'foreign' => 'sc_course_id']);
     }
 }
 
@@ -128,13 +128,13 @@ class T438_Course extends Doctrine_Record
     {
         $this->setTableName('t438_course');
 
-        $this->hasColumn('c_id as id', 'varchar', 20, array(  'primary' => true,));
-        $this->hasColumn('c_name as name', 'varchar', 50, array());
+        $this->hasColumn('c_id as id', 'varchar', 20, [  'primary' => true,]);
+        $this->hasColumn('c_name as name', 'varchar', 50, []);
     }
 
     public function setUp()
     {
-        $this->hasMany('T438_Student as Students', array('refClass' => 'T438_StudentCourse', 'local' => 'sc_course_id', 'foreign' => 'sc_student_id'));
+        $this->hasMany('T438_Student as Students', ['refClass' => 'T438_StudentCourse', 'local' => 'sc_course_id', 'foreign' => 'sc_student_id']);
     }
 }
 
@@ -144,14 +144,14 @@ class T438_StudentCourse extends Doctrine_Record
     {
         $this->setTableName('t438_student_course');
 
-        $this->hasColumn('sc_student_id as student_id', 'varchar', 30, array(  'primary' => true,));
-        $this->hasColumn('sc_course_id as course_id', 'varchar', 20, array(  'primary' => true,));
-        $this->hasColumn('sc_remark  as remark', 'varchar', 500, array());
+        $this->hasColumn('sc_student_id as student_id', 'varchar', 30, [  'primary' => true,]);
+        $this->hasColumn('sc_course_id as course_id', 'varchar', 20, [  'primary' => true,]);
+        $this->hasColumn('sc_remark  as remark', 'varchar', 500, []);
     }
 
     public function setUp()
     {
-        $this->hasOne('T438_Student as Student', array('local' => 'sc_student_id', 'foreign' => 's_id'));
-        $this->hasOne('T438_Course as Course', array('local' => 'sc_course_id', 'foreign' => 'c_id'));
+        $this->hasOne('T438_Student as Student', ['local' => 'sc_student_id', 'foreign' => 's_id']);
+        $this->hasOne('T438_Course as Course', ['local' => 'sc_course_id', 'foreign' => 'c_id']);
     }
 }

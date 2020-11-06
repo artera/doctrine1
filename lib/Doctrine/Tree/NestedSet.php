@@ -22,14 +22,14 @@
 /**
  * Doctrine_Tree_NestedSet
  *
- * @package     Doctrine
- * @subpackage  Tree
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 7490 $
- * @author      Joe Simms <joe.simms@websites4.com>
- * @author      Roman Borschel <roman@code-factory.org>
+ * @package    Doctrine
+ * @subpackage Tree
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 7490 $
+ * @author     Joe Simms <joe.simms@websites4.com>
+ * @author     Roman Borschel <roman@code-factory.org>
  */
 class Doctrine_Tree_NestedSet extends Doctrine_Tree implements Doctrine_Tree_Interface
 {
@@ -46,8 +46,8 @@ class Doctrine_Tree_NestedSet extends Doctrine_Tree implements Doctrine_Tree_Int
     /**
      * constructor, creates tree with reference to table and sets default root options
      *
-     * @param Doctrine_Table $table                     instance of Doctrine_Table
-     * @param array $options                    options
+     * @param Doctrine_Table $table   instance of Doctrine_Table
+     * @param array          $options options
      */
     public function __construct(Doctrine_Table $table, $options)
     {
@@ -90,18 +90,21 @@ class Doctrine_Tree_NestedSet extends Doctrine_Tree implements Doctrine_Tree_Int
      * the records id will be assigned to the root id. You must use numeric columns for the id
      * and root id columns.
      *
-     * @param Doctrine_Record $record        instance of Doctrine_Record
+     * @param  Doctrine_Record $record instance of Doctrine_Record
      * @return Doctrine_Record
      */
     public function createRoot(Doctrine_Record $record = null)
     {
         if ($this->getAttribute('hasManyRoots')) {
             if (! $record || (! $record->exists() && ! $record->getNode()->getRootValue())
-                    || $record->getTable()->isIdentifierComposite()) {
-                throw new Doctrine_Tree_Exception('Node must have a root id set or must '
+                || $record->getTable()->isIdentifierComposite()
+            ) {
+                throw new Doctrine_Tree_Exception(
+                    'Node must have a root id set or must '
                         . ' be persistent and have a single-valued numeric primary key in order to'
                         . ' be created as a root node. Automatic assignment of a root id on'
-                        . ' transient/new records is no longer supported.');
+                    . ' transient/new records is no longer supported.'
+                );
             }
 
             if ($record->exists() && ! $record->getNode()->getRootValue()) {
@@ -127,9 +130,9 @@ class Doctrine_Tree_NestedSet extends Doctrine_Tree implements Doctrine_Tree_Int
     /**
      * Fetches a/the root node.
      *
-     * @param integer $rootId
+     * @param  integer $rootId
      * @return false|Doctrine_Record
-     * @todo Better $rootid = null and exception if $rootId == null && hasManyRoots?
+     * @todo   Better $rootid = null and exception if $rootId == null && hasManyRoots?
      *       Fetching with id = 1 is too magical and cant work reliably anyway.
      */
     public function fetchRoot($rootId = 1)
@@ -161,11 +164,11 @@ class Doctrine_Tree_NestedSet extends Doctrine_Tree implements Doctrine_Tree_Int
     /**
      * Fetches a tree.
      *
-     * @param array $options  Options
-     * @param integer $hydrationMode  One of the Doctrine_Core::HYDRATE_* constants.
+     * @param  array   $options       Options
+     * @param  integer $hydrationMode One of the Doctrine_Core::HYDRATE_* constants.
      * @return false|array|Doctrine_Collection          The tree or FALSE if the tree could not be found.
      */
-    public function fetchTree($options = array(), $hydrationMode = null)
+    public function fetchTree($options = [], $hydrationMode = null)
     {
         // fetch tree
         $q = $this->getBaseQuery();
@@ -177,19 +180,21 @@ class Doctrine_Tree_NestedSet extends Doctrine_Tree implements Doctrine_Tree_Int
         // if tree has many roots, then specify root id
         $rootId = isset($options['root_id']) ? $options['root_id'] : '1';
         if (is_array($rootId)) {
-            $q->addOrderBy($this->_baseAlias . '.' . $this->getAttribute('rootColumnName') .
-                    ', ' . $this->_baseAlias . '.lft ASC');
+            $q->addOrderBy(
+                $this->_baseAlias . '.' . $this->getAttribute('rootColumnName') .
+                ', ' . $this->_baseAlias . '.lft ASC'
+            );
         } else {
             $q->addOrderBy($this->_baseAlias . '.lft ASC');
         }
 
         if (! is_null($depth)) {
-            $q->addWhere($this->_baseAlias . '.level BETWEEN ? AND ?', array(0, $depth));
+            $q->addWhere($this->_baseAlias . '.level BETWEEN ? AND ?', [0, $depth]);
         }
 
         $q = $this->returnQueryWithRootId($q, $rootId);
 
-        $tree = $q->execute(array(), $hydrationMode);
+        $tree = $q->execute([], $hydrationMode);
 
         if (count($tree) <= 0) {
             return false;
@@ -201,13 +206,13 @@ class Doctrine_Tree_NestedSet extends Doctrine_Tree implements Doctrine_Tree_Int
     /**
      * Fetches a branch of a tree.
      *
-     * @param mixed $pk              primary key as used by table::find() to locate node to traverse tree from
-     * @param array $options         Options.
-     * @param integer $hydrationMode  One of the Doctrine_Core::HYDRATE_* constants.
+     * @param  mixed   $pk            primary key as used by table::find() to locate node to traverse tree from
+     * @param  array   $options       Options.
+     * @param  integer $hydrationMode One of the Doctrine_Core::HYDRATE_* constants.
      * @return Doctrine_Collection|array|false                 The branch or FALSE if the branch could not be found.
-     * @todo Only fetch the lft and rgt values of the initial record. more is not needed.
+     * @todo   Only fetch the lft and rgt values of the initial record. more is not needed.
      */
-    public function fetchBranch($pk, $options = array(), $hydrationMode = null)
+    public function fetchBranch($pk, $options = [], $hydrationMode = null)
     {
         $record = $this->table->find($pk);
         if (! ($record instanceof Doctrine_Record) || !$record->exists()) {
@@ -218,19 +223,21 @@ class Doctrine_Tree_NestedSet extends Doctrine_Tree implements Doctrine_Tree_Int
         $depth = isset($options['depth']) ? $options['depth'] : null;
 
         $q      = $this->getBaseQuery();
-        $params = array($record->get('lft'), $record->get('rgt'));
+        $params = [$record->get('lft'), $record->get('rgt')];
         $q->addWhere($this->_baseAlias . '.lft >= ? AND ' . $this->_baseAlias . '.rgt <= ?', $params)
-                ->addOrderBy($this->_baseAlias . '.lft asc');
+            ->addOrderBy($this->_baseAlias . '.lft asc');
 
         if (! is_null($depth)) {
-            $q->addWhere($this->_baseAlias . '.level BETWEEN ? AND ?', array($record->get('level'), $record->get('level') + $depth));
+            $q->addWhere($this->_baseAlias . '.level BETWEEN ? AND ?', [$record->get('level'), $record->get('level') + $depth]);
         }
 
-        /** @var Doctrine_Node_NestedSet $node */
+        /**
+ * @var Doctrine_Node_NestedSet $node
+*/
         $node = $record->getNode();
         $q    = $this->returnQueryWithRootId($q, $node->getRootValue());
 
-        return $q->execute(array(), $hydrationMode);
+        return $q->execute([], $hydrationMode);
     }
 
     /**
@@ -249,8 +256,8 @@ class Doctrine_Tree_NestedSet extends Doctrine_Tree implements Doctrine_Tree_Int
     /**
      * returns parsed query with root id where clause added if applicable
      *
-     * @param Doctrine_Query    $query
-     * @param integer|array   $rootId  id of destination root
+     * @param  Doctrine_Query $query
+     * @param  integer|array  $rootId id of destination root
      * @return Doctrine_Query
      */
     public function returnQueryWithRootId($query, $rootId = 1)

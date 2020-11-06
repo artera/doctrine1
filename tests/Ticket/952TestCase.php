@@ -19,13 +19,13 @@
 /**
  * Doctrine_Ticket_952_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Ticket_952_TestCase extends Doctrine_UnitTestCase
 {
@@ -49,8 +49,8 @@ class Doctrine_Ticket_952_TestCase extends Doctrine_UnitTestCase
         Doctrine_Manager::connection()->setListener($profiler);
 
         $q = Doctrine_Query::create()
-                ->from('Ticket_952_Parent p')
-                ->leftJoin('p.Children c');
+            ->from('Ticket_952_Parent p')
+            ->leftJoin('p.Children c');
         $parents = $q->execute();
         $this->assertEqual($parents[0]['Children'][0]['Parent']->name, 'Parent'); // Invoked additional queries
         $this->assertEqual($profiler->count(), 1);
@@ -66,7 +66,7 @@ class Ticket_952_Parent extends Doctrine_Record
 
     public function setUp()
     {
-        $this->hasMany('Ticket_952_Child as Children', array('local' => 'id', 'foreign' => 'parent_id'));
+        $this->hasMany('Ticket_952_Child as Children', ['local' => 'id', 'foreign' => 'parent_id']);
     }
 }
 
@@ -80,6 +80,6 @@ class Ticket_952_Child extends Doctrine_Record
 
     public function setUp()
     {
-        $this->hasOne('Ticket_952_Parent as Parent', array('local' => 'parent_id', 'foreign' => 'id'));
+        $this->hasOne('Ticket_952_Parent as Parent', ['local' => 'parent_id', 'foreign' => 'id']);
     }
 }

@@ -19,13 +19,13 @@
 /**
  * Doctrine_Ticket_1280_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Ticket_1280_TestCase extends Doctrine_UnitTestCase
 {
@@ -67,18 +67,26 @@ class Ticket_1280_User extends Doctrine_Record
 {
     public function setTableDefinition()
     {
-        $this->hasColumn('group_id', 'integer', 20, array(
+        $this->hasColumn(
+            'group_id',
+            'integer',
+            20,
+            [
             'notnull' => false, 'default' => null
-        ));
+            ]
+        );
         $this->hasColumn('name', 'string', 255);
     }
 
     public function setUp()
     {
-        $this->hasOne('Ticket_1280_Group as Group', array(
+        $this->hasOne(
+            'Ticket_1280_Group as Group',
+            [
             'local'   => 'group_id',
             'foreign' => 'id'
-        ));
+            ]
+        );
     }
 }
 
@@ -92,9 +100,12 @@ class Ticket_1280_Group extends Doctrine_Record
 
     public function setUp()
     {
-        $this->hasMany('Ticket_1280_User as Users', array(
+        $this->hasMany(
+            'Ticket_1280_User as Users',
+            [
             'local'   => 'id',
             'foreign' => 'group_id'
-        ));
+            ]
+        );
     }
 }

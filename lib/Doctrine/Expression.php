@@ -25,13 +25,13 @@
  * This class manages abstractions of dql expressions like query parts
  * that use CONCAT(), MIN(), SUM().
  *
- * @package     Doctrine
- * @subpackage  Expression
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 7490 $
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @package    Doctrine
+ * @subpackage Expression
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 7490 $
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
 class Doctrine_Expression
 {
@@ -59,8 +59,8 @@ class Doctrine_Expression
      * $e = new Doctrine_Expression("CONCAT('some', 'one')");
      * </code>
      *
-     * @param string $expr                  sql fragment
-     * @param Doctrine_Connection $conn     the connection (optional)
+     * @param string              $expr sql fragment
+     * @param Doctrine_Connection $conn the connection (optional)
      */
     public function __construct($expr, $conn = null)
     {
@@ -92,7 +92,7 @@ class Doctrine_Expression
      * $e->setExpression("CONCAT('some', 'one')");
      * </code>
      *
-     * @param string $clause The expression to set
+     * @param  string $clause The expression to set
      * @return void
      */
     public function setExpression($clause)
@@ -104,7 +104,7 @@ class Doctrine_Expression
      * Parses a single expressions and substitutes dql abstract functions
      * with their concrete sql counterparts for the given connection.
      *
-     * @param string $expr The expression to parse
+     * @param  string $expr The expression to parse
      * @return string
      */
     public function parseExpression($expr)
@@ -118,21 +118,22 @@ class Doctrine_Expression
         // get the name of the function
         $name   = substr($expr, 0, $pos);
         $argStr = substr($expr, ($pos + 1), -1);
-        $args   = array();
+        $args   = [];
 
         // parse args
         foreach ($this->_tokenizer->bracketExplode($argStr, ',') as $arg) {
             $args[] = $this->parseClause($arg);
         }
 
-        return call_user_func_array(array($this->getConnection()->expression, $name), $args);
+        return call_user_func_array([$this->getConnection()->expression, $name], $args);
     }
 
     /**
      * Parses a set of expressions at once.
+     *
      * @see parseExpression()
      *
-     * @param string $clause    The clause. Can be complex and parenthesised.
+     * @param  string $clause The clause. Can be complex and parenthesised.
      * @return string           The parsed clause.
      */
     public function parseClause($clause)

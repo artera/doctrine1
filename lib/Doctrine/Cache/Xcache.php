@@ -22,24 +22,24 @@
 /**
  * Xcache cache driver
  *
- * @package     Doctrine
- * @subpackage  Cache
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: $
- * @author      Dmitry Bakaleinik (dima@snaiper.net)
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @author      Jonathan H. Wage <jonwage@gmail.com>
+ * @package    Doctrine
+ * @subpackage Cache
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: $
+ * @author     Dmitry Bakaleinik (dima@snaiper.net)
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @author     Jonathan H. Wage <jonwage@gmail.com>
  */
 class Doctrine_Cache_Xcache extends Doctrine_Cache_Driver
 {
     /**
      * constructor
      *
-     * @param array $options        associative array of cache driver options
+     * @param array $options associative array of cache driver options
      */
-    public function __construct($options = array())
+    public function __construct($options = [])
     {
         if (! extension_loaded('xcache')) {
             throw new Doctrine_Cache_Exception('In order to use Xcache driver, the xcache extension must be loaded.');
@@ -51,8 +51,8 @@ class Doctrine_Cache_Xcache extends Doctrine_Cache_Driver
     /**
      * Test if a cache record exists for the passed id
      *
-     * @param string $id cache id
-     * @param bool $testCacheValidity
+     * @param  string $id                cache id
+     * @param  bool   $testCacheValidity
      * @return mixed  Returns either the cached data or false
      */
     protected function _doFetch($id, $testCacheValidity = true)
@@ -63,7 +63,7 @@ class Doctrine_Cache_Xcache extends Doctrine_Cache_Driver
     /**
      * Test if a cache is available or not (for the given id)
      *
-     * @param string $id cache id
+     * @param  string $id cache id
      * @return mixed false (a cache is not available) or "last modified" timestamp (int) of the available cache record
      */
     protected function _doContains($id)
@@ -75,9 +75,9 @@ class Doctrine_Cache_Xcache extends Doctrine_Cache_Driver
      * Save a cache record directly. This method is implemented by the cache
      * drivers and used in Doctrine_Cache_Driver::save()
      *
-     * @param string $id        cache id
-     * @param string $data      data to cache
-     * @param int|false $lifeTime     if != false, set a specific lifetime for this cache record (null => infinite lifeTime)
+     * @param  string    $id       cache id
+     * @param  string    $data     data to cache
+     * @param  int|false $lifeTime if != false, set a specific lifetime for this cache record (null => infinite lifeTime)
      * @return boolean true if no problem
      */
     protected function _doSave($id, $data, $lifeTime = false)
@@ -93,7 +93,7 @@ class Doctrine_Cache_Xcache extends Doctrine_Cache_Driver
      * Remove a cache record directly. This method is implemented by the cache
      * drivers and used in Doctrine_Cache_Driver::delete()
      *
-     * @param string $id cache id
+     * @param  string $id cache id
      * @return boolean true if no problem
      */
     protected function _doDelete($id)
@@ -109,7 +109,7 @@ class Doctrine_Cache_Xcache extends Doctrine_Cache_Driver
     protected function _getCacheKeys()
     {
         $this->checkAuth();
-        $keys = array();
+        $keys = [];
         for ($i = 0, $count = xcache_count(XC_TYPE_VAR); $i < $count; $i++) {
             $entries = xcache_list(XC_TYPE_VAR, $i);
             if (is_array($entries['cache_list'])) {

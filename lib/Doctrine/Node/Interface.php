@@ -22,13 +22,13 @@
 /**
  * Doctrine_Node_Interface
  *
- * @package     Doctrine
- * @subpackage  Node
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 7490 $
- * @author      Joe Simms <joe.simms@websites4.com>
+ * @package    Doctrine
+ * @subpackage Node
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 7490 $
+ * @author     Joe Simms <joe.simms@websites4.com>
  */
 interface Doctrine_Node_Interface
 {
@@ -78,7 +78,7 @@ interface Doctrine_Node_Interface
     /**
      * gets siblings for node
      *
-     * @param bool $includeNode
+     * @param  bool $includeNode
      * @return array                            array of sibling Doctrine_Record objects
      */
     public function getSiblings($includeNode = false);
@@ -128,8 +128,8 @@ interface Doctrine_Node_Interface
     /**
      * gets path to node from root, uses record::toString() method to get node names
      *
-     * @param string $seperator                 path seperator
-     * @param bool $includeNode                 whether or not to include node at end of path
+     * @param  string $seperator   path seperator
+     * @param  bool   $includeNode whether or not to include node at end of path
      * @return string                           string representation of path
      */
     public function getPath($seperator = ' > ', $includeNode = false);

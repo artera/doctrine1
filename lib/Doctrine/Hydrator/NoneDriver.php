@@ -22,14 +22,13 @@
 /**
  * Get results directly and skip hydration. Uses PDO::FETCH_NUM
  *
- *
- * @package     Doctrine
- * @subpackage  Hydrate
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.2
- * @version     $Revision: 3192 $
- * @author      Jonathan H. Wage <jonwage@gmail.com>
+ * @package    Doctrine
+ * @subpackage Hydrate
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.2
+ * @version    $Revision: 3192 $
+ * @author     Jonathan H. Wage <jonwage@gmail.com>
  */
 class Doctrine_Hydrator_NoneDriver extends Doctrine_Hydrator_Abstract
 {

@@ -19,13 +19,13 @@
 /**
  * Doctrine_Ticket_1461_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Ticket_1461_TestCase extends Doctrine_UnitTestCase
 {
@@ -34,11 +34,11 @@ class Doctrine_Ticket_1461_TestCase extends Doctrine_UnitTestCase
         $q = new Doctrine_Query();
 
         $q->select("u.*, p.*, CONCAT(u.name, '_1') concat1, CONCAT(u.name, '_2') concat2")
-        ->from('User u')
-        ->innerJoin('u.Phonenumber p')
-        ->where("u.name = 'zYne'");
+            ->from('User u')
+            ->innerJoin('u.Phonenumber p')
+            ->where("u.name = 'zYne'");
 
-        $users = $q->execute(array(), Doctrine_Core::HYDRATE_ARRAY);
+        $users = $q->execute([], Doctrine_Core::HYDRATE_ARRAY);
 
         $this->assertEqual($users[0]['concat1'], 'zYne_1');
 
@@ -50,11 +50,11 @@ class Doctrine_Ticket_1461_TestCase extends Doctrine_UnitTestCase
         $q = new Doctrine_Query();
 
         $q->select("u.*, p.*, CONCAT(p.phonenumber, '_1') concat1, CONCAT(p.phonenumber, '_2') concat2")
-        ->from('User u')
-        ->innerJoin('u.Phonenumber p')
-        ->where("u.name = 'zYne'");
+            ->from('User u')
+            ->innerJoin('u.Phonenumber p')
+            ->where("u.name = 'zYne'");
 
-        $users = $q->execute(array(), Doctrine_Core::HYDRATE_ARRAY);
+        $users = $q->execute([], Doctrine_Core::HYDRATE_ARRAY);
 
         $this->assertEqual($users[0]['concat2'], '123 123_2');
 
@@ -66,11 +66,11 @@ class Doctrine_Ticket_1461_TestCase extends Doctrine_UnitTestCase
         $q = new Doctrine_Query();
 
         $q->select("u.*, p.*, CONCAT(u.name, '_1') concat1, CONCAT(u.name, '_2') concat2, CONCAT(p.phonenumber, '_3') concat3, CONCAT(p.phonenumber, '_3') concat4")
-        ->from('User u')
-        ->innerJoin('u.Phonenumber p')
-        ->where("u.name = 'zYne'");
+            ->from('User u')
+            ->innerJoin('u.Phonenumber p')
+            ->where("u.name = 'zYne'");
 
-        $users = $q->execute(array(), Doctrine_Core::HYDRATE_ARRAY);
+        $users = $q->execute([], Doctrine_Core::HYDRATE_ARRAY);
 
         $this->assertEqual($users[0]['concat1'], 'zYne_1');
 

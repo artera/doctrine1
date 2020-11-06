@@ -20,20 +20,21 @@
  * Abstract base class for child drivers to hydrate the object graph in to
  * various data types. For example Doctrine_Record instances or PHP arrays
  *
- * @package     Doctrine
- * @subpackage  Hydrate
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @author      Roman Borschel <roman@code-factory.org>
- * @author      Jonathan H. Wage <jonwage@gmail.com>
+ * @package    Doctrine
+ * @subpackage Hydrate
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision$
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @author     Roman Borschel <roman@code-factory.org>
+ * @author     Jonathan H. Wage <jonwage@gmail.com>
  */
 abstract class Doctrine_Hydrator_Graph extends Doctrine_Hydrator_Abstract
 {
     /**
      * This was previously undefined, setting to protected to match Doctrine_Hydrator
+     *
      * @var string|null
      */
     protected $_rootAlias = null;
@@ -41,12 +42,12 @@ abstract class Doctrine_Hydrator_Graph extends Doctrine_Hydrator_Abstract
     /**
      * @var array|null
      */
-    protected $_tables = array();
+    protected $_tables = [];
 
     /**
      * Gets the custom field used for indexing for the specified component alias.
      *
-     * @param string $alias
+     * @param  string $alias
      * @return string  The field name of the field used for indexing or NULL
      *                 if the component does not use any custom field indices.
      */
@@ -65,32 +66,32 @@ abstract class Doctrine_Hydrator_Graph extends Doctrine_Hydrator_Abstract
         // if only one component is involved we can make our lives easier
         $isSimpleQuery = count($this->_queryComponents) <= 1;
         // Holds the resulting hydrated data structure
-        $result = array();
+        $result = [];
         // Holds array of record instances so we can call hooks on it
-        $instances = array();
+        $instances = [];
         // Holds hydration listeners that get called during hydration
-        $listeners = array();
+        $listeners = [];
         // Lookup map to quickly discover/lookup existing records in the result
-        $identifierMap = array();
+        $identifierMap = [];
         // Holds for each component the last previously seen element in the result set
-        $prev = array();
+        $prev = [];
         // holds the values of the identifier/primary key fields of components,
         // separated by a pipe '|' and grouped by component alias (r, u, i, ... whatever)
         // the $idTemplate is a prepared template. $id is set to a fresh template when
         // starting to process a row.
-        $id         = array();
-        $idTemplate = array();
+        $id         = [];
+        $idTemplate = [];
 
         // Initialize
         foreach ($this->_queryComponents as $dqlAlias => $data) {
             $componentName             = $data['table']->getComponentName();
             $instances[$componentName] = $data['table']->getRecordInstance();
             $listeners[$componentName] = $data['table']->getRecordListener();
-            $identifierMap[$dqlAlias]  = array();
+            $identifierMap[$dqlAlias]  = [];
             $prev[$dqlAlias]           = null;
             $idTemplate[$dqlAlias]     = '';
         }
-        $cache = array();
+        $cache = [];
 
         $result = $this->getElementCollection($rootComponentName);
         if ($result instanceof Doctrine_Collection && $indexField = $this->_getCustomIndexField($rootAlias)) {
@@ -101,7 +102,7 @@ abstract class Doctrine_Hydrator_Graph extends Doctrine_Hydrator_Abstract
         }
 
         // Process result set
-        $cache = array();
+        $cache = [];
 
         $event = new Doctrine_Event(null, Doctrine_Event::HYDRATE, null);
 
@@ -131,7 +132,7 @@ abstract class Doctrine_Hydrator_Graph extends Doctrine_Hydrator_Abstract
             }
 
             $id                 = $idTemplate; // initialize the id-memory
-            $nonemptyComponents = array();
+            $nonemptyComponents = [];
             $rowData            = $this->_gatherRowData($data, $cache, $id, $nonemptyComponents);
 
             if ($this->_hydrationMode == Doctrine_Core::HYDRATE_ON_DEMAND) {
@@ -288,16 +289,16 @@ abstract class Doctrine_Hydrator_Graph extends Doctrine_Hydrator_Abstract
      * they belong to. The column names in the result set are mapped to their
      * field names during this procedure.
      *
-     * @param array $data
-     * @param array $cache
-     * @param array $id
-     * @param array $nonemptyComponents
+     * @param  array $data
+     * @param  array $cache
+     * @param  array $id
+     * @param  array $nonemptyComponents
      * @return array  An array with all the fields (name => value) of the data row,
      *                grouped by their component (alias).
      */
     protected function _gatherRowData(&$data, &$cache, &$id, &$nonemptyComponents)
     {
-        $rowData = array();
+        $rowData = [];
 
         foreach ($data as $key => $value) {
             // Parse each column name only once. Cache the results.
@@ -369,21 +370,21 @@ abstract class Doctrine_Hydrator_Graph extends Doctrine_Hydrator_Abstract
     }
 
     /**
-     * @param string $component
+     * @param  string $component
      * @return Doctrine_Collection|array
      */
     abstract public function getElementCollection($component);
 
     /**
-     * @param Doctrine_Collection $coll
+     * @param  Doctrine_Collection $coll
      * @return void
      */
     abstract public function registerCollection($coll);
 
     /**
-     * @param Doctrine_Record $record
-     * @param string $name
-     * @param string $keyColumn
+     * @param  Doctrine_Record $record
+     * @param  string          $name
+     * @param  string          $keyColumn
      * @return bool
      */
     abstract public function initRelated(&$record, $name, $keyColumn = null);
@@ -394,23 +395,23 @@ abstract class Doctrine_Hydrator_Graph extends Doctrine_Hydrator_Abstract
     abstract public function getNullPointer();
 
     /**
-     * @param string $component
+     * @param  string $component
      * @return Doctrine_Record|array
      */
     abstract public function getElement(array $data, $component);
 
     /**
-     * @param array|Doctrine_Collection $coll
+     * @param  array|Doctrine_Collection $coll
      * @return mixed
      */
     abstract public function getLastKey(&$coll);
 
     /**
-     * @param array $prev
-     * @param array|Doctrine_Collection $coll
-     * @param boolean|int $index
-     * @param string $dqlAlias
-     * @param bool $oneToOne
+     * @param  array                     $prev
+     * @param  array|Doctrine_Collection $coll
+     * @param  boolean|int               $index
+     * @param  string                    $dqlAlias
+     * @param  bool                      $oneToOne
      * @return void
      */
     abstract public function setLastElement(&$prev, &$coll, $index, $dqlAlias, $oneToOne);
@@ -433,9 +434,8 @@ abstract class Doctrine_Hydrator_Graph extends Doctrine_Hydrator_Abstract
      * @todo this function could use reflection to check the first time it runs
      * if the subclassing option is not set.
      *
-     * @param string $component
+     * @param  string $component
      * @return string The name of the class to create
-     *
      */
     protected function _getClassnameToReturn(array &$data, $component)
     {
@@ -447,7 +447,7 @@ abstract class Doctrine_Hydrator_Graph extends Doctrine_Hydrator_Abstract
             return $component;
         }
 
-        $matchedComponents = array($component);
+        $matchedComponents = [$component];
         foreach ($subclasses as $subclass) {
             $table          = Doctrine_Core::getTable($subclass);
             $inheritanceMap = $table->getOption('inheritanceMap');

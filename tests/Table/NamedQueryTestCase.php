@@ -19,19 +19,19 @@
 /**
  * Doctrine_Query_Registry
  *
- * @package     Doctrine
- * @subpackage  Query
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package    Doctrine
+ * @subpackage Query
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision$
  */
 class Doctrine_Table_NamedQuery_TestCase extends Doctrine_UnitTestCase
 {
     public function prepareTables()
     {
-        $this->tables = array('MyFoo');
+        $this->tables = ['MyFoo'];
 
         parent::prepareTables();
     }
@@ -69,9 +69,9 @@ class Doctrine_Table_NamedQuery_TestCase extends Doctrine_UnitTestCase
             'SELECT m.id AS m__id, m.value0 AS m__value0 FROM my_foo m WHERE (LOWER(m.name) LIKE LOWER(?))'
         );
 
-        $this->assertEqual($table->createNamedQuery('get.by.similar.names')->count(array('%jon%wage%')), 2);
+        $this->assertEqual($table->createNamedQuery('get.by.similar.names')->count(['%jon%wage%']), 2);
 
-        $items = $table->find('get.by.similar.names', array('%jon%wage%'));
+        $items = $table->find('get.by.similar.names', ['%jon%wage%']);
 
         $this->assertEqual(count($items), 2);
     }

@@ -22,36 +22,36 @@
 /**
  * This adapter interface should be implemented by all custom adapters
  *
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @package     Doctrine
- * @subpackage  Adapter
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 7490 $
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @package    Doctrine
+ * @subpackage Adapter
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 7490 $
  */
 interface Doctrine_Adapter_Interface
 {
     /**
-     * @param string $prepareString
+     * @param  string $prepareString
      * @return Doctrine_Adapter_Statement_Interface
      */
     public function prepare($prepareString);
 
     /**
-     * @param string $queryString
+     * @param  string $queryString
      * @return Doctrine_Adapter_Statement_Interface
      */
     public function query($queryString);
 
     /**
-     * @param string $input
+     * @param  string $input
      * @return string
      */
     public function quote($input);
 
     /**
-     * @param string $statement
+     * @param  string $statement
      * @return int|false
      */
     public function exec($statement);
@@ -87,14 +87,14 @@ interface Doctrine_Adapter_Interface
     public function errorInfo();
 
     /**
-     * @param int $attribute
-     * @param mixed $value
+     * @param  int   $attribute
+     * @param  mixed $value
      * @return bool
      */
     public function setAttribute($attribute, $value);
 
     /**
-     * @param int $attribute
+     * @param  int $attribute
      * @return mixed
      */
     public function getAttribute($attribute);

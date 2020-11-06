@@ -19,12 +19,12 @@
 /**
  * Doctrine_Ticket_1617_TestCase
  *
- * @package     Doctrine
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.1
- * @version     $Revision$
+ * @package  Doctrine
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.1
+ * @version  $Revision$
  */
 class Doctrine_Ticket_1617_TestCase extends Doctrine_UnitTestCase
 {

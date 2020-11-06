@@ -19,13 +19,13 @@
 /**
  * Doctrine_Query_Select_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Query_Select_TestCase extends Doctrine_UnitTestCase
 {
@@ -42,7 +42,7 @@ class Doctrine_Query_Select_TestCase extends Doctrine_UnitTestCase
     {
         $q = new Doctrine_Query();
         $q->select("CONCAT(u.name, ' ', e.address) value")
-          ->from('User u')->innerJoin('u.Email e');
+            ->from('User u')->innerJoin('u.Email e');
 
         $this->assertEqual($q->getSqlQuery(), "SELECT CONCAT(e.name, ' ', e2.address) AS e__0 FROM entity e INNER JOIN email e2 ON e.email_id = e2.id WHERE (e.type = 0)");
 
@@ -140,7 +140,7 @@ class Doctrine_Query_Select_TestCase extends Doctrine_UnitTestCase
 
         $q->parseDqlQuery('SELECT u.id, u.name, COUNT(p.id) FROM User u LEFT JOIN u.Phonenumber p GROUP BY u.id');
 
-        $users = $q->execute(array(), Doctrine_Core::HYDRATE_ARRAY);
+        $users = $q->execute([], Doctrine_Core::HYDRATE_ARRAY);
 
         $this->assertEqual($users[0]['COUNT'], 1);
 
@@ -248,7 +248,7 @@ class Doctrine_Query_Select_TestCase extends Doctrine_UnitTestCase
             ->leftJoin('u.Phonenumber p')
             ->where('u.id IN ?');
 
-        $params = array(array(4, 5, 6));
+        $params = [[4, 5, 6]];
 
         $this->assertEqual(
             $q->getSqlQuery($params),

@@ -19,13 +19,13 @@
 /**
  * Doctrine_Relation_OneToOne_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Relation_OneToMany_TestCase extends Doctrine_UnitTestCase
 {
@@ -34,7 +34,7 @@ class Doctrine_Relation_OneToMany_TestCase extends Doctrine_UnitTestCase
     }
     public function prepareTables()
     {
-        $this->tables = array('Entity', 'Phonenumber', 'Email', 'Policy', 'PolicyAsset', 'Role', 'Auth');
+        $this->tables = ['Entity', 'Phonenumber', 'Email', 'Policy', 'PolicyAsset', 'Role', 'Auth'];
 
         parent::prepareTables();
     }

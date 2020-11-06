@@ -22,13 +22,13 @@
 /**
  * Doctrine_Hook_Parser_Complex
  *
- * @package     Doctrine
- * @subpackage  Hook
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 7490 $
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @package    Doctrine
+ * @subpackage Hook
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 7490 $
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
 abstract class Doctrine_Hook_Parser_Complex extends Doctrine_Hook_Parser
 {
@@ -52,9 +52,9 @@ abstract class Doctrine_Hook_Parser_Complex extends Doctrine_Hook_Parser
      * prepared statement conditions (conditions that use
      * placeholders instead of literal values).
      *
-     * @param string $alias     component alias
-     * @param string $field     the field name
-     * @param mixed $value      the value of the field
+     * @param  string $alias component alias
+     * @param  string $field the field name
+     * @param  mixed  $value the value of the field
      * @return void
      */
     public function parse($alias, $field, $value)
@@ -65,9 +65,9 @@ abstract class Doctrine_Hook_Parser_Complex extends Doctrine_Hook_Parser
     /**
      * parseClause
      *
-     * @param string $alias     component alias
-     * @param string $field     the field name
-     * @param mixed $value      the value of the field
+     * @param  string $alias component alias
+     * @param  string $field the field name
+     * @param  mixed  $value the value of the field
      * @return string
      */
     public function parseClause($alias, $field, $value)
@@ -75,7 +75,7 @@ abstract class Doctrine_Hook_Parser_Complex extends Doctrine_Hook_Parser
         $parts = $this->_tokenizer->quoteExplode($value, ' AND ');
 
         if (count($parts) > 1) {
-            $ret = array();
+            $ret = [];
             foreach ($parts as $part) {
                 $ret[] = $this->parseSingle($alias, $field, $part);
             }
@@ -84,7 +84,7 @@ abstract class Doctrine_Hook_Parser_Complex extends Doctrine_Hook_Parser
         } else {
             $parts = $this->_tokenizer->quoteExplode($value, ' OR ');
             if (count($parts) > 1) {
-                $ret = array();
+                $ret = [];
                 foreach ($parts as $part) {
                     $ret[] = $this->parseClause($alias, $field, $part);
                 }
@@ -101,9 +101,9 @@ abstract class Doctrine_Hook_Parser_Complex extends Doctrine_Hook_Parser
     /**
      * parseSingle
      *
-     * @param string $alias     component alias
-     * @param string $field     the field name
-     * @param mixed $value      the value of the field
+     * @param  string $alias component alias
+     * @param  string $field the field name
+     * @param  mixed  $value the value of the field
      * @return string
      */
     abstract public function parseSingle($alias, $field, $value);

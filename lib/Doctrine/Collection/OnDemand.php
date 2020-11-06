@@ -23,13 +23,13 @@
  * Doctrine_Collection_OnDemand
  * iterates through Doctrine_Records hydrating one at a time
  *
- * @package     Doctrine
- * @subpackage  Collection
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.1
- * @version     $Revision$
- * @author      Geoff Davis <geoff.davis@gmedia.com.au>
+ * @package    Doctrine
+ * @subpackage Collection
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.1
+ * @version    $Revision$
+ * @author     Geoff Davis <geoff.davis@gmedia.com.au>
  */
 class Doctrine_Collection_OnDemand implements Iterator
 {
@@ -60,8 +60,8 @@ class Doctrine_Collection_OnDemand implements Iterator
 
     /**
      * @param Doctrine_Adapter_Statement_Interface|PDOStatement $stmt
-     * @param Doctrine_Hydrator_Abstract $hydrator
-     * @param array $tableAliasMap
+     * @param Doctrine_Hydrator_Abstract                        $hydrator
+     * @param array                                             $tableAliasMap
      */
     public function __construct($stmt, $hydrator, $tableAliasMap)
     {

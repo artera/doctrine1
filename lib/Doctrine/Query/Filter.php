@@ -19,13 +19,13 @@
 /**
  * Doctrine_Query_Filter
  *
- * @package     Doctrine
- * @subpackage  Query
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @package    Doctrine
+ * @subpackage Query
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision$
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
 class Doctrine_Query_Filter implements Doctrine_Query_Filter_Interface
 {
@@ -49,7 +49,7 @@ class Doctrine_Query_Filter implements Doctrine_Query_Filter_Interface
      * to hook into the query building procedure, doing any custom / specialized
      * post query procedures (for example logging) that are neccessary.
      *
-     * @param Doctrine_Query $query
+     * @param  Doctrine_Query $query
      * @return void
      */
     public function postQuery(Doctrine_Query $query)

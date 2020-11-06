@@ -22,20 +22,20 @@
 /**
  * Doctrine_Validator_Country
  *
- * @package     Doctrine
- * @subpackage  Validator
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 7490 $
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @package    Doctrine
+ * @subpackage Validator
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 7490 $
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
 class Doctrine_Validator_Country extends Doctrine_Validator_Driver
 {
     /**
      * @var string[]
      */
-    private static $countries = array(
+    private static $countries = [
         'ad' => 'Andorra',
         'ae' => 'United Arab Emirates',
         'af' => 'Afghanistan',
@@ -278,7 +278,7 @@ class Doctrine_Validator_Country extends Doctrine_Validator_Driver
         'za' => 'South Africa',
         'zm' => 'Zambia',
         'zr' => 'Zaire',
-        'zw' => 'Zimbabwe');
+        'zw' => 'Zimbabwe'];
 
     /**
      * returns all available country codes
@@ -293,7 +293,7 @@ class Doctrine_Validator_Country extends Doctrine_Validator_Driver
     /**
      * checks if given value is a valid country code
      *
-     * @param mixed $value
+     * @param  mixed $value
      * @return boolean
      */
     public function validate($value)

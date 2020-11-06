@@ -24,14 +24,13 @@
  *                         (= many-to-many relationships, where the relationship is handled with an additional relational table
  *                         which holds 2 foreign keys)
  *
- *
- * @package     Doctrine
- * @subpackage  Relation
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 7490 $
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @package    Doctrine
+ * @subpackage Relation
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 7490 $
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
 class Doctrine_Relation_Association extends Doctrine_Relation
 {
@@ -54,8 +53,8 @@ class Doctrine_Relation_Association extends Doctrine_Relation
     /**
      * getRelationDql
      *
-     * @param integer $count
-     * @param string $context
+     * @param  integer $count
+     * @param  string  $context
      * @return string
      */
     public function getRelationDql($count, $context = 'record')
@@ -87,6 +86,7 @@ class Doctrine_Relation_Association extends Doctrine_Relation
     /**
      * getLocalRefColumnName
      * returns the column name of the local reference column
+     *
      * @return string
      */
     final public function getLocalRefColumnName()
@@ -97,6 +97,7 @@ class Doctrine_Relation_Association extends Doctrine_Relation
     /**
      * getLocalRefFieldName
      * returns the field name of the local reference column
+     *
      * @return string
      */
     final public function getLocalRefFieldName()
@@ -107,6 +108,7 @@ class Doctrine_Relation_Association extends Doctrine_Relation
     /**
      * getForeignRefColumnName
      * returns the column name of the foreign reference column
+     *
      * @return string
      */
     final public function getForeignRefColumnName()
@@ -117,6 +119,7 @@ class Doctrine_Relation_Association extends Doctrine_Relation
     /**
      * getForeignRefFieldName
      * returns the field name of the foreign reference column
+     *
      * @return string
      */
     final public function getForeignRefFieldName()
@@ -129,7 +132,7 @@ class Doctrine_Relation_Association extends Doctrine_Relation
      *
      * fetches a component related to given record
      *
-     * @param Doctrine_Record $record
+     * @param  Doctrine_Record $record
      * @return Doctrine_Record|Doctrine_Collection
      */
     public function fetchRelatedFor(Doctrine_Record $record)
@@ -138,7 +141,7 @@ class Doctrine_Relation_Association extends Doctrine_Relation
         if (empty($id) || ! $this->definition['table']->getAttribute(Doctrine_Core::ATTR_LOAD_REFERENCES)) {
             $coll = Doctrine_Collection::create($this->getTable());
         } else {
-            $coll = $this->getTable()->getConnection()->query($this->getRelationDql(1), array($id));
+            $coll = $this->getTable()->getConnection()->query($this->getRelationDql(1), [$id]);
         }
         $coll->setReference($record, $this);
         return $coll;

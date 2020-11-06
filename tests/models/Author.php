@@ -3,9 +3,12 @@ class Author extends Doctrine_Record
 {
     public function setUp()
     {
-        $this->hasOne('Book', array('local'    => 'book_id',
+        $this->hasOne(
+            'Book',
+            ['local'    => 'book_id',
                                     'foreign'  => 'id',
-                                    'onDelete' => 'CASCADE'));
+            'onDelete' => 'CASCADE']
+        );
     }
     public function setTableDefinition()
     {

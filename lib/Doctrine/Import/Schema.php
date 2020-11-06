@@ -24,13 +24,13 @@
  *
  * Class for importing Doctrine_Record classes from a yaml schema definition
  *
- * @package     Doctrine
- * @subpackage  Import
- * @link        www.doctrine-project.org
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @version     $Revision: 1838 $
- * @author      Nicolas Bérard-Nault <nicobn@gmail.com>
- * @author      Jonathan H. Wage <jonwage@gmail.com>
+ * @package    Doctrine
+ * @subpackage Import
+ * @link       www.doctrine-project.org
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @version    $Revision: 1838 $
+ * @author     Nicolas Bérard-Nault <nicobn@gmail.com>
+ * @author     Jonathan H. Wage <jonwage@gmail.com>
  */
 class Doctrine_Import_Schema
 {
@@ -39,14 +39,14 @@ class Doctrine_Import_Schema
      *
      * @var array
      */
-    protected static $_globalDefinitionKeys = array(
+    protected static $_globalDefinitionKeys = [
         'connection',
         'attributes',
         'options',
         'package',
         'package_custom_path',
         'inheritance',
-        'detect_relations');
+        'detect_relations'];
 
     /**
      * _relations
@@ -55,7 +55,7 @@ class Doctrine_Import_Schema
      *
      * @var array
      */
-    protected $_relations = array();
+    protected $_relations = [];
 
     /**
      * _options
@@ -65,7 +65,7 @@ class Doctrine_Import_Schema
      *
      * @var array
      */
-    protected $_options = array('packagesPrefix'       => 'Package',
+    protected $_options = ['packagesPrefix'       => 'Package',
                                 'packagesPath'         => '',
                                 'packagesFolderName'   => 'packages',
                                 'suffix'               => '.php',
@@ -74,7 +74,7 @@ class Doctrine_Import_Schema
                                 'generateAccessors'    => false,
                                 'baseClassPrefix'      => 'Base',
                                 'baseClassesDirectory' => 'generated',
-                                'baseClassName'        => 'Doctrine_Record');
+                                'baseClassName'        => 'Doctrine_Record'];
 
     /**
      * _validation
@@ -84,7 +84,7 @@ class Doctrine_Import_Schema
      *
      * @var array
      */
-    protected $_validation = array('root' => array('abstract',
+    protected $_validation = ['root' => ['abstract',
                                                           'connection',
                                                           'className',
                                                           'tableName',
@@ -100,9 +100,9 @@ class Doctrine_Import_Schema
                                                           'detect_relations',
                                                           'listeners',
                                                           'checks',
-                                                          'comment'),
+                                                          'comment'],
 
-                                   'column' => array('name',
+                                   'column' => ['name',
                                                           'format',
                                                           'fixed',
                                                           'primary',
@@ -121,9 +121,9 @@ class Doctrine_Import_Schema
                                                           'extra',
                                                           'comment',
                                                           'charset',
-                                                          'collation'),
+                                                          'collation'],
 
-                                   'relation' => array('key',
+                                   'relation' => ['key',
                                                           'class',
                                                           'alias',
                                                           'type',
@@ -141,12 +141,12 @@ class Doctrine_Import_Schema
                                                           'owningSide',
                                                           'refClassRelationAlias',
                                                           'foreignKeyName',
-                                                          'orderBy'),
+                                                          'orderBy'],
 
-                                   'inheritance' => array('type',
+                                   'inheritance' => ['type',
                                                           'extends',
                                                           'keyField',
-                                                          'keyValue'));
+                                                          'keyValue']];
 
     /**
      * Returns an array of definition keys that can be applied at the global level.
@@ -161,7 +161,7 @@ class Doctrine_Import_Schema
     /**
      * getOption
      *
-     * @param string $name
+     * @param  string $name
      * @return mixed
      */
     public function getOption($name)
@@ -184,8 +184,8 @@ class Doctrine_Import_Schema
     /**
      * setOption
      *
-     * @param string $name
-     * @param string $value
+     * @param  string $name
+     * @param  string $value
      * @return void
      */
     public function setOption($name, $value)
@@ -198,7 +198,7 @@ class Doctrine_Import_Schema
     /**
      * setOptions
      *
-     * @param array $options
+     * @param  array $options
      * @return void
      */
     public function setOptions($options)
@@ -213,13 +213,13 @@ class Doctrine_Import_Schema
      *
      * Loop throug directories of schema files and parse them all in to one complete array of schema information
      *
-     * @param  string|array   $schema Array of schema files or single schema file. Array of directories with schema files or single directory
-     * @param  string   $format Format of the files we are parsing and building from
+     * @param  string|array $schema Array of schema files or single schema file. Array of directories with schema files or single directory
+     * @param  string       $format Format of the files we are parsing and building from
      * @return array    $array
      */
     public function buildSchema($schema, $format)
     {
-        $array = array();
+        $array = [];
 
         foreach ((array) $schema as $s) {
             if (is_file($s)) {
@@ -255,14 +255,14 @@ class Doctrine_Import_Schema
      *
      * A method to import a Schema and translate it into a Doctrine_Record object
      *
-     * @param  string $schema       The file containing the XML schema
-     * @param  string $format       Format of the schema file
-     * @param  string $directory    The directory where the Doctrine_Record class will be written
-     * @param  array  $models       Optional array of models to import
+     * @param string $schema    The file containing the XML schema
+     * @param string $format    Format of the schema file
+     * @param string $directory The directory where the Doctrine_Record class will be written
+     * @param array  $models    Optional array of models to import
      *
      * @return void
      */
-    public function importSchema($schema, $format = 'yml', $directory = null, $models = array())
+    public function importSchema($schema, $format = 'yml', $directory = null, $models = [])
     {
         $schema  = (array) $schema;
         $builder = new Doctrine_Import_Builder();
@@ -292,28 +292,28 @@ class Doctrine_Import_Schema
      * A method to parse a Schema and translate it into a property array.
      * The function returns that property array.
      *
-     * @param  string $schema   Path to the file containing the schema
-     * @param  string $type     Format type of the schema we are parsing
+     * @param  string $schema Path to the file containing the schema
+     * @param  string $type   Format type of the schema we are parsing
      * @return array  $build    Built array of schema information
      */
     public function parseSchema($schema, $type)
     {
-        $defaults = array('abstract'         => false,
+        $defaults = ['abstract'         => false,
                           'className'        => null,
                           'tableName'        => null,
                           'connection'       => null,
-                          'relations'        => array(),
-                          'indexes'          => array(),
-                          'attributes'       => array(),
-                          'options'          => array(),
+                          'relations'        => [],
+                          'indexes'          => [],
+                          'attributes'       => [],
+                          'options'          => [],
                           'package'          => null,
-                          'inheritance'      => array(),
-                          'detect_relations' => false);
+                          'inheritance'      => [],
+                          'detect_relations' => false];
 
         $array = Doctrine_Parser::load($schema, $type);
 
         // Loop over and build up all the global values and remove them from the array
-        $globals = array();
+        $globals = [];
         foreach ($array as $key => $value) {
             if (in_array($key, self::$_globalDefinitionKeys)) {
                 unset($array[$key]);
@@ -326,13 +326,13 @@ class Doctrine_Import_Schema
             $array[$className] = Doctrine_Lib::arrayDeepMerge($globals, $array[$className]);
         }
 
-        $build = array();
+        $build = [];
 
         foreach ($array as $className => $table) {
             $table = (array) $table;
             $this->_validateSchemaElement('root', array_keys($table), $className);
 
-            $columns = array();
+            $columns = [];
 
             $className = isset($table['className']) ? (string) $table['className']:(string) $className;
 
@@ -352,19 +352,18 @@ class Doctrine_Import_Schema
 
             $connection = isset($table['connection']) ? $table['connection']:'current';
 
-            $columns = isset($table['columns']) ? $table['columns']:array();
+            $columns = isset($table['columns']) ? $table['columns']:[];
 
             if (! empty($columns)) {
                 foreach ($columns as $columnName => $field) {
-
                     // Support short syntax: my_column: integer(4)
                     if (! is_array($field)) {
                         $original      = $field;
-                        $field         = array();
+                        $field         = [];
                         $field['type'] = $original;
                     }
 
-                    $colDesc = array();
+                    $colDesc = [];
                     if (isset($field['name'])) {
                         $colDesc['name'] = $field['name'];
                     } else {
@@ -448,7 +447,7 @@ class Doctrine_Import_Schema
      * Perform some processing on inheritance.
      * Sets the default type and sets some default values for certain types
      *
-     * @param array $array
+     * @param  array $array
      * @return array
      */
     protected function _processInheritance($array)
@@ -479,7 +478,7 @@ class Doctrine_Import_Schema
                     $parent = $this->_findBaseSuperClass($array, $definition['className']);
                     // Add the keyType column to the parent if a definition does not already exist
                     if (! isset($array[$parent]['columns'][$array[$className]['inheritance']['keyField']])) {
-                        $array[$parent]['columns'][$array[$className]['inheritance']['keyField']] = array('name' => $array[$className]['inheritance']['keyField'], 'type' => 'string', 'length' => 255);
+                        $array[$parent]['columns'][$array[$className]['inheritance']['keyField']] = ['name' => $array[$className]['inheritance']['keyField'], 'type' => 'string', 'length' => 255];
                     }
                 }
             }
@@ -487,11 +486,11 @@ class Doctrine_Import_Schema
 
         // Array of the array keys to move to the parent, and the value to default the child definition to
         // after moving it. Will also populate the subclasses array for the inheritance parent
-        $moves = array('columns'    => array(),
-                       'indexes'    => array(),
-                       'attributes' => array(),
-                       'options'    => array(),
-                       'checks'     => array());
+        $moves = ['columns'    => [],
+                       'indexes'    => [],
+                       'attributes' => [],
+                       'options'    => [],
+                       'checks'     => []];
 
         foreach ($array as $className => $definition) {
             // Move any definitions on the schema to the parent
@@ -508,7 +507,7 @@ class Doctrine_Import_Schema
                 if ($definition['inheritance']['type'] == 'column_aggregation') {
                     // Fix for 2015: loop through superclasses' inheritance to the base-superclass to
                     // make sure we collect all keyFields needed (and not only the first)
-                    $inheritanceFields = array($definition['inheritance']['keyField'] => $definition['inheritance']['keyValue']);
+                    $inheritanceFields = [$definition['inheritance']['keyField'] => $definition['inheritance']['keyValue']];
 
                     $superClass          = $definition['inheritance']['extends'];
                     $multiInheritanceDef = $array[$superClass];
@@ -535,8 +534,8 @@ class Doctrine_Import_Schema
      * Find the base super class for this inheritance child. We need to move all levels of children to the
      * top most parent.
      *
-     * @param  array  $array  Array of schema information
-     * @param string $class
+     * @param  array  $array Array of schema information
+     * @param  string $class
      * @return string $class  Class to get find the parent for
      */
     protected function _findBaseSuperClass($array, $class)
@@ -570,7 +569,7 @@ class Doctrine_Import_Schema
                     if (strpos($column['name'], '_id')) {
                         $columnClassName = Doctrine_Inflector::classify(str_replace('_id', '', $column['name']));
                         if (isset($array[$columnClassName]) && !isset($array[$className]['relations'][$columnClassName])) {
-                            $array[$className]['relations'][$columnClassName] = array();
+                            $array[$className]['relations'][$columnClassName] = [];
 
                             // Set the detected foreign key type and length to the same as the primary key
                             // of the related table
@@ -661,7 +660,7 @@ class Doctrine_Import_Schema
                     continue;
                 }
 
-                $newRelation                 = array();
+                $newRelation                 = [];
                 $newRelation['foreign']      = $relation['local'];
                 $newRelation['local']        = $relation['foreign'];
                 $newRelation['class']        = isset($relation['foreignClass']) ? $relation['foreignClass']:$className;
@@ -704,16 +703,16 @@ class Doctrine_Import_Schema
     {
         foreach ($this->_relations as $className => $relations) {
             // This is for checking for duplicates between alias-relations and a auto-generated relations to ensure the result set of unique relations
-            $existingRelations = array();
-            $uniqueRelations   = array();
+            $existingRelations = [];
+            $uniqueRelations   = [];
             foreach ($relations as $relation) {
                 if (! in_array($relation['key'], $existingRelations)) {
                     $existingRelations[] = $relation['key'];
-                    $uniqueRelations     = array_merge($uniqueRelations, array($relation['alias'] => $relation));
+                    $uniqueRelations     = array_merge($uniqueRelations, [$relation['alias'] => $relation]);
                 } else {
                     // check to see if this relationship is not autogenerated, if it's not, then the user must have explicitly declared it
                     if (! isset($relation['autogenerated']) || $relation['autogenerated'] != true) {
-                        $uniqueRelations = array_merge($uniqueRelations, array($relation['alias'] => $relation));
+                        $uniqueRelations = array_merge($uniqueRelations, [$relation['alias'] => $relation]);
                     }
                 }
             }
@@ -728,7 +727,7 @@ class Doctrine_Import_Schema
      * Build a unique key to identify a relationship by
      * Md5 hash of all the relationship parameters
      *
-     * @param array $relation
+     * @param  array $relation
      * @return string
      */
     protected function _buildUniqueRelationKey($relation)
@@ -739,9 +738,9 @@ class Doctrine_Import_Schema
     /**
      * _validateSchemaElement
      *
-     * @param string $name
-     * @param string|array $element
-     * @param string $path
+     * @param  string       $name
+     * @param  string|array $element
+     * @param  string       $path
      * @return void
      */
     protected function _validateSchemaElement($name, $element, $path)

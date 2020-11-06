@@ -19,13 +19,13 @@
 /**
  * Doctrine_Query_AggregateValue_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Query_AggregateValue_TestCase extends Doctrine_UnitTestCase
 {
@@ -219,7 +219,7 @@ class Doctrine_Query_AggregateValue_TestCase extends Doctrine_UnitTestCase
     {
         $q = new Doctrine_Query();
         $q->select('SUM(i.price * i.quantity)')
-          ->from('QueryTest_Item i');
+            ->from('QueryTest_Item i');
 
         $this->assertEqual($q->getSqlQuery(), 'SELECT SUM(q.price * q.quantity) AS q__0 FROM query_test__item q');
     }

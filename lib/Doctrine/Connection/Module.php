@@ -22,13 +22,13 @@
 /**
  * Doctrine_Connection_Module
  *
- * @package     Doctrine
- * @subpackage  Connection
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 7490 $
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @package    Doctrine
+ * @subpackage Connection
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 7490 $
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
 class Doctrine_Connection_Module
 {
@@ -44,8 +44,9 @@ class Doctrine_Connection_Module
     protected $moduleName;
 
     /**
-     * @param Doctrine_Connection $conn     Doctrine_Connection object, every connection
-     *                                      module holds an instance of Doctrine_Connection
+     * @param Doctrine_Connection $conn Doctrine_Connection object, every connection
+     *                                  module holds an instance of
+     *                                  Doctrine_Connection
      */
     public function __construct($conn = null)
     {

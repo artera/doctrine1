@@ -19,20 +19,20 @@
 /**
  * Doctrine_Query_Check_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Query_HydrateNone_TestCase extends Doctrine_UnitTestCase
 {
     public function testCheckParserSupportsStandardFunctions()
     {
         $q   = Doctrine_Query::create();
-        $res = $q->select('u.name')->from('User u')->execute(array(), Doctrine_Core::HYDRATE_NONE);
+        $res = $q->select('u.name')->from('User u')->execute([], Doctrine_Core::HYDRATE_NONE);
         foreach ($res as $row) {
             $this->assertEqual(1, count($row)); // just 1 column, the name
         }

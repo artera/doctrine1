@@ -19,24 +19,24 @@
 /**
  * Doctrine_Ticket_1821_TestCase
  *
- * @package     Doctrine
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
- * @author      Andrea Baron <andrea@bhweb.it>
+ * @package  Doctrine
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
+ * @author   Andrea Baron <andrea@bhweb.it>
  */
 class Doctrine_Ticket_1821_TestCase extends Doctrine_UnitTestCase
 {
     public function prepareTables()
     {
-        $this->tables = array(
+        $this->tables = [
             'Doctrine_Ticket_1821_Record',
             'Doctrine_Ticket_1821_Record_ID_Aliased',
             'Doctrine_Ticket_1821_Record_Column_Aliased',
             'Doctrine_Ticket_1821_Record_Full_Aliased',
-        );
+        ];
         parent::prepareTables();
     }
 
@@ -90,15 +90,25 @@ class Doctrine_Ticket_1821_Record_Full_Aliased extends Doctrine_Record
 {
     public function setTableDefinition()
     {
-        $this->hasColumn('user_id as id', 'integer', 4, array(
+        $this->hasColumn(
+            'user_id as id',
+            'integer',
+            4,
+            [
                 'autoincrement' => true,
                 'notnull'       => true,
                 'primary'       => true
-                ));
-        $this->hasColumn('user_name as name', 'string', 255, array(
+            ]
+        );
+        $this->hasColumn(
+            'user_name as name',
+            'string',
+            255,
+            [
                 'notnull' => true,
                 'unique'  => true
-                ));
+            ]
+        );
     }
 }
 
@@ -106,15 +116,25 @@ class Doctrine_Ticket_1821_Record_ID_Aliased extends Doctrine_Record
 {
     public function setTableDefinition()
     {
-        $this->hasColumn('user_id as id', 'integer', 4, array(
+        $this->hasColumn(
+            'user_id as id',
+            'integer',
+            4,
+            [
                 'autoincrement' => true,
                 'notnull'       => true,
                 'primary'       => true
-                ));
-        $this->hasColumn('name', 'string', 255, array(
+            ]
+        );
+        $this->hasColumn(
+            'name',
+            'string',
+            255,
+            [
                 'notnull' => true,
                 'unique'  => true
-                ));
+            ]
+        );
     }
 }
 
@@ -122,15 +142,25 @@ class Doctrine_Ticket_1821_Record_Column_Aliased extends Doctrine_Record
 {
     public function setTableDefinition()
     {
-        $this->hasColumn('id', 'integer', 4, array(
+        $this->hasColumn(
+            'id',
+            'integer',
+            4,
+            [
                 'autoincrement' => true,
                 'notnull'       => true,
                 'primary'       => true
-                ));
-        $this->hasColumn('user_name as name', 'string', 255, array(
+            ]
+        );
+        $this->hasColumn(
+            'user_name as name',
+            'string',
+            255,
+            [
                 'notnull' => true,
                 'unique'  => true
-                ));
+            ]
+        );
     }
 }
 
@@ -138,14 +168,24 @@ class Doctrine_Ticket_1821_Record extends Doctrine_Record
 {
     public function setTableDefinition()
     {
-        $this->hasColumn('id', 'integer', 4, array(
+        $this->hasColumn(
+            'id',
+            'integer',
+            4,
+            [
                 'autoincrement' => true,
                 'notnull'       => true,
                 'primary'       => true
-                ));
-        $this->hasColumn('name', 'string', 255, array(
+            ]
+        );
+        $this->hasColumn(
+            'name',
+            'string',
+            255,
+            [
                 'notnull' => true,
                 'unique'  => true
-                ));
+            ]
+        );
     }
 }

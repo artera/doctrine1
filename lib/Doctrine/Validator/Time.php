@@ -22,13 +22,13 @@
 /**
  * Doctrine_Validator_Time
  *
- * @package     Doctrine
- * @subpackage  Validator
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 3884 $
- * @author      Mark Pearson <mark.pearson0@googlemail.com>
+ * @package    Doctrine
+ * @subpackage Validator
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 3884 $
+ * @author     Mark Pearson <mark.pearson0@googlemail.com>
  */
 class Doctrine_Validator_Time extends Doctrine_Validator_Driver
 {
@@ -37,7 +37,7 @@ class Doctrine_Validator_Time extends Doctrine_Validator_Driver
      *
      * checks if given value is a valid time
      *
-     * @param mixed $value
+     * @param  mixed $value
      * @return boolean
      */
     public function validate($value)
@@ -57,7 +57,7 @@ class Doctrine_Validator_Time extends Doctrine_Validator_Driver
         $tz_hh = (isset($matches[7])) ? intval($matches[7]) : 0;
         $tz_mm = (isset($matches[9])) ? intval($matches[9]) : 0;
 
-        return 	($hh >= 0 && $hh <= 23) &&
+        return     ($hh >= 0 && $hh <= 23) &&
                 ($mm >= 0 && $mm <= 59) &&
                 ($ss >= 0 && $ss <= 59) &&
                 ($tz_hh >= -13 && $tz_hh <= 14) &&

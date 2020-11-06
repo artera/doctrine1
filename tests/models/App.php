@@ -9,13 +9,19 @@ class App extends Doctrine_Record
     }
     public function setUp()
     {
-        $this->hasOne('User', array(
+        $this->hasOne(
+            'User',
+            [
             'local' => 'user_id', 'foreign' => 'id'
-        ));
+            ]
+        );
 
-        $this->hasOne('App_Category as Category', array(
+        $this->hasOne(
+            'App_Category as Category',
+            [
             'local'   => 'app_category_id',
             'foreign' => 'id'
-        ));
+            ]
+        );
     }
 }

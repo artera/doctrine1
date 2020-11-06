@@ -23,13 +23,13 @@
  * Doctrine_RawSql_TestCase
  * This class tests the functinality of Doctrine_RawSql component
  *
- * @package     Doctrine
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 1181 $
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @package  Doctrine
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision: 1181 $
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
 class Doctrine_RawSql_TestCase extends Doctrine_UnitTestCase
 {
@@ -39,15 +39,15 @@ class Doctrine_RawSql_TestCase extends Doctrine_UnitTestCase
         $query = new Doctrine_RawSql($this->connection);
         $query->parseDqlQuery($sql);
 
-        $this->assertEqual($query->getSqlQueryPart('from'), array('photos p'));
+        $this->assertEqual($query->getSqlQueryPart('from'), ['photos p']);
 
 
         $sql = 'SELECT {p.*} FROM (SELECT p.* FROM photos p LEFT JOIN photos_tags t ON t.photo_id = p.id WHERE t.tag_id = 65) p LEFT JOIN photos_tags t ON t.photo_id = p.id WHERE p.can_see = -1 AND t.tag_id = 62 LIMIT 200';
         $query->parseDqlQuery($sql);
 
-        $this->assertEqual($query->getSqlQueryPart('from'), array('(SELECT p.* FROM photos p LEFT JOIN photos_tags t ON t.photo_id = p.id WHERE t.tag_id = 65) p LEFT JOIN photos_tags t ON t.photo_id = p.id'));
-        $this->assertEqual($query->getSqlQueryPart('where'), array('p.can_see = -1 AND t.tag_id = 62'));
-        $this->assertEqual($query->getSqlQueryPart('limit'), array(200));
+        $this->assertEqual($query->getSqlQueryPart('from'), ['(SELECT p.* FROM photos p LEFT JOIN photos_tags t ON t.photo_id = p.id WHERE t.tag_id = 65) p LEFT JOIN photos_tags t ON t.photo_id = p.id']);
+        $this->assertEqual($query->getSqlQueryPart('where'), ['p.can_see = -1 AND t.tag_id = 62']);
+        $this->assertEqual($query->getSqlQueryPart('limit'), [200]);
     }
 
     public function testAsteriskOperator()
@@ -58,7 +58,7 @@ class Doctrine_RawSql_TestCase extends Doctrine_UnitTestCase
         $query->parseDqlQuery('SELECT {entity.*} FROM entity');
         $fields = $query->getFields();
 
-        $this->assertEqual($fields, array('entity.*'));
+        $this->assertEqual($fields, ['entity.*']);
 
         $query->addComponent('entity', 'Entity');
 
@@ -77,7 +77,7 @@ class Doctrine_RawSql_TestCase extends Doctrine_UnitTestCase
         $query->parseDqlQuery('SELECT {entity.name}, {entity.id} FROM entity');
         $fields = $query->getFields();
 
-        $this->assertEqual($fields, array('entity.name', 'entity.id'));
+        $this->assertEqual($fields, ['entity.name', 'entity.id']);
         $query->addComponent('entity', 'Entity');
 
         $coll = $query->execute();
@@ -95,7 +95,7 @@ class Doctrine_RawSql_TestCase extends Doctrine_UnitTestCase
         $query->parseDqlQuery('SELECT {entity.name}, {entity.id} FROM entity');
         $fields = $query->getFields();
 
-        $this->assertEqual($fields, array('entity.name', 'entity.id'));
+        $this->assertEqual($fields, ['entity.name', 'entity.id']);
 
         $coll = $query->execute();
 
@@ -136,7 +136,7 @@ class Doctrine_RawSql_TestCase extends Doctrine_UnitTestCase
         $query->addComponent('entity', 'Entity e');
         $query->addComponent('phonenumber', 'e.Phonenumber');
 
-        $this->assertEqual(array_keys($query->getQueryComponents()), array('e', 'e.Phonenumber'));
+        $this->assertEqual(array_keys($query->getQueryComponents()), ['e', 'e.Phonenumber']);
 
         $coll = $query->execute();
         $this->assertEqual($coll->count(), 11);
@@ -235,7 +235,7 @@ class Doctrine_RawSql_TestCase extends Doctrine_UnitTestCase
         $query->addComponent('entity', 'Entity');
         $query->addComponent('phonenumber', 'Entity.Phonenumber');
         $this->assertEqual($query->getSqlQuery(), 'SELECT entity.name AS entity__name, entity.id AS entity__id, phonenumber.id AS phonenumber__id, phonenumber.phonenumber AS phonenumber__phonenumber, phonenumber.entity_id AS phonenumber__entity_id FROM entity LEFT JOIN phonenumber ON phonenumber.entity_id = entity.id LIMIT 3');
-        $coll = $query->execute(array(), Doctrine_Core::HYDRATE_ARRAY);
+        $coll = $query->execute([], Doctrine_Core::HYDRATE_ARRAY);
 
         $this->assertEqual(count($coll), 3);
     }
@@ -248,7 +248,7 @@ class Doctrine_RawSql_TestCase extends Doctrine_UnitTestCase
         $query->addComponent('entity', 'Entity');
         $query->addComponent('phonenumber', 'Entity.Phonenumber');
         $this->assertEqual($query->getSqlQuery(), 'SELECT entity.name AS entity__name, entity.id AS entity__id, phonenumber.id AS phonenumber__id, phonenumber.phonenumber AS phonenumber__phonenumber, phonenumber.entity_id AS phonenumber__entity_id FROM entity LEFT JOIN phonenumber ON phonenumber.entity_id = entity.id LIMIT 3');
-        $coll = $query->execute(array(), Doctrine_Core::HYDRATE_ARRAY);
+        $coll = $query->execute([], Doctrine_Core::HYDRATE_ARRAY);
 
         $this->assertEqual(count($coll), 3);
     }

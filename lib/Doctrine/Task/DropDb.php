@@ -22,13 +22,13 @@
 /**
  * Doctrine_Task_DropDb
  *
- * @package     Doctrine
- * @subpackage  Task
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 2761 $
- * @author      Jonathan H. Wage <jwage@mac.com>
+ * @package    Doctrine
+ * @subpackage Task
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 2761 $
+ * @author     Jonathan H. Wage <jwage@mac.com>
  */
 class Doctrine_Task_DropDb extends Doctrine_Task
 {
@@ -40,12 +40,12 @@ class Doctrine_Task_DropDb extends Doctrine_Task
     /**
      * @var array
      */
-    public $requiredArguments = array();
+    public $requiredArguments = [];
 
     /**
      * @var array
      */
-    public $optionalArguments = array('force' => 'Whether or not to force the drop database task');
+    public $optionalArguments = ['force' => 'Whether or not to force the drop database task'];
 
     public function execute()
     {

@@ -21,32 +21,32 @@
  * this class represents a chain of different listeners,
  * useful for having multiple listeners listening the events at the same time
  *
- * @package     Doctrine
- * @subpackage  Record
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package    Doctrine
+ * @subpackage Record
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision$
  */
 class Doctrine_Record_Listener_Chain extends Doctrine_Access implements Doctrine_Record_Listener_Interface
 {
     /**
      * @var array $_listeners        an array containing all listeners
      */
-    protected $_listeners = array();
+    protected $_listeners = [];
 
     /**
      * @var array $_options        an array containing chain options
      */
-    protected $_options = array('disabled' => false);
+    protected $_options = ['disabled' => false];
 
     /**
      * setOption
      * sets an option in order to allow flexible listener chaining
      *
-     * @param mixed $name              the name of the option to set
-     * @param mixed $value              the value of the option
+     * @param mixed $name  the name of the option to set
+     * @param mixed $value the value of the option
      *
      * @return void
      */
@@ -63,7 +63,7 @@ class Doctrine_Record_Listener_Chain extends Doctrine_Access implements Doctrine
      * getOption
      * returns the value of given option
      *
-     * @param string $name  the name of the option
+     * @param  string $name the name of the option
      * @return mixed        the value of given option
      */
     public function getOption($name)
@@ -89,14 +89,15 @@ class Doctrine_Record_Listener_Chain extends Doctrine_Access implements Doctrine
      * add
      * adds a listener to the chain of listeners
      *
-     * @param object $listener
-     * @param string $name
+     * @param  object $listener
+     * @param  string $name
      * @return void
      */
     public function add($listener, $name = null)
     {
-        if (! ($listener instanceof Doctrine_Record_Listener_Interface) &&
-             ! ($listener instanceof Doctrine_Overloadable)) {
+        if (! ($listener instanceof Doctrine_Record_Listener_Interface)
+            && ! ($listener instanceof Doctrine_Overloadable)
+        ) {
             throw new Doctrine_EventListener_Exception("Couldn't add eventlistener. Record listeners should implement either Doctrine_Record_Listener_Interface or Doctrine_Overloadable");
         }
         if ($name === null) {
@@ -110,7 +111,7 @@ class Doctrine_Record_Listener_Chain extends Doctrine_Access implements Doctrine
      * returns a Doctrine_Record_Listener on success
      * and null on failure
      *
-     * @param mixed $key
+     * @param  mixed $key
      * @return mixed
      */
     public function get($key)
@@ -124,8 +125,8 @@ class Doctrine_Record_Listener_Chain extends Doctrine_Access implements Doctrine
     /**
      * set
      *
-     * @param mixed $key
-     * @param Doctrine_Record_Listener $listener    listener to be added
+     * @param  mixed                    $key
+     * @param  Doctrine_Record_Listener $listener listener to be added
      * @return void
      */
     public function set($key, $listener)

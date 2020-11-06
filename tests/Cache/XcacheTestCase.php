@@ -22,14 +22,14 @@
 /**
  * Doctrine_Cache_Xcache_TestCase
  *
- * @package     Doctrine
- * @subpackage  Doctrine_Cache
- * @author      David Abdemoulaie <dave@hobodave.com>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.2
- * @version     $Revision: 7490 $
+ * @package    Doctrine
+ * @subpackage Doctrine_Cache
+ * @author     David Abdemoulaie <dave@hobodave.com>
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category   Object Relational Mapping
+ * @link       www.doctrine-project.org
+ * @since      1.2
+ * @version    $Revision: 7490 $
  */
 class Doctrine_Cache_Xcache_TestCase extends Doctrine_Cache_Abstract_TestCase
 {

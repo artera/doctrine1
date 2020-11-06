@@ -23,13 +23,13 @@
  * Doctrine_EventListener     all event listeners extend this base class
  *                            the empty methods allow child classes to only implement the methods they need to implement
  *
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @package     Doctrine
- * @subpackage  EventListener
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 7490 $
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @package    Doctrine
+ * @subpackage EventListener
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 7490 $
  */
 class Doctrine_EventListener implements Doctrine_EventListener_Interface
 {

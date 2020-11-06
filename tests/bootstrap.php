@@ -20,18 +20,18 @@ require_once __DIR__ . '/../vendor/autoload.php';
 set_include_path(
     implode(
         PATH_SEPARATOR,
-        array(
+        [
             DOCTRINE_DIR . '/lib',
             get_include_path(),
-        )
+        ]
     )
 );
 
-require_once(DOCTRINE_DIR . '/lib/Doctrine.php');
+require_once DOCTRINE_DIR . '/lib/Doctrine.php';
 
-spl_autoload_register(array('Doctrine', 'autoload'));
-spl_autoload_register(array('Doctrine', 'modelsAutoload'));
+spl_autoload_register(['Doctrine', 'autoload']);
+spl_autoload_register(['Doctrine', 'modelsAutoload']);
 
-require_once(DOCTRINE_DIR . '/tests/DoctrineTest.php');
+require_once DOCTRINE_DIR . '/tests/DoctrineTest.php';
 
-spl_autoload_register(array('DoctrineTest', 'autoload'));
+spl_autoload_register(['DoctrineTest', 'autoload']);

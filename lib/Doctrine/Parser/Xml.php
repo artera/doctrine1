@@ -22,13 +22,13 @@
 /**
  * Doctrine_Parser_Xml
  *
- * @package     Doctrine
- * @subpackage  Parser
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 1080 $
- * @author      Jonathan H. Wage <jwage@mac.com>
+ * @package    Doctrine
+ * @subpackage Parser
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 1080 $
+ * @author     Jonathan H. Wage <jwage@mac.com>
  */
 class Doctrine_Parser_Xml extends Doctrine_Parser
 {
@@ -37,9 +37,9 @@ class Doctrine_Parser_Xml extends Doctrine_Parser
      *
      * Convert array to xml and dump to specified path or return the xml
      *
-     * @param  array $array Array of data to convert to xml
-     * @param  string $path  Path to write xml data to
-     * @param string $charset The charset of the data being dumped
+     * @param  array  $array   Array of data to convert to xml
+     * @param  string $path    Path to write xml data to
+     * @param  string $charset The charset of the data being dumped
      * @return int|false|string
      */
     public function dumpData($array, $path = null, $charset = null)
@@ -52,10 +52,10 @@ class Doctrine_Parser_Xml extends Doctrine_Parser
     /**
      * arrayToXml
      *
-     * @param  array $array        Array to convert to xml
-     * @param  string $rootNodeName Name of the root node
+     * @param  array                 $array        Array to convert to xml
+     * @param  string                $rootNodeName Name of the root node
      * @param  SimpleXMLElement|null $xml          SimpleXmlElement, if null SimpleXMLElement will be created
-     * @param  string $charset
+     * @param  string                $charset
      * @return string|false         String of xml built from array
      */
     public static function arrayToXml($array, $rootNodeName = 'data', $xml = null, $charset = null)
@@ -99,7 +99,7 @@ class Doctrine_Parser_Xml extends Doctrine_Parser
      *
      * Load xml file and return array of data
      *
-     * @param  string $path  Path to load xml data from
+     * @param  string $path Path to load xml data from
      * @return array  $array Array of data converted from xml
      */
     public function loadData($path)
@@ -121,8 +121,8 @@ class Doctrine_Parser_Xml extends Doctrine_Parser
      */
     public function prepareData($simpleXml)
     {
-        $children = array();
-        $return   = array();
+        $children = [];
+        $return   = [];
 
         if ($simpleXml instanceof SimpleXMLElement) {
             $children = $simpleXml->children();
@@ -139,7 +139,7 @@ class Doctrine_Parser_Xml extends Doctrine_Parser
                         $return[$element] = (string) $value;
                     } else {
                         if (! is_array($return[$element])) {
-                            $return[$element] = array($return[$element], (string) $value);
+                            $return[$element] = [$return[$element], (string) $value];
                         } else {
                             $return[$element][] = (string) $value;
                         }

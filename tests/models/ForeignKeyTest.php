@@ -10,14 +10,17 @@ class ForeignKeyTest extends Doctrine_Record
 
         $this->hasOne(
             'ForeignKeyTest as Parent',
-            array('local'               => 'parent_id',
+            ['local'               => 'parent_id',
                              'foreign'  => 'id',
                              'onDelete' => 'CASCADE',
-                             'onUpdate' => 'RESTRICT')
+                             'onUpdate' => 'RESTRICT']
         );
 
-        $this->hasMany('ForeignKeyTest as Children', array(
-                'local' => 'id', 'foreign' => 'parent_id', 'cascade' => array('delete')));
+        $this->hasMany(
+            'ForeignKeyTest as Children',
+            [
+            'local' => 'id', 'foreign' => 'parent_id', 'cascade' => ['delete']]
+        );
 
         $this->option('type', 'INNODB');
     }

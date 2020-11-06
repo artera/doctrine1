@@ -48,9 +48,9 @@ require_once(DOCTRINE_PATH . DIRECTORY_SEPARATOR . 'Doctrine.php');
 
 Doctrine_Core::setExtensionsPath(dirname(__FILE__) . '/extensions');
 
-spl_autoload_register(array('Doctrine', 'autoload'));
-spl_autoload_register(array('Doctrine', 'modelsAutoload'));
-spl_autoload_register(array('Doctrine', 'extensionsAutoload'));
+spl_autoload_register(['Doctrine', 'autoload']);
+spl_autoload_register(['Doctrine', 'modelsAutoload']);
+spl_autoload_register(['Doctrine', 'extensionsAutoload']);
 
 $manager = Doctrine_Manager::getInstance();
 $manager->openConnection(DSN, 'doctrine');

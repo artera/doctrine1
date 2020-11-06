@@ -22,13 +22,13 @@
 /**
  * Doctrine_Validator_Notblank
  *
- * @package     Doctrine
- * @subpackage  Validator
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 7490 $
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @package    Doctrine
+ * @subpackage Validator
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 7490 $
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
 class Doctrine_Validator_Notblank extends Doctrine_Validator_Driver
 {
@@ -36,7 +36,7 @@ class Doctrine_Validator_Notblank extends Doctrine_Validator_Driver
      * checks that value isn't blank
      * a value is blank when its either null or contains only space characters
      *
-     * @param mixed $value
+     * @param  mixed $value
      * @return boolean
      */
     public function validate($value)

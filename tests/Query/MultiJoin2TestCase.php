@@ -19,13 +19,13 @@
 /**
  * Doctrine_Query_MultiJoin2_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Query_MultiJoin2_TestCase extends Doctrine_UnitTestCase
 {
@@ -34,7 +34,7 @@ class Doctrine_Query_MultiJoin2_TestCase extends Doctrine_UnitTestCase
     }
     public function prepareTables()
     {
-        $this->tables = array('QueryTest_Category', 'QueryTest_Board', 'QueryTest_User', 'QueryTest_Entry');
+        $this->tables = ['QueryTest_Category', 'QueryTest_Board', 'QueryTest_User', 'QueryTest_Entry'];
 
         parent::prepareTables();
     }
@@ -72,14 +72,14 @@ class Doctrine_Query_MultiJoin2_TestCase extends Doctrine_UnitTestCase
         $queryCount = $this->connection->count();
         try {
             $categories = $query->select('c.*, subCats.*, b.*, le.*, a.*')
-                    ->from('QueryTest_Category c')
-                    ->leftJoin('c.subCategories subCats')
-                    ->leftJoin('c.boards b')
-                    ->leftJoin('b.lastEntry le')
-                    ->leftJoin('le.author a')
-                    ->where('c.parentCategoryId = 0')
-                    ->orderBy('c.position ASC, subCats.position ASC, b.position ASC')
-                    ->execute();
+                ->from('QueryTest_Category c')
+                ->leftJoin('c.subCategories subCats')
+                ->leftJoin('c.boards b')
+                ->leftJoin('b.lastEntry le')
+                ->leftJoin('le.author a')
+                ->where('c.parentCategoryId = 0')
+                ->orderBy('c.position ASC, subCats.position ASC, b.position ASC')
+                ->execute();
             // Test that accessing a loaded (but empty) relation doesnt trigger an extra query
             $this->assertEqual($queryCount + 1, $this->connection->count());
 
@@ -96,14 +96,14 @@ class Doctrine_Query_MultiJoin2_TestCase extends Doctrine_UnitTestCase
         $queryCount = $this->connection->count();
         try {
             $categories = $query->select('c.*, subCats.*, b.*, le.*, a.*')
-                    ->from('QueryTest_Category c')
-                    ->leftJoin('c.subCategories subCats')
-                    ->leftJoin('c.boards b')
-                    ->leftJoin('b.lastEntry le')
-                    ->leftJoin('le.author a')
-                    ->where('c.parentCategoryId = 0')
-                    ->orderBy('c.position ASC, subCats.position ASC, b.position ASC')
-                    ->execute(array(), Doctrine_Core::HYDRATE_ARRAY);
+                ->from('QueryTest_Category c')
+                ->leftJoin('c.subCategories subCats')
+                ->leftJoin('c.boards b')
+                ->leftJoin('b.lastEntry le')
+                ->leftJoin('le.author a')
+                ->where('c.parentCategoryId = 0')
+                ->orderBy('c.position ASC, subCats.position ASC, b.position ASC')
+                ->execute([], Doctrine_Core::HYDRATE_ARRAY);
             $this->pass();
         } catch (Doctrine_Exception $e) {
             $this->fail($e->getMessage());

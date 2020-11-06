@@ -6,9 +6,9 @@ class SerializeTest extends Doctrine_Record
         $this->setTableName('serialize_test');
 
         $this->hasColumn('booltest', 'boolean');
-        $this->hasColumn('integertest', 'integer', 4, array('unsigned' => true));
+        $this->hasColumn('integertest', 'integer', 4, ['unsigned' => true]);
         $this->hasColumn('floattest', 'float');
-        $this->hasColumn('stringtest', 'string', 200, array('fixed' => true));
+        $this->hasColumn('stringtest', 'string', 200, ['fixed' => true]);
         $this->hasColumn('arraytest', 'array', 10000);
         $this->hasColumn('objecttest', 'object');
         $this->hasColumn('blobtest', 'blob');
@@ -20,13 +20,13 @@ class SerializeTest extends Doctrine_Record
             'enumtest',
             'enum',
             4,
-            array(
-                            'values' => array(
+            [
+                            'values' => [
                                         'php',
                                         'java',
                                         'python'
-                                        )
-                               )
+                                        ]
+                               ]
         );
         $this->hasColumn('gziptest', 'gzip');
     }

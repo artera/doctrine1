@@ -6,7 +6,7 @@ class Doctrine_Ticket_982_TestCase extends Doctrine_UnitTestCase
 {
     public function prepareTables()
     {
-        $this->tables   = array();
+        $this->tables   = [];
         $this->tables[] = 'T982_MyModel';
         parent::prepareTables();
     }
@@ -66,12 +66,12 @@ class T982_MyModel extends Doctrine_Record
 {
     public function setTableDefinition()
     {
-        $this->hasColumn('id', 'integer', 4, array('primary' => true, 'notnull' => true));
-        $this->hasColumn('parentid', 'integer', 4, array('notnull' => true));
+        $this->hasColumn('id', 'integer', 4, ['primary' => true, 'notnull' => true]);
+        $this->hasColumn('parentid', 'integer', 4, ['notnull' => true]);
     }
 
     public function setUp()
     {
-        $this->hasOne('T982_MyModel as parent', array('local' => 'parentid', 'foreign' => 'id'));
+        $this->hasOne('T982_MyModel as parent', ['local' => 'parentid', 'foreign' => 'id']);
     }
 }

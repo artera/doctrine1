@@ -19,13 +19,13 @@
 /**
  * Doctrine_Expression_Driver_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Expression_Driver_TestCase extends Doctrine_UnitTestCase
 {
@@ -132,19 +132,19 @@ class Doctrine_Expression_Driver_TestCase extends Doctrine_UnitTestCase
     }
     public function testSubReturnsValidSql()
     {
-        $this->assertEqual($this->expr->sub(array(2, 3)), '(2 - 3)');
+        $this->assertEqual($this->expr->sub([2, 3]), '(2 - 3)');
     }
     public function testMulReturnsValidSql()
     {
-        $this->assertEqual($this->expr->mul(array(2, 3)), '(2 * 3)');
+        $this->assertEqual($this->expr->mul([2, 3]), '(2 * 3)');
     }
     public function testAddReturnsValidSql()
     {
-        $this->assertEqual($this->expr->add(array(2, 3)), '(2 + 3)');
+        $this->assertEqual($this->expr->add([2, 3]), '(2 + 3)');
     }
     public function testDivReturnsValidSql()
     {
-        $this->assertEqual($this->expr->div(array(2, 3)), '(2 / 3)');
+        $this->assertEqual($this->expr->div([2, 3]), '(2 / 3)');
     }
 
     /**
@@ -184,7 +184,7 @@ class Doctrine_Expression_Driver_TestCase extends Doctrine_UnitTestCase
     }
     public function testInReturnsValidSql()
     {
-        $this->assertEqual($this->expr->in('id', array(1, 2)), 'id IN (1, 2)');
+        $this->assertEqual($this->expr->in('id', [1, 2]), 'id IN (1, 2)');
     }
     public function testIsNullReturnsValidSql()
     {

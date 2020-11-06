@@ -3,7 +3,7 @@ class Cms_Category extends Doctrine_Record
 {
     public function setUp()
     {
-        $this->hasMany('Cms_CategoryLanguages as langs', array('local' => 'id', 'foreign' => 'category_id'));
+        $this->hasMany('Cms_CategoryLanguages as langs', ['local' => 'id', 'foreign' => 'category_id']);
     }
 
     public function setTableDefinition()
@@ -15,6 +15,6 @@ class Cms_Category extends Doctrine_Record
         $this->option('collate', 'utf8_unicode_ci');
         $this->option('charset', 'utf8');
         $this->option('type', 'INNODB');
-        $this->index('index_parent', array('fields' => array('parent')));
+        $this->index('index_parent', ['fields' => ['parent']]);
     }
 }

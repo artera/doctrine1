@@ -22,13 +22,13 @@
 /**
  * Doctrine_Query_Condition
  *
- * @package     Doctrine
- * @subpackage  Query
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 7490 $
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @package    Doctrine
+ * @subpackage Query
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 7490 $
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
 abstract class Doctrine_Query_Condition extends Doctrine_Query_Part
 {
@@ -36,27 +36,27 @@ abstract class Doctrine_Query_Condition extends Doctrine_Query_Part
      * DQL CONDITION PARSER
      * parses the join condition/where/having part of the query string
      *
-     * @param string $str
+     * @param  string $str
      * @return string
      */
     public function parse($str)
     {
         $tmp = trim($str);
 
-        $parts = $this->_tokenizer->bracketExplode($str, array(' OR '), '(', ')');
+        $parts = $this->_tokenizer->bracketExplode($str, [' OR '], '(', ')');
 
         if (count($parts) > 1) {
-            $ret = array();
+            $ret = [];
             foreach ($parts as $part) {
                 $part  = $this->_tokenizer->bracketTrim($part, '(', ')');
                 $ret[] = $this->parse($part);
             }
             $r = implode(' OR ', $ret);
         } else {
-            $parts = $this->_tokenizer->bracketExplode($str, array(' AND '), '(', ')');
+            $parts = $this->_tokenizer->bracketExplode($str, [' AND '], '(', ')');
 
             // Ticket #1388: We need to make sure we're not splitting a BETWEEN ...  AND ... clause
-            $tmp = array();
+            $tmp = [];
 
             for ($i = 0, $l = count($parts); $i < $l; $i++) {
                 $test = $this->_tokenizer->sqlExplode($parts[$i]);
@@ -74,7 +74,7 @@ abstract class Doctrine_Query_Condition extends Doctrine_Query_Part
             unset($tmp);
 
             if (count($parts) > 1) {
-                $ret = array();
+                $ret = [];
                 foreach ($parts as $part) {
                     $part  = $this->_tokenizer->bracketTrim($part, '(', ')');
                     $ret[] = $this->parse($part);
@@ -104,7 +104,7 @@ abstract class Doctrine_Query_Condition extends Doctrine_Query_Part
      * boolean literals are parsed to integers
      * components are parsed to associated table aliases
      *
-     * @param string $value         literal value to be parsed
+     * @param  string $value literal value to be parsed
      * @return string|int
      */
     public function parseLiteralValue($value)
@@ -113,7 +113,7 @@ abstract class Doctrine_Query_Condition extends Doctrine_Query_Part
         if (strpos($value, '\'') === false) {
             // parse booleans
             $value = $this->query->getConnection()
-                     ->dataDict->parseBoolean($value);
+                ->dataDict->parseBoolean($value);
 
             $a = explode('.', (string) $value);
 

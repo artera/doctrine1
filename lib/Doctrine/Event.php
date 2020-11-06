@@ -19,19 +19,19 @@
 /**
  * Doctrine_Event
  *
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @package     Doctrine
- * @subpackage  Event
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
- * @property bool $skipOperation
- * @property int $fetchMode
- * @property int $cursorOrientation
- * @property int $cursorOffset
- * @property int $columnIndex
- * @property mixed $data
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @package    Doctrine
+ * @subpackage Event
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision$
+ * @property   bool $skipOperation
+ * @property   int $fetchMode
+ * @property   int $cursorOrientation
+ * @property   int $cursorOffset
+ * @property   int $columnIndex
+ * @property   mixed $data
  */
 class Doctrine_Event
 {
@@ -116,17 +116,17 @@ class Doctrine_Event
     /**
      * @var array $_options             an array of options
      */
-    protected $_options = array();
+    protected $_options = [];
 
     /**
      * constructor
      *
-     * @param Doctrine_Connection|Doctrine_Connection_Statement|Doctrine_Connection_UnitOfWork|Doctrine_Transaction|Doctrine_Record|null $invoker   the handler which invoked this event
-     * @param integer $code                                                  the event code
-     * @param string|Doctrine_Query_Abstract $query                                                  the sql query associated with this event (if any)
-     * @param array $params
+     * @param Doctrine_Connection|Doctrine_Connection_Statement|Doctrine_Connection_UnitOfWork|Doctrine_Transaction|Doctrine_Record|null $invoker the handler which invoked this event
+     * @param integer                                                                                                                    $code    the event code
+     * @param string|Doctrine_Query_Abstract                                                                                             $query   the sql query associated with this event (if any)
+     * @param array                                                                                                                      $params
      */
-    public function __construct($invoker, $code, $query = null, $params = array())
+    public function __construct($invoker, $code, $query = null, $params = [])
     {
         $this->_sequence = self::$_nextSequence++;
         $this->_invoker  = $invoker;
@@ -227,7 +227,7 @@ class Doctrine_Event
      * getOption
      * returns the value of an option
      *
-     * @param string $option    the name of the option
+     * @param  string $option the name of the option
      * @return mixed
      */
     public function __get($option)
@@ -257,8 +257,8 @@ class Doctrine_Event
      * setOption
      * sets the value of an option
      *
-     * @param string $option    the name of the option
-     * @param mixed $value      the value of the given option
+     * @param  string $option the name of the option
+     * @param  mixed  $value  the value of the given option
      * @return $this   this object
      */
     public function __set($option, $value)
@@ -272,8 +272,8 @@ class Doctrine_Event
      * setOption
      * sets the value of an option by reference
      *
-     * @param string $option    the name of the option
-     * @param mixed $value      the value of the given option
+     * @param  string $option the name of the option
+     * @param  mixed  $value  the value of the given option
      * @return $this   this object
      */
     public function set($option, &$value)
@@ -344,7 +344,7 @@ class Doctrine_Event
      * setInvoker
      * Defines new invoker (used in Hydrator)
      *
-     * @param mixed $invoker
+     * @param  mixed $invoker
      * @return void
      */
     public function setInvoker($invoker)

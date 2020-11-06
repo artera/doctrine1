@@ -23,36 +23,36 @@
  * Doctrine_Collection
  * Collection of Doctrine_Record objects.
  *
- * @package     Doctrine
- * @subpackage  Collection
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 7686 $
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @package    Doctrine
+ * @subpackage Collection
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 7686 $
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
  *
- * @phpstan-template T of \Doctrine_Record
+ * @phpstan-template   T of \Doctrine_Record
  * @phpstan-implements \IteratorAggregate<T>
  */
 class Doctrine_Collection extends Doctrine_Access implements Countable, IteratorAggregate, Serializable
 {
     /**
-     * @var Doctrine_Record[] $data                     an array containing the records of this collection
+     * @var         Doctrine_Record[] $data                     an array containing the records of this collection
      * @phpstan-var T[]
      */
-    protected $data = array();
+    protected $data = [];
 
     /**
-     * @var Doctrine_Table $_table           each collection has only records of specified table
+     * @var         Doctrine_Table $_table           each collection has only records of specified table
      * @phpstan-var Doctrine_Table<T>
      */
     protected $_table;
 
     /**
-     * @var Doctrine_Record[] $_snapshot                a snapshot of the fetched data
+     * @var         Doctrine_Record[] $_snapshot                a snapshot of the fetched data
      * @phpstan-var T[]
      */
-    protected $_snapshot = array();
+    protected $_snapshot = [];
 
     /**
      * @var Doctrine_Record|null $reference      collection can belong to a record
@@ -82,9 +82,9 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
     /**
      * constructor
      *
-     * @param Doctrine_Table|string $table
+     * @param         Doctrine_Table|string $table
      * @phpstan-param Doctrine_Table<T>|class-string<T> $table
-     * @param string|null $keyColumn
+     * @param         string|null           $keyColumn
      */
     public function __construct($table, $keyColumn = null)
     {
@@ -118,13 +118,13 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
     }
 
     /**
-     * @param Doctrine_Table|string $table
-     * @phpstan-param Doctrine_Table<T>|class-string<T> $table
-     * @param string|null $keyColumn
-     * @param string|null $class
-     * @psalm-param class-string|null $class
-     * @phpstan-param class-string<Doctrine_Collection<T>>|null $class
-     * @return Doctrine_Collection
+     * @param          Doctrine_Table|string $table
+     * @phpstan-param  Doctrine_Table<T>|class-string<T> $table
+     * @param          string|null           $keyColumn
+     * @param          string|null           $class
+     * @psalm-param    class-string|null $class
+     * @phpstan-param  class-string<Doctrine_Collection<T>>|null $class
+     * @return         Doctrine_Collection
      * @phpstan-return Doctrine_Collection<T>
      */
     public static function create($table, $keyColumn = null, $class = null)
@@ -133,7 +133,9 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
             if (! $table instanceof Doctrine_Table) {
                 $table = Doctrine_Core::getTable($table);
             }
-            /** @psalm-var class-string $class */
+            /**
+ * @psalm-var class-string $class
+*/
             $class = $table->getAttribute(Doctrine_Core::ATTR_COLLECTION_CLASS);
         }
 
@@ -143,7 +145,7 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
     /**
      * Get the table this collection belongs to
      *
-     * @return Doctrine_Table
+     * @return         Doctrine_Table
      * @phpstan-return Doctrine_Table<T>
      */
     public function getTable()
@@ -154,9 +156,9 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
     /**
      * Set the data for the Doctrin_Collection instance
      *
-     * @param Doctrine_Record[] $data
+     * @param         Doctrine_Record[] $data
      * @phpstan-param T[] $data
-     * @return void
+     * @return        void
      */
     public function setData(array $data)
     {
@@ -187,7 +189,7 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
     /**
      * This method is automatically called everytime a Doctrine_Collection object is unserialized
      *
-     * @param string $serialized
+     * @param  string $serialized
      * @return void
      */
     public function unserialize($serialized)
@@ -216,7 +218,7 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
     /**
      * Sets the key column for this collection
      *
-     * @param string $column
+     * @param  string $column
      * @return $this
      */
     public function setKeyColumn($column)
@@ -239,7 +241,7 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
     /**
      * Get all the records as an array
      *
-     * @return Doctrine_Record[]
+     * @return         Doctrine_Record[]
      * @phpstan-return T[]
      */
     public function getData()
@@ -250,7 +252,7 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
     /**
      * Get the first record in the collection
      *
-     * @return Doctrine_Record|false
+     * @return         Doctrine_Record|false
      * @phpstan-return T|false
      */
     public function getFirst()
@@ -261,7 +263,7 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
     /**
      * Get the last record in the collection
      *
-     * @return Doctrine_Record|false
+     * @return         Doctrine_Record|false
      * @phpstan-return T|false
      */
     public function getLast()
@@ -272,7 +274,7 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
     /**
      * Get the last record in the collection
      *
-     * @return Doctrine_Record|false
+     * @return         Doctrine_Record|false
      * @phpstan-return T|false
      */
     public function end()
@@ -300,8 +302,9 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
         $this->reference = $record;
         $this->relation  = $relation;
 
-        if ($relation instanceof Doctrine_Relation_ForeignKey ||
-                $relation instanceof Doctrine_Relation_LocalKey) {
+        if ($relation instanceof Doctrine_Relation_ForeignKey
+            || $relation instanceof Doctrine_Relation_LocalKey
+        ) {
             $this->referenceField = $relation->getForeignFieldName();
 
             $value = $record->get($relation->getLocalFieldName());
@@ -330,8 +333,8 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
     /**
      * Removes a specified collection element
      *
-     * @param mixed $key
-     * @return Doctrine_Record|null
+     * @param          mixed $key
+     * @return         Doctrine_Record|null
      * @phpstan-return T|null
      */
     public function remove($key)
@@ -345,7 +348,7 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
     /**
      * Whether or not this collection contains a specified element
      *
-     * @param mixed $key                    the key of the element
+     * @param  mixed $key the key of the element
      * @return boolean
      */
     public function contains($key)
@@ -356,9 +359,9 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
     /**
      * Search a Doctrine_Record instance
      *
-     * @param Doctrine_Record $record
+     * @param         Doctrine_Record $record
      * @phpstan-param T $record
-     * @return int|string|false
+     * @return        int|string|false
      */
     public function search(Doctrine_Record $record)
     {
@@ -378,8 +381,8 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
      *
      * Collection also maps referential information to newly created records
      *
-     * @param mixed $key                    the key of the element
-     * @return Doctrine_Record              return a specified record
+     * @param          mixed $key the key of the element
+     * @return         Doctrine_Record              return a specified record
      * @phpstan-return T
      */
     public function get($key)
@@ -419,7 +422,7 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
      */
     public function getPrimaryKeys()
     {
-        $list = array();
+        $list = [];
         $name = $this->_table->getIdentifier();
 
         foreach ($this->data as $record) {
@@ -456,10 +459,10 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
     /**
      * Set a Doctrine_Record instance to the collection
      *
-     * @param integer $key
-     * @param Doctrine_Record $record
+     * @param         integer         $key
+     * @param         Doctrine_Record $record
      * @phpstan-param T $record
-     * @return void
+     * @return        void
      */
     public function set($key, $record)
     {
@@ -473,10 +476,10 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
     /**
      * Adds a record to collection
      *
-     * @param Doctrine_Record $record              record to be added
+     * @param         Doctrine_Record $record record to be added
      * @phpstan-param T $record
-     * @param string $key                          optional key for the record
-     * @return boolean
+     * @param         string          $key    optional key for the record
+     * @return        boolean
      */
     public function add($record, $key = null)
     {
@@ -530,9 +533,9 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
     /**
      * Merges collection into $this and returns merged collection
      *
-     * @param Doctrine_Collection $coll
+     * @param         Doctrine_Collection $coll
      * @phpstan-param Doctrine_Collection<T> $coll
-     * @return $this
+     * @return        $this
      */
     public function merge(Doctrine_Collection $coll)
     {
@@ -553,12 +556,12 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
     /**
      * Load all relationships or the named relationship passed
      *
-     * @param string|null $name
+     * @param  string|null $name
      * @return null|Doctrine_Query
      */
     public function loadRelated($name = null)
     {
-        $list  = array();
+        $list  = [];
         $query = $this->_table->createQuery();
 
         if (! isset($name)) {
@@ -611,10 +614,10 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
     /**
      * Populate the relationship $name for all records in the passed collection
      *
-     * @param string $name
-     * @param Doctrine_Collection $coll
+     * @param         string              $name
+     * @param         Doctrine_Collection $coll
      * @phpstan-param Doctrine_Collection<T> $coll
-     * @return void
+     * @return        void
      */
     public function populateRelated($name, Doctrine_Collection $coll)
     {
@@ -699,7 +702,7 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
     /**
      * Gets the data of the last snapshot
      *
-     * @return \Doctrine_Record[]    returns the data in last snapshot
+     * @return         \Doctrine_Record[]    returns the data in last snapshot
      * @phpstan-return T[]
      */
     public function getSnapshot()
@@ -720,7 +723,7 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
      */
     public function processDiff()
     {
-        foreach (array_udiff($this->_snapshot, $this->data, array($this, 'compareRecords')) as $record) {
+        foreach (array_udiff($this->_snapshot, $this->data, [$this, 'compareRecords']) as $record) {
             $record->delete();
         }
 
@@ -731,13 +734,13 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
      * Mimics the result of a $query->execute(array(), Doctrine_Core::HYDRATE_ARRAY);
      *
      * @param boolean $deep
-     * @param bool $prefixKey
+     * @param bool    $prefixKey
      *
      * @return array<string,mixed>[]
      */
     public function toArray($deep = true, $prefixKey = false)
     {
-        $data = array();
+        $data = [];
         foreach ($this as $key => $record) {
             $key = $prefixKey ? get_class($record) . '_' . $key:$key;
 
@@ -750,13 +753,13 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
     /**
      * Build an array made up of the values from the 2 specified columns
      *
-     * @param string $key
-     * @param string $value
+     * @param  string $key
+     * @param  string $value
      * @return mixed[] $result
      */
     public function toKeyValueArray($key, $value)
     {
-        $result = array();
+        $result = [];
         foreach ($this as $record) {
             $result[$record->$key] = $record->$value;
         }
@@ -776,7 +779,9 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
         }
 
         // Trees mapped
-        /** @phpstan-var Doctrine_Collection<T> */
+        /**
+ * @phpstan-var Doctrine_Collection<T>
+*/
         $trees = new Doctrine_Collection($table);
         $l     = 0;
 
@@ -818,13 +823,13 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
     /**
      * Populate a Doctrine_Collection from an array of data
      *
-     * @param mixed[] $array
-     * @param bool $deep
+     * @param  mixed[] $array
+     * @param  bool    $deep
      * @return void
      */
     public function fromArray($array, $deep = true)
     {
-        $data = array();
+        $data = [];
         foreach ($array as $rowKey => $row) {
             $this[$rowKey]->fromArray($row, $deep);
         }
@@ -859,7 +864,7 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
     }
 
     /**
-     * @param array<mixed>[] $array representation of a Doctrine_Collection
+     * @param  array<mixed>[] $array representation of a Doctrine_Collection
      * @return void
      */
     public function synchronizeFromArray(array $array)
@@ -870,8 +875,8 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
     /**
      * Export a Doctrine_Collection to one of the supported Doctrine_Parser formats
      *
-     * @param string $type
-     * @param bool $deep
+     * @param  string $type
+     * @param  bool   $deep
      * @return mixed[]
      */
     public function exportTo($type, $deep = true)
@@ -886,8 +891,8 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
     /**
      * Import data to a Doctrine_Collection from one of the supported Doctrine_Parser formats
      *
-     * @param string $type
-     * @param string|array $data
+     * @param  string       $type
+     * @param  string|array $data
      * @return void
      */
     public function importFrom($type, $data)
@@ -902,33 +907,33 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
     /**
      * Perform a delete diff between the last snapshot and the current data
      *
-     * @return \Doctrine_Record[] $diff
+     * @return         \Doctrine_Record[] $diff
      * @phpstan-return T[]
      */
     public function getDeleteDiff()
     {
-        return array_udiff($this->_snapshot, $this->data, array($this, 'compareRecords'));
+        return array_udiff($this->_snapshot, $this->data, [$this, 'compareRecords']);
     }
 
     /**
      * Perform a insert diff between the last snapshot and the current data
      *
-     * @return \Doctrine_Record[] $diff
+     * @return         \Doctrine_Record[] $diff
      * @phpstan-return T[]
      */
     public function getInsertDiff()
     {
-        return array_udiff($this->data, $this->_snapshot, array($this, 'compareRecords'));
+        return array_udiff($this->data, $this->_snapshot, [$this, 'compareRecords']);
     }
 
     /**
      * Compares two records. To be used on _snapshot diffs using array_udiff
      *
-     * @param Doctrine_Record $a
-     * @param Doctrine_Record $b
+     * @param         Doctrine_Record $a
+     * @param         Doctrine_Record $b
      * @phpstan-param T $a
      * @phpstan-param T $b
-     * @return integer
+     * @return        integer
      */
     protected function compareRecords($a, $b)
     {
@@ -943,8 +948,8 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
      * Saves all records of this collection and processes the
      * difference of the last snapshot and the current data
      *
-     * @param Doctrine_Connection $conn     optional connection parameter
-     * @param bool $processDiff
+     * @param  Doctrine_Connection $conn        optional connection parameter
+     * @param  bool                $processDiff
      * @return $this
      */
     public function save(Doctrine_Connection $conn = null, $processDiff = true)
@@ -979,8 +984,8 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
      * Replaces all records of this collection and processes the
      * difference of the last snapshot and the current data
      *
-     * @param Doctrine_Connection $conn     optional connection parameter
-     * @param bool $processDiff
+     * @param  Doctrine_Connection $conn        optional connection parameter
+     * @param  bool                $processDiff
      * @return $this
      */
     public function replace(Doctrine_Connection $conn = null, $processDiff = true)
@@ -1014,8 +1019,8 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
     /**
      * Deletes all records from this collection
      *
-     * @param Doctrine_Connection|null $conn     optional connection parameter
-     * @param bool $clearColl
+     * @param  Doctrine_Connection|null $conn      optional connection parameter
+     * @param  bool                     $clearColl
      * @return $this
      */
     public function delete(Doctrine_Connection $conn = null, $clearColl = true)
@@ -1052,7 +1057,7 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
      */
     public function clear()
     {
-        $this->data = array();
+        $this->data = [];
     }
 
     /**
@@ -1060,7 +1065,7 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
      * WARNING: After invoking free() the collection is no longer considered to
      * be in a useable state. Subsequent usage may result in unexpected behavior.
      *
-     * @param bool $deep
+     * @param  bool $deep
      * @return void
      */
     public function free($deep = false)
@@ -1071,7 +1076,7 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
             }
         }
 
-        $this->data = array();
+        $this->data = [];
 
         if (isset($this->reference)) {
             $this->reference->free($deep);
@@ -1082,7 +1087,7 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
     /**
      * Get collection data iterator
      *
-     * @return \ArrayIterator<mixed,Doctrine_Record>
+     * @return         \ArrayIterator<mixed,Doctrine_Record>
      * @phpstan-return \ArrayIterator<mixed,T>
      */
     public function getIterator()

@@ -19,13 +19,13 @@
 /**
  * Doctrine_Ticket_1381_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Ticket_1381_TestCase extends Doctrine_UnitTestCase
 {
@@ -64,14 +64,14 @@ class Doctrine_Ticket_1381_TestCase extends Doctrine_UnitTestCase
         try {
             // Now we fetch with data we want (it seems it overrides calculates columns of already fetched objects)
             $dql   = 'SELECT c.*, a.* FROM T1381_Comment c INNER JOIN c.T1381_Article a';
-            $items = Doctrine_Query::create()->query($dql, array(), Doctrine_Core::HYDRATE_ARRAY);
+            $items = Doctrine_Query::create()->query($dql, [], Doctrine_Core::HYDRATE_ARRAY);
 
             // This should result in false, since we didn't fetch for this column
             $this->assertFalse(array_key_exists('ArticleTitle', $items[0]['T1381_Article']));
 
             // We fetch for data including new columns
             $dql     = 'SELECT c.*, a.title as ArticleTitle FROM T1381_Comment c INNER JOIN c.T1381_Article a WHERE c.id = ?';
-            $items   = Doctrine_Query::create()->query($dql, array(1), Doctrine_Core::HYDRATE_ARRAY);
+            $items   = Doctrine_Query::create()->query($dql, [1], Doctrine_Core::HYDRATE_ARRAY);
             $comment = $items[0];
 
             $this->assertTrue(array_key_exists('ArticleTitle', $comment));
@@ -86,14 +86,14 @@ class Doctrine_Ticket_1381_TestCase extends Doctrine_UnitTestCase
         try {
             // We fetch for data including new columns
             $dql     = 'SELECT c.*, a.title as ArticleTitle FROM T1381_Comment c INNER JOIN c.T1381_Article a WHERE c.id = ?';
-            $items   = Doctrine_Query::create()->query($dql, array(1), Doctrine_Core::HYDRATE_ARRAY);
+            $items   = Doctrine_Query::create()->query($dql, [1], Doctrine_Core::HYDRATE_ARRAY);
             $comment = $items[0];
 
             $this->assertTrue(array_key_exists('ArticleTitle', $comment));
 
             // Now we fetch with data we want (it seems it overrides calculates columns of already fetched objects)
             $dql   = 'SELECT c.*, a.* FROM T1381_Comment c INNER JOIN c.T1381_Article a';
-            $items = Doctrine_Query::create()->query($dql, array(), Doctrine_Core::HYDRATE_ARRAY);
+            $items = Doctrine_Query::create()->query($dql, [], Doctrine_Core::HYDRATE_ARRAY);
 
             // This should result in false, since we didn't fetch for this column
             $this->assertFalse(array_key_exists('ArticleTitle', $items[0]['T1381_Article']));
@@ -103,7 +103,7 @@ class Doctrine_Ticket_1381_TestCase extends Doctrine_UnitTestCase
 
             // Fetch including new columns again
             $dql   = 'SELECT c.id, a.*, a.id as ArticleTitle FROM T1381_Comment c INNER JOIN c.T1381_Article a';
-            $items = Doctrine_Query::create()->query($dql, array(), Doctrine_Core::HYDRATE_ARRAY);
+            $items = Doctrine_Query::create()->query($dql, [], Doctrine_Core::HYDRATE_ARRAY);
 
             // Assert that new calculated column with different content do not override the already fetched one
             $this->assertTrue(array_key_exists('ArticleTitle', $items[0]));
@@ -122,18 +122,18 @@ class T1381_Article extends Doctrine_Record
 {
     public function setTableDefinition()
     {
-        $this->hasColumn('id', 'integer', null, array('primary' => true, 'autoincrement' => true));
-        $this->hasColumn('title', 'string', 255, array('notnull' => true));
+        $this->hasColumn('id', 'integer', null, ['primary' => true, 'autoincrement' => true]);
+        $this->hasColumn('title', 'string', 255, ['notnull' => true]);
     }
 
     public function setUp()
     {
         $this->hasMany(
             'T1381_Comment',
-            array(
+            [
                 'local'   => 'id',
                 'foreign' => 'article_id'
-            )
+            ]
         );
     }
 }
@@ -143,19 +143,19 @@ class T1381_Comment extends Doctrine_Record
 {
     public function setTableDefinition()
     {
-        $this->hasColumn('id', 'integer', null, array('primary' => true, 'autoincrement' => true));
-        $this->hasColumn('body', 'string', null, array('notnull' => true));
-        $this->hasColumn('article_id', 'integer', null, array('notnull' => true));
+        $this->hasColumn('id', 'integer', null, ['primary' => true, 'autoincrement' => true]);
+        $this->hasColumn('body', 'string', null, ['notnull' => true]);
+        $this->hasColumn('article_id', 'integer', null, ['notnull' => true]);
     }
 
     public function setUp()
     {
         $this->hasOne(
             'T1381_Article',
-            array(
+            [
                 'local'   => 'article_id',
                 'foreign' => 'id'
-            )
+            ]
         );
     }
 }

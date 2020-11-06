@@ -19,13 +19,13 @@
 /**
  * Doctrine_Ticket_1875_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Ticket_1875_TestCase extends Doctrine_UnitTestCase
 {
@@ -53,6 +53,6 @@ class Ticket_1875_Account extends Doctrine_Record
     public function setTableDefinition()
     {
         $this->hasColumn('name', 'string', 255);
-        $this->hasColumn('amount', 'decimal', 4, array('scale' => 2));
+        $this->hasColumn('amount', 'decimal', 4, ['scale' => 2]);
     }
 }

@@ -19,13 +19,13 @@
 /**
  * Doctrine_Ticket_1044_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Ticket_1044_TestCase extends Doctrine_UnitTestCase
 {
@@ -53,11 +53,17 @@ class Ticket_1044_User extends Doctrine_Record
 
     public function setUp()
     {
-        $this->hasOne('Ticket_1044_UserProfile as UserProfile', array('local'   => 'user_profile_id',
-                                                                      'foreign' => 'id'));
-        $this->hasOne('Ticket_1044_UserProfile as UserProfile', array('local'    => 'user_profile_id',
+        $this->hasOne(
+            'Ticket_1044_UserProfile as UserProfile',
+            ['local'   => 'user_profile_id',
+            'foreign' => 'id']
+        );
+        $this->hasOne(
+            'Ticket_1044_UserProfile as UserProfile',
+            ['local'    => 'user_profile_id',
                                                                       'foreign'  => 'id',
-                                                                      'override' => true));
+            'override' => true]
+        );
     }
 }
 

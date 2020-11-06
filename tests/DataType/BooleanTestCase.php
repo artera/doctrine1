@@ -19,13 +19,13 @@
 /**
  * Doctrine_DataType_Boolean_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_DataType_Boolean_TestCase extends Doctrine_UnitTestCase
 {
@@ -34,7 +34,7 @@ class Doctrine_DataType_Boolean_TestCase extends Doctrine_UnitTestCase
     }
     public function prepareTables()
     {
-        $this->tables = array('BooleanTest');
+        $this->tables = ['BooleanTest'];
         parent::prepareTables();
     }
 
@@ -80,11 +80,11 @@ class Doctrine_DataType_Boolean_TestCase extends Doctrine_UnitTestCase
     public function testPreparedQueries()
     {
         $query = new Doctrine_Query($this->connection);
-        $ret   = $query->query('FROM BooleanTest WHERE BooleanTest.is_working = ?', array(false));
+        $ret   = $query->query('FROM BooleanTest WHERE BooleanTest.is_working = ?', [false]);
         $this->assertEqual(count($ret), 1);
 
         $query = new Doctrine_Query($this->connection);
-        $ret   = $query->query('FROM BooleanTest WHERE BooleanTest.is_working = ?', array(true));
+        $ret   = $query->query('FROM BooleanTest WHERE BooleanTest.is_working = ?', [true]);
         $this->assertEqual(count($ret), 1);
     }
     public function testFetchingWithSmartConversion()

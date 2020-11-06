@@ -19,13 +19,13 @@
 /**
  * Doctrine_Ticket_1923_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Ticket_1923_TestCase extends Doctrine_UnitTestCase
 {
@@ -39,10 +39,10 @@ class Doctrine_Ticket_1923_TestCase extends Doctrine_UnitTestCase
 
     public function testTest()
     {
-        $sql = Doctrine_Core::generateSqlFromArray(array('Ticket_1923_User'));
+        $sql = Doctrine_Core::generateSqlFromArray(['Ticket_1923_User']);
         $this->assertEqual($sql[1], 'CREATE INDEX username_idx ON ticket_1923__user (login)');
 
-        $sql = Doctrine_Core::generateSqlFromArray(array('Ticket_1923_User2'));
+        $sql = Doctrine_Core::generateSqlFromArray(['Ticket_1923_User2']);
         $this->assertEqual($sql[1], 'CREATE INDEX username2_idx ON ticket_1923__user2 (login DESC)');
     }
 }
@@ -54,7 +54,7 @@ class Ticket_1923_User extends Doctrine_Record
         $this->hasColumn('login as username', 'string', 255);
         $this->hasColumn('password', 'string', 255);
 
-        $this->index('username', array('fields' => array('username')));
+        $this->index('username', ['fields' => ['username']]);
     }
 }
 
@@ -65,6 +65,6 @@ class Ticket_1923_User2 extends Doctrine_Record
         $this->hasColumn('login as username', 'string', 255);
         $this->hasColumn('password', 'string', 255);
 
-        $this->index('username2', array('fields' => array('username' => array('sorting' => 'DESC'))));
+        $this->index('username2', ['fields' => ['username' => ['sorting' => 'DESC']]]);
     }
 }

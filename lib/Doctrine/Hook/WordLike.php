@@ -22,13 +22,13 @@
 /**
  * Doctrine_Hook_WordLike
  *
- * @package     Doctrine
- * @subpackage  Hook
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 7490 $
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @package    Doctrine
+ * @subpackage Hook
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 7490 $
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
 class Doctrine_Hook_WordLike extends Doctrine_Hook_Parser_Complex
 {
@@ -39,14 +39,14 @@ class Doctrine_Hook_WordLike extends Doctrine_Hook_Parser_Complex
      * prepared statement conditions (conditions that use
      * placeholders instead of literal values).
      *
-     * @param string $alias     component alias
-     * @param string $field     the field name
-     * @param mixed $value      the value of the field
+     * @param  string $alias component alias
+     * @param  string $field the field name
+     * @param  mixed  $value the value of the field
      * @return string
      */
     public function parseSingle($alias, $field, $value)
     {
-        $a = array();
+        $a = [];
 
         if (strpos($value, "'") !== false) {
             $value = $this->_tokenizer->bracketTrim($value, "'", "'");

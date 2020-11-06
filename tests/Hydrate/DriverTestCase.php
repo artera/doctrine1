@@ -19,13 +19,13 @@
 /**
  * Doctrine_Hydrate_Driver_TestCase
  *
- * @package     Doctrine
- * @author      Jonathan H. Wage <jonwage@gmail.com>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.1
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Jonathan H. Wage <jonwage@gmail.com>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.1
+ * @version  $Revision$
  */
 class Doctrine_Hydrate_Driver_TestCase extends Doctrine_UnitTestCase
 {
@@ -36,7 +36,7 @@ class Doctrine_Hydrate_Driver_TestCase extends Doctrine_UnitTestCase
 
         $result = Doctrine_Core::getTable('User')
             ->createQuery('u')
-            ->execute(array(), 'MyHydrator');
+            ->execute([], 'MyHydrator');
 
         $this->assertEqual($result, 'MY_HYDRATOR');
     }
@@ -49,16 +49,16 @@ class Doctrine_Hydrate_Driver_TestCase extends Doctrine_UnitTestCase
 
         $result = Doctrine_Core::getTable('User')
             ->createQuery('u')
-            ->execute(array(), 'MyHydrator');
+            ->execute([], 'MyHydrator');
 
         $this->assertEqual($result, 'MY_HYDRATOR');
     }
 
     public function testCustomHydratorConstructor()
     {
-        $queryComponents = array('queryComponents');
-        $tableAliases    = array('tableAliases');
-        $hydrationMode   = array('hydrationMode');
+        $queryComponents = ['queryComponents'];
+        $tableAliases    = ['tableAliases'];
+        $hydrationMode   = ['hydrationMode'];
 
         $hydrator = new MyHydrator($queryComponents, $tableAliases, $hydrationMode);
 
@@ -76,7 +76,7 @@ class Doctrine_Hydrate_Driver_TestCase extends Doctrine_UnitTestCase
         try {
             Doctrine_Core::getTable('User')
                 ->createQuery('u')
-                ->execute(array(), 'MyHydrator');
+                ->execute([], 'MyHydrator');
 
             $this->fail('Expected exception not thrown: Doctrine_Hydrator_Exception');
         } catch (Doctrine_Hydrator_Exception $e) {

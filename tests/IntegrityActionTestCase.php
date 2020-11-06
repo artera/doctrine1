@@ -19,13 +19,13 @@
 /**
  * Doctrine_IntegrityAction_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_IntegrityAction_TestCase extends Doctrine_UnitTestCase
 {
@@ -34,7 +34,7 @@ class Doctrine_IntegrityAction_TestCase extends Doctrine_UnitTestCase
     }
     public function prepareTables()
     {
-        $this->tables = array('CascadeDeleteTest', 'CascadeDeleteRelatedTest', 'CascadeDeleteRelatedTest2');
+        $this->tables = ['CascadeDeleteTest', 'CascadeDeleteRelatedTest', 'CascadeDeleteRelatedTest2'];
 
         parent::prepareTables();
     }
@@ -43,10 +43,10 @@ class Doctrine_IntegrityAction_TestCase extends Doctrine_UnitTestCase
         $c  = new CascadeDeleteTest;
         $c2 = new CascadeDeleteRelatedTest;
 
-        $expected = array('CascadeDeleteRelatedTest' => 'CASCADE');
+        $expected = ['CascadeDeleteRelatedTest' => 'CASCADE'];
         $this->assertEqual($this->manager->getDeleteActions('CascadeDeleteTest'), $expected);
 
-        $expected = array('CascadeDeleteRelatedTest' => 'SET NULL');
+        $expected = ['CascadeDeleteRelatedTest' => 'SET NULL'];
         $this->assertEqual($this->manager->getUpdateActions('CascadeDeleteTest'), $expected);
     }
     public function testOnDeleteCascadeEmulation()

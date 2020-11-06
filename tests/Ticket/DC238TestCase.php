@@ -19,20 +19,20 @@
 /**
  * Doctrine_Ticket_DC238_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Ticket_DC238_TestCase extends Doctrine_UnitTestCase
 {
     public function testTest()
     {
         $conn = Doctrine_Manager::connection('sqlite::memory:', 'test', false);
-        $conn->export->exportClasses(array('Ticket_DC238_User'));
+        $conn->export->exportClasses(['Ticket_DC238_User']);
 
         $user           = new Ticket_DC238_User();
         $user->username = 'jwage';

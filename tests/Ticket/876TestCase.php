@@ -2,21 +2,20 @@
 /**
  * Doctrine_Ticket_SegmentationFault_TestCase
  *
- * @package     Doctrine
- * @author      Tiago Ribeiro <tiago.ribeiro@gmail.com>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
- *
+ * @package  Doctrine
+ * @author   Tiago Ribeiro <tiago.ribeiro@gmail.com>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 
 class Doctrine_Ticket_876_TestCase extends Doctrine_UnitTestCase
 {
     public function prepareTables()
     {
-        $this->tables = array('Profile', 'Person', 'sfGuardUser');
+        $this->tables = ['Profile', 'Person', 'sfGuardUser'];
 
         parent::prepareTables();
     }
@@ -89,7 +88,7 @@ class Person extends Doctrine_Record
     public function setTableDefinition()
     {
         $this->setTableName('person');
-        $this->hasColumn('id', 'integer', 11, array('primary' => true, 'autoincrement' => true));
+        $this->hasColumn('id', 'integer', 11, ['primary' => true, 'autoincrement' => true]);
         $this->hasColumn('name', 'string', 255);
         $this->hasColumn('sf_guard_user_id', 'integer', 4);
     }
@@ -97,11 +96,17 @@ class Person extends Doctrine_Record
     public function setUp()
     {
         parent::setUp();
-        $this->hasMany('Profile as Profiles', array('local' => 'id',
-                                                'foreign'   => 'person_id'));
-        $this->hasOne('sfGuardUser', array('local' => 'sf_guard_user_id',
+        $this->hasMany(
+            'Profile as Profiles',
+            ['local' => 'id',
+            'foreign'   => 'person_id']
+        );
+        $this->hasOne(
+            'sfGuardUser',
+            ['local' => 'sf_guard_user_id',
                                        'foreign'   => 'id',
-                                       'onDelete'  => 'CASCADE'));
+            'onDelete'  => 'CASCADE']
+        );
     }
 }
 
@@ -110,7 +115,7 @@ class Profile extends Doctrine_Record
     public function setTableDefinition()
     {
         $this->setTableName('profile');
-        $this->hasColumn('id', 'integer', 11, array('primary' => true, 'autoincrement' => true));
+        $this->hasColumn('id', 'integer', 11, ['primary' => true, 'autoincrement' => true]);
         $this->hasColumn('name', 'string', 150);
         $this->hasColumn('person_id', 'integer', 11);
     }
@@ -118,8 +123,11 @@ class Profile extends Doctrine_Record
     public function setUp()
     {
         parent::setUp();
-        $this->hasOne('Person', array('local' => 'person_id',
-                                'foreign'     => 'id'));
+        $this->hasOne(
+            'Person',
+            ['local' => 'person_id',
+            'foreign'     => 'id']
+        );
     }
 }
 
@@ -128,14 +136,17 @@ class sfGuardUser extends Doctrine_Record
     public function setTableDefinition()
     {
         $this->setTableName('sf_guard_user');
-        $this->hasColumn('id', 'integer', 4, array('primary' => true, 'autoincrement' => true));
-        $this->hasColumn('name', 'string', 128, array('notnull' => true, 'unique' => true));
+        $this->hasColumn('id', 'integer', 4, ['primary' => true, 'autoincrement' => true]);
+        $this->hasColumn('name', 'string', 128, ['notnull' => true, 'unique' => true]);
     }
 
     public function setUp()
     {
         parent::setUp();
-        $this->hasOne('Person', array('local' => 'id',
-                                  'foreign'   => 'sf_guard_user_id'));
+        $this->hasOne(
+            'Person',
+            ['local' => 'id',
+            'foreign'   => 'sf_guard_user_id']
+        );
     }
 }

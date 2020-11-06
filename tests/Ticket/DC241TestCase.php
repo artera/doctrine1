@@ -19,13 +19,13 @@
 /**
  * Doctrine_Ticket_DC241_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Ticket_DC241_TestCase extends Doctrine_UnitTestCase
 {
@@ -64,13 +64,13 @@ class Ticket_DC241_Poll extends Doctrine_Record
 {
     public function setTableDefinition()
     {
-        $this->hasColumn('id_category', 'integer', null, array('notnull' => true));
+        $this->hasColumn('id_category', 'integer', null, ['notnull' => true]);
         $this->hasColumn('question', 'string', 256);
     }
 
     public function setUp()
     {
-        $this->hasMany('Ticket_DC241_PollAnswer as Answers', array('local' => 'id', 'foreign' => 'id_poll', 'orderBy' => 'position'));
+        $this->hasMany('Ticket_DC241_PollAnswer as Answers', ['local' => 'id', 'foreign' => 'id_poll', 'orderBy' => 'position']);
     }
 }
 
@@ -80,14 +80,14 @@ class Ticket_DC241_PollAnswer extends Doctrine_Record
     {
         $this->setTableName('module_polls_answers');
 
-        $this->hasColumn('id_poll', 'integer', null, array('notnull' => true));
+        $this->hasColumn('id_poll', 'integer', null, ['notnull' => true]);
         $this->hasColumn('answer', 'string', 256);
-        $this->hasColumn('votes', 'integer', null, array('notnull' => true, 'default' => 0));
+        $this->hasColumn('votes', 'integer', null, ['notnull' => true, 'default' => 0]);
         $this->hasColumn('position', 'integer');
     }
 
     public function setUp()
     {
-        $this->hasOne('Ticket_DC241_Poll as Poll', array('local' => 'id_poll', 'foreign' => 'id', 'onDelete' => 'CASCADE'));
+        $this->hasOne('Ticket_DC241_Poll as Poll', ['local' => 'id_poll', 'foreign' => 'id', 'onDelete' => 'CASCADE']);
     }
 }

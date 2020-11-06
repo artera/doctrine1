@@ -22,14 +22,14 @@
 /**
  * Doctrine_Connection_Sqlite
  *
- * @package     Doctrine
- * @subpackage  Connection
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @author      Lukas Smith <smith@pooteeweet.org> (PEAR MDB2 library)
- * @version     $Revision: 7490 $
- * @link        www.doctrine-project.org
- * @since       1.0
+ * @package    Doctrine
+ * @subpackage Connection
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @author     Lukas Smith <smith@pooteeweet.org> (PEAR MDB2 library)
+ * @version    $Revision: 7490 $
+ * @link       www.doctrine-project.org
+ * @since      1.0
  */
 class Doctrine_Connection_Sqlite extends Doctrine_Connection_Common
 {
@@ -46,12 +46,12 @@ class Doctrine_Connection_Sqlite extends Doctrine_Connection_Common
     /**
      * the constructor
      *
-     * @param Doctrine_Manager $manager
-     * @param PDO|Doctrine_Adapter_Interface $adapter                          database handle
+     * @param Doctrine_Manager               $manager
+     * @param PDO|Doctrine_Adapter_Interface $adapter database handle
      */
     public function __construct(Doctrine_Manager $manager, $adapter)
     {
-        $this->supported = array('sequences'     => 'emulated',
+        $this->supported = ['sequences'     => 'emulated',
                           'indexes'              => true,
                           'affected_rows'        => true,
                           'summary_functions'    => true,
@@ -69,21 +69,21 @@ class Doctrine_Connection_Sqlite extends Doctrine_Connection_Common
                           'prepared_statements'  => 'emulated',
                           'identifier_quoting'   => true,
                           'pattern_escaping'     => false,
-                          );
+                          ];
         parent::__construct($manager, $adapter);
 
         if ($this->isConnected) {
-            $this->dbh->sqliteCreateFunction('mod', array('Doctrine_Expression_Sqlite', 'modImpl'), 2);
-            $this->dbh->sqliteCreateFunction('concat', array('Doctrine_Expression_Sqlite', 'concatImpl'));
+            $this->dbh->sqliteCreateFunction('mod', ['Doctrine_Expression_Sqlite', 'modImpl'], 2);
+            $this->dbh->sqliteCreateFunction('concat', ['Doctrine_Expression_Sqlite', 'concatImpl']);
             $this->dbh->sqliteCreateFunction('md5', 'md5', 1);
-            $this->dbh->sqliteCreateFunction('now', array('Doctrine_Expression_Sqlite', 'nowImpl'), 0);
+            $this->dbh->sqliteCreateFunction('now', ['Doctrine_Expression_Sqlite', 'nowImpl'], 0);
         }
     }
 
     /**
      * initializes database functions missing in sqlite
      *
-     * @see Doctrine_Expression
+     * @see    Doctrine_Expression
      * @return void|false
      */
     public function connect()
@@ -94,10 +94,10 @@ class Doctrine_Connection_Sqlite extends Doctrine_Connection_Common
 
         parent::connect();
 
-        $this->dbh->sqliteCreateFunction('mod', array('Doctrine_Expression_Sqlite', 'modImpl'), 2);
-        $this->dbh->sqliteCreateFunction('concat', array('Doctrine_Expression_Sqlite', 'concatImpl'));
+        $this->dbh->sqliteCreateFunction('mod', ['Doctrine_Expression_Sqlite', 'modImpl'], 2);
+        $this->dbh->sqliteCreateFunction('concat', ['Doctrine_Expression_Sqlite', 'concatImpl']);
         $this->dbh->sqliteCreateFunction('md5', 'md5', 1);
-        $this->dbh->sqliteCreateFunction('now', array('Doctrine_Expression_Sqlite', 'nowImpl'), 0);
+        $this->dbh->sqliteCreateFunction('now', ['Doctrine_Expression_Sqlite', 'nowImpl'], 0);
     }
 
     /**

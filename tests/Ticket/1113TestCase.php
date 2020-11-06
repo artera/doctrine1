@@ -6,7 +6,7 @@ class Doctrine_Ticket_1113_TestCase extends Doctrine_UnitTestCase
     }
     public function prepareTables()
     {
-        $this->tables = array('VIH_Model_Course', 'VIH_Model_Course_Period', 'VIH_Model_Course_SubjectGroup', 'VIH_Model_Subject', 'VIH_Model_Course_SubjectGroup_Subject', 'VIH_Model_Course_Registration', 'VIH_Model_Course_Registration_Subject');
+        $this->tables = ['VIH_Model_Course', 'VIH_Model_Course_Period', 'VIH_Model_Course_SubjectGroup', 'VIH_Model_Subject', 'VIH_Model_Course_SubjectGroup_Subject', 'VIH_Model_Course_Registration', 'VIH_Model_Course_Registration_Subject'];
 
         parent::prepareTables();
     }
@@ -87,20 +87,20 @@ class VIH_Model_Subject extends Doctrine_Record
     {
         $this->hasMany(
             'VIH_Model_Course_SubjectGroup as SubjectGroups',
-            array(
+            [
                 'refClass' => 'VIH_Model_Course_SubjectGroup_Subject',
                 'local'    => 'subject_id',
                 'foreign'  => 'subject_group_id'
-            )
+            ]
         );
 
         $this->hasMany(
             'VIH_Model_Course_Registration as Registrations',
-            array(
+            [
                 'refClass' => 'VIH_Model_Course_Registration_Subject',
                 'local'    => 'subject_id',
                 'foreign'  => 'registration_id'
-            )
+            ]
         );
     }
 }
@@ -115,10 +115,16 @@ class VIH_Model_Course extends Doctrine_Record
 
     public function setUp()
     {
-        $this->hasMany('VIH_Model_Course_Period as Periods', array('local'   => 'id',
-                                                                   'foreign' => 'course_id'));
-        $this->hasMany('VIH_Model_Course_SubjectGroup as SubjectGroups', array('local'   => 'id',
-                                                                               'foreign' => 'course_id'));
+        $this->hasMany(
+            'VIH_Model_Course_Period as Periods',
+            ['local'   => 'id',
+            'foreign' => 'course_id']
+        );
+        $this->hasMany(
+            'VIH_Model_Course_SubjectGroup as SubjectGroups',
+            ['local'   => 'id',
+            'foreign' => 'course_id']
+        );
     }
 }
 
@@ -134,7 +140,7 @@ class VIH_Model_Course_Period extends Doctrine_Record
 
     public function setUp()
     {
-        $this->hasOne('VIH_Model_Course as Course', array('local' => 'course_id', 'foreign' => 'id'));
+        $this->hasOne('VIH_Model_Course as Course', ['local' => 'course_id', 'foreign' => 'id']);
     }
 }
 
@@ -151,12 +157,18 @@ class VIH_Model_Course_Registration extends Doctrine_Record
 
     public function setUp()
     {
-        $this->hasOne('VIH_Model_Course as Course', array('local'   => 'kursus_id',
-                                                          'foreign' => 'id'));
+        $this->hasOne(
+            'VIH_Model_Course as Course',
+            ['local'   => 'kursus_id',
+            'foreign' => 'id']
+        );
 
-        $this->hasMany('VIH_Model_Subject as Subjects', array('refClass' => 'VIH_Model_Course_Registration_Subject',
+        $this->hasMany(
+            'VIH_Model_Subject as Subjects',
+            ['refClass' => 'VIH_Model_Course_Registration_Subject',
                                                              'local'     => 'registration_id',
-                                                             'foreign'   => 'subject_id'));
+            'foreign'   => 'subject_id']
+        );
     }
 }
 
@@ -171,15 +183,24 @@ class VIH_Model_Course_SubjectGroup extends Doctrine_Record
 
     public function setUp()
     {
-        $this->hasOne('VIH_Model_Course_Period as Period', array('local'   => 'period_id',
-                                                                 'foreign' => 'id'));
+        $this->hasOne(
+            'VIH_Model_Course_Period as Period',
+            ['local'   => 'period_id',
+            'foreign' => 'id']
+        );
 
-        $this->hasOne('VIH_Model_Course as Course', array('local'   => 'course_id',
-                                                          'foreign' => 'id'));
+        $this->hasOne(
+            'VIH_Model_Course as Course',
+            ['local'   => 'course_id',
+            'foreign' => 'id']
+        );
 
-        $this->hasMany('VIH_Model_Subject as Subjects', array('refClass' => 'VIH_Model_Course_SubjectGroup_Subject',
+        $this->hasMany(
+            'VIH_Model_Subject as Subjects',
+            ['refClass' => 'VIH_Model_Course_SubjectGroup_Subject',
                                                              'local'     => 'subject_group_id',
-                                                             'foreign'   => 'subject_id'));
+            'foreign'   => 'subject_id']
+        );
     }
 }
 
@@ -187,8 +208,8 @@ class VIH_Model_Course_SubjectGroup_Subject extends Doctrine_Record
 {
     public function setTableDefinition()
     {
-        $this->hasColumn('subject_group_id', 'integer', null, array('primary' => true));
-        $this->hasColumn('subject_id', 'integer', null, array('primary' => true));
+        $this->hasColumn('subject_group_id', 'integer', null, ['primary' => true]);
+        $this->hasColumn('subject_id', 'integer', null, ['primary' => true]);
     }
 }
 
@@ -196,7 +217,7 @@ class VIH_Model_Course_Registration_Subject extends Doctrine_Record
 {
     public function setTableDefinition()
     {
-        $this->hasColumn('registration_id', 'integer', null, array('primary' => true));
-        $this->hasColumn('subject_id', 'integer', null, array('primary' => true));
+        $this->hasColumn('registration_id', 'integer', null, ['primary' => true]);
+        $this->hasColumn('subject_id', 'integer', null, ['primary' => true]);
     }
 }

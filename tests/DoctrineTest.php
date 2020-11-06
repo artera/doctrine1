@@ -19,14 +19,14 @@
 /**
  * Doctrine_UnitTestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @author      Bjarte S. Karlsen <bjartka@pvv.ntnu.no>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @author   Bjarte S. Karlsen <bjartka@pvv.ntnu.no>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 
 require_once dirname(__FILE__) . '/DoctrineTest/UnitTestCase.php';
@@ -65,19 +65,18 @@ class DoctrineTest
      * This method will run the tests with the correct Reporter. It will run
      * grouped tests if asked to and filter results. It also has support for
      * running coverage report.
-     *
      */
     public function run()
     {
         $testGroup = $this->testGroup;
         if (PHP_SAPI === 'cli') {
-            require_once(dirname(__FILE__) . '/DoctrineTest/Reporter/Cli.php');
+            include_once dirname(__FILE__) . '/DoctrineTest/Reporter/Cli.php';
             $reporter = new DoctrineTest_Reporter_Cli();
             $argv     = $_SERVER['argv'];
             array_shift($argv);
             $options = $this->parseOptions($argv);
         } else {
-            require_once(dirname(__FILE__) . '/DoctrineTest/Reporter/Html.php');
+            include_once dirname(__FILE__) . '/DoctrineTest/Reporter/Html.php';
             $options = $_GET;
             if (isset($options['filter'])) {
                 if (! is_array($options['filter'])) {
@@ -196,7 +195,6 @@ class DoctrineTest
 
     /**
      * Require all the models needed in the tests
-     *
      */
     public function requireModels()
     {
@@ -207,7 +205,7 @@ class DoctrineTest
                 $e = explode('.', $file->getFileName());
 
                 if (end($e) === 'php') {
-                    require_once $file->getPathname();
+                    include_once $file->getPathname();
                 }
             }
         }
@@ -216,13 +214,13 @@ class DoctrineTest
     /**
      * Parse Options from cli into an associative array
      *
-     * @param array $array An argv array from cli
+     * @param  array $array An argv array from cli
      * @return array An array with options
      */
     public function parseOptions($array)
     {
         $currentName = '';
-        $options     = array();
+        $options     = [];
 
         foreach ($array as $name) {
             if (strpos($name, '--') === 0) {
@@ -238,7 +236,7 @@ class DoctrineTest
                     if ($value !== null) {
                         $options[$currentName] = $value;
                     } else {
-                        $options[$currentName] = array();
+                        $options[$currentName] = [];
                     }
                 }
             } else {
@@ -258,7 +256,7 @@ class DoctrineTest
      *
      * Will create test case if it does not exist
      *
-     * @param string $class The name of the class to autoload
+     * @param  string $class The name of the class to autoload
      * @return boolean True
      */
     public static function autoload($class)
@@ -292,7 +290,7 @@ class DoctrineTest
             file_put_contents($file, $contents);
         }
 
-        require_once($file);
+        include_once $file;
 
         return true;
     }

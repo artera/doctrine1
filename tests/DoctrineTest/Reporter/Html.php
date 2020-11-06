@@ -52,7 +52,7 @@ class DoctrineTest_Reporter_Html extends DoctrineTest_Reporter
 <h1><?php echo $name ?></h1>
 
 <div id="messages">
-<?php
+        <?php
     }
 
     public function paintFooter()

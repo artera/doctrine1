@@ -23,28 +23,28 @@
  * Doctrine_Column
  * This class represents a database column
  *
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @package     Doctrine
- * @subpackage  Column
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @version     $Revision: 7663 $
- * @link        www.doctrine-project.org
- * @since       1.0
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @package    Doctrine
+ * @subpackage Column
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @version    $Revision: 7663 $
+ * @link       www.doctrine-project.org
+ * @since      1.0
  */
 class Doctrine_Column extends Doctrine_Access implements IteratorAggregate, Countable
 {
     /**
      * @var array $_definition  @see getDefinition()
      */
-    protected $_definition = array(
+    protected $_definition = [
                                 'type'   => null,
                                 'length' => 0,
-                                );
+                                ];
 
     /**
      * @var array $definition  @see getDefinition()
      */
-    public function __construct(array $definition = array())
+    public function __construct(array $definition = [])
     {
         $this->_definition = $definition;
     }
@@ -56,6 +56,7 @@ class Doctrine_Column extends Doctrine_Access implements IteratorAggregate, Coun
      *     string type,
      *     integer length,
      *     array values (only for enum fields, maps integer indexes to mixed values),
+     *
      * @return array
      */
     public function getDefinition()
@@ -66,7 +67,7 @@ class Doctrine_Column extends Doctrine_Access implements IteratorAggregate, Coun
     /**
      * contains
      *
-     * @param string $name
+     * @param  string $name
      * @return boolean
      */
     public function contains($name)
@@ -77,7 +78,7 @@ class Doctrine_Column extends Doctrine_Access implements IteratorAggregate, Coun
     /**
      * get
      *
-     * @param string $name
+     * @param  string $name
      * @return mixed
      */
     public function get($name)
@@ -92,8 +93,8 @@ class Doctrine_Column extends Doctrine_Access implements IteratorAggregate, Coun
     /**
      * set
      *
-     * @param string $name
-     * @param mixed $value
+     * @param  string $name
+     * @param  mixed  $value
      * @return void
      */
     public function set($name, $value)
@@ -109,14 +110,14 @@ class Doctrine_Column extends Doctrine_Access implements IteratorAggregate, Coun
         if (isset($this->_definition['values'])) {
             return $this->_definition['values'];
         } else {
-            return array();
+            return [];
         }
     }
 
     /**
      * Retrieves an enum value.
      *
-     * @param integer|Doctrine_Null $index
+     * @param  integer|Doctrine_Null $index
      * @return string|false       integer ($index) if not present
      */
     public function enumValue($index)
@@ -131,8 +132,8 @@ class Doctrine_Column extends Doctrine_Access implements IteratorAggregate, Coun
     /**
      * enumIndex
      *
-     * @param string $field
-     * @param mixed $value
+     * @param  string $field
+     * @param  mixed  $value
      * @return mixed
      */
     public function enumIndex($field, $value)

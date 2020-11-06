@@ -20,13 +20,13 @@
  * Doctrine_Query_Where_TestCase
  * This test case is used for testing DQL WHERE part functionality
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Query_Where_TestCase extends Doctrine_UnitTestCase
 {
@@ -36,7 +36,7 @@ class Doctrine_Query_Where_TestCase extends Doctrine_UnitTestCase
 
     public function prepareTables()
     {
-        $this->tables = array('Entity', 'EnumTest', 'GroupUser', 'Account', 'Book');
+        $this->tables = ['Entity', 'EnumTest', 'GroupUser', 'Account', 'Book'];
         parent::prepareTables();
     }
 
@@ -98,7 +98,7 @@ class Doctrine_Query_Where_TestCase extends Doctrine_UnitTestCase
 
         $q = new Doctrine_Query();
 
-        $q->from('User')->addWhere('User.id IN (?, ?)', array(1, 2));
+        $q->from('User')->addWhere('User.id IN (?, ?)', [1, 2]);
 
         $users = $q->execute();
 
@@ -121,7 +121,7 @@ class Doctrine_Query_Where_TestCase extends Doctrine_UnitTestCase
     {
         $q = Doctrine_Query::create()
             ->from('User')
-            ->where('User.id IN (?, ?)', array(1, 2));
+            ->where('User.id IN (?, ?)', [1, 2]);
 
         $this->assertEqual($q->getSqlQuery(), 'SELECT e.id AS e__id, e.name AS e__name, e.loginname AS e__loginname, e.password AS e__password, e.type AS e__type, e.created AS e__created, e.updated AS e__updated, e.email_id AS e__email_id FROM entity e WHERE (e.id IN (?, ?) AND (e.type = 0))');
 
@@ -132,7 +132,7 @@ class Doctrine_Query_Where_TestCase extends Doctrine_UnitTestCase
         $this->assertEqual($users[1]->name, 'someone.2');
 
         // the parameters and where part should be reseted
-        $q->where('User.id IN (?, ?)', array(1, 2));
+        $q->where('User.id IN (?, ?)', [1, 2]);
 
         $users = $q->execute();
 
@@ -145,7 +145,7 @@ class Doctrine_Query_Where_TestCase extends Doctrine_UnitTestCase
     {
         $q = new Doctrine_Query();
 
-        $q->from('User u')->addWhere('u.id NOT IN (?)', array(1));
+        $q->from('User u')->addWhere('u.id NOT IN (?)', [1]);
         $users = $q->execute();
 
         $this->assertEqual($users->count(), 1);
@@ -195,7 +195,7 @@ class Doctrine_Query_Where_TestCase extends Doctrine_UnitTestCase
     {
         $q = new Doctrine_Query();
 
-        $q->from('User u')->addWhere('u.id IN (?, ?)', array(1,2));
+        $q->from('User u')->addWhere('u.id IN (?, ?)', [1,2]);
 
         $users = $q->execute();
 
@@ -208,7 +208,7 @@ class Doctrine_Query_Where_TestCase extends Doctrine_UnitTestCase
     {
         $q = new Doctrine_Query();
 
-        $q->from('User u')->addWhere('u.name = ?', array('someone'));
+        $q->from('User u')->addWhere('u.name = ?', ['someone']);
 
         $users = $q->execute();
 

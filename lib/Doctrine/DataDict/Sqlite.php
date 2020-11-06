@@ -20,14 +20,14 @@
  */
 
 /**
- * @package     Doctrine
- * @subpackage  DataDict
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @author      Lukas Smith <smith@pooteeweet.org> (PEAR MDB2 library)
- * @version     $Revision: 7490 $
- * @link        www.doctrine-project.org
- * @since       1.0
+ * @package    Doctrine
+ * @subpackage DataDict
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @author     Lukas Smith <smith@pooteeweet.org> (PEAR MDB2 library)
+ * @version    $Revision: 7490 $
+ * @link       www.doctrine-project.org
+ * @since      1.0
  */
 class Doctrine_DataDict_Sqlite extends Doctrine_DataDict
 {
@@ -35,21 +35,17 @@ class Doctrine_DataDict_Sqlite extends Doctrine_DataDict
      * Obtain DBMS specific SQL code portion needed to declare an text type
      * field to be used in statements like CREATE TABLE.
      *
-     * @param array $field  associative array with the name of the properties
-     *      of the field being declared as array indexes. Currently, the types
-     *      of supported field properties are as follows:
-     *
-     *      length
-     *          Integer value that determines the maximum length of the text
-     *          field. If this argument is missing the field should be
-     *          declared to have the longest length allowed by the DBMS.
-     *
-     *      default
-     *          Text value to be used as default for this field.
-     *
-     *      notnull
-     *          Boolean flag that indicates whether this field is constrained
-     *          to not be set to null.
+     * @param  array $field associative array with the name of the properties
+     *                      of the field being declared as array indexes.
+     *                      Currently, the types of supported field
+     *                      properties are as follows: length Integer value
+     *                      that determines the maximum length of the text
+     *                      field. If this argument is missing the field
+     *                      should be declared to have the longest length
+     *                      allowed by the DBMS. default Text value to be
+     *                      used as default for this field. notnull Boolean
+     *                      flag that indicates whether this field is
+     *                      constrained to not be set to null.
      * @author Lukas Smith (PEAR MDB2 library)
      * @return string  DBMS specific SQL code portion that should be used to
      *      declare the specified field.
@@ -125,7 +121,7 @@ class Doctrine_DataDict_Sqlite extends Doctrine_DataDict
     /**
      * Maps a native array description of a field to Doctrine datatype and length
      *
-     * @param array  $field native field description
+     * @param  array $field native field description
      * @return array containing the various possible types, length, sign, fixed
      */
     public function getPortableDeclaration(array $field)
@@ -146,7 +142,7 @@ class Doctrine_DataDict_Sqlite extends Doctrine_DataDict
         $length   = (isset($field['length'])) ? $field['length'] : null;
         $unsigned = (isset($field['unsigned'])) ? $field['unsigned'] : null;
         $fixed    = null;
-        $type     = array();
+        $type     = [];
 
         if (! isset($field['name'])) {
             $field['name'] = '';
@@ -256,34 +252,27 @@ class Doctrine_DataDict_Sqlite extends Doctrine_DataDict
                 $length = isset($field['length']) ? $field['length']:null;
         }
 
-        return array('type'     => $type,
+        return ['type'     => $type,
                      'length'   => $length,
                      'unsigned' => $unsigned,
-                     'fixed'    => $fixed);
+                     'fixed'    => $fixed];
     }
 
     /**
      * Obtain DBMS specific SQL code portion needed to declare an integer type
      * field to be used in statements like CREATE TABLE.
      *
-     * @param string  $name   name the field to be declared.
-     * @param array  $field   associative array with the name of the properties
-     *                        of the field being declared as array indexes.
-     *                        Currently, the types of supported field
-     *                        properties are as follows:
-     *
-     *                       unsigned
-     *                        Boolean flag that indicates whether the field
-     *                        should be declared as unsigned integer if
-     *                        possible.
-     *
-     *                       default
-     *                        Integer value to be used as default for this
-     *                        field.
-     *
-     *                       notnull
-     *                        Boolean flag that indicates whether this field is
-     *                        constrained to not be set to null.
+     * @param  string $name  name the field to be declared.
+     * @param  array  $field associative array with the name of the properties
+     *                       of the field being declared as array indexes.
+     *                       Currently, the types of supported field
+     *                       properties are as follows: unsigned Boolean flag
+     *                       that indicates whether the field should be
+     *                       declared as unsigned integer if possible. default
+     *                       Integer value to be used as default for this
+     *                       field. notnull Boolean flag that indicates
+     *                       whether this field is constrained to not be set
+     *                       to null.
      * @return string  DBMS specific SQL code portion that should be used to
      *                 declare the specified field.
      * @access protected

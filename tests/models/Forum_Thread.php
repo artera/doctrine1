@@ -9,7 +9,7 @@ class Forum_Thread extends Doctrine_Record
     }
     public function setUp()
     {
-        $this->hasOne('Forum_Board as Board', array('local' => 'board_id', 'foreign' => 'id', 'onDelete' => 'CASCADE'));
-        $this->hasMany('Forum_Entry as Entries', array('local' => 'id', 'foreign' => 'thread_id'));
+        $this->hasOne('Forum_Board as Board', ['local' => 'board_id', 'foreign' => 'id', 'onDelete' => 'CASCADE']);
+        $this->hasMany('Forum_Entry as Entries', ['local' => 'id', 'foreign' => 'thread_id']);
     }
 }

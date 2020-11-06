@@ -22,21 +22,21 @@
 /**
  * Doctrine_Validator_Email
  *
- * @package     Doctrine
- * @subpackage  Validator
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 7490 $
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @package    Doctrine
+ * @subpackage Validator
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 7490 $
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
 class Doctrine_Validator_Email extends Doctrine_Validator_Driver
 {
     /**
      * checks if given value is a valid email address
      *
-     * @link http://iamcal.com/publish/articles/php/parsing_email/pdf/
-     * @param mixed $value
+     * @link   http://iamcal.com/publish/articles/php/parsing_email/pdf/
+     * @param  mixed $value
      * @return boolean
      */
     public function validate($value)
@@ -88,14 +88,14 @@ class Doctrine_Validator_Email extends Doctrine_Validator_Driver
     /**
      * Check DNS Records for MX type
      *
-     * @param string $host Host name
+     * @param  string $host Host name
      * @return boolean
      */
     private function _checkMX($host)
     {
         // We have different behavior here depending of OS and PHP version
         if (strtolower(substr(PHP_OS, 0, 3)) == 'win' && version_compare(PHP_VERSION, '5.3.0', '<')) {
-            $output = array();
+            $output = [];
 
             @exec('nslookup -type=MX ' . escapeshellcmd($host) . ' 2>&1', $output);
 

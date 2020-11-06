@@ -3,13 +3,13 @@
 /**
  * Doctrine_Ticket_585_TestCase
  *
- * @package     Doctrine
- * @author      Jay Klehr <jay@diablomedia.com>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Jay Klehr <jay@diablomedia.com>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 
 class Doctrine_Ticket_DC585_TestCase extends Doctrine_UnitTestCase
@@ -23,7 +23,7 @@ class Doctrine_Ticket_DC585_TestCase extends Doctrine_UnitTestCase
 
     public function prepareTables()
     {
-        $this->tables = array('DC585Site', 'DC585PlaceholderValues', 'DC585Placeholder', 'DC585Page', 'DC585PagesPlaceholders');
+        $this->tables = ['DC585Site', 'DC585PlaceholderValues', 'DC585Placeholder', 'DC585Page', 'DC585PagesPlaceholders'];
         parent::prepareTables();
     }
 
@@ -65,15 +65,24 @@ class DC585Site extends Doctrine_Record
     public function setTableDefinition()
     {
         $this->setTableName('Sites');
-        $this->hasColumn('id', 'string', 8, array(
+        $this->hasColumn(
+            'id',
+            'string',
+            8,
+            [
              'type'          => 'string',
              'fixed'         => 0,
              'unsigned'      => false,
              'primary'       => true,
              'autoincrement' => false,
              'length'        => '8',
-             ));
-        $this->hasColumn('name', 'string', 255, array(
+            ]
+        );
+        $this->hasColumn(
+            'name',
+            'string',
+            255,
+            [
              'type'          => 'string',
              'fixed'         => 0,
              'unsigned'      => false,
@@ -81,15 +90,19 @@ class DC585Site extends Doctrine_Record
              'notnull'       => true,
              'autoincrement' => false,
              'length'        => '255',
-             ));
+            ]
+        );
     }
 
     public function setUp()
     {
         parent::setUp();
-        $this->hasMany('DC585PlaceholderValues as Placeholders', array(
+        $this->hasMany(
+            'DC585PlaceholderValues as Placeholders',
+            [
              'local'   => 'id',
-             'foreign' => 'site_id'));
+            'foreign' => 'site_id']
+        );
     }
 }
 
@@ -98,15 +111,24 @@ class DC585PlaceholderValues extends Doctrine_Record
     public function setTableDefinition()
     {
         $this->setTableName('Placeholders_Values');
-        $this->hasColumn('id', 'integer', 4, array(
+        $this->hasColumn(
+            'id',
+            'integer',
+            4,
+            [
              'type'          => 'integer',
              'fixed'         => 0,
              'unsigned'      => true,
              'primary'       => true,
              'autoincrement' => true,
              'length'        => '4',
-             ));
-        $this->hasColumn('site_id', 'string', 8, array(
+            ]
+        );
+        $this->hasColumn(
+            'site_id',
+            'string',
+            8,
+            [
              'type'          => 'string',
              'fixed'         => 0,
              'unsigned'      => false,
@@ -114,8 +136,13 @@ class DC585PlaceholderValues extends Doctrine_Record
              'notnull'       => true,
              'autoincrement' => false,
              'length'        => '8',
-             ));
-        $this->hasColumn('placeholder_id', 'integer', 4, array(
+            ]
+        );
+        $this->hasColumn(
+            'placeholder_id',
+            'integer',
+            4,
+            [
              'type'          => 'integer',
              'fixed'         => 0,
              'unsigned'      => true,
@@ -123,8 +150,13 @@ class DC585PlaceholderValues extends Doctrine_Record
              'notnull'       => true,
              'autoincrement' => false,
              'length'        => '4',
-             ));
-        $this->hasColumn('value', 'string', null, array(
+            ]
+        );
+        $this->hasColumn(
+            'value',
+            'string',
+            null,
+            [
              'type'          => 'string',
              'fixed'         => 0,
              'unsigned'      => false,
@@ -132,19 +164,26 @@ class DC585PlaceholderValues extends Doctrine_Record
              'notnull'       => true,
              'autoincrement' => false,
              'length'        => '',
-             ));
+            ]
+        );
     }
 
     public function setUp()
     {
         parent::setUp();
-        $this->hasOne('DC585Site', array(
+        $this->hasOne(
+            'DC585Site',
+            [
              'local'   => 'site_id',
-             'foreign' => 'id'));
+            'foreign' => 'id']
+        );
 
-        $this->hasOne('DC585Placeholder', array(
+        $this->hasOne(
+            'DC585Placeholder',
+            [
              'local'   => 'placeholder_id',
-             'foreign' => 'id'));
+            'foreign' => 'id']
+        );
     }
 }
 
@@ -153,15 +192,24 @@ class DC585Page extends Doctrine_Record
     public function setTableDefinition()
     {
         $this->setTableName('Pages');
-        $this->hasColumn('id', 'string', 8, array(
+        $this->hasColumn(
+            'id',
+            'string',
+            8,
+            [
              'type'          => 'string',
              'fixed'         => 0,
              'unsigned'      => false,
              'primary'       => true,
              'autoincrement' => false,
              'length'        => '8',
-             ));
-        $this->hasColumn('name', 'string', 255, array(
+            ]
+        );
+        $this->hasColumn(
+            'name',
+            'string',
+            255,
+            [
              'type'          => 'string',
              'fixed'         => 0,
              'unsigned'      => false,
@@ -169,16 +217,20 @@ class DC585Page extends Doctrine_Record
              'notnull'       => true,
              'autoincrement' => false,
              'length'        => '255',
-             ));
+            ]
+        );
     }
 
     public function setUp()
     {
         parent::setUp();
-        $this->hasMany('DC585Placeholder as Placeholders', array(
+        $this->hasMany(
+            'DC585Placeholder as Placeholders',
+            [
              'refClass' => 'PagesPlaceholders',
              'local'    => 'page_id',
-             'foreign'  => 'placeholder_id'));
+            'foreign'  => 'placeholder_id']
+        );
     }
 }
 
@@ -187,15 +239,24 @@ class DC585Placeholder extends Doctrine_Record
     public function setTableDefinition()
     {
         $this->setTableName('PlaceholderKeys');
-        $this->hasColumn('id', 'integer', 4, array(
+        $this->hasColumn(
+            'id',
+            'integer',
+            4,
+            [
              'type'          => 'integer',
              'fixed'         => 0,
              'unsigned'      => true,
              'primary'       => true,
              'autoincrement' => true,
              'length'        => '4',
-             ));
-        $this->hasColumn('placeholder', 'string', 255, array(
+            ]
+        );
+        $this->hasColumn(
+            'placeholder',
+            'string',
+            255,
+            [
              'type'          => 'string',
              'fixed'         => 0,
              'unsigned'      => false,
@@ -203,20 +264,27 @@ class DC585Placeholder extends Doctrine_Record
              'notnull'       => true,
              'autoincrement' => false,
              'length'        => '255',
-             ));
+            ]
+        );
     }
 
     public function setUp()
     {
         parent::setUp();
-        $this->hasMany('DC585Page', array(
+        $this->hasMany(
+            'DC585Page',
+            [
              'refClass' => 'DC585PagesPlaceholders',
              'local'    => 'placeholder_id',
-             'foreign'  => 'page_id'));
+            'foreign'  => 'page_id']
+        );
 
-        $this->hasMany('DC585PlaceholderValues', array(
+        $this->hasMany(
+            'DC585PlaceholderValues',
+            [
              'local'   => 'id',
-             'foreign' => 'placeholder_id'));
+            'foreign' => 'placeholder_id']
+        );
     }
 }
 
@@ -225,23 +293,37 @@ class DC585PagesPlaceholders extends Doctrine_Record
     public function setTableDefinition()
     {
         $this->setTableName('Pages_Placeholders');
-        $this->hasColumn('id', 'integer', 10, array(
+        $this->hasColumn(
+            'id',
+            'integer',
+            10,
+            [
              'type'          => 'integer',
              'fixed'         => 0,
              'unsigned'      => true,
              'primary'       => true,
              'autoincrement' => true,
              'length'        => '10',
-             ));
-        $this->hasColumn('page_id', 'string', 8, array(
+            ]
+        );
+        $this->hasColumn(
+            'page_id',
+            'string',
+            8,
+            [
              'type'          => 'string',
              'fixed'         => 0,
              'unsigned'      => false,
              'primary'       => true,
              'autoincrement' => false,
              'length'        => '8',
-             ));
-        $this->hasColumn('placeholder_id', 'integer', 4, array(
+            ]
+        );
+        $this->hasColumn(
+            'placeholder_id',
+            'integer',
+            4,
+            [
              'type'          => 'integer',
              'fixed'         => 0,
              'unsigned'      => true,
@@ -249,7 +331,8 @@ class DC585PagesPlaceholders extends Doctrine_Record
              'notnull'       => true,
              'autoincrement' => false,
              'length'        => '4',
-             ));
+            ]
+        );
     }
 
     public function setUp()

@@ -24,13 +24,13 @@ use Symfony\Component\Yaml\Yaml;
 /**
  * Doctrine_Parser_Yml
  *
- * @package     Doctrine
- * @subpackage  Parser
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 1080 $
- * @author      Jonathan H. Wage <jwage@mac.com>, Thomas Courbon <harthie@yahoo.fr>
+ * @package    Doctrine
+ * @subpackage Parser
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 1080 $
+ * @author     Jonathan H. Wage <jwage@mac.com>, Thomas Courbon <harthie@yahoo.fr>
  */
 class Doctrine_Parser_Yml extends Doctrine_Parser
 {
@@ -40,9 +40,9 @@ class Doctrine_Parser_Yml extends Doctrine_Parser
      * Dump an array of data to a specified path or return
      *
      * @throws Doctrine_Parser_Exception dumping error
-     * @param  array $array Array of data to dump to yaml
-     * @param  string $path  Path to dump the yaml to
-     * @param string $charset
+     * @param  array  $array   Array of data to dump to yaml
+     * @param  string $path    Path to dump the yaml to
+     * @param  string $charset
      * @return int|false|string
      */
     public function dumpData($array, $path = null, $charset = null)
@@ -65,7 +65,7 @@ class Doctrine_Parser_Yml extends Doctrine_Parser
      * Load and parse data from a yml file
      *
      * @throws Doctrine_Parser_Exception parsing error
-     * @param  string  $path  Path to load yaml data from
+     * @param  string $path Path to load yaml data from
      * @return array   $array Array of parsed yaml data
      */
     public function loadData($path)

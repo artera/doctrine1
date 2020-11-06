@@ -8,9 +8,15 @@ class Element extends Doctrine_Record
     }
     public function setUp()
     {
-        $this->hasMany('Element as Child', array('local'   => 'id',
-                                                 'foreign' => 'parent_id'));
-        $this->hasOne('Element as Parent', array('local'   => 'parent_id',
-                                                 'foreign' => 'id'));
+        $this->hasMany(
+            'Element as Child',
+            ['local'   => 'id',
+            'foreign' => 'parent_id']
+        );
+        $this->hasOne(
+            'Element as Parent',
+            ['local'   => 'parent_id',
+            'foreign' => 'id']
+        );
     }
 }

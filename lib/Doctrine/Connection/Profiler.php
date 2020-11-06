@@ -19,37 +19,37 @@
 /**
  * Doctrine_Connection_Profiler
  *
- * @package     Doctrine
- * @subpackage  Connection
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package    Doctrine
+ * @subpackage Connection
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision$
  */
 class Doctrine_Connection_Profiler implements Doctrine_Overloadable, IteratorAggregate, Countable
 {
     /**
      * @var array $listeners      an array containing all availible listeners
      */
-    private $listeners = array('query',
+    private $listeners = ['query',
                                 'prepare',
                                 'commit',
                                 'rollback',
                                 'connect',
                                 'begintransaction',
                                 'exec',
-                                'execute');
+                                'execute'];
 
     /**
      * @var array $events         an array containing all listened events
      */
-    private $events = array();
+    private $events = [];
 
     /**
      * @var array $eventSequences         an array containing sequences of all listened events as keys
      */
-    private $eventSequences = array();
+    private $eventSequences = [];
 
     /**
      * constructor
@@ -71,9 +71,9 @@ class Doctrine_Connection_Profiler implements Doctrine_Overloadable, IteratorAgg
      * this method is used for invoking different listeners, for the full
      * list of availible listeners, see Doctrine_EventListener
      *
-     * @param string $m     the name of the method
-     * @param array $a      method arguments
-     * @see Doctrine_EventListener
+     * @param  string $m the name of the method
+     * @param  array  $a method arguments
+     * @see    Doctrine_EventListener
      * @return void
      */
     public function __call($m, $a)
@@ -102,7 +102,7 @@ class Doctrine_Connection_Profiler implements Doctrine_Overloadable, IteratorAgg
     /**
      * get
      *
-     * @param mixed $key
+     * @param  mixed $key
      * @return Doctrine_Event|null
      */
     public function get($key)

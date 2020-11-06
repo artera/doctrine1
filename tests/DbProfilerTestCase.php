@@ -38,7 +38,7 @@ class Doctrine_Db_Profiler_TestCase extends Doctrine_UnitTestCase
         $this->assertEqual($this->profiler->lastEvent()->getType(), Doctrine_Db_Event::PREPARE);
         $this->assertTrue(is_numeric($this->profiler->lastEvent()->getElapsedSecs()));
 
-        $stmt->execute(array(1));
+        $stmt->execute([1]);
 
         $this->assertEqual($this->profiler->lastEvent()->getQuery(), 'INSERT INTO test (id) VALUES (?)');
         $this->assertTrue($this->profiler->lastEvent()->hasEnded());
@@ -61,8 +61,8 @@ class Doctrine_Db_Profiler_TestCase extends Doctrine_UnitTestCase
         $this->assertEqual($this->profiler->lastEvent()->getType(), Doctrine_Db_Event::PREPARE);
         $this->assertTrue(is_numeric($this->profiler->lastEvent()->getElapsedSecs()));
 
-        $stmt->execute(array(1));
-        $stmt2->execute(array(1));
+        $stmt->execute([1]);
+        $stmt2->execute([1]);
 
         $this->assertEqual($this->profiler->lastEvent()->getQuery(), 'INSERT INTO test (id) VALUES (?)');
         $this->assertTrue($this->profiler->lastEvent()->hasEnded());
@@ -75,8 +75,8 @@ class Doctrine_Db_Profiler_TestCase extends Doctrine_UnitTestCase
     {
         try {
             $stmt = $this->dbh->prepare('INSERT INTO test (id) VALUES (?)');
-            $stmt->execute(array(1));
-            $stmt->execute(array(1));
+            $stmt->execute([1]);
+            $stmt->execute([1]);
             $this->pass();
         } catch (Doctrine_Db_Exception $e) {
             $this->fail($e->__toString());

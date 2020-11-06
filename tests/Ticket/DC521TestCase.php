@@ -21,14 +21,24 @@ class DC521TestModel extends Doctrine_Record
     public function setTableDefinition()
     {
         $this->setTableName('dc521_test_model');
-        $this->hasColumn('id', 'integer', null, array(
+        $this->hasColumn(
+            'id',
+            'integer',
+            null,
+            [
              'type'          => 'integer',
              'primary'       => true,
              'autoincrement' => true,
-             ));
-        $this->hasColumn('data', 'string', null, array(
+            ]
+        );
+        $this->hasColumn(
+            'data',
+            'string',
+            null,
+            [
              'type' => 'string',
-             ));
+            ]
+        );
     }
 
     public function setUp()
@@ -42,11 +52,16 @@ class DC521IdOnlyTestModel extends Doctrine_Record
     public function setTableDefinition()
     {
         $this->setTableName('dc521_idonly_test_model');
-        $this->hasColumn('id', 'integer', null, array(
+        $this->hasColumn(
+            'id',
+            'integer',
+            null,
+            [
              'type'          => 'integer',
              'primary'       => true,
              'autoincrement' => true,
-             ));
+            ]
+        );
     }
 
     public function setUp()
@@ -58,13 +73,13 @@ class DC521IdOnlyTestModel extends Doctrine_Record
 /**
  * Doctrine_Ticket_DC521_TestCase
  *
- * @package     Doctrine
- * @author      Gergely Kis <gergely.kis@mattakis.com>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.2
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Gergely Kis <gergely.kis@mattakis.com>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.2
+ * @version  $Revision$
  */
 class Doctrine_Ticket_DC521_TestCase extends Doctrine_UnitTestCase
 {
@@ -125,7 +140,7 @@ class Doctrine_Ticket_DC521_TestCase extends Doctrine_UnitTestCase
 
     public function prepareTables()
     {
-        $this->tables = array('DC521TestModel', 'DC521IdOnlyTestModel');
+        $this->tables = ['DC521TestModel', 'DC521IdOnlyTestModel'];
         parent::prepareTables();
     }
 

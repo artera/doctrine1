@@ -19,13 +19,13 @@
 /**
  * Doctrine_Ticket_DC198_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Ticket_DC198_TestCase extends Doctrine_UnitTestCase
 {
@@ -69,20 +69,33 @@ class Ticket_DC198_Email extends Doctrine_Record
 {
     public function setTableDefinition()
     {
-        $this->hasColumn('user_id', 'integer', null, array(
+        $this->hasColumn(
+            'user_id',
+            'integer',
+            null,
+            [
              'type' => 'integer',
-             ));
-        $this->hasColumn('address', 'string', 150, array(
+            ]
+        );
+        $this->hasColumn(
+            'address',
+            'string',
+            150,
+            [
              'type'   => 'string',
              'length' => '150',
-             ));
+            ]
+        );
     }
 
     public function setUp()
     {
-        $this->hasOne('Ticket_DC198_User', array(
+        $this->hasOne(
+            'Ticket_DC198_User',
+            [
              'local'   => 'user_id',
-             'foreign' => 'id'));
+            'foreign' => 'id']
+        );
     }
 }
 
@@ -90,16 +103,24 @@ class Ticket_DC198_User extends Doctrine_Record
 {
     public function setTableDefinition()
     {
-        $this->hasColumn('name', 'string', 150, array(
+        $this->hasColumn(
+            'name',
+            'string',
+            150,
+            [
              'type'   => 'string',
              'length' => '150',
-             ));
+            ]
+        );
     }
 
     public function setUp()
     {
-        $this->hasOne('Ticket_DC198_Email as email', array(
+        $this->hasOne(
+            'Ticket_DC198_Email as email',
+            [
              'local'   => 'id',
-             'foreign' => 'user_id'));
+            'foreign' => 'user_id']
+        );
     }
 }

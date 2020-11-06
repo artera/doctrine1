@@ -7,11 +7,11 @@ class UnitTestCase
 
     protected $_skipped = 0;
 
-    protected $_messages = array();
+    protected $_messages = [];
 
-    protected static $_passesAndFails = array('passes' => array(), 'fails' => array(), 'skips' => array());
+    protected static $_passesAndFails = ['passes' => [], 'fails' => [], 'skips' => []];
 
-    protected static $_lastRunsPassesAndFails = array('passes' => array(), 'fails' => array(), 'skips' => array());
+    protected static $_lastRunsPassesAndFails = ['passes' => [], 'fails' => [], 'skips' => []];
 
     public function init()
     {
@@ -20,7 +20,7 @@ class UnitTestCase
         if (file_exists($tmpFileName)) {
             $array = unserialize(file_get_contents($tmpFileName));
         } else {
-            $array = array();
+            $array = [];
         }
         if ($array) {
             self::$_lastRunsPassesAndFails = $array;
@@ -222,17 +222,17 @@ class UnitTestCase
 
     public function getLastRunsFails()
     {
-        return isset(self::$_lastRunsPassesAndFails['fails']) ? self::$_lastRunsPassesAndFails['fails'] : array();
+        return isset(self::$_lastRunsPassesAndFails['fails']) ? self::$_lastRunsPassesAndFails['fails'] : [];
     }
 
     public function getLastRunsPass()
     {
-        return isset(self::$_lastRunsPassesAndFails['passes']) ? self::$_lastRunsPassesAndFails['passes'] : array();
+        return isset(self::$_lastRunsPassesAndFails['passes']) ? self::$_lastRunsPassesAndFails['passes'] : [];
     }
 
     public function getNewFails()
     {
-        $newFails = array();
+        $newFails = [];
         $fails    = self::$_passesAndFails['fails'];
         foreach ($fails as $fail) {
             // If it passed before then it is a new fail
@@ -245,7 +245,7 @@ class UnitTestCase
 
     public function getFixedFails()
     {
-        $fixed = array();
+        $fixed = [];
         $fails = self::$_lastRunsPassesAndFails['fails'];
         foreach ($fails as $fail) {
             // If the fail passes this time then it is fixed

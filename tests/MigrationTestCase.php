@@ -19,13 +19,13 @@
 /**
  * Doctrine_Migration_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Migration_TestCase extends Doctrine_UnitTestCase
 {
@@ -69,19 +69,22 @@ class Doctrine_Migration_TestCase extends Doctrine_UnitTestCase
         $this->assertFalse($this->conn->import->tableExists('migration_phonenumber'));
         $this->assertFalse($this->conn->import->tableExists('migration_user'));
         $this->assertFalse($this->conn->import->tableExists('migration_profile'));
-        $this->assertEqual(array(
-          1  => 'AddPhonenumber',
-          2  => 'AddUser',
-          3  => 'AddProfile',
-          4  => 'DropProfile',
-          5  => 'Test5',
-          6  => 'Test6',
-          7  => 'Test7',
-          8  => 'Test8',
-          9  => 'Test9',
-          10 => 'Test10',
-          11 => 'Test11',
-        ), $migration->getMigrationClasses());
+        $this->assertEqual(
+            [
+            1  => 'AddPhonenumber',
+            2  => 'AddUser',
+            3  => 'AddProfile',
+            4  => 'DropProfile',
+            5  => 'Test5',
+            6  => 'Test6',
+            7  => 'Test7',
+            8  => 'Test8',
+            9  => 'Test9',
+            10 => 'Test10',
+            11 => 'Test11',
+            ],
+            $migration->getMigrationClasses()
+        );
     }
 
     public function testMigrateClearsErrors()
@@ -109,13 +112,13 @@ class Doctrine_Migration_TestCase extends Doctrine_UnitTestCase
 
     public function testMigrationClassNameInflected()
     {
-        $tests = array('test-class-Name',
+        $tests = ['test-class-Name',
                        'test_class_name',
                        'test:class:name',
                        'test(class)name',
                        'test*class*name',
                        'test class name',
-                       'test&class&name');
+                       'test&class&name'];
 
         $builder = new Doctrine_Migration_Builder();
 

@@ -60,4 +60,4 @@ class Doctrine_DataDict_Sqlite_TestCase extends Doctrine_UnitTestCase {
         $this->assertEqual($this->columns['col_real']->getName(), 'col_real');
     }
 }
-*/
+ */

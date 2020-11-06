@@ -25,21 +25,21 @@
  * reading to a reader object and passes the result to a builder object which
  * builds a Doctrine data model.
  *
- * @package     Doctrine
- * @subpackage  Import
- * @link        www.doctrine-project.org
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @since       1.0
- * @version     $Revision: 7490 $
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @author      Jukka Hassinen <Jukka.Hassinen@BrainAlliance.com>
+ * @package    Doctrine
+ * @subpackage Import
+ * @link       www.doctrine-project.org
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @since      1.0
+ * @version    $Revision: 7490 $
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @author     Jukka Hassinen <Jukka.Hassinen@BrainAlliance.com>
  */
 class Doctrine_Import extends Doctrine_Connection_Module
 {
     /**
      * @var array
      */
-    protected $sql = array();
+    protected $sql = [];
 
     /**
      * lists all databases
@@ -72,7 +72,7 @@ class Doctrine_Import extends Doctrine_Connection_Module
     /**
      * lists all database triggers
      *
-     * @param string|null $database
+     * @param  string|null $database
      * @return array
      */
     public function listTriggers($database = null)
@@ -83,7 +83,7 @@ class Doctrine_Import extends Doctrine_Connection_Module
     /**
      * lists all database sequences
      *
-     * @param string|null $database
+     * @param  string|null $database
      * @return array
      */
     public function listSequences($database = null)
@@ -98,7 +98,7 @@ class Doctrine_Import extends Doctrine_Connection_Module
     /**
      * lists table constraints
      *
-     * @param string $table     database table name
+     * @param  string $table database table name
      * @return array
      */
     public function listTableConstraints($table)
@@ -122,7 +122,7 @@ class Doctrine_Import extends Doctrine_Connection_Module
      *     )
      * )
      *
-     * @param string $table     database table name
+     * @param  string $table database table name
      * @return array
      */
     public function listTableRelations($table)
@@ -133,7 +133,7 @@ class Doctrine_Import extends Doctrine_Connection_Module
     /**
      * lists table constraints
      *
-     * @param string $table     database table name
+     * @param  string $table database table name
      * @return array
      */
     public function listTableColumns($table)
@@ -144,7 +144,7 @@ class Doctrine_Import extends Doctrine_Connection_Module
     /**
      * lists table constraints
      *
-     * @param string $table     database table name
+     * @param  string $table database table name
      * @return array
      */
     public function listTableIndexes($table)
@@ -155,7 +155,7 @@ class Doctrine_Import extends Doctrine_Connection_Module
     /**
      * lists tables
      *
-     * @param string|null $database
+     * @param  string|null $database
      * @return array
      */
     public function listTables($database = null)
@@ -166,7 +166,7 @@ class Doctrine_Import extends Doctrine_Connection_Module
     /**
      * lists table triggers
      *
-     * @param string $table     database table name
+     * @param  string $table database table name
      * @return array
      */
     public function listTableTriggers($table)
@@ -177,7 +177,7 @@ class Doctrine_Import extends Doctrine_Connection_Module
     /**
      * lists table views
      *
-     * @param string $table     database table name
+     * @param  string $table database table name
      * @return array
      */
     public function listTableViews($table)
@@ -202,7 +202,7 @@ class Doctrine_Import extends Doctrine_Connection_Module
     /**
      * lists database views
      *
-     * @param string|null $database
+     * @param  string|null $database
      * @return array
      */
     public function listViews($database = null)
@@ -217,7 +217,7 @@ class Doctrine_Import extends Doctrine_Connection_Module
     /**
      * checks if a database exists
      *
-     * @param string $database
+     * @param  string $database
      * @return boolean
      */
     public function databaseExists($database)
@@ -228,7 +228,7 @@ class Doctrine_Import extends Doctrine_Connection_Module
     /**
      * checks if a function exists
      *
-     * @param string $function
+     * @param  string $function
      * @return boolean
      */
     public function functionExists($function)
@@ -239,8 +239,8 @@ class Doctrine_Import extends Doctrine_Connection_Module
     /**
      * checks if a trigger exists
      *
-     * @param string $trigger
-     * @param string|null $database
+     * @param  string      $trigger
+     * @param  string|null $database
      * @return boolean
      */
     public function triggerExists($trigger, $database = null)
@@ -251,8 +251,8 @@ class Doctrine_Import extends Doctrine_Connection_Module
     /**
      * checks if a sequence exists
      *
-     * @param string $sequence
-     * @param string|null $database
+     * @param  string      $sequence
+     * @param  string|null $database
      * @return boolean
      */
     public function sequenceExists($sequence, $database = null)
@@ -263,8 +263,8 @@ class Doctrine_Import extends Doctrine_Connection_Module
     /**
      * checks if a table constraint exists
      *
-     * @param string $constraint
-     * @param string $table     database table name
+     * @param  string $constraint
+     * @param  string $table      database table name
      * @return boolean
      */
     public function tableConstraintExists($constraint, $table)
@@ -275,8 +275,8 @@ class Doctrine_Import extends Doctrine_Connection_Module
     /**
      * checks if a table column exists
      *
-     * @param string $column
-     * @param string $table     database table name
+     * @param  string $column
+     * @param  string $table  database table name
      * @return boolean
      */
     public function tableColumnExists($column, $table)
@@ -287,8 +287,8 @@ class Doctrine_Import extends Doctrine_Connection_Module
     /**
      * checks if a table index exists
      *
-     * @param string $index
-     * @param string $table     database table name
+     * @param  string $index
+     * @param  string $table database table name
      * @return boolean
      */
     public function tableIndexExists($index, $table)
@@ -299,8 +299,8 @@ class Doctrine_Import extends Doctrine_Connection_Module
     /**
      * checks if a table exists
      *
-     * @param string $table
-     * @param string|null $database
+     * @param  string      $table
+     * @param  string|null $database
      * @return boolean
      */
     public function tableExists($table, $database = null)
@@ -311,8 +311,8 @@ class Doctrine_Import extends Doctrine_Connection_Module
     /**
      * checks if a table trigger exists
      *
-     * @param string $trigger
-     * @param string $table     database table name
+     * @param  string $trigger
+     * @param  string $table   database table name
      * @return boolean
      */
     public function tableTriggerExists($trigger, $table)
@@ -323,8 +323,8 @@ class Doctrine_Import extends Doctrine_Connection_Module
     /**
      * checks if a table view exists
      *
-     * @param string $view
-     * @param string $table     database table name
+     * @param  string $view
+     * @param  string $table database table name
      * @return boolean
      */
     public function tableViewExists($view, $table)
@@ -335,7 +335,7 @@ class Doctrine_Import extends Doctrine_Connection_Module
     /**
      * checks if a user exists
      *
-     * @param string $user
+     * @param  string $user
      * @return boolean
      */
     public function userExists($user)
@@ -346,8 +346,8 @@ class Doctrine_Import extends Doctrine_Connection_Module
     /**
      * checks if a view exists
      *
-     * @param string $view
-     * @param string|null $database
+     * @param  string      $view
+     * @param  string|null $database
      * @return boolean
      */
     public function viewExists($view, $database = null)
@@ -360,13 +360,13 @@ class Doctrine_Import extends Doctrine_Connection_Module
      *
      * method for importing existing schema to Doctrine_Record classes
      *
-     * @param string $directory
-     * @param array $connections Array of connection names to generate models for
+     * @param  string $directory
+     * @param  array  $connections Array of connection names to generate models for
      * @return array                the names of the imported classes
      */
-    public function importSchema($directory, array $connections = array(), array $options = array())
+    public function importSchema($directory, array $connections = [], array $options = [])
     {
-        $classes = array();
+        $classes = [];
 
         $manager = Doctrine_Manager::getInstance();
         foreach ($manager as $name => $connection) {
@@ -380,20 +380,20 @@ class Doctrine_Import extends Doctrine_Connection_Module
             $builder->setTargetPath($directory);
             $builder->setOptions($options);
 
-            $definitions = array();
+            $definitions = [];
 
             foreach ($connection->import->listTables() as $table) {
-                $definition                        = array();
+                $definition                        = [];
                 $definition['tableName']           = $table;
                 $definition['className']           = Doctrine_Inflector::classify(Doctrine_Inflector::tableize($table));
                 $definition['columns']             = $connection->import->listTableColumns($table);
                 $definition['connection']          = $connection->getName();
                 $definition['connectionClassName'] = $definition['className'];
-                $definition['relations']           = array();
+                $definition['relations']           = [];
 
                 try {
                     $relations  = $connection->import->listTableRelations($table);
-                    $relClasses = array();
+                    $relClasses = [];
                     foreach ($relations as $relation) {
                         $table = $relation['table'];
                         $class = Doctrine_Inflector::classify(Doctrine_Inflector::tableize($table));
@@ -403,12 +403,12 @@ class Doctrine_Import extends Doctrine_Connection_Module
                             $alias = $class;
                         }
                         $relClasses[]                    = $class;
-                        $definition['relations'][$alias] = array(
+                        $definition['relations'][$alias] = [
                           'alias'   => $alias,
                           'class'   => $class,
                           'local'   => $relation['local'],
                           'foreign' => $relation['foreign']
-                      );
+                        ];
                     }
                 } catch (Exception $e) {
                 }
@@ -420,7 +420,7 @@ class Doctrine_Import extends Doctrine_Connection_Module
             // Build opposite end of relationships
             foreach ($definitions as $definition) {
                 $className  = $definition['className'];
-                $relClasses = array();
+                $relClasses = [];
                 foreach ($definition['relations'] as $alias => $relation) {
                     if (in_array($relation['class'], $relClasses) || isset($definitions[$relation['class']]['relations'][$className])) {
                         $alias = $className . '_' . (count($relClasses) + 1);
@@ -428,13 +428,13 @@ class Doctrine_Import extends Doctrine_Connection_Module
                         $alias = $className;
                     }
                     $relClasses[]                                                     = $relation['class'];
-                    $definitions[strtolower($relation['class'])]['relations'][$alias] = array(
+                    $definitions[strtolower($relation['class'])]['relations'][$alias] = [
                     'type'    => Doctrine_Relation::MANY,
                     'alias'   => $alias,
                     'class'   => $className,
                     'local'   => $relation['foreign'],
                     'foreign' => $relation['local']
-                  );
+                    ];
                 }
             }
 

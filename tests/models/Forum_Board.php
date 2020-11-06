@@ -9,7 +9,7 @@ class Forum_Board extends Doctrine_Record
     }
     public function setUp()
     {
-        $this->hasOne('Forum_Category as Category', array('local' => 'category_id', 'foreign' => 'id'));
-        $this->hasMany('Forum_Thread as Threads', array('local' => 'id', 'foreign' => 'board_id'));
+        $this->hasOne('Forum_Category as Category', ['local' => 'category_id', 'foreign' => 'id']);
+        $this->hasMany('Forum_Thread as Threads', ['local' => 'id', 'foreign' => 'board_id']);
     }
 }

@@ -7,8 +7,11 @@ class ORM_AccessControl extends Doctrine_Record
     }
     public function setUp()
     {
-        $this->hasMany('ORM_AccessGroup as accessGroups', array(
+        $this->hasMany(
+            'ORM_AccessGroup as accessGroups',
+            [
             'local' => 'accessControlID', 'foreign' => 'accessGroupID', 'refClass' => 'ORM_AccessControlsGroups'
-        ));
+            ]
+        );
     }
 }

@@ -19,13 +19,13 @@
 /**
  * Doctrine_Ticket_1244_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Ticket_1244_TestCase extends Doctrine_UnitTestCase
 {
@@ -57,6 +57,6 @@ class Ticket_1244_Test extends Doctrine_Record
 {
     public function setTableDefinition()
     {
-        $this->hasColumn('test', 'integer', 4, array('range' => array(5, 10)));
+        $this->hasColumn('test', 'integer', 4, ['range' => [5, 10]]);
     }
 }

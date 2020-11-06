@@ -2,13 +2,13 @@
 /**
  * Doctrine_Ticket_749_TestCase
  *
- * @package     Doctrine
- * @author      David Brewer <dbrewer@secondstory.com>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   David Brewer <dbrewer@secondstory.com>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  *
  * This test case demonstrates a problem with column aggregation inheritance
  * in Doctrine 0.9. The high level summary is that it is possible to make
@@ -26,7 +26,7 @@ class Doctrine_Ticket_749_TestCase extends Doctrine_UnitTestCase
 {
     public function prepareTables()
     {
-        $this->tables = array('Parent749', 'Record749', 'RelatedRecord749');
+        $this->tables = ['Parent749', 'Record749', 'RelatedRecord749'];
         parent::prepareTables();
     }
 
@@ -45,14 +45,14 @@ class Doctrine_Ticket_749_TestCase extends Doctrine_UnitTestCase
 
     public function testSelectDataFromSubclassAsCollection()
     {
-        $records = Doctrine_Query::create()->query('FROM Record749 r ORDER BY r.title', array());
+        $records = Doctrine_Query::create()->query('FROM Record749 r ORDER BY r.title', []);
 
         $this->verifyRecords($records);
     }
 
     public function testSelectDataFromParentClassAsCollection()
     {
-        $records = Doctrine_Query::create()->query('FROM Parent749 p ORDER BY p.title', array());
+        $records = Doctrine_Query::create()->query('FROM Parent749 p ORDER BY p.title', []);
         $this->verifyRecords($records);
     }
 
@@ -62,10 +62,10 @@ class Doctrine_Ticket_749_TestCase extends Doctrine_UnitTestCase
      */
     private function verifyRecords($records)
     {
-        $expected_values = array(
-            array('title' => 'Test Record 1', 'content' => 'Test Content 1'),
-            array('title' => 'Test Record 2', 'content' => 'Test Content 2'),
-        );
+        $expected_values = [
+            ['title' => 'Test Record 1', 'content' => 'Test Content 1'],
+            ['title' => 'Test Record 2', 'content' => 'Test Content 2'],
+        ];
 
         foreach ($records as $record) {
             $this->assertTrue($record instanceof Record749);
@@ -85,16 +85,21 @@ class Parent749 extends Doctrine_Record
     public function setTableDefinition()
     {
         $this->setTableName('mytable');
-        $this->hasColumn('id', 'integer', 4, array(
-      'primary'       => true,
-      'autoincrement' => true,
-      'notnull'       => true,
-    ));
+        $this->hasColumn(
+            'id',
+            'integer',
+            4,
+            [
+            'primary'       => true,
+            'autoincrement' => true,
+            'notnull'       => true,
+            ]
+        );
 
-        $this->hasColumn('title', 'string', 255, array());
-        $this->hasColumn('type', 'integer', 11, array());
+        $this->hasColumn('title', 'string', 255, []);
+        $this->hasColumn('type', 'integer', 11, []);
 
-        $this->setSubclasses(array('Record749' => array('type' => 1)));
+        $this->setSubclasses(['Record749' => ['type' => 1]]);
     }
 
     public function setUp()
@@ -113,8 +118,11 @@ class Record749 extends Parent749
     public function setUp()
     {
         parent::setUp();
-        $this->hasOne('RelatedRecord749 as Related', array('local' => 'id',
-                                                    'foreign'      => 'record_id'));
+        $this->hasOne(
+            'RelatedRecord749 as Related',
+            ['local' => 'id',
+            'foreign'      => 'record_id']
+        );
     }
 }
 
@@ -122,20 +130,28 @@ class RelatedRecord749 extends Doctrine_Record
 {
     public function setTableDefinition()
     {
-        $this->hasColumn('id', 'integer', 4, array(
-      'primary'       => true,
-      'autoincrement' => true,
-      'notnull'       => true,
-    ));
+        $this->hasColumn(
+            'id',
+            'integer',
+            4,
+            [
+            'primary'       => true,
+            'autoincrement' => true,
+            'notnull'       => true,
+            ]
+        );
 
-        $this->hasColumn('content', 'string', 255, array());
-        $this->hasColumn('record_id', 'integer', null, array('unique' => true,));
+        $this->hasColumn('content', 'string', 255, []);
+        $this->hasColumn('record_id', 'integer', null, ['unique' => true,]);
     }
 
     public function setUp()
     {
-        $this->hasOne('Record749 as Record', array('local' => 'record_id',
+        $this->hasOne(
+            'Record749 as Record',
+            ['local' => 'record_id',
                                   'foreign'                => 'id',
-                                  'onDelete'               => 'cascade'));
+            'onDelete'               => 'cascade']
+        );
     }
 }

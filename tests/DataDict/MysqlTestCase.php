@@ -19,13 +19,13 @@
 /**
  * Doctrine_DataDict_Mysql_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_DataDict_Mysql_TestCase extends Doctrine_UnitTestCase
 {
@@ -41,281 +41,377 @@ class Doctrine_DataDict_Mysql_TestCase extends Doctrine_UnitTestCase
 
     public function testGetPortableDeclarationSupportsNativeIntegerTypes()
     {
-        $type = $this->dataDict->getPortableDeclaration(array('type' => 'tinyint'));
+        $type = $this->dataDict->getPortableDeclaration(['type' => 'tinyint']);
 
-        $this->assertEqual($type, array('type'     => array('integer', 'boolean'),
+        $this->assertEqual(
+            $type,
+            ['type'     => ['integer', 'boolean'],
                                         'length'   => 1,
                                         'unsigned' => null,
-                                        'fixed'    => null));
+            'fixed'    => null]
+        );
 
         // If column name starts with "is" or "has" treat as a boolean
-        $type = $this->dataDict->getPortableDeclaration(array('type' => 'tinyint', 'field' => 'isenabled'));
+        $type = $this->dataDict->getPortableDeclaration(['type' => 'tinyint', 'field' => 'isenabled']);
 
-        $this->assertEqual($type, array('type'     => array('boolean', 'integer'),
+        $this->assertEqual(
+            $type,
+            ['type'     => ['boolean', 'integer'],
                                         'length'   => 1,
                                         'unsigned' => null,
-                                        'fixed'    => null));
+            'fixed'    => null]
+        );
 
-        $type = $this->dataDict->getPortableDeclaration(array('type' => 'smallint unsigned'));
+        $type = $this->dataDict->getPortableDeclaration(['type' => 'smallint unsigned']);
 
-        $this->assertEqual($type, array('type'     => array('integer'),
+        $this->assertEqual(
+            $type,
+            ['type'     => ['integer'],
                                         'length'   => 2,
                                         'unsigned' => true,
-                                        'fixed'    => null));
+            'fixed'    => null]
+        );
 
-        $type = $this->dataDict->getPortableDeclaration(array('type' => 'mediumint unsigned'));
+        $type = $this->dataDict->getPortableDeclaration(['type' => 'mediumint unsigned']);
 
-        $this->assertEqual($type, array('type'     => array('integer'),
+        $this->assertEqual(
+            $type,
+            ['type'     => ['integer'],
                                         'length'   => 3,
                                         'unsigned' => true,
-                                        'fixed'    => null));
+            'fixed'    => null]
+        );
 
-        $type = $this->dataDict->getPortableDeclaration(array('type' => 'int unsigned'));
+        $type = $this->dataDict->getPortableDeclaration(['type' => 'int unsigned']);
 
-        $this->assertEqual($type, array('type'     => array('integer'),
+        $this->assertEqual(
+            $type,
+            ['type'     => ['integer'],
                                         'length'   => 4,
                                         'unsigned' => true,
-                                        'fixed'    => null));
+            'fixed'    => null]
+        );
 
-        $type = $this->dataDict->getPortableDeclaration(array('type' => 'integer unsigned'));
+        $type = $this->dataDict->getPortableDeclaration(['type' => 'integer unsigned']);
 
-        $this->assertEqual($type, array('type'     => array('integer'),
+        $this->assertEqual(
+            $type,
+            ['type'     => ['integer'],
                                         'length'   => 4,
                                         'unsigned' => true,
-                                        'fixed'    => null));
+            'fixed'    => null]
+        );
 
-        $type = $this->dataDict->getPortableDeclaration(array('type' => 'bigint unsigned'));
+        $type = $this->dataDict->getPortableDeclaration(['type' => 'bigint unsigned']);
 
-        $this->assertEqual($type, array('type'     => array('integer'),
+        $this->assertEqual(
+            $type,
+            ['type'     => ['integer'],
                                         'length'   => 8,
                                         'unsigned' => true,
-                                        'fixed'    => null));
+            'fixed'    => null]
+        );
     }
 
     public function testGetPortableDeclarationSupportsNativeStringTypes()
     {
-        $type = $this->dataDict->getPortableDeclaration(array('type' => 'text'));
+        $type = $this->dataDict->getPortableDeclaration(['type' => 'text']);
 
-        $this->assertEqual($type, array('type'     => array('string', 'clob'),
+        $this->assertEqual(
+            $type,
+            ['type'     => ['string', 'clob'],
                                         'length'   => null,
                                         'unsigned' => null,
-                                        'fixed'    => false));
+            'fixed'    => false]
+        );
 
-        $type = $this->dataDict->getPortableDeclaration(array('type' => 'longtext'));
+        $type = $this->dataDict->getPortableDeclaration(['type' => 'longtext']);
 
-        $this->assertEqual($type, array('type'     => array('string', 'clob'),
+        $this->assertEqual(
+            $type,
+            ['type'     => ['string', 'clob'],
                                         'length'   => null,
                                         'unsigned' => null,
-                                        'fixed'    => false));
+            'fixed'    => false]
+        );
 
-        $type = $this->dataDict->getPortableDeclaration(array('type' => 'mediumtext'));
+        $type = $this->dataDict->getPortableDeclaration(['type' => 'mediumtext']);
 
-        $this->assertEqual($type, array('type'     => array('string', 'clob'),
+        $this->assertEqual(
+            $type,
+            ['type'     => ['string', 'clob'],
                                         'length'   => null,
                                         'unsigned' => null,
-                                        'fixed'    => false));
+            'fixed'    => false]
+        );
 
-        $type = $this->dataDict->getPortableDeclaration(array('type' => 'tinytext'));
+        $type = $this->dataDict->getPortableDeclaration(['type' => 'tinytext']);
 
-        $this->assertEqual($type, array('type'     => array('string', 'clob'),
+        $this->assertEqual(
+            $type,
+            ['type'     => ['string', 'clob'],
                                         'length'   => null,
                                         'unsigned' => null,
-                                        'fixed'    => false));
+            'fixed'    => false]
+        );
 
-        $type = $this->dataDict->getPortableDeclaration(array('type' => 'tinyint', 'comment' => 'BOOL'));
+        $type = $this->dataDict->getPortableDeclaration(['type' => 'tinyint', 'comment' => 'BOOL']);
 
-        $this->assertEqual($type, array('type'     => array('boolean', 'integer'),
+        $this->assertEqual(
+            $type,
+            ['type'     => ['boolean', 'integer'],
                                         'length'   => 1,
                                         'unsigned' => false,
-                                        'fixed'    => null));
+            'fixed'    => null]
+        );
 
-        $type = $this->dataDict->getPortableDeclaration(array('type' => 'tinyint', 'field' => 'hascontent'));
+        $type = $this->dataDict->getPortableDeclaration(['type' => 'tinyint', 'field' => 'hascontent']);
 
-        $this->assertEqual($type, array('type'     => array('boolean', 'integer'),
+        $this->assertEqual(
+            $type,
+            ['type'     => ['boolean', 'integer'],
                                         'length'   => 1,
                                         'unsigned' => null,
-                                        'fixed'    => null));
+            'fixed'    => null]
+        );
 
-        $type = $this->dataDict->getPortableDeclaration(array('type' => 'tinyint'));
+        $type = $this->dataDict->getPortableDeclaration(['type' => 'tinyint']);
 
-        $this->assertEqual($type, array('type'     => array('integer', 'boolean'),
+        $this->assertEqual(
+            $type,
+            ['type'     => ['integer', 'boolean'],
                                         'length'   => 1,
                                         'unsigned' => null,
-                                        'fixed'    => false));
+            'fixed'    => false]
+        );
     }
 
     public function testGetPortableDeclarationSupportsNativeFloatTypes()
     {
-        $type = $this->dataDict->getPortableDeclaration(array('type' => 'float'));
+        $type = $this->dataDict->getPortableDeclaration(['type' => 'float']);
 
-        $this->assertEqual($type, array('type'     => array('float'),
+        $this->assertEqual(
+            $type,
+            ['type'     => ['float'],
                                         'length'   => null,
                                         'unsigned' => null,
-                                        'fixed'    => null));
+            'fixed'    => null]
+        );
 
-        $type = $this->dataDict->getPortableDeclaration(array('type' => 'real unsigned'));
+        $type = $this->dataDict->getPortableDeclaration(['type' => 'real unsigned']);
 
-        $this->assertEqual($type, array('type'     => array('float'),
+        $this->assertEqual(
+            $type,
+            ['type'     => ['float'],
                                         'length'   => null,
                                         'unsigned' => true,
-                                        'fixed'    => null));
+            'fixed'    => null]
+        );
 
-        $type = $this->dataDict->getPortableDeclaration(array('type' => 'double'));
+        $type = $this->dataDict->getPortableDeclaration(['type' => 'double']);
 
-        $this->assertEqual($type, array('type'     => array('float'),
+        $this->assertEqual(
+            $type,
+            ['type'     => ['float'],
                                         'length'   => null,
                                         'unsigned' => null,
-                                        'fixed'    => null));
+            'fixed'    => null]
+        );
     }
 
     public function testGetPortableDeclarationSupportsNativeDateType()
     {
-        $type = $this->dataDict->getPortableDeclaration(array('type' => 'date'));
+        $type = $this->dataDict->getPortableDeclaration(['type' => 'date']);
 
-        $this->assertEqual($type, array('type'     => array('date'),
+        $this->assertEqual(
+            $type,
+            ['type'     => ['date'],
                                         'length'   => null,
                                         'unsigned' => null,
-                                        'fixed'    => null));
+            'fixed'    => null]
+        );
     }
 
     public function testGetPortableDeclarationSupportsNativeDecimalTypes()
     {
-        $type = $this->dataDict->getPortableDeclaration(array('type' => 'decimal'));
+        $type = $this->dataDict->getPortableDeclaration(['type' => 'decimal']);
 
-        $this->assertEqual($type, array('type'     => array('decimal'),
+        $this->assertEqual(
+            $type,
+            ['type'     => ['decimal'],
                                         'length'   => null,
                                         'unsigned' => null,
-                                        'fixed'    => null));
+            'fixed'    => null]
+        );
 
-        $type = $this->dataDict->getPortableDeclaration(array('type' => 'unknown'));
+        $type = $this->dataDict->getPortableDeclaration(['type' => 'unknown']);
 
-        $this->assertEqual($type, array('type'     => array('decimal'),
+        $this->assertEqual(
+            $type,
+            ['type'     => ['decimal'],
                                         'length'   => null,
                                         'unsigned' => null,
-                                        'fixed'    => null));
+            'fixed'    => null]
+        );
 
-        $type = $this->dataDict->getPortableDeclaration(array('type' => 'numeric'));
+        $type = $this->dataDict->getPortableDeclaration(['type' => 'numeric']);
 
-        $this->assertEqual($type, array('type'     => array('decimal'),
+        $this->assertEqual(
+            $type,
+            ['type'     => ['decimal'],
                                         'length'   => null,
                                         'unsigned' => null,
-                                        'fixed'    => null));
+            'fixed'    => null]
+        );
     }
 
     public function testGetPortableDeclarationSupportsNativeTimestampTypes()
     {
-        $type = $this->dataDict->getPortableDeclaration(array('type' => 'timestamp'));
+        $type = $this->dataDict->getPortableDeclaration(['type' => 'timestamp']);
 
-        $this->assertEqual($type, array('type'     => array('timestamp'),
+        $this->assertEqual(
+            $type,
+            ['type'     => ['timestamp'],
                                         'length'   => null,
                                         'unsigned' => null,
-                                        'fixed'    => null));
+            'fixed'    => null]
+        );
 
-        $type = $this->dataDict->getPortableDeclaration(array('type' => 'datetime'));
+        $type = $this->dataDict->getPortableDeclaration(['type' => 'datetime']);
 
-        $this->assertEqual($type, array('type'     => array('timestamp'),
+        $this->assertEqual(
+            $type,
+            ['type'     => ['timestamp'],
                                         'length'   => null,
                                         'unsigned' => null,
-                                        'fixed'    => null));
+            'fixed'    => null]
+        );
     }
 
     public function testGetPortableDeclarationSupportsNativeYearType()
     {
-        $type = $this->dataDict->getPortableDeclaration(array('type' => 'year'));
+        $type = $this->dataDict->getPortableDeclaration(['type' => 'year']);
 
 
-        $this->assertEqual($type, array('type'     => array('integer', 'date'),
+        $this->assertEqual(
+            $type,
+            ['type'     => ['integer', 'date'],
                                         'length'   => null,
                                         'unsigned' => null,
-                                        'fixed'    => null));
+            'fixed'    => null]
+        );
     }
 
     public function testGetPortableDeclarationSupportsNativeBlobTypes()
     {
-        $type = $this->dataDict->getPortableDeclaration(array('type' => 'blob'));
+        $type = $this->dataDict->getPortableDeclaration(['type' => 'blob']);
 
-        $this->assertEqual($type, array('type'     => array('blob'),
+        $this->assertEqual(
+            $type,
+            ['type'     => ['blob'],
                                         'length'   => null,
                                         'unsigned' => null,
-                                        'fixed'    => null));
+            'fixed'    => null]
+        );
 
-        $type = $this->dataDict->getPortableDeclaration(array('type' => 'mediumblob'));
+        $type = $this->dataDict->getPortableDeclaration(['type' => 'mediumblob']);
 
-        $this->assertEqual($type, array('type'     => array('blob'),
+        $this->assertEqual(
+            $type,
+            ['type'     => ['blob'],
                                         'length'   => null,
                                         'unsigned' => null,
-                                        'fixed'    => null));
+            'fixed'    => null]
+        );
 
-        $type = $this->dataDict->getPortableDeclaration(array('type' => 'tinyblob'));
+        $type = $this->dataDict->getPortableDeclaration(['type' => 'tinyblob']);
 
-        $this->assertEqual($type, array('type'     => array('blob'),
+        $this->assertEqual(
+            $type,
+            ['type'     => ['blob'],
                                         'length'   => null,
                                         'unsigned' => null,
-                                        'fixed'    => null));
+            'fixed'    => null]
+        );
 
-        $type = $this->dataDict->getPortableDeclaration(array('type' => 'longblob'));
+        $type = $this->dataDict->getPortableDeclaration(['type' => 'longblob']);
 
-        $this->assertEqual($type, array('type'     => array('blob'),
+        $this->assertEqual(
+            $type,
+            ['type'     => ['blob'],
                                         'length'   => null,
                                         'unsigned' => null,
-                                        'fixed'    => null));
+            'fixed'    => null]
+        );
     }
 
     public function testGetPortableDeclarationSupportsNativeEnumTypes()
     {
-        $field = array(
+        $field = [
             'field'   => 'letter',
             'type'    => "enum('a','b','c')",
             'null'    => 'NO',
             'key'     => '',
             'default' => 'a',
             'extra'   => ''
-        );
+        ];
 
         $type = $this->dataDict->getPortableDeclaration($field);
 
-        $this->assertEqual($type, array('type'     => array('enum', 'integer'),
+        $this->assertEqual(
+            $type,
+            ['type'     => ['enum', 'integer'],
                                         'length'   => 1,
                                         'unsigned' => null,
                                         'fixed'    => false,
-                                        'values'   => array('a', 'b', 'c')));
+            'values'   => ['a', 'b', 'c']]
+        );
 
         $field['type'] = "set('a','b','c')";
 
         $type = $this->dataDict->getPortableDeclaration($field);
 
-        $this->assertEqual($type, array('type'     => array('set', 'integer'),
+        $this->assertEqual(
+            $type,
+            ['type'     => ['set', 'integer'],
                                         'length'   => 5,
                                         'unsigned' => null,
                                         'fixed'    => false,
-                                        'values'   => array('a', 'b', 'c')));
+            'values'   => ['a', 'b', 'c']]
+        );
 
         // Custom "boolean" type when ENUM only has two values
         $field['type'] = "enum('y','n')";
 
         $type = $this->dataDict->getPortableDeclaration($field);
 
-        $this->assertEqual($type, array('type'     => array('enum', 'boolean', 'integer'),
+        $this->assertEqual(
+            $type,
+            ['type'     => ['enum', 'boolean', 'integer'],
                                         'length'   => 1,
                                         'unsigned' => null,
                                         'fixed'    => false,
-                                        'values'   => array('y', 'n')));
+            'values'   => ['y', 'n']]
+        );
 
         // Another special case where types are flipped when field name is "is" or "has"
         $field['field'] = 'isenabled';
 
         $type = $this->dataDict->getPortableDeclaration($field);
 
-        $this->assertEqual($type, array('type'     => array('boolean', 'enum', 'integer'),
+        $this->assertEqual(
+            $type,
+            ['type'     => ['boolean', 'enum', 'integer'],
                                         'length'   => 1,
                                         'unsigned' => null,
                                         'fixed'    => false,
-                                        'values'   => array('y', 'n')));
+            'values'   => ['y', 'n']]
+        );
     }
 
     public function testGetNativeDefinitionSupportsEnumTypes()
     {
-        $a = array('type' => 'enum', 'fixed' => false, 'values' => array('a', 'b', 'c'));
+        $a = ['type' => 'enum', 'fixed' => false, 'values' => ['a', 'b', 'c']];
 
         // Native ENUM type disabled, should be VARCHAR
         $this->assertEqual($this->dataDict->getNativeDeclaration($a), 'VARCHAR(1)');
@@ -333,7 +429,7 @@ class Doctrine_DataDict_Mysql_TestCase extends Doctrine_UnitTestCase
 
     public function testGetNativeDefinitionSupportsSetTypes()
     {
-        $a = array('type' => 'set', 'fixed' => false, 'values' => array('a', 'b', 'c'));
+        $a = ['type' => 'set', 'fixed' => false, 'values' => ['a', 'b', 'c']];
 
         // Native SET type disabled, should be VARCHAR
         $this->assertEqual($this->dataDict->getNativeDeclaration($a), 'VARCHAR(5)');
@@ -349,7 +445,7 @@ class Doctrine_DataDict_Mysql_TestCase extends Doctrine_UnitTestCase
 
     public function testGetNativeDefinitionSupportsIntegerType()
     {
-        $a = array('type' => 'integer', 'length' => 20, 'fixed' => false);
+        $a = ['type' => 'integer', 'length' => 20, 'fixed' => false];
 
         $this->assertEqual($this->dataDict->getNativeDeclaration($a), 'BIGINT');
 
@@ -364,98 +460,98 @@ class Doctrine_DataDict_Mysql_TestCase extends Doctrine_UnitTestCase
 
     public function testGetNativeDeclarationSupportsFloatType()
     {
-        $a = array('type' => 'float', 'length' => 20, 'fixed' => false);
+        $a = ['type' => 'float', 'length' => 20, 'fixed' => false];
 
         $this->assertEqual($this->dataDict->GetNativeDeclaration($a), 'FLOAT(20, 2)');
     }
 
     public function testGetNativeDeclarationSupportsBooleanType()
     {
-        $a = array('type' => 'boolean', 'fixed' => false);
+        $a = ['type' => 'boolean', 'fixed' => false];
 
         $this->assertEqual($this->dataDict->GetNativeDeclaration($a), 'TINYINT(1)');
     }
 
     public function testGetNativeDeclarationSupportsDateType()
     {
-        $a = array('type' => 'date', 'fixed' => false);
+        $a = ['type' => 'date', 'fixed' => false];
 
         $this->assertEqual($this->dataDict->GetNativeDeclaration($a), 'DATE');
     }
 
     public function testGetNativeDeclarationSupportsTimestampType()
     {
-        $a = array('type' => 'timestamp', 'fixed' => false);
+        $a = ['type' => 'timestamp', 'fixed' => false];
 
         $this->assertEqual($this->dataDict->GetNativeDeclaration($a), 'DATETIME');
     }
 
     public function testGetNativeDeclarationSupportsTimeType()
     {
-        $a = array('type' => 'time', 'fixed' => false);
+        $a = ['type' => 'time', 'fixed' => false];
 
         $this->assertEqual($this->dataDict->GetNativeDeclaration($a), 'TIME');
     }
 
     public function testGetNativeDeclarationSupportsClobType()
     {
-        $a = array('type' => 'clob');
+        $a = ['type' => 'clob'];
 
         $this->assertEqual($this->dataDict->GetNativeDeclaration($a), 'LONGTEXT');
     }
 
     public function testGetNativeDeclarationSupportsBlobType()
     {
-        $a = array('type' => 'blob');
+        $a = ['type' => 'blob'];
 
         $this->assertEqual($this->dataDict->GetNativeDeclaration($a), 'LONGBLOB');
     }
 
     public function testGetNativeDeclarationSupportsCharType()
     {
-        $a = array('type' => 'char', 'length' => 10);
+        $a = ['type' => 'char', 'length' => 10];
 
         $this->assertEqual($this->dataDict->GetNativeDeclaration($a), 'CHAR(10)');
     }
 
     public function testGetNativeDeclarationSupportsVarcharType()
     {
-        $a = array('type' => 'varchar', 'length' => 10);
+        $a = ['type' => 'varchar', 'length' => 10];
 
         $this->assertEqual($this->dataDict->GetNativeDeclaration($a), 'VARCHAR(10)');
     }
 
     public function testGetNativeDeclarationSupportsArrayType()
     {
-        $a = array('type' => 'array', 'length' => 40);
+        $a = ['type' => 'array', 'length' => 40];
 
         $this->assertEqual($this->dataDict->GetNativeDeclaration($a), 'TINYTEXT');
     }
 
     public function testGetNativeDeclarationSupportsStringType()
     {
-        $a = array('type' => 'string');
+        $a = ['type' => 'string'];
 
         $this->assertEqual($this->dataDict->GetNativeDeclaration($a), 'TEXT');
     }
 
     public function testGetNativeDeclarationSupportsStringTypeWithLongLength()
     {
-        $a = array('type' => 'string', 'length' => 2000);
+        $a = ['type' => 'string', 'length' => 2000];
 
         $this->assertEqual($this->dataDict->GetNativeDeclaration($a), 'TEXT');
     }
 
     public function testGetNativeDeclarationSupportsArrayType2()
     {
-        $a = array('type' => 'array');
+        $a = ['type' => 'array'];
 
         $this->assertEqual($this->dataDict->GetNativeDeclaration($a), 'LONGTEXT');
     }
 
     public function testGetNativeDeclarationSupportsObjectType()
     {
-        $a = array('type' => 'object');
+        $a = ['type' => 'object'];
 
         $this->assertEqual($this->dataDict->GetNativeDeclaration($a), 'LONGTEXT');
     }

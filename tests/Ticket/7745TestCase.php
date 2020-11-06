@@ -19,13 +19,13 @@
 /**
  * Doctrine_Ticket_7745_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Ticket_7745_TestCase extends Doctrine_UnitTestCase
 {
@@ -78,10 +78,13 @@ class RecordTest1 extends Doctrine_Record
 
     public function setUp()
     {
-        $this->hasOne('RecordTest2', array(
+        $this->hasOne(
+            'RecordTest2',
+            [
             'local'   => 'record_test2_id',
             'foreign' => 'id'
-        ));
+            ]
+        );
     }
 }
 
@@ -94,10 +97,13 @@ class RecordTest2 extends Doctrine_Record
 
     public function setUp()
     {
-        $this->hasMany('RecordTest1', array(
+        $this->hasMany(
+            'RecordTest1',
+            [
             'local'   => 'id',
             'foreign' => 'record_test2_id'
-        ));
+            ]
+        );
     }
 }
 

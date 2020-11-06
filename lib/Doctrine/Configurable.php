@@ -23,20 +23,20 @@
  * Doctrine_Configurable
  * the base for Doctrine_Table, Doctrine_Manager and Doctrine_Connection
  *
- * @package     Doctrine
- * @subpackage  Configurable
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 7490 $
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @package    Doctrine
+ * @subpackage Configurable
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 7490 $
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
 abstract class Doctrine_Configurable extends Doctrine_Locator_Injectable
 {
     /**
      * @var array $attributes               an array of containing all attributes
      */
-    protected $attributes = array();
+    protected $attributes = [];
 
     /**
      * @var Doctrine_Configurable $parent   the parent of this component
@@ -46,7 +46,7 @@ abstract class Doctrine_Configurable extends Doctrine_Locator_Injectable
     /**
      * @var array $_params                  an array of user defined parameters
      */
-    protected $_params = array();
+    protected $_params = [];
 
     /**
      * setAttribute
@@ -56,10 +56,10 @@ abstract class Doctrine_Configurable extends Doctrine_Locator_Injectable
      * $manager->setAttribute(Doctrine_Core::ATTR_PORTABILITY, Doctrine_Core::PORTABILITY_ALL);
      * </code>
      *
-     * @param mixed $attribute              either a Doctrine_Core::ATTR_* integer constant or a string
-     *                                      corresponding to a constant
-     * @param mixed $value                  the value of the attribute
-     * @see Doctrine_Core::ATTR_* constants
+     * @param  mixed $attribute either a Doctrine_Core::ATTR_* integer constant or a string
+     *                          corresponding to a constant
+     * @param  mixed $value     the value of the attribute
+     * @see    Doctrine_Core::ATTR_* constants
      * @throws Doctrine_Exception           if the value is invalid
      * @return void
      */
@@ -101,8 +101,10 @@ abstract class Doctrine_Configurable extends Doctrine_Locator_Injectable
             case Doctrine_Core::ATTR_TBLNAME_FORMAT:
             case Doctrine_Core::ATTR_FKNAME_FORMAT:
                 if ($this instanceof Doctrine_Table) {
-                    throw new Doctrine_Exception('Sequence / index name format attributes cannot be set'
-                                               . 'at table level (only at connection or global level).');
+                    throw new Doctrine_Exception(
+                        'Sequence / index name format attributes cannot be set'
+                                           . 'at table level (only at connection or global level).'
+                    );
                 }
                 break;
         }
@@ -136,9 +138,9 @@ abstract class Doctrine_Configurable extends Doctrine_Locator_Injectable
     }
 
     /**
-     * @param string $name
-     * @param mixed $value
-     * @param string $namespace
+     * @param  string $name
+     * @param  mixed  $value
+     * @param  string $namespace
      * @return $this
      */
     public function setParam($name, $value, $namespace = null)
@@ -154,7 +156,7 @@ abstract class Doctrine_Configurable extends Doctrine_Locator_Injectable
 
     /**
      * @param  string $name
-     * @param  int $namespace
+     * @param  int    $namespace
      * @return mixed
      */
     public function getParam($name, $namespace = null)
@@ -174,7 +176,7 @@ abstract class Doctrine_Configurable extends Doctrine_Locator_Injectable
     }
 
     /**
-     * @param Doctrine_EventListener $listener
+     * @param  Doctrine_EventListener $listener
      * @return $this
      */
     public function setEventListener($listener)
@@ -185,14 +187,15 @@ abstract class Doctrine_Configurable extends Doctrine_Locator_Injectable
     /**
      * addRecordListener
      *
-     * @param Doctrine_EventListener_Interface|Doctrine_Overloadable $listener
-     * @param string $name
+     * @param  Doctrine_EventListener_Interface|Doctrine_Overloadable $listener
+     * @param  string                                                 $name
      * @return $this        this object
      */
     public function addRecordListener($listener, $name = null)
     {
-        if (! isset($this->attributes[Doctrine_Core::ATTR_RECORD_LISTENER]) ||
-             ! ($this->attributes[Doctrine_Core::ATTR_RECORD_LISTENER] instanceof Doctrine_Record_Listener_Chain)) {
+        if (! isset($this->attributes[Doctrine_Core::ATTR_RECORD_LISTENER])
+            || ! ($this->attributes[Doctrine_Core::ATTR_RECORD_LISTENER] instanceof Doctrine_Record_Listener_Chain)
+        ) {
             $this->attributes[Doctrine_Core::ATTR_RECORD_LISTENER] = new Doctrine_Record_Listener_Chain();
         }
         $this->attributes[Doctrine_Core::ATTR_RECORD_LISTENER]->add($listener, $name);
@@ -219,7 +222,7 @@ abstract class Doctrine_Configurable extends Doctrine_Locator_Injectable
     /**
      * setListener
      *
-     * @param Doctrine_EventListener_Interface|Doctrine_Overloadable $listener
+     * @param  Doctrine_EventListener_Interface|Doctrine_Overloadable $listener
      * @return $this        this object
      */
     public function setRecordListener($listener)
@@ -237,14 +240,15 @@ abstract class Doctrine_Configurable extends Doctrine_Locator_Injectable
     /**
      * addListener
      *
-     * @param Doctrine_EventListener_Interface|Doctrine_Overloadable $listener
-     * @param string $name
+     * @param  Doctrine_EventListener_Interface|Doctrine_Overloadable $listener
+     * @param  string                                                 $name
      * @return $this    this object
      */
     public function addListener($listener, $name = null)
     {
-        if (! isset($this->attributes[Doctrine_Core::ATTR_LISTENER]) ||
-             ! ($this->attributes[Doctrine_Core::ATTR_LISTENER] instanceof Doctrine_EventListener_Chain)) {
+        if (! isset($this->attributes[Doctrine_Core::ATTR_LISTENER])
+            || ! ($this->attributes[Doctrine_Core::ATTR_LISTENER] instanceof Doctrine_EventListener_Chain)
+        ) {
             $this->attributes[Doctrine_Core::ATTR_LISTENER] = new Doctrine_EventListener_Chain();
         }
         $this->attributes[Doctrine_Core::ATTR_LISTENER]->add($listener, $name);
@@ -271,7 +275,7 @@ abstract class Doctrine_Configurable extends Doctrine_Locator_Injectable
     /**
      * setListener
      *
-     * @param Doctrine_EventListener_Interface|Doctrine_Overloadable $listener
+     * @param  Doctrine_EventListener_Interface|Doctrine_Overloadable $listener
      * @return $this        this object
      */
     public function setListener($listener)
@@ -289,7 +293,7 @@ abstract class Doctrine_Configurable extends Doctrine_Locator_Injectable
     /**
      * returns the value of an attribute
      *
-     * @param integer $attribute
+     * @param  integer $attribute
      * @return mixed|null
      */
     public function getAttribute($attribute)
@@ -307,7 +311,7 @@ abstract class Doctrine_Configurable extends Doctrine_Locator_Injectable
     /**
      * Unset an attribute from this levels attributes
      *
-     * @param integer $attribute
+     * @param  integer $attribute
      * @return void
      */
     public function unsetAttribute($attribute)
@@ -376,7 +380,7 @@ abstract class Doctrine_Configurable extends Doctrine_Locator_Injectable
      * sets a parent for this configurable component
      * the parent must be configurable component itself
      *
-     * @param Doctrine_Configurable $component
+     * @param  Doctrine_Configurable $component
      * @return void
      */
     public function setParent(Doctrine_Configurable $component)

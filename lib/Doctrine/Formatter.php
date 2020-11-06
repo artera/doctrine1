@@ -19,13 +19,13 @@
 /**
  * Doctrine_Formatter
  *
- * @package     Doctrine
- * @subpackage  Formatter
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @package    Doctrine
+ * @subpackage Formatter
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision$
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
 class Doctrine_Formatter extends Doctrine_Connection_Module
 {
@@ -37,9 +37,9 @@ class Doctrine_Formatter extends Doctrine_Connection_Module
      * WARNING: this function is experimental and may change signature at
      * any time until labelled as non-experimental
      *
-     * @param   string  $text the input string to quote
+     * @param string $text the input string to quote
      *
-     * @return  string  quoted string
+     * @return string  quoted string
      */
     public function escapePattern($text)
     {
@@ -114,8 +114,8 @@ class Doctrine_Formatter extends Doctrine_Connection_Module
      * InterBase doesn't seem to be able to use delimited identifiers
      * via PHP 4.  They work fine under PHP 5.
      *
-     * @param string $str           identifier name to be quoted
-     * @param bool $checkOption     check the 'quote_identifier' option
+     * @param string $str         identifier name to be quoted
+     * @param bool   $checkOption check the 'quote_identifier' option
      *
      * @return string               quoted identifier string
      */
@@ -140,8 +140,8 @@ class Doctrine_Formatter extends Doctrine_Connection_Module
      * quoteMultipleIdentifier
      * Quotes multiple identifier strings
      *
-     * @param array $arr           identifiers array to be quoted
-     * @param bool $checkOption     check the 'quote_identifier' option
+     * @param array $arr         identifiers array to be quoted
+     * @param bool  $checkOption check the 'quote_identifier' option
      *
      * @return array
      */
@@ -158,8 +158,8 @@ class Doctrine_Formatter extends Doctrine_Connection_Module
      * quote
      * quotes given input parameter
      *
-     * @param mixed $input      parameter to be quoted
-     * @param string $type
+     * @param  mixed  $input parameter to be quoted
+     * @param  string $type
      * @return string|null
      */
     public function quote($input, $type = null)
@@ -201,7 +201,7 @@ class Doctrine_Formatter extends Doctrine_Connection_Module
     /**
      * Removes any formatting in an sequence name using the 'seqname_format' option
      *
-     * @param string $sqn string that containts name of a potential sequence
+     * @param  string $sqn string that containts name of a potential sequence
      * @return string name of the sequence with possible formatting removed
      */
     public function fixSequenceName($sqn)
@@ -218,7 +218,7 @@ class Doctrine_Formatter extends Doctrine_Connection_Module
     /**
      * Removes any formatting in an index name using the 'idxname_format' option
      *
-     * @param string $idx string that containts name of anl index
+     * @param  string $idx string that containts name of anl index
      * @return string name of the index with possible formatting removed
      */
     public function fixIndexName($idx)
@@ -234,7 +234,7 @@ class Doctrine_Formatter extends Doctrine_Connection_Module
     /**
      * adds sequence name formatting to a sequence name
      *
-     * @param string $sqn   name of the sequence
+     * @param  string $sqn name of the sequence
      * @return string   formatted sequence name
      */
     public function getSequenceName($sqn)
@@ -248,7 +248,7 @@ class Doctrine_Formatter extends Doctrine_Connection_Module
     /**
      * adds index name formatting to a index name
      *
-     * @param string $idx   name of the index
+     * @param  string $idx name of the index
      * @return string   formatted index name
      */
     public function getIndexName($idx)
@@ -262,7 +262,7 @@ class Doctrine_Formatter extends Doctrine_Connection_Module
     /**
      * Formatting a foreign Key name
      *
-     * @param string $fkey   name of the foreign key
+     * @param  string $fkey name of the foreign key
      * @return string   formatted foreign key name
      */
     public function getForeignKeyName($fkey)
@@ -276,7 +276,7 @@ class Doctrine_Formatter extends Doctrine_Connection_Module
     /**
      * adds table name formatting to a table name
      *
-     * @param string  $table  name of the table
+     * @param  string $table name of the table
      * @return string   formatted table name
      */
     public function getTableName($table)

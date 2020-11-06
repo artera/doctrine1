@@ -22,13 +22,13 @@
 /**
  * Base class for any code builders/generators for Doctrine
  *
- * @package     Doctrine
- * @subpackage  Builder
- * @link        www.doctrine-project.org
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @since       1.0
- * @version     $Revision: 4593 $
- * @author      Jonathan H. Wage <jwage@mac.com>
+ * @package    Doctrine
+ * @subpackage Builder
+ * @link       www.doctrine-project.org
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @since      1.0
+ * @version    $Revision: 4593 $
+ * @author     Jonathan H. Wage <jwage@mac.com>
  */
 class Doctrine_Builder
 {
@@ -37,7 +37,7 @@ class Doctrine_Builder
      * The normal code which is returned is malformed and does not follow Doctrine standards
      * So we do some string replacing to clean it up
      *
-     * @param mixed $var
+     * @param  mixed $var
      * @return string
      */
     public function varExport($var)

@@ -19,13 +19,13 @@
 /**
  * Doctrine_Db_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Db_TestCase extends Doctrine_UnitTestCase
 {
@@ -43,7 +43,7 @@ class Doctrine_Db_TestCase extends Doctrine_UnitTestCase
 
     public function testInitialize()
     {
-        $this->conn = Doctrine_Manager::getInstance()->openConnection(array('sqlite::memory:'));
+        $this->conn = Doctrine_Manager::getInstance()->openConnection(['sqlite::memory:']);
         $this->conn->exec('CREATE TABLE entity (id INTEGER, name TEXT)');
 
         $this->conn->exec("INSERT INTO entity (id, name) VALUES (1, 'zYne')");
@@ -115,7 +115,7 @@ class Doctrine_Db_TestCase extends Doctrine_UnitTestCase
         $this->assertEqual($listener->pop(), 'postPrepare');
         $this->assertEqual($listener->pop(), 'prePrepare');
 
-        $stmt->execute(array(1));
+        $stmt->execute([1]);
 
         $this->assertEqual($listener->pop(), 'postStmtExecute');
         $this->assertEqual($listener->pop(), 'preStmtExecute');
@@ -170,7 +170,7 @@ class Doctrine_Db_TestCase extends Doctrine_UnitTestCase
         $this->assertEqual($listener2->pop(), 'postPrepare');
         $this->assertEqual($listener2->pop(), 'prePrepare');
 
-        $stmt->execute(array(1));
+        $stmt->execute([1]);
 
         $this->assertEqual($listener->pop(), 'postStmtExecute');
         $this->assertEqual($listener->pop(), 'preStmtExecute');
@@ -223,7 +223,7 @@ class Doctrine_Db_TestCase extends Doctrine_UnitTestCase
 
         $stmt = $this->conn->prepare('INSERT INTO entity (id) VALUES (?)');
 
-        $stmt->execute(array(1, 2, 3));
+        $stmt->execute([1, 2, 3]);
 
         $this->assertEqual($listener->pop(), 'postError');
         $this->assertEqual($listener->pop(), 'preError');
@@ -371,7 +371,6 @@ class Doctrine_Db_TestCase extends Doctrine_UnitTestCase
         $this->assertEqual($this->conn->getOption('username'), 'root');
         $this->assertEqual($this->conn->getOption('password'), 'password');
 
-
         $this->conn = Doctrine_Connection::getConnection('sqlite::memory:');
 
         $this->assertEqual($this->conn->getOption('dsn'), 'sqlite::memory:');
@@ -402,7 +401,7 @@ class Doctrine_Db_TestCase extends Doctrine_UnitTestCase
 
 class Doctrine_Connection_TestLogger implements Doctrine_Overloadable
 {
-    private $messages = array();
+    private $messages = [];
 
     public function __call($m, $a)
     {

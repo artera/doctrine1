@@ -9,7 +9,7 @@ class Doctrine_Query_ShortAliases_TestCase extends Doctrine_UnitTestCase
 
         $this->assertEqual($q->getSqlQuery(), 'SELECT e.id AS e__id, e.name AS e__name FROM entity e WHERE (e.type = 0)');
     }
-    */
+     */
     public function testShortAliasesWithOneToManyLeftJoin()
     {
         $q = new Doctrine_Query();

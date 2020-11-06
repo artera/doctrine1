@@ -6,30 +6,30 @@ class QueryTest_Board extends Doctrine_Record
      */
     public function setTableDefinition()
     {
-        $this->hasColumn('id', 'integer', 4, array('primary', 'autoincrement', 'notnull'));
+        $this->hasColumn('id', 'integer', 4, ['primary', 'autoincrement', 'notnull']);
         $this->hasColumn(
             'categoryId as categoryId',
             'integer',
             4,
-            array('notnull')
+            ['notnull']
         );
         $this->hasColumn(
             'name as name',
             'string',
             100,
-            array('notnull', 'unique')
+            ['notnull', 'unique']
         );
         $this->hasColumn(
             'lastEntryId as lastEntryId',
             'integer',
             4,
-            array('default' => 0)
+            ['default' => 0]
         );
         $this->hasColumn(
             'position as position',
             'integer',
             4,
-            array('default' => 0, 'notnull')
+            ['default' => 0, 'notnull']
         );
     }
 
@@ -38,11 +38,17 @@ class QueryTest_Board extends Doctrine_Record
      */
     public function setUp()
     {
-        $this->hasOne('QueryTest_Category as category', array(
+        $this->hasOne(
+            'QueryTest_Category as category',
+            [
             'local' => 'categoryId', 'foreign' => 'id'
-        ));
-        $this->hasOne('QueryTest_Entry as lastEntry', array(
+            ]
+        );
+        $this->hasOne(
+            'QueryTest_Entry as lastEntry',
+            [
             'local' => 'lastEntryId', 'foreign' => 'id', 'onDelete' => 'CASCADE'
-        ));
+            ]
+        );
     }
 }

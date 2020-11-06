@@ -22,13 +22,13 @@
 /**
  * Doctrine_Node_NestedSet_PreOrderIterator
  *
- * @package     Doctrine
- * @subpackage  Node
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 7490 $
- * @author      Joe Simms <joe.simms@websites4.com>
+ * @package    Doctrine
+ * @subpackage Node
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 7490 $
+ * @author     Joe Simms <joe.simms@websites4.com>
  */
 class Doctrine_Node_NestedSet_PreOrderIterator implements Iterator
 {
@@ -90,7 +90,7 @@ class Doctrine_Node_NestedSet_PreOrderIterator implements Iterator
 
     /**
      * @param Doctrine_Record $record
-     * @param array $opts
+     * @param array           $opts
      */
     public function __construct($record, $opts)
     {
@@ -98,16 +98,20 @@ class Doctrine_Node_NestedSet_PreOrderIterator implements Iterator
 
         $q = $record->getTable()->createQuery();
 
-        $params = array($record->get('lft'), $record->get('rgt'));
+        $params = [$record->get('lft'), $record->get('rgt')];
         if (isset($opts['include_record']) && $opts['include_record']) {
             $query = $q->where("$componentName.lft >= ? AND $componentName.rgt <= ?", $params)->orderBy("$componentName.lft asc");
         } else {
             $query = $q->where("$componentName.lft > ? AND $componentName.rgt < ?", $params)->orderBy("$componentName.lft asc");
         }
 
-        /** @var Doctrine_Tree_NestedSet $tree */
+        /**
+ * @var Doctrine_Tree_NestedSet $tree
+*/
         $tree = $record->getTable()->getTree();
-        /** @var Doctrine_Node_NestedSet $node */
+        /**
+ * @var Doctrine_Node_NestedSet $node
+*/
         $node  = $record->getNode();
         $query = $tree->returnQueryWithRootId($query, $node->getRootValue());
 
@@ -153,7 +157,9 @@ class Doctrine_Node_NestedSet_PreOrderIterator implements Iterator
     public function current()
     {
         $record = $this->collection->get($this->key);
-        /** @var Doctrine_Node_NestedSet $node */
+        /**
+ * @var Doctrine_Node_NestedSet $node
+*/
         $node = $record->getNode();
         $node->setLevel($this->level);
         return $record;
@@ -199,7 +205,9 @@ class Doctrine_Node_NestedSet_PreOrderIterator implements Iterator
     private function updateLevel()
     {
         if (! (isset($this->options['include_record']) && $this->options['include_record'] && $this->index == 0)) {
-            /** @var Doctrine_Node_NestedSet $node */
+            /**
+ * @var Doctrine_Node_NestedSet $node
+*/
             $node = $this->collection->get($this->key)->getNode();
             $left = $node->getLeftValue();
             $this->level += $this->prevLeft - $left + 2;

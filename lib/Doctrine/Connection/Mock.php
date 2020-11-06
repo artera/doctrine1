@@ -22,14 +22,14 @@
 /**
  * Doctrine_Connection_Mysql
  *
- * @package     Doctrine
- * @subpackage  Connection
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @author      Lukas Smith <smith@pooteeweet.org> (PEAR MDB2 library)
- * @version     $Revision: 7490 $
- * @link        www.doctrine-project.org
- * @since       1.0
+ * @package    Doctrine
+ * @subpackage Connection
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @author     Lukas Smith <smith@pooteeweet.org> (PEAR MDB2 library)
+ * @version    $Revision: 7490 $
+ * @link       www.doctrine-project.org
+ * @since      1.0
  */
 class Doctrine_Connection_Mock extends Doctrine_Connection_Common
 {
@@ -41,8 +41,8 @@ class Doctrine_Connection_Mock extends Doctrine_Connection_Common
     /**
      * the constructor
      *
-     * @param Doctrine_Manager $manager
-     * @param PDO|Doctrine_Adapter_Interface $adapter     database handler
+     * @param Doctrine_Manager               $manager
+     * @param PDO|Doctrine_Adapter_Interface $adapter database handler
      */
     public function __construct(Doctrine_Manager $manager, $adapter)
     {

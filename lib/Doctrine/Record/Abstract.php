@@ -19,20 +19,20 @@
 /**
  * Doctrine_Record_Abstract
  *
- * @package     Doctrine
- * @subpackage  Record
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package    Doctrine
+ * @subpackage Record
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision$
  *
  * @phpstan-template T of Doctrine_Table
  */
 abstract class Doctrine_Record_Abstract extends Doctrine_Access
 {
     /**
-     * @var Doctrine_Table $_table     reference to associated Doctrine_Table instance
+     * @var         Doctrine_Table $_table     reference to associated Doctrine_Table instance
      * @phpstan-var T
      */
     protected $_table;
@@ -55,7 +55,7 @@ abstract class Doctrine_Record_Abstract extends Doctrine_Access
      * getTable
      * returns the associated table object
      *
-     * @return Doctrine_Table               the associated table object
+     * @return         Doctrine_Table               the associated table object
      * @phpstan-return T
      */
     public function getTable()
@@ -66,8 +66,8 @@ abstract class Doctrine_Record_Abstract extends Doctrine_Access
     /**
      * addListener
      *
-     * @param Doctrine_EventListener_Interface|Doctrine_Overloadable|Doctrine_Record_Listener_Interface $listener
-     * @param string $name
+     * @param  Doctrine_EventListener_Interface|Doctrine_Overloadable|Doctrine_Record_Listener_Interface $listener
+     * @param  string                                                                                    $name
      * @return $this
      */
     public function addListener($listener, $name = null)
@@ -90,7 +90,7 @@ abstract class Doctrine_Record_Abstract extends Doctrine_Access
     /**
      * setListener
      *
-     * @param Doctrine_EventListener_Interface|Doctrine_Overloadable|Doctrine_Record_Listener_Interface $listener
+     * @param  Doctrine_EventListener_Interface|Doctrine_Overloadable|Doctrine_Record_Listener_Interface $listener
      * @return $this
      */
     public function setListener($listener)
@@ -106,11 +106,11 @@ abstract class Doctrine_Record_Abstract extends Doctrine_Access
      * if the second parameter is set this method defines an index
      * if not this method retrieves index named $name
      *
-     * @param string $name              the name of the index
-     * @param array $definition         the definition array
+     * @param  string $name       the name of the index
+     * @param  array  $definition the definition array
      * @return mixed
      */
-    public function index($name, array $definition = array())
+    public function index($name, array $definition = [])
     {
         if (! $definition) {
             return $this->_table->getIndex($name);
@@ -126,19 +126,19 @@ abstract class Doctrine_Record_Abstract extends Doctrine_Access
      * and validate the values on save. The UNIQUE index is not created in the
      * database until you use @see export().
      *
-     * @param array $fields     values are fieldnames
-     * @param array $options    array of options for unique validator
-     * @param bool $createUniqueIndex  Whether or not to create a unique index in the database
+     * @param  array $fields            values are fieldnames
+     * @param  array $options           array of options for unique validator
+     * @param  bool  $createUniqueIndex Whether or not to create a unique index in the database
      * @return void
      */
-    public function unique($fields, $options = array(), $createUniqueIndex = true)
+    public function unique($fields, $options = [], $createUniqueIndex = true)
     {
         $this->_table->unique($fields, $options, $createUniqueIndex);
     }
 
     /**
-     * @param string|int $attr
-     * @param mixed $value
+     * @param  string|int $attr
+     * @param  mixed      $value
      * @return void
      */
     public function setAttribute($attr, $value)
@@ -147,7 +147,7 @@ abstract class Doctrine_Record_Abstract extends Doctrine_Access
     }
 
     /**
-     * @param string $tableName
+     * @param  string $tableName
      * @return void
      */
     public function setTableName($tableName)
@@ -156,7 +156,7 @@ abstract class Doctrine_Record_Abstract extends Doctrine_Access
     }
 
     /**
-     * @param array $map
+     * @param  array $map
      * @return void
      */
     public function setInheritanceMap($map)
@@ -165,7 +165,7 @@ abstract class Doctrine_Record_Abstract extends Doctrine_Access
     }
 
     /**
-     * @param array $map
+     * @param  array $map
      * @return void
      */
     public function setSubclasses($map)
@@ -175,7 +175,7 @@ abstract class Doctrine_Record_Abstract extends Doctrine_Access
         if (isset($map[$class])) {
             // fix for #1621
             $mapFieldNames  = $map[$class];
-            $mapColumnNames = array();
+            $mapColumnNames = [];
 
             foreach ($mapFieldNames as $fieldName => $val) {
                 $mapColumnNames[$this->getTable()->getColumnName($fieldName)] = $val;
@@ -186,7 +186,7 @@ abstract class Doctrine_Record_Abstract extends Doctrine_Access
         } else {
             // Put an index on the key column
             $mapFieldName = array_keys(end($map));
-            $this->index($this->getTable()->getTableName() . '_' . $mapFieldName[0], array('fields' => array($mapFieldName[0])));
+            $this->index($this->getTable()->getTableName() . '_' . $mapFieldName[0], ['fields' => [$mapFieldName[0]]]);
         }
 
         // Set the subclasses array for the parent class
@@ -197,9 +197,9 @@ abstract class Doctrine_Record_Abstract extends Doctrine_Access
      * attribute
      * sets or retrieves an option
      *
-     * @see Doctrine_Core::ATTR_* constants   availible attributes
-     * @param mixed $attr
-     * @param mixed $value
+     * @see    Doctrine_Core::ATTR_* constants   availible attributes
+     * @param  mixed $attr
+     * @param  mixed $value
      * @return mixed
      */
     public function attribute($attr, $value)
@@ -221,9 +221,9 @@ abstract class Doctrine_Record_Abstract extends Doctrine_Access
      * option
      * sets or retrieves an option
      *
-     * @see Doctrine_Table::$options    availible options
-     * @param mixed $name               the name of the option
-     * @param mixed $value              options value
+     * @see    Doctrine_Table::$options    availible options
+     * @param  mixed $name  the name of the option
+     * @param  mixed $value options value
      * @return mixed
      */
     public function option($name, $value = null)
@@ -244,9 +244,9 @@ abstract class Doctrine_Record_Abstract extends Doctrine_Access
     /**
      * Binds One-to-One aggregate relation
      *
-     * @param string|array ...$args  First: the name of the related component
+     * @param  string|array ...$args First: the name of the related component
      *                               Second: relation options
-     * @see Doctrine_Relation::_$definition
+     * @see    Doctrine_Relation::_$definition
      * @return $this          this object
      */
     public function hasOne(...$args)
@@ -259,9 +259,9 @@ abstract class Doctrine_Record_Abstract extends Doctrine_Access
     /**
      * Binds One-to-Many / Many-to-Many aggregate relation
      *
-     * @param string|array ...$args First: the name of the related component
-     *                        Second: relation options
-     * @see Doctrine_Relation::_$definition
+     * @param  string|array ...$args First: the name of the related component
+     *                               Second: relation options
+     * @see    Doctrine_Relation::_$definition
      * @return $this          this object
      */
     public function hasMany(...$args)
@@ -274,13 +274,13 @@ abstract class Doctrine_Record_Abstract extends Doctrine_Access
     /**
      * Sets a column definition
      *
-     * @param string $name
-     * @param string $type
-     * @param integer $length
-     * @param mixed $options
+     * @param  string  $name
+     * @param  string  $type
+     * @param  integer $length
+     * @param  mixed   $options
      * @return void
      */
-    public function hasColumn($name, $type = null, $length = null, $options = array())
+    public function hasColumn($name, $type = null, $length = null, $options = [])
     {
         $this->_table->setColumn($name, $type, $length, $options);
     }
@@ -288,7 +288,7 @@ abstract class Doctrine_Record_Abstract extends Doctrine_Access
     /**
      * Set multiple column definitions at once
      *
-     * @param array $definitions
+     * @param  array $definitions
      * @return void
      */
     public function hasColumns(array $definitions)
@@ -313,8 +313,8 @@ abstract class Doctrine_Record_Abstract extends Doctrine_Access
      *         ));
      *     }
      *
-     * @param string $name
-     * @param array $options
+     * @param  string $name
+     * @param  array  $options
      * @return void
      */
     public function setColumnOptions($name, array $options)
@@ -325,9 +325,9 @@ abstract class Doctrine_Record_Abstract extends Doctrine_Access
     /**
      * Set an individual column option
      *
-     * @param string $columnName
-     * @param string $option
-     * @param mixed $value
+     * @param  string $columnName
+     * @param  string $option
+     * @param  mixed  $value
      * @return void
      */
     public function setColumnOption($columnName, $option, $value)
@@ -339,7 +339,7 @@ abstract class Doctrine_Record_Abstract extends Doctrine_Access
      * bindQueryParts
      * binds query parts to given component
      *
-     * @param array $queryParts         an array of pre-bound query parts
+     * @param  array $queryParts an array of pre-bound query parts
      * @return $this          this object
      */
     public function bindQueryParts(array $queryParts)
@@ -364,8 +364,8 @@ abstract class Doctrine_Record_Abstract extends Doctrine_Access
      *
      * This method will add a CHECK constraint to the record table.
      *
-     * @param mixed $constraint     either a SQL constraint portion or an array of CHECK constraints. If array, all values will be added as constraint
-     * @param string $name          optional constraint name. Not used if $constraint is an array.
+     * @param  mixed  $constraint either a SQL constraint portion or an array of CHECK constraints. If array, all values will be added as constraint
+     * @param  string $name       optional constraint name. Not used if $constraint is an array.
      * @return $this      this object
      */
     public function check($constraint, $name = null)

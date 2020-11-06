@@ -19,13 +19,13 @@
 /**
  * Doctrine_Query_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Query_TestCase extends Doctrine_UnitTestCase
 {
@@ -33,9 +33,9 @@ class Doctrine_Query_TestCase extends Doctrine_UnitTestCase
     {
         $q = Doctrine_Query::create()
             ->from('User u')
-            ->where('u.id IN ?', array(array(1, 2, 3)))
-            ->whereNotIn('u.name', array('', 'a'))
-            ->addWhere('u.id NOT IN ?', array(array(4, 5, 6, 7)));
+            ->where('u.id IN ?', [[1, 2, 3]])
+            ->whereNotIn('u.name', ['', 'a'])
+            ->addWhere('u.id NOT IN ?', [[4, 5, 6, 7]]);
 
         $this->assertEqual(
             $q->getSqlQuery(),
@@ -48,7 +48,7 @@ class Doctrine_Query_TestCase extends Doctrine_UnitTestCase
     {
         $q = Doctrine_Query::create()
             ->from('User u')
-            ->where('u.id IN ?', array(1));
+            ->where('u.id IN ?', [1]);
 
         $this->assertEqual(
             $q->getSqlQuery(),
@@ -176,12 +176,12 @@ class Doctrine_Query_TestCase extends Doctrine_UnitTestCase
         $user->free();
 
         $query = Doctrine_Query::create()
-                    ->select('u.*, p.*, SUM(p.phonenumber) summ')
-                    ->from('User u')
-                    ->leftJoin('u.Phonenumber p')
-                    ->where('u.id = ?', $id);
+            ->select('u.*, p.*, SUM(p.phonenumber) summ')
+            ->from('User u')
+            ->leftJoin('u.Phonenumber p')
+            ->where('u.id = ?', $id);
 
-        $users = $query->execute(array(), Doctrine_Core::HYDRATE_ARRAY);
+        $users = $query->execute([], Doctrine_Core::HYDRATE_ARRAY);
 
         $this->assertTrue(array_key_exists('summ', $users[0]));
     }
@@ -190,10 +190,10 @@ class Doctrine_Query_TestCase extends Doctrine_UnitTestCase
     {
         try {
             $users = Doctrine_Query::create()
-                        ->select('p.*')
-                        ->from('User u')
-                        ->leftJoin('u.Phonenumber p')
-                        ->execute();
+                ->select('p.*')
+                ->from('User u')
+                ->leftJoin('u.Phonenumber p')
+                ->execute();
             $this->fail();
         } catch (Doctrine_Query_Exception $e) {
             $this->pass();
@@ -222,8 +222,8 @@ class Doctrine_Query_TestCase extends Doctrine_UnitTestCase
             'WHERE (e.name = ? OR e.loginname = ? AND (e.type = 0))'
         );
 
-        $items1 = $q1->execute(array('zYne', 'jwage'), Doctrine_Core::HYDRATE_ARRAY);
-        $items2 = $q2->execute(array('zYne', 'jwage'), Doctrine_Core::HYDRATE_ARRAY);
+        $items1 = $q1->execute(['zYne', 'jwage'], Doctrine_Core::HYDRATE_ARRAY);
+        $items2 = $q2->execute(['zYne', 'jwage'], Doctrine_Core::HYDRATE_ARRAY);
 
         $this->assertEqual(count($items1), count($items2));
 
@@ -254,8 +254,8 @@ class Doctrine_Query_TestCase extends Doctrine_UnitTestCase
             'WHERE (e.name = ? AND e.loginname = ? OR e.id = ? AND (e.type = 0))'
         );
 
-        $items1 = $q1->execute(array('jon', 'jwage', 4), Doctrine_Core::HYDRATE_ARRAY);
-        $items2 = $q2->execute(array('jon', 'jwage', 4), Doctrine_Core::HYDRATE_ARRAY);
+        $items1 = $q1->execute(['jon', 'jwage', 4], Doctrine_Core::HYDRATE_ARRAY);
+        $items2 = $q2->execute(['jon', 'jwage', 4], Doctrine_Core::HYDRATE_ARRAY);
 
         $this->assertEqual(count($items1), count($items2));
 
@@ -288,8 +288,8 @@ class Doctrine_Query_TestCase extends Doctrine_UnitTestCase
             "WHERE (e.name = 'jon' AND e.loginname = 'jwage' OR e.id = 4 OR e.id = 5 AND e.name LIKE 'Arnold%' AND (e.type = 0))"
         );
 
-        $items1 = $q1->execute(array(), Doctrine_Core::HYDRATE_ARRAY);
-        $items2 = $q2->execute(array(), Doctrine_Core::HYDRATE_ARRAY);
+        $items1 = $q1->execute([], Doctrine_Core::HYDRATE_ARRAY);
+        $items2 = $q2->execute([], Doctrine_Core::HYDRATE_ARRAY);
 
         $this->assertEqual(count($items1), count($items2));
 
@@ -303,8 +303,7 @@ class Doctrine_Query_TestCase extends Doctrine_UnitTestCase
             ->select('u.id')
             ->from('QueryTest_User u')
             ->where('CURRENT_DATE() BETWEEN u.QueryTest_Subscription.begin AND u.QueryTest_Subscription.begin')
-            ->addWhere('u.id != 5')
-            ;
+            ->addWhere('u.id != 5');
 
         $expected = 'SELECT q.id AS q__id FROM query_test__user q LEFT JOIN query_test__subscription q2 ON q.subscriptionid = q2.id WHERE (CURRENT_DATE() BETWEEN q2.begin AND q2.begin AND q.id != 5)';
 
@@ -367,12 +366,12 @@ class Doctrine_Query_TestCase extends Doctrine_UnitTestCase
     public function testNoLimitSubqueryIfXToOneSelected()
     {
         $q = Doctrine_Query::create()
-                    ->select('u.name, e.address')
-                    ->from('User u')
-                    ->leftJoin('u.Email e')
-                    ->leftJoin('u.Phonenumber p')
-                    ->distinct()
-                    ->limit(1);
+            ->select('u.name, e.address')
+            ->from('User u')
+            ->leftJoin('u.Email e')
+            ->leftJoin('u.Phonenumber p')
+            ->distinct()
+            ->limit(1);
 
         $this->assertEqual($q->getSqlQuery(), 'SELECT DISTINCT e.id AS e__id, e.name AS e__name, e2.id AS e2__id, e2.address AS e2__address FROM entity e LEFT JOIN email e2 ON e.email_id = e2.id LEFT JOIN phonenumber p ON e.id = p.entity_id WHERE (e.type = 0) LIMIT 1');
     }

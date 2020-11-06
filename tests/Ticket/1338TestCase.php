@@ -19,13 +19,13 @@
 /**
  * Doctrine_Ticket_1338_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Ticket_1338_TestCase extends Doctrine_UnitTestCase
 {
@@ -36,15 +36,18 @@ class Doctrine_Ticket_1338_TestCase extends Doctrine_UnitTestCase
         $users = $q->execute();
 
         $array = $users->toKeyValueArray('id', 'name');
-        $this->assertEqual($array, array(
-          4  => 'zYne',
-          5  => 'Arnold Schwarzenegger',
-          6  => 'Michael Caine',
-          7  => 'Takeshi Kitano',
-          8  => 'Sylvester Stallone',
-          9  => 'Kurt Russell',
-          10 => 'Jean Reno',
-          11 => 'Edward Furlong',
-        ));
+        $this->assertEqual(
+            $array,
+            [
+            4  => 'zYne',
+            5  => 'Arnold Schwarzenegger',
+            6  => 'Michael Caine',
+            7  => 'Takeshi Kitano',
+            8  => 'Sylvester Stallone',
+            9  => 'Kurt Russell',
+            10 => 'Jean Reno',
+            11 => 'Edward Furlong',
+            ]
+        );
     }
 }

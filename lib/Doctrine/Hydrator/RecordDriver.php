@@ -19,27 +19,27 @@
 /**
  * Builds result sets in to the object graph using Doctrine_Record instances
  *
- * @package     Doctrine
- * @subpackage  Hydrate
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @author      Roman Borschel <roman@code-factory.org>
- * @author      Jonathan H. Wage <jonwage@gmail.com>
+ * @package    Doctrine
+ * @subpackage Hydrate
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision$
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @author     Roman Borschel <roman@code-factory.org>
+ * @author     Jonathan H. Wage <jonwage@gmail.com>
  */
 class Doctrine_Hydrator_RecordDriver extends Doctrine_Hydrator_Graph
 {
     /**
      * @var array|null
      */
-    protected $_collections = array();
+    protected $_collections = [];
 
     /**
      * @var array|null
      */
-    private $_initializedRelations = array();
+    private $_initializedRelations = [];
 
     /**
      * @param  string $component
@@ -54,9 +54,9 @@ class Doctrine_Hydrator_RecordDriver extends Doctrine_Hydrator_Graph
     }
 
     /**
-     * @param Doctrine_Record $record
-     * @param string $name
-     * @param string $keyColumn
+     * @param  Doctrine_Record $record
+     * @param  string          $name
+     * @param  string          $keyColumn
      * @return true
      */
     public function initRelated(&$record, $name, $keyColumn = null)
@@ -72,7 +72,7 @@ class Doctrine_Hydrator_RecordDriver extends Doctrine_Hydrator_Graph
     }
 
     /**
-     * @param array|Doctrine_Collection $coll
+     * @param  array|Doctrine_Collection $coll
      * @return void
      */
     public function registerCollection($coll)
@@ -103,7 +103,7 @@ class Doctrine_Hydrator_RecordDriver extends Doctrine_Hydrator_Graph
     }
 
     /**
-     * @param Doctrine_Collection $coll
+     * @param  Doctrine_Collection $coll
      * @return mixed
      */
     public function getLastKey(&$coll)
@@ -117,13 +117,13 @@ class Doctrine_Hydrator_RecordDriver extends Doctrine_Hydrator_Graph
      * sets the last element of given data array / collection
      * as previous element
      *
-     * @param array $prev
-     * @param Doctrine_Collection $coll
-     * @param boolean|integer $index
-     * @param string $dqlAlias
-     * @param mixed $oneToOne (seems to be unused)
+     * @param  array               $prev
+     * @param  Doctrine_Collection $coll
+     * @param  boolean|integer     $index
+     * @param  string              $dqlAlias
+     * @param  mixed               $oneToOne (seems to be unused)
      * @return void
-     * @todo Detailed documentation
+     * @todo   Detailed documentation
      */
     public function setLastElement(&$prev, &$coll, $index, $dqlAlias, $oneToOne)
     {

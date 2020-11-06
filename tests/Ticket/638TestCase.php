@@ -3,13 +3,13 @@
 /**
  * Doctrine_Ticket_638_TestCase
  *
- * @package     Doctrine
- * @author      Tamcy <7am.online@gmail.com>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Tamcy <7am.online@gmail.com>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 
 class Doctrine_Ticket_638_TestCase extends Doctrine_UnitTestCase
@@ -20,7 +20,7 @@ class Doctrine_Ticket_638_TestCase extends Doctrine_UnitTestCase
 
     public function prepareTables()
     {
-        $this->tables = array('T638_Student', 'T638_Course', 'T638_StudentCourse');
+        $this->tables = ['T638_Student', 'T638_Course', 'T638_StudentCourse'];
         parent::prepareTables();
     }
 
@@ -100,9 +100,9 @@ class T638_Student extends Doctrine_Record
     {
         $this->setTableName('T638_student');
 
-        $this->hasColumn('s_id as id', 'varchar', 30, array(  'primary' => true,));
-        $this->hasColumn('s_g_id as group_id', 'varchar', 30, array('notnull' => true));
-        $this->hasColumn('s_name as name', 'varchar', 50, array('notnull' => true));
+        $this->hasColumn('s_id as id', 'varchar', 30, [  'primary' => true,]);
+        $this->hasColumn('s_g_id as group_id', 'varchar', 30, ['notnull' => true]);
+        $this->hasColumn('s_name as name', 'varchar', 50, ['notnull' => true]);
     }
 
     public function setUp()
@@ -116,8 +116,8 @@ class T638_Course extends Doctrine_Record
     {
         $this->setTableName('T638_course');
 
-        $this->hasColumn('c_id as id', 'varchar', 20, array(  'primary' => true,));
-        $this->hasColumn('c_name as name', 'varchar', 50, array('notnull' => true));
+        $this->hasColumn('c_id as id', 'varchar', 20, [  'primary' => true,]);
+        $this->hasColumn('c_name as name', 'varchar', 50, ['notnull' => true]);
     }
 
     public function setUp()
@@ -136,14 +136,14 @@ class T638_StudentCourse extends Doctrine_Record
     {
         $this->setTableName('T638_Student_course');
 
-        $this->hasColumn('sc_student_id as student_id', 'varchar', 30, array(  'primary' => true,));
-        $this->hasColumn('sc_course_id as course_id', 'varchar', 20, array(  'primary' => true,));
-        $this->hasColumn('sc_remark  as remark', 'varchar', 500, array('notnull' => true));
+        $this->hasColumn('sc_student_id as student_id', 'varchar', 30, [  'primary' => true,]);
+        $this->hasColumn('sc_course_id as course_id', 'varchar', 20, [  'primary' => true,]);
+        $this->hasColumn('sc_remark  as remark', 'varchar', 500, ['notnull' => true]);
     }
 
     public function setUp()
     {
-        $this->hasOne('T638_Student as Student', array('local' => 'sc_student_id', 'foreign' => 's_id'));
-        $this->hasOne('T638_Course as Course', array('local' => 'sc_course_id', 'foreign' => 'c_id'));
+        $this->hasOne('T638_Student as Student', ['local' => 'sc_student_id', 'foreign' => 's_id']);
+        $this->hasOne('T638_Course as Course', ['local' => 'sc_course_id', 'foreign' => 'c_id']);
     }
 }

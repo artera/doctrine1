@@ -22,13 +22,13 @@
 /**
  * Doctrine_Task_GenerateMigrationsDiff
  *
- * @package     Doctrine
- * @subpackage  Task
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 2761 $
- * @author      Jonathan H. Wage <jwage@mac.com>
+ * @package    Doctrine
+ * @subpackage Task
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 2761 $
+ * @author     Jonathan H. Wage <jwage@mac.com>
  */
 class Doctrine_Task_GenerateMigrationsDiff extends Doctrine_Task
 {
@@ -40,12 +40,12 @@ class Doctrine_Task_GenerateMigrationsDiff extends Doctrine_Task
     /**
      * @var array
      */
-    public $requiredArguments = array('migrations_path'       => 'Specify the path to your migration classes folder.',
-                                           'yaml_schema_path' => 'Specify the path to your yaml schema files folder.');
+    public $requiredArguments = ['migrations_path'       => 'Specify the path to your migration classes folder.',
+                                           'yaml_schema_path' => 'Specify the path to your yaml schema files folder.'];
     /**
      * @var array
      */
-    public $optionalArguments = array('models_path' => 'Specify the path to your doctrine models folder.');
+    public $optionalArguments = ['models_path' => 'Specify the path to your doctrine models folder.'];
 
     public function execute()
     {

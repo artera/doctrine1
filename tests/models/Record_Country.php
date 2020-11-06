@@ -7,9 +7,12 @@ class Record_Country extends Doctrine_Record
     }
     public function setUp()
     {
-        $this->hasMany('Record_City as City', array(
+        $this->hasMany(
+            'Record_City as City',
+            [
             'local'   => 'id',
             'foreign' => 'country_id'
-        ));
+            ]
+        );
     }
 }

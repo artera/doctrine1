@@ -20,22 +20,22 @@
  */
 
 /**
- * @package     Doctrine
- * @subpackage  Import
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @author      Paul Cooper <pgc@ucecom.com>
- * @author      Lukas Smith <smith@pooteeweet.org> (PEAR MDB2 library)
- * @version     $Revision: 7689 $
- * @link        www.doctrine-project.org
- * @since       1.0
+ * @package    Doctrine
+ * @subpackage Import
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @author     Paul Cooper <pgc@ucecom.com>
+ * @author     Lukas Smith <smith@pooteeweet.org> (PEAR MDB2 library)
+ * @version    $Revision: 7689 $
+ * @link       www.doctrine-project.org
+ * @since      1.0
  */
 class Doctrine_Import_Pgsql extends Doctrine_Import
 {
     /**
      * @var array
      */
-    protected $sql = array(
+    protected $sql = [
                         'listDatabases' => 'SELECT datname FROM pg_database',
                         'listFunctions' => "SELECT
                                                 proname
@@ -124,23 +124,23 @@ class Doctrine_Import_Pgsql extends Doctrine_Import
                                                               WHERE c.relname ~ ? AND pg_catalog.pg_table_is_visible(c.oid)
                                                           )
                                                           AND r.contype = 'f'"
-                        );
+                        ];
 
     /**
      * lists all database triggers
      *
-     * @param string|null $database
+     * @param  string|null $database
      * @return array
      */
     public function listTriggers($database = null)
     {
-        return array();
+        return [];
     }
 
     /**
      * lists table constraints
      *
-     * @param string $table     database table name
+     * @param  string $table database table name
      * @return array
      */
     public function listTableConstraints($table)
@@ -154,7 +154,7 @@ class Doctrine_Import_Pgsql extends Doctrine_Import
     /**
      * lists table constraints
      *
-     * @param string $table     database table name
+     * @param  string $table database table name
      * @return array
      */
     public function listTableColumns($table)
@@ -163,7 +163,7 @@ class Doctrine_Import_Pgsql extends Doctrine_Import
         $query  = sprintf($this->sql['listTableColumns'], $table);
         $result = $this->conn->fetchAssoc($query);
 
-        $columns = array();
+        $columns = [];
         foreach ($result as $key => $val) {
             $val = array_change_key_case($val, CASE_LOWER);
 
@@ -177,11 +177,13 @@ class Doctrine_Import_Pgsql extends Doctrine_Import
                 $val['length'] = $length;
             }
 
-            /** @var Doctrine_DataDict_Pgsql $dataDict */
+            /**
+ * @var Doctrine_DataDict_Pgsql $dataDict
+*/
             $dataDict = $this->conn->dataDict;
             $decl     = $dataDict->getPortableDeclaration($val);
 
-            $description = array(
+            $description = [
                 'name'     => $val['field'],
                 'ntype'    => $val['type'],
                 'type'     => $decl['type'][0],
@@ -192,7 +194,7 @@ class Doctrine_Import_Pgsql extends Doctrine_Import
                 'notnull'  => ($val['isnotnull'] == 'NO'),
                 'default'  => $val['default'],
                 'primary'  => ($val['pri'] == 't'),
-            );
+            ];
 
             // If postgres enum type
             if ($val['type'] == 'e') {
@@ -207,7 +209,7 @@ class Doctrine_Import_Pgsql extends Doctrine_Import
                 }
             }
 
-            $matches = array();
+            $matches = [];
 
             if (preg_match("/^nextval\('(.*)'(::.*)?\)$/", $description['default'], $matches)) {
                 $description['sequence'] = $this->conn->formatter->fixSequenceName($matches[1]);
@@ -233,7 +235,7 @@ class Doctrine_Import_Pgsql extends Doctrine_Import
     /**
      * list all indexes in a table
      *
-     * @param string $table     database table name
+     * @param  string $table database table name
      * @return array
      */
     public function listTableIndexes($table)
@@ -247,7 +249,7 @@ class Doctrine_Import_Pgsql extends Doctrine_Import
     /**
      * lists tables
      *
-     * @param string|null $database
+     * @param  string|null $database
      * @return array
      */
     public function listTables($database = null)
@@ -258,7 +260,7 @@ class Doctrine_Import_Pgsql extends Doctrine_Import
     /**
      * lists table triggers
      *
-     * @param string $table     database table name
+     * @param  string $table database table name
      * @return array
      */
     public function listTableTriggers($table)
@@ -277,7 +279,7 @@ class Doctrine_Import_Pgsql extends Doctrine_Import
     /**
      * list the views in the database that reference a given table
      *
-     * @param string $table     database table name
+     * @param  string $table database table name
      * @return array
      */
     public function listTableViews($table)
@@ -288,18 +290,18 @@ class Doctrine_Import_Pgsql extends Doctrine_Import
     public function listTableRelations($table)
     {
         $sql   = $this->sql['listTableRelations'];
-        $param = array('^(' . $table . ')$');
+        $param = ['^(' . $table . ')$'];
 
-        $relations = array();
+        $relations = [];
 
         $results = $this->conn->fetchAssoc($sql, $param);
         foreach ($results as $result) {
             preg_match('/FOREIGN KEY \((.+)\) REFERENCES (.+)\((.+)\)/', $result['condef'], $values);
             if ((strpos($values[1], ',') === false) && (strpos($values[3], ',') === false)) {
                 $tableName   = trim($values[2], '"');
-                $relations[] = array('table'   => $tableName,
+                $relations[] = ['table'   => $tableName,
                                      'local'   => $values[1],
-                                     'foreign' => $values[3]);
+                                     'foreign' => $values[3]];
             }
         }
 

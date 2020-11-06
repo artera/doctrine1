@@ -2,7 +2,7 @@
 
 class Transaction_TestLogger implements Doctrine_Overloadable
 {
-    private $messages = array();
+    private $messages = [];
 
     public function __call($m, $a)
     {
@@ -16,7 +16,7 @@ class Transaction_TestLogger implements Doctrine_Overloadable
 
     public function clear()
     {
-        $this->messages = array();
+        $this->messages = [];
     }
 
     public function getAll()

@@ -19,13 +19,13 @@
 /**
  * Doctrine_Ticket_987_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Ticket_987_TestCase extends Doctrine_UnitTestCase
 {
@@ -70,9 +70,9 @@ class Ticket_987_Person extends Doctrine_Record
     public function setTableDefinition()
     {
         $this->setTableName('person');
-        $this->hasColumn('id', 'integer', 11, array('primary' => true, 'notnull' => true, 'autoincrement' => true));
-        $this->hasColumn('gender', 'integer', 1, array('notblank' => true, 'primary' => false, 'notnull' => true, 'autoincrement' => false));
-        $this->hasColumn('firstname', 'string', 30, array('notblank' => true, 'primary' => false, 'notnull' => true, 'autoincrement' => false));
-        $this->hasColumn('lastname', 'string', 30, array('notblank' => true, 'primary' => false, 'notnull' => true, 'autoincrement' => false));
+        $this->hasColumn('id', 'integer', 11, ['primary' => true, 'notnull' => true, 'autoincrement' => true]);
+        $this->hasColumn('gender', 'integer', 1, ['notblank' => true, 'primary' => false, 'notnull' => true, 'autoincrement' => false]);
+        $this->hasColumn('firstname', 'string', 30, ['notblank' => true, 'primary' => false, 'notnull' => true, 'autoincrement' => false]);
+        $this->hasColumn('lastname', 'string', 30, ['notblank' => true, 'primary' => false, 'notnull' => true, 'autoincrement' => false]);
     }
 }

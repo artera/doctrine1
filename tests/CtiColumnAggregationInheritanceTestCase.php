@@ -19,13 +19,13 @@
 /**
  * Doctrine_CtiColumnAggregation_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_CtiColumnAggregationInheritance_TestCase extends Doctrine_UnitTestCase
 {
@@ -49,10 +49,12 @@ class CTICATestParent2 extends CTICATestParent1
         $this->hasColumn('verified', 'boolean', 1);
         $this->hasColumn('type', 'integer', 2);
 
-        $this->setSubclasses(array(
-            'CTICATest'  => array('type' => 1),
-            'CTICATest2' => array('type' => 2)
-            ));
+        $this->setSubclasses(
+            [
+            'CTICATest'  => ['type' => 1],
+            'CTICATest2' => ['type' => 2]
+            ]
+        );
     }
 }
 class CTICATestParent3 extends CTICATestParent2
@@ -90,6 +92,6 @@ class CTICATestOneToManyRelated extends Doctrine_Record
 
     public function setUp()
     {
-        $this->hasMany('CTICATestParent1', array('local' => 'cti_id', 'foreign' => 'id'));
+        $this->hasMany('CTICATestParent1', ['local' => 'cti_id', 'foreign' => 'id']);
     }
 }

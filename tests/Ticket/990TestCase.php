@@ -19,13 +19,13 @@
 /**
  * Doctrine_Ticket_990_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Ticket_990_TestCase extends Doctrine_UnitTestCase
 {
@@ -66,14 +66,14 @@ class Doctrine_Ticket_990_TestCase extends Doctrine_UnitTestCase
 
         $this->assertEqual(Doctrine_Record::STATE_DIRTY, $person->state());
         $this->assertTrue($person->isModified());
-        $this->assertEqual(array('firstname' => 'Alice'), $person->getModified());
+        $this->assertEqual(['firstname' => 'Alice'], $person->getModified());
 
         $person = Doctrine_Core::getTable('Ticket_990_Person')->find($person->id);
 
         $this->assertEqual('Alice', $person->firstname);
         $this->assertEqual(Doctrine_Record::STATE_DIRTY, $person->state());
         $this->assertTrue($person->isModified());
-        $this->assertEqual(array('firstname' => 'Alice'), $person->getModified());
+        $this->assertEqual(['firstname' => 'Alice'], $person->getModified());
 
         Doctrine_Manager::getInstance()->setAttribute(Doctrine_Core::ATTR_HYDRATE_OVERWRITE, true);
     }
@@ -101,7 +101,7 @@ class Ticket_990_Person extends Doctrine_Record
     public function setTableDefinition()
     {
         $this->setTableName('person');
-        $this->hasColumn('id', 'integer', 11, array('primary' => true, 'notnull' => true, 'autoincrement' => true));
+        $this->hasColumn('id', 'integer', 11, ['primary' => true, 'notnull' => true, 'autoincrement' => true]);
         $this->hasColumn('firstname', 'string');
         $this->hasColumn('lastname', 'string');
     }

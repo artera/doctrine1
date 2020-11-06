@@ -19,19 +19,19 @@
 /**
  * Doctrine_Ticket_1277_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Ticket_1277_TestCase extends Doctrine_UnitTestCase
 {
     public function prepareTables()
     {
-        $this->tables = array('T1277_User');
+        $this->tables = ['T1277_User'];
         parent::prepareTables();
     }
 
@@ -200,26 +200,28 @@ class T1277_User extends Doctrine_Record
     {
         $this->setTableName('t1277_users');
 
-        $this->hasColumns(array(
+        $this->hasColumns(
+            [
 
-            'id' => array(
+            'id' => [
                     'type'          => 'integer',
                     'length'        => 4,
                     'notnull'       => true,
                     'autoincrement' => true,
                     'primary'       => true
-            ),
+            ],
 
-            'username' => array(
+            'username' => [
                     'type'   => 'string',
                     'length' => 50
-            ),
+            ],
 
-            'email' => array(
+            'email' => [
                     'type'    => 'string',
                     'length'  => 50,
                     'default' => null,
-            ),
-        ));
+            ],
+            ]
+        );
     }
 }

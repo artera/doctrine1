@@ -19,13 +19,13 @@
 /**
  * Doctrine_Import_Pgsql_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Import_Pgsql_TestCase extends Doctrine_UnitTestCase
 {
@@ -33,19 +33,24 @@ class Doctrine_Import_Pgsql_TestCase extends Doctrine_UnitTestCase
     {
         $this->import->listSequences('table');
 
-        $this->assertEqual($this->adapter->pop(), "SELECT
+        $this->assertEqual(
+            $this->adapter->pop(),
+            "SELECT
                                                 regexp_replace(relname, '_seq$', '')
                                             FROM
                                                 pg_class
                                             WHERE relkind = 'S' AND relnamespace IN
                                                 (SELECT oid FROM pg_namespace
-                                                 WHERE nspname NOT LIKE 'pg_%' AND nspname != 'information_schema')");
+                                                 WHERE nspname NOT LIKE 'pg_%' AND nspname != 'information_schema')"
+        );
     }
     public function testListTableColumnsExecutesSql()
     {
         $this->import->listTableColumns('table');
 
-        $this->assertEqual($this->adapter->pop(), "SELECT
+        $this->assertEqual(
+            $this->adapter->pop(),
+            "SELECT
                                                      ordinal_position as attnum,
                                                      column_name as field,
                                                      udt_name as type,
@@ -63,13 +68,16 @@ class Doctrine_Import_Pgsql_TestCase extends Doctrine_UnitTestCase
                                                      character_maximum_length as length
                                                    FROM information_schema.COLUMNS
                                                    WHERE table_name = 'table'
-                                                   ORDER BY ordinal_position");
+                                                   ORDER BY ordinal_position"
+        );
     }
     public function testListTableIndexesExecutesSql()
     {
         $this->import->listTableIndexes('table');
 
-        $this->assertEqual($this->adapter->pop(), "SELECT
+        $this->assertEqual(
+            $this->adapter->pop(),
+            "SELECT
                                                         relname
                                                    FROM
                                                         pg_class
@@ -80,7 +88,8 @@ class Doctrine_Import_Pgsql_TestCase extends Doctrine_UnitTestCase
                                                             AND pg_class.oid=pg_index.indrelid
                                                             AND indisunique != 't'
                                                             AND indisprimary != 't'
-                                                        )");
+                                                        )"
+        );
     }
     public function testListTablesExecutesSql()
     {

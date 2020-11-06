@@ -21,7 +21,7 @@ class Doctrine_Ticket_1072_TestCase extends Doctrine_UnitTestCase
 
     public function prepareTables()
     {
-        $this->tables   = array();
+        $this->tables   = [];
         $this->tables[] = 'T1072BankTransaction';
         $this->tables[] = 'T1072PaymentDetail';
         parent::prepareTables();
@@ -107,15 +107,18 @@ class T1072BankTransaction extends Doctrine_Record
     {
         $this->setTableName('t1072_bank_transaction');
         $this->hasColumn('payment_detail_id', 'integer', null);
-        $this->hasColumn('name', 'string', 255, array('notnull' => true));
+        $this->hasColumn('name', 'string', 255, ['notnull' => true]);
         $this->option('charset', 'utf8');
     }
 
     public function setUp()
     {
         parent::setUp();
-        $this->hasOne('T1072PaymentDetail', array('local'   => 'payment_detail_id',
-                                                  'foreign' => 'id'));
+        $this->hasOne(
+            'T1072PaymentDetail',
+            ['local'   => 'payment_detail_id',
+            'foreign' => 'id']
+        );
     }
 }
 
@@ -124,14 +127,17 @@ class T1072PaymentDetail extends Doctrine_Record
     public function setTableDefinition()
     {
         $this->setTableName('t1072_payment_detail');
-        $this->hasColumn('name', 'string', 255, array('notnull' => true));
+        $this->hasColumn('name', 'string', 255, ['notnull' => true]);
         $this->option('charset', 'utf8');
     }
 
     public function setUp()
     {
         parent::setUp();
-        $this->hasOne('T1072BankTransaction', array('local'   => 'id',
-                                                    'foreign' => 'payment_detail_id'));
+        $this->hasOne(
+            'T1072BankTransaction',
+            ['local'   => 'id',
+            'foreign' => 'payment_detail_id']
+        );
     }
 }

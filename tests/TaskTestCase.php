@@ -22,13 +22,13 @@
  * N.B. Invalid task classes are loaded just-in-time to avoid clashes with the CLI tests.  Other test-specific
  * subclasses are declared at the bottom of this file.
  *
- * @package     Doctrine
- * @author      Dan Bettles <danbettles@yahoo.co.uk>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Dan Bettles <danbettles@yahoo.co.uk>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Task_TestCase extends Doctrine_UnitTestCase
 {
@@ -74,11 +74,11 @@ class Doctrine_Task_TestCase extends Doctrine_UnitTestCase
      * Loads a PHP fixture from the directory for this test case
      *
      * @ignore
-     * @param string $basename
+     * @param  string $basename
      */
     protected function loadPhpFixture($basename)
     {
-        require_once(dirname(__FILE__) . '/TaskTestCase/' . $basename);
+        include_once dirname(__FILE__) . '/TaskTestCase/' . $basename;
     }
 
     public function testSettasknameThrowsAnExceptionIfTheTaskNameIsInvalid()
@@ -109,10 +109,10 @@ class Doctrine_Task_TestCase extends Doctrine_UnitTestCase
         $this->loadPhpFixture('TestTask004.php');
         $this->loadPhpFixture('TestTask005.php');
 
-        $aClassWithInvalidTaskName = array(
+        $aClassWithInvalidTaskName = [
             'Doctrine_Task_TestCase_TestTask004' => '-invalid-task-name',
             'Doctrine_Task_TestCase_TestTask005' => 'another invalid task name',
-        );
+        ];
 
         $numPasses = 0;
 

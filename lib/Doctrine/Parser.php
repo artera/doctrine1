@@ -22,13 +22,13 @@
 /**
  * Doctrine_Parser
  *
- * @package     Doctrine
- * @subpackage  Parser
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 1080 $
- * @author      Jonathan H. Wage <jwage@mac.com>
+ * @package    Doctrine
+ * @subpackage Parser
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 1080 $
+ * @author     Jonathan H. Wage <jwage@mac.com>
  */
 abstract class Doctrine_Parser
 {
@@ -37,7 +37,7 @@ abstract class Doctrine_Parser
      *
      * Override in the parser driver
      *
-     * @param string $array
+     * @param  string $array
      * @return mixed
      * @author Jonathan H. Wage
      */
@@ -48,9 +48,9 @@ abstract class Doctrine_Parser
      *
      * Override in the parser driver
      *
-     * @param array $array
-     * @param string $path
-     * @param string $charset The charset of the data being dumped
+     * @param  array  $array
+     * @param  string $path
+     * @param  string $charset The charset of the data being dumped
      * @return int|false|string
      * @author Jonathan H. Wage
      */
@@ -61,13 +61,15 @@ abstract class Doctrine_Parser
      *
      * Get instance of the specified parser
      *
-     * @param string $type
+     * @param  string $type
      * @return Doctrine_Parser
      * @author Jonathan H. Wage
      */
     public static function getParser($type)
     {
-        /** @psalm-var class-string $class */
+        /**
+ * @psalm-var class-string $class
+*/
         $class = 'Doctrine_Parser_' . ucfirst($type);
 
         return new $class;
@@ -78,8 +80,8 @@ abstract class Doctrine_Parser
      *
      * Interface for loading and parsing data from a file
      *
-     * @param string $path
-     * @param string $type
+     * @param  string $path
+     * @param  string $type
      * @return array
      * @author Jonathan H. Wage
      */
@@ -95,10 +97,10 @@ abstract class Doctrine_Parser
      *
      * Interface for pulling and dumping data to a file
      *
-     * @param array $array
-     * @param string $path
-     * @param string $type
-     * @param string $charset The charset of the data being dumped
+     * @param  array  $array
+     * @param  string $path
+     * @param  string $type
+     * @param  string $charset The charset of the data being dumped
      * @return int|false|string
      * @author Jonathan H. Wage
      */
@@ -115,7 +117,7 @@ abstract class Doctrine_Parser
      * Get contents whether it is the path to a file file or a string of txt.
      * Either should allow php code in it.
      *
-     * @param string $path
+     * @param  string $path
      * @return string
      */
     public function doLoad($path)
@@ -128,7 +130,7 @@ abstract class Doctrine_Parser
             file_put_contents($path, $contents);
         }
 
-        include($path);
+        include $path;
 
         // Fix #1569. Need to check if it's still all valid
         $contents = ob_get_clean(); //iconv("UTF-8", "UTF-8", ob_get_clean());
@@ -139,8 +141,8 @@ abstract class Doctrine_Parser
     /**
      * doDump
      *
-     * @param string $data
-     * @param string $path
+     * @param  string $data
+     * @param  string $path
      * @return int|false|string
      */
     public function doDump($data, $path = null)

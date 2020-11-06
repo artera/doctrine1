@@ -10,6 +10,6 @@ class ColumnAliasTest extends Doctrine_Record
     }
     public function setUp()
     {
-        $this->hasOne('Book as book', array('local' => 'book_id', 'foreign' => 'id'));
+        $this->hasOne('Book as book', ['local' => 'book_id', 'foreign' => 'id']);
     }
 }

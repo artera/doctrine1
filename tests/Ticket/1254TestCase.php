@@ -19,13 +19,13 @@
 /**
  * Doctrine_Ticket_1254_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Ticket_1254_TestCase extends Doctrine_UnitTestCase
 {
@@ -40,7 +40,7 @@ class Doctrine_Ticket_1254_TestCase extends Doctrine_UnitTestCase
     {
         Doctrine_Manager::getInstance()->getCurrentConnection()->beginTransaction();
 
-        $cats = array('cat1', 'cat2');
+        $cats = ['cat1', 'cat2'];
         $now  = time();
 
         for ($i = 0; $i < 10; $i++) {
@@ -71,7 +71,7 @@ class Doctrine_Ticket_1254_TestCase extends Doctrine_UnitTestCase
         $q->limit(5);
 
         //echo $sql = $q->getSqlQuery();
-        //	echo $sql;
+        //    echo $sql;
 
         $xs = $q->execute();
 
@@ -86,14 +86,14 @@ class RelX extends Doctrine_Record
     public function setTableDefinition()
     {
         $this->setTableName('rel_x');
-        $this->hasColumn('name', 'string', 25, array());
-        $this->hasColumn('category', 'string', 25, array());
-        $this->hasColumn('created_at', 'timestamp', null, array());
+        $this->hasColumn('name', 'string', 25, []);
+        $this->hasColumn('category', 'string', 25, []);
+        $this->hasColumn('created_at', 'timestamp', null, []);
     }
 
     public function setUp()
     {
-        $this->HasMany('RelY as y', array('local' => 'id', 'foreign' => 'rel_x_id'));
+        $this->HasMany('RelY as y', ['local' => 'id', 'foreign' => 'rel_x_id']);
     }
 }
 
@@ -102,8 +102,8 @@ class RelY extends Doctrine_Record
     public function setTableDefinition()
     {
         $this->setTableName('rel_y');
-        $this->hasColumn('name', 'string', 25, array());
-        $this->hasColumn('rel_x_id', 'integer', 10, array());
+        $this->hasColumn('name', 'string', 25, []);
+        $this->hasColumn('rel_x_id', 'integer', 10, []);
     }
 
     public function setUp()

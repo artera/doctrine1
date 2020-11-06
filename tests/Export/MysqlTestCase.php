@@ -19,13 +19,13 @@
 /**
  * Doctrine_Export_Mysql_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Export_Mysql_TestCase extends Doctrine_UnitTestCase
 {
@@ -40,7 +40,7 @@ class Doctrine_Export_Mysql_TestCase extends Doctrine_UnitTestCase
     public function testAlterTableThrowsExceptionWithoutValidTableName()
     {
         try {
-            $this->export->alterTable(0, array(), array());
+            $this->export->alterTable(0, [], []);
 
             $this->fail();
         } catch (Doctrine_Export_Exception $e) {
@@ -52,8 +52,8 @@ class Doctrine_Export_Mysql_TestCase extends Doctrine_UnitTestCase
     {
         $name = 'mytable';
 
-        $fields  = array('id' => array('type' => 'integer', 'unsigned' => 1));
-        $options = array('type' => 'MYISAM');
+        $fields  = ['id' => ['type' => 'integer', 'unsigned' => 1]];
+        $options = ['type' => 'MYISAM'];
 
         $this->export->createTable($name, $fields, $options);
 
@@ -64,7 +64,7 @@ class Doctrine_Export_Mysql_TestCase extends Doctrine_UnitTestCase
     {
         $name = 'mytable';
 
-        $fields = array('id' => array('type' => 'integer', 'unsigned' => 1));
+        $fields = ['id' => ['type' => 'integer', 'unsigned' => 1]];
 
         $this->export->createTable($name, $fields);
 
@@ -75,10 +75,10 @@ class Doctrine_Export_Mysql_TestCase extends Doctrine_UnitTestCase
     public function testCreateTableSupportsMultiplePks()
     {
         $name   = 'mytable';
-        $fields = array('name'  => array('type' => 'char', 'length' => 10),
-                         'type' => array('type' => 'integer', 'length' => 3));
+        $fields = ['name'  => ['type' => 'char', 'length' => 10],
+                         'type' => ['type' => 'integer', 'length' => 3]];
 
-        $options = array('primary' => array('name', 'type'));
+        $options = ['primary' => ['name', 'type']];
         $this->export->createTable($name, $fields, $options);
 
         $this->assertEqual($this->adapter->pop(), 'CREATE TABLE mytable (name CHAR(10), type MEDIUMINT, PRIMARY KEY(name, type)) ENGINE = INNODB');
@@ -88,9 +88,9 @@ class Doctrine_Export_Mysql_TestCase extends Doctrine_UnitTestCase
     {
         $name = 'mytable';
 
-        $fields  = array('id' => array('type' => 'integer', 'unsigned' => 1, 'autoincrement' => true));
-        $options = array('primary' => array('id'),
-                        'type'     => 'INNODB');
+        $fields  = ['id' => ['type' => 'integer', 'unsigned' => 1, 'autoincrement' => true]];
+        $options = ['primary' => ['id'],
+                        'type'     => 'INNODB'];
 
         $this->export->createTable($name, $fields, $options);
 
@@ -101,8 +101,8 @@ class Doctrine_Export_Mysql_TestCase extends Doctrine_UnitTestCase
     {
         $name = 'mytable';
 
-        $fields  = array('id' => array('type' => 'char', 'length' => 3));
-        $options = array('type' => 'MYISAM');
+        $fields  = ['id' => ['type' => 'char', 'length' => 3]];
+        $options = ['type' => 'MYISAM'];
 
         $this->export->createTable($name, $fields, $options);
 
@@ -113,8 +113,8 @@ class Doctrine_Export_Mysql_TestCase extends Doctrine_UnitTestCase
     {
         $name = 'mytable';
 
-        $fields  = array('id' => array('type' => 'char'));
-        $options = array('type' => 'MYISAM');
+        $fields  = ['id' => ['type' => 'char']];
+        $options = ['type' => 'MYISAM'];
 
         $this->export->createTable($name, $fields, $options);
 
@@ -125,8 +125,8 @@ class Doctrine_Export_Mysql_TestCase extends Doctrine_UnitTestCase
     {
         $name = 'mytable';
 
-        $fields  = array('id' => array('type' => 'varchar', 'length' => '100'));
-        $options = array('type' => 'MYISAM');
+        $fields  = ['id' => ['type' => 'varchar', 'length' => '100']];
+        $options = ['type' => 'MYISAM'];
 
         $this->export->createTable($name, $fields, $options);
 
@@ -137,8 +137,8 @@ class Doctrine_Export_Mysql_TestCase extends Doctrine_UnitTestCase
     {
         $name = 'mytable';
 
-        $fields  = array('id' => array('type' => 'integer', 'length' => '10'));
-        $options = array('type' => 'MYISAM');
+        $fields  = ['id' => ['type' => 'integer', 'length' => '10']];
+        $options = ['type' => 'MYISAM'];
 
         $this->export->createTable($name, $fields, $options);
 
@@ -149,8 +149,8 @@ class Doctrine_Export_Mysql_TestCase extends Doctrine_UnitTestCase
     {
         $name = 'mytable';
 
-        $fields  = array('content' => array('type' => 'blob'));
-        $options = array('type' => 'MYISAM');
+        $fields  = ['content' => ['type' => 'blob']];
+        $options = ['type' => 'MYISAM'];
 
         $this->export->createTable($name, $fields, $options);
 
@@ -161,8 +161,8 @@ class Doctrine_Export_Mysql_TestCase extends Doctrine_UnitTestCase
     {
         $name = 'mytable';
 
-        $fields  = array('content' => array('type' => 'blob', 'length' => 2000));
-        $options = array('type' => 'MYISAM');
+        $fields  = ['content' => ['type' => 'blob', 'length' => 2000]];
+        $options = ['type' => 'MYISAM'];
 
         $this->export->createTable($name, $fields, $options);
 
@@ -173,8 +173,8 @@ class Doctrine_Export_Mysql_TestCase extends Doctrine_UnitTestCase
     {
         $name = 'mytable';
 
-        $fields  = array('id' => array('type' => 'boolean'));
-        $options = array('type' => 'MYISAM');
+        $fields  = ['id' => ['type' => 'boolean']];
+        $options = ['type' => 'MYISAM'];
 
         $this->export->createTable($name, $fields, $options);
 
@@ -185,17 +185,17 @@ class Doctrine_Export_Mysql_TestCase extends Doctrine_UnitTestCase
     {
         $name = 'mytable';
 
-        $fields = array(
-            'letter' => array(
+        $fields = [
+            'letter' => [
                 'type'    => 'enum',
-                'values'  => array('a', 'b', 'c'),
+                'values'  => ['a', 'b', 'c'],
                 'default' => 'a',
                 'notnull' => true,
                 'length'  => '1',
-            )
-        );
+            ]
+        ];
 
-        $options = array('type' => 'MYISAM');
+        $options = ['type' => 'MYISAM'];
 
         $this->export->createTable($name, $fields, $options);
 
@@ -218,16 +218,16 @@ class Doctrine_Export_Mysql_TestCase extends Doctrine_UnitTestCase
     {
         $name = 'mytable';
 
-        $fields = array(
-            'letter' => array(
+        $fields = [
+            'letter' => [
                 'type'    => 'set',
-                'values'  => array('a', 'b', 'c'),
+                'values'  => ['a', 'b', 'c'],
                 'default' => 'a',
                 'notnull' => true,
-            )
-        );
+            ]
+        ];
 
-        $options = array('type' => 'MYISAM');
+        $options = ['type' => 'MYISAM'];
 
         $this->export->createTable($name, $fields, $options);
 
@@ -250,14 +250,14 @@ class Doctrine_Export_Mysql_TestCase extends Doctrine_UnitTestCase
     {
         $name = 'mytable';
 
-        $fields = array('id'         => array('type' => 'boolean', 'primary' => true),
-                        'foreignKey' => array('type' => 'integer')
-                        );
-        $options = array('type'        => 'INNODB',
-                         'foreignKeys' => array(array('local'        => 'foreignKey',
+        $fields = ['id'         => ['type' => 'boolean', 'primary' => true],
+                        'foreignKey' => ['type' => 'integer']
+                        ];
+        $options = ['type'        => 'INNODB',
+                         'foreignKeys' => [['local'        => 'foreignKey',
                                                       'foreign'      => 'id',
-                                                      'foreignTable' => 'sometable'))
-                         );
+                                                      'foreignTable' => 'sometable']]
+                         ];
 
 
         $sql = $this->export->createTableSql($name, $fields, $options);
@@ -272,14 +272,14 @@ class Doctrine_Export_Mysql_TestCase extends Doctrine_UnitTestCase
 
         $name = 'mytable';
 
-        $fields = array('id'         => array('type' => 'boolean', 'primary' => true),
-                        'foreignKey' => array('type' => 'integer')
-                        );
-        $options = array('type'        => 'INNODB',
-                         'foreignKeys' => array(array('local'        => 'foreignKey',
+        $fields = ['id'         => ['type' => 'boolean', 'primary' => true],
+                        'foreignKey' => ['type' => 'integer']
+                        ];
+        $options = ['type'        => 'INNODB',
+                         'foreignKeys' => [['local'        => 'foreignKey',
                                                       'foreign'      => 'id',
-                                                      'foreignTable' => 'sometable'))
-                         );
+                                                      'foreignTable' => 'sometable']]
+                         ];
 
 
         $sql = $this->export->createTableSql($name, $fields, $options);
@@ -294,13 +294,13 @@ class Doctrine_Export_Mysql_TestCase extends Doctrine_UnitTestCase
     {
         $this->conn->setAttribute(Doctrine_Core::ATTR_QUOTE_IDENTIFIER, true);
 
-        $fields = array('id'    => array('type' => 'integer', 'unsigned' => 1, 'autoincrement' => true),
-                         'name' => array('type' => 'string', 'length' => 4),
-                         );
+        $fields = ['id'    => ['type' => 'integer', 'unsigned' => 1, 'autoincrement' => true],
+                         'name' => ['type' => 'string', 'length' => 4],
+                         ];
 
-        $options = array('primary' => array('id'),
-                         'indexes' => array('myindex' => array('fields' => array('id', 'name')))
-                         );
+        $options = ['primary' => ['id'],
+                         'indexes' => ['myindex' => ['fields' => ['id', 'name']]]
+                         ];
 
         $this->export->createTable('sometable', $fields, $options);
 
@@ -317,15 +317,15 @@ class Doctrine_Export_Mysql_TestCase extends Doctrine_UnitTestCase
     {
         $name = 'mytable';
 
-        $fields = array('id'         => array('type' => 'boolean', 'primary' => true),
-                        'foreignKey' => array('type' => 'integer')
-                        );
-        $options = array('type'        => 'INNODB',
-                         'foreignKeys' => array(array('local'        => 'foreignKey',
+        $fields = ['id'         => ['type' => 'boolean', 'primary' => true],
+                        'foreignKey' => ['type' => 'integer']
+                        ];
+        $options = ['type'        => 'INNODB',
+                         'foreignKeys' => [['local'        => 'foreignKey',
                                                       'foreign'      => 'id',
-                                                      'foreignTable' => 'sometable')),
-                         'indexes' => array('myindex' => array('fields' => array('foreignKey'))),
-                         );
+                                                      'foreignTable' => 'sometable']],
+                         'indexes' => ['myindex' => ['fields' => ['foreignKey']]],
+                         ];
 
 
         $sql = $this->export->createTableSql($name, $fields, $options);
@@ -358,8 +358,8 @@ class Doctrine_Export_Mysql_TestCase extends Doctrine_UnitTestCase
 
     public function testUnknownIndexSortingAttributeThrowsException()
     {
-        $fields = array('id'   => array('sorting' => 'ASC'),
-                        'name' => array('sorting' => 'unknown'));
+        $fields = ['id'   => ['sorting' => 'ASC'],
+                        'name' => ['sorting' => 'unknown']];
 
         try {
             $this->export->getIndexFieldDeclarationList($fields);
@@ -371,22 +371,22 @@ class Doctrine_Export_Mysql_TestCase extends Doctrine_UnitTestCase
 
     public function testIndexDeclarationsSupportSortingAndLengthAttributes()
     {
-        $fields = array('id'   => array('sorting' => 'ASC', 'length' => 10),
-                        'name' => array('sorting' => 'DESC', 'length' => 1));
+        $fields = ['id'   => ['sorting' => 'ASC', 'length' => 10],
+                        'name' => ['sorting' => 'DESC', 'length' => 1]];
 
         $this->assertEqual($this->export->getIndexFieldDeclarationList($fields), 'id(10) ASC, name(1) DESC');
     }
 
     public function testCreateTableSupportsIndexesUsingSingleFieldString()
     {
-        $fields = array('id'    => array('type' => 'integer', 'unsigned' => 1, 'autoincrement' => true),
-                         'name' => array('type' => 'string', 'length' => 4),
-                         );
+        $fields = ['id'    => ['type' => 'integer', 'unsigned' => 1, 'autoincrement' => true],
+                         'name' => ['type' => 'string', 'length' => 4],
+                         ];
 
-        $options = array('primary' => array('id'),
-                         'indexes' => array('myindex' => array(
-                                                    'fields' => 'name'))
-                         );
+        $options = ['primary' => ['id'],
+                         'indexes' => ['myindex' => [
+                                                    'fields' => 'name']]
+                         ];
 
         $this->export->createTable('sometable', $fields, $options);
         $this->assertEqual($this->adapter->pop(), 'CREATE TABLE sometable (id INT UNSIGNED AUTO_INCREMENT, name VARCHAR(4), INDEX myindex_idx (name), PRIMARY KEY(id)) ENGINE = INNODB');
@@ -394,18 +394,18 @@ class Doctrine_Export_Mysql_TestCase extends Doctrine_UnitTestCase
 
     public function testCreateTableSupportsIndexesWithCustomSorting()
     {
-        $fields = array('id'    => array('type' => 'integer', 'unsigned' => 1, 'autoincrement' => true),
-                         'name' => array('type' => 'string', 'length' => 4),
-                         );
+        $fields = ['id'    => ['type' => 'integer', 'unsigned' => 1, 'autoincrement' => true],
+                         'name' => ['type' => 'string', 'length' => 4],
+                         ];
 
-        $options = array('primary' => array('id'),
-                         'indexes' => array('myindex' => array(
-                                                    'fields' => array(
-                                                            'id'   => array('sorting' => 'ASC'),
-                                                            'name' => array('sorting' => 'DESC')
-                                                                )
-                                                            ))
-                         );
+        $options = ['primary' => ['id'],
+                         'indexes' => ['myindex' => [
+                                                    'fields' => [
+                                                            'id'   => ['sorting' => 'ASC'],
+                                                            'name' => ['sorting' => 'DESC']
+                                                                ]
+                                                            ]]
+                         ];
 
         $this->export->createTable('sometable', $fields, $options);
 
@@ -413,19 +413,19 @@ class Doctrine_Export_Mysql_TestCase extends Doctrine_UnitTestCase
     }
     public function testCreateTableSupportsFulltextIndexes()
     {
-        $fields = array('id'       => array('type' => 'integer', 'unsigned' => 1, 'autoincrement' => true),
-                         'content' => array('type' => 'string', 'length' => 4),
-                         );
+        $fields = ['id'       => ['type' => 'integer', 'unsigned' => 1, 'autoincrement' => true],
+                         'content' => ['type' => 'string', 'length' => 4],
+                         ];
 
-        $options = array('primary' => array('id'),
-                         'indexes' => array('myindex' => array(
-                                                    'fields' => array(
-                                                            'content' => array('sorting' => 'DESC')
-                                                                ),
+        $options = ['primary' => ['id'],
+                         'indexes' => ['myindex' => [
+                                                    'fields' => [
+                                                            'content' => ['sorting' => 'DESC']
+                                                                ],
                                                     'type' => 'fulltext',
-                                                            )),
+                                                            ]],
                          'type' => 'MYISAM',
-                         );
+                         ];
 
         $this->export->createTable('sometable', $fields, $options);
 
@@ -436,14 +436,14 @@ class Doctrine_Export_Mysql_TestCase extends Doctrine_UnitTestCase
     {
         $name = 'mytable';
 
-        $fields = array('id'   => array('type' => 'boolean', 'primary' => true),
-                        'lang' => array('type' => 'integer', 'primary' => true)
-                        );
-        $options = array('type'        => 'INNODB',
-                         'foreignKeys' => array(array('local'        => array('id', 'lang' ),
-                                                      'foreign'      => array('id', 'lang'),
-                                                      'foreignTable' => 'sometable'))
-                         );
+        $fields = ['id'   => ['type' => 'boolean', 'primary' => true],
+                        'lang' => ['type' => 'integer', 'primary' => true]
+                        ];
+        $options = ['type'        => 'INNODB',
+                         'foreignKeys' => [['local'        => ['id', 'lang' ],
+                                                      'foreign'      => ['id', 'lang'],
+                                                      'foreignTable' => 'sometable']]
+                         ];
 
         $sql = $this->export->createTableSql($name, $fields, $options);
 
@@ -453,18 +453,24 @@ class Doctrine_Export_Mysql_TestCase extends Doctrine_UnitTestCase
 
     public function testCreateTableSupportsFieldCharset()
     {
-        $sql = $this->export->createTableSql('mytable', array(
-            'name' => array('type' => 'string', 'length' => 255, 'charset' => 'utf8'),
-        ));
+        $sql = $this->export->createTableSql(
+            'mytable',
+            [
+            'name' => ['type' => 'string', 'length' => 255, 'charset' => 'utf8'],
+            ]
+        );
 
         $this->assertEqual($sql[0], 'CREATE TABLE mytable (name VARCHAR(255) CHARACTER SET utf8) ENGINE = INNODB');
     }
 
     public function testCreateTableSupportsFieldCollation()
     {
-        $sql = $this->export->createTableSql('mytable', array(
-            'name' => array('type' => 'string', 'length' => 255, 'collation' => 'utf8_general_ci'),
-        ));
+        $sql = $this->export->createTableSql(
+            'mytable',
+            [
+            'name' => ['type' => 'string', 'length' => 255, 'collation' => 'utf8_general_ci'],
+            ]
+        );
 
         $this->assertEqual($sql[0], 'CREATE TABLE mytable (name VARCHAR(255) COLLATE utf8_general_ci) ENGINE = INNODB');
     }

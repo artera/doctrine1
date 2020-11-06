@@ -22,13 +22,13 @@
 /**
  * Doctrine_Task_Migrate
  *
- * @package     Doctrine
- * @subpackage  Task
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 2761 $
- * @author      Jonathan H. Wage <jwage@mac.com>
+ * @package    Doctrine
+ * @subpackage Task
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 2761 $
+ * @author     Jonathan H. Wage <jwage@mac.com>
  */
 class Doctrine_Task_Migrate extends Doctrine_Task
 {
@@ -40,12 +40,12 @@ class Doctrine_Task_Migrate extends Doctrine_Task
     /**
      * @var array
      */
-    public $requiredArguments = array('migrations_path' => 'Specify path to your migrations directory.');
+    public $requiredArguments = ['migrations_path' => 'Specify path to your migrations directory.'];
 
     /**
      * @var array
      */
-    public $optionalArguments = array('version' => 'Version to migrate to. If you do not specify, the db will be migrated from the current version to the latest.');
+    public $optionalArguments = ['version' => 'Version to migrate to. If you do not specify, the db will be migrated from the current version to the latest.'];
 
     /**
      * @return void

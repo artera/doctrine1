@@ -22,13 +22,13 @@
 /**
  * Doctrine_Task_GenerateSql
  *
- * @package     Doctrine
- * @subpackage  Task
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 2761 $
- * @author      Jonathan H. Wage <jwage@mac.com>
+ * @package    Doctrine
+ * @subpackage Task
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 2761 $
+ * @author     Jonathan H. Wage <jwage@mac.com>
  */
 class Doctrine_Task_GenerateSql extends Doctrine_Task
 {
@@ -40,13 +40,13 @@ class Doctrine_Task_GenerateSql extends Doctrine_Task
     /**
      * @var array
      */
-    public $requiredArguments = array('models_path'   => 'Specify complete path to your Doctrine_Record definitions.',
-                                           'sql_path' => 'Path to write the generated sql.');
+    public $requiredArguments = ['models_path'   => 'Specify complete path to your Doctrine_Record definitions.',
+                                           'sql_path' => 'Path to write the generated sql.'];
 
     /**
      * @var array
      */
-    public $optionalArguments = array();
+    public $optionalArguments = [];
 
     public function execute()
     {

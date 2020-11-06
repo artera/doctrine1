@@ -22,21 +22,21 @@
 /**
  * Doctrine_Sequence_Mysql
  *
- * @package     Doctrine
- * @subpackage  Sequence
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 7490 $
+ * @package    Doctrine
+ * @subpackage Sequence
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 7490 $
  */
 class Doctrine_Sequence_Mysql extends Doctrine_Sequence
 {
     /**
      * Returns the next free id of a sequence
      *
-     * @param string $seqName   name of the sequence
-     * @param bool   $onDemand  when true missing sequences are automatic created
+     * @param string $seqName  name of the sequence
+     * @param bool   $onDemand when true missing sequences are automatic created
      *
      * @return integer|bool          next id in the given sequence
      */
@@ -80,8 +80,8 @@ class Doctrine_Sequence_Mysql extends Doctrine_Sequence
      * Returns the autoincrement ID if supported or $id or fetches the current
      * ID in a sequence called: $table.(empty($field) ? '' : '_'.$field)
      *
-     * @param string  $table name of the table into which a new row was inserted
-     * @param string  $field name of the field into which a new row was inserted
+     * @param string $table name of the table into which a new row was inserted
+     * @param string $field name of the field into which a new row was inserted
      *
      * @return int|string
      */
@@ -93,7 +93,7 @@ class Doctrine_Sequence_Mysql extends Doctrine_Sequence
     /**
      * Returns the current id of a sequence
      *
-     * @param string $seqName   name of the sequence
+     * @param string $seqName name of the sequence
      *
      * @return integer          current id in the given sequence
      */

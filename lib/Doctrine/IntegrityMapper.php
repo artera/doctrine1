@@ -19,13 +19,13 @@
 /**
  * Doctrine_IntegrityMapper
  *
- * @package     Doctrine
- * @subpackage  IntegrityMapper
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @package    Doctrine
+ * @subpackage IntegrityMapper
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision$
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
 class Doctrine_IntegrityMapper
 {
@@ -37,7 +37,7 @@ class Doctrine_IntegrityMapper
     /**
      * processDeleteIntegrity
      *
-     * @param Doctrine_Record $record
+     * @param  Doctrine_Record $record
      * @return void
      */
     public function processDeleteIntegrity(Doctrine_Record $record)
@@ -50,20 +50,20 @@ class Doctrine_IntegrityMapper
     /**
      * invokeIntegrityActions
      *
-     * @param Doctrine_Record $record
+     * @param  Doctrine_Record $record
      * @return void
      */
     public function invokeIntegrityActions(Doctrine_Record $record)
     {
         $deleteActions = Doctrine_Manager::getInstance()
-                         ->getDeleteActions($record->getTable()->getComponentName());
+            ->getDeleteActions($record->getTable()->getComponentName());
 
         foreach ($record->getTable()->getRelations() as $relation) {
             $componentName = $relation->getTable()->getComponentName();
 
             foreach ($record->get($relation->getAlias()) as $coll) {
                 if (! ($coll instanceof Doctrine_Collection)) {
-                    $coll = array($coll);
+                    $coll = [$coll];
                 }
                 foreach ($coll as $record) {
                     $this->invokeIntegrityActions($record);
@@ -91,10 +91,10 @@ class Doctrine_IntegrityMapper
     {
         $q = $record->getTable()->createQuery();
 
-        $aliases = array();
-        $indexes = array();
-        $fields  = array();
-        $cond    = array();
+        $aliases = [];
+        $indexes = [];
+        $fields  = [];
+        $cond    = [];
         $params  = '';
 
         $root                = $record->getTable()->getComponentName();
@@ -118,23 +118,23 @@ class Doctrine_IntegrityMapper
         }
         $q->where(implode(' AND ', $cond));
 
-        return $q->execute(array($params));
+        return $q->execute([$params]);
     }
 
     /**
      * buildIntegrityRelations
      *
-     * @param Doctrine_Table $table
-     * @param mixed $aliases
-     * @param mixed $fields
-     * @param mixed $indexes
-     * @param mixed $components
+     * @param  Doctrine_Table $table
+     * @param  mixed          $aliases
+     * @param  mixed          $fields
+     * @param  mixed          $indexes
+     * @param  mixed          $components
      * @return void
      */
     public function buildIntegrityRelations(Doctrine_Table $table, &$aliases, &$fields, &$indexes, &$components)
     {
         $deleteActions = Doctrine_Manager::getInstance()
-                         ->getDeleteActions($table->getComponentName());
+            ->getDeleteActions($table->getComponentName());
 
         foreach ($table->getRelations() as $relation) {
             $componentName = $relation->getTable()->getComponentName();

@@ -20,13 +20,13 @@
  * Doctrine_Query_Subquery_TestCase
  * This test case is used for testing DQL subquery functionality
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Query_Subquery_TestCase extends Doctrine_UnitTestCase
 {
@@ -129,12 +129,12 @@ class Doctrine_Query_Subquery_TestCase extends Doctrine_UnitTestCase
         $q = new Doctrine_Query();
 
         $q->select('u.*, COUNT(a.id) num_albums')
-          ->from('User u')
-          ->leftJoin('u.Album a')
-          ->orderby('num_albums desc')
-          ->groupby('u.id')
-          ->having('num_albums > 0')
-          ->limit(5);
+            ->from('User u')
+            ->leftJoin('u.Album a')
+            ->orderby('num_albums desc')
+            ->groupby('u.id')
+            ->having('num_albums > 0')
+            ->limit(5);
 
         try {
             $this->assertEqual($q->getCountSqlQuery(), 'SELECT COUNT(*) AS num_results FROM (SELECT e.id, COUNT(a.id) AS a__0 FROM entity e LEFT JOIN album a ON e.id = a.user_id WHERE (e.type = 0) GROUP BY e.id HAVING a__0 > 0) dctrn_count_query');

@@ -22,18 +22,18 @@
 /**
  * Doctrine_Query_JoinCondition
  *
- * @package     Doctrine
- * @subpackage  Query
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 7490 $
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @package    Doctrine
+ * @subpackage Query
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 7490 $
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
 class Doctrine_Query_JoinCondition extends Doctrine_Query_Condition
 {
     /**
-     * @param string $condition
+     * @param  string $condition
      * @return string
      */
     public function load($condition)
@@ -73,7 +73,7 @@ class Doctrine_Query_JoinCondition extends Doctrine_Query_Condition
             }
 
             // We need to check for agg functions here
-            $rightMatches          = array();
+            $rightMatches          = [];
             $hasRightAggExpression = $this->_processPossibleAggExpression($e[2], $rightMatches);
 
             // Defining needed information
@@ -97,7 +97,7 @@ class Doctrine_Query_JoinCondition extends Doctrine_Query_Condition
                 } else {
                     // simple in expression found
                     $e     = $this->_tokenizer->sqlExplode($trimmed, ',');
-                    $value = array();
+                    $value = [];
 
                     foreach ($e as $part) {
                         $value[] = $this->parseLiteralValue($part);
@@ -108,8 +108,8 @@ class Doctrine_Query_JoinCondition extends Doctrine_Query_Condition
             } elseif (! $hasRightAggExpression) {
                 // Possible expression found (field1 AND field2)
                 // In relation to ticket #1488
-                $e     = $this->_tokenizer->bracketExplode($value, array(' AND ', ' \&\& '), '(', ')');
-                $value = array();
+                $e     = $this->_tokenizer->bracketExplode($value, [' AND ', ' \&\& '], '(', ')');
+                $value = [];
 
                 foreach ($e as $part) {
                     $value[] = $this->parseLiteralValue($part);
@@ -137,11 +137,11 @@ class Doctrine_Query_JoinCondition extends Doctrine_Query_Condition
 
 
     /**
-     * @param string $expr
-     * @param array $matches
+     * @param  string $expr
+     * @param  array  $matches
      * @return int|false
      */
-    protected function _processPossibleAggExpression(& $expr, & $matches = array())
+    protected function _processPossibleAggExpression(&$expr, &$matches = [])
     {
         $hasAggExpr = preg_match('/(.*[^\s\(\=])\(([^\)]*)\)(.*)/', $expr, $matches);
 
@@ -152,7 +152,7 @@ class Doctrine_Query_JoinCondition extends Doctrine_Query_Condition
             if (substr(trim($matches[3]), 0, 1) == ',') {
                 $xplod = $this->_tokenizer->sqlExplode(trim($matches[3], ' )'), ',');
 
-                $matches[3] = array();
+                $matches[3] = [];
 
                 foreach ($xplod as $part) {
                     if ($part != '') {

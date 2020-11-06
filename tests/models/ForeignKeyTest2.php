@@ -6,8 +6,11 @@ class ForeignKeyTest2 extends Doctrine_Record
         $this->hasColumn('name', 'string', null);
         $this->hasColumn('foreignkey', 'integer');
 
-        $this->hasOne('ForeignKeyTest', array(
+        $this->hasOne(
+            'ForeignKeyTest',
+            [
             'local' => 'foreignKey', 'foreign' => 'id'
-        ));
+            ]
+        );
     }
 }

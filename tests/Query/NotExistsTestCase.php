@@ -19,19 +19,19 @@
 /**
  * Doctrine_Query_JoinCondition_TestCase
  *
- * @package     Doctrine
- * @author      Jay Klehr <jay@diablomedia.com>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Jay Klehr <jay@diablomedia.com>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Query_NotExists_TestCase extends Doctrine_UnitTestCase
 {
     public function prepareTables()
     {
-        $this->tables = array('User', 'Group', 'GroupUser');
+        $this->tables = ['User', 'Group', 'GroupUser'];
 
         parent::prepareTables();
     }
@@ -49,8 +49,8 @@ class Doctrine_Query_NotExists_TestCase extends Doctrine_UnitTestCase
         $q = new Doctrine_Query();
 
         $q->select('u.id')
-          ->from('User u')
-          ->where('NOT EXISTS (SELECT g.id FROM Group g)');
+            ->from('User u')
+            ->where('NOT EXISTS (SELECT g.id FROM Group g)');
 
         $this->assertEqual($q->getSqlQuery(), 'SELECT e.id AS e__id FROM entity e WHERE (NOT EXISTS (SELECT e2.id AS e2__id FROM entity e2 WHERE (e2.type = 1)) AND (e.type = 0))');
     }

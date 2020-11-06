@@ -22,13 +22,13 @@
 /**
  * Doctrine_Task_GenerateFromModels
  *
- * @package     Doctrine
- * @subpackage  Task
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 2761 $
- * @author      Jonathan H. Wage <jwage@mac.com>
+ * @package    Doctrine
+ * @subpackage Task
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 2761 $
+ * @author     Jonathan H. Wage <jwage@mac.com>
  */
 class Doctrine_Task_GenerateYamlModels extends Doctrine_Task
 {
@@ -40,12 +40,12 @@ class Doctrine_Task_GenerateYamlModels extends Doctrine_Task
     /**
      * @var array
      */
-    public $requiredArguments = array('yaml_schema_path' => 'Specify the complete directory path to your yaml schema files.');
+    public $requiredArguments = ['yaml_schema_path' => 'Specify the complete directory path to your yaml schema files.'];
 
     /**
      * @var array
      */
-    public $optionalArguments = array('models_path' => 'Specify complete path to your Doctrine_Record definitions.');
+    public $optionalArguments = ['models_path' => 'Specify complete path to your Doctrine_Record definitions.'];
 
     /**
      * @return void

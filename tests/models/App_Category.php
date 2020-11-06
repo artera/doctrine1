@@ -8,14 +8,20 @@ class App_Category extends Doctrine_Record
     }
     public function setUp()
     {
-        $this->hasMany('App', array(
+        $this->hasMany(
+            'App',
+            [
             'local'   => 'id',
             'foreign' => 'app_category_id'
-        ));
+            ]
+        );
 
-        $this->hasMany('App_Category as Parent', array(
+        $this->hasMany(
+            'App_Category as Parent',
+            [
             'local'   => 'parent_id',
             'foreign' => 'id'
-        ));
+            ]
+        );
     }
 }

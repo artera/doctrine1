@@ -19,13 +19,13 @@
 /**
  * Doctrine_Ticket_1940_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Ticket_1940_TestCase extends Doctrine_UnitTestCase
 {
@@ -40,7 +40,7 @@ class Doctrine_Ticket_1940_TestCase extends Doctrine_UnitTestCase
         Doctrine_Manager::getInstance()->setAttribute(Doctrine_Core::ATTR_AUTO_ACCESSOR_OVERRIDE, true);
 
         $user = new Ticket_1940_User();
-        $user->fromArray(array('username' => 'jwage', 'password' => 'changeme', 'email_address' => 'jonwage@gmail.com'));
+        $user->fromArray(['username' => 'jwage', 'password' => 'changeme', 'email_address' => 'jonwage@gmail.com']);
 
         $userArray = $user->toArray();
         $this->assertEqual($userArray['username'], 'jwage-modified');

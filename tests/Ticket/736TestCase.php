@@ -2,11 +2,11 @@
 /**
  * Doctrine_Ticket_736_TestCase
  *
- * @package     Doctrine
- * @author      Peter Petermann <Peter.Petermann@rtl.de>
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Peter Petermann <Peter.Petermann@rtl.de>
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @version  $Revision$
  */
 class Doctrine_Ticket_736_TestCase extends Doctrine_UnitTestCase
 {
@@ -25,7 +25,7 @@ class Doctrine_Ticket_736_TestCase extends Doctrine_UnitTestCase
 
     public function prepareTables()
     {
-        $this->tables   = array();
+        $this->tables   = [];
         $this->tables[] = 'T736_Module';
         $this->tables[] = 'T736_ModuleDelegate';
         parent::prepareTables();
@@ -46,7 +46,7 @@ class T736_Module extends Doctrine_Record
     public function setTableDefinition()
     {
         $this->hasColumn('lastchange', 'timestamp');
-        $this->hasColumn('moduledelegateid', 'integer', 4, array('notnull' => true));
+        $this->hasColumn('moduledelegateid', 'integer', 4, ['notnull' => true]);
     }
 
     public function setUp()
@@ -59,13 +59,13 @@ class T736_ModuleDelegate extends Doctrine_Record
 {
     public function setTableDefinition()
     {
-        $this->hasColumn('moduleid', 'integer', 4, array());
+        $this->hasColumn('moduleid', 'integer', 4, []);
         $this->hasColumn('content', 'string', 2000);
     }
 
     public function setUp()
     {
-        $this->hasOne('T736_Module as parent', array('local' => 'moduleid', 'foreign' => 'id'));
+        $this->hasOne('T736_Module as parent', ['local' => 'moduleid', 'foreign' => 'id']);
     }
 
 

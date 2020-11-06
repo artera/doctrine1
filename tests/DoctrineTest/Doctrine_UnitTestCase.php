@@ -19,13 +19,13 @@
 /**
  * Doctrine_UnitTestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_UnitTestCase extends UnitTestCase
 {
@@ -39,7 +39,7 @@ class Doctrine_UnitTestCase extends UnitTestCase
 
     protected $users;
     protected $valueHolder;
-    protected $tables = array();
+    protected $tables = [];
     protected $unitOfWork;
     protected $driverName = false;
     protected $generic    = false;
@@ -72,7 +72,7 @@ class Doctrine_UnitTestCase extends UnitTestCase
 
         $this->tables = array_merge(
             $this->tables,
-            array(
+            [
                 'entity',
                 'entityReference',
                 'email',
@@ -90,7 +90,7 @@ class Doctrine_UnitTestCase extends UnitTestCase
                 'assignment',
                 'resourceType',
                 'resourceReference',
-            )
+            ]
         );
 
 
@@ -108,7 +108,7 @@ class Doctrine_UnitTestCase extends UnitTestCase
                 case 'DataDict':
                 case 'Sequence':
                     $this->driverName = 'Sqlite';
-                break;
+                    break;
             }
 
             $module = $e[1];
@@ -120,7 +120,7 @@ class Doctrine_UnitTestCase extends UnitTestCase
                     case 'Pgsql':
                     case 'Sqlite':
                         $this->driverName = $e[2];
-                    break;
+                        break;
                 }
             }
         }
@@ -165,10 +165,10 @@ class Doctrine_UnitTestCase extends UnitTestCase
                         $lower = strtolower($module);
 
                         $this->$lower = $this->connection->$lower;
-                    break;
+                        break;
                     case 'DataDict':
                         $this->dataDict = $this->connection->dataDict;
-                    break;
+                        break;
                 }
             }
         }
@@ -265,14 +265,14 @@ class Doctrine_UnitTestCase extends UnitTestCase
         $dec = $this->getDeclaration($type);
 
         if (! is_array($type2)) {
-            $type2 = array($type2);
+            $type2 = [$type2];
         }
 
         $this->assertEqual($dec['type'], $type2);
     }
     public function getDeclaration($type)
     {
-        return $this->dataDict->getPortableDeclaration(array('type' => $type, 'name' => 'colname', 'length' => 1, 'fixed' => true));
+        return $this->dataDict->getPortableDeclaration(['type' => $type, 'name' => 'colname', 'length' => 1, 'fixed' => true]);
     }
     public function setUp()
     {

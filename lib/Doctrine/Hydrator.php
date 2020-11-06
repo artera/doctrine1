@@ -22,15 +22,14 @@
 /**
  * Its purpose is to populate object graphs.
  *
- *
- * @package     Doctrine
- * @subpackage  Hydrate
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 3192 $
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @author      Jonathan H. Wage <jonwage@gmail.com>
+ * @package    Doctrine
+ * @subpackage Hydrate
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 3192 $
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @author     Jonathan H. Wage <jonwage@gmail.com>
  */
 class Doctrine_Hydrator
 {
@@ -57,7 +56,7 @@ class Doctrine_Hydrator
     /**
      * @var array
      */
-    protected $_queryComponents = array();
+    protected $_queryComponents = [];
 
     public function __construct()
     {
@@ -67,9 +66,9 @@ class Doctrine_Hydrator
     /**
      * Set the hydration mode
      *
-     * @param mixed $hydrationMode  One of the Doctrine_Core::HYDRATE_* constants or
-     *                              a string representing the name of the hydration mode or
-     *                              or an instance of the hydration class
+     * @param mixed $hydrationMode One of the Doctrine_Core::HYDRATE_* constants or
+     *                             a string representing the name of the hydration
+     *                             mode or or an instance of the hydration class
      *
      * @return void
      */
@@ -113,8 +112,8 @@ class Doctrine_Hydrator
     /**
      * Get the name of the driver class for the passed hydration mode
      *
-     * @param int $mode
-     * @return string
+     * @param        int $mode
+     * @return       string
      * @psalm-return class-string
      */
     public function getHydratorDriverClassName($mode = null)
@@ -133,8 +132,8 @@ class Doctrine_Hydrator
     /**
      * Get an instance of the hydration driver for the passed hydration mode
      *
-     * @param int $mode
-     * @param array $tableAliases
+     * @param  int   $mode
+     * @param  array $tableAliases
      * @return Doctrine_Hydrator_Abstract
      */
     public function getHydratorDriver($mode, $tableAliases)
@@ -144,13 +143,17 @@ class Doctrine_Hydrator
             if (!$driverClass instanceof Doctrine_Hydrator_Abstract) {
                 throw new Doctrine_Hydrator_Exception('Invalid hydration class specified: ' . get_class($driverClass));
             }
-            /** @var Doctrine_Hydrator_Abstract $driver */
+            /**
+ * @var Doctrine_Hydrator_Abstract $driver
+*/
             $driver = $driverClass;
             $driver->setQueryComponents($this->_queryComponents);
             $driver->setTableAliases($tableAliases);
             $driver->setHydrationMode($mode);
         } else {
-            /** @var Doctrine_Hydrator_Abstract $driver */
+            /**
+ * @var Doctrine_Hydrator_Abstract $driver
+*/
             $driver = new $driverClass($this->_queryComponents, $tableAliases, $mode);
         }
 
@@ -161,8 +164,8 @@ class Doctrine_Hydrator
      * Hydrate the query statement in to its final data structure by one of the
      * hydration drivers.
      *
-     * @param Doctrine_Adapter_Statement_Interface|PDOStatement $stmt
-     * @param array $tableAliases
+     * @param  Doctrine_Adapter_Statement_Interface|PDOStatement $stmt
+     * @param  array                                             $tableAliases
      * @return mixed $result
      */
     public function hydrateResultSet($stmt, $tableAliases)

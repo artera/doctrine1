@@ -22,13 +22,13 @@
 /**
  * Doctrine_Task_GenerateMigrationsModels
  *
- * @package     Doctrine
- * @subpackage  Task
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 2761 $
- * @author      Jonathan H. Wage <jwage@mac.com>
+ * @package    Doctrine
+ * @subpackage Task
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 2761 $
+ * @author     Jonathan H. Wage <jwage@mac.com>
  */
 class Doctrine_Task_GenerateMigrationsModels extends Doctrine_Task
 {
@@ -40,13 +40,13 @@ class Doctrine_Task_GenerateMigrationsModels extends Doctrine_Task
     /**
      * @var array
      */
-    public $requiredArguments = array('migrations_path'  => 'Specify the path to your migration classes folder.',
-                                           'models_path' => 'Specify the path to your doctrine models folder.');
+    public $requiredArguments = ['migrations_path'  => 'Specify the path to your migration classes folder.',
+                                           'models_path' => 'Specify the path to your doctrine models folder.'];
 
     /**
      * @var array
      */
-    public $optionalArguments = array();
+    public $optionalArguments = [];
 
     public function execute()
     {

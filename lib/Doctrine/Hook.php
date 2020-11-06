@@ -22,13 +22,13 @@
 /**
  * Doctrine_Hook
  *
- * @package     Doctrine
- * @subpackage  Hook
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision: 7490 $
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @package    Doctrine
+ * @subpackage Hook
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link       www.doctrine-project.org
+ * @since      1.0
+ * @version    $Revision: 7490 $
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
 class Doctrine_Hook
 {
@@ -45,25 +45,25 @@ class Doctrine_Hook
     /**
      * @var array $hooks                    hooks array
      */
-    protected $hooks = array(
+    protected $hooks = [
                              'where',
                              'orderby',
                              'limit',
                              'offset'
-                              );
+                              ];
 
     /**
      * @var array $fieldParsers             custom field parsers array
      *                                      keys as field names in the format componentAlias.FieldName
      *                                      values as parser names / objects
      */
-    protected $fieldParsers = array();
+    protected $fieldParsers = [];
 
     /**
      * @var array $typeParsers              type parsers array
      *                                      keys as type names and values as parser names / objects
      */
-    protected $typeParsers = array(
+    protected $typeParsers = [
                               'char'    => 'Doctrine_Hook_WordLike',
                               'string'  => 'Doctrine_Hook_WordLike',
                               'varchar' => 'Doctrine_Hook_WordLike',
@@ -71,10 +71,10 @@ class Doctrine_Hook
                               'enum'    => 'Doctrine_Hook_Integer',
                               'time'    => 'Doctrine_Hook_Time',
                               'date'    => 'Doctrine_Hook_Date',
-                              );
+                              ];
 
     /**
-     * @param Doctrine_Query|string $query         the base query
+     * @param Doctrine_Query|string $query the base query
      */
     public function __construct($query)
     {
@@ -103,8 +103,8 @@ class Doctrine_Hook
     /**
      * setTypeParser
      *
-     * @param string $type              type name
-     * @param string|object $parser     parser name or custom parser object
+     * @param string        $type   type name
+     * @param string|object $parser parser name or custom parser object
      *
      * @return void
      */
@@ -116,8 +116,8 @@ class Doctrine_Hook
     /**
      * setFieldParser
      *
-     * @param string $field             field name
-     * @param string|object $parser     parser name or custom parser object
+     * @param string        $field  field name
+     * @param string|object $parser parser name or custom parser object
      *
      * @return void
      */
@@ -130,8 +130,8 @@ class Doctrine_Hook
      * hookWhere
      * builds DQL query where part from given parameter array
      *
-     * @param array $params         an associative array containing field
-     *                              names and their values
+     * @param  array $params an associative array containing field
+     *                       names and their values
      * @return boolean              whether or not the hooking was
      */
     public function hookWhere($params)
@@ -176,8 +176,8 @@ class Doctrine_Hook
      * hookOrderBy
      * builds DQL query orderby part from given parameter array
      *
-     * @param array $params         an array containing all fields which the built query
-     *                              should be ordered by
+     * @param  array $params an array containing all fields which the built query
+     *                       should be ordered by
      * @return boolean              whether or not the hooking was successful
      */
     public function hookOrderby($params)
@@ -213,7 +213,7 @@ class Doctrine_Hook
     /**
      * set the hook limit
      *
-     * @param integer $limit
+     * @param  integer $limit
      * @return void
      */
     public function hookLimit($limit)

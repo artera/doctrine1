@@ -19,13 +19,13 @@
 /**
  * Doctrine_Ticket_DC25_TestCase
  *
- * @package     Doctrine
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.0
- * @version     $Revision$
+ * @package  Doctrine
+ * @author   Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.0
+ * @version  $Revision$
  */
 class Doctrine_Ticket_DC25_TestCase extends Doctrine_UnitTestCase
 {
@@ -57,11 +57,14 @@ class Ticket_DC25_Article extends Doctrine_Record
 
     public function setUp()
     {
-        $this->hasMany('Ticket_DC25_Tag as Tags', array(
+        $this->hasMany(
+            'Ticket_DC25_Tag as Tags',
+            [
             'local'    => 'article_id',
             'foreign'  => 'tag_id',
             'refClass' => 'Ticket_DC25_ArticleTag'
-        ));
+            ]
+        );
     }
 }
 
@@ -74,11 +77,14 @@ class Ticket_DC25_Tag extends Doctrine_Record
 
     public function setUp()
     {
-        $this->hasMany('Ticket_DC25_Article as Article', array(
+        $this->hasMany(
+            'Ticket_DC25_Article as Article',
+            [
             'local'    => 'tag_id',
             'foreign'  => 'article_id',
             'refClass' => 'Ticket_DC25_ArticleTag'
-        ));
+            ]
+        );
     }
 }
 

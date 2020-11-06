@@ -19,12 +19,12 @@
 /**
  * Doctrine_Ticket_2032_TestCase
  *
- * @package     Doctrine
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @category    Object Relational Mapping
- * @link        www.doctrine-project.org
- * @since       1.1
- * @version     $Revision$
+ * @package  Doctrine
+ * @license  http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @category Object Relational Mapping
+ * @link     www.doctrine-project.org
+ * @since    1.1
+ * @version  $Revision$
  */
 class Doctrine_Ticket_2032_TestCase extends Doctrine_UnitTestCase
 {
@@ -34,9 +34,9 @@ class Doctrine_Ticket_2032_TestCase extends Doctrine_UnitTestCase
     public function testNonSpacedOrderByIsParsedCorrectly()
     {
         $q = Doctrine_Query::create()
-                ->select('u.*')
-                ->from('User u')
-                ->orderby('u.name,u.id,u.password');
+            ->select('u.*')
+            ->from('User u')
+            ->orderby('u.name,u.id,u.password');
 
         try {
             $u = $q->execute();

@@ -20,14 +20,14 @@
  */
 
 /**
- * @package     Doctrine
- * @subpackage  DataDict
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @author      Lukas Smith <smith@pooteeweet.org> (PEAR MDB2 library)
- * @version     $Revision: 7635 $
- * @link        www.doctrine-project.org
- * @since       1.0
+ * @package    Doctrine
+ * @subpackage DataDict
+ * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @author     Lukas Smith <smith@pooteeweet.org> (PEAR MDB2 library)
+ * @version    $Revision: 7635 $
+ * @link       www.doctrine-project.org
+ * @since      1.0
  */
 class Doctrine_DataDict_Mysql extends Doctrine_DataDict
 {
@@ -305,21 +305,17 @@ class Doctrine_DataDict_Mysql extends Doctrine_DataDict
      * Obtain DBMS specific SQL code portion needed to declare an text type
      * field to be used in statements like CREATE TABLE.
      *
-     * @param array $field  associative array with the name of the properties
-     *      of the field being declared as array indexes. Currently, the types
-     *      of supported field properties are as follows:
-     *
-     *      length
-     *          Integer value that determines the maximum length of the text
-     *          field. If this argument is missing the field should be
-     *          declared to have the longest length allowed by the DBMS.
-     *
-     *      default
-     *          Text value to be used as default for this field.
-     *
-     *      notnull
-     *          Boolean flag that indicates whether this field is constrained
-     *          to not be set to null.
+     * @param array $field associative array with the name of the properties
+     *                     of the field being declared as array indexes.
+     *                     Currently, the types of supported field
+     *                     properties are as follows: length Integer value
+     *                     that determines the maximum length of the text
+     *                     field. If this argument is missing the field
+     *                     should be declared to have the longest length
+     *                     allowed by the DBMS. default Text value to be
+     *                     used as default for this field. notnull Boolean
+     *                     flag that indicates whether this field is
+     *                     constrained to not be set to null.
      *
      * @return string  DBMS specific SQL code portion that should be used to
      *      declare the specified field.
@@ -337,10 +333,10 @@ class Doctrine_DataDict_Mysql extends Doctrine_DataDict
                 return $length ? 'CHAR(' . $length . ')' : 'CHAR(255)';
             case 'enum':
             case 'set':
-                if (($this->conn->getAttribute(Doctrine_Core::ATTR_USE_NATIVE_SET) && $field['type'] === 'set') ||
-                    ($this->conn->getAttribute(Doctrine_Core::ATTR_USE_NATIVE_ENUM) && $field['type'] === 'enum')
+                if (($this->conn->getAttribute(Doctrine_Core::ATTR_USE_NATIVE_SET) && $field['type'] === 'set')
+                || ($this->conn->getAttribute(Doctrine_Core::ATTR_USE_NATIVE_ENUM) && $field['type'] === 'enum')
                 ) {
-                    $values = array();
+                    $values = [];
                     foreach ($field['values'] as $value) {
                         $values[] = $this->conn->quote($value, 'varchar');
                     }
@@ -445,7 +441,7 @@ class Doctrine_DataDict_Mysql extends Doctrine_DataDict
     /**
      * Maps a native array description of a field to a Mysql datatype and length
      *
-     * @param array  $field native field description
+     * @param  array $field native field description
      * @return array containing the various possible types, length, sign, fixed
      */
     public function getPortableDeclaration(array $field)
@@ -465,7 +461,7 @@ class Doctrine_DataDict_Mysql extends Doctrine_DataDict
                 $decimal = null;
             }
         }
-        $type     = array();
+        $type     = [];
         $unsigned = $fixed = null;
 
         if (! isset($field['name'])) {
@@ -490,28 +486,28 @@ class Doctrine_DataDict_Mysql extends Doctrine_DataDict
                 }
                 $unsigned = (bool) preg_match('/ unsigned/i', $field['type']);
                 $length   = 1;
-            break;
+                break;
             case 'smallint':
                 $type[]   = 'integer';
                 $unsigned = (bool) preg_match('/ unsigned/i', $field['type']);
                 $length   = 2;
-            break;
+                break;
             case 'mediumint':
                 $type[]   = 'integer';
                 $unsigned = (bool) preg_match('/ unsigned/i', $field['type']);
                 $length   = 3;
-            break;
+                break;
             case 'int':
             case 'integer':
                 $type[]   = 'integer';
                 $unsigned = (bool) preg_match('/ unsigned/i', $field['type']);
                 $length   = 4;
-            break;
+                break;
             case 'bigint':
                 $type[]   = 'integer';
                 $unsigned = (bool) preg_match('/ unsigned/i', $field['type']);
                 $length   = 8;
-            break;
+                break;
             case 'tinytext':
             case 'mediumtext':
             case 'longtext':
@@ -532,7 +528,7 @@ class Doctrine_DataDict_Mysql extends Doctrine_DataDict
                 if ($fixed !== false) {
                     $fixed = true;
                 }
-            break;
+                break;
             case 'enum':
             case 'set':
                 $type[] = $dbType;
@@ -558,26 +554,26 @@ class Doctrine_DataDict_Mysql extends Doctrine_DataDict
                     $values = $matches[1];
                 }
                 $type[] = 'integer';
-            break;
+                break;
             case 'date':
                 $type[] = 'date';
                 $length = null;
-            break;
+                break;
             case 'datetime':
             case 'timestamp':
                 $type[] = 'timestamp';
                 $length = null;
-            break;
+                break;
             case 'time':
                 $type[] = 'time';
                 $length = null;
-            break;
+                break;
             case 'float':
             case 'double':
             case 'real':
                 $type[]   = 'float';
                 $unsigned = (bool) preg_match('/ unsigned/i', $field['type']);
-            break;
+                break;
             case 'unknown':
             case 'decimal':
                 if ($decimal !== null) {
@@ -587,7 +583,7 @@ class Doctrine_DataDict_Mysql extends Doctrine_DataDict
             case 'numeric':
                 $type[]   = 'decimal';
                 $unsigned = (bool) preg_match('/ unsigned/i', $field['type']);
-            break;
+                break;
             case 'tinyblob':
             case 'mediumblob':
             case 'longblob':
@@ -596,15 +592,15 @@ class Doctrine_DataDict_Mysql extends Doctrine_DataDict
             case 'varbinary':
                 $type[] = 'blob';
                 $length = null;
-            break;
+                break;
             case 'year':
                 $type[] = 'integer';
                 $type[] = 'date';
                 $length = null;
-            break;
+                break;
             case 'bit':
                 $type[] = 'bit';
-            break;
+                break;
             case 'geometry':
             case 'geometrycollection':
             case 'point':
@@ -615,14 +611,14 @@ class Doctrine_DataDict_Mysql extends Doctrine_DataDict
             case 'multipolygon':
                 $type[] = 'blob';
                 $length = null;
-            break;
+                break;
             default:
                 $type[] = $field['type'];
                 $length = isset($field['length']) ? $field['length']:null;
         }
 
         $length = ((int) $length == 0) ? null : (int) $length;
-        $def    = array('type' => $type, 'length' => $length, 'unsigned' => $unsigned, 'fixed' => $fixed);
+        $def    = ['type' => $type, 'length' => $length, 'unsigned' => $unsigned, 'fixed' => $fixed];
         if ($values !== null) {
             $def['values'] = $values;
         }
@@ -636,7 +632,7 @@ class Doctrine_DataDict_Mysql extends Doctrine_DataDict
      * Obtain DBMS specific SQL code portion needed to set the CHARACTER SET
      * of a field declaration to be used in statements like CREATE TABLE.
      *
-     * @param string $charset   name of the charset
+     * @param  string $charset name of the charset
      * @return string  DBMS specific SQL code portion needed to set the CHARACTER SET
      *                 of a field declaration.
      */
@@ -649,7 +645,7 @@ class Doctrine_DataDict_Mysql extends Doctrine_DataDict
      * Obtain DBMS specific SQL code portion needed to set the COLLATION
      * of a field declaration to be used in statements like CREATE TABLE.
      *
-     * @param string $collation   name of the collation
+     * @param  string $collation name of the collation
      * @return string  DBMS specific SQL code portion needed to set the COLLATION
      *                 of a field declaration.
      */
@@ -662,24 +658,17 @@ class Doctrine_DataDict_Mysql extends Doctrine_DataDict
      * Obtain DBMS specific SQL code portion needed to declare an integer type
      * field to be used in statements like CREATE TABLE.
      *
-     * @param string  $name   name the field to be declared.
-     * @param array  $field  associative array with the name of the properties
-     *                        of the field being declared as array indexes.
-     *                        Currently, the types of supported field
-     *                        properties are as follows:
-     *
-     *                       unsigned
-     *                        Boolean flag that indicates whether the field
-     *                        should be declared as unsigned integer if
-     *                        possible.
-     *
-     *                       default
-     *                        Integer value to be used as default for this
-     *                        field.
-     *
-     *                       notnull
-     *                        Boolean flag that indicates whether this field is
-     *                        constrained to not be set to null.
+     * @param  string $name  name the field to be declared.
+     * @param  array  $field associative array with the name of the properties
+     *                       of the field being declared as array indexes.
+     *                       Currently, the types of supported field
+     *                       properties are as follows: unsigned Boolean flag
+     *                       that indicates whether the field should be
+     *                       declared as unsigned integer if possible. default
+     *                       Integer value to be used as default for this
+     *                       field. notnull Boolean flag that indicates
+     *                       whether this field is constrained to not be set
+     *                       to null.
      * @return string  DBMS specific SQL code portion that should be used to
      *                 declare the specified field.
      */
