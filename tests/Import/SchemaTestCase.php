@@ -66,8 +66,6 @@ class Doctrine_Import_Schema_TestCase extends Doctrine_UnitTestCase
         $this->assertTrue(array_key_exists('relations', $model) && is_array($model['relations']));
         $this->assertTrue(array_key_exists('indexes', $model) && is_array($model['indexes']));
         $this->assertTrue(array_key_exists('attributes', $model) && is_array($model['attributes']));
-        $this->assertTrue(array_key_exists('templates', $model) && is_array($model['columns']));
-        $this->assertTrue(array_key_exists('actAs', $model) && is_array($model['actAs']));
         $this->assertTrue(array_key_exists('options', $model) && is_array($model['options']));
         $this->assertTrue(array_key_exists('package', $model));
         $this->assertTrue(array_key_exists('inheritance', $model) && is_array($model['inheritance']));

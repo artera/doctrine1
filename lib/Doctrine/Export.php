@@ -1154,7 +1154,7 @@ class Doctrine_Export extends Doctrine_Connection_Module
                     continue;
                 }
 
-                // If alter table statement or oracle anonymous block enclosing alter
+                // If alter table statement
                 if (substr($query, 0, strlen('ALTER TABLE')) == 'ALTER TABLE'
                        || substr($query, 0, strlen('DECLARE')) == 'DECLARE') {
                     $connections[$connectionName]['alters'][] = $query;
@@ -1163,7 +1163,7 @@ class Doctrine_Export extends Doctrine_Connection_Module
                     continue;
                 }
 
-                // If create trgger statement
+                // If create trigger statement
                 if (substr($query, 0, strlen('CREATE TRIGGER')) == 'CREATE TRIGGER') {
                     $connections[$connectionName]['create_triggers'][] = $query;
 

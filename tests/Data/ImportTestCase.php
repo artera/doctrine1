@@ -34,10 +34,6 @@ class Doctrine_Data_Import_TestCase extends Doctrine_UnitTestCase
         $this->tables[] = 'User';
         $this->tables[] = 'Phonenumber';
         $this->tables[] = 'Album';
-        $this->tables[] = 'I18nTestImport';
-        $this->tables[] = 'ImportNestedSet';
-        $this->tables[] = 'ImportNestedSetMultipleTree';
-        $this->tables[] = 'I18nNumberLang';
         parent::prepareTables();
     }
 
@@ -45,12 +41,12 @@ class Doctrine_Data_Import_TestCase extends Doctrine_UnitTestCase
     {
         $yml = <<<END
 ---
-User: 
-  User_1: 
+User:
+  User_1:
     name: jwage
     password: changeme
-    Phonenumber: 
-      Phonenumber_1: 
+    Phonenumber:
+      Phonenumber_1:
         phonenumber: 6155139185
 END;
         try {
@@ -115,8 +111,8 @@ END;
     {
         $yml = <<<END
 ---
-User: 
-  User_1: 
+User:
+  User_1:
     name: jwage2
     password: changeme
     Phonenumber: [Phonenumber_1, Phonenumber_2]
@@ -147,183 +143,6 @@ END;
         } catch (Exception $e) {
             $this->fail();
         }
-        unlink('test.yml');
-    }
-
-    public function testI18nImport()
-    {
-        $yml = <<<END
----
-I18nTestImport:
-  I18nTestImport_1:
-    Translation:
-      en:
-        name: english name
-        title: english title
-      fr:
-        name: french name
-        title: french title
-END;
-        try {
-            file_put_contents('test.yml', $yml);
-            Doctrine_Core::loadData('test.yml', true);
-
-            $this->conn->clear();
-
-            $query = new Doctrine_Query();
-            $query->from('I18nTestImport i, i.Translation t');
-
-            $i = $query->execute()->getFirst();
-
-            $this->assertEqual($i->Translation['en']->name, 'english name');
-            $this->assertEqual($i->Translation['fr']->name, 'french name');
-            $this->assertEqual($i->Translation['en']->title, 'english title');
-            $this->assertEqual($i->Translation['fr']->title, 'french title');
-
-            $this->pass();
-        } catch (Exception $e) {
-            $this->fail($e->getMessage());
-        }
-
-        unlink('test.yml');
-    }
-
-    public function testImportNestedSetData()
-    {
-        $yml = <<<END
----
-ImportNestedSet:
-  ImportNestedSet_1:
-    name: Root
-    children:
-      ImportNestedSet_2:
-        name: Child 1
-      ImportNestedSet_3:
-        name: Child 2
-        children:
-          ImportNestedSet_4:
-            name: Sub-Child 1
-END;
-        try {
-            file_put_contents('test.yml', $yml);
-            Doctrine_Core::loadData('test.yml', true);
-
-            $this->conn->clear();
-
-            $query = new Doctrine_Query();
-            $query->from('ImportNestedSet');
-
-            $i = $query->execute(array(), Doctrine_Core::HYDRATE_ARRAY);
-
-            $this->assertEqual($i[0]['name'], 'Root');
-            $this->assertEqual($i[0]['lft'], 1);
-            $this->assertEqual($i[0]['rgt'], 8);
-            $this->assertEqual($i[0]['level'], 0);
-
-            $this->assertEqual($i[1]['name'], 'Child 2');
-            $this->assertEqual($i[1]['lft'], 4);
-            $this->assertEqual($i[1]['rgt'], 7);
-            $this->assertEqual($i[1]['level'], 1);
-
-            $this->assertEqual($i[2]['name'], 'Sub-Child 1');
-            $this->assertEqual($i[2]['lft'], 5);
-            $this->assertEqual($i[2]['rgt'], 6);
-            $this->assertEqual($i[2]['level'], 2);
-
-            $this->assertEqual($i[3]['name'], 'Child 1');
-            $this->assertEqual($i[3]['lft'], 2);
-            $this->assertEqual($i[3]['rgt'], 3);
-            $this->assertEqual($i[3]['level'], 1);
-            $this->pass();
-        } catch (Exception $e) {
-            $this->fail();
-        }
-
-        unlink('test.yml');
-    }
-
-    public function testImportNestedSetMultipleTreeData()
-    {
-        $yml = <<<END
----
-ImportNestedSetMultipleTree:
-  ImportNestedSetMultipleTree_Item1:
-    name: Item 1
-
-    children:
-      ImportNestedSetMultipleTree_Item1_1:
-        name: Item 1.1
-
-      ImportNestedSetMultipleTree_Item1_2:
-        name: Item 1.2
-
-  ImportNestedSetMultipleTree_Item2:
-    name: Item 2
-
-    children:
-      ImportNestedSetMultipleTree_Item2_1:
-        name: Item 2.1
-
-      ImportNestedSetMultipleTree_Item2_2:
-        name: Item 2.2
-
-        children:
-          ImportNestedSetMultipleTree_Item2_2_1:
-            name: Item 2.2.1
-
-          ImportNestedSetMultipleTree_Item2_2_2:
-            name: Item 2.2.2
-
-          ImportNestedSetMultipleTree_Item2_2_3:
-            name: Item 2.2.3
-END;
-        try {
-            file_put_contents('test.yml', $yml);
-            Doctrine_Core::loadData('test.yml', true);
-
-            $this->conn->clear();
-
-            $query = Doctrine_Query::create()
-                ->from('ImportNestedSetMultipleTree insmt')
-                ->orderBy('insmt.root_id ASC, insmt.lft ASC');
-
-            $i = $query->execute(array(), Doctrine_Core::HYDRATE_ARRAY);
-
-            $this->assertEqual($i[0]['name'], 'Item 1');
-            $this->assertEqual($i[0]['lft'], 1);
-            $this->assertEqual($i[0]['rgt'], 6);
-            $this->assertEqual($i[0]['level'], 0);
-            $this->assertEqual($i[0]['root_id'], $i[0]['id']);
-
-            $this->assertEqual($i[1]['name'], 'Item 1.1');
-            $this->assertEqual($i[1]['lft'], 2);
-            $this->assertEqual($i[1]['rgt'], 3);
-            $this->assertEqual($i[1]['level'], 1);
-            $this->assertEqual($i[1]['root_id'], $i[0]['root_id']);
-
-            $this->assertEqual($i[3]['name'], 'Item 2');
-            $this->assertEqual($i[3]['lft'], 1);
-            $this->assertEqual($i[3]['rgt'], 12);
-            $this->assertEqual($i[3]['level'], 0);
-            $this->assertEqual($i[3]['root_id'], $i[3]['id']);
-
-            $this->assertEqual($i[4]['name'], 'Item 2.1');
-            $this->assertEqual($i[4]['lft'], 2);
-            $this->assertEqual($i[4]['rgt'], 3);
-            $this->assertEqual($i[4]['level'], 1);
-            $this->assertEqual($i[4]['root_id'], $i[3]['root_id']);
-
-            $this->assertEqual($i[5]['name'], 'Item 2.2');
-            $this->assertEqual($i[5]['lft'], 4);
-            $this->assertEqual($i[5]['rgt'], 11);
-            $this->assertEqual($i[5]['level'], 1);
-            $this->assertEqual($i[5]['root_id'], $i[3]['root_id']);
-
-            $this->pass();
-        } catch (Exception $e) {
-            $this->fail();
-        }
-
         unlink('test.yml');
     }
 
@@ -504,106 +323,5 @@ END;
         }
 
         unlink('test.yml');
-    }
-
-    public function testI18nImportWithInteger()
-    {
-        $yml = <<<END
----
-I18nNumberLang:
-  I18nNumberLang_1:
-    name: test
-    Translation:
-      0:
-        title: english title
-        body: english body
-      1:
-        title: french title
-        body: french body
-END;
-        try {
-            file_put_contents('test.yml', $yml);
-            Doctrine_Core::loadData('test.yml', true);
-
-            $this->conn->clear();
-
-            $query = new Doctrine_Query();
-            $query->from('I18nNumberLang i, i.Translation t');
-
-            $i = $query->execute()->getFirst();
-
-            $this->assertEqual($i->name, 'test');
-            $this->assertEqual($i->Translation['0']->title, 'english title');
-            $this->assertEqual($i->Translation['1']->title, 'french title');
-            $this->assertEqual($i->Translation['0']->body, 'english body');
-            $this->assertEqual($i->Translation['1']->body, 'french body');
-
-            $this->pass();
-        } catch (Exception $e) {
-            $this->fail($e->getMessage());
-        }
-
-        unlink('test.yml');
-    }
-}
-
-class ImportNestedSet extends Doctrine_Record
-{
-    public function setTableDefinition()
-    {
-        $this->hasColumn('name', 'string', 255);
-    }
-
-    public function setUp()
-    {
-        $this->actAs('NestedSet');
-    }
-}
-
-class ImportNestedSetMultipleTree extends Doctrine_Record
-{
-    public function setTableDefinition()
-    {
-        $this->hasColumn('name', 'string', 255);
-    }
-
-    public function setUp()
-    {
-        $this->actAs(
-            'NestedSet',
-            array(
-                'hasManyRoots'   => true,
-                'rootColumnName' => 'root_id'
-            )
-        );
-    }
-}
-
-class I18nNumberLang extends Doctrine_Record
-{
-    public function setTableDefinition()
-    {
-        $this->hasColumn('name', 'string', 255);
-        $this->hasColumn('title', 'string', 255);
-        $this->hasColumn('body', 'clob');
-    }
-
-    public function setUp()
-    {
-        $this->actAs('I18n', array('fields' => array('title', 'body'), 'type' => 'integer', 'length' => 4));
-    }
-}
-
-class I18nTestImport extends Doctrine_Record
-{
-    public function setTableDefinition()
-    {
-        $this->hasColumn('name', 'string', 200);
-        $this->hasColumn('title', 'string', 200);
-    }
-
-    public function setUp()
-    {
-        $this->actAs('I18n', array('fields' => array('name', 'title')));
     }
 }

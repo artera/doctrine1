@@ -53,10 +53,7 @@ class Doctrine_Compiler
 
         // If we have an array of specified drivers then lets determine which drivers we should exclude
         if (! empty($includedDrivers)) {
-            $drivers = array('db2',
-                             'mssql',
-                             'mysql',
-                             'oracle',
+            $drivers = array('mysql',
                              'pgsql',
                              'sqlite');
 
@@ -68,11 +65,7 @@ class Doctrine_Compiler
 
         foreach ($it as $file) {
             $e = explode('.', $file->getFileName());
-
-            //@todo what is a versioning file? do we have these anymore? None
-            //exists in my version of doctrine from svn.
-            // we don't want to require versioning files
-            if (end($e) === 'php' && strpos($file->getFileName(), '.inc') === false) {
+            if (end($e) === 'php') {
                 require_once $file->getPathName();
             }
         }

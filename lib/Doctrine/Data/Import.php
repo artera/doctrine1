@@ -137,7 +137,7 @@ class Doctrine_Data_Import extends Doctrine_Data
             $this->_rows[$className][$rowKey] = $row;
 
             foreach ((array) $row as $key => $value) {
-                if ($table->hasRelation($key) && is_array($value) && ! $table->hasTemplate('Doctrine_Template_I18n')) {
+                if ($table->hasRelation($key) && is_array($value)) {
                     // Skip associative arrays defining keys to relationships
                     if (! isset($value[0]) || (isset($value[0]) && is_array($value[0]))) {
                         $rel          = $table->getRelation($key);
@@ -256,7 +256,7 @@ class Doctrine_Data_Import extends Doctrine_Data
                 try {
                     $obj->$key = $value;
                 } catch (Exception $e) {
-                    // used for Doctrine plugin methods (Doctrine_Template)
+                    // used for Doctrine plugin methods
                     if (is_callable(array($obj, 'set' . Doctrine_Inflector::classify($key)))) {
                         $func = 'set' . Doctrine_Inflector::classify($key);
                         $obj->$func($value);

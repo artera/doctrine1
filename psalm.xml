@@ -118,18 +118,10 @@
             <errorLevel type="info">
                 <!-- No Doctrine_Collection objects define the "expand" method, and no __call implementations that I can see -->
                 <file name="lib/Doctrine/Collection/Iterator/Expandable.php" />
-                <!-- getSequenceName does not live on Doctrine_Connection (or any subclasses), but does live on Doctrine_Formatter, don't see a path to it from Doctrine_Connection though -->
-                <file name="lib/Doctrine/Export/Mssql.php" />
                 <!-- The getNode() call on the record here should return a Doctrine_Node_NestedSet, not easy to hint that though without breaking up the if condition -->
                 <file name="lib/Doctrine/Tree/NestedSet.php" />
                 <!-- Can't hint which validator this is, and Doctrine_Validator_Driver doesn't implement the validate method -->
                 <file name="lib/Doctrine/Table.php" />
-                <!-- This should be hinted to Doctrine_Record (since Doctrine_Record_Abstract doesn't define the delete method), would need to pull $this->_invoker to a variable for that though -->
-                <file name="lib/Doctrine/Template/SoftDelete.php" />
-                <!-- _connect and lastSquenceId don't exist -->
-                <file name="lib/Doctrine/Sequence/Db2.php" />
-                <!-- indexFile does not exist anywhere -->
-                <file name="lib/Doctrine/Search/Indexer/Dir.php" />
                 <!-- parseLiteralValue does not exist on Doctrine_Query_Set or its parents, does live on Doctrine_Query_Condition, but not path to that that I can see -->
                 <file name="lib/Doctrine/Query/Set.php" />
                 <!-- load method exists in subclasses, but not this base class -->
@@ -160,8 +152,6 @@
 
         <InvalidArgument>
             <errorLevel type="info">
-                <file name="lib/Doctrine/Adapter/Statement/Oracle.php" />
-                <file name="lib/Doctrine/Template/Listener/Timestampable.php" />
                 <file name="lib/Doctrine/Validator/Readonly.php" />
             </errorLevel>
         </InvalidArgument>

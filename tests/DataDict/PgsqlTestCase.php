@@ -17,7 +17,7 @@
  */
 
 /**
- * Doctrine_DataDict_Oracle_TestCase
+ * Doctrine_DataDict_Pgsql_TestCase
  *
  * @package     Doctrine
  * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>

@@ -29,41 +29,4 @@
  */
 class Doctrine_Record_Generator_TestCase extends Doctrine_UnitTestCase
 {
-    public function testGeneratorComponentBinding()
-    {
-        Doctrine_Manager::connection('sqlite::memory:', 'test_tmp_conn', false);
-        Doctrine_Manager::getInstance()->bindComponent('I18nGeneratorComponentBinding', 'test_tmp_conn');
-        Doctrine_Core::createTablesFromArray(array('I18nGeneratorComponentBinding'));
-
-        try {
-            $i                           = new I18nGeneratorComponentBinding();
-            $i->name                     = 'test';
-            $i->Translation['EN']->title = 'en test';
-            $i->Translation['FR']->title = 'fr test';
-            $i->save();
-
-            $this->pass();
-
-            $this->assertTrue($i->id > 0);
-            $this->assertEqual($i->Translation['EN']->title, 'en test');
-            $this->assertEqual($i->Translation['FR']->title, 'fr test');
-            $this->assertEqual($i->getTable()->getConnection()->getName(), $i->Translation->getTable()->getConnection()->getName());
-        } catch (Exception $e) {
-            $this->fail($e->getMessage());
-        }
-    }
-}
-
-class I18nGeneratorComponentBinding extends Doctrine_Record
-{
-    public function setTableDefinition()
-    {
-        $this->hasColumn('name', 'string');
-        $this->hasColumn('title', 'string');
-    }
-
-    public function setUp()
-    {
-        $this->actAs('I18n', array('fields' => array('title')));
-    }
 }

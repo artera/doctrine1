@@ -121,15 +121,15 @@ class Doctrine_Query_Expression_TestCase extends Doctrine_UnitTestCase
         $lon    = '33.23';
         $radius = '33';
 
-        $query->select("l.*, i18n.*, GeoDistKM(l.lat, l.lon, $lat, $lon) distance")
-              ->from('Location l, l.LocationI18n i18n')
-              ->where('l.id <> ? AND i18n.culture = ?', array(1, 'en'))
+        $query->select("l.*, GeoDistKM(l.lat, l.lon, $lat, $lon) distance")
+              ->from('Location l')
+              ->where('l.id <> ? AND l.lat > ?', array(1, 0))
               ->having("distance < $radius")
               ->orderby('distance ASC')
               ->groupby('l.id')
               ->limit(5);
 
-        $this->assertEqual($query->getSqlQuery(), 'SELECT l.id AS l__id, l.lat AS l__lat, l.lon AS l__lon, l2.name AS l2__name, l2.id AS l2__id, l2.culture AS l2__culture, GeoDistKM(l.lat, l.lon, 13.23, 33.23) AS l__0 FROM location l LEFT JOIN location_i18n l2 ON l.id = l2.id WHERE l.id IN (SELECT DISTINCT l3.id FROM location l3 LEFT JOIN location_i18n l4 ON l3.id = l4.id WHERE (l3.id <> ? AND l4.culture = ?) GROUP BY l3.id HAVING GeoDistKM(l3.lat, l3.lon, 13.23, 33.23) < 33 ORDER BY GeoDistKM(l3.lat, l3.lon, 13.23, 33.23) LIMIT 5) AND (l.id <> ? AND l2.culture = ?) GROUP BY l.id HAVING l__0 < 33 ORDER BY l__0 ASC');
+        $this->assertEqual($query->getSqlQuery(), 'SELECT l.id AS l__id, l.lat AS l__lat, l.lon AS l__lon, GeoDistKM(l.lat, l.lon, 13.23, 33.23) AS l__0 FROM location l WHERE (l.id <> ? AND l.lat > ?) GROUP BY l.id HAVING l__0 < 33 ORDER BY l__0 ASC LIMIT 5');
 
         $this->conn->setAttribute(Doctrine_Core::ATTR_PORTABILITY, Doctrine_Core::PORTABILITY_ALL);
     }

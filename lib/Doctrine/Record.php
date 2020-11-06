@@ -2791,15 +2791,6 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
             return call_user_func_array(array($template, $method), $args);
         }
 
-        foreach ($this->_table->getTemplates() as $template) {
-            if (is_callable(array($template, $method))) {
-                $template->setInvoker($this);
-                $this->_table->setMethodOwner($method, $template);
-
-                return call_user_func_array(array($template, $method), $args);
-            }
-        }
-
         throw new Doctrine_Record_UnknownPropertyException(sprintf('Unknown method %s::%s', get_class($this), $method));
     }
 

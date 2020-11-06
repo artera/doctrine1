@@ -688,7 +688,7 @@ abstract class Doctrine_Query_Abstract
 
     /**
      * getSqlTableAlias
-     * some database such as Oracle need the identifier lengths to be < ~30 chars
+     * some database need the identifier lengths to be < ~30 chars
      * hence Doctrine creates as short identifier aliases as possible
      *
      * this method is used for the creation of short table aliases, its also

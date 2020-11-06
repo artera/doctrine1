@@ -44,13 +44,6 @@ abstract class Doctrine_Configurable extends Doctrine_Locator_Injectable
     protected $parent;
 
     /**
-     * @var array $_impl                    an array containing concrete implementations for class templates
-     *                                      keys as template names and values as names of the concrete
-     *                                      implementation classes
-     */
-    protected $_impl = array();
-
-    /**
      * @var array $_params                  an array of user defined parameters
      */
     protected $_params = array();
@@ -178,56 +171,6 @@ abstract class Doctrine_Configurable extends Doctrine_Locator_Injectable
         }
 
         return $this->_params[$namespace][$name];
-    }
-
-    /**
-     * setImpl
-     * binds given class to given template name
-     *
-     * this method is the base of Doctrine dependency injection
-     *
-     * @param string $template      name of the class template
-     * @param string $class         name of the class to be bound
-     * @return $this                this object
-     */
-    public function setImpl($template, $class)
-    {
-        $this->_impl[$template] = $class;
-
-        return $this;
-    }
-
-    /**
-     * getImpl
-     * returns the implementation for given class
-     *
-     * @param string $template
-     * @return string|null   name of the concrete implementation
-     */
-    public function getImpl($template)
-    {
-        if (! isset($this->_impl[$template])) {
-            if (isset($this->parent)) {
-                return $this->parent->getImpl($template);
-            }
-            return null;
-        }
-        return $this->_impl[$template];
-    }
-
-    /**
-     * @param  string $template
-     * @return bool
-     */
-    public function hasImpl($template)
-    {
-        if (! isset($this->_impl[$template])) {
-            if (isset($this->parent)) {
-                return $this->parent->hasImpl($template);
-            }
-            return false;
-        }
-        return true;
     }
 
     /**

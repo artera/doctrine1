@@ -64,7 +64,6 @@ class Doctrine_Core
     const ERR_VALUE_COUNT_ON_ROW  = -22;
     const ERR_INVALID_DSN         = -23;
     const ERR_CONNECT_FAILED      = -24;
-    const ERR_EXTENSION_NOT_FOUND = -25;
     const ERR_NOSUCHDB            = -26;
     const ERR_ACCESS_VIOLATION    = -27;
     const ERR_CANNOT_REPLACE      = -28;
@@ -138,7 +137,6 @@ class Doctrine_Core
     const ATTR_CASE                = 8;
     const ATTR_CURSOR_NAME         = 9;
     const ATTR_CURSOR              = 10;
-    const ATTR_ORACLE_NULLS        = 11;
     const ATTR_PERSISTENT          = 12;
     const ATTR_STATEMENT_CLASS     = 13;
     const ATTR_FETCH_TABLE_NAMES   = 14;
@@ -470,13 +468,6 @@ class Doctrine_Core
     private static $_path;
 
     /**
-     * Path to the Doctrine extensions directory
-     *
-     * @var string $_extensionsPath
-     */
-    private static $_extensionsPath;
-
-    /**
      * Debug bool true/false option
      *
      * @var boolean $_debug
@@ -563,27 +554,6 @@ class Doctrine_Core
         }
 
         return self::$_path;
-    }
-
-    /**
-     * Set the path to autoload extension classes from
-     *
-     * @param string $extensionsPath
-     * @return void
-     */
-    public static function setExtensionsPath($extensionsPath)
-    {
-        self::$_extensionsPath = $extensionsPath;
-    }
-
-    /**
-     * Get the path to load extension classes from
-     *
-     * @return string $extensionsPath
-     */
-    public static function getExtensionsPath()
-    {
-        return self::$_extensionsPath;
     }
 
     /**

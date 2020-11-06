@@ -123,7 +123,7 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
      * @param string|null $keyColumn
      * @param string|null $class
      * @psalm-param class-string|null $class
-     * @phpstan-param class-string<T>|null $class
+     * @phpstan-param class-string<Doctrine_Collection<T>>|null $class
      * @return Doctrine_Collection
      * @phpstan-return Doctrine_Collection<T>
      */
@@ -435,7 +435,7 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
     /**
      * Get all keys of the data in the collection
      *
-     * @return <int,int|string>
+     * @return array<int,int|string>
      */
     public function getKeys()
     {

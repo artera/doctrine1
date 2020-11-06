@@ -219,10 +219,6 @@ class Doctrine_Driver_UnitTestCase extends UnitTestCase
 
             $name = $this->adapter->getName();
 
-            if ($this->adapter->getName() == 'oci') {
-                $name = 'Oracle';
-            }
-
             $tx       = 'Doctrine_Transaction_' . ucwords($name);
             $dataDict = 'Doctrine_DataDict_' . ucwords($name);
 

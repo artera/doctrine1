@@ -482,11 +482,6 @@ class Doctrine_Import_Builder extends Doctrine_Builder
             }
         }
 
-        if (isset($definition['actAs']) && is_array($definition['actAs']) && !empty($definition['actAs'])) {
-            $ret[$i] = $this->buildActAs($definition['actAs']);
-            $i++;
-        }
-
         if (isset($definition['listeners']) && is_array($definition['listeners']) && !empty($definition['listeners'])) {
             $ret[$i] = $this->buildListeners($definition['listeners']);
             $i++;
@@ -758,9 +753,6 @@ class Doctrine_Import_Builder extends Doctrine_Builder
     {
         // find class matching $name
         $classname = $name;
-        if (class_exists("Doctrine_Template_$name", true)) {
-            $classname = "Doctrine_Template_$name";
-        }
         return '        $' . strtolower($name) . "$level = new $classname($option);" . PHP_EOL;
     }
 
@@ -775,110 +767,6 @@ class Doctrine_Import_Builder extends Doctrine_Builder
     private function emitAddChild($level, $parent, $name)
     {
         return '        $' . strtolower($parent) . ($level - 1) . '->addChild($' . strtolower($name) . "$level);" . PHP_EOL;
-    }
-
-    /**
-     * emit an indented actAs
-     *
-     * @param int $level
-     * @param string $name
-     * @return string actAs code
-     */
-    private function emitActAs($level, $name)
-    {
-        return '        $this->actAs($' . strtolower($name) . "$level);" . PHP_EOL;
-    }
-
-    /**
-     * buildActAs: builds a complete actAs code. It supports hierarchy of plugins
-     *
-     * @param array $actAs array of plugin definitions and options
-     *
-     * @return string
-     */
-    public function buildActAs($actAs)
-    {
-        $emittedActAs = array();
-        $build        = $this->innerBuildActAs($actAs, 0, null, $emittedActAs);
-        foreach ($emittedActAs as $str) {
-            $build .= $str;
-        }
-        return $build;
-    }
-
-    /**
-     * innerBuildActAs: build a complete actAs code that handles hierarchy of plugins
-     *
-     * @param string|array  $actAs array of plugin definitions and options
-     * @param int    $level current indentation level
-     * @param string $parent name of the parent template/plugin
-     * @param array  $emittedActAs contains on output an array of actAs command to be appended to output
-     * @return string actAs full definition
-     */
-    private function innerBuildActAs($actAs, $level = 0, $parent = null, array &$emittedActAs)
-    {
-        // rewrite special case of actAs: [Behavior] which gave [0] => Behavior
-        if (is_array($actAs) && isset($actAs[0]) && !is_array($actAs[0])) {
-            $tmp = array();
-            foreach ($actAs as $key => $value) {
-                if (is_numeric($key)) {
-                    $tmp[(string)$value] = null;
-                } else {
-                    $tmp[$key] = $value;
-                }
-            }
-            $actAs = $tmp;
-        }
-
-        $build         = '';
-        $currentParent = $parent;
-        if (is_array($actAs)) {
-            foreach ($actAs as $template => $options) {
-                if ($template == 'actAs') {
-                    // found another actAs
-                    $build .= $this->innerBuildActAs($options, $level + 1, $parent, $emittedActAs);
-                } elseif (is_array($options)) {
-                    // remove actAs from options
-                    $realOptions = array();
-                    $leftActAs   = array();
-                    foreach ($options as $name => $value) {
-                        if ($name != 'actAs') {
-                            $realOptions[$name] = $options[$name];
-                        } else {
-                            $leftActAs[$name] = $options[$name];
-                        }
-                    }
-
-                    $optionPHP = $this->varExport($realOptions);
-                    $build .= $this->emitAssign($level, $template, $optionPHP);
-                    if ($level == 0) {
-                        $emittedActAs[] = $this->emitActAs($level, $template);
-                    } else {
-                        $build .= $this->emitAddChild($level, $currentParent, $template);
-                    }
-                    // descend for the remainings actAs
-                    $parent = $template;
-                    $build .= $this->innerBuildActAs($leftActAs, $level, $template, $emittedActAs);
-                } else {
-                    $build .= $this->emitAssign($level, $template, null);
-                    if ($level == 0) {
-                        $emittedActAs[] = $this->emitActAs($level, $template);
-                    } else {
-                        $build .= $this->emitAddChild($level, $currentParent, $template);
-                    }
-                    $parent = $template;
-                }
-            }
-        } else {
-            $build .= $this->emitAssign($level, $actAs, null);
-            if ($level == 0) {
-                $emittedActAs[] = $this->emitActAs($level, $actAs);
-            } else {
-                $build .= $this->emitAddChild($level, $currentParent, $actAs);
-            }
-        }
-
-        return $build;
     }
 
     /**

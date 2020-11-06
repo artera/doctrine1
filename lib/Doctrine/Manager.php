@@ -83,24 +83,12 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
      * @var array
      */
     protected $_connectionDrivers = array(
-        'db2'    => 'Doctrine_Connection_Db2',
         'mysql'  => 'Doctrine_Connection_Mysql',
         'mysqli' => 'Doctrine_Connection_Mysql',
         'sqlite' => 'Doctrine_Connection_Sqlite',
         'pgsql'  => 'Doctrine_Connection_Pgsql',
-        'oci'    => 'Doctrine_Connection_Oracle',
-        'oci8'   => 'Doctrine_Connection_Oracle',
-        'oracle' => 'Doctrine_Connection_Oracle',
-        'mssql'  => 'Doctrine_Connection_Mssql',
-        'dblib'  => 'Doctrine_Connection_Mssql',
-        'odbc'   => 'Doctrine_Connection_Mssql',
         'mock'   => 'Doctrine_Connection_Mock'
     );
-
-    /**
-     * @var array
-     */
-    protected $_extensions = array();
 
     /**
      * @var boolean                     Whether or not the validators from disk have been loaded
@@ -226,7 +214,6 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
         }
         $this->_connections              = array();
         $this->_queryRegistry            = null;
-        $this->_extensions               = array();
         $this->_bound                    = array();
         $this->_validators               = array();
         $this->_loadedValidatorsFromDisk = false;
@@ -467,24 +454,6 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
 
                 break;
 
-            case 'mssql':
-            case 'dblib':
-                if (! isset($parts['path']) || $parts['path'] == '/') {
-                    throw new Doctrine_Manager_Exception('No database available in data source name');
-                }
-                if (isset($parts['path'])) {
-                    $parts['database'] = substr($parts['path'], 1);
-                }
-                if (! isset($parts['host'])) {
-                    throw new Doctrine_Manager_Exception('No hostname set in data source name');
-                }
-
-                $parts['dsn'] = $parts['scheme'] . ':host='
-                              . $parts['host'] . (isset($parts['port']) ? ':' . $parts['port']:null) . ';dbname='
-                              . $parts['database'];
-
-                break;
-
             case 'mysql':
                 if (! isset($parts['path']) || $parts['path'] == '/') {
                     throw new Doctrine_Manager_Exception('No database available in data source name');
@@ -509,12 +478,8 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
                     }
                 }
                 break;
-            case 'oci8':
-            case 'oci':
             case 'pgsql':
-            case 'odbc':
             case 'mock':
-            case 'oracle':
                 if (! isset($parts['path']) || $parts['path'] == '/') {
                     throw new Doctrine_Manager_Exception('No database available in data source name');
                 }
@@ -849,39 +814,5 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
     public function getConnectionDrivers()
     {
         return $this->_connectionDrivers;
-    }
-
-    /**
-     * Register a Doctrine extension for extensionsAutoload() method
-     *
-     * @param string $name
-     * @param string $path
-     * @return void
-     */
-    public function registerExtension($name, $path = null)
-    {
-        if (is_null($path)) {
-            $path = Doctrine_Core::getExtensionsPath() . '/' . $name . '/lib';
-        }
-        $this->_extensions[$name] = $path;
-    }
-
-    /**
-     * @param string $name
-     * @return void
-     */
-    public function deRegisterExtension($name)
-    {
-        unset($this->_extensions[$name]);
-    }
-
-    /**
-     * Get all registered Doctrine extensions
-     *
-     * @return array
-     */
-    public function getExtensions()
-    {
-        return $this->_extensions;
     }
 }

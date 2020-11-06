@@ -62,7 +62,6 @@ class Doctrine_Exception extends Exception
                 Doctrine_Core::ERR_INVALID_DSN         => 'invalid DSN',
                 Doctrine_Core::ERR_CONNECT_FAILED      => 'connect failed',
                 Doctrine_Core::ERR_NEED_MORE_DATA      => 'insufficient data supplied',
-                Doctrine_Core::ERR_EXTENSION_NOT_FOUND => 'extension not found',
                 Doctrine_Core::ERR_NOSUCHDB            => 'no such database',
                 Doctrine_Core::ERR_ACCESS_VIOLATION    => 'insufficient permissions',
                 Doctrine_Core::ERR_LOADMODULE          => 'error while including on demand module',

@@ -1,6 +1,5 @@
 ---
 SchemaTestUser:
-  actAs: [Timestampable]
   columns:
     id:
       type: integer(4)
@@ -14,7 +13,6 @@ SchemaTestUser:
       type: string(255)
 
 SchemaTestProfile:
-  actAs: [Timestampable]
   columns:
     id:
       type: integer(4)
@@ -29,13 +27,12 @@ SchemaTestProfile:
     last_name:
       type: string(255)
   relations:
-    SchemaTestUser: 
+    SchemaTestUser:
       foreignType: one
     SchemaTestContact:
       foreignType: one
 
 SchemaTestContact:
-  actAs: [Timestampable]
   columns:
     id:
       type: integer(4)
@@ -45,7 +42,6 @@ SchemaTestContact:
       type: string(255)
 
 SchemaTestPhonenumber:
-  actAs: [Timestampable]
   columns:
     id:
       type: integer(4)
@@ -149,11 +145,11 @@ AliasTest:
     test_col:
       name: test_col as test_col_alias
       type: string(255)
-      
+
 # App-level cascade delete
 AppCascadeDeleteTest:
-  columns: 
-    id: 
+  columns:
+    id:
       primary: true
       autoincrement: true
       type: integer(4)
@@ -166,10 +162,10 @@ AppCascadeDeleteTest:
       local: alias_id
       foreign: id
       cascade: [delete]
-      
+
 ListenerTestAsArray:
   columns:
-    id: 
+    id:
       primary: true
       autoincrement: true
       type: integer(4)
@@ -177,11 +173,10 @@ ListenerTestAsArray:
       type: string(50)
     slug:
       type: string(60)
-  listeners: [Doctrine_Template_Listener_Sluggable]
-  
+
 ListenerTestWithParameters:
   columns:
-    id: 
+    id:
       primary: true
       autoincrement: true
       type: integer(4)
@@ -189,12 +184,8 @@ ListenerTestWithParameters:
       type: string(50)
     slug:
       type: string(60)
-  listeners: 
-    Sluggable:
-      useOptions: true
-      class: Doctrine_Template_Listener_Sluggable
 
-# Long identifier test on FK      
+# Long identifier test on FK
 sfUserEmailAddressType:
   columns:
     name:
@@ -202,8 +193,6 @@ sfUserEmailAddressType:
       length: 20
 
 sfUserEmailAddress:
-  actAs:
-    Timestampable:
   columns:
     email_address_type_id: integer
     address:

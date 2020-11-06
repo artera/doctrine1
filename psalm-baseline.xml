@@ -1,10 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <files psalm-version="3.11.0@5bc9b095d1a6f1a2e0890353fc2c6cd7de62371d">
-  <file src="lib/Doctrine/Adapter/Statement/Oracle.php">
-    <InvalidOperand occurrences="1">
-      <code>$var</code>
-    </InvalidOperand>
-  </file>
   <file src="lib/Doctrine/Cache/Memcache.php">
     <UndefinedDocblockClass occurrences="7">
       <code>Memcache</code>
@@ -47,23 +42,6 @@
     <PossiblyUndefinedArrayOffset occurrences="1">
       <code>$this-&gt;pendingAttributes[$attribute]</code>
     </PossiblyUndefinedArrayOffset>
-  </file>
-  <file src="lib/Doctrine/Connection/Mssql.php">
-    <EmptyArrayAccess occurrences="4">
-      <code>$columns[$i]</code>
-      <code>$aliases[$i]</code>
-      <code>$columns[$i]</code>
-      <code>$aliases[$i]</code>
-    </EmptyArrayAccess>
-    <InvalidNullableReturnType occurrences="1">
-      <code>string</code>
-    </InvalidNullableReturnType>
-    <NullableReturnStatement occurrences="1">
-      <code>is_null($value) ? 'NULL' : $this-&gt;quote($params[$m[1]])</code>
-    </NullableReturnStatement>
-    <UndefinedVariable occurrences="1">
-      <code>$fields</code>
-    </UndefinedVariable>
   </file>
   <file src="lib/Doctrine/Connection/Statement.php">
     <InvalidScalarArgument occurrences="1">
@@ -224,11 +202,6 @@
       <code>$coll[]</code>
     </InvalidPropertyAssignment>
   </file>
-  <file src="lib/Doctrine/Sequence/Db2.php">
-    <NullableReturnStatement occurrences="1">
-      <code>$result</code>
-    </NullableReturnStatement>
-  </file>
   <file src="lib/Doctrine/Sequence/Mysql.php">
     <InvalidReturnStatement occurrences="1">
       <code>$value</code>
@@ -236,11 +209,6 @@
     <InvalidReturnType occurrences="1">
       <code>integer|bool</code>
     </InvalidReturnType>
-  </file>
-  <file src="lib/Doctrine/Sequence/Oracle.php">
-    <LessSpecificImplementedReturnType occurrences="1">
-      <code>mixed</code>
-    </LessSpecificImplementedReturnType>
   </file>
   <file src="lib/Doctrine/Table.php">
     <FalsableReturnStatement occurrences="1">
@@ -256,11 +224,6 @@
     <TypeDoesNotContainType occurrences="1">
       <code>$class === false</code>
     </TypeDoesNotContainType>
-  </file>
-  <file src="lib/Doctrine/Template/Listener/Timestampable.php">
-    <ImplicitToStringCast occurrences="1">
-      <code>$this-&gt;getTimestamp('updated', $event-&gt;getInvoker()-&gt;getTable()-&gt;getConnection())</code>
-    </ImplicitToStringCast>
   </file>
   <file src="lib/Doctrine/Tree/NestedSet.php">
     <InvalidScalarArgument occurrences="1">

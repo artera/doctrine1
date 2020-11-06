@@ -1395,11 +1395,7 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
         $q .= (! empty($this->_sqlParts['orderby'])) ? ' ORDER BY ' . implode(', ', $this->_sqlParts['orderby'])  : '';
 
         if ($modifyLimit) {
-            if ($this->_conn instanceof Doctrine_Connection_Mssql) {
-                $q = $this->_conn->modifyLimitQuery($q, $this->_sqlParts['limit'], $this->_sqlParts['offset'], false, false, $this);
-            } else {
-                $q = $this->_conn->modifyLimitQuery($q, $this->_sqlParts['limit'], $this->_sqlParts['offset'], false);
-            }
+            $q = $this->_conn->modifyLimitQuery($q, $this->_sqlParts['limit'], $this->_sqlParts['offset'], false);
         }
 
         $q .= $this->_sqlParts['forUpdate'] === true ? ' FOR UPDATE ' : '';
@@ -1436,18 +1432,13 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
         $driverName = $this->_conn->getAttribute(Doctrine_Core::ATTR_DRIVER_NAME);
 
         // initialize the base of the subquery
-        if (($driverName == 'oracle' || $driverName == 'oci') && $this->_isOrderedByJoinedColumn()) {
-            $subquery = 'SELECT ';
-        } else {
-            $subquery = 'SELECT DISTINCT ';
-        }
-        $subquery .= $this->_conn->quoteIdentifier($primaryKey);
+        $subquery = 'SELECT DISTINCT ' . $this->_conn->quoteIdentifier($primaryKey);
 
-        // pgsql & oracle need the order by fields to be preserved in select clause
+        // pgsql need the order by fields to be preserved in select clause
         // Technically this isn't required for mysql <= 5.6, but mysql 5.7 with an sql_mode option enabled
         // (only_full_group_by, which is enabled by default in 5.7) will throw SQL errors if this isn't done,
         // so easier to just enable for all of mysql.
-        if ($driverName == 'mysql' || $driverName == 'pgsql' || $driverName == 'oracle' || $driverName == 'oci' || $driverName == 'mssql' || $driverName == 'odbc') {
+        if ($driverName == 'mysql' || $driverName == 'pgsql') {
             foreach ($this->_sqlParts['orderby'] as $part) {
                 // Remove identifier quoting if it exists
                 $e = $this->_tokenizer->bracketExplode($part, ' ');
@@ -1533,19 +1524,6 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
         $subquery .= (! empty($having))?  ' HAVING ' . implode(' AND ', $having) : '';
         $subquery .= (! empty($orderby))? ' ORDER BY ' . implode(', ', $orderby)  : '';
 
-        if (($driverName == 'oracle' || $driverName == 'oci') && $this->_isOrderedByJoinedColumn()) {
-            // When using "ORDER BY x.foo" where x.foo is a column of a joined table,
-            // we may get duplicate primary keys because all columns in ORDER BY must appear
-            // in the SELECT list when using DISTINCT. Hence we need to filter out the
-            // primary keys with an additional DISTINCT subquery.
-            // #1038
-            $quotedIdentifierColumnName = $this->_conn->quoteIdentifier($table->getColumnName($table->getIdentifier()));
-            $subquery                   = 'SELECT doctrine_subquery_alias.' . $quotedIdentifierColumnName
-                    . ' FROM (' . $subquery . ') doctrine_subquery_alias'
-                    . ' GROUP BY doctrine_subquery_alias.' . $quotedIdentifierColumnName
-                    . ' ORDER BY MIN(ROWNUM)';
-        }
-
         // add driver specific limit clause
         $subquery = $this->_conn->modifyLimitSubquery($table, $subquery, $this->_sqlParts['limit'], $this->_sqlParts['offset']);
 
@@ -1618,36 +1596,6 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
 
         $subquery = implode(' ', $parts);
         return $subquery;
-    }
-
-    /**
-     * Checks whether the query has an ORDER BY on a column of a joined table.
-     * This information is needed in special scenarios like the limit-offset when its
-     * used with an Oracle database.
-     *
-     * @return boolean  TRUE if the query is ordered by a joined column, FALSE otherwise.
-     */
-    private function _isOrderedByJoinedColumn()
-    {
-        if (! $this->_queryComponents) {
-            throw new Doctrine_Query_Exception('The query is in an invalid state for this '
-                    . 'operation. It must have been fully parsed first.');
-        }
-        $componentAlias = key($this->_queryComponents);
-        $mainTableAlias = $this->getSqlTableAlias($componentAlias);
-        foreach ($this->_sqlParts['orderby'] as $part) {
-            $part = trim($part);
-            $e    = $this->_tokenizer->bracketExplode($part, ' ');
-            $part = trim($e[0]);
-            if (strpos($part, '.') === false) {
-                continue;
-            }
-            list($tableAlias, $columnName) = explode('.', $part);
-            if ($tableAlias != $mainTableAlias) {
-                return true;
-            }
-        }
-        return false;
     }
 
     /**

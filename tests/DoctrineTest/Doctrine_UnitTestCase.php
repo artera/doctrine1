@@ -117,8 +117,6 @@ class Doctrine_UnitTestCase extends UnitTestCase
                 $driver = $e[2];
                 switch ($e[2]) {
                     case 'Mysql':
-                    case 'Mssql':
-                    case 'Oracle':
                     case 'Pgsql':
                     case 'Sqlite':
                         $this->driverName = $e[2];

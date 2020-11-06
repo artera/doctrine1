@@ -102,15 +102,12 @@ class Doctrine_Formatter extends Doctrine_Connection_Module
      * Portability is broken by using the following characters inside
      * delimited identifiers:
      *   + backtick (<kbd>`</kbd>) -- due to MySQL
-     *   + double quote (<kbd>"</kbd>) -- due to Oracle
      *   + brackets (<kbd>[</kbd> or <kbd>]</kbd>) -- due to Access
      *
      * Delimited identifiers are known to generally work correctly under
      * the following drivers:
-     *   + mssql
      *   + mysql
      *   + mysqli
-     *   + oci8
      *   + pgsql
      *   + sqlite
      *

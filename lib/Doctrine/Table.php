@@ -47,7 +47,6 @@
  * @property array $parents
  * @property array $joinedParents
  * @property array $queryParts
- * @property mixed $versioning
  * @property array $subclasses
  * @property mixed $orderBy
  *
@@ -178,8 +177,6 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
      *      -- treeOptions                  the tree options
      *
      *      -- queryParts                   the bound query parts
-     *
-     *      -- versioning
      */
     protected $_options = array('name'                => null,
                                      'tableName'      => null,
@@ -195,7 +192,6 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
                                      'parents'        => array(),
                                      'joinedParents'  => array(),
                                      'queryParts'     => array(),
-                                     'versioning'     => null,
                                      'subclasses'     => array(),
                                      'orderBy'        => null
                                      );
@@ -209,12 +205,6 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
      * @var Doctrine_Relation_Parser $_parser   relation parser object
      */
     protected $_parser;
-
-    /**
-     * @see Doctrine_Template
-     * @var array $_templates                   an array containing all templates attached to this table
-     */
-    protected $_templates = array();
 
     /**
      * @see Doctrine_Record_Filter
@@ -2480,63 +2470,6 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
     public function isTree()
     {
         return (! is_null($this->_options['treeImpl'])) ? true : false;
-    }
-
-    /**
-     * Retrieves all templates (behaviors) attached to this table.
-     *
-     * @return Doctrine_Template[]     an array containing all templates
-     */
-    public function getTemplates()
-    {
-        return $this->_templates;
-    }
-
-    /**
-     * Retrieves a particular template by class name.
-     *
-     * This method retrieves a behavior/template object attached to the table.
-     * For Doctrine_Template_* classes, the base name can be used.
-     *
-     * @param string $template              name of the behavior
-     * @throws Doctrine_Table_Exception     if the given template is
-     *                                      not set on this table
-     * @return Doctrine_Template
-     */
-    public function getTemplate($template)
-    {
-        if (isset($this->_templates['Doctrine_Template_' . $template])) {
-            return $this->_templates['Doctrine_Template_' . $template];
-        } elseif (isset($this->_templates[$template])) {
-            return $this->_templates[$template];
-        }
-
-        throw new Doctrine_Table_Exception('Template ' . $template . ' not loaded');
-    }
-
-    /**
-     * Checks if the table has a given template.
-     *
-     * @param string $template  name of template; @see getTemplate()
-     * @return boolean
-     */
-    public function hasTemplate($template)
-    {
-        return isset($this->_templates[$template]) || isset($this->_templates['Doctrine_Template_' . $template]);
-    }
-
-    /**
-     * Adds a template to this table.
-     *
-     * @param string $template          template name
-     * @param Doctrine_Template $impl   behavior to attach
-     * @return $this
-     */
-    public function addTemplate($template, Doctrine_Template $impl)
-    {
-        $this->_templates[$template] = $impl;
-
-        return $this;
     }
 
     /**
