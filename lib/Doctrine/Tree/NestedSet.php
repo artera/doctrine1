@@ -164,9 +164,13 @@ class Doctrine_Tree_NestedSet extends Doctrine_Tree implements Doctrine_Tree_Int
     /**
      * Fetches a tree.
      *
-     * @param  array   $options       Options
-     * @param  integer $hydrationMode One of the Doctrine_Core::HYDRATE_* constants.
-     * @return false|array|Doctrine_Collection          The tree or FALSE if the tree could not be found.
+     * @param array   $options       Options
+     * @param integer $hydrationMode One of the Doctrine_Core::HYDRATE_* constants.
+     *
+     * @return Doctrine_Collection|array|false|int The tree or FALSE if the tree could not be found.
+     *
+     * @psalm-return Doctrine_Collection<Doctrine_Record>|array|false|int
+     * @phpstan-return Doctrine_Collection<Doctrine_Record>|array|false|int
      */
     public function fetchTree($options = [], $hydrationMode = null)
     {
@@ -206,11 +210,16 @@ class Doctrine_Tree_NestedSet extends Doctrine_Tree implements Doctrine_Tree_Int
     /**
      * Fetches a branch of a tree.
      *
-     * @param  mixed   $pk            primary key as used by table::find() to locate node to traverse tree from
-     * @param  array   $options       Options.
-     * @param  integer $hydrationMode One of the Doctrine_Core::HYDRATE_* constants.
-     * @return Doctrine_Collection|array|false                 The branch or FALSE if the branch could not be found.
-     * @todo   Only fetch the lft and rgt values of the initial record. more is not needed.
+     * @param mixed   $pk            primary key as used by table::find() to locate node to traverse tree from
+     * @param array   $options       Options.
+     * @param integer $hydrationMode One of the Doctrine_Core::HYDRATE_* constants.
+     *
+     * @return Doctrine_Collection|array|false|int The branch or FALSE if the branch could not be found.
+     *
+     * @todo Only fetch the lft and rgt values of the initial record. more is not needed.
+     *
+     * @psalm-return Doctrine_Collection<Doctrine_Record>|array|false|int
+     * @phpstan-return Doctrine_Collection<Doctrine_Record>|array|false|int
      */
     public function fetchBranch($pk, $options = [], $hydrationMode = null)
     {

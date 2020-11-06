@@ -1040,10 +1040,14 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
      *       ->where('myuser.Phonenumber = ?', '5551234');
      * </code>
      *
-     * @param  string $alias name for component aliasing
-     * @return Doctrine_Query<T>
+     * @param string $alias name for component aliasing
+     *
+     * @return Doctrine_Query
+     *
+     * @psalm-return Doctrine_Query<Doctrine_Record>
+     * @phpstan-return Doctrine_Query<T>
      */
-    public function createQuery($alias = '')
+    public function createQuery($alias = ''): Doctrine_Query
     {
         if (! empty($alias)) {
             $alias = ' ' . trim($alias);
@@ -1538,14 +1542,17 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
      * this component. The record is not created in the database until you
      * call @save().
      *
-     * @param          array $array an array where keys are field names and
+     * @param array $array an array where keys are field names and
      *                              values representing field values. Can
      *                              contain also related components;
-     * @see            Doctrine_Record::fromArray()
-     * @return         Doctrine_Record   the created record object
+     *
+     * @see Doctrine_Record::fromArray()
+     *
+     * @return Doctrine_Record
+     *
      * @phpstan-return T
      */
-    public function create(array $array = [])
+    public function create(array $array = []): Doctrine_Record
     {
         /**
  * @var Doctrine_Record $record
@@ -1673,8 +1680,12 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
     /**
      * Retrieves all the records stored in this table.
      *
-     * @param  int $hydrationMode Doctrine_Core::HYDRATE_ARRAY or Doctrine_Core::HYDRATE_RECORD
-     * @return Doctrine_Collection|array
+     * @param int $hydrationMode Doctrine_Core::HYDRATE_ARRAY or Doctrine_Core::HYDRATE_RECORD
+     *
+     * @return Doctrine_Collection|array|int
+     *
+     * @psalm-return Doctrine_Collection<Doctrine_Record>|array|int
+     * @psalm-return Doctrine_Collection<T>|array|int
      */
     public function findAll($hydrationMode = null)
     {
@@ -1803,12 +1814,15 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
      * This method is used internally to cache records, ensuring that only one
      * object that represents a sql record exists in all scopes.
      *
-     * @param         Doctrine_Record $record record to be added
+     * @param Doctrine_Record $record
+     *
      * @phpstan-param T $record
-     * @return        boolean                      true if record was not present in the map
-     * @todo          Better name? registerRecord?
+     *
+     * @return boolean                      true if record was not present in the map
+     *
+     * @todo Better name? registerRecord?
      */
-    public function addRecord(Doctrine_Record $record)
+    public function addRecord(Doctrine_Record $record): bool
     {
         $id = implode(' ', $record->identifier());
 
@@ -1827,12 +1841,14 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
      * This method deletes from the cache the given record; can be used to
      * force reloading of an object from database.
      *
-     * @param         Doctrine_Record $record record to remove from cache
+     * @param Doctrine_Record $record
+     *
      * @phpstan-param T $record
-     * @return        boolean                  true if the record was found and removed,
+     *
+     * @return boolean                  true if the record was found and removed,
      *                                  false if the record wasn't found.
      */
-    public function removeRecord(Doctrine_Record $record)
+    public function removeRecord(Doctrine_Record $record): bool
     {
         $id = implode(' ', $record->identifier());
 
@@ -2003,10 +2019,13 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
     }
 
     /**
-     * @return         Doctrine_Query  a Doctrine_Query object
+     * @return Doctrine_Query
+     *
      * @phpstan-return Doctrine_Query<T>
+     *
+     * @psalm-return Doctrine_Query<Doctrine_Record>
      */
-    public function getQueryObject()
+    public function getQueryObject(): Doctrine_Query
     {
         $graph = $this->createQuery();
         $graph->load($this->getComponentName());
@@ -2078,11 +2097,13 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
      *
      * @see Doctrine_Core::ATTR_VALIDATE
      *
-     * @param         string                               $fieldName
-     * @param         string|Doctrine_Record|Doctrine_Null $value
-     * @param         Doctrine_Record                      $record    record to consider; if it does not exists, it is created
+     * @param string                               $fieldName
+     * @param string|Doctrine_Record|Doctrine_Null $value
+     * @param Doctrine_Record|null $record
+     *
      * @phpstan-param T $record
-     * @return        Doctrine_Validator_ErrorStack $errorStack
+     *
+     * @return Doctrine_Validator_ErrorStack $errorStack
      */
     public function validateField($fieldName, $value, Doctrine_Record $record = null)
     {

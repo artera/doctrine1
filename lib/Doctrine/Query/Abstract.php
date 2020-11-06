@@ -157,7 +157,7 @@ abstract class Doctrine_Query_Abstract
     /**
      * @var Doctrine_Connection  The connection used by this query object.
      */
-    protected $_conn;
+    protected Doctrine_Connection $_conn;
 
     /**
      * @var bool Whether or not a connection was passed to this query object to use
@@ -2092,7 +2092,7 @@ abstract class Doctrine_Query_Abstract
      *
      * @return Doctrine_Connection
      */
-    public function getConnection()
+    public function getConnection(): Doctrine_Connection
     {
         return $this->_conn;
     }

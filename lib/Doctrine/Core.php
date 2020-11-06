@@ -185,7 +185,6 @@ class Doctrine_Core
     const ATTR_RESULT_CACHE_LIFESPAN      = 151;
     const ATTR_LOAD_REFERENCES            = 153;
     const ATTR_RECORD_LISTENER            = 154;
-    const ATTR_THROW_EXCEPTIONS           = 155;
     const ATTR_DEFAULT_PARAM_NAMESPACE    = 156;
     const ATTR_QUERY_CACHE                = 157;
     const ATTR_QUERY_CACHE_LIFESPAN       = 158;
@@ -993,9 +992,11 @@ class Doctrine_Core
     /**
      * Migrate database to specified $to version. Migrates from current to latest if you do not specify.
      *
-     * @param  string $migrationsPath Path to migrations directory which contains your migration classes
-     * @param  int    $to             Version you wish to migrate to.
-     * @return bool|int
+     * @param string $migrationsPath Path to migrations directory which contains your migration classes
+     * @param int    $to             Version you wish to migrate to.
+     *
+     * @return false|int|null
+     *
      * @throws Doctrine_Migration_Exception
      */
     public static function migrate($migrationsPath, $to = null)
@@ -1171,40 +1172,5 @@ class Doctrine_Core
         }
 
         return false;
-    }
-
-    /**
-     * dumps a given variable
-     *
-     * @param  mixed   $var    a variable of any type
-     * @param  boolean $output whether to output the content
-     * @param  string  $indent indention string
-     * @return string
-     */
-    public static function dump($var, $output = true, $indent = '')
-    {
-        $ret = [];
-        switch (gettype($var)) {
-            case 'array':
-                $ret[] = 'Array(';
-                $indent .= '    ';
-                foreach ($var as $k => $v) {
-                    $ret[] = $indent . $k . ' : ' . self::dump($v, false, $indent);
-                }
-                $indent = substr($indent, 0, -4);
-                $ret[]  = $indent . ')';
-                break;
-            case 'object':
-                $ret[] = 'Object(' . get_class($var) . ')';
-                break;
-            default:
-                $ret[] = var_export($var, true);
-        }
-
-        if ($output) {
-            print implode("\n", $ret);
-        }
-
-        return implode("\n", $ret);
     }
 }

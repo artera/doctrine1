@@ -813,8 +813,11 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
      *
      * This method takes care of that conversion
      *
-     * @param  array|bool $item
-     * @return array|int
+     * @param array|bool $item
+     *
+     * @return (int|mixed)[]|bool|int
+     *
+     * @psalm-return array<array-key, int|mixed>|bool|int
      */
     public function convertBooleans($item)
     {
@@ -965,7 +968,7 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
      *
      * @return Doctrine_Connection_Statement
      */
-    public function prepare($statement)
+    public function prepare($statement): Doctrine_Connection_Statement
     {
         $this->connect();
 
@@ -1096,7 +1099,7 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
      *
      * @return integer
      */
-    public function exec($query, array $params = [])
+    public function exec($query, array $params = []): int
     {
         $this->connect();
 
@@ -1141,9 +1144,7 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
 
         $this->getListener()->preError($event);
 
-        /**
- * @psalm-var class-string $name
-*/
+        /** @var class-string $name */
         $name = 'Doctrine_Connection_' . $this->driverName . '_Exception';
 
         $message = $e->getMessage();
@@ -1151,20 +1152,13 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
             $message .= sprintf('. Failing Query: "%s"', $query);
         }
 
-        /**
- * @var Doctrine_Connection_Exception $exc
-*/
+        /** @var Doctrine_Connection_Exception $exc */
         $exc = new $name($message, (int) $e->getCode());
         if (! isset($e->errorInfo) || ! is_array($e->errorInfo)) {
             $e->errorInfo = [null, null, null, null];
         }
         $exc->processErrorInfo($e->errorInfo);
-
-        if ($this->getAttribute(Doctrine_Core::ATTR_THROW_EXCEPTIONS)) {
-            throw $exc;
-        }
-
-        $this->getListener()->postError($event);
+        throw $exc;
     }
 
     /**
@@ -1231,9 +1225,10 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
      * }
      * </code>
      *
-     * @return ArrayIterator<Doctrine_Table>        SPL ArrayIterator object
+     * @return ArrayIterator SPL ArrayIterator object
+     * @phpstan-return ArrayIterator<Doctrine_Table>
      */
-    public function getIterator()
+    public function getIterator(): ArrayIterator
     {
         return new ArrayIterator($this->tables);
     }

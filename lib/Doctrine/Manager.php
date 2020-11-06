@@ -137,7 +137,6 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
                         Doctrine_Core::ATTR_LOAD_REFERENCES            => true,
                         Doctrine_Core::ATTR_LISTENER                   => new Doctrine_EventListener(),
                         Doctrine_Core::ATTR_RECORD_LISTENER            => new Doctrine_Record_Listener(),
-                        Doctrine_Core::ATTR_THROW_EXCEPTIONS           => true,
                         Doctrine_Core::ATTR_VALIDATE                   => Doctrine_Core::VALIDATE_NONE,
                         Doctrine_Core::ATTR_QUERY_LIMIT                => Doctrine_Core::LIMIT_RECORDS,
                         Doctrine_Core::ATTR_IDXNAME_FORMAT             => '%s_idx',
@@ -660,7 +659,7 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
      * @throws Doctrine_Connection_Exception       if there are no open connections
      * @return Doctrine_Connection
      */
-    public function getCurrentConnection()
+    public function getCurrentConnection(): Doctrine_Connection
     {
         $i = $this->_currIndex;
         if (! isset($this->_connections[$i])) {

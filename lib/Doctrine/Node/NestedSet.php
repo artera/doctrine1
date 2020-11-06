@@ -208,7 +208,10 @@ class Doctrine_Node_NestedSet extends Doctrine_Node implements Doctrine_Node_Int
     /**
      * gets children for node (direct descendants only)
      *
-     * @return false|Doctrine_Collection  The children of the node or FALSE if the node has no children.
+     * @return Doctrine_Collection|array|false|int The children of the node or FALSE if the node has no children.
+     *
+     * @psalm-return Doctrine_Collection<Doctrine_Record>|array|false|int
+     * @phpstan-return Doctrine_Collection<Doctrine_Record>|array|false|int
      */
     public function getChildren()
     {
@@ -221,7 +224,10 @@ class Doctrine_Node_NestedSet extends Doctrine_Node implements Doctrine_Node_Int
      * @param int  $depth
      * @param bool $includeNode
      *
-     * @return Doctrine_Collection|array|false The descendants of the node or FALSE if the node has no descendants.
+     * @return Doctrine_Collection|array|false|int The descendants of the node or FALSE if the node has no descendants.
+     *
+     * @psalm-return Doctrine_Collection<Doctrine_Record>|array|false|int
+     * @phpstan-return Doctrine_Collection<Doctrine_Record>|array|false|int
      */
     public function getDescendants($depth = null, $includeNode = false)
     {
@@ -282,7 +288,10 @@ class Doctrine_Node_NestedSet extends Doctrine_Node implements Doctrine_Node_Int
      *
      * @param integer $depth The depth 'upstairs'.
      *
-     * @return Doctrine_Collection|array|false The ancestors of the node or FALSE if the node has no ancestors (this basically means it's a root node).
+     * @return Doctrine_Collection|array|false|int The ancestors of the node or FALSE if the node has no ancestors (this basically means it's a root node).
+     *
+     * @psalm-return Doctrine_Collection<Doctrine_Record>|array|false|int
+     * @phpstan-return Doctrine_Collection<Doctrine_Record>|array|false|int
      */
     public function getAncestors($depth = null)
     {

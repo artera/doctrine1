@@ -2228,9 +2228,12 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
     /**
      * exports instance to a chosen format
      *
-     * @param  string $type format type: array, xml, yml, json
-     * @param  bool   $deep whether or not to export all relationships
-     * @return false|int|string|array       representation as $type format. Array is $type is array
+     * @param string $type format type: array, xml, yml, json
+     * @param bool   $deep whether or not to export all relationships
+     *
+     * @return (array|false|int|mixed|null)[]|false|int|string representation as $type format. Array is $type is array
+     *
+     * @psalm-return array<array-key|array, array|false|int|mixed|null>|false|int|string
      */
     public function exportTo($type, $deep = true)
     {
@@ -2883,7 +2886,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
      */
     public function toString()
     {
-        return Doctrine_Core::dump(get_object_vars($this));
+        return json_encode(get_object_vars($this), JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT);
     }
 
     /**

@@ -62,29 +62,6 @@ class Doctrine_Lib
     }
 
     /**
-     * Dumps a record.
-     *
-     * This method returns an html representation of a given
-     * record, containing keys, state and data.
-     *
-     * @param  Doctrine_Record $record
-     * @return string
-     */
-    public static function getRecordAsString(Doctrine_Record $record)
-    {
-        $r[] = '<pre>';
-        $r[] = 'Component  : ' . $record->getTable()->getComponentName();
-        $r[] = 'ID         : ' . Doctrine_Core::dump($record->identifier());
-        $r[] = 'References : ' . count($record->getReferences());
-        $r[] = 'State      : ' . Doctrine_Lib::getRecordStateAsString($record->state());
-        $r[] = 'OID        : ' . $record->getOid();
-        $r[] = 'data       : ' . Doctrine_Core::dump($record->getData(), false);
-        $r[] = '</pre>';
-
-        return implode("\n", $r) . '<br />';
-    }
-
-    /**
      * Generates a human readable representation of a connection's state.
      *
      * This method translates a Doctrine_Connection state (integer constant)
@@ -179,26 +156,6 @@ class Doctrine_Lib
         $l     = str_replace('  ', '<dd>', $l);
 
         return $l;
-    }
-
-    /**
-     * Generates a string representation of a collection.
-     *
-     * This method returns an html dump of a collection of records, containing
-     * all data.
-     *
-     * @param  Doctrine_Collection $collection
-     * @return string
-     */
-    public static function getCollectionAsString(Doctrine_Collection $collection)
-    {
-        $r[] = '<pre>';
-        $r[] = get_class($collection);
-        $r[] = 'data : ' . Doctrine_Core::dump($collection->getData(), false);
-        //$r[] = 'snapshot : ' . Doctrine_Core::dump($collection->getSnapshot());
-        $r[] = '</pre>';
-
-        return implode("\n", $r);
     }
 
     // Code from symfony sfToolkit class. See LICENSE

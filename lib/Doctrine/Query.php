@@ -2042,7 +2042,6 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
             $queryPart .= ' LEFT JOIN ' . $this->_conn->quoteIdentifier($parentTable->getTableName())
                         . ' ' . $this->_conn->quoteIdentifier($parentTableAlias) . ' ON ';
 
-            //Doctrine_Core::dump($table->getIdentifier());
             foreach ((array) $table->getIdentifier() as $identifier) {
                 $column = $table->getColumnName($identifier);
 

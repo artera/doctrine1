@@ -122,7 +122,6 @@ class Doctrine_Query_TestCase extends Doctrine_UnitTestCase
         $q = new Doctrine_Query();
         $q->from('User u')->leftJoin('u.Phonenumber p');
         $q->getSqlQuery();
-        //Doctrine_Core::dump($q->getCachedForm(array('foo' => 'bar')));
         $this->assertEqual($q->parseClause("CONCAT('u.name', u.name)"), "CONCAT('u.name', e.name)");
     }
 

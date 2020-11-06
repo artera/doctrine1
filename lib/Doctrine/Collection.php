@@ -736,9 +736,11 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
      * @param boolean $deep
      * @param bool    $prefixKey
      *
-     * @return array<string,mixed>[]
+     * @return ((array|false|int|mixed|null)[]|false)[]
+     *
+     * @psalm-return array<array-key|mixed, array<array-key|array, array|false|int|mixed|null>|false>
      */
-    public function toArray($deep = true, $prefixKey = false)
+    public function toArray($deep = true, $prefixKey = false): array
     {
         $data = [];
         foreach ($this as $key => $record) {
@@ -875,9 +877,12 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
     /**
      * Export a Doctrine_Collection to one of the supported Doctrine_Parser formats
      *
-     * @param  string $type
-     * @param  bool   $deep
-     * @return mixed[]
+     * @param string $type
+     * @param bool   $deep
+     *
+     * @return ((array|false|int|mixed|null)[]|false)[]|false|int|string
+     *
+     * @psalm-return array<array-key|mixed, array<array-key|array, array|false|int|mixed|null>|false>|false|int|string
      */
     public function exportTo($type, $deep = true)
     {
@@ -1094,16 +1099,6 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
     {
         $data = $this->data;
         return new ArrayIterator($data);
-    }
-
-    /**
-     * Returns a string representation of this object
-     *
-     * @return string $string
-     */
-    public function __toString()
-    {
-        return Doctrine_Lib::getCollectionAsString($this);
     }
 
     /**

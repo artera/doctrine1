@@ -30,8 +30,11 @@
 class Doctrine_Hydrator_SingleScalarDriver extends Doctrine_Hydrator_Abstract
 {
     /**
-     * @param  Doctrine_Connection_Statement $stmt
-     * @return array|scalar
+     * @param Doctrine_Connection_Statement $stmt
+     *
+     * @return (null|scalar)[]|null|scalar
+     *
+     * @psalm-return list<null|scalar>|null|scalar
      */
     public function hydrateResultSet($stmt)
     {

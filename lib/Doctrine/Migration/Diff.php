@@ -364,10 +364,11 @@ class Doctrine_Migration_Diff
      * Get the extension of the type of file contained in a directory.
      * Used to determine if a directory contains YAML or PHP files.
      *
-     * @param  string $item
-     * @return string $extension
+     * @param string $item
+     *
+     * @return null|string $extension
      */
-    protected function _getItemExtension($item)
+    protected function _getItemExtension($item): ?string
     {
         if (is_dir($item)) {
             $files = glob($item . DIRECTORY_SEPARATOR . '*');

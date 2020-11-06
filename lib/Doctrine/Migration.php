@@ -331,16 +331,15 @@ class Doctrine_Migration
     /**
      * Get the next incremented class version based on the loaded migration classes
      *
-     * @return integer $nextMigrationClassVersion
+     * @return int $nextMigrationClassVersion
      */
-    public function getNextMigrationClassVersion()
+    public function getNextMigrationClassVersion(): int
     {
         if (empty($this->_migrationClasses)) {
             return 1;
         } else {
             $nums = array_keys($this->_migrationClasses);
-            $num  = end($nums) + 1;
-            return $num;
+            return (int) end($nums) + 1;
         }
     }
 
@@ -405,8 +404,9 @@ class Doctrine_Migration
      * Run the migration process but rollback at the very end. Returns true or
      * false for whether or not the migration can be ran
      *
-     * @param  int $to
-     * @return boolean|int $success
+     * @param int $to
+     *
+     * @return false|int|null
      */
     public function migrateDryRun($to = null)
     {

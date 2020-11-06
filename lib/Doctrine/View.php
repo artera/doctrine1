@@ -80,7 +80,7 @@ class Doctrine_View
      * @param Doctrine_Query $query
      * @param string         $viewName
      */
-    public function __construct(Doctrine_Query $query, $viewName)
+    public function __construct(Doctrine_Query $query, string $viewName)
     {
         $this->_name  = $viewName;
         $this->_query = $query;
@@ -95,7 +95,7 @@ class Doctrine_View
      *
      * @return Doctrine_Query
      */
-    public function getQuery()
+    public function getQuery(): Doctrine_Query
     {
         return $this->_query;
     }
@@ -105,7 +105,7 @@ class Doctrine_View
      *
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->_name;
     }
@@ -115,7 +115,7 @@ class Doctrine_View
      *
      * @return Doctrine_Connection
      */
-    public function getConnection()
+    public function getConnection(): Doctrine_Connection
     {
         return $this->_conn;
     }
@@ -142,7 +142,7 @@ class Doctrine_View
      * @throws Doctrine_View_Exception
      * @return void
      */
-    public function drop()
+    public function drop(): void
     {
         try {
             $this->_conn->execute(sprintf(self::DROP, $this->_name));
@@ -154,7 +154,10 @@ class Doctrine_View
     /**
      * returns a collection of Doctrine_Record objects
      *
-     * @return Doctrine_Collection|array
+     * @return Doctrine_Collection|array|int
+     *
+     * @psalm-return Doctrine_Collection<Doctrine_Record>|array|int
+     * @phpstan-return Doctrine_Collection<Doctrine_Record>|array|int
      */
     public function execute()
     {
@@ -166,7 +169,7 @@ class Doctrine_View
      *
      * @return string
      */
-    public function getSelectSql()
+    public function getSelectSql(): string
     {
         return sprintf(self::SELECT, $this->_name);
     }
