@@ -1,0 +1,55 @@
+<phpunit
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd"
+  bootstrap="Tests/bootstrap.php"
+  colors="true"
+  verbose="true"
+  beStrictAboutTestsThatDoNotTestAnything="false"
+  beStrictAboutChangesToGlobalState="true"
+  cacheResultFile="phpunit.result.cache"
+>
+  <php>
+    <const name="PHPUNIT" value="true" />
+    <ini name="memory_limit" value="768M" />
+    <ini name="error_reporting" value="E_ALL | E_STRICT" />
+    <ini name="display_errors" value="1" />
+    <ini name="display_startup_errors" value="1" />
+    <ini name="max_execution_time" value="900" />
+    <ini name="date.timezone" value="GMT+0" />
+    <ini name="zend.assertions" value="1" />
+    <ini name="assert.exception" value="1" />
+  </php>
+
+  <testsuites>
+    <testsuite name="Core">
+      <directory>Tests/Core</directory>
+    </testsuite>
+    <testsuite name="Cache">
+      <directory>Tests/Cache</directory>
+    </testsuite>
+    <testsuite name="Tickets">
+      <directory>Tests/Tickets</directory>
+    </testsuite>
+  </testsuites>
+
+  <groups>
+    <exclude>
+      <group>mysql</group>
+    </exclude>
+  </groups>
+
+  <coverage>
+    <include>
+      <directory suffix=".php">lib</directory>
+    </include>
+
+    <exclude>
+      <directory>tools</directory>
+    </exclude>
+
+    <report>
+      <text outputFile="php://stdout" showOnlySummary="true" />
+      <html outputDirectory="coverage" />
+    </report>
+  </coverage>
+</phpunit>

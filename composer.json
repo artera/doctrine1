@@ -17,6 +17,12 @@
             "lib/Doctrine.php"
         ]
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "Tests"
+        },
+        "classmap": ["Tests/models"]
+    },
     "replace": {
         "doctrine/doctrine1": "*"
     },
@@ -33,9 +39,9 @@
         "symfony/yaml": "^3.4 || ^4.1 || ^5.0"
     },
     "require-dev": {
-        "phpunit/php-code-coverage": "^4.0 || ^5.0 || ^6.0 || ^7.0",
         "phpstan/phpstan": "^0.12.54",
-        "vimeo/psalm": "^4.1"
+        "vimeo/psalm": "^4.1",
+        "phpunit/phpunit": "^9.4"
     },
     "scripts": {
         "test": "cd tests && php run.php",

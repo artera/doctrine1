@@ -105,7 +105,7 @@ class Doctrine_Cache_Db extends Doctrine_Cache_Driver
         $result = $this->getConnection()->fetchOne($sql, [$id]);
 
         if (isset($result[0])) {
-            return time();
+            return (bool) time();
         }
         return false;
     }

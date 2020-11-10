@@ -1,0 +1,20 @@
+<?php
+namespace Tests\Tickets;
+
+use Tests\DoctrineUnitTestCase;
+
+class TicketDC141Test extends DoctrineUnitTestCase
+{
+    public static function prepareData(): void
+    {
+    }
+
+    public function testTest()
+    {
+        $q = \Doctrine::getTable('User')
+            ->createQuery('u')
+            ->where('u.name LIKE :name OR u.email_id = :email_id', [':email_id' => 2, ':name' => '%zYne%']);
+        $users = $q->fetchArray();
+        $this->assertEquals(count($users), 2);
+    }
+}
