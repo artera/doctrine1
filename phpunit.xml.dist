@@ -34,7 +34,7 @@
       <directory>Tests/Query</directory>
     </testsuite>
     <testsuite name="Record">
-      <file>Tests/RecordTest.php</file>
+      <directory>Tests/Record</directory>
     </testsuite>
     <testsuite name="Tickets">
       <directory>Tests/Tickets</directory>

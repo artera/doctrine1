@@ -113,7 +113,6 @@ namespace Tests\Record {
             $owner->name = 'Jeff Bridges';
             $owner->save();
             $owner->delete();
-            $this->pass();
         }
 
         public function testDeletionOfCompositeKeys()
@@ -196,7 +195,7 @@ namespace {
 /* The following is a typical one-to-one cascade => delete scenario. The association
     is bidirectional, as is the cascade. */
 
-    class CascadeDeleteHouseOwner extends Doctrine_Record
+    class CascadeDelete_HouseOwner extends Doctrine_Record
     {
         public function setTableDefinition()
         {
@@ -211,7 +210,7 @@ namespace {
         }
     }
 
-    class CascadeDeleteHouse extends Doctrine_Record
+    class CascadeDelete_House extends Doctrine_Record
     {
         public function setTableDefinition()
         {
@@ -232,7 +231,7 @@ namespace {
    deletion routines with composite keys. Composite foreign keys are currently not
    supported, so we can't test this class in a cascade => delete scenario. */
 
-    class CascadeDeleteCompositeKeyItem extends Doctrine_Record
+    class CascadeDelete_CompositeKeyItem extends Doctrine_Record
     {
         public function setTableDefinition()
         {
@@ -246,7 +245,7 @@ namespace {
    Note that such a scenario is very unlikely in the real world and also pretty
    slow. */
 
-    class CascadeDeleteManyManySideA extends Doctrine_Record
+    class CascadeDelete_ManyManySideA extends Doctrine_Record
     {
         public function setTableDefinition()
         {
@@ -268,7 +267,7 @@ namespace {
         }
     }
 
-    class CascadeDeleteManyManySideB extends Doctrine_Record
+    class CascadeDelete_ManyManySideB extends Doctrine_Record
     {
         public function setTableDefinition()
         {
@@ -290,7 +289,7 @@ namespace {
         }
     }
 
-    class CascadeDeleteManyManyAToB extends Doctrine_Record
+    class CascadeDelete_ManyManyAToB extends Doctrine_Record
     {
         public function setTableDefinition()
         {
