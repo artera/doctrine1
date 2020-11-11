@@ -18,7 +18,7 @@ class DoctrineUnitTestCase extends TestCase
 {
     protected static $connection;
     protected static $dbh = null;
-    protected static $listener;
+    protected static ?Doctrine_EventListener $listener;
     protected static $unitOfWork;
     protected static ?string $driverName = null;
     protected static ?Doctrine_Connection $conn = null;

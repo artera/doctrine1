@@ -9,12 +9,6 @@ namespace Tests\Tickets {
     {
         protected static ?string $driverName = 'Mysql';
 
-        public static function setUpBeforeClass(): void
-        {
-            \Doctrine_Manager::connection('mysql://root:password@localhost/doctrine', 'Mysql');
-            parent::setUpBeforeClass();
-        }
-
         public function setUp(): void
         {
             \Doctrine_Manager::connection('mysql://root:password@localhost/doctrine', 'Mysql');

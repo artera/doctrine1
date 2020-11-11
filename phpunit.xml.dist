@@ -30,6 +30,9 @@
     <testsuite name="Tickets">
       <directory>Tests/Tickets</directory>
     </testsuite>
+    <testsuite name="Transaction">
+      <directory>Tests/Transaction</directory>
+    </testsuite>
   </testsuites>
 
   <groups>
