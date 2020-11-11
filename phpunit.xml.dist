@@ -33,6 +33,9 @@
     <testsuite name="DataDict">
       <directory>Tests/DataDict</directory>
     </testsuite>
+    <testsuite name="DataType">
+      <directory>Tests/DataType</directory>
+    </testsuite>
     <testsuite name="Query">
       <directory>Tests/Query</directory>
     </testsuite>
