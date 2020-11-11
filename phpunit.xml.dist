@@ -27,6 +27,9 @@
     <testsuite name="Cache">
       <directory>Tests/Cache</directory>
     </testsuite>
+    <testsuite name="Connection">
+      <directory>Tests/Connection</directory>
+    </testsuite>
     <testsuite name="Query">
       <directory>Tests/Query</directory>
     </testsuite>
@@ -41,6 +44,12 @@
     </testsuite>
     <testsuite name="Fixture">
       <file>Tests/FixtureTest.php</file>
+    </testsuite>
+    <testsuite name="Hook">
+      <file>Tests/HookTest.php</file>
+    </testsuite>
+    <testsuite name="Parser">
+      <file>Tests/ParserTest.php</file>
     </testsuite>
   </testsuites>
 
