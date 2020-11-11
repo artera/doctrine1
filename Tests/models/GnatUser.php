@@ -1,9 +1,9 @@
 <?php
-class gnatUserTable
+class GnatUserTable
 {
 }
 
-class gnatUser extends Doctrine_Record
+class GnatUser extends Doctrine_Record
 {
     public function setTableDefinition()
     {
@@ -14,6 +14,6 @@ class gnatUser extends Doctrine_Record
     public function setUp()
     {
         parent::setUp();
-        $this->hasOne('gnatEmail as Email', ['local' => 'foreign_id', 'foreign' => 'id', 'onDelete' => 'CASCADE']);
+        $this->hasOne('GnatEmail as Email', ['local' => 'foreign_id', 'foreign' => 'id', 'onDelete' => 'CASCADE']);
     }
 }

@@ -42,6 +42,9 @@
     <testsuite name="Record">
       <directory>Tests/Record</directory>
     </testsuite>
+    <testsuite name="Relation">
+      <directory>Tests/Relation</directory>
+    </testsuite>
     <testsuite name="Tickets">
       <directory>Tests/Tickets</directory>
     </testsuite>
