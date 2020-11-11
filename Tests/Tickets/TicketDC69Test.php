@@ -5,10 +5,6 @@ use Tests\DoctrineUnitTestCase;
 
 class TicketDC69Test extends DoctrineUnitTestCase
 {
-    public static function prepareData(): void
-    {
-    }
-
     public function testTest()
     {
         $user = \Doctrine::getTable('User')

@@ -121,7 +121,7 @@ class DoctrineUnitTestCase extends TestCase
         static::$conn->setAttribute(\Doctrine_Core::ATTR_USE_NATIVE_ENUM, false);
     }
 
-    public function tearDown(): void
+    public function setUp(): void
     {
         if (isset(static::$objTable)) {
             static::$objTable->clear();

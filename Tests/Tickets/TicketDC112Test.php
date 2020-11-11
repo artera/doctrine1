@@ -5,10 +5,6 @@ use Tests\DoctrineUnitTestCase;
 
 class TicketDC112Test extends DoctrineUnitTestCase
 {
-    public static function prepareData(): void
-    {
-    }
-
     public function testResultCacheSetHash()
     {
         $cacheDriver = new \Doctrine_Cache_Array();

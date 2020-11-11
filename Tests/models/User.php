@@ -44,25 +44,25 @@ class User extends Entity
     /**
      * Custom validation
      */
-    public function validate()
-    {
-        // Allow only one name!
-        if ($this->name !== 'The Saint') {
-            $this->errorStack()->add('name', 'notTheSaint');
-        }
-    }
+    // public function validate()
+    // {
+    //     // Allow only one name!
+    //     if ($this->name !== 'The Saint') {
+    //         $this->errorStack()->add('name', 'notTheSaint');
+    //     }
+    // }
 
-    public function validateOnInsert()
-    {
-        if ($this->password !== 'Top Secret') {
-            $this->errorStack()->add('password', 'pwNotTopSecret');
-        }
-    }
+    // public function validateOnInsert()
+    // {
+    //     if ($this->password !== 'Top Secret') {
+    //         $this->errorStack()->add('password', 'pwNotTopSecret');
+    //     }
+    // }
 
-    public function validateOnUpdate()
-    {
-        if ($this->loginname !== 'Nobody') {
-            $this->errorStack()->add('loginname', 'notNobody');
-        }
-    }
+    // public function validateOnUpdate()
+    // {
+    //     if ($this->loginname !== 'Nobody') {
+    //         $this->errorStack()->add('loginname', 'notNobody');
+    //     }
+    // }
 }
