@@ -44,11 +44,7 @@ class Ticket1436Test extends DoctrineUnitTestCase
 
         $user->synchronizeWithArray($userArray);
 
-        try {
-            $user->save();
-        } catch (Exception $e) {
-            $this->fail('Failed saving with ' . $e->getMessage());
-        }
+        $user->save();
     }
     public function testSynchronizeAddMNLinksAfterSave()
     {

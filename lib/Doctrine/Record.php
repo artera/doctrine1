@@ -998,16 +998,21 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
 
         // Remove existing record from the repository and table entity map.
         $this->_table->setData($this->_data);
+        $repo = $this->_table->getRepository();
         $existing_record = $this->_table->getRecord();
         if ($existing_record->exists()) {
-            $this->_table->getRepository()->evict($existing_record->getOid());
+            if ($repo !== null) {
+                $repo->evict($existing_record->getOid());
+            }
             $this->_table->removeRecord($existing_record);
         }
 
         // Add the unserialized record to repository and entity map.
         $this->_oid = self::$_index;
         self::$_index++;
-        $this->_table->getRepository()->add($this);
+        if ($repo !== null) {
+            $repo->add($this);
+        }
         $this->_table->addRecord($this);
 
         $this->cleanData($this->_data);
@@ -2833,7 +2838,10 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
         if ($this->_state != self::STATE_LOCKED && $this->_state != self::STATE_TLOCKED) {
             $this->_state = $this->exists() ? self::STATE_LOCKED : self::STATE_TLOCKED;
 
-            $this->_table->getRepository()->evict($this->_oid);
+            $repo = $this->_table->getRepository();
+            if ($repo !== null) {
+                $repo->evict($this->_oid);
+            }
             $this->_table->removeRecord($this);
             $this->_data = [];
             $this->_id   = [];

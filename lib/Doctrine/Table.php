@@ -80,7 +80,7 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
     protected $_identityMap = [];
 
     /**
-     * @var Doctrine_Table_Repository $_repository       record repository
+     * @var Doctrine_Table_Repository|null $_repository       record repository
      */
     protected $_repository;
 
@@ -1060,7 +1060,7 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
     /**
      * Gets the internal record repository.
      *
-     * @return Doctrine_Table_Repository
+     * @return Doctrine_Table_Repository|null
      */
     public function getRepository()
     {

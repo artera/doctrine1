@@ -17,12 +17,11 @@ use PHPUnit\Framework\TestCase;
 class DoctrineUnitTestCase extends TestCase
 {
     protected static $connection;
-    protected static $objTable;
-    protected static $dbh;
+    protected static $dbh = null;
     protected static $listener;
     protected static $unitOfWork;
-    protected static $driverName = false;
-    protected static Doctrine_Connection $conn;
+    protected static ?string $driverName = null;
+    protected static ?Doctrine_Connection $conn = null;
     protected static $adapter;
     protected static array $tables = [];
     protected static Doctrine_Manager $manager;
@@ -57,7 +56,7 @@ class DoctrineUnitTestCase extends TestCase
 
 
         $e = explode('_', static::class);
-        if (! static::$driverName) {
+        if (!static::$driverName) {
             static::$driverName = 'main';
 
             switch ($e[1]) {
@@ -112,19 +111,21 @@ class DoctrineUnitTestCase extends TestCase
         if (static::$driverName === 'main') {
             static::prepareTables();
             static::prepareData();
-            foreach (static::$tables as $name) {
-                static::$connection->getTable(ucwords($name))->clear();
-            }
         }
 
         static::$conn->setAttribute(\Doctrine_Core::ATTR_USE_NATIVE_SET, false);
         static::$conn->setAttribute(\Doctrine_Core::ATTR_USE_NATIVE_ENUM, false);
     }
 
+    public static function tearDownAfterClass(): void
+    {
+        static::$manager->resetInstance();
+    }
+
     public function setUp(): void
     {
-        if (isset(static::$objTable)) {
-            static::$objTable->clear();
+        foreach (static::$tables as $name) {
+            static::$connection->getTable(ucwords($name))->clear();
         }
     }
 
@@ -140,7 +141,6 @@ class DoctrineUnitTestCase extends TestCase
             }
         }
         static::$conn->export->exportClasses(static::$tables);
-        static::$objTable = static::$connection->getTable('User');
     }
 
     public static function prepareData(): void

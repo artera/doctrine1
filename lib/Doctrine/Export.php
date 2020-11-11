@@ -1176,7 +1176,10 @@ class Doctrine_Export extends Doctrine_Connection_Module
             $sql = array_merge($sql, $query);
 
             // DC-474: Remove dummy $record from repository to not pollute it during export
-            $table->getRepository()->evict($record->getOid());
+            $repo = $table->getRepository();
+            if ($repo !== null) {
+                $repo->evict($record->getOid());
+            }
             unset($record);
         }
 

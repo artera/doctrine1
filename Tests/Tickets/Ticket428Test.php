@@ -13,8 +13,6 @@ class Ticket428Test extends DoctrineUnitTestCase
 
     public function testInitData()
     {
-        // Since the tests do a static::$objTable()->clear() before each method call
-        // using the User model is not recommended for this test
         $albums = new \Doctrine_Collection('Album');
 
         $albums[0]->name           = 'Revolution';

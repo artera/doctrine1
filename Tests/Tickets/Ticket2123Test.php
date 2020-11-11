@@ -5,6 +5,8 @@ use Tests\DoctrineUnitTestCase;
 
 class Ticket2123Test extends DoctrineUnitTestCase
 {
+    protected static array $tables = ['User'];
+
     public function testCheckingRelatedExistsOnCollectionThrowsException()
     {
         $this->expectException(\Doctrine_Record_Exception::class);

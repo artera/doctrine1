@@ -104,7 +104,7 @@ namespace Tests\Core {
 
         public function testAdd()
         {
-            $coll = new \Doctrine_Collection(static::$objTable);
+            $coll = new \Doctrine_Collection(static::$connection->getTable('User'));
             $coll->add(new \User());
             $this->assertEquals($coll->count(), 1);
             $coll->add(new \User());
