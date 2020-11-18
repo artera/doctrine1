@@ -39,6 +39,9 @@
     <testsuite name="EventListener">
       <directory>Tests/EventListener</directory>
     </testsuite>
+    <testsuite name="Export">
+      <directory>Tests/Export</directory>
+    </testsuite>
     <testsuite name="Expression">
       <directory>Tests/Expression</directory>
     </testsuite>
