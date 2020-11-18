@@ -989,7 +989,7 @@ class Doctrine_Import_Builder extends Doctrine_Builder
         <?php
         $docBlock
         class $className extends $extends
-        \{
+        {
         $code
         }
         PHP;
