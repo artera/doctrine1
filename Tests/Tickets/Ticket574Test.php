@@ -47,9 +47,7 @@ class Ticket574Test extends DoctrineUnitTestCase
         $cAuthors = $q->from('Author, Author.Book')->execute();
 
         foreach ($cAuthors as $oAuthor) {
-            if (! $oAuthor->name) {
-                $this->fail('Querying the same table multiple times triggers hydration/caching(?) bug');
-            }
+            $this->assertNotEmpty($oAuthor->name, 'Querying the same table multiple times triggers hydration/caching(?) bug');
         }
     }
 }

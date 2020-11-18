@@ -84,10 +84,7 @@ namespace Tests\Tickets {
             ->addComponent('i', 'T1195_Item i')
             ->from('items i');
 
-            if (!method_exists($q, 'count')) {
-                $this->fail("The query doesn't have a count() method");
-                return;
-            }
+            $this->assertTrue(method_exists($q, 'count'));
 
             $res = $q->count();
             $this->assertEquals($res, 4);

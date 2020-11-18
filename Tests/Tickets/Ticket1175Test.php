@@ -57,11 +57,7 @@ namespace Tests\Tickets {
             $u = $q->fetchOne();
 
             $this->assertTrue(is_object($u));
-            if (is_object($u)) {
-                $this->assertEquals(count($u->Images), 2);
-            } else {
-                $this->fail();
-            }
+            $this->assertEquals(count($u->Images), 2);
         }
     }
 }

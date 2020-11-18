@@ -155,9 +155,7 @@ class EnumTest extends DoctrineUnitTestCase
             ->limit(1);
         $ret = $q->execute([], \Doctrine_Core::HYDRATE_ARRAY);
 
-        if (is_numeric($ret[0]['status'])) {
-            $this->fail();
-        }
+        $this->assertFalse(is_numeric($ret[0]['status']));
     }
 
     public function testLiteralEnumValueConversionSupportsJoins()

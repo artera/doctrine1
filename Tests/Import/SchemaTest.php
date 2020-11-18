@@ -51,11 +51,7 @@ class SchemaTest extends DoctrineUnitTestCase
 
         foreach ($this->schema as $name => $properties) {
             foreach ($properties['relations'] as $alias => $relation) {
-                if (! $this->_verifyMultiDirectionalRelationship($name, $alias, $relation)) {
-                    $this->fail();
-
-                    return false;
-                }
+                $this->assertTrue($this->_verifyMultiDirectionalRelationship($name, $alias, $relation));
             }
         }
     }
@@ -68,10 +64,6 @@ class SchemaTest extends DoctrineUnitTestCase
         $foreignClassRelations = $this->schema[$foreignClass]['relations'];
 
         // Check to see if the foreign class has the opposite end defined for the class/foreignAlias
-        if (isset($foreignClassRelations[$foreignAlias])) {
-            return true;
-        } else {
-            return false;
-        }
+        return isset($foreignClassRelations[$foreignAlias]);
     }
 }

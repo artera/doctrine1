@@ -191,27 +191,22 @@ class OneToOneFetchingTest extends DoctrineUnitTestCase
         $board->save();
 
         $query = new \Doctrine_Query(static::$connection);
-        try {
-            $categories = $query->select('c.*, b.*, le.*, a.username, vr.title, vr.color, vr.icon')
-                    ->from('QueryTest_Category c')
-                    ->leftJoin('c.boards b')
-                    ->leftJoin('b.lastEntry le')
-                    ->leftJoin('le.author a')
-                    ->leftJoin('a.visibleRank vr')
-                    ->execute();
+        $categories = $query->select('c.*, b.*, le.*, a.username, vr.title, vr.color, vr.icon')
+                ->from('QueryTest_Category c')
+                ->leftJoin('c.boards b')
+                ->leftJoin('b.lastEntry le')
+                ->leftJoin('le.author a')
+                ->leftJoin('a.visibleRank vr')
+                ->execute();
 
-            // check boards/categories
-            $this->assertEquals(1, count($categories));
-            $this->assertTrue(isset($categories[0]['boards']));
-            $this->assertEquals(1, count($categories[0]['boards']));
+        // check boards/categories
+        $this->assertEquals(1, count($categories));
+        $this->assertTrue(isset($categories[0]['boards']));
+        $this->assertEquals(1, count($categories[0]['boards']));
 
-            // get the board for inspection
-            $tmpBoard = $categories[0]['boards'][0];
-            $this->assertTrue(! isset($tmpBoard['lastEntry']));
-        } catch (Doctrine_Exception $e) {
-            print $e;
-            $this->fail();
-        }
+        // get the board for inspection
+        $tmpBoard = $categories[0]['boards'][0];
+        $this->assertTrue(! isset($tmpBoard['lastEntry']));
 
         $board->lastEntryId = $lastEntryId;
         //$board->save();

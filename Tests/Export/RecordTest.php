@@ -20,11 +20,8 @@ class RecordTest extends DoctrineUnitTestCase
         $sql = static::$conn->export->exportClassesSql(['ForeignKeyTest']);
 
         $this->assertEquals($sql[0], 'CREATE TABLE foreign_key_test (id BIGINT AUTO_INCREMENT, name TEXT, code INT, content TEXT, parent_id BIGINT, INDEX parent_id_idx (parent_id), PRIMARY KEY(id)) ENGINE = INNODB');
-        if (isset($sql[1])) {
-            $this->assertEquals($sql[1], 'ALTER TABLE foreign_key_test ADD CONSTRAINT foreign_key_test_parent_id_foreign_key_test_id FOREIGN KEY (parent_id) REFERENCES foreign_key_test(id) ON UPDATE RESTRICT ON DELETE CASCADE');
-        } else {
-            $this->fail('$sql should contain ALTER TABLE statement');
-        }
+        $this->assertTrue(isset($sql[1]));
+        $this->assertEquals($sql[1], 'ALTER TABLE foreign_key_test ADD CONSTRAINT foreign_key_test_parent_id_foreign_key_test_id FOREIGN KEY (parent_id) REFERENCES foreign_key_test(id) ON UPDATE RESTRICT ON DELETE CASCADE');
     }
 
     public function testExportSupportsIndexes()
@@ -46,11 +43,8 @@ class RecordTest extends DoctrineUnitTestCase
         $sql = static::$conn->export->exportClassesSql(['ForeignKeyTest']);
 
         $this->assertEquals($sql[0], 'CREATE TABLE foreign_key_test (id BIGINT AUTO_INCREMENT, name TEXT, code INT, content TEXT, parent_id BIGINT, INDEX parent_id_idx (parent_id), PRIMARY KEY(id)) ENGINE = INNODB');
-        if (isset($sql[1])) {
-            $this->assertEquals($sql[1], 'ALTER TABLE foreign_key_test ADD CONSTRAINT foreign_key_test_parent_id_foreign_key_test_id FOREIGN KEY (parent_id) REFERENCES foreign_key_test(id) ON UPDATE RESTRICT ON DELETE CASCADE');
-        } else {
-            $this->fail('$sql should contain ALTER TABLE statement');
-        }
+        $this->assertTrue(isset($sql[1]));
+        $this->assertEquals($sql[1], 'ALTER TABLE foreign_key_test ADD CONSTRAINT foreign_key_test_parent_id_foreign_key_test_id FOREIGN KEY (parent_id) REFERENCES foreign_key_test(id) ON UPDATE RESTRICT ON DELETE CASCADE');
     }
 
     public function testExportSupportsForeignKeysForManyToManyRelations()
