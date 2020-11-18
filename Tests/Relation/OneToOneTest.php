@@ -50,7 +50,7 @@ class OneToOneTest extends DoctrineUnitTestCase
         $user->Email    = $email;
         $user->save();
         $this->assertTrue($user->Email instanceof \Email);
-        $user->Email = \Email::getNullObject();
+        $user->Email = \Doctrine_Null::instance();
         $user->save();
         $this->assertTrue($user->Email === null);
     }

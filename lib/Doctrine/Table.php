@@ -2090,7 +2090,7 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
             $errorStack = new Doctrine_Validator_ErrorStack($this->getOption('name'));
         }
 
-        if ($value === self::$_null) {
+        if ($value === Doctrine_Null::instance()) {
             $value = null;
         } elseif ($value instanceof Doctrine_Record && $value->exists()) {
             $value = $value->getIncremented();
@@ -2378,8 +2378,8 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
      */
     public function prepareValue($fieldName, $value, $typeHint = null)
     {
-        if ($value === self::$_null) {
-            return self::$_null;
+        if ($value === Doctrine_Null::instance()) {
+            return $value;
         } elseif ($value === null) {
             return null;
         } else {

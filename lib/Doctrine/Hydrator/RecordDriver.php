@@ -80,12 +80,9 @@ class Doctrine_Hydrator_RecordDriver extends Doctrine_Hydrator_Graph
         $this->_collections[] = $coll;
     }
 
-    /**
-     * @return Doctrine_Null
-     */
-    public function getNullPointer()
+    public function getNullPointer(): ?Doctrine_Null
     {
-        return self::$_null;
+        return Doctrine_Null::instance();
     }
 
     /**
@@ -127,7 +124,7 @@ class Doctrine_Hydrator_RecordDriver extends Doctrine_Hydrator_Graph
      */
     public function setLastElement(&$prev, &$coll, $index, $dqlAlias, $oneToOne)
     {
-        if ($coll === self::$_null) {
+        if ($coll === Doctrine_Null::instance()) {
             unset($prev[$dqlAlias]); // Ticket #1228
             return;
         }

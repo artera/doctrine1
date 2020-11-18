@@ -105,18 +105,6 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
     private $_initialized = false;
 
     /**
-     * constructor
-     *
-     * this is private constructor (use getInstance to get an instance of this class)
-     */
-    private function __construct()
-    {
-        $null = new Doctrine_Null;
-        Doctrine_Locator_Injectable::initNullObject($null);
-        Doctrine_Record_Iterator::initNullObject($null);
-    }
-
-    /**
      * Sets default attributes values.
      *
      * This method sets default values for all null attributes of this

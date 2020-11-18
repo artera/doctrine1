@@ -38,11 +38,6 @@ class Doctrine_Record_Iterator extends ArrayIterator
     private $record;
 
     /**
-     * @var Doctrine_Null $null
-     */
-    private static $null;
-
-    /**
      * constructor
      *
      * @param Doctrine_Record $record
@@ -54,18 +49,6 @@ class Doctrine_Record_Iterator extends ArrayIterator
     }
 
     /**
-     * initNullObject
-     *
-     * @param Doctrine_Null $null
-     *
-     * @return void
-     */
-    public static function initNullObject(Doctrine_Null $null)
-    {
-        self::$null = $null;
-    }
-
-    /**
      * current
      *
      * @return mixed
@@ -74,7 +57,7 @@ class Doctrine_Record_Iterator extends ArrayIterator
     {
         $value = parent::current();
 
-        if ($value === self::$null) {
+        if ($value === Doctrine_Null::instance()) {
             return null;
         } else {
             return $value;

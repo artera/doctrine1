@@ -86,11 +86,6 @@ parameters:
 			path: lib/Doctrine/Table.php
 
 		-
-			message: "#^Parameter \\#1 \\$args \\(array\\) of method Doctrine_Table\\:\\:bind\\(\\) should be compatible with parameter \\$name \\(string\\) of method Doctrine_Locator_Injectable\\:\\:bind\\(\\)$#"
-			count: 1
-			path: lib/Doctrine/Table.php
-
-		-
 			message: "#^Method Doctrine_Table\\:\\:find\\(\\) should return Doctrine_Collection\\<T of Doctrine_Record\\>\\|\\(iterable\\<T of Doctrine_Record\\>&T of Doctrine_Record\\)\\|false but returns array\\|Doctrine_Collection\\<T of Doctrine_Record\\>\\|Doctrine_Record\\|int\\|false\\.$#"
 			count: 1
 			path: lib/Doctrine/Table.php

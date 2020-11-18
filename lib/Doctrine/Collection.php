@@ -88,6 +88,8 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
      */
     public function __construct($table, $keyColumn = null)
     {
+        static::$null = Doctrine_Null::instance();
+
         if (! ($table instanceof Doctrine_Table)) {
             $table = Doctrine_Core::getTable($table);
         }
@@ -105,16 +107,6 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
         if ($keyColumn !== null) {
             $this->keyColumn = $keyColumn;
         }
-    }
-
-    /**
-     * Initializes the null object for this collection
-     *
-     * @return void
-     */
-    public static function initNullObject(Doctrine_Null $null)
-    {
-        self::$null = $null;
     }
 
     /**

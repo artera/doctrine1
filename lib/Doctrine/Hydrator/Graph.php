@@ -389,10 +389,7 @@ abstract class Doctrine_Hydrator_Graph extends Doctrine_Hydrator_Abstract
      */
     abstract public function initRelated(&$record, $name, $keyColumn = null);
 
-    /**
-     * @return Doctrine_Null|null
-     */
-    abstract public function getNullPointer();
+    abstract public function getNullPointer(): ?Doctrine_Null;
 
     /**
      * @param  string $component

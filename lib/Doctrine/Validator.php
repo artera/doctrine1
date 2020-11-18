@@ -31,7 +31,7 @@
  * @author     Roman Borschel <roman@code-factory.org>
  * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
-class Doctrine_Validator extends Doctrine_Locator_Injectable
+class Doctrine_Validator
 {
     /**
      * @var array $validators           an array of validator objects

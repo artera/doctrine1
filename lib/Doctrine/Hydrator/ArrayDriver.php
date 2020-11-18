@@ -69,10 +69,7 @@ class Doctrine_Hydrator_ArrayDriver extends Doctrine_Hydrator_Graph
         return true;
     }
 
-    /**
-     * @return null
-     */
-    public function getNullPointer()
+    public function getNullPointer(): ?Doctrine_Null
     {
         return null;
     }

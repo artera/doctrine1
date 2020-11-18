@@ -818,7 +818,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
             } elseif (array_key_exists($fieldName, $tmp)) {
                 $data[$fieldName] = null;
             } elseif (!isset($this->_data[$fieldName])) {
-                $data[$fieldName] = self::$_null;
+                $data[$fieldName] = Doctrine_Null::instance();
             }
             unset($tmp[$fieldName]);
         }
@@ -1480,14 +1480,13 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
      */
     protected function _get($fieldName, $load = true)
     {
-        $value = self::$_null;
+        $value = Doctrine_Null::instance();
 
         if (array_key_exists($fieldName, $this->_values)) {
             return $this->_values[$fieldName];
         }
 
         if (array_key_exists($fieldName, $this->_data)) {
-            // check if the value is the Doctrine_Null object located in self::$_null)
             if ($this->_data[$fieldName] instanceof Doctrine_Null && $load) {
                 $this->load();
             }
@@ -1713,7 +1712,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
         $rel = $this->_table->getRelation($name);
 
         if ($value === null) {
-            $value = self::$_null;
+            $value = Doctrine_Null::instance();
         }
 
         // one-to-many or one-to-one relation
@@ -1807,7 +1806,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
         } elseif (isset($this->_references[$name])) {
             if ($this->_references[$name] instanceof Doctrine_Record) {
                 $this->_pendingDeletes[]  = $this->$name;
-                $this->_references[$name] = self::$_null;
+                $this->_references[$name] = Doctrine_Null::instance();
             } elseif ($this->_references[$name] instanceof Doctrine_Collection) {
                 $this->_pendingDeletes[] = $this->$name;
                 $this->_references[$name]->setData([]);
