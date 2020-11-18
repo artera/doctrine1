@@ -530,18 +530,12 @@ END;
      */
     public function buildMigrationClass($className, $fileName = null, $options = [], $up = null, $down = null)
     {
-        $extends = isset($options['extends']) ? $options['extends']:'Doctrine_Migration_Base';
-
-        $content = '<?php' . PHP_EOL;
-
-        $content .= sprintf(
+        return "<?php\n" . sprintf(
             self::$tpl,
             $className,
-            $extends,
+            $options['extends'] ?? 'Doctrine_Migration_Base',
             $up,
             $down
         );
-
-        return $content;
     }
 }

@@ -193,35 +193,9 @@ namespace {
         {
             $users = \Doctrine_Core::getTable('T1323User')->findAll();
 
-            //echo "=========================================<br/>".PHP_EOL;
-            //echo "list of all existing users and their relations:<br/> ".PHP_EOL;
-            //echo "=========================================<br/><br/>".PHP_EOL.PHP_EOL;
-
             foreach ($users as $user) {
                 $parents  = $user->Parents;
                 $children = $user->Children;
-
-                /*echo "user: ";
-                echo $user->name;
-                echo PHP_EOL."<br/>";
-
-                echo "parents:";
-                echo PHP_EOL."<br/>";
-                foreach ($parents as $parent) {
-                echo $parent->name;
-                echo PHP_EOL."<br/>";
-                }
-                echo PHP_EOL."<br/>";
-
-                echo "children:";
-                echo PHP_EOL."<br/>";
-                foreach ($children as $child) {
-                echo $child->name;
-                echo PHP_EOL."<br/>";
-                }
-                echo PHP_EOL."<br/>";
-                echo "--------------".PHP_EOL."<br/>";
-                echo PHP_EOL."<br/>";*/
             }
         }
     }
@@ -230,7 +204,6 @@ namespace {
     {
         public function setTableDefinition()
         {
-            //$this->hasColumn('id', 'integer', null, array('primary' => true, 'autoincrement' => true));
             $this->hasColumn('parent_id', 'integer', null, ['primary' => true]);
             $this->hasColumn('child_id', 'integer', null, ['primary' => true]);
         }

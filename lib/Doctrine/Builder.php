@@ -37,20 +37,19 @@ class Doctrine_Builder
      * The normal code which is returned is malformed and does not follow Doctrine standards
      * So we do some string replacing to clean it up
      *
-     * @param  mixed $var
+     * @param mixed $var
+     * @param int $indent
      * @return string
      */
-    public function varExport($var)
+    public function varExport($var, int $indent = 0): string
     {
         $export = var_export($var, true);
-        $export = str_replace("\n", PHP_EOL . str_repeat(' ', 50), $export);
-        $export = str_replace('  ', ' ', $export);
-        $export = str_replace('array (', 'array(', $export);
-        $export = str_replace('array( ', 'array(', $export);
-        $export = str_replace(',)', ')', $export);
-        $export = str_replace(', )', ')', $export);
-        $export = str_replace('  ', ' ', $export);
-
+        $export = str_replace('  ', '    ', $export);
+        $export = str_replace('array (', '[', $export);
+        $export = str_replace(')', ']', $export);
+        if ($indent) {
+            $export = str_replace("\n", "\n" . str_repeat(' ', $indent), $export);
+        }
         return $export;
     }
 }
