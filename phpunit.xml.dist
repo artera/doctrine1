@@ -60,6 +60,9 @@
     <testsuite name="Relation">
       <directory>Tests/Relation</directory>
     </testsuite>
+    <testsuite name="Sequence">
+      <directory>Tests/Sequence</directory>
+    </testsuite>
     <testsuite name="Tickets">
       <directory>Tests/Tickets</directory>
     </testsuite>
