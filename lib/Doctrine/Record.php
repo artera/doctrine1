@@ -90,12 +90,6 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
      */
     const STATE_TLOCKED = 7;
 
-
-    /**
-     * @var Doctrine_Node        node object
-     */
-    protected $_node;
-
     /**
      * @var array $_id                    the primary keys of this object
      */
@@ -2539,28 +2533,6 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
     }
 
     /**
-     * getter for node associated with this record
-     *
-     * @return Doctrine_Node|false    false if component is not a Tree
-     */
-    public function getNode()
-    {
-        if (! $this->_table->isTree()) {
-            return false;
-        }
-
-        if (! isset($this->_node)) {
-            $this->_node = Doctrine_Node::factory(
-                $this,
-                $this->getTable()->getOption('treeImpl'),
-                $this->getTable()->getOption('treeOptions')
-            );
-        }
-
-        return $this->_node;
-    }
-
-    /**
      * @return         Doctrine_Table
      * @phpstan-return T<self>
      */
@@ -2807,18 +2779,6 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
         }
 
         throw new Doctrine_Record_UnknownPropertyException(sprintf('Unknown method %s::%s', get_class($this), $method));
-    }
-
-    /**
-     * used to delete node from tree - MUST BE USE TO DELETE RECORD IF TABLE ACTS AS TREE
-     *
-     * @return void
-     */
-    public function deleteNode()
-    {
-        /** @var Doctrine_Node_NestedSet $node */
-        $node = $this->getNode();
-        $node->delete();
     }
 
     /**

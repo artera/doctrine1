@@ -765,60 +765,6 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
     }
 
     /**
-     * @return self
-     */
-    public function toHierarchy()
-    {
-        $collection = $this;
-        $table      = $collection->getTable();
-
-        if (! $table->isTree() || ! $table->hasColumn('level')) {
-            throw new Doctrine_Exception('Cannot hydrate model that does not implements Tree behavior with `level` column');
-        }
-
-        // Trees mapped
-        /**
- * @phpstan-var Doctrine_Collection<T>
-*/
-        $trees = new Doctrine_Collection($table);
-        $l     = 0;
-
-        if (count($collection) > 0) {
-            // Node Stack. Used to help building the hierarchy
-            $stack = new Doctrine_Collection($table);
-
-            foreach ($collection as $child) {
-                $item = $child;
-
-                $item->mapValue('__children', new Doctrine_Collection($table));
-
-                // Number of stack items
-                $l = count($stack);
-
-                // Check if we're dealing with different levels
-                while ($l > 0 && $stack[$l - 1]['level'] >= $item['level']) {
-                    array_pop($stack->data);
-                    $l--;
-                }
-
-                // Stack is empty (we are inspecting the root)
-                if ($l == 0) {
-                    // Assigning the root child
-                    $i         = count($trees);
-                    $trees[$i] = $item;
-                    $stack[]   = $trees[$i];
-                } else {
-                    // Add child to parent
-                    $i                               = count($stack[$l - 1]['__children']);
-                    $stack[$l - 1]['__children'][$i] = $item;
-                    $stack[]                         = $stack[$l - 1]['__children'][$i];
-                }
-            }
-        }
-        return $trees;
-    }
-
-    /**
      * Populate a Doctrine_Collection from an array of data
      *
      * @param  mixed[] $array

@@ -160,24 +160,6 @@ class Doctrine_Data_Import extends Doctrine_Data
     }
 
     /**
-     * Build the rows for nested set models
-     *
-     * @param  string $className
-     * @param  array  $data
-     * @return void
-     */
-    protected function _buildNestedSetRows($className, $data)
-    {
-        foreach ($data as $rowKey => $row) {
-            $children = isset($row['children']) ? $row['children']:[];
-            unset($row['children']);
-            $this->_rows[$className][$rowKey] = $row;
-
-            $this->_buildNestedSetRows($className, $children);
-        }
-    }
-
-    /**
      * Get the unsaved object for a specified row key and validate that it is the valid object class
      * for the passed record and relation name
      *
@@ -271,31 +253,6 @@ class Doctrine_Data_Import extends Doctrine_Data
     }
 
     /**
-     * NestedSet fixtures may come in a 'natural' format with nested children listed under a 'children'
-     * key or in a raw, non-nested format with lft/rgt values.
-     *
-     * This method returns true if the given $data is a nested set in 'natural' form.
-     *
-     * @param  string $className
-     * @param  array  $data
-     * @return boolean
-     */
-    protected function _hasNaturalNestedSetFormat($className, array &$data)
-    {
-        if (Doctrine_Core::getTable($className)->isTree()) {
-            if (isset($data['NestedSet']) && $data['NestedSet'] == true) {
-                unset($data['NestedSet']);
-                return true;
-            } else {
-                $first = current($data);
-                return array_key_exists('children', $first);
-            }
-        } else {
-            return false;
-        }
-    }
-
-    /**
      * Perform the loading of the data from the passed array
      *
      * @param  array $array
@@ -303,8 +260,6 @@ class Doctrine_Data_Import extends Doctrine_Data
      */
     protected function _loadData(array $array)
     {
-        $nestedSets = [];
-
         $specifiedModels = $this->getModels();
 
         foreach ($array as $className => $data) {
@@ -312,14 +267,7 @@ class Doctrine_Data_Import extends Doctrine_Data
                 continue;
             }
 
-            // if loaded data is a nested set in natural format, process through _buildNestedSetRows.
-            // 'raw' nested sets and all other models are processed through _buildRows.
-            if ($this->_hasNaturalNestedSetFormat($className, $data)) {
-                $nestedSets[$className][] = $data;
-                $this->_buildNestedSetRows($className, $data);
-            } else {
-                $this->_buildRows($className, $data);
-            }
+            $this->_buildRows($className, $data);
         }
 
         $buildRows = [];
@@ -337,13 +285,6 @@ class Doctrine_Data_Import extends Doctrine_Data
             $this->_processRow($rowKey, $row);
         }
 
-        // save natural nested set fixture data and unset from _importedObjects
-        foreach ($nestedSets as $className => $sets) {
-            foreach ($sets as $data) {
-                $this->_loadNestedSetData($className, $data);
-            }
-        }
-
         $manager = Doctrine_Manager::getInstance();
         foreach ($manager as $connection) {
             $tree = $connection->unitOfWork->buildFlushTree(array_keys($array));
@@ -354,49 +295,6 @@ class Doctrine_Data_Import extends Doctrine_Data
                         $obj->save();
                     }
                 }
-            }
-        }
-    }
-
-    /**
-     * Load nested set data for models with nested set enabled
-     *
-     * @param  string          $model
-     * @param  array           $nestedSetData
-     * @param  Doctrine_Record $parent
-     * @return void
-     */
-    protected function _loadNestedSetData($model, $nestedSetData, $parent = null)
-    {
-        foreach ($nestedSetData as $rowKey => $nestedSet) {
-            $children = [];
-            $data     = [];
-
-            if (array_key_exists('children', $nestedSet)) {
-                $children = (array) $nestedSet['children'];
-                $children = array_reverse($children, true);
-                unset($nestedSet['children']);
-            }
-
-            $rowKey = $this->_getRowKeyPrefix(Doctrine_Core::getTable($model)) . $rowKey;
-
-            $record = $this->_importedObjects[$rowKey];
-            // remove this nested set from _importedObjects so it's not processed in the save routine for normal objects
-            unset($this->_importedObjects[$rowKey]);
-
-            if (! $parent) {
-                $record->save(); // save, so that createRoot can do: root id = id
-                /** @var Doctrine_Tree_NestedSet $tree */
-                $tree = Doctrine_Core::getTable($model)->getTree();
-                $tree->createRoot($record);
-            } else {
-                /** @var Doctrine_Node_NestedSet $node */
-                $node = $parent->getNode();
-                $node->addChild($record);
-            }
-
-            if (is_array($children) and !empty($children)) {
-                $this->_loadNestedSetData($model, $children, $record);
             }
         }
     }

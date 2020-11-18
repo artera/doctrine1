@@ -196,11 +196,6 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
                                      ];
 
     /**
-     * @var Doctrine_Tree|null $_tree                 tree object associated with this table
-     */
-    protected $_tree;
-
-    /**
      * @var Doctrine_Relation_Parser $_parser   relation parser object
      */
     protected $_parser;
@@ -254,16 +249,8 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
             $this->initIdentifier();
 
             $this->record->setUp();
-
-            // if tree, set up tree
-            $tree = $this->getTree();
-            if ($tree !== null) {
-                $tree->setUp();
-            }
-        } else {
-            if (! isset($this->_options['tableName'])) {
-                $this->setTableName(Doctrine_Inflector::tableize($this->_options['name']));
-            }
+        } elseif (! isset($this->_options['tableName'])) {
+            $this->setTableName(Doctrine_Inflector::tableize($this->_options['name']));
         }
 
         $this->_filters[]  = new Doctrine_Record_Filter_Standard();
@@ -382,12 +369,6 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
         $this->_options['joinedParents'] = array_values(array_unique($this->_options['joinedParents']));
 
         $this->_options['declaringClass'] = $class;
-
-        // set the table definition for the given tree implementation
-        $tree = $this->getTree();
-        if ($tree !== null) {
-            $tree->setTableDefinition();
-        }
 
         $this->columnCount = count($this->_columns);
 
@@ -2438,29 +2419,6 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
     }
 
     /**
-     * Gets associated tree.
-     * This method returns the associated Tree object (if any exists).
-     * Normally implemented by NestedSet behavior.
-     *
-     * @return null|Doctrine_Tree false if not a tree
-     */
-    public function getTree(): ?Doctrine_Tree
-    {
-        if (isset($this->_options['treeImpl'])) {
-            if (!$this->_tree) {
-                $options     = isset($this->_options['treeOptions']) ? $this->_options['treeOptions'] : [];
-                $this->_tree = Doctrine_Tree::factory(
-                    $this,
-                    $this->_options['treeImpl'],
-                    $options
-                );
-            }
-            return $this->_tree;
-        }
-        return null;
-    }
-
-    /**
      * Gets the subclass of Doctrine_Record that belongs to this table.
      *
      * @return         string
@@ -2491,16 +2449,6 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
     public function setTableName($tableName)
     {
         $this->setOption('tableName', $this->_conn->formatter->getTableName($tableName));
-    }
-
-    /**
-     * Determines if table acts as tree.
-     *
-     * @return boolean  if tree return true, otherwise returns false
-     */
-    public function isTree(): bool
-    {
-        return !is_null($this->_options['treeImpl']);
     }
 
     /**
