@@ -36,6 +36,9 @@
     <testsuite name="DataType">
       <directory>Tests/DataType</directory>
     </testsuite>
+    <testsuite name="EventListener">
+      <directory>Tests/EventListener</directory>
+    </testsuite>
     <testsuite name="Import">
       <directory>Tests/Import</directory>
     </testsuite>
