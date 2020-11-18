@@ -512,7 +512,11 @@ class Doctrine_Connection_UnitOfWork extends Doctrine_Connection_Module
         // save all records
         foreach ($tree as $name) {
             $table = $this->conn->getTable($name);
-            foreach ($table->getRepository() as $record) {
+            $repo = $table->getRepository();
+            if ($repo === null) {
+                continue;
+            }
+            foreach ($repo as $record) {
                 $this->saveGraph($record);
             }
         }
