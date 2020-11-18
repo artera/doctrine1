@@ -54,6 +54,9 @@
     <testsuite name="Transaction">
       <directory>Tests/Transaction</directory>
     </testsuite>
+    <testsuite name="Validator">
+      <directory>Tests/Validator</directory>
+    </testsuite>
     <testsuite name="Fixture">
       <file>Tests/FixtureTest.php</file>
     </testsuite>
