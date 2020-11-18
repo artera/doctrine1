@@ -55,7 +55,7 @@ class Doctrine_Query_JoinCondition extends Doctrine_Query_Condition
             if ($l == 4) {
                 // FIX: "field NOT IN (XXX)" issue
                 // Related to ticket #1329
-                $operator .= ' ' . $e[2]; // Glue "NOT" and "IN"
+                $operator .= ' ' . $e[2]; // Glue NOT and IN
                 $e[2] = $e[3]; // Move "(XXX)" to previous index
 
                 unset($e[3]); // Remove unused index

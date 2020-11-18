@@ -444,9 +444,6 @@ class Doctrine_Node_NestedSet extends Doctrine_Node implements Doctrine_Node_Int
             $this->shiftRlValues($newLeft, 2, $newRoot);
             $this->record['level'] = $dest['level'];
             $this->insertNode($newLeft, $newRight, $newRoot);
-            // update destination left/right values to prevent a refresh
-            // $dest->getNode()->setLeftValue($dest->getNode()->getLeftValue() + 2);
-            // $dest->getNode()->setRightValue($dest->getNode()->getRightValue() + 2);
 
             $conn->commit();
         } catch (Exception $e) {
@@ -530,9 +527,6 @@ class Doctrine_Node_NestedSet extends Doctrine_Node implements Doctrine_Node_Int
             $this->record['level'] = $dest['level'] + 1;
             $this->insertNode($newLeft, $newRight, $newRoot);
 
-            // update destination left/right values to prevent a refresh
-            // $dest->getNode()->setRightValue($dest->getNode()->getRightValue() + 2);
-
             $conn->commit();
         } catch (Exception $e) {
             $conn->rollback();
@@ -572,9 +566,6 @@ class Doctrine_Node_NestedSet extends Doctrine_Node implements Doctrine_Node_Int
             $this->shiftRlValues($newLeft, 2, $newRoot);
             $this->record['level'] = $dest['level'] + 1;
             $this->insertNode($newLeft, $newRight, $newRoot);
-
-            // update destination left/right values to prevent a refresh
-            // $dest->getNode()->setRightValue($dest->getNode()->getRightValue() + 2);
 
             $conn->commit();
         } catch (Exception $e) {

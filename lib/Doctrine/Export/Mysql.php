@@ -578,7 +578,6 @@ class Doctrine_Export_Mysql extends Doctrine_Export
             $default = ' DEFAULT ' . (is_null($field['default'])
                 ? 'NULL'
                 : $this->conn->quote($field['default'], $fieldType));
-            //$default = ' DEFAULT ' . $this->conn->quote($field['default'], $field['type']);
         }
 
         return $default;

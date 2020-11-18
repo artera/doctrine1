@@ -40,9 +40,10 @@ abstract class Doctrine_Task
     public $dispatcher = null;
 
     /**
+     * treat as protected
      * @var string|null
      */
-    public $taskName = null;  /*Treat as protected*/
+    public $taskName = null;
 
     /**
      * @var string|null

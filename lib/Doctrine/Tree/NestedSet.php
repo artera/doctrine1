@@ -108,7 +108,6 @@ class Doctrine_Tree_NestedSet extends Doctrine_Tree implements Doctrine_Tree_Int
             }
 
             if ($record->exists() && ! $record->getNode()->getRootValue()) {
-                // Default: root_id = id
                 $identifier = $record->getTable()->getIdentifier();
                 $record->getNode()->setRootValue($record->get($identifier));
             }

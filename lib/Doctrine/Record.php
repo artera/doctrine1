@@ -365,7 +365,6 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
 
         if (is_null($event)) {
             $constant = constant('Doctrine_Event::RECORD_' . strtoupper($type));
-            //echo $func . " - " . 'Doctrine_Event::RECORD_' . strtoupper($type) . "\n";
             $event = new Doctrine_Event($this, $constant);
         }
 

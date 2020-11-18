@@ -73,7 +73,6 @@ class Doctrine_Query_Tokenizer
                 case 'offset':
                 case 'having':
                     $p = $token;
-                    //$parts[$token] = array();
                     $parts[$token] = '';
                     break;
 
@@ -83,10 +82,8 @@ class Doctrine_Query_Tokenizer
                     if (isset($tokens[$i]) && strtolower($tokens[$i]) === 'by') {
                         $p             = $token;
                         $parts[$token] = '';
-                        //$parts[$token] = array();
                     } else {
                         $parts[$p] .= "$token ";
-                        //$parts[$p][] = $token;
                     }
                     break;
 
@@ -101,7 +98,6 @@ class Doctrine_Query_Tokenizer
                     }
 
                     $parts[$p] .= "$token ";
-                    //$parts[$p][] = $token;
             }
         }
 

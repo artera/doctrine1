@@ -691,7 +691,6 @@ class Doctrine_Connection_UnitOfWork extends Doctrine_Connection_Module
             $index = array_search($currentClass, $flushList);
 
             if ($index === false) {
-                //echo "adding $currentClass to flushlist";
                 $flushList[] = $currentClass;
                 $index       = max(array_keys($flushList));
             }

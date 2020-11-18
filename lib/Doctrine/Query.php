@@ -1174,9 +1174,6 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
             foreach ($this->_pendingJoinConditions[$alias] as $joinCondition) {
                 $parts[] = $parser->parse($joinCondition);
             }
-
-            // FIX #1860 and #1876: Cannot unset them, otherwise query cannot be reused later
-            //unset($this->_pendingJoinConditions[$alias]);
         }
 
         return (count($parts) > 0 ? '(' . implode(') AND (', $parts) . ')' : '');
@@ -1386,7 +1383,6 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
                 ? $where : '(' . $where . ')';
 
             $q .= ' WHERE ' . $limitSubquerySql . $where;
-            //   .  (($limitSubquerySql == '' && count($this->_sqlParts['where']) == 1) ? substr($where, 1, -1) : $where);
         }
 
         // Fix the orderbys so we only have one orderby per value

@@ -581,7 +581,6 @@ class Doctrine_Import_Builder extends Doctrine_Builder
                 unset($options['default']);
             }
 
-            // Remove null and empty array values
             foreach ($options as $key => $value) {
                 if (is_null($value) || (is_array($value) && empty($value))) {
                     unset($options[$key]);
@@ -1187,9 +1186,8 @@ class Doctrine_Import_Builder extends Doctrine_Builder
             if ($this->generateTableClasses()) {
                 $this->writeTableClassDefinition($definition, $writePath, ['extends' => $definition['inheritance']['tableExtends']]);
             }
-        }
-        // If is the package class then we need to make the path to the complete package
-        elseif (isset($definition['is_package_class']) && $definition['is_package_class']) {
+        } elseif (isset($definition['is_package_class']) && $definition['is_package_class']) {
+            // If is the package class then we need to make the path to the complete package
             if (isset($definition['package_custom_path'])) {
                 $writePath = $definition['package_custom_path'];
             } else {
@@ -1199,9 +1197,8 @@ class Doctrine_Import_Builder extends Doctrine_Builder
             if ($this->generateTableClasses()) {
                 $this->writeTableClassDefinition($definition, $writePath, ['extends' => $definition['inheritance']['tableExtends']]);
             }
-        }
-        // If it is the base class of the doctrine record definition
-        elseif (isset($definition['is_base_class']) && $definition['is_base_class']) {
+        } elseif (isset($definition['is_base_class']) && $definition['is_base_class']) {
+            // If it is the base class of the doctrine record definition
             // If it is a part of a package then we need to put it in a package subfolder
             if (isset($definition['is_package']) && $definition['is_package']) {
                 $basePath  = $this->_path . DIRECTORY_SEPARATOR . $definition['package_name'];

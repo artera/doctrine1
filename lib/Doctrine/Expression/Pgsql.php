@@ -1,4 +1,5 @@
 <?php
+// phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
 /*
  *  $Id: Pgsql.php 7685 2010-08-24 16:43:34Z jwage $
  *

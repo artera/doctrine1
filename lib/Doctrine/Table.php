@@ -1368,8 +1368,6 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
                 case 'object':
                 case 'blob':
                 case 'gzip':
-                    //$length = 2147483647;
-
                     //All the DataDict driver classes have work-arounds to deal
                     //with unset lengths.
                     $length = null;
