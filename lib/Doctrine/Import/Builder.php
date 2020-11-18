@@ -404,11 +404,10 @@ class Doctrine_Import_Builder extends Doctrine_Builder
     public function buildSetUp(array $definition)
     {
         $ret = [];
-        $i   = 0;
 
         if (isset($definition['relations']) && is_array($definition['relations']) && ! empty($definition['relations'])) {
             foreach ($definition['relations'] as $name => $relation) {
-                $class = isset($relation['class']) ? $relation['class']:$name;
+                $class = $relation['class'] ?? $name;
                 $alias = (isset($relation['alias']) && $relation['alias'] !== $this->_classPrefix . $relation['class']) ? ' as ' . $relation['alias'] : '';
 
                 if (! isset($relation['type'])) {
@@ -416,9 +415,9 @@ class Doctrine_Import_Builder extends Doctrine_Builder
                 }
 
                 if ($relation['type'] === Doctrine_Relation::ONE) {
-                    $ret[$i] = '        ' . '$this->hasOne(\'' . $class . $alias . '\'';
+                    $row = "        \$this->hasOne('{$class}{$alias}'";
                 } else {
-                    $ret[$i] = '        ' . '$this->hasMany(\'' . $class . $alias . '\'';
+                    $row = "        \$this->hasMany('{$class}{$alias}'";
                 }
 
                 $a = [];
@@ -471,30 +470,33 @@ class Doctrine_Import_Builder extends Doctrine_Builder
                     $a[] = '\'orderBy\' => ' . $this->varExport($relation['orderBy']);
                 }
 
-                if (! empty($a)) {
-                    $ret[$i] .= ', ' . 'array(' . PHP_EOL . str_repeat(' ', 13);
-                    $length = strlen($ret[$i]);
-                    $ret[$i] .= implode(',' . PHP_EOL . str_repeat(' ', 13), $a) . ')';
+                if (!empty($a)) {
+                    $a = implode('', array_map(fn($v) => "\n            $v,", $a));
+                    $row .= ", [$a\n        ]";
                 }
 
-                $ret[$i] .= ');' . PHP_EOL;
-                $i++;
+                $row .= ");\n";
+
+                $sortBy = $relation['alias'] ?? $relation['class'] ?? $name;
+                $ret[$sortBy] = $row;
             }
+
+            ksort($ret);
+            $ret = array_values($ret);
         }
 
         if (isset($definition['listeners']) && is_array($definition['listeners']) && !empty($definition['listeners'])) {
-            $ret[$i] = $this->buildListeners($definition['listeners']);
-            $i++;
+            $ret[] = $this->buildListeners($definition['listeners']);
         }
 
-        $code = implode(PHP_EOL, $ret);
+        $code = implode("\n", $ret);
         $code = trim($code);
 
-        $code = 'parent::setUp();' . PHP_EOL . '        ' . $code;
+        $code = "parent::setUp();\n        $code";
 
         // If we have some code for the function then lets define it and return it
         if ($code) {
-            return '    public function setUp()' . PHP_EOL . '    {' . PHP_EOL . '        ' . $code . PHP_EOL . '    }';
+            return "    public function setUp()\n    {\n        $code\n    }";
         }
 
         return null;
@@ -510,7 +512,7 @@ class Doctrine_Import_Builder extends Doctrine_Builder
     {
         $build = '';
         foreach ($checks as $check) {
-            $build .= "        \$this->check('" . $check . "');" . PHP_EOL;
+            $build .= "        \$this->check('$check');\n";
         }
         return $build;
     }
@@ -653,26 +655,17 @@ class Doctrine_Import_Builder extends Doctrine_Builder
         $ret[] = '';
 
         if ((isset($definition['is_base_class']) && $definition['is_base_class']) || ! $this->generateBaseClasses()) {
+            $retProperties = [];
             foreach ($definition['columns'] as $name => $column) {
-                $name = isset($column['name']) ? $column['name']:$name;
+                $name = isset($column['name']) ? $column['name'] : $name;
                 // extract column name & field name
-                if (stripos($name, ' as ')) {
-                    if (strpos($name, ' as')) {
-                        $parts = explode(' as ', $name);
-                    } else {
-                        $parts = explode(' AS ', $name);
-                    }
-
-                    if (count($parts) > 1) {
-                        $fieldName = $parts[1];
-                    } else {
-                        $fieldName = $parts[0];
-                    }
-
-                    $name = $parts[0];
-                } else {
+                $parts = preg_split('/\sas\s/i', $name, 2) ?: [$name];
+                if (count($parts) === 1) {
                     $fieldName = $name;
                     $name      = $name;
+                } else {
+                    $fieldName = $parts[1];
+                    $name      = $parts[0];
                 }
 
                 $name      = trim($name);
@@ -715,17 +708,26 @@ class Doctrine_Import_Builder extends Doctrine_Builder
                     }
                 }
 
-                $ret[] = '@property ' . $type . ' $' . $fieldName;
+                $retProperties[$fieldName] = '@property ' . $type . ' $' . $fieldName;
             }
 
+            ksort($retProperties);
+            $ret = array_merge($ret, array_values($retProperties));
+
             if (isset($definition['relations']) && ! empty($definition['relations'])) {
+                $retProperties = [];
+
                 foreach ($definition['relations'] as $relation) {
+                    $fieldName = $relation['alias'];
                     if (isset($relation['type']) && $relation['type'] == Doctrine_Relation::MANY) {
-                        $ret[] = sprintf('@property Doctrine_Collection<%s> $%s', $relation['class'], $relation['alias']);
+                        $retProperties[$fieldName] = sprintf('@property Doctrine_Collection<%s> $%s', $relation['class'], $fieldName);
                     } else {
-                        $ret[] = sprintf('@property %s%s $%s', $this->_classPrefix, $relation['class'], $relation['alias']);
+                        $retProperties[$fieldName] = sprintf('@property %s%s $%s', $this->_classPrefix, $relation['class'], $fieldName);
                     }
                 }
+
+                ksort($retProperties);
+                $ret = array_merge($ret, array_values($retProperties));
             }
 
             $extends = $definition['inheritance']['extends'] ?? $this->_baseClassName;
