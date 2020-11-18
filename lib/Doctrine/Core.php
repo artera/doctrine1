@@ -1077,21 +1077,6 @@ class Doctrine_Core
     }
 
     /**
-     * Method for making a single file of most used doctrine runtime components
-     * including the compiled file instead of multiple files (in worst
-     * cases dozens of files) can improve performance by an order of magnitude
-     *
-     * @param  string $target
-     * @param  array  $includedDrivers
-     * @throws Doctrine_Exception
-     * @return string
-     */
-    public static function compile($target = null, $includedDrivers = [])
-    {
-        return Doctrine_Compiler::compile($target, $includedDrivers);
-    }
-
-    /**
      * simple autoload function
      * returns true if the class was loaded, otherwise false
      *
