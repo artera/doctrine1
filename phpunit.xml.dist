@@ -42,6 +42,9 @@
     <testsuite name="Import">
       <directory>Tests/Import</directory>
     </testsuite>
+    <testsuite name="Inheritance">
+      <directory>Tests/Inheritance</directory>
+    </testsuite>
     <testsuite name="Query">
       <directory>Tests/Query</directory>
     </testsuite>
