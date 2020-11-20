@@ -48,7 +48,7 @@ class Doctrine_Import extends Doctrine_Connection_Module
      */
     public function listDatabases()
     {
-        if (! isset($this->sql['listDatabases'])) {
+        if (!isset($this->sql['listDatabases'])) {
             throw new Doctrine_Import_Exception(__FUNCTION__ . ' not supported by this driver.');
         }
 
@@ -62,7 +62,7 @@ class Doctrine_Import extends Doctrine_Connection_Module
      */
     public function listFunctions()
     {
-        if (! isset($this->sql['listFunctions'])) {
+        if (!isset($this->sql['listFunctions'])) {
             throw new Doctrine_Import_Exception(__FUNCTION__ . ' not supported by this driver.');
         }
 
@@ -88,7 +88,7 @@ class Doctrine_Import extends Doctrine_Connection_Module
      */
     public function listSequences($database = null)
     {
-        if (! isset($this->sql['listSequences'])) {
+        if (!isset($this->sql['listSequences'])) {
             throw new Doctrine_Import_Exception(__FUNCTION__ . ' not supported by this driver.');
         }
 
@@ -192,7 +192,7 @@ class Doctrine_Import extends Doctrine_Connection_Module
      */
     public function listUsers()
     {
-        if (! isset($this->sql['listUsers'])) {
+        if (!isset($this->sql['listUsers'])) {
             throw new Doctrine_Import_Exception(__FUNCTION__ . ' not supported by this driver.');
         }
 
@@ -207,7 +207,7 @@ class Doctrine_Import extends Doctrine_Connection_Module
      */
     public function listViews($database = null)
     {
-        if (! isset($this->sql['listViews'])) {
+        if (!isset($this->sql['listViews'])) {
             throw new Doctrine_Import_Exception(__FUNCTION__ . ' not supported by this driver.');
         }
 
@@ -372,7 +372,7 @@ class Doctrine_Import extends Doctrine_Connection_Module
         foreach ($manager as $name => $connection) {
             // Limit the databases to the ones specified by $connections.
             // Check only happens if array is not empty
-            if (! empty($connections) && ! in_array($name, $connections)) {
+            if (!empty($connections) && !in_array($name, $connections)) {
                 continue;
             }
 
@@ -383,57 +383,78 @@ class Doctrine_Import extends Doctrine_Connection_Module
             $definitions = [];
 
             foreach ($connection->import->listTables() as $table) {
-                $definition                        = [];
-                $definition['tableName']           = $table;
-                $definition['className']           = Doctrine_Inflector::classify(Doctrine_Inflector::tableize($table));
-                $definition['columns']             = $connection->import->listTableColumns($table);
-                $definition['connection']          = $connection->getName();
+                $definition = [];
+                $definition['tableName'] = $table;
+                $definition['className'] = Doctrine_Inflector::classify(Doctrine_Inflector::tableize($table));
+                $definition['columns'] = $connection->import->listTableColumns($table);
+                $definition['connection'] = $connection->getName();
                 $definition['connectionClassName'] = $definition['className'];
-                $definition['relations']           = [];
+                $definition['relations'] = [];
+
 
                 try {
-                    $relations  = $connection->import->listTableRelations($table);
-                    $relClasses = [];
-                    foreach ($relations as $relation) {
-                        $table = $relation['table'];
-                        $class = Doctrine_Inflector::classify(Doctrine_Inflector::tableize($table));
-                        if (in_array($class, $relClasses)) {
-                            $alias = $class . '_' . (count($relClasses) + 1);
-                        } else {
-                            $alias = $class;
+                    $unsortedRelations = $connection->import->listTableRelations($table);
+                } catch (Doctrine_Import_Exception $e) {
+                    $unsortedRelations = [];
+                }
+
+                $relations = [];
+                foreach ($definition['columns'] as $columnName => $column) {
+                    foreach ($unsortedRelations as $relation) {
+                        if ($relation['local'] === $columnName) {
+                            $relations[] = $relation;
+                            break;
                         }
-                        $relClasses[]                    = $class;
-                        $definition['relations'][$alias] = [
-                          'alias'   => $alias,
-                          'class'   => $class,
-                          'local'   => $relation['local'],
-                          'foreign' => $relation['foreign']
-                        ];
                     }
-                } catch (Exception $e) {
+                }
+                unset($unsortedRelations);
+
+                $aliasesByClass = [];
+                foreach ($relations as $relation) {
+                    $table = $relation['table'];
+                    $class = Doctrine_Inflector::classify(Doctrine_Inflector::tableize($table));
+
+                    if (empty($aliasesByClass[$class])) {
+                        $alias = $class;
+                        $aliasesByClass[$class] = 1;
+                    } else {
+                        $aliasesByClass[$class]++;
+                        $alias = "$class{$aliasesByClass[$class]}";
+                    }
+
+                    $definition['relations'][$alias] = [
+                        'alias'   => $alias,
+                        'class'   => $class,
+                        'local'   => $relation['local'],
+                        'foreign' => $relation['foreign']
+                    ];
                 }
 
                 $definitions[strtolower($definition['className'])] = $definition;
-                $classes[]                                         = $definition['className'];
+                $classes[] = $definition['className'];
             }
 
             // Build opposite end of relationships
             foreach ($definitions as $definition) {
-                $className  = $definition['className'];
-                $relClasses = [];
-                foreach ($definition['relations'] as $alias => $relation) {
-                    if (in_array($relation['class'], $relClasses) || isset($definitions[$relation['class']]['relations'][$className])) {
-                        $alias = $className . '_' . (count($relClasses) + 1);
-                    } else {
+                $className = $definition['className'];
+
+                $aliasesByClass = [];
+                foreach ($definition['relations'] as $relation) {
+                    $class = $relation['class'];
+                    if (empty($aliasesByClass[$class])) {
                         $alias = $className;
+                        $aliasesByClass[$class] = 1;
+                    } else {
+                        $aliasesByClass[$class]++;
+                        $alias = "$className{$aliasesByClass[$class]}";
                     }
-                    $relClasses[]                                                     = $relation['class'];
-                    $definitions[strtolower($relation['class'])]['relations'][$alias] = [
-                    'type'    => Doctrine_Relation::MANY,
-                    'alias'   => $alias,
-                    'class'   => $className,
-                    'local'   => $relation['foreign'],
-                    'foreign' => $relation['local']
+
+                    $definitions[strtolower($class)]['relations'][$alias] = [
+                        'type'    => Doctrine_Relation::MANY,
+                        'alias'   => $alias,
+                        'class'   => $className,
+                        'local'   => $relation['foreign'],
+                        'foreign' => $relation['local']
                     ];
                 }
             }

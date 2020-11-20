@@ -127,14 +127,23 @@ class Doctrine_Import_Mysql extends Doctrine_Import
      */
     public function listTableRelations($tableName)
     {
+        $tableName = $this->conn->quote($tableName);
+        $dbName = $this->conn->quote($this->conn->getDatabaseName());
+
         $relations = [];
-        $sql       = "SELECT column_name, REFERENCED_TABLE_NAME, REFERENCED_COLUMN_NAME FROM information_schema.key_column_usage WHERE table_name = '" . $tableName . "' AND table_schema = '" . $this->conn->getDatabaseName() . "' and REFERENCED_COLUMN_NAME is not NULL";
-        $results   = $this->conn->fetchAssoc($sql);
+        $results = $this->conn->fetchAssoc(
+            "SELECT column_name, referenced_table_name, referenced_column_name
+            FROM information_schema.key_column_usage
+            WHERE table_name = $tableName
+            AND table_schema = $dbName
+            AND referenced_column_name IS NOT NULL"
+        );
         foreach ($results as $result) {
-            $result      = array_change_key_case($result, CASE_LOWER);
-            $relations[] = ['table'   => $result['referenced_table_name'],
-                                 'local'   => $result['column_name'],
-                                 'foreign' => $result['referenced_column_name']];
+            $relations[] = [
+                'table'   => $result['referenced_table_name'],
+                'local'   => $result['column_name'],
+                'foreign' => $result['referenced_column_name'],
+            ];
         }
         return $relations;
     }

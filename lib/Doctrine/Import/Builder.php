@@ -361,10 +361,10 @@ class Doctrine_Import_Builder extends Doctrine_Builder
     {
         $ret = [];
 
-        if (isset($definition['relations']) && is_array($definition['relations']) && !empty($definition['relations'])) {
+        if (!empty($definition['relations']) && is_array($definition['relations'])) {
             foreach ($definition['relations'] as $name => $relation) {
                 $class = $relation['class'] ?? $name;
-                $alias = (isset($relation['alias']) && $relation['alias'] !== $this->_classPrefix . $relation['class']) ? ' as ' . $relation['alias'] : '';
+                $alias = (isset($relation['alias']) && $relation['alias'] !== $this->_classPrefix . $relation['class']) ? " as {$relation['alias']}" : '';
 
                 if (!isset($relation['type'])) {
                     $relation['type'] = Doctrine_Relation::ONE;
@@ -441,7 +441,7 @@ class Doctrine_Import_Builder extends Doctrine_Builder
             $ret = array_values($ret);
         }
 
-        if (isset($definition['listeners']) && is_array($definition['listeners']) && !empty($definition['listeners'])) {
+        if (!empty($definition['listeners']) && is_array($definition['listeners'])) {
             $ret[] = $this->buildListeners($definition['listeners']);
         }
 
@@ -499,16 +499,16 @@ class Doctrine_Import_Builder extends Doctrine_Builder
 
             // Update column name if an alias is provided
             if (isset($column['alias']) && !isset($column['name'])) {
-                $column['name'] = $name . ' as ' . $column['alias'];
+                $column['name'] = "{$name} as {$column['alias']}";
             }
 
-            $columnName = isset($column['name']) ? $column['name']:$name;
+            $columnName = $column['name'] ?? $name;
             if ($manager->getAttribute(Doctrine_Core::ATTR_AUTO_ACCESSOR_OVERRIDE)) {
                 $e          = explode(' as ', $columnName);
-                $fieldName  = isset($e[1]) ? $e[1] : $e[0];
+                $fieldName  = $e[1] ?? $e[0];
                 $classified = Doctrine_Inflector::classify($fieldName);
-                $getter     = 'get' . $classified;
-                $setter     = 'set' . $classified;
+                $getter     = "get$classified";
+                $setter     = "set$classified";
 
                 if ($refl->hasMethod($getter) || $refl->hasMethod($setter)) {
                     throw new Doctrine_Import_Exception(
@@ -516,13 +516,9 @@ class Doctrine_Import_Builder extends Doctrine_Builder
                     );
                 }
             }
-            $build .= '        ' . '$this->hasColumn(\'' . $columnName . '\', \'' . $column['type'] . '\'';
 
-            if ($column['length']) {
-                $build .= ', ' . $column['length'];
-            } else {
-                $build .= ', null';
-            }
+            $length = $column['length'] ?: 'null';
+            $build .= "        \$this->hasColumn('$columnName', '{$column['type']}', $length";
 
             $options = $column;
 
@@ -531,20 +527,23 @@ class Doctrine_Import_Builder extends Doctrine_Builder
             unset($options['alltypes']);
             unset($options['ntype']);
 
-            // Remove notnull => true if the column is primary
-            // Primary columns are implied to be notnull in Doctrine
-            if (isset($options['primary']) && $options['primary'] == true && (isset($options['notnull']) && $options['notnull'] == true)) {
-                unset($options['notnull']);
-            }
 
-            // Remove default if the value is 0 and the column is a primary key
-            // Doctrine defaults to 0 if it is a primary key
-            if (isset($options['primary']) && $options['primary'] == true && (isset($options['default']) && $options['default'] == 0)) {
-                unset($options['default']);
+            if (!empty($options['primary'])) {
+                // Remove notnull => true if the column is primary
+                // Primary columns are implied to be notnull in Doctrine
+                if (!empty($options['notnull'])) {
+                    unset($options['notnull']);
+                }
+
+                // Remove default if the value is 0 and the column is a primary key
+                // Doctrine defaults to 0 if it is a primary key
+                if (isset($options['default']) && $options['default'] == 0) {
+                    unset($options['default']);
+                }
             }
 
             foreach ($options as $key => $value) {
-                if (is_null($value) || (is_array($value) && empty($value))) {
+                if ($value === null || (is_array($value) && empty($value))) {
                     unset($options[$key]);
                 }
             }

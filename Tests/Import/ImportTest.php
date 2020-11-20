@@ -5,6 +5,8 @@ use Tests\DoctrineUnitTestCase;
 
 class ImportTest extends DoctrineUnitTestCase
 {
+    public static ?string $driverName = 'Mysql';
+
     public static function prepareTables(): void
     {
     }

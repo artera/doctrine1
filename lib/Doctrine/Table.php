@@ -935,7 +935,7 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
      */
     public function bind($args, $type)
     {
-        $options         = (! isset($args[1])) ? [] : $args[1];
+        $options = $args[1] ?? [];
         $options['type'] = $type;
 
         $this->_parser->bind($args[0], $options);
