@@ -1654,10 +1654,10 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
      *
      * @param int $hydrationMode Doctrine_Core::HYDRATE_ARRAY or Doctrine_Core::HYDRATE_RECORD
      *
-     * @return Doctrine_Collection|array|int
+     * @return Doctrine_Collection|array
      *
-     * @psalm-return Doctrine_Collection<Doctrine_Record>|array|int
-     * @psalm-return Doctrine_Collection<T>|array|int
+     * @psalm-return Doctrine_Collection<Doctrine_Record>|array
+     * @phpstan-return Doctrine_Collection<T>|array
      */
     public function findAll($hydrationMode = null)
     {

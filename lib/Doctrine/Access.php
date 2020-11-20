@@ -29,6 +29,7 @@
  * @since      1.0
  * @version    $Revision: 7490 $
  * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
+ * @phpstan-implements ArrayAccess<mixed, mixed>
  */
 abstract class Doctrine_Access implements ArrayAccess
 {

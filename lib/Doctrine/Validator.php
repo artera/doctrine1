@@ -79,7 +79,7 @@ class Doctrine_Validator
 
         // if record is transient all fields will be validated
         // if record is persistent only the modified fields will be validated
-        $fields = $record->exists() ? $record->getModified():$record->getData();
+        $fields = $record->exists() ? $record->getModified() : $record->getData();
         foreach ($fields as $fieldName => $value) {
             $table->validateField($fieldName, $value, $record);
         }

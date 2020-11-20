@@ -232,12 +232,12 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
     /**
      * Get all the records as an array
      *
-     * @return (Doctrine_Record|Doctrine_Null)[]
-     * @phpstan-return (T|Doctrine_Null)[]
+     * @return Doctrine_Record[]
+     * @phpstan-return T[]
      */
     public function getData()
     {
-        return $this->data;
+        return array_filter($this->data, fn($r) => !$r instanceof Doctrine_Null);
     }
 
     /**
@@ -533,9 +533,7 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
         }
 
         foreach ($coll->getData() as $record) {
-            if (!$record instanceof Doctrine_Null) {
-                $this->add($record);
-            }
+            $this->add($record);
         }
 
         return $this;
@@ -872,9 +870,7 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
             }
 
             foreach ($this->getData() as $record) {
-                if (!$record instanceof Doctrine_Null) {
-                    $record->save($conn);
-                }
+                $record->save($conn);
             }
 
             $conn->commit();
@@ -910,9 +906,7 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
             }
 
             foreach ($this->getData() as $record) {
-                if (!$record instanceof Doctrine_Null) {
-                    $record->replace($conn);
-                }
+                $record->replace($conn);
             }
 
             $conn->commit();
@@ -979,9 +973,7 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
     public function free($deep = false)
     {
         foreach ($this->getData() as $key => $record) {
-            if (!$record instanceof Doctrine_Null) {
-                $record->free($deep);
-            }
+            $record->free($deep);
         }
 
         $this->data = [];

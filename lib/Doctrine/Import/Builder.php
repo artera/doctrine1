@@ -836,9 +836,10 @@ class Doctrine_Import_Builder extends Doctrine_Builder
         if (!isset($definition['className'])) {
             throw new Doctrine_Import_Builder_Exception('Missing class name.');
         }
+
         $abstract  = isset($definition['abstract']) && $definition['abstract'] === true ? 'abstract ':null;
         $className = $definition['className'];
-        $extends   = isset($definition['inheritance']['extends']) ? $definition['inheritance']['extends']:$this->_baseClassName;
+        $extends   = isset($definition['inheritance']['extends']) ? $definition['inheritance']['extends'] : $this->_baseClassName;
 
         $tableDefinitionCode = '';
         $setUpCode           = '';
@@ -852,6 +853,7 @@ class Doctrine_Import_Builder extends Doctrine_Builder
             $setUpCode = "\n$setUpCode";
         }
 
+        $tableClassName = sprintf($this->_tableClassFormat, $definition['topLevelClassName']);
         $setUpCode .= $this->buildToString($definition);
 
         return <<<PHP
@@ -962,18 +964,6 @@ class Doctrine_Import_Builder extends Doctrine_Builder
             $extends = $this->_classPrefix . $extends;
         }
 
-        $code = <<<PHP
-            /**
-             * Returns an instance of this class.
-             */
-            public static function getInstance(): $className
-            {
-                \$table = Doctrine_Core::getTable('{$definition['className']}');
-                assert(\$table instanceof $className);
-                return \$table;
-            }
-        PHP;
-
         $docBlock = '';
         if (isset($definition['topLevelClassName'])) {
             $docBlock = sprintf('@phpstan-extends %s<%s>', $extends, $definition['topLevelClassName']);
@@ -990,7 +980,15 @@ class Doctrine_Import_Builder extends Doctrine_Builder
         $docBlock
         class $className extends $extends
         {
-        $code
+            /**
+             * Returns an instance of this class.
+             */
+            public static function getInstance(): $className
+            {
+                \$table = Doctrine_Core::getTable('{$definition['className']}');
+                assert(\$table instanceof $className);
+                return \$table;
+            }
         }
         PHP;
     }

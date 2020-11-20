@@ -33,6 +33,7 @@
  *
  * @phpstan-template T of Doctrine_Table
  * @phpstan-extends Doctrine_Record_Abstract<T>
+ * @phpstan-implements IteratorAggregate<string, mixed>
  */
 abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Countable, IteratorAggregate, Serializable
 {
@@ -102,6 +103,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
      * - Doctrine_Null - field value is unknown, it wasn't loaded yet
      *
      * @var array $_data                    the record data
+     * @phpstan-var array<string, mixed> $_data
      */
     protected $_data = [];
 
@@ -196,7 +198,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
 
     /**
      * @var Doctrine_Table $_table     reference to associated Doctrine_Table instance
-     * @phpstan-var T<self>
+     * @phpstan-var T
      */
     protected $_table;
 
@@ -207,7 +209,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
      *                                                if null the table object is
      *                                                retrieved from current
      *                                                connection
-     * @phpstan-param T<self>|null $table
+     * @phpstan-param T|null $table
      *
      * @param boolean $isNewEntry whether or not this record is transient
      *
@@ -1096,7 +1098,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
             $record = $query->fetchOne($id);
         } else {
             // Use HYDRATE_ARRAY to avoid clearing object relations
-            /** @var array<string, mixed>|false */
+            /** @phpstan-var array<string, mixed>|false */
             $record = $this->getTable()->find($id, Doctrine_Core::HYDRATE_ARRAY);
             if ($record) {
                 $this->hydrate($record);
@@ -1214,7 +1216,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
      * returns the table object for this record.
      *
      * @return Doctrine_Table        a Doctrine_Table object
-     * @phpstan-return T<self>
+     * @phpstan-return T
      */
     public function getTable(): Doctrine_Table
     {
@@ -1225,6 +1227,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
      * return all the internal data (columns)
      *
      * @return array                        an array containing all the properties
+     * @phpstan-return array<string, mixed>
      */
     public function getData()
     {
@@ -2294,11 +2297,11 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
     /**
      * implements IteratorAggregate interface
      *
-     * @return Doctrine_Record_Iterator     iterator through data
+     * @return ArrayIterator<string, mixed> iterator through data
      */
     public function getIterator()
     {
-        return new Doctrine_Record_Iterator($this);
+        return new ArrayIterator($this->getData());
     }
 
     /**
@@ -2321,7 +2324,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
      * generates a copy of this object. Returns an instance of the same class of $this.
      *
      * @param  boolean $deep whether to duplicates the objects targeted by the relations
-     * @return self
+     * @return static
      */
     public function copy($deep = false)
     {
@@ -2533,7 +2536,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
 
     /**
      * @return         Doctrine_Table
-     * @phpstan-return T<self>
+     * @phpstan-return T
      */
     public function unshiftFilter(Doctrine_Record_Filter $filter)
     {
@@ -2645,7 +2648,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
         if (! $this->exists() || $now === false) {
             $relTable = $this->getTable()->getRelation($alias)->getTable();
 
-            /** @phpstan-var Doctrine_Collection<self> */
+            /** @phpstan-var Doctrine_Collection<static> */
             $records  = $relTable->createQuery()
                 ->whereIn($relTable->getIdentifier(), $ids)
                 ->execute();
