@@ -59,7 +59,7 @@ class Doctrine_Validator_Creditcard extends Doctrine_Validator_Driver
                 break;
             }
         }
-        if (! $cardType) {
+        if (!$cardType) {
             return false;
         }
         /* mod 10 checksum algorithm */

@@ -298,7 +298,7 @@ class Doctrine_Export_Pgsql extends Doctrine_Export
      */
     public function createTableSql($name, array $fields, array $options = [])
     {
-        if (! $name) {
+        if (!$name) {
             throw new Doctrine_Export_Exception('no valid table name specified');
         }
 
@@ -309,7 +309,7 @@ class Doctrine_Export_Pgsql extends Doctrine_Export
         $queryFields = $this->getFieldDeclarationList($fields);
 
 
-        if (isset($options['primary']) && ! empty($options['primary'])) {
+        if (isset($options['primary']) && !empty($options['primary'])) {
             $keyColumns = array_values($options['primary']);
             $keyColumns = array_map([$this->conn, 'quoteIdentifier'], $keyColumns);
             $queryFields .= ', PRIMARY KEY(' . implode(', ', $keyColumns) . ')';
@@ -329,7 +329,7 @@ class Doctrine_Export_Pgsql extends Doctrine_Export
 
         $sql[] = $query;
 
-        if (isset($options['indexes']) && ! empty($options['indexes'])) {
+        if (isset($options['indexes']) && !empty($options['indexes'])) {
             foreach ($options['indexes'] as $index => $definition) {
                 $sql[] = $this->createIndexSql($name, $index, $definition);
             }

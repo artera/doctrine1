@@ -39,7 +39,7 @@ class Doctrine_Relation_Nest extends Doctrine_Relation_Association
     {
         $id = $record->getIncremented();
 
-        if (empty($id) || ! $this->definition['table']->getAttribute(Doctrine_Core::ATTR_LOAD_REFERENCES)) {
+        if (empty($id) || !$this->definition['table']->getAttribute(Doctrine_Core::ATTR_LOAD_REFERENCES)) {
             return Doctrine_Collection::create($this->getTable());
         } else {
             $q         = new Doctrine_RawSql($this->getTable()->getConnection());

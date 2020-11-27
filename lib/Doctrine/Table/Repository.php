@@ -93,7 +93,7 @@ class Doctrine_Table_Repository implements Countable, IteratorAggregate
      */
     public function get($oid)
     {
-        if (! isset($this->registry[$oid])) {
+        if (!isset($this->registry[$oid])) {
             throw new Doctrine_Table_Repository_Exception('Unknown object identifier');
         }
         return $this->registry[$oid];
@@ -116,7 +116,7 @@ class Doctrine_Table_Repository implements Countable, IteratorAggregate
      */
     public function evict($oid)
     {
-        if (! isset($this->registry[$oid])) {
+        if (!isset($this->registry[$oid])) {
             return false;
         }
         unset($this->registry[$oid]);

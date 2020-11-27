@@ -64,18 +64,18 @@ class Doctrine_Query_Registry
     public function get($key, $namespace = null)
     {
         if (isset($namespace)) {
-            if (! isset($this->_queries[$namespace][$key])) {
+            if (!isset($this->_queries[$namespace][$key])) {
                 throw new Doctrine_Query_Registry_Exception('A query with the name ' . $namespace . '/' . $key . ' does not exist.');
             }
             $query = $this->_queries[$namespace][$key];
         } else {
-            if (! isset($this->_queries[$key])) {
+            if (!isset($this->_queries[$key])) {
                 throw new Doctrine_Query_Registry_Exception('A query with the name ' . $key . ' does not exist.');
             }
             $query = $this->_queries[$key];
         }
 
-        if (! ($query instanceof Doctrine_Query)) {
+        if (!($query instanceof Doctrine_Query)) {
             $query = Doctrine_Query::create()
                 ->parseDqlQuery($query);
         }

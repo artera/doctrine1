@@ -129,19 +129,19 @@ class TableTest extends DoctrineUnitTestCase
 
         $record = static::$connection->getTable('User')->find('4', \Doctrine_Core::HYDRATE_ARRAY);
         $this->assertTrue(is_array($record));
-        $this->assertTrue(! is_object($record));
+        $this->assertTrue(!is_object($record));
         $this->assertTrue(array_key_exists('id', $record));
         $this->assertTrue(array_key_exists('name', $record));
-        $this->assertTrue(! $record instanceof \Doctrine_Record);
+        $this->assertTrue(!$record instanceof \Doctrine_Record);
 
         $record = static::$connection->getTable('User')->find(123);
-        $this->assertTrue($record === false);
+        $this->assertFalse($record);
 
         $record = static::$connection->getTable('User')->find(null);
-        $this->assertTrue($record === false);
+        $this->assertFalse($record);
 
         $record = static::$connection->getTable('User')->find(false);
-        $this->assertTrue($record === false);
+        $this->assertFalse($record);
     }
 
     public function testFindAll()
@@ -151,9 +151,9 @@ class TableTest extends DoctrineUnitTestCase
         $this->assertTrue($users instanceof \Doctrine_Collection);
 
         $users = static::$connection->getTable('User')->findAll(\Doctrine_Core::HYDRATE_ARRAY);
-        $this->assertTrue(! $users instanceof \Doctrine_Collection);
+        $this->assertTrue(!$users instanceof \Doctrine_Collection);
         $this->assertTrue(is_array($users));
-        $this->assertTrue(! is_object($users));
+        $this->assertTrue(!is_object($users));
         $this->assertEquals(count($users), 8);
     }
 

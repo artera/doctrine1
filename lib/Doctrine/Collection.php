@@ -90,7 +90,7 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
     {
         static::$null = Doctrine_Null::instance();
 
-        if (! ($table instanceof Doctrine_Table)) {
+        if (!($table instanceof Doctrine_Table)) {
             $table = Doctrine_Core::getTable($table);
         }
 
@@ -122,7 +122,7 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
     public static function create($table, $keyColumn = null, $class = null)
     {
         if (is_null($class)) {
-            if (! $table instanceof Doctrine_Table) {
+            if (!$table instanceof Doctrine_Table) {
                 $table = Doctrine_Core::getTable($table);
             }
             /**
@@ -378,7 +378,7 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
      */
     public function get($key)
     {
-        if (! isset($this->data[$key])) {
+        if (!isset($this->data[$key])) {
             $record = $this->_table->create();
 
             if (isset($this->referenceField) && $this->reference !== null) {
@@ -550,7 +550,7 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
         $list  = [];
         $query = $this->_table->createQuery();
 
-        if (! isset($name)) {
+        if (!isset($name)) {
             foreach ($this->data as $record) {
                 $value = $record->getIncremented();
                 if ($value !== null) {
@@ -558,7 +558,7 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
                 }
             }
             $query->where($this->_table->getComponentName() . '.id IN (' . substr(str_repeat('?, ', count($list)), 0, -2) . ')');
-            if (! $list) {
+            if (!$list) {
                 $query->where($this->_table->getComponentName() . '.id IN (' . substr(str_repeat('?, ', count($list)), 0, -2) . ')', $list);
             }
 
@@ -580,7 +580,7 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
             }
         }
 
-        if (! $list) {
+        if (!$list) {
             return null;
         }
 
@@ -622,7 +622,7 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
             }
         } elseif ($rel instanceof Doctrine_Relation_ForeignKey) {
             foreach ($this->data as $key => $record) {
-                if (! $record->exists()) {
+                if (!$record->exists()) {
                     continue;
                 }
                 $sub = Doctrine_Collection::create($table);
@@ -642,7 +642,7 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
             $name       = $table->getComponentName();
 
             foreach ($this->data as $key => $record) {
-                if (! $record->exists()) {
+                if (!$record->exists()) {
                     continue;
                 }
                 $sub = Doctrine_Collection::create($table);
@@ -1015,7 +1015,7 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
     final public function isModified()
     {
         $dirty = (count($this->getInsertDiff()) > 0 || count($this->getDeleteDiff()) > 0);
-        if (! $dirty) {
+        if (!$dirty) {
             foreach ($this as $record) {
                 if ($dirty = $record->isModified()) {
                     break;

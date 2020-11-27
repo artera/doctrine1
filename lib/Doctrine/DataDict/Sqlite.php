@@ -52,7 +52,7 @@ class Doctrine_DataDict_Sqlite extends Doctrine_DataDict
      */
     public function getNativeDeclaration(array $field)
     {
-        if (! isset($field['type'])) {
+        if (!isset($field['type'])) {
             throw new Doctrine_DataDict_Exception('Missing column type.');
         }
         switch ($field['type']) {
@@ -73,7 +73,7 @@ class Doctrine_DataDict_Sqlite extends Doctrine_DataDict
                 return $fixed ? ($length ? 'CHAR(' . $length . ')' : 'CHAR(' . $this->conn->varchar_max_length . ')')
                     : ($length ? 'VARCHAR(' . $length . ')' : 'TEXT');
             case 'clob':
-                if (! empty($field['length'])) {
+                if (!empty($field['length'])) {
                     $length = $field['length'];
                     if ($length <= 255) {
                         return 'TINYTEXT';
@@ -85,7 +85,7 @@ class Doctrine_DataDict_Sqlite extends Doctrine_DataDict
                 }
                 return 'LONGTEXT';
             case 'blob':
-                if (! empty($field['length'])) {
+                if (!empty($field['length'])) {
                     $length = $field['length'];
                     if ($length <= 255) {
                         return 'TINYBLOB';
@@ -134,7 +134,7 @@ class Doctrine_DataDict_Sqlite extends Doctrine_DataDict
 
         $dbType = strtolower($field['type']);
 
-        if (! $dbType) {
+        if (!$dbType) {
             throw new Doctrine_DataDict_Exception('Missing "type" from field definition');
         }
 
@@ -143,7 +143,7 @@ class Doctrine_DataDict_Sqlite extends Doctrine_DataDict
         $fixed    = null;
         $type     = [];
 
-        if (! isset($field['name'])) {
+        if (!isset($field['name'])) {
             $field['name'] = '';
         }
 

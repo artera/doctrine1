@@ -45,7 +45,7 @@ class Doctrine_Cache_Memcache extends Doctrine_Cache_Driver
      */
     public function __construct($options = [])
     {
-        if (! extension_loaded('memcache')) {
+        if (!extension_loaded('memcache')) {
             throw new Doctrine_Cache_Exception('In order to use Memcache driver, the memcache extension must be loaded.');
         }
         parent::__construct($options);
@@ -62,10 +62,10 @@ class Doctrine_Cache_Memcache extends Doctrine_Cache_Driver
         $this->_memcache = new Memcache;
 
         foreach ($this->_options['servers'] as $server) {
-            if (! array_key_exists('persistent', $server)) {
+            if (!array_key_exists('persistent', $server)) {
                 $server['persistent'] = true;
             }
-            if (! array_key_exists('port', $server)) {
+            if (!array_key_exists('port', $server)) {
                 $server['port'] = 11211;
             }
             $this->_memcache->addServer($server['host'], $server['port'], $server['persistent']);

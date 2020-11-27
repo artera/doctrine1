@@ -56,7 +56,7 @@ class Doctrine_Hydrator_ScalarDriver extends Doctrine_Hydrator_Abstract
         $rowData = [];
         foreach ($data as $key => $value) {
             // Parse each column name only once. Cache the results.
-            if (! isset($cache[$key])) {
+            if (!isset($cache[$key])) {
                 if ($key == 'DOCTRINE_ROWNUM') {
                     continue;
                 }

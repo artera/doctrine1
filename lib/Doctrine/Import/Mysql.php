@@ -58,7 +58,7 @@ class Doctrine_Import_Mysql extends Doctrine_Import
     public function listSequences($database = null)
     {
         $query = 'SHOW TABLES';
-        if (! is_null($database)) {
+        if (!is_null($database)) {
             $query .= ' FROM ' . $database;
         }
         $tableNames = $this->conn->fetchColumn($query);
@@ -92,13 +92,13 @@ class Doctrine_Import_Mysql extends Doctrine_Import
 
         $result = [];
         foreach ($indexes as $indexData) {
-            if (! $indexData[$nonUnique]) {
+            if (!$indexData[$nonUnique]) {
                 if ($indexData[$keyName] !== 'PRIMARY') {
                     $index = $this->conn->formatter->fixIndexName($indexData[$keyName]);
                 } else {
                     $index = 'PRIMARY';
                 }
-                if (! empty($index)) {
+                if (!empty($index)) {
                     $result[] = $index;
                 }
             }

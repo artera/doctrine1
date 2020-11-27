@@ -67,7 +67,7 @@ class Doctrine_Parser_Xml extends Doctrine_Parser
         foreach ($array as $key => $value) {
             $key = preg_replace('/[^a-z]/i', '', $key);
 
-            if (is_array($value) && ! empty($value)) {
+            if (is_array($value) && !empty($value)) {
                 $node = $xml->addChild($key);
 
                 foreach ($value as $k => $v) {
@@ -135,10 +135,10 @@ class Doctrine_Parser_Xml extends Doctrine_Parser
                 if (count($values) > 0) {
                     $return[$element] = $this->prepareData($value);
                 } else {
-                    if (! isset($return[$element])) {
+                    if (!isset($return[$element])) {
                         $return[$element] = (string) $value;
                     } else {
-                        if (! is_array($return[$element])) {
+                        if (!is_array($return[$element])) {
                             $return[$element] = [$return[$element], (string) $value];
                         } else {
                             $return[$element][] = (string) $value;

@@ -136,7 +136,7 @@ class Doctrine_Hook
      */
     public function hookWhere($params)
     {
-        if (! is_array($params)) {
+        if (!is_array($params)) {
             return false;
         }
         foreach ($params as $name => $value) {
@@ -151,7 +151,7 @@ class Doctrine_Hook
                 $map   = $this->query->getQueryComponent($alias);
                 $table = $map['table'];
 
-                if (! $table) {
+                if (!$table) {
                     throw new Doctrine_Exception('Unknown alias ' . $alias);
                 }
 
@@ -182,7 +182,7 @@ class Doctrine_Hook
      */
     public function hookOrderby($params)
     {
-        if (! is_array($params)) {
+        if (!is_array($params)) {
             return false;
         }
         foreach ($params as $name) {

@@ -168,7 +168,7 @@ abstract class Doctrine_Task
         $requiredArguments = $this->getRequiredArguments();
 
         foreach ($requiredArguments as $arg) {
-            if (! isset($this->arguments[$arg])) {
+            if (!isset($this->arguments[$arg])) {
                 return false;
             }
         }
@@ -251,7 +251,7 @@ abstract class Doctrine_Task
      */
     protected function setTaskName($taskName)
     {
-        if (! self::validateTaskName($taskName)) {
+        if (!self::validateTaskName($taskName)) {
             throw new InvalidArgumentException(
                 sprintf('The task name "%s", in %s, is invalid', $taskName, get_class($this))
             );

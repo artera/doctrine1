@@ -42,7 +42,7 @@ class Doctrine_Query_JoinCondition extends Doctrine_Query_Condition
         $e         = $this->_tokenizer->sqlExplode($condition);
 
         foreach ($e as $k => $v) {
-            if (! $v) {
+            if (!$v) {
                 unset($e[$k]);
             }
         }
@@ -105,7 +105,7 @@ class Doctrine_Query_JoinCondition extends Doctrine_Query_Condition
 
                     $value = '(' . implode(', ', $value) . ')';
                 }
-            } elseif (! $hasRightAggExpression) {
+            } elseif (!$hasRightAggExpression) {
                 // Possible expression found (field1 AND field2)
                 // In relation to ticket #1488
                 $e     = $this->_tokenizer->bracketExplode($value, [' AND ', ' \&\& '], '(', ')');

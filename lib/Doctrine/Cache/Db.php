@@ -41,14 +41,14 @@ class Doctrine_Cache_Db extends Doctrine_Cache_Driver
      */
     public function __construct($options = [])
     {
-        if (! isset($options['connection'])
-            || ! ($options['connection'] instanceof Doctrine_Connection)
+        if (!isset($options['connection'])
+            || !($options['connection'] instanceof Doctrine_Connection)
         ) {
             throw new Doctrine_Cache_Exception('Connection option not set.');
         }
 
-        if (! isset($options['tableName'])
-            || ! is_string($options['tableName'])
+        if (!isset($options['tableName'])
+            || !is_string($options['tableName'])
         ) {
             throw new Doctrine_Cache_Exception('Table name option not set.');
         }
@@ -83,7 +83,7 @@ class Doctrine_Cache_Db extends Doctrine_Cache_Driver
 
         $result = $this->getConnection()->execute($sql, [$id])->fetchAll(Doctrine_Core::FETCH_NUM);
 
-        if (! isset($result[0])) {
+        if (!isset($result[0])) {
             return false;
         }
 

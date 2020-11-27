@@ -57,7 +57,7 @@ namespace Tests\Tickets {
             $weekdayOids = [];
             foreach ($semester->Courses as $course) {
                 foreach ($course->Weekdays as $weekday) {
-                    if (! in_array($weekday->getOid(), $weekdayOids)) {
+                    if (!in_array($weekday->getOid(), $weekdayOids)) {
                         $weekdayOids[] = $weekday->getOid();
                     }
                     $this->assertTrue(is_numeric($weekday->id));

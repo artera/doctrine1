@@ -123,7 +123,7 @@ class Doctrine_Hydrator
             $mode = $this->_hydrationMode;
         }
 
-        if (! isset($this->_hydrators[$mode])) {
+        if (!isset($this->_hydrators[$mode])) {
             throw new Doctrine_Hydrator_Exception('Invalid hydration mode specified: ' . $this->_hydrationMode);
         }
 

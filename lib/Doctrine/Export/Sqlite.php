@@ -45,13 +45,13 @@ class Doctrine_Export_Sqlite extends Doctrine_Export
      */
     public function dropDatabase($databaseFile)
     {
-        if (! @file_exists($databaseFile)) {
+        if (!@file_exists($databaseFile)) {
             throw new Doctrine_Export_Exception('database does not exist');
         }
 
         $result = @unlink($databaseFile);
 
-        if (! $result) {
+        if (!$result) {
             throw new Doctrine_Export_Exception('could not remove the database file');
         }
     }
@@ -165,7 +165,7 @@ class Doctrine_Export_Sqlite extends Doctrine_Export
      */
     public function createTableSql($name, array $fields, array $options = [])
     {
-        if (! $name) {
+        if (!$name) {
             throw new Doctrine_Export_Exception('no valid table name specified');
         }
 
@@ -184,7 +184,7 @@ class Doctrine_Export_Sqlite extends Doctrine_Export
             }
         }
 
-        if (! $autoinc && isset($options['primary']) && ! empty($options['primary'])) {
+        if (!$autoinc && isset($options['primary']) && !empty($options['primary'])) {
             $keyColumns = array_values($options['primary']);
             $keyColumns = array_map([$this->conn, 'quoteIdentifier'], $keyColumns);
             $queryFields .= ', PRIMARY KEY(' . implode(', ', $keyColumns) . ')';
@@ -205,7 +205,7 @@ class Doctrine_Export_Sqlite extends Doctrine_Export
 
         $query[] = $sql;
 
-        if (isset($options['indexes']) && ! empty($options['indexes'])) {
+        if (isset($options['indexes']) && !empty($options['indexes'])) {
             foreach ($options['indexes'] as $index => $definition) {
                 $query[] = $this->createIndexSql($name, $index, $definition);
             }
@@ -306,7 +306,7 @@ class Doctrine_Export_Sqlite extends Doctrine_Export
      */
     public function alterTableSql($name, array $changes, $check = false)
     {
-        if (! $name) {
+        if (!$name) {
             throw new Doctrine_Export_Exception('no valid table name specified');
         }
         foreach ($changes as $changeName => $change) {
@@ -326,12 +326,12 @@ class Doctrine_Export_Sqlite extends Doctrine_Export
         }
 
         $query = '';
-        if (! empty($changes['name'])) {
+        if (!empty($changes['name'])) {
             $change_name = $this->conn->quoteIdentifier($changes['name']);
             $query .= 'RENAME TO ' . $change_name;
         }
 
-        if (! empty($changes['add']) && is_array($changes['add'])) {
+        if (!empty($changes['add']) && is_array($changes['add'])) {
             foreach ($changes['add'] as $fieldName => $field) {
                 if ($query) {
                     $query .= ', ';
@@ -341,13 +341,13 @@ class Doctrine_Export_Sqlite extends Doctrine_Export
         }
 
         $rename = [];
-        if (! empty($changes['rename']) && is_array($changes['rename'])) {
+        if (!empty($changes['rename']) && is_array($changes['rename'])) {
             foreach ($changes['rename'] as $fieldName => $field) {
                 $rename[$field['name']] = $fieldName;
             }
         }
 
-        if (! empty($changes['change']) && is_array($changes['change'])) {
+        if (!empty($changes['change']) && is_array($changes['change'])) {
             foreach ($changes['change'] as $fieldName => $field) {
                 if ($query) {
                     $query .= ', ';
@@ -364,7 +364,7 @@ class Doctrine_Export_Sqlite extends Doctrine_Export
             }
         }
 
-        if (! empty($rename) && is_array($rename)) {
+        if (!empty($rename) && is_array($rename)) {
             foreach ($rename as $renameName => $renamedField) {
                 if ($query) {
                     $query .= ', ';
@@ -376,7 +376,7 @@ class Doctrine_Export_Sqlite extends Doctrine_Export
             }
         }
 
-        if (! $query) {
+        if (!$query) {
             return false;
         }
 

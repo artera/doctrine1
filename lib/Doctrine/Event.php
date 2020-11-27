@@ -231,7 +231,7 @@ class Doctrine_Event
      */
     public function __get($option)
     {
-        if (! isset($this->_options[$option])) {
+        if (!isset($this->_options[$option])) {
             return null;
         }
 

@@ -109,7 +109,7 @@ class Doctrine_Import_Sqlite extends Doctrine_Import
         foreach ($indexes as $sql) {
             if (preg_match('/^create unique index ([^ ]+) on /i', $sql, $tmp)) {
                 $index = $this->conn->formatter->fixIndexName($tmp[1]);
-                if (! empty($index)) {
+                if (!empty($index)) {
                     $result[$index] = true;
                 }
             }
@@ -212,7 +212,7 @@ class Doctrine_Import_Sqlite extends Doctrine_Import
         $result = [];
         foreach ($views as $row) {
             if (preg_match("/^create view .* \bfrom\b\s+\b{$table}\b /i", $row['sql'])) {
-                if (! empty($row['name'])) {
+                if (!empty($row['name'])) {
                     $result[$row['name']] = true;
                 }
             }

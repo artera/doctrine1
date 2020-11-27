@@ -203,7 +203,7 @@ class Doctrine_Import_Schema
      */
     public function setOptions($options)
     {
-        if (! empty($options)) {
+        if (!empty($options)) {
             $this->_options = $options;
         }
     }
@@ -278,7 +278,7 @@ class Doctrine_Import_Schema
         }
 
         foreach ($array as $name => $definition) {
-            if (! empty($models) && !in_array($definition['className'], $models)) {
+            if (!empty($models) && !in_array($definition['className'], $models)) {
                 continue;
             }
 
@@ -354,10 +354,10 @@ class Doctrine_Import_Schema
 
             $columns = isset($table['columns']) ? $table['columns']:[];
 
-            if (! empty($columns)) {
+            if (!empty($columns)) {
                 foreach ($columns as $columnName => $field) {
                     // Support short syntax: my_column: integer(4)
-                    if (! is_array($field)) {
+                    if (!is_array($field)) {
                         $original      = $field;
                         $field         = [];
                         $field['type'] = $original;
@@ -420,7 +420,7 @@ class Doctrine_Import_Schema
 
             // Apply the default values
             foreach ($defaults as $key => $defaultValue) {
-                if (isset($table[$key]) && ! isset($build[$className][$key])) {
+                if (isset($table[$key]) && !isset($build[$className][$key])) {
                     $build[$className][$key] = $table[$key];
                 } else {
                     $build[$className][$key] = isset($build[$className][$key]) ? $build[$className][$key]:$defaultValue;
@@ -454,11 +454,11 @@ class Doctrine_Import_Schema
     {
         // Apply default inheritance configuration
         foreach ($array as $className => $definition) {
-            if (! empty($array[$className]['inheritance'])) {
+            if (!empty($array[$className]['inheritance'])) {
                 $this->_validateSchemaElement('inheritance', array_keys($definition['inheritance']), $className . '->inheritance');
 
                 // Default inheritance to concrete inheritance
-                if (! isset($array[$className]['inheritance']['type'])) {
+                if (!isset($array[$className]['inheritance']['type'])) {
                     $array[$className]['inheritance']['type'] = 'concrete';
                 }
 
@@ -466,18 +466,18 @@ class Doctrine_Import_Schema
                 // Adds keyField to the parent class automatically
                 if ($array[$className]['inheritance']['type'] == 'column_aggregation') {
                     // Set the keyField to 'type' by default
-                    if (! isset($array[$className]['inheritance']['keyField'])) {
+                    if (!isset($array[$className]['inheritance']['keyField'])) {
                         $array[$className]['inheritance']['keyField'] = 'type';
                     }
 
                     // Set the keyValue to the name of the child class if it does not exist
-                    if (! isset($array[$className]['inheritance']['keyValue'])) {
+                    if (!isset($array[$className]['inheritance']['keyValue'])) {
                         $array[$className]['inheritance']['keyValue'] = $className;
                     }
 
                     $parent = $this->_findBaseSuperClass($array, $definition['className']);
                     // Add the keyType column to the parent if a definition does not already exist
-                    if (! isset($array[$parent]['columns'][$array[$className]['inheritance']['keyField']])) {
+                    if (!isset($array[$parent]['columns'][$array[$className]['inheritance']['keyField']])) {
                         $array[$parent]['columns'][$array[$className]['inheritance']['keyField']] = ['name' => $array[$className]['inheritance']['keyField'], 'type' => 'string', 'length' => 255];
                     }
                 }
@@ -516,7 +516,7 @@ class Doctrine_Import_Schema
                         $superClass = $multiInheritanceDef['inheritance']['extends'];
 
                         // keep original keyField with it's keyValue
-                        if (! isset($inheritanceFields[$multiInheritanceDef['inheritance']['keyField']])) {
+                        if (!isset($inheritanceFields[$multiInheritanceDef['inheritance']['keyField']])) {
                             $inheritanceFields[$multiInheritanceDef['inheritance']['keyField']] = $multiInheritanceDef['inheritance']['keyValue'];
                         }
                         $multiInheritanceDef = $array[$superClass];
@@ -562,7 +562,7 @@ class Doctrine_Import_Schema
         // Handle auto detecting relations by the names of columns
         // User.contact_id will automatically create User hasOne Contact local => contact_id, foreign => id
         foreach ($array as $className => $properties) {
-            if (isset($properties['columns']) && ! empty($properties['columns']) && isset($properties['detect_relations']) && $properties['detect_relations']) {
+            if (isset($properties['columns']) && !empty($properties['columns']) && isset($properties['detect_relations']) && $properties['detect_relations']) {
                 foreach ($properties['columns'] as $column) {
                     // Check if the column we are inflecting has a _id on the end of it before trying to inflect it and find
                     // the class name for the column
@@ -584,7 +584,7 @@ class Doctrine_Import_Schema
         }
 
         foreach ($array as $name => $properties) {
-            if (! isset($properties['relations'])) {
+            if (!isset($properties['relations'])) {
                 continue;
             }
 
@@ -593,7 +593,7 @@ class Doctrine_Import_Schema
 
             foreach ($relations as $alias => $relation) {
                 $class = isset($relation['class']) ? $relation['class']:$alias;
-                if (! isset($array[$class])) {
+                if (!isset($array[$class])) {
                     continue;
                 }
                 $relation['class'] = $class;
@@ -683,7 +683,7 @@ class Doctrine_Import_Schema
                 }
 
                 // Make sure it doesn't already exist
-                if (! isset($this->_relations[$relation['class']][$newRelation['alias']])) {
+                if (!isset($this->_relations[$relation['class']][$newRelation['alias']])) {
                     $newRelation['key']                                          = $this->_buildUniqueRelationKey($newRelation);
                     $this->_relations[$relation['class']][$newRelation['alias']] = $newRelation;
                 }
@@ -706,12 +706,12 @@ class Doctrine_Import_Schema
             $existingRelations = [];
             $uniqueRelations   = [];
             foreach ($relations as $relation) {
-                if (! in_array($relation['key'], $existingRelations)) {
+                if (!in_array($relation['key'], $existingRelations)) {
                     $existingRelations[] = $relation['key'];
                     $uniqueRelations     = array_merge($uniqueRelations, [$relation['alias'] => $relation]);
                 } else {
                     // check to see if this relationship is not autogenerated, if it's not, then the user must have explicitly declared it
-                    if (! isset($relation['autogenerated']) || $relation['autogenerated'] != true) {
+                    if (!isset($relation['autogenerated']) || $relation['autogenerated'] != true) {
                         $uniqueRelations = array_merge($uniqueRelations, [$relation['alias'] => $relation]);
                     }
                 }
@@ -758,7 +758,7 @@ class Doctrine_Import_Schema
 
         $validation = array_flip($validation);
         foreach ($element as $key => $value) {
-            if (! isset($validation[$value])) {
+            if (!isset($validation[$value])) {
                 throw new Doctrine_Import_Exception(
                     sprintf('Invalid schema element named "' . $value . '" at path "' . $path . '"')
                 );

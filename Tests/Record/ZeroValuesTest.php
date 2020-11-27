@@ -37,7 +37,7 @@ class ZeroValuesTest extends DoctrineUnitTestCase
 
         $this->assertSame($users[0]['is_super_admin'], false);
         // check for aggregate bug
-        $this->assertTrue(! isset($users[0][0]));
+        $this->assertTrue(!isset($users[0][0]));
     }
 
     public function testZeroValuesMaintained3()

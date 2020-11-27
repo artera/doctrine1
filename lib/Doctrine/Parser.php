@@ -123,7 +123,7 @@ abstract class Doctrine_Parser
     public function doLoad($path)
     {
         ob_start();
-        if (! file_exists($path)) {
+        if (!file_exists($path)) {
             $contents = $path;
             $path     = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'dparser_' . microtime();
 

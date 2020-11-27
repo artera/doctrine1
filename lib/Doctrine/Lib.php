@@ -202,9 +202,9 @@ class Doctrine_Lib
                             $args[2][$key] = self::arrayDeepMerge($args[0][$key], $args[1][$key]);
                         } elseif ($isKey0 && $isKey1) {
                             $args[2][$key] = $args[1][$key];
-                        } elseif (! $isKey1) {
+                        } elseif (!$isKey1) {
                             $args[2][$key] = $args[0][$key];
-                        } elseif (! $isKey0) {
+                        } elseif (!$isKey0) {
                             $args[2][$key] = $args[1][$key];
                         }
                     }
@@ -236,7 +236,7 @@ class Doctrine_Lib
      */
     public static function makeDirectories($path, $mode = 0777)
     {
-        if (! $path) {
+        if (!$path) {
             return false;
         }
 
@@ -295,7 +295,7 @@ class Doctrine_Lib
         }
 
         // Make destination directory
-        if (! is_dir($dest)) {
+        if (!is_dir($dest)) {
             mkdir($dest);
         }
 

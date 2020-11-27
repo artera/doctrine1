@@ -79,7 +79,7 @@ class Doctrine_Expression
      */
     public function getConnection()
     {
-        if (! isset($this->_conn)) {
+        if (!isset($this->_conn)) {
             return Doctrine_Manager::connection();
         }
 

@@ -82,7 +82,7 @@ class Doctrine_Data_Export extends Doctrine_Data
         }
 
         foreach ($models as $name) {
-            if (! empty($specifiedModels) and ! in_array($name, $specifiedModels)) {
+            if (!empty($specifiedModels) and !in_array($name, $specifiedModels)) {
                 continue;
             }
 
@@ -119,12 +119,12 @@ class Doctrine_Data_Export extends Doctrine_Data
         if ($this->exportIndividualFiles()) {
             if (is_array($directory)) {
                 throw new Doctrine_Data_Exception('You must specify a single path to a folder in order to export individual files.');
-            } elseif (! is_dir($directory) && is_file($directory)) {
+            } elseif (!is_dir($directory) && is_file($directory)) {
                 $directory = dirname($directory);
             }
 
             foreach ($data as $className => $classData) {
-                if (! empty($classData)) {
+                if (!empty($classData)) {
                     Doctrine_Parser::dump([$className => $classData], $format, $directory . DIRECTORY_SEPARATOR . $className . '.' . $format);
                 }
             }
@@ -133,7 +133,7 @@ class Doctrine_Data_Export extends Doctrine_Data
                 $directory .= DIRECTORY_SEPARATOR . 'data.' . $format;
             }
 
-            if (! empty($data)) {
+            if (!empty($data)) {
                 return Doctrine_Parser::dump($data, $format, $directory);
             }
         }
@@ -167,7 +167,7 @@ class Doctrine_Data_Export extends Doctrine_Data
                 $recordData = $record->toArray(false);
 
                 foreach ($recordData as $key => $value) {
-                    if (! is_array($keys)) {
+                    if (!is_array($keys)) {
                         $keys = [$keys];
                     }
 
@@ -181,7 +181,7 @@ class Doctrine_Data_Export extends Doctrine_Data
                     }
 
                     if ($relation = $this->isRelation($record, $key)) {
-                        if (! $value) {
+                        if (!$value) {
                             continue;
                         }
                         $relationAlias  = $relation['alias'];
@@ -193,7 +193,7 @@ class Doctrine_Data_Export extends Doctrine_Data
                         }
 
                         // If relation is null or does not exist then continue
-                        if ($relationRecord instanceof Doctrine_Null || ! $relationRecord) {
+                        if ($relationRecord instanceof Doctrine_Null || !$relationRecord) {
                             continue;
                         }
 

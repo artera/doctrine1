@@ -62,7 +62,7 @@ class Doctrine_Export_Schema
         // we iterate through the diff of previously declared classes
         // and currently declared classes
         foreach ($loadedModels as $className) {
-            if (! empty($models) && !in_array($className, $models)) {
+            if (!empty($models) && !in_array($className, $models)) {
                 continue;
             }
 

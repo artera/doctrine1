@@ -222,7 +222,7 @@ class Doctrine_Export extends Doctrine_Connection_Module
      */
     public function createTableSql($name, array $fields, array $options = [])
     {
-        if (! $name) {
+        if (!$name) {
             throw new Doctrine_Export_Exception('no valid table name specified');
         }
 
@@ -233,12 +233,12 @@ class Doctrine_Export extends Doctrine_Connection_Module
         $queryFields = $this->getFieldDeclarationList($fields);
 
 
-        if (isset($options['primary']) && ! empty($options['primary'])) {
+        if (isset($options['primary']) && !empty($options['primary'])) {
             $primaryKeys = array_map([$this->conn, 'quoteIdentifier'], array_values($options['primary']));
             $queryFields .= ', PRIMARY KEY(' . implode(', ', $primaryKeys) . ')';
         }
 
-        if (isset($options['indexes']) && ! empty($options['indexes'])) {
+        if (isset($options['indexes']) && !empty($options['indexes'])) {
             foreach ($options['indexes'] as $index => $definition) {
                 $indexDeclaration = $this->getIndexDeclaration($index, $definition);
                 $queryFields .= ', ' . $indexDeclaration;
@@ -249,7 +249,7 @@ class Doctrine_Export extends Doctrine_Connection_Module
 
         $check = $this->getCheckDeclaration($fields);
 
-        if (! empty($check)) {
+        if (!empty($check)) {
             $query .= ', ' . $check;
         }
 
@@ -867,10 +867,10 @@ class Doctrine_Export extends Doctrine_Connection_Module
     public function getAdvancedForeignKeyOptions(array $definition)
     {
         $query = '';
-        if (! empty($definition['onUpdate'])) {
+        if (!empty($definition['onUpdate'])) {
             $query .= ' ON UPDATE ' . $this->getForeignKeyReferentialAction($definition['onUpdate']);
         }
-        if (! empty($definition['onDelete'])) {
+        if (!empty($definition['onDelete'])) {
             $query .= ' ON DELETE ' . $this->getForeignKeyReferentialAction($definition['onDelete']);
         }
         return $query;
@@ -919,20 +919,20 @@ class Doctrine_Export extends Doctrine_Connection_Module
         }
         $sql .= 'FOREIGN KEY (';
 
-        if (! isset($definition['local'])) {
+        if (!isset($definition['local'])) {
             throw new Doctrine_Export_Exception('Local reference field missing from definition.');
         }
-        if (! isset($definition['foreign'])) {
+        if (!isset($definition['foreign'])) {
             throw new Doctrine_Export_Exception('Foreign reference field missing from definition.');
         }
-        if (! isset($definition['foreignTable'])) {
+        if (!isset($definition['foreignTable'])) {
             throw new Doctrine_Export_Exception('Foreign reference table missing from definition.');
         }
 
-        if (! is_array($definition['local'])) {
+        if (!is_array($definition['local'])) {
             $definition['local'] = [$definition['local']];
         }
-        if (! is_array($definition['foreign'])) {
+        if (!is_array($definition['foreign'])) {
             $definition['foreign'] = [$definition['foreign']];
         }
 
@@ -1020,7 +1020,7 @@ class Doctrine_Export extends Doctrine_Connection_Module
             $connection     = Doctrine_Manager::getInstance()->getConnectionForComponent($class);
             $connectionName = $connection->getName();
 
-            if (! isset($connections[$connectionName])) {
+            if (!isset($connections[$connectionName])) {
                 $connections[$connectionName] = [
                      'create_tables'    => [],
                      'create_sequences' => [],
@@ -1093,7 +1093,7 @@ class Doctrine_Export extends Doctrine_Connection_Module
             $build[$connectionName] = array_unique(array_merge($sql['create_tables'], $sql['create_sequences'], $sql['create_indexes'], $sql['alters'], $sql['create_triggers']));
         }
 
-        if (! $groupByConnection) {
+        if (!$groupByConnection) {
             $new = [];
             foreach ($build as $connectionname => $sql) {
                 $new = array_unique(array_merge($new, $sql));

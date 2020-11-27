@@ -53,7 +53,7 @@ class Doctrine_Query_Check
      */
     public function __construct($table)
     {
-        if (! ($table instanceof Doctrine_Table)) {
+        if (!($table instanceof Doctrine_Table)) {
             $table = Doctrine_Manager::getInstance()
                 ->getCurrentConnection()
                 ->getTable($table);
@@ -154,7 +154,7 @@ class Doctrine_Query_Check
 
             $expr = $this->table->getConnection()->expression;
 
-            if (! method_exists($expr, $func)) {
+            if (!method_exists($expr, $func)) {
                 throw new Doctrine_Query_Exception('Unknown function ' . $func);
             }
 

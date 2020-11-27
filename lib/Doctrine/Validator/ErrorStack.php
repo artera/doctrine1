@@ -74,7 +74,7 @@ class Doctrine_Validator_ErrorStack extends Doctrine_Access implements Countable
     public function add($invalidFieldName, $errorCode = 'general')
     {
         if (is_object($errorCode)) {
-            if (! ($errorCode instanceof Doctrine_Validator_Driver)) {
+            if (!($errorCode instanceof Doctrine_Validator_Driver)) {
                 throw new Doctrine_Exception('Validators must be an instance of Doctrine_Validator_Driver');
             }
             $validator                              = $errorCode;

@@ -322,13 +322,13 @@ class Doctrine_DataDict_Mysql extends Doctrine_DataDict
      */
     public function getNativeDeclaration($field)
     {
-        if (! isset($field['type'])) {
+        if (!isset($field['type'])) {
             throw new Doctrine_DataDict_Exception('Missing column type.');
         }
 
         switch ($field['type']) {
             case 'char':
-                $length = (! empty($field['length'])) ? $field['length'] : false;
+                $length = (!empty($field['length'])) ? $field['length'] : false;
 
                 return $length ? 'CHAR(' . $length . ')' : 'CHAR(255)';
             case 'enum':
@@ -356,7 +356,7 @@ class Doctrine_DataDict_Mysql extends Doctrine_DataDict
             case 'varchar':
             case 'string':
             case 'gzip':
-                if (! isset($field['length'])) {
+                if (!isset($field['length'])) {
                     if (array_key_exists('default', $field)) {
                         $field['length'] = $this->conn->varchar_max_length;
                     } else {
@@ -372,7 +372,7 @@ class Doctrine_DataDict_Mysql extends Doctrine_DataDict
             case 'array':
             case 'object':
             case 'clob':
-                if (! empty($field['length'])) {
+                if (!empty($field['length'])) {
                     $length = $field['length'];
                     if ($length <= 255) {
                         return 'TINYTEXT';
@@ -384,7 +384,7 @@ class Doctrine_DataDict_Mysql extends Doctrine_DataDict
                 }
                 return 'LONGTEXT';
             case 'blob':
-                if (! empty($field['length'])) {
+                if (!empty($field['length'])) {
                     $length = $field['length'];
                     if ($length <= 255) {
                         return 'TINYBLOB';
@@ -397,7 +397,7 @@ class Doctrine_DataDict_Mysql extends Doctrine_DataDict
                 return 'LONGBLOB';
             case 'integer':
             case 'int':
-                if (! empty($field['length'])) {
+                if (!empty($field['length'])) {
                     $length = $field['length'];
                     if ($length <= 1) {
                         return 'TINYINT';
@@ -457,14 +457,14 @@ class Doctrine_DataDict_Mysql extends Doctrine_DataDict
         } else {
             $length  = strtok('(), ');
             $decimal = strtok('(), ');
-            if (! $decimal) {
+            if (!$decimal) {
                 $decimal = null;
             }
         }
         $type     = [];
         $unsigned = $fixed = null;
 
-        if (! isset($field['name'])) {
+        if (!isset($field['name'])) {
             // Mysql's DESCRIBE returns a "Field" column, not a "Name" column
             // this method is called with output from that query in Doctrine_Import_Mysql::listTableColumns
             if (isset($field['field'])) {
@@ -676,7 +676,7 @@ class Doctrine_DataDict_Mysql extends Doctrine_DataDict
     {
         $unique  = (isset($field['unique']) && $field['unique']) ? ' UNIQUE' : '';
         $default = $autoinc = '';
-        if (! empty($field['autoincrement'])) {
+        if (!empty($field['autoincrement'])) {
             $autoinc = ' AUTO_INCREMENT';
         } elseif (array_key_exists('default', $field)) {
             if ($field['default'] === '') {

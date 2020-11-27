@@ -52,8 +52,8 @@ class Doctrine_Relation_ForeignKey extends Doctrine_Relation
             }
         }
         if ($this->isOneToOne()) {
-            if (! $record->exists() || empty($id)
-                || ! $this->definition['table']->getAttribute(Doctrine_Core::ATTR_LOAD_REFERENCES)
+            if (!$record->exists() || empty($id)
+                || !$this->definition['table']->getAttribute(Doctrine_Core::ATTR_LOAD_REFERENCES)
             ) {
                 $related = $this->getTable()->create();
             } else {
@@ -70,8 +70,8 @@ class Doctrine_Relation_ForeignKey extends Doctrine_Relation
                 false
             );
         } else {
-            if (! $record->exists() || empty($id)
-                || ! $this->definition['table']->getAttribute(Doctrine_Core::ATTR_LOAD_REFERENCES)
+            if (!$record->exists() || empty($id)
+                || !$this->definition['table']->getAttribute(Doctrine_Core::ATTR_LOAD_REFERENCES)
             ) {
                 $related = Doctrine_Collection::create($this->getTable());
             } else {
@@ -92,7 +92,7 @@ class Doctrine_Relation_ForeignKey extends Doctrine_Relation
      */
     public function getCondition($alias = null)
     {
-        if (! $alias) {
+        if (!$alias) {
             $alias = $this->getTable()->getComponentName();
         }
         $conditions = [];

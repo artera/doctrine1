@@ -107,19 +107,19 @@ abstract class Doctrine_Hydrator_Graph extends Doctrine_Hydrator_Abstract
         $event = new Doctrine_Event(null, Doctrine_Event::HYDRATE, null);
 
         if ($this->_hydrationMode == Doctrine_Core::HYDRATE_ON_DEMAND) {
-            if (! is_null($this->_priorRow)) {
+            if (!is_null($this->_priorRow)) {
                 $data            = $this->_priorRow;
                 $this->_priorRow = null;
             } else {
                 $data = $stmt->fetch(Doctrine_Core::FETCH_ASSOC);
-                if (! $data) {
+                if (!$data) {
                     return $result;
                 }
             }
             $activeRootIdentifier = null;
         } else {
             $data = $stmt->fetch(Doctrine_Core::FETCH_ASSOC);
-            if (! $data) {
+            if (!$data) {
                 return $result;
             }
         }
@@ -159,7 +159,7 @@ abstract class Doctrine_Hydrator_Graph extends Doctrine_Hydrator_Abstract
             $index = false;
 
             // Check for an existing element
-            if ($isSimpleQuery || ! isset($identifierMap[$rootAlias][$id[$rootAlias]])) {
+            if ($isSimpleQuery || !isset($identifierMap[$rootAlias][$id[$rootAlias]])) {
                 $element = $this->getElement($rowData[$rootAlias], $componentName);
                 $event->set('data', $element);
                 $listeners[$componentName]->postHydrate($event);
@@ -167,7 +167,7 @@ abstract class Doctrine_Hydrator_Graph extends Doctrine_Hydrator_Abstract
 
                 // do we need to index by a custom field?
                 if ($field = $this->_getCustomIndexField($rootAlias)) {
-                    if (! isset($element[$field])) {
+                    if (!isset($element[$field])) {
                         throw new Doctrine_Hydrator_Exception("Couldn't hydrate. Found a non-existent key named '$field'.");
                     } elseif (isset($result[$element[$field]])) {
                         throw new Doctrine_Hydrator_Exception("Couldn't hydrate. Found non-unique key mapping named '{$element[$field]}' for the field named '$field'.");
@@ -201,7 +201,7 @@ abstract class Doctrine_Hydrator_Graph extends Doctrine_Hydrator_Abstract
                 $instances[$componentName]->preHydrate($event);
 
                 // It would be nice if this could be moved to the query parser but I could not find a good place to implement it
-                if (! isset($map['parent'])) {
+                if (!isset($map['parent'])) {
                     throw new Doctrine_Hydrator_Exception(
                         '"' . $componentName . '" with an alias of "' . $dqlAlias . '"' .
                         ' in your query does not reference the parent component it is related to.'
@@ -214,7 +214,7 @@ abstract class Doctrine_Hydrator_Graph extends Doctrine_Hydrator_Abstract
 
                 $path = $parent . '.' . $dqlAlias;
 
-                if (! isset($prev[$parent])) {
+                if (!isset($prev[$parent])) {
                     unset($prev[$dqlAlias]); // Ticket #1228
                     continue;
                 }
@@ -222,21 +222,21 @@ abstract class Doctrine_Hydrator_Graph extends Doctrine_Hydrator_Abstract
                 $indexField = $this->_getCustomIndexField($dqlAlias);
 
                 // check the type of the relation
-                if (! $relation->isOneToOne() && $this->initRelated($prev[$parent], $relationAlias, $indexField)) {
+                if (!$relation->isOneToOne() && $this->initRelated($prev[$parent], $relationAlias, $indexField)) {
                     $oneToOne = false;
                     // append element
                     if (isset($nonemptyComponents[$dqlAlias])) {
                         $indexExists  = isset($identifierMap[$path][$id[$parent]][$id[$dqlAlias]]);
                         $index        = $indexExists ? $identifierMap[$path][$id[$parent]][$id[$dqlAlias]] : false;
                         $indexIsValid = $index !== false ? isset($prev[$parent][$relationAlias][$index]) : false;
-                        if (! $indexExists || ! $indexIsValid) {
+                        if (!$indexExists || !$indexIsValid) {
                             $element = $this->getElement($data, $componentName);
                             $event->set('data', $element);
                             $listeners[$componentName]->postHydrate($event);
                             $instances[$componentName]->postHydrate($event);
 
                             if ($field = $this->_getCustomIndexField($dqlAlias)) {
-                                if (! isset($element[$field])) {
+                                if (!isset($element[$field])) {
                                     throw new Doctrine_Hydrator_Exception("Couldn't hydrate. Found a non-existent key named '$field'.");
                                 } elseif (isset($prev[$parent][$relationAlias][$element[$field]])) {
                                     throw new Doctrine_Hydrator_Exception("Couldn't hydrate. Found non-unique key mapping named '$field'.");
@@ -258,9 +258,9 @@ abstract class Doctrine_Hydrator_Graph extends Doctrine_Hydrator_Abstract
                 } else {
                     // 1-1 relation
                     $oneToOne = true;
-                    if (! isset($nonemptyComponents[$dqlAlias]) && ! isset($prev[$parent][$relationAlias])) {
+                    if (!isset($nonemptyComponents[$dqlAlias]) && !isset($prev[$parent][$relationAlias])) {
                         $prev[$parent][$relationAlias] = $this->getNullPointer();
-                    } elseif (! isset($prev[$parent][$relationAlias])) {
+                    } elseif (!isset($prev[$parent][$relationAlias])) {
                         $element = $this->getElement($data, $componentName);
 
                         // [FIX] Tickets #1205 and #1237
@@ -302,7 +302,7 @@ abstract class Doctrine_Hydrator_Graph extends Doctrine_Hydrator_Abstract
 
         foreach ($data as $key => $value) {
             // Parse each column name only once. Cache the results.
-            if (! isset($cache[$key])) {
+            if (!isset($cache[$key])) {
                 // check ignored names. fastest solution for now. if we get more we'll start
                 // to introduce a list.
                 if ($this->_isIgnoredName($key)) {
@@ -361,7 +361,7 @@ abstract class Doctrine_Hydrator_Graph extends Doctrine_Hydrator_Abstract
                 $rowData[$dqlAlias][$fieldName] = $preparedValue;
             }
 
-            if (! isset($nonemptyComponents[$dqlAlias]) && $value !== null) {
+            if (!isset($nonemptyComponents[$dqlAlias]) && $value !== null) {
                 $nonemptyComponents[$dqlAlias] = true;
             }
         }
@@ -436,11 +436,11 @@ abstract class Doctrine_Hydrator_Graph extends Doctrine_Hydrator_Abstract
      */
     protected function _getClassnameToReturn(array &$data, $component)
     {
-        if (! isset($this->_tables[$component])) {
+        if (!isset($this->_tables[$component])) {
             $this->_tables[$component] = Doctrine_Core::getTable($component);
         }
 
-        if (! ($subclasses = $this->_tables[$component]->getOption('subclasses'))) {
+        if (!($subclasses = $this->_tables[$component]->getOption('subclasses'))) {
             return $component;
         }
 
@@ -462,7 +462,7 @@ abstract class Doctrine_Hydrator_Graph extends Doctrine_Hydrator_Abstract
 
         $matchedComponent = $matchedComponents[count($matchedComponents) - 1];
 
-        if (! isset($this->_tables[$matchedComponent])) {
+        if (!isset($this->_tables[$matchedComponent])) {
             $this->_tables[$matchedComponent] = Doctrine_Core::getTable($matchedComponent);
         }
 

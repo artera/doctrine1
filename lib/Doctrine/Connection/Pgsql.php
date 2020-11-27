@@ -149,10 +149,10 @@ class Doctrine_Connection_Pgsql extends Doctrine_Connection_Common
                 $query = $manip . ' ' . $from . ' WHERE ctid=(SELECT ctid FROM '
                        . $from . ' ' . $where . ' LIMIT ' . (int)$limit . ')';
             } else {
-                if (! empty($limit)) {
+                if (!empty($limit)) {
                     $query .= ' LIMIT ' . (int)$limit;
                 }
-                if (! empty($offset)) {
+                if (!empty($offset)) {
                     $query .= ' OFFSET ' . (int)$offset;
                 }
             }
@@ -172,7 +172,7 @@ class Doctrine_Connection_Pgsql extends Doctrine_Connection_Common
 
         $serverInfo = $this->fetchOne($query);
 
-        if (! $native) {
+        if (!$native) {
             $tmp = explode('.', $serverInfo, 3);
 
             if (empty($tmp[2]) && isset($tmp[1])

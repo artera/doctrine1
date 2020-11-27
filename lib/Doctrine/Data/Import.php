@@ -114,7 +114,7 @@ class Doctrine_Data_Import extends Doctrine_Data
     {
         $array = $this->doParsing();
 
-        if (! $append) {
+        if (!$append) {
             $this->purge(array_reverse(array_keys($array)));
         }
 
@@ -139,7 +139,7 @@ class Doctrine_Data_Import extends Doctrine_Data
             foreach ((array) $row as $key => $value) {
                 if ($table->hasRelation($key) && is_array($value)) {
                     // Skip associative arrays defining keys to relationships
-                    if (! isset($value[0]) || (isset($value[0]) && is_array($value[0]))) {
+                    if (!isset($value[0]) || (isset($value[0]) && is_array($value[0]))) {
                         $rel          = $table->getRelation($key);
                         $relClassName = $rel->getTable()->getOption('name');
                         $relRowKey    = $rowKey . '_' . $relClassName;
@@ -175,7 +175,7 @@ class Doctrine_Data_Import extends Doctrine_Data
         $relation = $record->getTable()->getRelation($relationName);
         $rowKey   = $this->_getRowKeyPrefix($relation->getTable()) . $rowKey;
 
-        if (! isset($this->_importedObjects[$rowKey])) {
+        if (!isset($this->_importedObjects[$rowKey])) {
             throw new Doctrine_Data_Exception(
                 sprintf('Invalid row key specified: %s, referred to in %s', $rowKey, $referringRowKey)
             );
@@ -184,7 +184,7 @@ class Doctrine_Data_Import extends Doctrine_Data
         $relatedRowKeyObject = $this->_importedObjects[$rowKey];
 
         $relationClass = $relation->getClass();
-        if (! $relatedRowKeyObject instanceof $relationClass) {
+        if (!$relatedRowKeyObject instanceof $relationClass) {
             throw new Doctrine_Data_Exception(
                 sprintf(
                     'Class referred to in "%s" is expected to be "%s" and "%s" was given',
@@ -220,7 +220,7 @@ class Doctrine_Data_Import extends Doctrine_Data
                 $obj->set($key, $value);
             } elseif ($obj->getTable()->hasRelation($key)) {
                 if (is_array($value)) {
-                    if (isset($value[0]) && ! is_array($value[0])) {
+                    if (isset($value[0]) && !is_array($value[0])) {
                         foreach ($value as $link) {
                             if ($obj->getTable()->getRelation($key)->getType() === Doctrine_Relation::ONE) {
                                 $obj->set($key, $this->_getImportedObject($link, $obj, $key, $rowKey));
@@ -263,7 +263,7 @@ class Doctrine_Data_Import extends Doctrine_Data
         $specifiedModels = $this->getModels();
 
         foreach ($array as $className => $data) {
-            if (! empty($specifiedModels) && !in_array($className, $specifiedModels)) {
+            if (!empty($specifiedModels) && !in_array($className, $specifiedModels)) {
                 continue;
             }
 

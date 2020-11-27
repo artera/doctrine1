@@ -115,7 +115,7 @@ class Doctrine_Migration_Diff
      */
     public function setTmpPath($tmpPath)
     {
-        if (! is_dir($tmpPath)) {
+        if (!is_dir($tmpPath)) {
             mkdir($tmpPath, 0777, true);
         }
         $this->_tmpPath = $tmpPath;
@@ -219,7 +219,7 @@ class Doctrine_Migration_Diff
         // Loop over the to schema information and compare it to the from
         foreach ($to as $className => $info) {
             // If the from doesn't have this class then it is a new table
-            if (! isset($from[$className])) {
+            if (!isset($from[$className])) {
                 $names   = ['type', 'charset', 'collate', 'indexes', 'foreignKeys', 'primary'];
                 $options = [];
                 foreach ($names as $name) {
@@ -236,7 +236,7 @@ class Doctrine_Migration_Diff
             // Check for new and changed columns
             foreach ($info['columns'] as $name => $column) {
                 // If column doesn't exist in the from schema information then it is a new column
-                if (isset($from[$className]) && ! isset($from[$className]['columns'][$name])) {
+                if (isset($from[$className]) && !isset($from[$className]['columns'][$name])) {
                     $this->_changes['created_columns'][$info['tableName']][$name] = $column;
                 }
                 // If column exists in the from schema information but is not the same then it is a changed column
@@ -248,7 +248,7 @@ class Doctrine_Migration_Diff
             foreach ($info['options']['foreignKeys'] as $name => $foreignKey) {
                 $foreignKey['name'] = $name;
                 // If foreign key doesn't exist in the from schema information then we need to add a index and the new fk
-                if (! isset($from[$className]['options']['foreignKeys'][$name])) {
+                if (!isset($from[$className]['options']['foreignKeys'][$name])) {
                     $this->_changes['created_foreign_keys'][$info['tableName']][$name] = $foreignKey;
                     $indexName                                                         = Doctrine_Manager::connection()->generateUniqueIndexName($info['tableName'], $foreignKey['local']);
                     $this->_changes['created_indexes'][$info['tableName']][$indexName] = ['fields' => [$foreignKey['local']]];
@@ -266,7 +266,7 @@ class Doctrine_Migration_Diff
             // Check for new indexes
             foreach ($info['options']['indexes'] as $name => $index) {
                 // If index doesn't exist in the from schema information
-                if (! isset($from[$className]['options']['indexes'][$name])) {
+                if (!isset($from[$className]['options']['indexes'][$name])) {
                     $this->_changes['created_indexes'][$info['tableName']][$name] = $index;
                 }
             }
@@ -274,7 +274,7 @@ class Doctrine_Migration_Diff
         // Loop over the from schema information and compare it to the to schema information
         foreach ($from as $className => $info) {
             // If the class exists in the from but not in the to then it is a dropped table
-            if (! isset($to[$className])) {
+            if (!isset($to[$className])) {
                 $table = ['tableName' => $info['tableName'],
                                'columns'   => $info['columns'],
                                'options'   => ['type'        => $info['options']['type'],
@@ -288,21 +288,21 @@ class Doctrine_Migration_Diff
             // Check for removed columns
             foreach ($info['columns'] as $name => $column) {
                 // If column exists in the from but not in the to then we need to remove it
-                if (isset($to[$className]) && ! isset($to[$className]['columns'][$name])) {
+                if (isset($to[$className]) && !isset($to[$className]['columns'][$name])) {
                     $this->_changes['dropped_columns'][$info['tableName']][$name] = $column;
                 }
             }
             // Check for dropped foreign keys
             foreach ($info['options']['foreignKeys'] as $name => $foreignKey) {
                 // If the foreign key exists in the from but not in the to then we need to drop it
-                if (! isset($to[$className]['options']['foreignKeys'][$name])) {
+                if (!isset($to[$className]['options']['foreignKeys'][$name])) {
                     $this->_changes['dropped_foreign_keys'][$info['tableName']][$name] = $foreignKey;
                 }
             }
             // Check for removed indexes
             foreach ($info['options']['indexes'] as $name => $index) {
                 // If the index exists in the from but not the to then we need to remove it
-                if (! isset($to[$className]['options']['indexes'][$name])) {
+                if (!isset($to[$className]['options']['indexes'][$name])) {
                     $this->_changes['dropped_indexes'][$info['tableName']][$name] = $index;
                 }
             }

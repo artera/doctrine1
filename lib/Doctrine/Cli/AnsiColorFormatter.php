@@ -91,15 +91,15 @@ class Doctrine_Cli_AnsiColorFormatter extends Doctrine_Cli_Formatter
      */
     public function format($text = '', $parameters = [], $stream = STDOUT)
     {
-        if (! $this->supportsColors($stream)) {
+        if (!$this->supportsColors($stream)) {
             return $text;
         }
 
-        if (! is_array($parameters) && 'NONE' == $parameters) {
+        if (!is_array($parameters) && 'NONE' == $parameters) {
             return $text;
         }
 
-        if (! is_array($parameters) && isset($this->_styles[$parameters])) {
+        if (!is_array($parameters) && isset($this->_styles[$parameters])) {
             $parameters = $this->_styles[$parameters];
         }
 
@@ -147,7 +147,7 @@ class Doctrine_Cli_AnsiColorFormatter extends Doctrine_Cli_Formatter
      */
     public function excerpt($text, $size = null)
     {
-        if (! $size) {
+        if (!$size) {
             $size = $this->_size;
         }
 

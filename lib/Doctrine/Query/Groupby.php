@@ -56,7 +56,7 @@ class Doctrine_Query_Groupby extends Doctrine_Query_Part
             } else {
                 if (substr($term[0], 0, 1) !== "'" && substr($term[0], -1) !== "'") {
                     if (strpos($term[0], '.') !== false) {
-                        if (! is_numeric($term[0])) {
+                        if (!is_numeric($term[0])) {
                             $e = explode('.', $term[0]);
 
                             $field = array_pop($e);
@@ -90,7 +90,7 @@ class Doctrine_Query_Groupby extends Doctrine_Query_Part
                                 $field = $table->getColumnName($field);
 
                                 // check column existence
-                                if (! $def) {
+                                if (!$def) {
                                     throw new Doctrine_Query_Exception('Unknown column ' . $field);
                                 }
 
@@ -109,8 +109,8 @@ class Doctrine_Query_Groupby extends Doctrine_Query_Part
                             }
                         }
                     } else {
-                        if (! empty($term[0])
-                            && ! is_numeric($term[0])
+                        if (!empty($term[0])
+                            && !is_numeric($term[0])
                             && $term[0] !== '?' && substr($term[0], 0, 1) !== ':'
                         ) {
                             $componentAlias = $this->query->getRootAlias();
@@ -160,7 +160,7 @@ class Doctrine_Query_Groupby extends Doctrine_Query_Part
                                 }
                             }
 
-                            if (! $found) {
+                            if (!$found) {
                                 $term[0] = $this->query->getSqlAggregateAlias($term[0]);
                             }
                         }

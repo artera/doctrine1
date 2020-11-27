@@ -134,7 +134,7 @@ abstract class Doctrine_Access implements ArrayAccess
      */
     public function offsetSet($offset, $value)
     {
-        if (! isset($offset)) {
+        if (!isset($offset)) {
             $this->add($value);
         } else {
             $this->set($offset, $value);

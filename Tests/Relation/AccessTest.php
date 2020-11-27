@@ -147,7 +147,7 @@ class AccessTest extends DoctrineUnitTestCase
         $other  = static::$connection->query($query);
         $check1 = [];
         foreach ($other as $oth) {
-            if (! isset($check1[$oth->other_thing_id])) {
+            if (!isset($check1[$oth->other_thing_id])) {
                 $check1[$oth->other_thing_id] = [];
             }
             $check1[$oth->other_thing_id][$oth->id] = $oth;
@@ -156,7 +156,7 @@ class AccessTest extends DoctrineUnitTestCase
         $ones   = static::$connection->query($query);
         $check2 = [];
         foreach ($ones as $one) {
-            if (! isset($check2[$one->one_thing_id])) {
+            if (!isset($check2[$one->one_thing_id])) {
                 $check2[$one->one_thing_id] = [];
             }
             $check2[$one->one_thing_id][$one->id] = $one;

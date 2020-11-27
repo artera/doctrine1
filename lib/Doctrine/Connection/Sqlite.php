@@ -107,7 +107,7 @@ class Doctrine_Connection_Sqlite extends Doctrine_Connection_Common
      */
     public function createDatabase()
     {
-        if (! $dsn = $this->getOption('dsn')) {
+        if (!$dsn = $this->getOption('dsn')) {
             throw new Doctrine_Connection_Exception('You must create your Doctrine_Connection by using a valid Doctrine style dsn in order to use the create/drop database functionality');
         }
 
@@ -123,7 +123,7 @@ class Doctrine_Connection_Sqlite extends Doctrine_Connection_Common
      */
     public function dropDatabase()
     {
-        if (! $dsn = $this->getOption('dsn')) {
+        if (!$dsn = $this->getOption('dsn')) {
             throw new Doctrine_Connection_Exception('You must create your Doctrine_Connection by using a valid Doctrine style dsn in order to use the create/drop database functionality');
         }
 

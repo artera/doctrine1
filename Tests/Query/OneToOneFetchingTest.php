@@ -140,7 +140,7 @@ class OneToOneFetchingTest extends DoctrineUnitTestCase
             // get the board for inspection
             $tmpBoard = $categories[0]['boards'][0];
 
-            $this->assertTrue(! isset($tmpBoard['lastEntry']));
+            $this->assertTrue(!isset($tmpBoard['lastEntry']));
 
         $board->lastEntryId = $lastEntryId;
         $board->save();
@@ -206,7 +206,7 @@ class OneToOneFetchingTest extends DoctrineUnitTestCase
 
         // get the board for inspection
         $tmpBoard = $categories[0]['boards'][0];
-        $this->assertTrue(! isset($tmpBoard['lastEntry']));
+        $this->assertTrue(!isset($tmpBoard['lastEntry']));
 
         $board->lastEntryId = $lastEntryId;
         //$board->save();

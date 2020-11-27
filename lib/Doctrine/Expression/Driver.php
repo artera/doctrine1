@@ -514,7 +514,7 @@ class Doctrine_Expression_Driver extends Doctrine_Connection_Module
      */
     public function in($column, $values)
     {
-        if (! is_array($values)) {
+        if (!is_array($values)) {
             $values = [$values];
         }
         $values = $this->getIdentifiers($values);

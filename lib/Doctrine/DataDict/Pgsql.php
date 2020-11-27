@@ -355,7 +355,7 @@ class Doctrine_DataDict_Pgsql extends Doctrine_DataDict
      */
     public function getNativeDeclaration(array $field)
     {
-        if (! isset($field['type'])) {
+        if (!isset($field['type'])) {
             throw new Doctrine_DataDict_Exception('Missing column type.');
         }
 
@@ -388,8 +388,8 @@ class Doctrine_DataDict_Pgsql extends Doctrine_DataDict
                 return 'BYTEA';
             case 'integer':
             case 'int':
-                if (! empty($field['autoincrement'])) {
-                    if (! empty($field['length'])) {
+                if (!empty($field['autoincrement'])) {
+                    if (!empty($field['length'])) {
                         $length = $field['length'];
                         if ($length > 4) {
                             return 'BIGSERIAL';
@@ -397,7 +397,7 @@ class Doctrine_DataDict_Pgsql extends Doctrine_DataDict
                     }
                     return 'SERIAL';
                 }
-                if (! empty($field['length'])) {
+                if (!empty($field['length'])) {
                     $length = $field['length'];
                     if ($length <= 2) {
                         return 'SMALLINT';
@@ -451,7 +451,7 @@ class Doctrine_DataDict_Pgsql extends Doctrine_DataDict
         $type     = [];
         $unsigned = $fixed = null;
 
-        if (! isset($field['name'])) {
+        if (!isset($field['name'])) {
             $field['name'] = '';
         }
 
@@ -633,12 +633,12 @@ class Doctrine_DataDict_Pgsql extends Doctrine_DataDict
     public function getIntegerDeclaration($name, $field)
     {
         /**
-        if ( ! empty($field['unsigned'])) {
+        if ( !empty($field['unsigned'])) {
             $this->conn->warnings[] = "unsigned integer field \"$name\" is being declared as signed integer";
         }
         */
 
-        if (! empty($field['autoincrement'])) {
+        if (!empty($field['autoincrement'])) {
             $name = $this->conn->quoteIdentifier($name, true);
             return $name . ' ' . $this->getNativeDeclaration($field);
         }

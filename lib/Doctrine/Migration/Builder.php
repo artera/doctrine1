@@ -150,21 +150,21 @@ END;
         $up   = [];
         $down = [];
 
-        if (! empty($changes['dropped_tables'])) {
+        if (!empty($changes['dropped_tables'])) {
             foreach ($changes['dropped_tables'] as $tableName => $table) {
                 $up[]   = $this->buildDropTable($table);
                 $down[] = $this->buildCreateTable($table);
             }
         }
 
-        if (! empty($changes['created_tables'])) {
+        if (!empty($changes['created_tables'])) {
             foreach ($changes['created_tables'] as $tableName => $table) {
                 $up[]   = $this->buildCreateTable($table);
                 $down[] = $this->buildDropTable($table);
             }
         }
 
-        if (! empty($changes['dropped_columns'])) {
+        if (!empty($changes['dropped_columns'])) {
             foreach ($changes['dropped_columns'] as $tableName => $removedColumns) {
                 foreach ($removedColumns as $name => $column) {
                     $up[]   = $this->buildRemoveColumn($tableName, $name, $column);
@@ -173,7 +173,7 @@ END;
             }
         }
 
-        if (! empty($changes['created_columns'])) {
+        if (!empty($changes['created_columns'])) {
             foreach ($changes['created_columns'] as $tableName => $addedColumns) {
                 foreach ($addedColumns as $name => $column) {
                     $up[]   = $this->buildAddColumn($tableName, $name, $column);
@@ -182,7 +182,7 @@ END;
             }
         }
 
-        if (! empty($changes['changed_columns'])) {
+        if (!empty($changes['changed_columns'])) {
             foreach ($changes['changed_columns'] as $tableName => $changedColumns) {
                 foreach ($changedColumns as $name => $column) {
                     $up[] = $this->buildChangeColumn($tableName, $name, $column);
@@ -190,7 +190,7 @@ END;
             }
         }
 
-        if (! empty($up) || ! empty($down)) {
+        if (!empty($up) || !empty($down)) {
             $up        = implode("\n", $up);
             $down      = implode("\n", $down);
             $className = 'Version' . $this->migration->getNextMigrationClassVersion();
@@ -199,9 +199,9 @@ END;
 
         $up   = [];
         $down = [];
-        if (! empty($changes['dropped_foreign_keys'])) {
+        if (!empty($changes['dropped_foreign_keys'])) {
             foreach ($changes['dropped_foreign_keys'] as $tableName => $droppedFks) {
-                if (! empty($changes['dropped_tables']) && isset($changes['dropped_tables'][$tableName])) {
+                if (!empty($changes['dropped_tables']) && isset($changes['dropped_tables'][$tableName])) {
                     continue;
                 }
 
@@ -212,9 +212,9 @@ END;
             }
         }
 
-        if (! empty($changes['dropped_indexes'])) {
+        if (!empty($changes['dropped_indexes'])) {
             foreach ($changes['dropped_indexes'] as $tableName => $removedIndexes) {
-                if (! empty($changes['dropped_tables']) && isset($changes['dropped_tables'][$tableName])) {
+                if (!empty($changes['dropped_tables']) && isset($changes['dropped_tables'][$tableName])) {
                     continue;
                 }
 
@@ -225,9 +225,9 @@ END;
             }
         }
 
-        if (! empty($changes['created_foreign_keys'])) {
+        if (!empty($changes['created_foreign_keys'])) {
             foreach ($changes['created_foreign_keys'] as $tableName => $createdFks) {
-                if (! empty($changes['dropped_tables']) && isset($changes['dropped_tables'][$tableName])) {
+                if (!empty($changes['dropped_tables']) && isset($changes['dropped_tables'][$tableName])) {
                     continue;
                 }
 
@@ -238,9 +238,9 @@ END;
             }
         }
 
-        if (! empty($changes['created_indexes'])) {
+        if (!empty($changes['created_indexes'])) {
             foreach ($changes['created_indexes'] as $tableName => $addedIndexes) {
-                if (! empty($changes['dropped_tables']) && isset($changes['dropped_tables'][$tableName])) {
+                if (!empty($changes['dropped_tables']) && isset($changes['dropped_tables'][$tableName])) {
                     continue;
                 }
 
@@ -254,7 +254,7 @@ END;
             }
         }
 
-        if (! empty($up) || ! empty($down)) {
+        if (!empty($up) || !empty($down)) {
             $up        = implode("\n", $up);
             $down      = implode("\n", $down);
             $className = 'Version' . $this->migration->getNextMigrationClassVersion();
@@ -316,7 +316,7 @@ END;
             }
         }
 
-        if (! empty($foreignKeys)) {
+        if (!empty($foreignKeys)) {
             $className = 'AddFks';
 
             $up   = [];
@@ -492,10 +492,10 @@ END;
         $className = str_replace('-', '_', $className);
         $className = Doctrine_Inflector::classify($className);
 
-        if ($return || ! $this->getMigrationsPath()) {
+        if ($return || !$this->getMigrationsPath()) {
             return $this->buildMigrationClass($className, null, $options, $up, $down);
         } else {
-            if (! $this->getMigrationsPath()) {
+            if (!$this->getMigrationsPath()) {
                 throw new Doctrine_Migration_Exception('You must specify the path to your migrations.');
             }
 

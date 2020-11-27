@@ -76,7 +76,7 @@ class Doctrine_Validator_Unique extends Doctrine_Validator_Driver
         // unique value already exists in the database IF the record in the database is the same
         // as the one that is validated here.
         $state = $this->invoker->state();
-        if (! ($state == Doctrine_Record::STATE_TDIRTY || $state == Doctrine_Record::STATE_TCLEAN)) {
+        if (!($state == Doctrine_Record::STATE_TDIRTY || $state == Doctrine_Record::STATE_TCLEAN)) {
             foreach ((array) $table->getIdentifierColumnNames() as $pk) {
                 $sql .= ' AND ' . $conn->quoteIdentifier($pk) . ' != ?';
                 $pkFieldName = $table->getFieldName($pk);
@@ -92,6 +92,6 @@ class Doctrine_Validator_Unique extends Doctrine_Validator_Driver
         $stmt = $table->getConnection()->getDbh()->prepare($sql);
         $stmt->execute($values);
 
-        return (! is_array($stmt->fetch()));
+        return !is_array($stmt->fetch());
     }
 }

@@ -62,7 +62,7 @@ class Doctrine_Task_DumpData extends Doctrine_Task
             $path = $path[0];
         }
 
-        if (! empty($path)) {
+        if (!empty($path)) {
             Doctrine_Core::dumpData($path);
 
             $this->notify(sprintf('Dumped data successfully to: %s', $path));

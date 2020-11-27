@@ -317,7 +317,7 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
     public function getAttribute($attribute)
     {
         if ($attribute >= 100 && $attribute < 1000) {
-            if (! isset($this->attributes[$attribute])) {
+            if (!isset($this->attributes[$attribute])) {
                 return parent::getAttribute($attribute);
             }
             return $this->attributes[$attribute];
@@ -330,7 +330,7 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
                 throw new Doctrine_Connection_Exception('Attribute ' . $attribute . ' not found.');
             }
         } else {
-            if (! isset($this->pendingAttributes[$attribute])) {
+            if (!isset($this->pendingAttributes[$attribute])) {
                 $this->connect();
                 $this->getAttribute($attribute);
             }
@@ -440,7 +440,7 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
             return $this->properties[$name];
         }
 
-        if (! isset($this->modules[$name])) {
+        if (!isset($this->modules[$name])) {
             throw new Doctrine_Connection_Exception('Unknown module / property ' . $name);
         }
         if ($this->modules[$name] === false) {
@@ -522,7 +522,7 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
             }
         }
 
-        if (! $found) {
+        if (!$found) {
             $class = 'Doctrine_Adapter_' . ucwords($e[0]);
 
             if (class_exists($class)) {
@@ -636,7 +636,7 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
         }
 
         $affectedRows = 0;
-        if (! empty($condition) && ! empty($conditionValues)) {
+        if (!empty($condition) && !empty($conditionValues)) {
             $query = 'DELETE FROM ' . $this->quoteIdentifier($table->getTableName())
                     . ' WHERE ' . implode(' AND ', $condition);
 
@@ -1007,7 +1007,7 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
         $parser = Doctrine_Query::create();
 
         $coll = $parser->query($query, $params);
-        if (! $coll->contains(0)) {
+        if (!$coll->contains(0)) {
             return false;
         }
         return $coll[0];
@@ -1056,7 +1056,7 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
         $this->connect();
 
         try {
-            if (! empty($params)) {
+            if (!empty($params)) {
                 $stmt = $this->prepare($query);
                 $stmt->execute($params);
                 return $stmt;
@@ -1089,7 +1089,7 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
         $this->connect();
 
         try {
-            if (! empty($params)) {
+            if (!empty($params)) {
                 $stmt = $this->prepare($query);
                 $stmt->execute($params);
 
@@ -1136,7 +1136,7 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
 
         /** @var Doctrine_Connection_Exception $exc */
         $exc = new $name($message, (int) $e->getCode());
-        if (! isset($e->errorInfo) || ! is_array($e->errorInfo)) {
+        if (!isset($e->errorInfo) || !is_array($e->errorInfo)) {
             $e->errorInfo = [null, null, null, null];
         }
         $exc->processErrorInfo($e->errorInfo);
@@ -1379,7 +1379,7 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
      */
     public function getResultCacheDriver()
     {
-        if (! $this->getAttribute(Doctrine_Core::ATTR_RESULT_CACHE)) {
+        if (!$this->getAttribute(Doctrine_Core::ATTR_RESULT_CACHE)) {
             throw new Doctrine_Exception('Result Cache driver not initialized.');
         }
 
@@ -1393,7 +1393,7 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
      */
     public function getQueryCacheDriver()
     {
-        if (! $this->getAttribute(Doctrine_Core::ATTR_QUERY_CACHE)) {
+        if (!$this->getAttribute(Doctrine_Core::ATTR_QUERY_CACHE)) {
             throw new Doctrine_Exception('Query Cache driver not initialized.');
         }
 
@@ -1491,7 +1491,7 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
      */
     public function createDatabase()
     {
-        if (! $dsn = $this->getOption('dsn')) {
+        if (!$dsn = $this->getOption('dsn')) {
             throw new Doctrine_Connection_Exception('You must create your Doctrine_Connection by using a valid Doctrine style dsn in order to use the create/drop database functionality');
         }
 
@@ -1525,7 +1525,7 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
      */
     public function dropDatabase()
     {
-        if (! $dsn = $this->getOption('dsn')) {
+        if (!$dsn = $this->getOption('dsn')) {
             throw new Doctrine_Connection_Exception('You must create your Doctrine_Connection by using a valid Doctrine style dsn in order to use the create/drop database functionality');
         }
 
