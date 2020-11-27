@@ -45,7 +45,7 @@ class Doctrine_Cache_Array extends Doctrine_Cache_Driver
      * @param  boolean $testCacheValidity if set to false, the cache validity won't be tested
      * @return mixed  Returns either the cached data or false
      */
-    protected function _doFetch($id, $testCacheValidity = true)
+    protected function doFetch(string $id, bool $testCacheValidity = true)
     {
         if (isset($this->data[$id])) {
             return $this->data[$id];
@@ -53,13 +53,7 @@ class Doctrine_Cache_Array extends Doctrine_Cache_Driver
         return false;
     }
 
-    /**
-     * Test if a cache record exists for the passed id
-     *
-     * @param  string $id cache id
-     * @return mixed false (a cache is not available) or "last modified" timestamp (int) of the available cache record
-     */
-    protected function _doContains($id)
+    protected function doContains(string $id): ?bool
     {
         return isset($this->data[$id]);
     }
@@ -73,7 +67,7 @@ class Doctrine_Cache_Array extends Doctrine_Cache_Driver
      * @param  int|false $lifeTime if != false, set a specific lifetime for this cache record (null => infinite lifeTime)
      * @return boolean true if no problem
      */
-    protected function _doSave($id, $data, $lifeTime = false)
+    protected function doSave(string $id, $data, $lifeTime = false): bool
     {
         $this->data[$id] = $data;
 
@@ -87,7 +81,7 @@ class Doctrine_Cache_Array extends Doctrine_Cache_Driver
      * @param  string $id cache id
      * @return boolean true if no problem
      */
-    protected function _doDelete($id)
+    protected function doDelete(string $id): bool
     {
         $exists = isset($this->data[$id]);
 
@@ -101,7 +95,7 @@ class Doctrine_Cache_Array extends Doctrine_Cache_Driver
      *
      * @return array Returns the array of cache keys
      */
-    protected function _getCacheKeys()
+    protected function getCacheKeys(): array
     {
         return array_keys($this->data);
     }

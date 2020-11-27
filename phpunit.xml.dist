@@ -11,12 +11,8 @@
   <php>
     <const name="PHPUNIT" value="true" />
     <ini name="memory_limit" value="768M" />
-    <ini name="error_reporting" value="E_ALL | E_STRICT" />
-    <ini name="display_errors" value="1" />
-    <ini name="display_startup_errors" value="1" />
     <ini name="max_execution_time" value="900" />
     <ini name="date.timezone" value="GMT+0" />
-    <ini name="zend.assertions" value="1" />
     <ini name="assert.exception" value="1" />
   </php>
 

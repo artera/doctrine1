@@ -1,0 +1,3 @@
+#!/bin/bash
+BASEDIR=$(dirname $(realpath $0))
+${PHP:-php} -d zend.assertions=on -d apc.enabled=on -d apc.enable_cli=on $BASEDIR/vendor/bin/phpunit "$@"

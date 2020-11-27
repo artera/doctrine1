@@ -72,7 +72,7 @@ abstract class Doctrine_Cache_Driver implements Doctrine_Cache_Interface
      */
     public function getOption($option)
     {
-        if (! isset($this->_options[$option])) {
+        if (!isset($this->_options[$option])) {
             return null;
         }
 
@@ -86,22 +86,22 @@ abstract class Doctrine_Cache_Driver implements Doctrine_Cache_Interface
      * @param  boolean $testCacheValidity if set to false, the cache validity won't be tested
      * @return mixed  Returns either the cached data or false
      */
-    public function fetch($id, $testCacheValidity = true)
+    public function fetch(string $id, bool $testCacheValidity = true)
     {
-        $key = $this->_getKey($id);
-        return $this->_doFetch($key, $testCacheValidity);
+        $key = $this->getKey($id);
+        return $this->doFetch($key, $testCacheValidity);
     }
 
     /**
      * Test if a cache record exists for the passed id
      *
      * @param  string $id cache id
-     * @return mixed false (a cache is not available) or "last modified" timestamp (int) of the available cache record
+     * @return bool|null
      */
-    public function contains($id)
+    public function contains(string $id): ?bool
     {
-        $key = $this->_getKey($id);
-        return $this->_doContains($key);
+        $key = $this->getKey($id);
+        return $this->doContains($key);
     }
 
     /**
@@ -109,13 +109,13 @@ abstract class Doctrine_Cache_Driver implements Doctrine_Cache_Interface
      *
      * @param  string    $id       cache id
      * @param  string    $data     data to cache
-     * @param  int|false $lifeTime if != false, set a specific lifetime for this cache record (null => infinite lifeTime)
+     * @param  int|false|null $lifeTime if != false, set a specific lifetime for this cache record (null => infinite lifeTime)
      * @return boolean true if no problem
      */
-    public function save($id, $data, $lifeTime = false)
+    public function save(string $id, $data, $lifeTime = false): bool
     {
-        $key = $this->_getKey($id);
-        return $this->_doSave($key, $data, $lifeTime);
+        $key = $this->getKey($id);
+        return $this->doSave($key, $data, $lifeTime);
     }
 
     /**
@@ -124,17 +124,17 @@ abstract class Doctrine_Cache_Driver implements Doctrine_Cache_Interface
      * Note: This method accepts wildcards with the * character
      *
      * @param  string $id cache id
-     * @return int|bool
+     * @return bool
      */
-    public function delete($id)
+    public function delete(string $id): bool
     {
-        $key = $this->_getKey($id);
+        $key = $this->getKey($id);
 
         if (strpos($key, '*') !== false) {
-            return $this->deleteByRegex('/' . str_replace('*', '.*', $key) . '/');
+            return $this->deleteByRegex('/' . str_replace('*', '.*', $key) . '/') > 0;
         }
 
-        return $this->_doDelete($key);
+        return $this->doDelete($key);
     }
 
     /**
@@ -143,10 +143,10 @@ abstract class Doctrine_Cache_Driver implements Doctrine_Cache_Interface
      * @param  string $regex
      * @return integer $count The number of deleted cache entries
      */
-    public function deleteByRegex($regex)
+    public function deleteByRegex(string $regex): int
     {
         $count = 0;
-        $keys  = $this->_getCacheKeys();
+        $keys  = $this->getCacheKeys();
         if (is_array($keys)) {
             foreach ($keys as $key) {
                 if (preg_match($regex, $key)) {
@@ -164,10 +164,10 @@ abstract class Doctrine_Cache_Driver implements Doctrine_Cache_Interface
      * @param  string $prefix
      * @return integer $count The number of deleted cache entries
      */
-    public function deleteByPrefix($prefix)
+    public function deleteByPrefix(string $prefix): int
     {
         $count = 0;
-        $keys  = $this->_getCacheKeys();
+        $keys  = $this->getCacheKeys();
         if (is_array($keys)) {
             foreach ($keys as $key) {
                 if (strpos($key, $prefix) === 0) {
@@ -185,10 +185,10 @@ abstract class Doctrine_Cache_Driver implements Doctrine_Cache_Interface
      * @param  string $suffix
      * @return integer $count The number of deleted cache entries
      */
-    public function deleteBySuffix($suffix)
+    public function deleteBySuffix(string $suffix): int
     {
         $count = 0;
-        $keys  = $this->_getCacheKeys();
+        $keys  = $this->getCacheKeys();
         if (is_array($keys)) {
             foreach ($keys as $key) {
                 if (substr($key, -1 * strlen($suffix)) == $suffix) {
@@ -205,10 +205,10 @@ abstract class Doctrine_Cache_Driver implements Doctrine_Cache_Interface
      *
      * @return integer $count The number of deleted cache entries
      */
-    public function deleteAll()
+    public function deleteAll(): int
     {
         $count = 0;
-        if (is_array($keys = $this->_getCacheKeys())) {
+        if (is_array($keys = $this->getCacheKeys())) {
             foreach ($keys as $key) {
                 $count++;
                 $this->delete($key);
@@ -223,7 +223,7 @@ abstract class Doctrine_Cache_Driver implements Doctrine_Cache_Interface
      * @param  string $id The hash key suffix
      * @return string     Hash key to be used by drivers
      */
-    protected function _getKey($id)
+    protected function getKey(string $id): string
     {
         $prefix = isset($this->_options['prefix']) ? $this->_options['prefix'] : '';
 
@@ -235,28 +235,21 @@ abstract class Doctrine_Cache_Driver implements Doctrine_Cache_Interface
     }
 
     /**
-     * Fetch an array of all keys stored in cache
-     *
-     * @return array Returns the array of cache keys
-     */
-    abstract protected function _getCacheKeys();
-
-    /**
      * Fetch a cache record from this cache driver instance
      *
      * @param  string  $id                cache id
      * @param  boolean $testCacheValidity if set to false, the cache validity won't be tested
      * @return mixed  Returns either the cached data or false
      */
-    abstract protected function _doFetch($id, $testCacheValidity = true);
+    abstract protected function doFetch(string $id, bool $testCacheValidity = true);
 
     /**
      * Test if a cache record exists for the passed id
      *
      * @param  string $id cache id
-     * @return mixed false (a cache is not available) or "last modified" timestamp (int) of the available cache record
+     * @return bool|null
      */
-    abstract protected function _doContains($id);
+    abstract protected function doContains(string $id): ?bool;
 
     /**
      * Save a cache record directly. This method is implemented by the cache
@@ -264,10 +257,10 @@ abstract class Doctrine_Cache_Driver implements Doctrine_Cache_Interface
      *
      * @param  string    $id       cache id
      * @param  string    $data     data to cache
-     * @param  int|false $lifeTime if != false, set a specific lifetime for this cache record (null => infinite lifeTime)
+     * @param  int|false|null $lifeTime if != false, set a specific lifetime for this cache record (null => infinite lifeTime)
      * @return boolean true if no problem
      */
-    abstract protected function _doSave($id, $data, $lifeTime = false);
+    abstract protected function doSave(string $id, $data, $lifeTime = false): bool;
 
     /**
      * Remove a cache record directly. This method is implemented by the cache
@@ -276,5 +269,12 @@ abstract class Doctrine_Cache_Driver implements Doctrine_Cache_Interface
      * @param  string $id cache id
      * @return boolean true if no problem
      */
-    abstract protected function _doDelete($id);
+    abstract protected function doDelete(string $id): bool;
+
+    /**
+     * Fetch an array of all keys stored in cache
+     *
+     * @return array Returns the array of cache keys
+     */
+    abstract protected function getCacheKeys(): array;
 }

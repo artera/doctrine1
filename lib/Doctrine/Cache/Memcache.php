@@ -79,18 +79,12 @@ class Doctrine_Cache_Memcache extends Doctrine_Cache_Driver
      * @param  bool   $testCacheValidity
      * @return mixed  Returns either the cached data or false
      */
-    protected function _doFetch($id, $testCacheValidity = true)
+    protected function doFetch(string $id, bool $testCacheValidity = true)
     {
         return $this->_memcache->get($id);
     }
 
-    /**
-     * Test if a cache is available or not (for the given id)
-     *
-     * @param  string $id cache id
-     * @return mixed false (a cache is not available) or "last modified" timestamp (int) of the available cache record
-     */
-    protected function _doContains($id)
+    protected function doContains(string $id): ?bool
     {
         return (bool) $this->_memcache->get($id);
     }
@@ -104,19 +98,10 @@ class Doctrine_Cache_Memcache extends Doctrine_Cache_Driver
      * @param  int|false $lifeTime if != false, set a specific lifetime for this cache record (null => infinite lifeTime)
      * @return boolean true if no problem
      */
-    protected function _doSave($id, $data, $lifeTime = false)
+    protected function doSave(string $id, $data, $lifeTime = false): bool
     {
-        if ($this->_options['compression']) {
-            $flag = MEMCACHE_COMPRESSED;
-        } else {
-            $flag = 0;
-        }
-
-        if ($lifeTime === false) {
-            $lifeTime = null;
-        }
-
-        return $this->_memcache->set($id, $data, $flag, $lifeTime);
+        $flag = $this->_options['compression'] ? MEMCACHE_COMPRESSED : 0;
+        return $this->_memcache->set($id, $data, $flag, $lifeTime ?: 0);
     }
 
     /**
@@ -126,7 +111,7 @@ class Doctrine_Cache_Memcache extends Doctrine_Cache_Driver
      * @param  string $id cache id
      * @return boolean true if no problem
      */
-    protected function _doDelete($id)
+    protected function doDelete(string $id): bool
     {
         return $this->_memcache->delete($id);
     }
@@ -136,7 +121,7 @@ class Doctrine_Cache_Memcache extends Doctrine_Cache_Driver
      *
      * @return array Returns the array of cache keys
      */
-    protected function _getCacheKeys()
+    protected function getCacheKeys(): array
     {
         $keys     = [];
         $allSlabs = $this->_memcache->getExtendedStats('slabs');

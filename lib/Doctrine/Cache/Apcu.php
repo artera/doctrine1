@@ -45,44 +45,28 @@ class Doctrine_Cache_Apcu extends Doctrine_Cache_Driver
         parent::__construct($options);
     }
 
-    protected function _doFetch($id, $testCacheValidity = true)
+    protected function doFetch(string $id, bool $testCacheValidity = true)
     {
         return apcu_fetch($id);
     }
 
-    protected function _doContains($id)
+    protected function doContains(string $id): ?bool
     {
-        $found = false;
         apcu_fetch($id, $found);
-
         return $found;
     }
 
-    protected function _doSave($id, $data, $lifeTime = false)
+    protected function doSave(string $id, $data, $lifeTime = false): bool
     {
-        if ($lifeTime === false) {
-            $lifeTime = 0;
-        }
-
-        /**
- * @var bool $result
-*/
-        $result = apcu_store($id, $data, $lifeTime);
-
-        return $result;
+        return apcu_store($id, $data, $lifeTime ?: 0);
     }
 
-    protected function _doDelete($id)
+    protected function doDelete(string $id): bool
     {
-        /**
- * @var bool $result
-*/
-        $result = apcu_delete($id);
-
-        return $result;
+        return apcu_delete($id);
     }
 
-    protected function _getCacheKeys()
+    protected function getCacheKeys(): array
     {
         $ci   = apcu_cache_info();
         $keys = [];

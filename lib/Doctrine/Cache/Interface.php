@@ -40,25 +40,25 @@ interface Doctrine_Cache_Interface
      * @param  boolean $testCacheValidity if set to false, the cache validity won't be tested
      * @return mixed  Returns either the cached data or false
      */
-    public function fetch($id, $testCacheValidity = true);
+    public function fetch(string $id, bool $testCacheValidity = true);
 
     /**
      * Test if a cache record exists for the passed id
      *
      * @param  string $id cache id
-     * @return mixed false (a cache is not available) or "last modified" timestamp (int) of the available cache record
+     * @return int|false false (a cache is not available) or "last modified" timestamp (int) of the available cache record
      */
-    public function contains($id);
+    public function contains(string $id);
 
     /**
      * Save a cache record and add the key to the index of cached keys
      *
      * @param  string    $id       cache id
      * @param  string    $data     data to cache
-     * @param  int|false $lifeTime if != false, set a specific lifetime for this cache record (null => infinite lifeTime)
+     * @param  int|false|null $lifeTime if != false, set a specific lifetime for this cache record (null => infinite lifeTime)
      * @return boolean true if no problem
      */
-    public function save($id, $data, $lifeTime = false);
+    public function save(string $id, $data, $lifeTime = false): bool;
 
     /**
      * Remove a cache record
@@ -66,5 +66,5 @@ interface Doctrine_Cache_Interface
      * @param  string $id cache id
      * @return boolean true if no problem
      */
-    public function delete($id);
+    public function delete(string $id): bool;
 }

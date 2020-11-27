@@ -6,26 +6,6 @@ parameters:
 			path: lib/Doctrine/Adapter/Statement/Mock.php
 
 		-
-			message: "#^Return type \\(int\\) of method Doctrine_Cache_Db\\:\\:_doSave\\(\\) should be compatible with return type \\(bool\\) of method Doctrine_Cache_Driver\\:\\:_doSave\\(\\)$#"
-			count: 1
-			path: lib/Doctrine/Cache/Db.php
-
-		-
-			message: "#^Return type \\(int\\) of method Doctrine_Cache_Db\\:\\:_doDelete\\(\\) should be compatible with return type \\(bool\\) of method Doctrine_Cache_Driver\\:\\:_doDelete\\(\\)$#"
-			count: 1
-			path: lib/Doctrine/Cache/Db.php
-
-		-
-			message: "#^Parameter \\#4 \\$expire of method MemcachePool\\:\\:set\\(\\) expects int, int\\|null given\\.$#"
-			count: 1
-			path: lib/Doctrine/Cache/Memcache.php
-
-		-
-			message: "#^Constant XC_TYPE_VAR not found\\.$#"
-			count: 2
-			path: lib/Doctrine/Cache/Xcache.php
-
-		-
 			message: "#^Call to sprintf contains 1 placeholder, 2 values given\\.$#"
 			count: 1
 			path: lib/Doctrine/Cli/Formatter.php
