@@ -55,32 +55,8 @@ class DoctrineUnitTestCase extends TestCase
         );
 
 
-        $e = explode('_', static::class);
         if (!static::$driverName) {
             static::$driverName = 'main';
-
-            switch ($e[1]) {
-                case 'Export':
-                case 'Import':
-                case 'Transaction':
-                case 'DataDict':
-                case 'Sequence':
-                    static::$driverName = 'Sqlite';
-                    break;
-            }
-
-            $module = $e[1];
-
-            if (count($e) > 3) {
-                $driver = $e[2];
-                switch ($e[2]) {
-                    case 'Mysql':
-                    case 'Pgsql':
-                    case 'Sqlite':
-                        static::$driverName = $e[2];
-                        break;
-                }
-            }
         }
 
         try {
