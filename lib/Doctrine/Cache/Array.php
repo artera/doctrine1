@@ -53,7 +53,7 @@ class Doctrine_Cache_Array extends Doctrine_Cache_Driver
         return false;
     }
 
-    protected function doContains(string $id): ?bool
+    protected function doContains(string $id): bool
     {
         return isset($this->data[$id]);
     }

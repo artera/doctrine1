@@ -7,15 +7,14 @@ class DbTest extends AbstractTestCase
     {
         parent::setUp();
 
-        $this->cache = new \Doctrine_Cache_Db(
-            [
+        $this->cache = new \Doctrine_Cache_Db([
             'connection' => static::$connection,
             'tableName'  => 'd_cache',
-            ]
-        );
+        ]);
         static::$connection->exec('DROP TABLE IF EXISTS d_cache');
         $this->cache->createTable();
     }
+
     protected function _clearCache()
     {
         static::$connection->exec('DELETE FROM d_cache');

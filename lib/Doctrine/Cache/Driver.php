@@ -92,13 +92,7 @@ abstract class Doctrine_Cache_Driver implements Doctrine_Cache_Interface
         return $this->doFetch($key, $testCacheValidity);
     }
 
-    /**
-     * Test if a cache record exists for the passed id
-     *
-     * @param  string $id cache id
-     * @return bool|null
-     */
-    public function contains(string $id): ?bool
+    public function contains(string $id): bool
     {
         $key = $this->getKey($id);
         return $this->doContains($key);
@@ -247,9 +241,9 @@ abstract class Doctrine_Cache_Driver implements Doctrine_Cache_Interface
      * Test if a cache record exists for the passed id
      *
      * @param  string $id cache id
-     * @return bool|null
+     * @return bool
      */
-    abstract protected function doContains(string $id): ?bool;
+    abstract protected function doContains(string $id): bool;
 
     /**
      * Save a cache record directly. This method is implemented by the cache

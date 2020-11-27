@@ -50,7 +50,7 @@ class Doctrine_Cache_Apcu extends Doctrine_Cache_Driver
         return apcu_fetch($id);
     }
 
-    protected function doContains(string $id): ?bool
+    protected function doContains(string $id): bool
     {
         apcu_fetch($id, $found);
         return $found;

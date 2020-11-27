@@ -95,15 +95,11 @@ class Doctrine_Cache_Db extends Doctrine_Cache_Driver
      *
      * @param  string $id cache id
      */
-    protected function doContains(string $id): ?bool
+    protected function doContains(string $id): bool
     {
         $sql = "SELECT id, expire FROM {$this->_options['tableName']} WHERE id = ?";
         $result = $this->getConnection()->fetchOne($sql, [$id]);
-
-        if (isset($result[0])) {
-            return (bool) time();
-        }
-        return null;
+        return isset($result[0]);
     }
 
     /**

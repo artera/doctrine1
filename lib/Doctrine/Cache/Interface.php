@@ -46,9 +46,9 @@ interface Doctrine_Cache_Interface
      * Test if a cache record exists for the passed id
      *
      * @param  string $id cache id
-     * @return int|false false (a cache is not available) or "last modified" timestamp (int) of the available cache record
+     * @return bool
      */
-    public function contains(string $id);
+    public function contains(string $id): bool;
 
     /**
      * Save a cache record and add the key to the index of cached keys

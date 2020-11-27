@@ -84,7 +84,7 @@ class Doctrine_Cache_Memcache extends Doctrine_Cache_Driver
         return $this->_memcache->get($id);
     }
 
-    protected function doContains(string $id): ?bool
+    protected function doContains(string $id): bool
     {
         return (bool) $this->_memcache->get($id);
     }
