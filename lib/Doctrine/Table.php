@@ -1661,8 +1661,14 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
      */
     public function findAll($hydrationMode = null)
     {
-        return $this->createQuery('dctrn_find')
-            ->execute([], $hydrationMode);
+        if ($hydrationMode === null) {
+            $hydrationMode = Doctrine_Core::HYDRATE_RECORD;
+        } elseif (!in_array($hydrationMode, [Doctrine_Core::HYDRATE_ARRAY, Doctrine_Core::HYDRATE_RECORD])) {
+            throw new \InvalidArgumentException("Hydration mode for findAll can only be ony of HYDRATE_ARRAY or HYDRATE_RECORD");
+        }
+        $result = $this->createQuery('dctrn_find')->execute([], $hydrationMode);
+        assert(!is_int($result));
+        return $result;
     }
 
     /**

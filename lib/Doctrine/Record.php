@@ -223,9 +223,8 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
             $this->_table = $table;
             $exists       = !$isNewEntry;
         } else {
-            // get the table of this class
-            $class        = get_class($this);
-            $this->_table = Doctrine_Core::getTable($class);
+            // @phpstan-ignore-next-line
+            $this->_table = Doctrine_Core::getTable(static::class);
             $exists       = false;
         }
 
@@ -709,7 +708,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
         $errorStack = $this->getErrorStack();
 
         if (count($errorStack)) {
-            $message = sprintf("Validation failed in class %s\n\n", get_class($this));
+            $message = sprintf("Validation failed in class %s\n\n", static::class);
 
             $message .= '  ' . count($errorStack) . ' field' . (count($errorStack) > 1 ?  's' : null) . ' had validation error' . (count($errorStack) > 1 ?  's' : null) . ":\n\n";
             foreach ($errorStack as $field => $errors) {
@@ -729,7 +728,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
     public function getErrorStack()
     {
         if (!$this->_errorStack) {
-            $this->_errorStack = new Doctrine_Validator_ErrorStack(get_class($this));
+            $this->_errorStack = new Doctrine_Validator_ErrorStack(static::class);
         }
 
         return $this->_errorStack;
@@ -961,9 +960,10 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
         $event = new Doctrine_Event($this, Doctrine_Event::RECORD_UNSERIALIZE);
 
         $manager    = Doctrine_Manager::getInstance();
-        $connection = $manager->getConnectionForComponent(get_class($this));
+        $connection = $manager->getConnectionForComponent(static::class);
 
-        $this->_table = $connection->getTable(get_class($this));
+        // @phpstan-ignore-next-line
+        $this->_table = $connection->getTable(static::class);
 
         $this->preUnserialize($event);
         $this->getTable()->getRecordListener()->preUnserialize($event);
@@ -1091,7 +1091,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
         if ($deep) {
             $query = $this->getTable()->createQuery();
             foreach (array_keys($this->_references) as $name) {
-                $query->leftJoin(get_class($this) . '.' . $name);
+                $query->leftJoin(static::class . ".$name");
             }
             $query->where(implode(' = ? AND ', (array)$this->getTable()->getIdentifier()) . ' = ?');
             $this->clearRelated();
@@ -1280,7 +1280,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
 
             if (is_array($data)) {
                 foreach ($data as $field => $value) {
-                    if ($table->hasField($field) && (!array_key_exists($field, $this->_data) || $this->_data[$field] instanceof Doctrine_Null)) {
+                    if (is_string($field) && $table->hasField($field) && (!array_key_exists($field, $this->_data) || $this->_data[$field] instanceof Doctrine_Null)) {
                         $this->_data[$field] = $value;
                     }
                 }
@@ -2337,6 +2337,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
             }
         }
 
+        /** @var static */
         $ret = $this->_table->create($data);
 
         foreach ($data as $key => $val) {
@@ -2363,7 +2364,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
     /**
      * assigns an identifier to the instance, for database storage
      *
-     * @param  mixed $id a key value or an array of keys
+     * @param  scalar|array<string, scalar> $id a key value or an array of keys
      * @return void
      */
     public function assignIdentifier($id = false)
@@ -2775,12 +2776,13 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
      */
     public function __call($method, $args)
     {
-        if (($template = $this->_table->getMethodOwner($method)) !== false) {
+        $template = $this->_table->getMethodOwner($method);
+        if ($template !== false) {
             $template->setInvoker($this);
             return call_user_func_array([$template, $method], $args);
         }
 
-        throw new Doctrine_Record_UnknownPropertyException(sprintf('Unknown method %s::%s', get_class($this), $method));
+        throw new Doctrine_Record_UnknownPropertyException(sprintf('Unknown method %s::%s', static::class, $method));
     }
 
     /**
