@@ -5,8 +5,6 @@ use Tests\DoctrineUnitTestCase;
 
 class Ticket428Test extends DoctrineUnitTestCase
 {
-    private $_albums;
-
     public static function prepareData(): void
     {
     }
@@ -22,12 +20,15 @@ class Ticket428Test extends DoctrineUnitTestCase
         $albums[0]->Song[3]->title = 'Michelle';
         $albums->save();
         $this->assertEquals(count($albums[0]->Song), 4);
-        $this->_albums = $albums;
+        return $albums;
     }
 
-    public function testAggregateValueMappingSupportsLeftJoins()
+    /**
+     * @depends testInitData
+     */
+    public function testAggregateValueMappingSupportsLeftJoins($albums)
     {
-        foreach ($this->_albums as $album) {
+        foreach ($albums as $album) {
             $album->clearRelated();
         }
 
