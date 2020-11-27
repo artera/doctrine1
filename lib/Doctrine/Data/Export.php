@@ -88,7 +88,7 @@ class Doctrine_Data_Export extends Doctrine_Data
 
             $results = Doctrine_Core::getTable($name)->findAll();
 
-            if ($results->count() > 0) {
+            if (count($results) > 0) {
                 $data[$name] = $results;
             }
         }

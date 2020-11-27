@@ -116,11 +116,6 @@ parameters:
 			path: lib/Doctrine/Connection/UnitOfWork.php
 
 		-
-			message: "#^Cannot call method count\\(\\) on array\\|Doctrine_Collection\\<Doctrine_Record\\>\\|int\\.$#"
-			count: 1
-			path: lib/Doctrine/Data/Export.php
-
-		-
 			message: "#^Parameter \\#1 \\$componentName of static method Doctrine_Core\\:\\:getTable\\(\\) expects string, int\\|string given\\.$#"
 			count: 1
 			path: lib/Doctrine/Data/Export.php
