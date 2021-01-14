@@ -1,0 +1,3 @@
+#!/bin/sh -eu
+PHP="php -dapc.enabled=on -dapc.enable_cli=on"
+$PHP vendor/bin/phpunit "$@"
