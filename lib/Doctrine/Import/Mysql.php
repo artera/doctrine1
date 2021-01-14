@@ -132,7 +132,9 @@ class Doctrine_Import_Mysql extends Doctrine_Import
 
         $relations = [];
         $results = $this->conn->fetchAssoc(
-            "SELECT column_name, referenced_table_name, referenced_column_name
+            "SELECT column_name AS column_name,
+                    referenced_table_name AS referenced_table_name,
+                    referenced_column_name AS referenced_column_name
             FROM information_schema.key_column_usage
             WHERE table_name = $tableName
             AND table_schema = $dbName
