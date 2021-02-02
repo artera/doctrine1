@@ -168,8 +168,7 @@ class Doctrine_Import_Mysql extends Doctrine_Import
 
             $decl = $this->conn->dataDict->getPortableDeclaration($val);
 
-            $values         = isset($decl['values']) ? $decl['values'] : [];
-            $val['default'] = $val['default'] == 'CURRENT_TIMESTAMP' ? null : $val['default'];
+            $val['default'] = $val['default'] === 'CURRENT_TIMESTAMP' ? null : $val['default'];
 
             $description = [
                 'name'          => $val['field'],
@@ -179,15 +178,26 @@ class Doctrine_Import_Mysql extends Doctrine_Import
                 'length'        => $decl['length'],
                 'fixed'         => (bool) $decl['fixed'],
                 'unsigned'      => (bool) $decl['unsigned'],
-                'values'        => $values,
-                'primary'       => (strtolower($val['key']) == 'pri'),
+                'values'        => $decl['values'] ?? [],
+                'primary'       => strtolower($val['key']) === 'pri',
                 'default'       => $val['default'],
-                'notnull'       => ($val['null'] != 'YES'),
-                'autoincrement' => (strpos($val['extra'], 'auto_increment') !== false),
+                'notnull'       => $val['null'] !== 'YES',
+                'autoincrement' => strpos($val['extra'], 'auto_increment') !== false,
+                'virtual'       => strpos($val['extra'], 'VIRTUAL') !== false,
+                'comment'       => $val['comment'],
             ];
             if (isset($decl['scale'])) {
                 $description['scale'] = $decl['scale'];
             }
+
+            $meta = json_decode($description['comment'], true);
+            if (is_array($meta)) {
+                $description['comment'] = '';
+            } else {
+                $meta = [];
+            }
+            $description['meta'] = $meta;
+
             $columns[$val['field']] = $description;
         }
 

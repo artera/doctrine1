@@ -391,7 +391,6 @@ class Doctrine_Import extends Doctrine_Connection_Module
                 $definition['connectionClassName'] = $definition['className'];
                 $definition['relations'] = [];
 
-
                 try {
                     $unsortedRelations = $connection->import->listTableRelations($table);
                 } catch (Doctrine_Import_Exception $e) {
@@ -409,17 +408,27 @@ class Doctrine_Import extends Doctrine_Connection_Module
                 }
                 unset($unsortedRelations);
 
-                $aliasesByClass = [];
                 foreach ($relations as $relation) {
                     $table = $relation['table'];
                     $class = Doctrine_Inflector::classify(Doctrine_Inflector::tableize($table));
 
-                    if (empty($aliasesByClass[$class])) {
-                        $alias = $class;
-                        $aliasesByClass[$class] = 1;
+                    $columnDefinition = $definition['columns'][$relation['local']];
+                    if (!empty($columnDefinition['meta']['relation_alias'])) {
+                        $alias = $columnDefinition['meta']['relation_alias'];
+                        if (isset($definition['relations'][$alias])) {
+                            throw new Doctrine_Import_Exception('The alias name requested via database meta-comments is already taken by another relation');
+                        }
                     } else {
-                        $aliasesByClass[$class]++;
-                        $alias = "$class{$aliasesByClass[$class]}";
+                        $aliasNum = 1;
+                        $alias = $class;
+                        while (isset($definition['relations'][$alias])) {
+                            if (substr($relation['local'], 0, 3) === 'id_') {
+                                $alias = Doctrine_Inflector::classify(Doctrine_Inflector::tableize(substr($relation['local'], 3)));
+                            } else {
+                                $aliasNum++;
+                                $alias = "$class{$aliasNum}";
+                            }
+                        }
                     }
 
                     $definition['relations'][$alias] = [
@@ -430,7 +439,8 @@ class Doctrine_Import extends Doctrine_Connection_Module
                     ];
                 }
 
-                $definitions[strtolower($definition['className'])] = $definition;
+                $definitionId = strtolower($definition['className']);
+                $definitions[$definitionId] = $definition;
                 $classes[] = $definition['className'];
             }
 
@@ -438,18 +448,25 @@ class Doctrine_Import extends Doctrine_Connection_Module
             foreach ($definitions as $definition) {
                 $className = $definition['className'];
 
-                $aliasesByClass = [];
                 foreach ($definition['relations'] as $relation) {
-                    $class = $relation['class'];
-                    if (empty($aliasesByClass[$class])) {
-                        $alias = $className;
-                        $aliasesByClass[$class] = 1;
+                    $definitionId = strtolower($relation['class']);
+
+                    $columnDefinition = $definition['columns'][$relation['local']];
+                    if (!empty($columnDefinition['meta']['inverse_relation_alias'])) {
+                        $alias = $columnDefinition['meta']['inverse_relation_alias'];
+                        if (isset($definitions[$definitionId]['relations'][$alias])) {
+                            throw new Doctrine_Import_Exception('The alias name requested via database meta-comments is already taken by another relation');
+                        }
                     } else {
-                        $aliasesByClass[$class]++;
-                        $alias = "$className{$aliasesByClass[$class]}";
+                        $aliasNum = 1;
+                        $alias = $className;
+                        while (isset($definitions[$definitionId]['relations'][$alias])) {
+                            $aliasNum++;
+                            $alias = "$className{$aliasNum}";
+                        }
                     }
 
-                    $definitions[strtolower($class)]['relations'][$alias] = [
+                    $definitions[$definitionId]['relations'][$alias] = [
                         'type'    => Doctrine_Relation::MANY,
                         'alias'   => $alias,
                         'class'   => $className,

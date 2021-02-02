@@ -2502,23 +2502,25 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
         // this loop is a dirty workaround to get the validators filtered out of
         // the options, since everything is squeezed together currently
         foreach ($this->_columns[$columnName] as $name => $args) {
-            if (empty($name)
-                || $name == 'primary'
-                || $name == 'protected'
-                || $name == 'autoincrement'
-                || $name == 'default'
-                || $name == 'values'
-                || $name == 'sequence'
-                || $name == 'zerofill'
-                || $name == 'owner'
-                || $name == 'scale'
-                || $name == 'type'
-                || $name == 'length'
-                || $name == 'fixed'
-                || $name == 'comment'
-                || $name == 'alias'
-                || $name == 'extra'
-            ) {
+            if (empty($name) || in_array($name, [
+                'primary',
+                'protected',
+                'autoincrement',
+                'default',
+                'values',
+                'sequence',
+                'zerofill',
+                'owner',
+                'scale',
+                'type',
+                'length',
+                'fixed',
+                'comment',
+                'alias',
+                'extra',
+                'virtual',
+                'meta',
+            ])) {
                 continue;
             }
             if ($name == 'notnull' && isset($this->_columns[$columnName]['autoincrement'])
