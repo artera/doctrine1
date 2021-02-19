@@ -56,14 +56,13 @@ requiring needless code duplication.</description>
       <file name="Listener.php" role="php" />
      </dir> <!-- /lib/Doctrine/AuditLog -->
      <dir name="Cache">
-      <file name="Apc.php" role="php" />
+      <file name="Apcu.php" role="php" />
       <file name="Array.php" role="php" />
       <file name="Db.php" role="php" />
       <file name="Driver.php" role="php" />
       <file name="Exception.php" role="php" />
       <file name="Interface.php" role="php" />
       <file name="Memcache.php" role="php" />
-      <file name="Xcache.php" role="php" />
      </dir> <!-- /lib/Doctrine/Cache -->
      <dir name="Cli">
       <file name="AnsiColorFormatter.php" role="php" />
@@ -460,14 +459,12 @@ requiring needless code duplication.</description>
       <file name="SqliteTestCase.php" role="test" />
      </dir> <!-- /tests/Cache/Query -->
      <file name="AbstractTestCase.php" role="test" />
-     <file name="ApcTestCase.php" role="test" />
      <file name="ApcuTestCase.php" role="test" />
      <file name="ArrayTestCase.php" role="test" />
      <file name="DbTestCase.php" role="test" />
      <file name="MemcacheTestCase.php" role="test" />
      <file name="QuerySqliteTestCase.php" role="test" />
      <file name="SqliteTestCase.php" role="test" />
-     <file name="XcacheTestCase.php" role="test" />
     </dir> <!-- /tests/Cache -->
     <dir name="CliTestCase">
      <dir name="testLoadtasksLoadsDoctrineStyleTasksFromTheSpecifiedDirectory">
