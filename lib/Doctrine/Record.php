@@ -1025,9 +1025,8 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
      * @see   Doctrine_Record::STATE_* constants
      *
      * @throws Doctrine_Record_State_Exception      if trying to set an unknown state
-     * @return void|integer
      */
-    public function state($state = null)
+    public function state($state = null): ?int
     {
         if ($state == null) {
             return $this->_state;
@@ -1060,6 +1059,8 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
         if ($err) {
             throw new Doctrine_Record_State_Exception('Unknown record state ' . $state);
         }
+
+        return null;
     }
 
     /**

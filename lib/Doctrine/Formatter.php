@@ -68,9 +68,9 @@ class Doctrine_Formatter extends Doctrine_Connection_Module
      *
      * This method takes care of that conversion
      *
-     * @param array|bool $item
+     * @param array|bool|int $item
      *
-     * @return (int|mixed)[]|bool|int
+     * @return mixed[]|bool|int
      *
      * @psalm-return array<array-key, int|mixed>|bool|int
      */

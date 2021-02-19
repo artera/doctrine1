@@ -390,10 +390,8 @@ class Doctrine_Connection_UnitOfWork extends Doctrine_Connection_Module
      * @throws PDOException         if something went wrong at database level
      *
      * @param Doctrine_Record $record
-     *
-     * @return void
      */
-    public function saveRelatedLocalKeys(Doctrine_Record $record)
+    public function saveRelatedLocalKeys(Doctrine_Record $record): void
     {
         $state = $record->state();
         $record->state($record->exists() ? Doctrine_Record::STATE_LOCKED : Doctrine_Record::STATE_TLOCKED);

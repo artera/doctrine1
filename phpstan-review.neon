@@ -71,11 +71,6 @@ parameters:
 			path: lib/Doctrine/Connection/Statement.php
 
 		-
-			message: "#^Parameter \\#1 \\$state of method Doctrine_Record\\<Doctrine_Table\\>\\:\\:state\\(\\) expects int\\|string\\|null, int\\|void given\\.$#"
-			count: 3
-			path: lib/Doctrine/Connection/UnitOfWork.php
-
-		-
 			message: "#^Result of method Doctrine_Connection_UnitOfWork\\:\\:_preDelete\\(\\) \\(void\\) is used\\.$#"
 			count: 1
 			path: lib/Doctrine/Connection/UnitOfWork.php
@@ -301,27 +296,7 @@ parameters:
 			path: lib/Doctrine/Import/Sqlite.php
 
 		-
-			message: "#^Cannot call method bindParam\\(\\) on Doctrine_Adapter_Statement_Interface\\|PDOStatement\\|false\\.$#"
-			count: 17
-			path: lib/Doctrine/Locking/Manager/Pessimistic.php
-
-		-
-			message: "#^Cannot call method execute\\(\\) on Doctrine_Adapter_Statement_Interface\\|PDOStatement\\|false\\.$#"
-			count: 5
-			path: lib/Doctrine/Locking/Manager/Pessimistic.php
-
-		-
-			message: "#^Cannot call method rowCount\\(\\) on Doctrine_Adapter_Statement_Interface\\|PDOStatement\\|false\\.$#"
-			count: 2
-			path: lib/Doctrine/Locking/Manager/Pessimistic.php
-
-		-
 			message: "#^Method Doctrine_Locking_Manager_Pessimistic\\:\\:_getLockingUserIdent\\(\\) never returns float so it can be removed from the return typehint\\.$#"
-			count: 1
-			path: lib/Doctrine/Locking/Manager/Pessimistic.php
-
-		-
-			message: "#^Cannot call method fetchColumn\\(\\) on Doctrine_Adapter_Statement_Interface\\|PDOStatement\\|false\\.$#"
 			count: 1
 			path: lib/Doctrine/Locking/Manager/Pessimistic.php
 
@@ -594,21 +569,6 @@ parameters:
 			message: "#^Cannot access offset 'primary' on array\\<string, mixed\\>\\|false\\.$#"
 			count: 1
 			path: lib/Doctrine/Relation/Parser.php
-
-		-
-			message: "#^Method Doctrine_Sequence_Mysql\\:\\:lastInsertId\\(\\) should return int\\|string but returns int\\|string\\|false\\.$#"
-			count: 1
-			path: lib/Doctrine/Sequence/Mysql.php
-
-		-
-			message: "#^Method Doctrine_Sequence_Sqlite\\:\\:nextId\\(\\) should return int\\|string but returns int\\|string\\|false\\.$#"
-			count: 1
-			path: lib/Doctrine/Sequence/Sqlite.php
-
-		-
-			message: "#^Method Doctrine_Sequence_Sqlite\\:\\:lastInsertId\\(\\) should return int\\|string but returns int\\|string\\|false\\.$#"
-			count: 1
-			path: lib/Doctrine/Sequence/Sqlite.php
 
 		-
 			message: "#^Cannot call method getConfig\\(\\) on Doctrine_Cli\\|null\\.$#"

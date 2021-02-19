@@ -1348,6 +1348,7 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
                     $this->useQueryCache(false);
 
                     // mysql doesn't support LIMIT in subqueries
+                    /** @phpstan-var string[] */
                     $list     = $this->_conn->execute($subquery, $this->_execParams)->fetchAll(Doctrine_Core::FETCH_COLUMN);
                     $subquery = implode(', ', array_map([$this->_conn, 'quote'], $list));
 

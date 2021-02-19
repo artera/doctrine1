@@ -81,6 +81,7 @@ class Doctrine_Cache_Db extends Doctrine_Cache_Driver
             $sql .= " AND (expire is null OR expire > '" . date('Y-m-d H:i:s') . "')";
         }
 
+        /** @phpstan-var array<int, mixed>[] */
         $result = $this->getConnection()->execute($sql, [$id])->fetchAll(Doctrine_Core::FETCH_NUM);
 
         if (!isset($result[0])) {
@@ -202,6 +203,7 @@ class Doctrine_Cache_Db extends Doctrine_Cache_Driver
     {
         $sql     = "SELECT id FROM {$this->_options['tableName']}";
         $keys    = [];
+        /** @phpstan-var array<int, mixed>[] */
         $results = $this->getConnection()->execute($sql)->fetchAll(Doctrine_Core::FETCH_NUM);
         for ($i = 0, $count = count($results); $i < $count; $i++) {
             $keys[] = $results[$i][0];

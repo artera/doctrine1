@@ -810,9 +810,9 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
      *
      * This method takes care of that conversion
      *
-     * @param array|bool $item
+     * @param array|bool|int $item
      *
-     * @return (int|mixed)[]|bool|int
+     * @return mixed[]|bool|int
      *
      * @psalm-return array<array-key, int|mixed>|bool|int
      */
@@ -851,10 +851,13 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
      *
      * @param  string $statement sql query to be executed
      * @param  array  $params    prepared statement params
-     * @return array
+     * @return array[]
+     * @phpstan-return array<string, mixed>[]
      */
     public function fetchAll($statement, array $params = [])
     {
+        // PDO::ATTR_ERRMODE ensures that false is never returned
+        /** @var array */
         return $this->execute($statement, $params)->fetchAll(Doctrine_Core::FETCH_ASSOC);
     }
 
@@ -877,9 +880,12 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
      * @param  string $statement sql query to be executed
      * @param  array  $params    prepared statement params
      * @return array
+     * @phpstan-return array<string, mixed>
      */
     public function fetchRow($statement, array $params = [])
     {
+        // PDO::ATTR_ERRMODE ensures that false is never returned
+        /** @var array */
         return $this->execute($statement, $params)->fetch(Doctrine_Core::FETCH_ASSOC);
     }
 
@@ -889,6 +895,7 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
      * @param  string $statement sql query to be executed
      * @param  array  $params    prepared statement params
      * @return array
+     * @phpstan-return array<int, mixed>
      */
     public function fetchArray($statement, array $params = [])
     {
@@ -901,10 +908,13 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
      * @param  string $statement sql query to be executed
      * @param  array  $params    prepared statement params
      * @param  int    $colnum    0-indexed column number to retrieve
-     * @return array
+     * @return array[]
+     * @phpstan-return mixed[]
      */
     public function fetchColumn($statement, array $params = [], $colnum = 0)
     {
+        // PDO::ATTR_ERRMODE ensures that false is never returned
+        /** @var array */
         return $this->execute($statement, $params)->fetchAll(Doctrine_Core::FETCH_COLUMN, $colnum);
     }
 
@@ -913,11 +923,12 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
      *
      * @param  string $statement sql query to be executed
      * @param  array  $params    prepared statement params
-     * @return array
+     * @return array[]
+     * @phpstan-return array<string, mixed>[]
      */
     public function fetchAssoc($statement, array $params = [])
     {
-        return $this->execute($statement, $params)->fetchAll(Doctrine_Core::FETCH_ASSOC);
+        return $this->fetchAll($statement, $params);
     }
 
     /**
@@ -925,10 +936,13 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
      *
      * @param  string $statement sql query to be executed
      * @param  array  $params    prepared statement params
-     * @return array
+     * @return array[]
+     * @phpstan-return array<string|int, mixed>[]
      */
     public function fetchBoth($statement, array $params = [])
     {
+        // PDO::ATTR_ERRMODE ensures that false is never returned
+        /** @var array */
         return $this->execute($statement, $params)->fetchAll(Doctrine_Core::FETCH_BOTH);
     }
 

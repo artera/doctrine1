@@ -339,8 +339,10 @@ class Doctrine_Connection_Statement implements Doctrine_Adapter_Statement_Interf
 
         $this->_conn->getListener()->preFetchAll($event);
         if ($columnIndex !== null) {
+            /** @var array */
             $data = $this->_stmt->fetchAll($fetchMode, $columnIndex);
         } else {
+            /** @var array */
             $data = $this->_stmt->fetchAll($fetchMode);
         }
 
