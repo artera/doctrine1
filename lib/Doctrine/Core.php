@@ -369,16 +369,6 @@ class Doctrine_Core
     const HYDRATE_ON_DEMAND = 7;
 
     /**
-     * HYDRATE_ARRAY_HIERARCHY
-     */
-    const HYDRATE_ARRAY_HIERARCHY = 8;
-
-    /**
-     * HYDRATE_RECORD_HIERARCHY
-     */
-    const HYDRATE_RECORD_HIERARCHY = 9;
-
-    /**
      * HYDRATE_ARRAY_SHALLOW
      */
     const HYDRATE_ARRAY_SHALLOW = 10;

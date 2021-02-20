@@ -37,10 +37,8 @@ class Doctrine_Sequence_Mysql extends Doctrine_Sequence
      *
      * @param string $seqName  name of the sequence
      * @param bool   $onDemand when true missing sequences are automatic created
-     *
-     * @return int|string next id in the given sequence
      */
-    public function nextId($seqName, $onDemand = true)
+    public function nextId($seqName, $onDemand = true): int
     {
         $sequenceName = $this->conn->quoteIdentifier($seqName, true);
         $seqcolName   = $this->conn->quoteIdentifier($this->conn->getAttribute(Doctrine_Core::ATTR_SEQCOL_NAME), true);
@@ -66,7 +64,7 @@ class Doctrine_Sequence_Mysql extends Doctrine_Sequence
             }
         }
 
-        $value = $this->lastInsertId();
+        $value = (int) $this->lastInsertId();
 
         if (is_numeric($value)) {
             $query = 'DELETE FROM ' . $sequenceName . ' WHERE ' . $seqcolName . ' < ' . $value;
@@ -82,10 +80,8 @@ class Doctrine_Sequence_Mysql extends Doctrine_Sequence
      *
      * @param string $table name of the table into which a new row was inserted
      * @param string $field name of the field into which a new row was inserted
-     *
-     * @return int|string
      */
-    public function lastInsertId($table = null, $field = null)
+    public function lastInsertId($table = null, $field = null): string
     {
         return $this->conn->getDbh()->lastInsertId();
     }
@@ -94,10 +90,8 @@ class Doctrine_Sequence_Mysql extends Doctrine_Sequence
      * Returns the current id of a sequence
      *
      * @param string $seqName name of the sequence
-     *
-     * @return integer          current id in the given sequence
      */
-    public function currId($seqName)
+    public function currId($seqName): int
     {
         $sequenceName = $this->conn->quoteIdentifier($seqName, true);
         $seqcolName   = $this->conn->quoteIdentifier($this->conn->getAttribute(Doctrine_Core::ATTR_SEQCOL_NAME), true);

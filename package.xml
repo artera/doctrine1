@@ -159,7 +159,6 @@ requiring needless code duplication.</description>
       <file name="Graph.php" role="php" />
       <file name="NoneDriver.php" role="php" />
       <file name="RecordDriver.php" role="php" />
-      <file name="RecordHierarchyDriver.php" role="php" />
       <file name="ScalarDriver.php" role="php" />
       <file name="SingleScalarDriver.php" role="php" />
      </dir> <!-- /lib/Doctrine/Hydrator -->

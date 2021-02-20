@@ -37,10 +37,8 @@ class Doctrine_Sequence_Pgsql extends Doctrine_Sequence
      *
      * @param string $seqName  name of the sequence
      * @param bool   $onDemand when true missing sequences are automatic created
-     *
-     * @return integer          next id in the given sequence
      */
-    public function nextId($seqName, $onDemand = true)
+    public function nextId($seqName, $onDemand = true): int
     {
         $sequenceName = $this->conn->quoteIdentifier($this->conn->formatter->getSequenceName($seqName), true);
         $query        = "SELECT NEXTVAL('" . $sequenceName . "')";
@@ -72,14 +70,13 @@ class Doctrine_Sequence_Pgsql extends Doctrine_Sequence
      *
      * @param  string $table name of the table into which a new row was inserted
      * @param  string $field name of the field into which a new row was inserted
-     * @return integer      the autoincremented id
      */
-    public function lastInsertId($table = null, $field = null)
+    public function lastInsertId($table = null, $field = null): string
     {
         $seqName      = $table . (empty($field) ? '' : '_' . $field);
         $sequenceName = $this->conn->quoteIdentifier($this->conn->formatter->getSequenceName($seqName), true);
 
-        return (int) $this->conn->fetchOne("SELECT CURRVAL('" . $sequenceName . "')");
+        return $this->conn->fetchOne("SELECT CURRVAL('" . $sequenceName . "')");
     }
 
     /**
@@ -89,7 +86,7 @@ class Doctrine_Sequence_Pgsql extends Doctrine_Sequence
      *
      * @return integer          current id in the given sequence
      */
-    public function currId($seqName)
+    public function currId($seqName): int
     {
         $sequenceName = $this->conn->quoteIdentifier($this->conn->formatter->getSequenceName($seqName), true);
         return (int) $this->conn->fetchOne('SELECT last_value FROM ' . $sequenceName);

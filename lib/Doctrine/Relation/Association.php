@@ -35,6 +35,65 @@
 class Doctrine_Relation_Association extends Doctrine_Relation
 {
     /**
+     * @var array $definition   @see __construct()
+     * @phpstan-var array{
+     *   alias: string,
+     *   foreign: string,
+     *   local: string,
+     *   class: class-string<Doctrine_Record>,
+     *   type: int,
+     *   table: Doctrine_Table,
+     *   localTable: Doctrine_Table,
+     *   name: ?string,
+     *   refTable: Doctrine_Table,
+     *   onDelete: ?string,
+     *   onUpdate: ?string,
+     *   deferred: ?bool,
+     *   deferrable: ?bool,
+     *   constraint: ?bool,
+     *   equal: bool,
+     *   cascade: string[],
+     *   owningSide: bool,
+     *   refClassRelationAlias: ?string,
+     *   foreignKeyName: ?string,
+     *   orderBy: null|string|string[],
+     * }
+     */
+    protected array $definition;
+
+    /**
+     * @phpstan-param array{
+     *   alias: string,
+     *   foreign: string,
+     *   local: string,
+     *   class: class-string<Doctrine_Record>,
+     *   type: int,
+     *   table: Doctrine_Table,
+     *   localTable: Doctrine_Table,
+     *   name?: ?string,
+     *   refTable: Doctrine_Table,
+     *   onDelete?: ?string,
+     *   onUpdate?: ?string,
+     *   deferred?: ?bool,
+     *   deferrable?: ?bool,
+     *   constraint?: ?bool,
+     *   equal?: bool,
+     *   cascade?: string[],
+     *   owningSide?: bool,
+     *   refClassRelationAlias?: ?string,
+     *   foreignKeyName?: ?string,
+     *   orderBy?: null|string|string[],
+     * } $definition
+     */
+    public function __construct(array $definition)
+    {
+        if (!array_key_exists('refTable', $definition)) {
+            throw new Doctrine_Exception("refTable is required!");
+        }
+        parent::__construct($definition);
+    }
+
+    /**
      * @return Doctrine_Table
      */
     public function getAssociationFactory()
@@ -50,14 +109,7 @@ class Doctrine_Relation_Association extends Doctrine_Relation
         return $this->definition['refTable'];
     }
 
-    /**
-     * getRelationDql
-     *
-     * @param  integer $count
-     * @param  string  $context
-     * @return string
-     */
-    public function getRelationDql($count, $context = 'record')
+    public function getRelationDql(int $count, string $context = 'record'): string
     {
         $table     = $this->definition['refTable'];
         $component = $this->definition['refTable']->getComponentName();

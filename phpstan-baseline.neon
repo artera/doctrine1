@@ -11,37 +11,7 @@ parameters:
 			path: lib/Doctrine/Parser.php
 
 		-
-			message: "#^Call to an undefined method Doctrine_EventListener_Interface\\|Doctrine_Overloadable\\<Doctrine_EventListener_Interface\\>\\:\\:preValidate\\(\\)\\.$#"
-			count: 1
-			path: lib/Doctrine/Record.php
-
-		-
-			message: "#^Call to an undefined method Doctrine_EventListener_Interface\\|Doctrine_Overloadable\\<Doctrine_EventListener_Interface\\>\\:\\:postValidate\\(\\)\\.$#"
-			count: 1
-			path: lib/Doctrine/Record.php
-
-		-
 			message: "#^Negated boolean expression is always false\\.$#"
-			count: 1
-			path: lib/Doctrine/Record.php
-
-		-
-			message: "#^Call to an undefined method Doctrine_EventListener_Interface\\|Doctrine_Overloadable\\<Doctrine_EventListener_Interface\\>\\:\\:preSerialize\\(\\)\\.$#"
-			count: 1
-			path: lib/Doctrine/Record.php
-
-		-
-			message: "#^Call to an undefined method Doctrine_EventListener_Interface\\|Doctrine_Overloadable\\<Doctrine_EventListener_Interface\\>\\:\\:postSerialize\\(\\)\\.$#"
-			count: 1
-			path: lib/Doctrine/Record.php
-
-		-
-			message: "#^Call to an undefined method Doctrine_EventListener_Interface\\|Doctrine_Overloadable\\<Doctrine_EventListener_Interface\\>\\:\\:preUnserialize\\(\\)\\.$#"
-			count: 1
-			path: lib/Doctrine/Record.php
-
-		-
-			message: "#^Call to an undefined method Doctrine_EventListener_Interface\\|Doctrine_Overloadable\\<Doctrine_EventListener_Interface\\>\\:\\:postUnserialize\\(\\)\\.$#"
 			count: 1
 			path: lib/Doctrine/Record.php
 
@@ -56,16 +26,6 @@ parameters:
 			path: lib/Doctrine/Record.php
 
 		-
-			message: "#^Possibly invalid array key type array\\<string\\>\\|string\\|null\\.$#"
-			count: 3
-			path: lib/Doctrine/Record.php
-
-		-
-			message: "#^Parameter \\#1 \\$expr of method Doctrine_Query_Abstract\\<Doctrine_Record\\>\\:\\:whereIn\\(\\) expects string, array\\<string\\>\\|string\\|null given\\.$#"
-			count: 4
-			path: lib/Doctrine/Record.php
-
-		-
 			message: "#^Cannot call method setInvoker\\(\\) on string\\.$#"
 			count: 1
 			path: lib/Doctrine/Record.php
@@ -76,42 +36,22 @@ parameters:
 			path: lib/Doctrine/Record.php
 
 		-
-			message: "#^Cannot call method getConnection\\(\\) on array\\|null\\.$#"
-			count: 1
-			path: lib/Doctrine/Relation.php
-
-		-
 			message: "#^Negated boolean expression is always false\\.$#"
 			count: 1
 			path: lib/Doctrine/Table.php
 
 		-
-			message: "#^Method Doctrine_Table\\:\\:find\\(\\) should return Doctrine_Collection\\<T of Doctrine_Record\\>\\|\\(iterable\\<T of Doctrine_Record\\>&T of Doctrine_Record\\)\\|false but returns array\\|Doctrine_Collection\\<T of Doctrine_Record\\>\\|Doctrine_Record\\|int\\|false\\.$#"
+			message: '#^Method Doctrine_Table\:\:execute\(\) should return iterable\<array\<string, mixed\>\>&T of Doctrine_Record but returns array\|bool\|Doctrine_Collection\<T of Doctrine_Record\>\|Doctrine_Collection_OnDemand\<T of Doctrine_Record\>\|float\|int\|string\.$#'
 			count: 1
 			path: lib/Doctrine/Table.php
 
 		-
-			message: "#^Method Doctrine_Table\\:\\:findOneBy\\(\\) should return array\\<string, mixed\\>\\|T of Doctrine_Record\\|false but returns array\\|Doctrine_Record\\|int\\|false\\.$#"
-			count: 1
-			path: lib/Doctrine/Table.php
-
-		-
-			message: "#^Method Doctrine_Table\\:\\:execute\\(\\) should return iterable\\<array\\<string, mixed\\>\\>&T of Doctrine_Record but returns array\\|Doctrine_Collection\\<T of Doctrine_Record\\>\\|int\\.$#"
-			count: 1
-			path: lib/Doctrine/Table.php
-
-		-
-			message: "#^Method Doctrine_Table\\:\\:executeOne\\(\\) should return array\\<string, mixed\\>\\|T of Doctrine_Record\\|false but returns array\\|Doctrine_Record\\|int\\|false\\.$#"
+			message: '#^Method Doctrine_Table\:\:findAll\(\) should return array\|Doctrine_Collection\<T of Doctrine_Record\> but returns array\|bool\|Doctrine_Collection\<T of Doctrine_Record\>\|Doctrine_Collection_OnDemand\<T of Doctrine_Record\>\|float\|string\.$#'
 			count: 1
 			path: lib/Doctrine/Table.php
 
 		-
 			message: "#^Call to an undefined method Doctrine_Validator_Driver\\:\\:validate\\(\\)\\.$#"
-			count: 1
-			path: lib/Doctrine/Table.php
-
-		-
-			message: "#^Strict comparison using \\=\\=\\= between array\\|null and 1 will always evaluate to false\\.$#"
 			count: 1
 			path: lib/Doctrine/Table.php
 

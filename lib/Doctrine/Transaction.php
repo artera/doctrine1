@@ -343,9 +343,8 @@ class Doctrine_Transaction extends Doctrine_Connection_Module
      * creates a new savepoint
      *
      * @param  string $savepoint name of a savepoint to create
-     * @return PDOStatement|Doctrine_Adapter_Statement_Interface
      */
-    protected function createSavePoint($savepoint)
+    protected function createSavePoint($savepoint): Doctrine_Connection_Statement
     {
         throw new Doctrine_Transaction_Exception('Savepoints not supported by this driver.');
     }
@@ -355,9 +354,8 @@ class Doctrine_Transaction extends Doctrine_Connection_Module
      * releases given savepoint
      *
      * @param  string $savepoint name of a savepoint to release
-     * @return PDOStatement|Doctrine_Adapter_Statement_Interface
      */
-    protected function releaseSavePoint($savepoint)
+    protected function releaseSavePoint($savepoint): Doctrine_Connection_Statement
     {
         throw new Doctrine_Transaction_Exception('Savepoints not supported by this driver.');
     }
@@ -367,9 +365,8 @@ class Doctrine_Transaction extends Doctrine_Connection_Module
      * releases given savepoint
      *
      * @param  string $savepoint name of a savepoint to rollback to
-     * @return PDOStatement|Doctrine_Adapter_Statement_Interface
      */
-    protected function rollbackSavePoint($savepoint)
+    protected function rollbackSavePoint($savepoint): Doctrine_Connection_Statement
     {
         throw new Doctrine_Transaction_Exception('Savepoints not supported by this driver.');
     }
@@ -458,9 +455,8 @@ class Doctrine_Transaction extends Doctrine_Connection_Module
      *
      * @throws Doctrine_Transaction_Exception           if the feature is not supported by the driver
      * @throws PDOException                             if something fails at the PDO level
-     * @return PDOStatement|Doctrine_Adapter_Statement_Interface
      */
-    public function setIsolation($isolation)
+    public function setIsolation($isolation): Doctrine_Connection_Statement
     {
         throw new Doctrine_Transaction_Exception('Transaction isolation levels not supported by this driver.');
     }

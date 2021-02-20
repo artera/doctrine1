@@ -29,29 +29,13 @@ namespace Tests\Core\Hydrate {
             $this->assertEquals($result, 'MY_HYDRATOR');
         }
 
-        public function testCustomHydratorConstructor()
-        {
-            $queryComponents = ['queryComponents'];
-            $tableAliases    = ['tableAliases'];
-            $hydrationMode   = ['hydrationMode'];
-
-            $hydrator = new \MyHydrator($queryComponents, $tableAliases, $hydrationMode);
-
-            $this->assertEquals($queryComponents, $hydrator->_queryComponents);
-            $this->assertEquals($tableAliases, $hydrator->_tableAliases);
-            $this->assertEquals($hydrationMode, $hydrator->_hydrationMode);
-        }
-
         public function testCustomHydratorUsingClassInstanceExceptingException()
         {
+            $this->expectException(\TypeError::class);
+
             $hydrator = new \StdClass();
             \Doctrine_Manager::getInstance()
                 ->registerHydrator('MyHydrator', $hydrator);
-
-            $this->expectException(\Doctrine_Hydrator_Exception::class);
-            \Doctrine_Core::getTable('User')
-                ->createQuery('u')
-                ->execute([], 'MyHydrator');
         }
     }
 }
@@ -59,11 +43,11 @@ namespace Tests\Core\Hydrate {
 namespace {
     class MyHydrator extends Doctrine_Hydrator_Abstract
     {
-        public $_queryComponents;
-        public $_tableAliases;
-        public $_hydrationMode;
+        protected array $_queryComponents;
+        protected array $_tableAliases;
+        protected int|string $_hydrationMode;
 
-        public function hydrateResultSet($stmt)
+        public function hydrateResultSet(Doctrine_Connection_Statement $stmt): string
         {
             return 'MY_HYDRATOR';
         }

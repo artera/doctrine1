@@ -1,36 +1,5 @@
 <?php
-/*
- *  $Id: Relation.php 7490 2010-03-29 19:53:27Z jwage $
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- * This software consists of voluntary contributions made by many individuals
- * and is licensed under the LGPL. For more information, see
- * <http://www.doctrine-project.org>.
- */
 
-/**
- * Doctrine_Relation
- * This class represents a relation between components
- *
- * @package    Doctrine
- * @subpackage Relation
- * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link       www.doctrine-project.org
- * @since      1.0
- * @version    $Revision: 7490 $
- * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
- */
 abstract class Doctrine_Relation implements ArrayAccess
 {
     /**
@@ -51,93 +20,134 @@ abstract class Doctrine_Relation implements ArrayAccess
     // since TRUE can bot be used as a default value this way. All values should be default values.
     /**
      * @var array $definition   @see __construct()
+     * @phpstan-var array{
+     *   alias: string,
+     *   foreign: string,
+     *   local: string,
+     *   class: class-string<Doctrine_Record>,
+     *   type: int,
+     *   table: Doctrine_Table,
+     *   localTable: Doctrine_Table,
+     *   name: ?string,
+     *   refTable: ?Doctrine_Table,
+     *   onDelete: ?string,
+     *   onUpdate: ?string,
+     *   deferred: ?bool,
+     *   deferrable: ?bool,
+     *   constraint: ?bool,
+     *   equal: bool,
+     *   cascade: string[],
+     *   owningSide: bool,
+     *   refClassRelationAlias: ?string,
+     *   foreignKeyName: ?string,
+     *   orderBy: null|string|string[],
+     * }
      */
-    protected $definition = [
-        'alias'                 => true,
-        'foreign'               => true,
-        'local'                 => true,
-        'class'                 => true,
-        'type'                  => true,
-        'table'                 => true,
-        'localTable'            => true,
-        'name'                  => null,
-        'refTable'              => null,
-        'onDelete'              => null,
-        'onUpdate'              => null,
-        'deferred'              => null,
-        'deferrable'            => null,
-        'constraint'            => null,
-        'equal'                 => false,
-        'cascade'               => [], // application-level cascades
-        'owningSide'            => false, // whether this is the owning side
-        'refClassRelationAlias' => null,
-        'foreignKeyName'        => null,
-        'orderBy'               => null,
-    ];
-    /**
-     * @var bool|null
-     */
-    protected $_isRefClass = null;
+    protected array $definition;
+
+    protected ?bool $_isRefClass = null;
 
     /**
      * constructor
      *
      * @param array $definition an associative array with the following structure:
-     *                          name                    foreign key constraint
-     *                          name local                   the local field(s)
-     *                          foreign                 the foreign reference
-     *                          field(s) table                   the foreign table
-     *                          object localTable              the local table
-     *                          object refTable                the reference table
-     *                          object (if any) onDelete
-     *                          referential delete action onUpdate
-     *                          referential update action deferred
-     *                          deferred constraint checking alias
-     *                          relation alias type                    the
-     *                          relation type, either Doctrine_Relation::ONE or
-     *                          Doctrine_Relation::MANY constraint
-     *                          boolean value, true if the relation has an
-     *                          explicit referential integrity constraint
-     *                          foreignKeyName          the name of the dbms
-     *                          foreign key to create. Optional, if left blank
-     *                          Doctrine will generate one for you The onDelete
-     *                          and onUpdate keys accept the following values:
-     *                          CASCADE: Delete or update the row from the parent
-     *                          table and automatically delete or update the
-     *                          matching rows in the child table. Both ON DELETE
-     *                          CASCADE and ON UPDATE CASCADE are supported.
-     *                          Between two tables, you should not define several
-     *                          ON UPDATE CASCADE clauses that act on the same
-     *                          column in the parent table or in the child table.
-     *                          SET NULL: Delete or update the row from the parent
-     *                          table and set the foreign key column or columns in
-     *                          the child table to NULL. This is valid only if the
-     *                          foreign key columns do not have the NOT NULL
-     *                          qualifier specified. Both ON DELETE SET NULL and
-     *                          ON UPDATE SET NULL clauses are supported. NO
-     *                          ACTION: In standard SQL, NO ACTION means no action
-     *                          in the sense that an attempt to delete or update a
-     *                          primary key value is not allowed to proceed if
-     *                          there is a related foreign key value in the
-     *                          referenced table. RESTRICT: Rejects the delete or
-     *                          update operation for the parent table. NO ACTION
-     *                          and RESTRICT are the same as omitting the ON
-     *                          DELETE or ON UPDATE clause. SET DEFAULT
+     * name foreign key constraint name
+     * local the local field(s)
+     * foreign the foreign reference field(s)
+     * table the foreign table object
+     * localTable the local table object
+     * refTable the reference table object  (if any)
+     * onDelete referential delete action
+     * onUpdate referential update action
+     * deferred * deferred constraint checking
+     * alias relation alias
+     * type the relation type, either Doctrine_Relation::ONE or Doctrine_Relation::MANY
+     * constraint boolean value, true if the relation has an explicit referential integrity constraint
+     * foreignKeyName the name of the dbms foreign key to create.
+     *
+     * Optional, if left blank Doctrine will generate one for you The onDelete
+     * and onUpdate keys accept the following values:
+     * CASCADE: Delete or update the row from the parent
+     * table and automatically delete or update the
+     * matching rows in the child table. Both ON DELETE
+     * CASCADE and ON UPDATE CASCADE are supported.
+     * Between two tables, you should not define several
+     * ON UPDATE CASCADE clauses that act on the same
+     * column in the parent table or in the child table.
+     * SET NULL: Delete or update the row from the parent
+     * table and set the foreign key column or columns in
+     * the child table to NULL. This is valid only if the
+     * foreign key columns do not have the NOT NULL
+     * qualifier specified. Both ON DELETE SET NULL and
+     * ON UPDATE SET NULL clauses are supported. NO
+     * ACTION: In standard SQL, NO ACTION means no action
+     * in the sense that an attempt to delete or update a
+     * primary key value is not allowed to proceed if
+     * there is a related foreign key value in the
+     * referenced table. RESTRICT: Rejects the delete or
+     * update operation for the parent table. NO ACTION
+     * and RESTRICT are the same as omitting the ON
+     * DELETE or ON UPDATE clause. SET DEFAULT
+     *
+     * @phpstan-param array{
+     *   alias: string,
+     *   foreign: string,
+     *   local: string,
+     *   class: class-string<Doctrine_Record>,
+     *   type: int,
+     *   table: Doctrine_Table,
+     *   localTable: Doctrine_Table,
+     *   name?: ?string,
+     *   refTable?: ?Doctrine_Table,
+     *   onDelete?: ?string,
+     *   onUpdate?: ?string,
+     *   deferred?: ?bool,
+     *   deferrable?: ?bool,
+     *   constraint?: ?bool,
+     *   equal?: bool,
+     *   cascade?: string[],
+     *   owningSide?: bool,
+     *   refClassRelationAlias?: ?string,
+     *   foreignKeyName?: ?string,
+     *   orderBy?: null|string|string[],
+     * } $definition
      */
     public function __construct(array $definition)
     {
-        $def = [];
-        foreach ($this->definition as $key => $val) {
-            if (!isset($definition[$key]) && $val) {
-                throw new Doctrine_Exception($key . ' is required!');
-            }
-            if (isset($definition[$key])) {
-                $def[$key] = $definition[$key];
-            } else {
-                $def[$key] = $this->definition[$key];
+        foreach (['alias', 'foreign', 'local', 'class', 'type', 'table', 'localTable'] as $req) {
+            if (!array_key_exists($req, $definition)) {
+                throw new Doctrine_Exception("$req is required!");
             }
         }
-        $this->definition = $def;
+
+        $this->definition = [
+            'alias'                 => $definition['alias'],
+            'foreign'               => $definition['foreign'],
+            'local'                 => $definition['local'],
+            'class'                 => $definition['class'],
+            'type'                  => $definition['type'],
+            'table'                 => $definition['table'],
+            'localTable'            => $definition['localTable'],
+            'name'                  => null,
+            'refTable'              => null,
+            'onDelete'              => null,
+            'onUpdate'              => null,
+            'deferred'              => null,
+            'deferrable'            => null,
+            'constraint'            => null,
+            'equal'                 => false,
+            'cascade'               => [],
+            'owningSide'            => false,
+            'refClassRelationAlias' => null,
+            'foreignKeyName'        => null,
+            'orderBy'               => null,
+        ];
+
+        foreach ($definition as $key => $value) {
+            if (array_key_exists($key, $this->definition)) {
+                $this->definition[$key] = $value;
+            }
+        }
     }
 
     /**
@@ -188,9 +198,9 @@ abstract class Doctrine_Relation implements ArrayAccess
 
     /**
      * @param  mixed $offset
-     * @return null|array
+     * @return mixed
      */
-    public function offsetGet($offset)
+    public function offsetGet($offset): mixed
     {
         if (isset($this->definition[$offset])) {
             return $this->definition[$offset];
@@ -386,13 +396,7 @@ abstract class Doctrine_Relation implements ArrayAccess
         return ($this->definition['type'] == Doctrine_Relation::ONE);
     }
 
-    /**
-     * getRelationDql
-     *
-     * @param  integer $count
-     * @return string
-     */
-    public function getRelationDql($count)
+    public function getRelationDql(int $count): string
     {
         $component = $this->getTable()->getComponentName();
 
@@ -488,23 +492,5 @@ abstract class Doctrine_Relation implements ArrayAccess
         }
 
         return $this->_isRefClass;
-    }
-
-    /**
-     * __toString
-     *
-     * @return string
-     */
-    public function __toString()
-    {
-        $r[] = '<pre>';
-        foreach ($this->definition as $k => $v) {
-            if (is_object($v)) {
-                $v = 'Object(' . get_class($v) . ')';
-            }
-            $r[] = $k . ' : ' . $v;
-        }
-        $r[] = '</pre>';
-        return implode("\n", $r);
     }
 }

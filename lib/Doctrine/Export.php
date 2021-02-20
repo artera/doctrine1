@@ -309,11 +309,11 @@ class Doctrine_Export extends Doctrine_Connection_Module
      *                         array( 'comment' => 'Foo', 'charset'
      *                         => 'utf8', 'collate' =>
      *                         'utf8_unicode_ci', );
-     * @return Doctrine_Adapter_Statement_Interface|PDOStatement
      */
-    public function createSequence($seqName, $start = 1, array $options = [])
+    public function createSequence($seqName, $start = 1, array $options = []): bool
     {
-        return $this->conn->execute($this->createSequenceSql($seqName, $start = 1, $options));
+        $this->conn->execute($this->createSequenceSql($seqName, $start = 1, $options));
+        return true;
     }
 
     /**
@@ -408,9 +408,8 @@ class Doctrine_Export extends Doctrine_Connection_Module
      *                            supports() to determine whether the DBMS driver can manage indexes.
      *                            Example array( 'fields' => array( 'user_name' => array( 'sorting' =>
      *                            'ascending' ), 'last_login' => array() ) )
-     * @return Doctrine_Adapter_Statement_Interface|PDOStatement
      */
-    public function createIndex($table, $name, array $definition)
+    public function createIndex($table, $name, array $definition): Doctrine_Connection_Statement
     {
         return $this->conn->execute($this->createIndexSql($table, $name, $definition));
     }
@@ -472,13 +471,11 @@ class Doctrine_Export extends Doctrine_Connection_Module
      *
      * @param  string $table      name of the table on which the foreign key is to be created
      * @param  array  $definition associative array that defines properties of the foreign key to be created.
-     * @return Doctrine_Adapter_Statement_Interface|PDOStatement
      */
-    public function createForeignKey($table, array $definition)
+    public function createForeignKey($table, array $definition): void
     {
         $sql = $this->createForeignKeySql($table, $definition);
-
-        return $this->conn->execute($sql);
+        $this->conn->execute($sql);
     }
 
     /**

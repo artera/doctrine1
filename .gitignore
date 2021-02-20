@@ -1,3 +1,6 @@
+.*
+!.git*
+
 /Tests/DbTestCase.php
 /Tests/DoctrineTest/doctrine_tests/*
 /Tests/Import/import_builder_test

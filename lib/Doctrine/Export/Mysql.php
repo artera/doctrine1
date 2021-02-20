@@ -431,9 +431,8 @@ class Doctrine_Export_Mysql extends Doctrine_Export
      *                              => 'utf8', 'collate' =>
      *                              'utf8_unicode_ci', 'type'    =>
      *                              'innodb', );
-     * @return boolean|null
      */
-    public function createSequence($sequenceName, $start = 1, array $options = [])
+    public function createSequence($sequenceName, $start = 1, array $options = []): bool
     {
         $sequenceName = $this->conn->quoteIdentifier($sequenceName, true);
         $seqcolName   = $this->conn->quoteIdentifier($this->conn->getAttribute(Doctrine_Core::ATTR_SEQCOL_NAME), true);
@@ -494,7 +493,7 @@ class Doctrine_Export_Mysql extends Doctrine_Export
             throw new Doctrine_Export_Exception('could not drop inconsistent sequence table');
         }
 
-        return null;
+        return false;
     }
 
     /**

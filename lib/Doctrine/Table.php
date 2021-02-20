@@ -1431,12 +1431,12 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
     /**
      * Returns the definition of the identifier key.
      *
-     * @return string|string[]|null    can be array if a multi-column primary key is used.
+     * @return string|string[] can be array if a multi-column primary key is used.
      */
     public function getIdentifier()
     {
         if (empty($this->_identifier)) {
-            return null;
+            throw new Doctrine_Table_Exception("Table has now identifiers");
         }
         if (count($this->_identifier) == 1) {
             return $this->_identifier[0];
@@ -1592,7 +1592,7 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
      *                                params. Third param: Optional Doctrine_Core::HYDRATE_ARRAY or
      *                                Doctrine_Core::HYDRATE_RECORD if first argument is a NamedQuery
      * @return         Doctrine_Collection|Doctrine_Record[]|Doctrine_Record|false    Doctrine_Collection, array, Doctrine_Record or false if no result
-     * @phpstan-return Doctrine_Collection<T>|T[]|T|false
+     * @phpstan-return Doctrine_Collection<T>|Doctrine_Collection_OnDemand<T>|T[]|T|array<string,mixed>|scalar
      */
     public function find(...$args)
     {
@@ -1731,7 +1731,7 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
      * @param          scalar $value         prepared statement parameter
      * @param          int    $hydrationMode Doctrine_Core::HYDRATE_ARRAY or Doctrine_Core::HYDRATE_RECORD
      * @return         Doctrine_Record|array<string,mixed>|false
-     * @phpstan-return T|array<string,mixed>|false
+     * @phpstan-return T|array<string,mixed>|scalar
      */
     public function findOneBy($fieldName, $value, $hydrationMode = null)
     {
@@ -1768,7 +1768,7 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
      * @param          mixed[] $params        prepared statement params (if any)
      * @param          int     $hydrationMode Doctrine_Core::HYDRATE_ARRAY or Doctrine_Core::HYDRATE_RECORD
      * @return         Doctrine_Record|array<string,mixed>|false
-     * @phpstan-return T|array<string,mixed>|false
+     * @phpstan-return T|array<string,mixed>|scalar
      */
     public function executeOne($queryKey, $params = [], $hydrationMode = Doctrine_Core::HYDRATE_RECORD)
     {

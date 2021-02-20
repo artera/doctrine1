@@ -1,35 +1,5 @@
 <?php
-/*
- *  $Id: Mock.php 7490 2010-03-29 19:53:27Z jwage $
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- * This software consists of voluntary contributions made by many individuals
- * and is licensed under the LGPL. For more information, see
- * <http://www.doctrine-project.org>.
- */
 
-/**
- * Doctrine mock connection adapter. This class is used for special testing purposes.
- *
- * @package    Doctrine
- * @subpackage Adapter
- * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link       www.doctrine-project.org
- * @since      1.0
- * @version    $Revision: 7490 $
- */
 class Doctrine_Adapter_Mock implements Doctrine_Adapter_Interface, Countable
 {
     /**
@@ -224,72 +194,43 @@ class Doctrine_Adapter_Mock implements Doctrine_Adapter_Interface, Countable
         }
     }
 
-    /**
-     * Get the id of the last inserted record
-     *
-     * @return integer|null $id
-     */
-    public function lastInsertId()
+    public function lastInsertId(): string
     {
         $this->_queries[] = 'LAST_INSERT_ID()';
         if ($this->_lastInsertIdFail) {
-            return null;
+            return '';
         } else {
-            return 1;
+            return '1';
         }
     }
 
-    /**
-     * Get the number of queries executed
-     *
-     * @return integer $count
-     */
     public function count(): int
     {
         return count($this->_queries);
     }
 
-    /**
-     * Begin a transaction
-     *
-     * @return bool
-     */
-    public function beginTransaction()
+    public function beginTransaction(): bool
     {
         $this->_queries[] = 'BEGIN TRANSACTION';
 
         return true;
     }
 
-    /**
-     * Commit a transaction
-     *
-     * @return bool
-     */
-    public function commit()
+    public function commit(): bool
     {
         $this->_queries[] = 'COMMIT';
 
         return true;
     }
 
-    /**
-     * Rollback a transaction
-     *
-     * @return bool
-     */
-    public function rollBack()
+    public function rollBack(): bool
     {
         $this->_queries[] = 'ROLLBACK';
 
         return true;
     }
 
-    /**
-     * @param  string|int $attribute
-     * @return string|null
-     */
-    public function getAttribute($attribute)
+    public function getAttribute(int $attribute): mixed
     {
         if ($attribute == Doctrine_Core::ATTR_DRIVER_NAME) {
             return strtolower($this->_name);
@@ -298,18 +239,12 @@ class Doctrine_Adapter_Mock implements Doctrine_Adapter_Interface, Countable
         return null;
     }
 
-    /**
-     * @return int
-     */
-    public function errorCode()
+    public function errorCode(): int
     {
         return 0;
     }
 
-    /**
-     * @return string
-     */
-    public function errorInfo()
+    public function errorInfo(): string
     {
         return '';
     }
@@ -319,7 +254,7 @@ class Doctrine_Adapter_Mock implements Doctrine_Adapter_Interface, Countable
      * @param  mixed      $value
      * @return bool
      */
-    public function setAttribute($attribute, $value)
+    public function setAttribute($attribute, $value): bool
     {
         return true;
     }

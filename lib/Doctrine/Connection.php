@@ -972,29 +972,23 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
         return $res;
     }
 
-    /**
-     * prepare
-     *
-     * @param string $statement
-     *
-     * @return Doctrine_Connection_Statement
-     */
-    public function prepare($statement): Doctrine_Connection_Statement
+    public function prepare(string $statement): Doctrine_Connection_Statement
     {
         $this->connect();
 
         try {
             $event = new Doctrine_Event($this, Doctrine_Event::CONN_PREPARE, $statement);
             $this->getAttribute(Doctrine_Core::ATTR_LISTENER)->prePrepare($event);
-            /** @var Doctrine_Adapter_Statement_Interface|PDOStatement */
+            /** @var Doctrine_Connection_Statement|PDOStatement */
             $stmt = $this->dbh->prepare($statement);
             $this->getAttribute(Doctrine_Core::ATTR_LISTENER)->postPrepare($event);
-            return new Doctrine_Connection_Statement($this, $stmt);
-        } catch (Doctrine_Adapter_Exception $e) {
-        } catch (PDOException $e) {
+            if ($stmt instanceof PDOStatement) {
+                $stmt = new Doctrine_Connection_Statement($this, $stmt);
+            }
+            return $stmt;
+        } catch (Doctrine_Adapter_Exception|PDOException $e) {
+            $this->rethrowException($e, $this, $statement);
         }
-
-        $this->rethrowException($e, $this, $statement);
     }
 
     /**
@@ -1034,9 +1028,8 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
      * @param  string  $query
      * @param  integer $limit
      * @param  integer $offset
-     * @return PDOStatement|Doctrine_Connection_Statement
      */
-    public function select($query, $limit = 0, $offset = 0)
+    public function select($query, $limit = 0, $offset = 0): Doctrine_Connection_Statement
     {
         if ($limit > 0 || $offset > 0) {
             $query = $this->modifyLimitQuery($query, $limit, $offset);
@@ -1049,10 +1042,8 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
      *
      * @param string $query  sql query
      * @param array  $params query parameters
-     *
-     * @return PDOStatement|Doctrine_Connection_Statement
      */
-    public function standaloneQuery($query, $params = [])
+    public function standaloneQuery($query, $params = []): Doctrine_Connection_Statement
     {
         return $this->execute($query, $params);
     }
@@ -1062,10 +1053,8 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
      *
      * @param string $query  sql query
      * @param array  $params query parameters
-     *
-     * @return PDOStatement|Doctrine_Connection_Statement
      */
-    public function execute($query, array $params = [])
+    public function execute($query, array $params = []): Doctrine_Connection_Statement
     {
         $this->connect();
 
@@ -1081,13 +1070,14 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
                 $stmt = $this->dbh->query($query);
                 $this->incrementQueryCount();
                 $this->getAttribute(Doctrine_Core::ATTR_LISTENER)->postQuery($event);
+                if ($stmt instanceof PDOStatement) {
+                    $stmt = new Doctrine_Connection_Statement($this, $stmt);
+                }
                 return $stmt;
             }
-        } catch (Doctrine_Adapter_Exception $e) {
-        } catch (PDOException $e) {
+        } catch (Doctrine_Adapter_Exception|PDOException $e) {
+            $this->rethrowException($e, $this, $query);
         }
-
-        $this->rethrowException($e, $this, $query);
     }
 
     /**
@@ -1287,9 +1277,8 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
      * this operation is isolated using a transaction
      *
      * @throws PDOException         if something went wrong at database level
-     * @return void
      */
-    public function flush()
+    public function flush(): void
     {
         try {
             $this->beginInternalTransaction();
@@ -1425,9 +1414,8 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
      *
      * @param  string $table name of the table into which a new row was inserted
      * @param  string $field name of the field into which a new row was inserted
-     * @return int|mixed
      */
-    public function lastInsertId($table = null, $field = null)
+    public function lastInsertId($table = null, $field = null): string
     {
         return $this->sequence->lastInsertId($table, $field);
     }

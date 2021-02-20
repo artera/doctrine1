@@ -32,70 +32,30 @@
  */
 interface Doctrine_Adapter_Interface
 {
-    /**
-     * @param  string $prepareString
-     * @return Doctrine_Adapter_Statement_Interface
-     */
-    public function prepare($prepareString);
+    public function prepare(string $prepareString): Doctrine_Connection_Statement;
+
+    public function query(string $queryString): Doctrine_Connection_Statement;
+
+    public function quote(string $input): string;
 
     /**
-     * @param  string $queryString
-     * @return Doctrine_Adapter_Statement_Interface
-     */
-    public function query($queryString);
-
-    /**
-     * @param  string $input
-     * @return string
-     */
-    public function quote($input);
-
-    /**
-     * @param  string $statement
      * @return int|false
      */
-    public function exec($statement);
+    public function exec(string $statement);
 
-    /**
-     * @return integer
-     */
-    public function lastInsertId();
+    public function lastInsertId(): string;
 
-    /**
-     * @return bool
-     */
-    public function beginTransaction();
+    public function beginTransaction(): bool;
 
-    /**
-     * @return bool
-     */
-    public function commit();
+    public function commit(): bool;
 
-    /**
-     * @return bool
-     */
-    public function rollBack();
+    public function rollBack(): bool;
 
-    /**
-     * @return int
-     */
-    public function errorCode();
+    public function errorCode(): int;
 
-    /**
-     * @return string
-     */
-    public function errorInfo();
+    public function errorInfo(): string;
 
-    /**
-     * @param  int   $attribute
-     * @param  mixed $value
-     * @return bool
-     */
-    public function setAttribute($attribute, $value);
+    public function setAttribute(int $attribute, mixed $value): bool;
 
-    /**
-     * @param  int $attribute
-     * @return mixed
-     */
-    public function getAttribute($attribute);
+    public function getAttribute(int $attribute): mixed;
 }

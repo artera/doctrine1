@@ -47,7 +47,7 @@ class Doctrine_Sequence extends Doctrine_Connection_Module
      * @return integer          next id in the given sequence
      * @throws Doctrine_Sequence_Exception
      */
-    public function nextId($seqName, $onDemand = true)
+    public function nextId($seqName, $onDemand = true): int
     {
         throw new Doctrine_Sequence_Exception('method not implemented');
     }
@@ -58,10 +58,8 @@ class Doctrine_Sequence extends Doctrine_Connection_Module
      *
      * @param string $table name of the table into which a new row was inserted
      * @param string $field name of the field into which a new row was inserted
-     *
-     * @return integer|boolean
      */
-    public function lastInsertId($table = null, $field = null)
+    public function lastInsertId($table = null, $field = null): string
     {
         throw new Doctrine_Sequence_Exception('method not implemented');
     }
@@ -70,10 +68,8 @@ class Doctrine_Sequence extends Doctrine_Connection_Module
      * Returns the current id of a sequence
      *
      * @param string $seqName name of the sequence
-     *
-     * @return integer          current id in the given sequence
      */
-    public function currId($seqName)
+    public function currId($seqName): int
     {
         $this->warnings[] = 'database does not support getting current
             sequence value, the sequence value was incremented';

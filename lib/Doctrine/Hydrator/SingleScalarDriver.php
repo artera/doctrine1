@@ -36,7 +36,7 @@ class Doctrine_Hydrator_SingleScalarDriver extends Doctrine_Hydrator_Abstract
      *
      * @psalm-return list<null|scalar>|null|scalar
      */
-    public function hydrateResultSet($stmt)
+    public function hydrateResultSet(Doctrine_Connection_Statement $stmt): mixed
     {
         $result = [];
         while (($val = $stmt->fetchColumn()) !== false) {

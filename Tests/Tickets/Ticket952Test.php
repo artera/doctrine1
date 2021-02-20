@@ -23,12 +23,12 @@ namespace Tests\Tickets {
             $profiler = new \Doctrine_Connection_Profiler();
             \Doctrine_Manager::connection()->setListener($profiler);
 
-            $q = \Doctrine_Query::create()
-            ->from('Ticket_952_Parent p')
-            ->leftJoin('p.Children c');
-            $parents = $q->execute();
-            $this->assertEquals($parents[0]['Children'][0]['Parent']->name, 'Parent'); // Invoked additional queries
-            $this->assertEquals($profiler->count(), 1);
+            $parents = \Doctrine_Query::create()
+                ->from('Ticket_952_Parent p')
+                ->leftJoin('p.Children c')
+                ->execute();
+            $this->assertEquals('Parent', $parents[0]['Children'][0]['Parent']->name); // Invoked additional queries
+            $this->assertEquals(1, $profiler->count());
         }
     }
 }

@@ -73,8 +73,6 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
         Doctrine_Core::HYDRATE_SCALAR           => 'Doctrine_Hydrator_ScalarDriver',
         Doctrine_Core::HYDRATE_SINGLE_SCALAR    => 'Doctrine_Hydrator_SingleScalarDriver',
         Doctrine_Core::HYDRATE_ON_DEMAND        => 'Doctrine_Hydrator_RecordDriver',
-        Doctrine_Core::HYDRATE_ARRAY_HIERARCHY  => 'Doctrine_Hydrator_ArrayHierarchyDriver',
-        Doctrine_Core::HYDRATE_RECORD_HIERARCHY => 'Doctrine_Hydrator_RecordHierarchyDriver',
         Doctrine_Core::HYDRATE_ARRAY_SHALLOW    => 'Doctrine_Hydrator_ArrayShallowDriver',
     ];
 
@@ -762,11 +760,9 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
     /**
      * Register a new driver for hydration
      *
-     * @param  string $name
-     * @param  string $class
-     * @return void
+     * @phpstan-param class-string<Doctrine_Hydrator_Abstract>|Doctrine_Hydrator_Abstract $class
      */
-    public function registerHydrator($name, $class)
+    public function registerHydrator(string $name, string|Doctrine_Hydrator_Abstract $class): void
     {
         $this->_hydrators[$name] = $class;
     }

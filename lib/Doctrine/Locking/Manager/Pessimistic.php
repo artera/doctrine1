@@ -234,6 +234,7 @@ class Doctrine_Locking_Manager_Pessimistic
                 throw new Doctrine_Locking_Exception('Failed to determine locking user');
             }
 
+            /** @var scalar|null */
             $userIdent = $stmt->fetchColumn();
         } catch (PDOException $pdoe) {
             throw new Doctrine_Locking_Exception($pdoe->getMessage());

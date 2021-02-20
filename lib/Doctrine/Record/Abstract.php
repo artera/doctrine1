@@ -65,23 +65,21 @@ abstract class Doctrine_Record_Abstract extends Doctrine_Access
     /**
      * addListener
      *
-     * @param  Doctrine_EventListener_Interface|Doctrine_Overloadable|Doctrine_Record_Listener_Interface $listener
-     * @param  string                                                                                    $name
+     * @phpstan-param Doctrine_Record_Listener_Interface|Doctrine_Overloadable<Doctrine_Record_Listener_Interface> $listener
      * @return $this
      */
-    public function addListener($listener, $name = null)
+    public function addListener(Doctrine_Record_Listener_Interface|Doctrine_Overloadable $listener, ?string $name = null): self
     {
         $this->_table->addRecordListener($listener, $name);
-
         return $this;
     }
 
     /**
      * getListener
      *
-     * @return Doctrine_EventListener_Interface|Doctrine_Overloadable|null
+     * @phpstan-return Doctrine_Record_Listener_Interface|Doctrine_Overloadable<Doctrine_Record_Listener_Interface>|null
      */
-    public function getListener()
+    public function getListener(): Doctrine_Record_Listener_Interface|Doctrine_Overloadable|null
     {
         return $this->_table->getRecordListener();
     }
@@ -89,13 +87,12 @@ abstract class Doctrine_Record_Abstract extends Doctrine_Access
     /**
      * setListener
      *
-     * @param  Doctrine_EventListener_Interface|Doctrine_Overloadable|Doctrine_Record_Listener_Interface $listener
+     * @phpstan-param Doctrine_Record_Listener_Interface|Doctrine_Overloadable<Doctrine_Record_Listener_Interface> $listener
      * @return $this
      */
-    public function setListener($listener)
+    public function setListener(Doctrine_Record_Listener_Interface|Doctrine_Overloadable $listener): self
     {
         $this->_table->setRecordListener($listener);
-
         return $this;
     }
 

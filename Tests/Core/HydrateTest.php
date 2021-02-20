@@ -75,7 +75,7 @@ namespace {
             $this->data = $data;
         }
 
-        public function hydrateResultSet($stmt)
+        public function hydrateResultSet(Doctrine_Connection_Statement $stmt): bool
         {
             return true;
         }

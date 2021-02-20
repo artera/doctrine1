@@ -116,4 +116,14 @@ interface Doctrine_Record_Listener_Interface
      * @return void
      */
     public function postHydrate(Doctrine_Event $event);
+
+    /**
+     * @return void
+     */
+    public function preValidate(Doctrine_Event $event);
+
+    /**
+     * @return void
+     */
+    public function postValidate(Doctrine_Event $event);
 }

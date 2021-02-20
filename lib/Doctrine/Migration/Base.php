@@ -360,9 +360,8 @@ abstract class Doctrine_Migration_Base
      * @param  string $tableName  Name of the table.
      * @param  string $name       Name of the foreign key.
      * @param  array  $definition Array for the foreign key definition
-     * @return void
      */
-    public function createForeignKey($tableName, $name, array $definition)
+    public function createForeignKey($tableName, $name, array $definition): void
     {
         $this->foreignKey('up', $tableName, $name, $definition);
     }

@@ -88,7 +88,7 @@ class Doctrine_Validator_Unique extends Doctrine_Validator_Driver
             $sql .= ' AND ' . $this->args['where'];
         }
 
-        /** @var PDOStatement|Doctrine_Adapter_Statement_Interface */
+        /** @var Doctrine_Connection_Statement */
         $stmt = $table->getConnection()->getDbh()->prepare($sql);
         $stmt->execute($values);
 

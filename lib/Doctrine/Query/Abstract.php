@@ -1,36 +1,6 @@
 <?php
-/*
- *  $Id: Query.php 1393 2007-05-19 17:49:16Z zYne $
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- * This software consists of voluntary contributions made by many individuals
- * and is licensed under the LGPL. For more information, see
- * <http://www.doctrine-project.org>.
- */
 
 /**
- * Doctrine_Query_Abstract
- *
- * @package    Doctrine
- * @subpackage Query
- * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link       www.doctrine-project.org
- * @since      1.0
- * @version    $Revision: 1393 $
- * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @todo       See {@link Doctrine_Query}
- *
  * @template T of Doctrine_Record_Abstract
  */
 abstract class Doctrine_Query_Abstract
@@ -201,6 +171,7 @@ abstract class Doctrine_Query_Abstract
 
 
     /**
+     * @phpstan-var array<string, array{table: Doctrine_Table, map?: ?string, parent?: string, relation?: Doctrine_Relation, ref?: bool, agg?: array<string, string>}>
      * @var array<string,mixed> $_queryComponents   Two dimensional array containing the components of this query,
      *                                informations about their relations and other related information.
      *                                The components are constructed during query parsing.
@@ -218,7 +189,7 @@ abstract class Doctrine_Query_Abstract
      *          map                 the name of the column / aggregate value this
      *                              component is mapped to a collection
      */
-    protected $_queryComponents = [];
+    protected array $_queryComponents = [];
 
     /**
      * Stores the root DQL alias
@@ -953,13 +924,7 @@ abstract class Doctrine_Query_Abstract
         }
     }
 
-    /**
-     * _execute
-     *
-     * @param  array $params
-     * @return PDOStatement|Doctrine_Adapter_Statement_Interface|int  The executed PDOStatement.
-     */
-    protected function _execute($params)
+    protected function _execute(array $params): Doctrine_Connection_Statement|int
     {
         // Apply boolean conversion in DQL params
         $params = $this->_conn->convertBooleans($params);
@@ -1032,15 +997,12 @@ abstract class Doctrine_Query_Abstract
     }
 
     /**
-     * execute
      * executes the query and populates the data set
      *
-     * @param          array $params
-     * @param          int   $hydrationMode
-     * @return         Doctrine_Collection|array|int            the root collection
-     * @phpstan-return Doctrine_Collection<T>|array|int
+     * @phpstan-param int|class-string<Doctrine_Hydrator_Abstract>|null $hydrationMode
+     * @phpstan-return Doctrine_Collection<T>|Doctrine_Collection_OnDemand<T>|array|scalar
      */
-    public function execute($params = [], $hydrationMode = null)
+    public function execute(array $params = [], int|string|null $hydrationMode = null): Doctrine_Collection|Doctrine_Collection_OnDemand|array|int|string|float|bool
     {
         // Clean any possible processed params
         $this->_execParams = [];
@@ -1067,12 +1029,9 @@ abstract class Doctrine_Query_Abstract
             if ($cached === false) {
                 // cache miss
                 $stmt = $this->_execute($params);
+                assert($stmt instanceof Doctrine_Connection_Statement);
                 $this->_hydrator->setQueryComponents($this->_queryComponents);
-                if ($this->_hydrator instanceof Doctrine_Hydrator) {
-                    $result = $this->_hydrator->hydrateResultSet($stmt, $this->_tableAliasMap);
-                } else {
-                    $result = $this->_hydrator->hydrateResultSet($stmt);
-                }
+                $result = $this->_hydrator->hydrateResultSet($stmt, $this->_hydrator instanceof Doctrine_Hydrator ? $this->_tableAliasMap : []);
 
                 $cached = $this->getCachedForm($result);
                 $cacheDriver->save($hash, $cached, $this->getResultCacheLifeSpan());
@@ -1238,24 +1197,32 @@ abstract class Doctrine_Query_Abstract
         $queryComponents  = [];
         $cachedComponents = $cached[1];
         foreach ($cachedComponents as $alias => $components) {
+            assert(is_string($alias));
+
+            $component = [];
+
             $e = explode('.', $components['name']);
             if (count($e) === 1) {
                 $manager = Doctrine_Manager::getInstance();
                 if (!$this->_passedConn && $manager->hasConnectionForComponent($e[0])) {
                     $this->_conn = $manager->getConnectionForComponent($e[0]);
                 }
-                $queryComponents[$alias]['table'] = $this->_conn->getTable($e[0]);
+                $component['table'] = $this->_conn->getTable($e[0]);
             } else {
-                $queryComponents[$alias]['parent']   = $e[0];
-                $queryComponents[$alias]['relation'] = $queryComponents[$e[0]]['table']->getRelation($e[1]);
-                $queryComponents[$alias]['table']    = $queryComponents[$alias]['relation']->getTable();
+                /** @var array{table: Doctrine_Table} */
+                $parentComponent = $queryComponents[$e[0]];
+                $component['parent']   = $e[0];
+                $component['relation'] = $parentComponent['table']->getRelation($e[1]);
+                $component['table']    = $component['relation']->getTable();
             }
-            if (isset($components['agg'])) {
-                $queryComponents[$alias]['agg'] = $components['agg'];
+            if (isset($components['agg']) && is_array($components['agg'])) {
+                /** @var array<string, string> */
+                $agg = $components['agg'];
+                $component['agg'] = $agg;
             }
-            if (isset($components['map'])) {
-                $queryComponents[$alias]['map'] = $components['map'];
-            }
+            $component['map'] = (isset($components['map']) && is_string($components['map'])) ? $components['map'] : null;
+
+            $queryComponents[$alias] = $component;
         }
         $this->_queryComponents = $queryComponents;
 

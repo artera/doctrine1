@@ -28,52 +28,61 @@ namespace {
         {
         }
 
-        public function prepare($prepareString)
+        public function prepare(string $prepareString): Doctrine_Connection_Statement
         {
         }
 
-        public function query($queryString)
+        public function query(string $queryString): Doctrine_Connection_Statement
         {
         }
 
-        public function quote($input)
+        public function quote(string $input): string
+        {
+            return '';
+        }
+
+        public function exec(string $statement)
         {
         }
 
-        public function exec($statement)
+        public function lastInsertId(): string
         {
+            return '1';
         }
 
-        public function lastInsertId()
+        public function beginTransaction(): bool
         {
+            return true;
         }
 
-        public function beginTransaction()
+        public function commit(): bool
         {
+            return true;
         }
 
-        public function commit()
+        public function rollBack(): bool
         {
+            return true;
         }
 
-        public function rollBack()
+        public function errorCode(): int
         {
+            return 0;
         }
 
-        public function errorCode()
+        public function errorInfo(): string
         {
+            return '';
         }
 
-        public function errorInfo()
+        public function getAttribute(int $attribute): mixed
         {
+            return true;
         }
 
-        public function getAttribute($attribute)
+        public function setAttribute(int $attribute, mixed $value): bool
         {
-        }
-
-        public function setAttribute($attribute, $value)
-        {
+            return true;
         }
 
         public function sqliteCreateFunction()

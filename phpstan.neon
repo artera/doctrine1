@@ -13,3 +13,5 @@ parameters:
     processTimeout: 300.0
   paths:
     - lib
+  ignoreErrors:
+    - '#with type mixed is not subtype of native type iterable#'

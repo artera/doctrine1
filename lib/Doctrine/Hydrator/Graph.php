@@ -1,72 +1,42 @@
 <?php
-/* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- * This software consists of voluntary contributions made by many individuals
- * and is licensed under the LGPL. For more information, see
- * <http://www.doctrine-project.org>.
- */
 
 /**
- * Abstract base class for child drivers to hydrate the object graph in to
- * various data types. For example Doctrine_Record instances or PHP arrays
- *
- * @package    Doctrine
- * @subpackage Hydrate
- * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link       www.doctrine-project.org
- * @since      1.0
- * @version    $Revision$
- * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @author     Roman Borschel <roman@code-factory.org>
- * @author     Jonathan H. Wage <jonwage@gmail.com>
+ * @template C
  */
 abstract class Doctrine_Hydrator_Graph extends Doctrine_Hydrator_Abstract
 {
     /**
      * This was previously undefined, setting to protected to match Doctrine_Hydrator
-     *
-     * @var string|null
      */
-    protected $_rootAlias = null;
+    protected ?string $_rootAlias = null;
 
-    /**
-     * @var array|null
-     */
-    protected $_tables = [];
+    protected ?array $_tables = [];
 
     /**
      * Gets the custom field used for indexing for the specified component alias.
      *
      * @param  string $alias
-     * @return string  The field name of the field used for indexing or NULL
+     * @return string|null The field name of the field used for indexing or NULL
      *                 if the component does not use any custom field indices.
      */
-    protected function _getCustomIndexField($alias)
+    protected function _getCustomIndexField(string $alias): ?string
     {
         return isset($this->_queryComponents[$alias]['map']) ? $this->_queryComponents[$alias]['map'] : null;
     }
 
-    public function hydrateResultSet($stmt)
+    /** @return C */
+    public function hydrateResultSet(Doctrine_Connection_Statement $stmt): iterable
     {
         // Used variables during hydration
         reset($this->_queryComponents);
+
+        /** @var string */
         $rootAlias         = key($this->_queryComponents);
         $this->_rootAlias  = $rootAlias;
+
         $rootComponentName = $this->_queryComponents[$rootAlias]['table']->getComponentName();
         // if only one component is involved we can make our lives easier
         $isSimpleQuery = count($this->_queryComponents) <= 1;
-        // Holds the resulting hydrated data structure
-        $result = [];
         // Holds array of record instances so we can call hooks on it
         $instances = [];
         // Holds hydration listeners that get called during hydration
@@ -94,11 +64,8 @@ abstract class Doctrine_Hydrator_Graph extends Doctrine_Hydrator_Abstract
         $cache = [];
 
         $result = $this->getElementCollection($rootComponentName);
-        if ($result instanceof Doctrine_Collection && $indexField = $this->_getCustomIndexField($rootAlias)) {
+        if ($rootAlias && $result instanceof Doctrine_Collection && $indexField = $this->_getCustomIndexField($rootAlias)) {
             $result->setKeyColumn($indexField);
-        }
-        if ($stmt === false || $stmt === 0) {
-            return $result;
         }
 
         // Process result set
@@ -107,7 +74,7 @@ abstract class Doctrine_Hydrator_Graph extends Doctrine_Hydrator_Abstract
         $event = new Doctrine_Event(null, Doctrine_Event::HYDRATE, null);
 
         if ($this->_hydrationMode == Doctrine_Core::HYDRATE_ON_DEMAND) {
-            if (!is_null($this->_priorRow)) {
+            if ($this->_priorRow !== null) {
                 $data            = $this->_priorRow;
                 $this->_priorRow = null;
             } else {
@@ -201,7 +168,7 @@ abstract class Doctrine_Hydrator_Graph extends Doctrine_Hydrator_Abstract
                 $instances[$componentName]->preHydrate($event);
 
                 // It would be nice if this could be moved to the query parser but I could not find a good place to implement it
-                if (!isset($map['parent'])) {
+                if (!isset($map['parent']) || !isset($map['relation'])) {
                     throw new Doctrine_Hydrator_Exception(
                         '"' . $componentName . '" with an alias of "' . $dqlAlias . '"' .
                         ' in your query does not reference the parent component it is related to.'
@@ -248,12 +215,13 @@ abstract class Doctrine_Hydrator_Graph extends Doctrine_Hydrator_Abstract
                             $identifierMap[$path][$id[$parent]][$id[$dqlAlias]] = $this->getLastKey($prev[$parent][$relationAlias]);
                         }
                         $collection = $prev[$parent][$relationAlias];
-                        if ($collection instanceof Doctrine_Collection && $indexField) {
-                            $collection->setKeyColumn($indexField);
+                        if ($collection instanceof Doctrine_Collection) {
+                            if ($indexField) {
+                                $collection->setKeyColumn($indexField);
+                            }
+                            // register collection for later snapshots
+                            $this->registerCollection($collection);
                         }
-
-                        // register collection for later snapshots
-                        $this->registerCollection($collection);
                     }
                 } else {
                     // 1-1 relation
@@ -334,7 +302,7 @@ abstract class Doctrine_Hydrator_Graph extends Doctrine_Hydrator_Abstract
             $dqlAlias  = $cache[$key]['dqlAlias'];
             $fieldName = $cache[$key]['fieldName'];
             $agg       = false;
-            if (isset($this->_queryComponents[$dqlAlias]['agg'][$fieldName])) {
+            if (isset($this->_queryComponents[$dqlAlias]['agg']) && isset($this->_queryComponents[$dqlAlias]['agg'][$fieldName])) {
                 $fieldName = $this->_queryComponents[$dqlAlias]['agg'][$fieldName];
                 $agg       = true;
             }
@@ -369,17 +337,10 @@ abstract class Doctrine_Hydrator_Graph extends Doctrine_Hydrator_Abstract
         return $rowData;
     }
 
-    /**
-     * @param  string $component
-     * @return Doctrine_Collection|array
-     */
-    abstract public function getElementCollection($component);
+    /** @return C */
+    abstract public function getElementCollection(string $component);
 
-    /**
-     * @param  Doctrine_Collection $coll
-     * @return void
-     */
-    abstract public function registerCollection($coll);
+    abstract public function registerCollection(Doctrine_Collection $coll): void;
 
     /**
      * @param  Doctrine_Record $record
@@ -397,26 +358,13 @@ abstract class Doctrine_Hydrator_Graph extends Doctrine_Hydrator_Abstract
      */
     abstract public function getElement(array $data, $component);
 
-    /**
-     * @param  array|Doctrine_Collection $coll
-     * @return mixed
-     */
-    abstract public function getLastKey(&$coll);
+    /** @param  C $coll */
+    abstract public function getLastKey(&$coll): mixed;
 
-    /**
-     * @param  array                     $prev
-     * @param  array|Doctrine_Collection $coll
-     * @param  boolean|int               $index
-     * @param  string                    $dqlAlias
-     * @param  bool                      $oneToOne
-     * @return void
-     */
-    abstract public function setLastElement(&$prev, &$coll, $index, $dqlAlias, $oneToOne);
+    /** @param null|Doctrine_Null|C $coll */
+    abstract public function setLastElement(array &$prev, &$coll, int|bool $index, string $dqlAlias, bool $oneToOne): void;
 
-    /**
-     * @return void
-     */
-    public function flush()
+    public function flush(): void
     {
     }
 

@@ -187,12 +187,10 @@ abstract class Doctrine_Configurable
     /**
      * addRecordListener
      *
-     * @param Doctrine_EventListener_Interface|Doctrine_Overloadable $listener
-     * @phpstan-param Doctrine_EventListener_Interface|Doctrine_Overloadable<Doctrine_EventListener_Interface> $listener
-     * @param string $name
-     * @return $this this object
+     * @phpstan-param Doctrine_Record_Listener_Interface|Doctrine_Overloadable<Doctrine_Record_Listener_Interface> $listener
+     * @return $this
      */
-    public function addRecordListener($listener, $name = null)
+    public function addRecordListener(Doctrine_Record_Listener_Interface|Doctrine_Overloadable $listener, ?string $name = null): self
     {
         if (!isset($this->attributes[Doctrine_Core::ATTR_RECORD_LISTENER])
             || !($this->attributes[Doctrine_Core::ATTR_RECORD_LISTENER] instanceof Doctrine_Record_Listener_Chain)
@@ -207,8 +205,8 @@ abstract class Doctrine_Configurable
     /**
      * getListener
      *
-     * @return Doctrine_EventListener_Interface|Doctrine_Overloadable
-     * @phpstan-return Doctrine_EventListener_Interface|Doctrine_Overloadable<Doctrine_EventListener_Interface>
+     * @return Doctrine_Record_Listener_Interface|Doctrine_Overloadable
+     * @phpstan-return Doctrine_Record_Listener_Interface|Doctrine_Overloadable<Doctrine_Record_Listener_Interface>
      */
     public function getRecordListener()
     {
@@ -225,11 +223,12 @@ abstract class Doctrine_Configurable
      * setListener
      *
      * @param Doctrine_EventListener_Interface|Doctrine_Overloadable $listener
-     * @phpstan-param Doctrine_EventListener_Interface|Doctrine_Overloadable<Doctrine_EventListener_Interface> $listener
+     * @phpstan-param Doctrine_Record_Listener_Interface|Doctrine_Overloadable<Doctrine_Record_Listener_Interface> $listener
      * @return $this        this object
      */
     public function setRecordListener($listener)
     {
+        // @phpstan-ignore-next-line
         if (!($listener instanceof Doctrine_Record_Listener_Interface)
             && !($listener instanceof Doctrine_Overloadable)
         ) {

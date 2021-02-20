@@ -2079,7 +2079,10 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
         }
 
         if ($this->_table->getIdentifierType() == Doctrine_Core::IDENTIFIER_AUTOINC) {
-            $i     = $this->_table->getIdentifier();
+            $i = $this->_table->getIdentifier();
+            if (is_array($i)) {
+                throw new Doctrine_Exception("Multi column identifiers are not supported for auto increments");
+            }
             $a[$i] = $this->getIncremented();
         }
 
@@ -2386,8 +2389,9 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
                     $this->_data[$fieldName] = $value;
                 }
             } else {
-                $name               = $this->_table->getIdentifier();
-                $this->_id[$name]   = $id;
+                $name = $this->_table->getIdentifier();
+                assert(!is_array($name));
+                $this->_id[$name] = $id;
                 $this->_data[$name] = $id;
             }
             $this->_state = Doctrine_Record::STATE_CLEAN;
@@ -2623,7 +2627,11 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
                 ->addWhere($rel->getForeign() . ' = ?', array_values($this->identifier()));
 
             if (count($ids) > 0) {
-                $q->whereIn($rel->getTable()->getIdentifier(), $ids);
+                $identifier = $rel->getTable()->getIdentifier();
+                if (is_array($identifier)) {
+                    throw new Doctrine_Exception("Cannot unlink related components with multi-column identifiers");
+                }
+                $q->whereIn($identifier, $ids);
             }
 
             $q->execute();
@@ -2650,9 +2658,14 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
         if (!$this->exists() || $now === false) {
             $relTable = $this->getTable()->getRelation($alias)->getTable();
 
+            $identifier = $relTable->getIdentifier();
+            if (is_array($identifier)) {
+                throw new Doctrine_Exception("Cannot link related components with multi-column identifiers");
+            }
+
             /** @phpstan-var Doctrine_Collection<static> */
-            $records  = $relTable->createQuery()
-                ->whereIn($relTable->getIdentifier(), $ids)
+            $records = $relTable->createQuery()
+                ->whereIn($identifier, $ids)
                 ->execute();
 
             foreach ($records as $record) {
@@ -2727,7 +2740,11 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
                 ->set($rel->getForeign(), '?', array_values($this->identifier()));
 
             if (count($ids) > 0) {
-                $q->whereIn($rel->getTable()->getIdentifier(), $ids);
+                $identifier = $rel->getTable()->getIdentifier();
+                if (is_array($identifier)) {
+                    throw new Doctrine_Exception("Cannot link related components with multi-column identifiers");
+                }
+                $q->whereIn($identifier, $ids);
             }
 
             $q->execute();
@@ -2738,7 +2755,11 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
                 ->set($rel->getLocalFieldName(), '?', $ids);
 
             if (count($ids) > 0) {
-                $q->whereIn($rel->getTable()->getIdentifier(), array_values($this->identifier()));
+                $identifier = $rel->getTable()->getIdentifier();
+                if (is_array($identifier)) {
+                    throw new Doctrine_Exception("Cannot link related components with multi-column identifiers");
+                }
+                $q->whereIn($identifier, array_values($this->identifier()));
             }
 
             $q->execute();

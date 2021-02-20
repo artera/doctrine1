@@ -153,13 +153,9 @@ class Doctrine_View
 
     /**
      * returns a collection of Doctrine_Record objects
-     *
-     * @return Doctrine_Collection|array|int
-     *
-     * @psalm-return Doctrine_Collection<Doctrine_Record>|array|int
-     * @phpstan-return Doctrine_Collection<Doctrine_Record>|array|int
+     * @phpstan-return array|bool|Doctrine_Collection<Doctrine_Record>|Doctrine_Collection_OnDemand<Doctrine_Record>|float|int|string
      */
-    public function execute()
+    public function execute(): array|bool|Doctrine_Collection|Doctrine_Collection_OnDemand|float|int|string
     {
         return $this->_query->execute();
     }

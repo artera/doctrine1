@@ -1,36 +1,5 @@
 <?php
-/*
- *  $Id: Table.php 1397 2007-05-19 19:54:15Z zYne $
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- * This software consists of voluntary contributions made by many individuals
- * and is licensed under the LGPL. For more information, see
- * <http://www.doctrine-project.org>.
- */
 
-/**
- * Doctrine_Relation_Parser
- *
- * @package    Doctrine
- * @subpackage Relation
- * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @version    $Revision: 1397 $
- * @link       www.doctrine-project.org
- * @since      1.0
- * @todo       Composite key support?
- */
 class Doctrine_Relation_Parser
 {
     /**
@@ -163,14 +132,15 @@ class Doctrine_Relation_Parser
         }
 
         if (isset($this->_pending[$alias])) {
-            $def                   = $this->_pending[$alias];
+            /** @var array{alias: string, type: int, class: class-string<Doctrine_Record>, refClass?: class-string<Doctrine_Record>} */
+            $def = $this->_pending[$alias];
             $identifierColumnNames = $this->_table->getIdentifierColumnNames();
             $idColumnName          = array_pop($identifierColumnNames);
 
             // check if reference class name exists
             // if it does we are dealing with association relation
             if (isset($def['refClass'])) {
-                $def          = $this->completeAssocDefinition($def);
+                $def = $this->completeAssocDefinition($def);
                 $localClasses = array_merge($this->_table->getOption('parents'), [$this->_table->getComponentName()]);
 
                 $backRefRelationName = isset($def['refClassRelationAlias']) ?
@@ -270,8 +240,27 @@ class Doctrine_Relation_Parser
      *
      * @param  array $def definition array to be completed
      * @return array        completed definition array
+     *
+     * @phpstan-param array{
+     *   alias: string,
+     *   type: int,
+     *   class: class-string<Doctrine_Record>,
+     *   refClass: class-string<Doctrine_Record>,
+     *   local?: string,
+     * } $def
+     * @phpstan-return array{
+     *   alias: string,
+     *   type: int,
+     *   table: Doctrine_Table,
+     *   localTable: Doctrine_Table,
+     *   class: class-string<Doctrine_Record>,
+     *   refTable: Doctrine_Table,
+     *   refClass: class-string<Doctrine_Record>,
+     *   foreign: string,
+     *   local: string,
+     * }
      */
-    public function completeAssocDefinition($def)
+    public function completeAssocDefinition(array $def): array
     {
         $conn              = $this->_table->getConnection();
         $def['table']      = $conn->getTable($def['class']);
@@ -286,7 +275,7 @@ class Doctrine_Relation_Parser
                 // foreign key not set
                 // try to guess the foreign key
 
-                $def['foreign'] = ($def['local'] === $id[0]) ? $id[1] : $id[0];
+                $def['foreign'] = (isset($def['local']) && $def['local'] === $id[0]) ? $id[1] : $id[0];
             }
             if (!isset($def['local'])) {
                 // foreign key not set
@@ -299,14 +288,14 @@ class Doctrine_Relation_Parser
                 // try to guess the foreign key
 
                 $columns = $this->getIdentifiers($def['table']);
-
+                assert(is_string($columns));
                 $def['foreign'] = $columns;
             }
             if (!isset($def['local'])) {
                 // local key not set
                 // try to guess the local key
                 $columns = $this->getIdentifiers($this->_table);
-
+                assert(is_string($columns));
                 $def['local'] = $columns;
             }
         }
@@ -386,10 +375,27 @@ class Doctrine_Relation_Parser
      *
      * @param  array $def definition array to be completed
      * @return array        completed definition array
-     * @todo   Description: What does it mean to complete a definition? What is done (not how)?
-     *       Refactor (too long & nesting level)
+     *
+     * @phpstan-param array{
+     *   alias: string,
+     *   type: int,
+     *   class: class-string<Doctrine_Record>,
+     *   local?: string,
+     *   owningSide?: bool,
+     * } $def
+     * @phpstan-return array{
+     *   alias: string,
+     *   type: int,
+     *   table: Doctrine_Table,
+     *   localTable: Doctrine_Table,
+     *   class: class-string<Doctrine_Record>,
+     *   foreign: string,
+     *   local: string,
+     *   localKey?: bool,
+     *   owningSide?: bool,
+     * }
      */
-    public function completeDefinition($def)
+    public function completeDefinition(array $def): array
     {
         $conn              = $this->_table->getConnection();
         $def['table']      = $conn->getTable($def['class']);
@@ -402,6 +408,7 @@ class Doctrine_Relation_Parser
         $localIdentifierColumnNames   = $this->_table->getIdentifierColumnNames();
         $localIdentifierCount         = count($localIdentifierColumnNames);
         $localIdColumnName            = array_pop($localIdentifierColumnNames);
+        assert(is_string($localIdColumnName));
         $foreignIdentifierColumnNames = $def['table']->getIdentifierColumnNames();
         $foreignIdColumnName          = array_pop($foreignIdentifierColumnNames);
 
@@ -424,9 +431,7 @@ class Doctrine_Relation_Parser
                 $def['foreign'] = $def['table']->getColumnName($def['foreign']);
 
                 if ($localIdentifierCount == 1) {
-                    if ($def['local'] == $localIdColumnName && isset($def['owningSide'])
-                        && $def['owningSide'] === true
-                    ) {
+                    if ($def['local'] == $localIdColumnName && array_key_exists('owningSide', $def) && $def['owningSide'] === true) {
                         $def['localKey'] = true;
                     } elseif (($def['local'] !== $localIdColumnName && $def['type'] == Doctrine_Relation::ONE)) {
                         $def['localKey'] = true;
@@ -464,6 +469,7 @@ class Doctrine_Relation_Parser
                     $table                 = $conn->getTable($class);
                     $identifierColumnNames = $table->getIdentifierColumnNames();
                     $idColumnName          = array_pop($identifierColumnNames);
+                    assert(is_string($idColumnName));
                     $column                = strtolower($table->getComponentName())
                             . '_' . $idColumnName;
 
@@ -481,6 +487,7 @@ class Doctrine_Relation_Parser
                     $table                 = $conn->getTable($class);
                     $identifierColumnNames = $table->getIdentifierColumnNames();
                     $idColumnName          = array_pop($identifierColumnNames);
+                    assert(is_string($idColumnName));
                     $column                = strtolower($table->getComponentName())
                             . '_' . $idColumnName;
 

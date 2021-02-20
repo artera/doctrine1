@@ -1,34 +1,6 @@
 <?php
-/* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- * This software consists of voluntary contributions made by many individuals
- * and is licensed under the LGPL. For more information, see
- * <http://www.doctrine-project.org>.
- */
 
-/**
- * Builds result sets in to the object graph using Doctrine_Record instances
- *
- * @package    Doctrine
- * @subpackage Hydrate
- * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link       www.doctrine-project.org
- * @since      1.0
- * @version    $Revision$
- * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @author     Roman Borschel <roman@code-factory.org>
- * @author     Jonathan H. Wage <jonwage@gmail.com>
- */
+/** @extends Doctrine_Hydrator_Graph<Doctrine_Collection> */
 class Doctrine_Hydrator_RecordDriver extends Doctrine_Hydrator_Graph
 {
     /**
@@ -41,11 +13,7 @@ class Doctrine_Hydrator_RecordDriver extends Doctrine_Hydrator_Graph
      */
     private $_initializedRelations = [];
 
-    /**
-     * @param  string $component
-     * @return Doctrine_Collection
-     */
-    public function getElementCollection($component)
+    public function getElementCollection(string $component): Doctrine_Collection
     {
         $coll                 = Doctrine_Collection::create($component);
         $this->_collections[] = $coll;
@@ -71,11 +39,7 @@ class Doctrine_Hydrator_RecordDriver extends Doctrine_Hydrator_Graph
         return true;
     }
 
-    /**
-     * @param  array|Doctrine_Collection $coll
-     * @return void
-     */
-    public function registerCollection($coll)
+    public function registerCollection(Doctrine_Collection $coll): void
     {
         $this->_collections[] = $coll;
     }
@@ -103,28 +67,15 @@ class Doctrine_Hydrator_RecordDriver extends Doctrine_Hydrator_Graph
      * @param  Doctrine_Collection $coll
      * @return mixed
      */
-    public function getLastKey(&$coll)
+    public function getLastKey(&$coll): mixed
     {
         $coll->end();
-
         return $coll->key();
     }
 
-    /**
-     * sets the last element of given data array / collection
-     * as previous element
-     *
-     * @param  array               $prev
-     * @param  Doctrine_Collection $coll
-     * @param  boolean|integer     $index
-     * @param  string              $dqlAlias
-     * @param  mixed               $oneToOne (seems to be unused)
-     * @return void
-     * @todo   Detailed documentation
-     */
-    public function setLastElement(&$prev, &$coll, $index, $dqlAlias, $oneToOne)
+    public function setLastElement(array &$prev, &$coll, int|bool $index, string $dqlAlias, bool $oneToOne): void
     {
-        if ($coll === Doctrine_Null::instance()) {
+        if ($coll instanceof Doctrine_Null || $coll === null) {
             unset($prev[$dqlAlias]); // Ticket #1228
             return;
         }
@@ -141,10 +92,7 @@ class Doctrine_Hydrator_RecordDriver extends Doctrine_Hydrator_Graph
         }
     }
 
-    /**
-     * @return void
-     */
-    public function flush()
+    public function flush(): void
     {
         // take snapshots from all initialized collections
         foreach ($this->_collections as $key => $coll) {

@@ -46,9 +46,8 @@ class Doctrine_Transaction_Sqlite extends Doctrine_Transaction
      *                           phantom reads)
      * @throws PDOException                         if something fails at the PDO level
      * @throws Doctrine_Transaction_Exception       if using unknown isolation level
-     * @return PDOStatement|Doctrine_Adapter_Statement_Interface
      */
-    public function setIsolation($isolation)
+    public function setIsolation($isolation): Doctrine_Connection_Statement
     {
         switch ($isolation) {
             case 'READ UNCOMMITTED':

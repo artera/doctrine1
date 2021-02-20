@@ -1,39 +1,9 @@
 <?php
-/* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- * This software consists of voluntary contributions made by many individuals
- * and is licensed under the LGPL. For more information, see
- * <http://www.doctrine-project.org>.
- */
 
-/**
- * Builds result sets in to the object graph using php arrays
- *
- * @package    Doctrine
- * @subpackage Hydrate
- * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link       www.doctrine-project.org
- * @since      1.0
- * @version    $Revision$
- * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
- */
+/** @extends Doctrine_Hydrator_Graph<array> */
 class Doctrine_Hydrator_ArrayDriver extends Doctrine_Hydrator_Graph
 {
-    /**
-     * @param  string $component
-     * @return array
-     */
-    public function getElementCollection($component)
+    public function getElementCollection(string $component): array
     {
         return [];
     }
@@ -47,11 +17,7 @@ class Doctrine_Hydrator_ArrayDriver extends Doctrine_Hydrator_Graph
         return $data;
     }
 
-    /**
-     * @param  array|Doctrine_Collection $coll
-     * @return void
-     */
-    public function registerCollection($coll)
+    public function registerCollection(Doctrine_Collection $coll): void
     {
     }
 
@@ -74,27 +40,15 @@ class Doctrine_Hydrator_ArrayDriver extends Doctrine_Hydrator_Graph
         return null;
     }
 
-    /**
-     * @param  Doctrine_Collection|array $coll
-     * @return mixed
-     */
-    public function getLastKey(&$coll)
+    public function getLastKey(&$coll): mixed
     {
         end($coll);
         return key($coll);
     }
 
-    /**
-     * @param  array                     $prev
-     * @param  array|Doctrine_Collection $coll
-     * @param  int|bool                  $index
-     * @param  string                    $dqlAlias
-     * @param  bool                      $oneToOne
-     * @return void
-     */
-    public function setLastElement(&$prev, &$coll, $index, $dqlAlias, $oneToOne)
+    public function setLastElement(array &$prev, &$coll, int|bool $index, string $dqlAlias, bool $oneToOne): void
     {
-        if ($coll === null) {
+        if ($coll instanceof Doctrine_Null || $coll === null) {
             unset($prev[$dqlAlias]); // Ticket #1228
             return;
         }
@@ -108,10 +62,10 @@ class Doctrine_Hydrator_ArrayDriver extends Doctrine_Hydrator_Graph
 
         if ($coll) {
             if ($oneToOne) {
-                $prev[$dqlAlias] = & $coll;
+                $prev[$dqlAlias] = &$coll;
             } else {
                 end($coll);
-                $prev[$dqlAlias] = & $coll[key($coll)];
+                $prev[$dqlAlias] = &$coll[key($coll)];
             }
         }
     }
