@@ -44,11 +44,6 @@ abstract class Doctrine_Configurable
     protected $parent;
 
     /**
-     * @var array $_params                  an array of user defined parameters
-     */
-    protected array $_params = [];
-
-    /**
      * sets a given attribute
      *
      * <code>
@@ -114,54 +109,6 @@ abstract class Doctrine_Configurable
 
         $this->attributes[$attribute] = $value;
         return $this;
-    }
-
-    public function getParams(?int $namespace = null): ?array
-    {
-        if ($namespace == null) {
-            $namespace = $this->getAttribute(Doctrine_Core::ATTR_DEFAULT_PARAM_NAMESPACE);
-        }
-
-        if (!isset($this->_params[$namespace])) {
-            return null;
-        }
-
-        return $this->_params[$namespace];
-    }
-
-    public function getParamNamespaces(): array
-    {
-        return array_keys($this->_params);
-    }
-
-    /**
-     * @return $this
-     */
-    public function setParam(string $name, mixed $value, ?string $namespace = null): self
-    {
-        if ($namespace == null) {
-            $namespace = $this->getAttribute(Doctrine_Core::ATTR_DEFAULT_PARAM_NAMESPACE);
-        }
-
-        $this->_params[$namespace][$name] = $value;
-
-        return $this;
-    }
-
-    public function getParam(string $name, ?int $namespace = null): mixed
-    {
-        if ($namespace == null) {
-            $namespace = $this->getAttribute(Doctrine_Core::ATTR_DEFAULT_PARAM_NAMESPACE);
-        }
-
-        if (!isset($this->_params[$namespace][$name])) {
-            if (isset($this->parent)) {
-                return $this->parent->getParam($name, $namespace);
-            }
-            return null;
-        }
-
-        return $this->_params[$namespace][$name];
     }
 
     /**
