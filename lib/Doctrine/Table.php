@@ -282,7 +282,7 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
     {
         $name = $this->_options['name'];
         if (!class_exists($name) || empty($name)) {
-            throw new Doctrine_Exception("Couldn't find class " . $name);
+            throw new Doctrine_Exception("Couldn't find class $name");
         }
         $record = new $name($this);
 
@@ -313,7 +313,7 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
 
         // create database table
         if (method_exists($record, 'setTableDefinition')) {
-            $record->setTableDefinition();
+            $record->setTableDefinition(); // @phpstan-ignore-line
             // get the declaring class of setTableDefinition method
             $method = new ReflectionMethod($this->_options['name'], 'setTableDefinition');
             $class  = $method->getDeclaringClass();

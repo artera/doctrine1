@@ -47,7 +47,7 @@ class Doctrine_EventListener_Chain extends Doctrine_Access implements Doctrine_E
      * @param  string $name
      * @return void
      */
-    public function add($listener, $name = null)
+    public function add($listener, $name = null): void
     {
         if (!($listener instanceof Doctrine_EventListener_Interface)
             && !($listener instanceof Doctrine_Overloadable)

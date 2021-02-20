@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * @template Connection of Doctrine_Connection
+ * @extends Doctrine_Connection_Module<Connection>
+ */
 class Doctrine_Connection_UnitOfWork extends Doctrine_Connection_Module
 {
     /**
@@ -185,12 +189,10 @@ class Doctrine_Connection_UnitOfWork extends Doctrine_Connection_Module
                 $deletedRecords = [];
                 foreach ($deletions as $oid => $record) {
                     if ($record->getTable()->getComponentName() == $className) {
-                        $veto = $this->_preDelete($record);
-                        if (!$veto) {
-                            $identifierMaps[] = $record->identifier();
-                            $deletedRecords[] = $record;
-                            unset($deletions[$oid]);
-                        }
+                        $this->_preDelete($record);
+                        $identifierMaps[] = $record->identifier();
+                        $deletedRecords[] = $record;
+                        unset($deletions[$oid]);
                     }
                 }
 
@@ -623,7 +625,7 @@ class Doctrine_Connection_UnitOfWork extends Doctrine_Connection_Module
      * 'correct' order. Basically this means that the records of those
      * components can be saved safely in the order specified by the returned array.
      *
-     * @param  array|Doctrine_Table[] $tables an array of Doctrine_Table objects or component names
+     * @param  (Doctrine_Table|class-string<Doctrine_Record>)[] $tables an array of Doctrine_Table objects or component names
      * @return array            an array of component names in flushing order
      */
     public function buildFlushTree(array $tables)

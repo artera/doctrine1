@@ -71,7 +71,7 @@ class Doctrine_Validator_ErrorStack extends Doctrine_Access implements Countable
      * @param  string|Doctrine_Validator_Driver $errorCode
      * @return void
      */
-    public function add($invalidFieldName, $errorCode = 'general')
+    public function add($invalidFieldName, $errorCode = 'general'): void
     {
         if (is_object($errorCode)) {
             if (!($errorCode instanceof Doctrine_Validator_Driver)) {
@@ -151,7 +151,7 @@ class Doctrine_Validator_ErrorStack extends Doctrine_Access implements Countable
      *
      * @return ArrayIterator
      */
-    public function getIterator()
+    public function getIterator(): ArrayIterator
     {
         return new ArrayIterator($this->_errors);
     }

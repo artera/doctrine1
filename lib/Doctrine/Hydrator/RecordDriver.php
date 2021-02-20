@@ -13,9 +13,10 @@ class Doctrine_Hydrator_RecordDriver extends Doctrine_Hydrator_Graph
      */
     private $_initializedRelations = [];
 
+    /** @phpstan-param class-string<Doctrine_Record> $component */
     public function getElementCollection(string $component): Doctrine_Collection
     {
-        $coll                 = Doctrine_Collection::create($component);
+        $coll = Doctrine_Collection::create($component);
         $this->_collections[] = $coll;
 
         return $coll;
@@ -31,7 +32,7 @@ class Doctrine_Hydrator_RecordDriver extends Doctrine_Hydrator_Graph
     {
         if (!isset($this->_initializedRelations[$record->getOid()][$name])) {
             $relation = $record->getTable()->getRelation($name);
-            $coll     = Doctrine_Collection::create($relation->getTable()->getComponentName(), $keyColumn);
+            $coll = Doctrine_Collection::create($relation->getTable()->getComponentName(), $keyColumn);
             $coll->setReference($record, $relation);
             $record[$name]                                         = $coll;
             $this->_initializedRelations[$record->getOid()][$name] = true;
@@ -50,10 +51,10 @@ class Doctrine_Hydrator_RecordDriver extends Doctrine_Hydrator_Graph
     }
 
     /**
-     * @param  string $component
+     * @phpstan-param class-string<Doctrine_Record> $component
      * @return Doctrine_Record
      */
-    public function getElement(array $data, $component)
+    public function getElement(array $data, string $component)
     {
         $component = $this->_getClassnameToReturn($data, $component);
 
@@ -100,6 +101,6 @@ class Doctrine_Hydrator_RecordDriver extends Doctrine_Hydrator_Graph
         }
         $this->_initializedRelations = null;
         $this->_collections          = null;
-        $this->_tables               = null;
+        $this->_tables = [];
     }
 }

@@ -93,7 +93,7 @@ class Doctrine_Record_Listener_Chain extends Doctrine_Access implements Doctrine
      * @param  string $name
      * @return void
      */
-    public function add($listener, $name = null)
+    public function add($listener, $name = null): void
     {
         if (!($listener instanceof Doctrine_Record_Listener_Interface)
             && !($listener instanceof Doctrine_Overloadable)

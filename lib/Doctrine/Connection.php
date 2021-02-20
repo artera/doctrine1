@@ -833,7 +833,7 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
                 $stmt = new Doctrine_Connection_Statement($this, $stmt);
             }
             return $stmt;
-        } catch (Doctrine_Adapter_Exception|PDOException $e) {
+        } catch (PDOException $e) {
             $this->rethrowException($e, $this, $statement);
         }
     }
@@ -917,7 +917,7 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
                 }
                 return $stmt;
             }
-        } catch (Doctrine_Adapter_Exception|PDOException $e) {
+        } catch (PDOException $e) {
             $this->rethrowException($e, $this, $query);
         }
     }
@@ -945,18 +945,16 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
                 $this->getAttribute(Doctrine_Core::ATTR_LISTENER)->postExec($event);
                 return $count;
             }
-        } catch (Doctrine_Adapter_Exception $e) {
         } catch (PDOException $e) {
+            $this->rethrowException($e, $this, $query);
         }
-
-        $this->rethrowException($e, $this, $query);
     }
 
     /**
      * @throws Doctrine_Connection_Exception
      * @return never
      */
-    public function rethrowException(PDOException|Doctrine_Adapter_Exception $e, mixed $invoker, ?string $query = null): void
+    public function rethrowException(PDOException $e, mixed $invoker, ?string $query = null): void
     {
         $event = new Doctrine_Event($this, Doctrine_Event::CONN_ERROR);
 
@@ -1267,21 +1265,18 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
         // Parse pdo dsn so we are aware of the connection information parts
         $info = $this->getManager()->parsePdoDsn($dsn);
 
+        if (!isset($info['dbname'])) {
+            throw new Doctrine_Connection_Exception('The connection dsn must specify a dbname in order to use the create/drop database functionality');
+        }
+
         // Get the temporary connection to issue the create database command
         $tmpConnection = $this->getTmpConnection($info);
 
-        // Catch any exceptions and delay the throwing of it so we can close
-        // the tmp connection
         try {
             $tmpConnection->export->createDatabase($info['dbname']);
-        } catch (Exception $e) {
-        }
-
-        // Close the temporary connection used to issue the drop database command
-        $this->getManager()->closeConnection($tmpConnection);
-
-        if (isset($e)) {
-            throw $e;
+        } finally {
+            // Close the temporary connection used to issue the drop database command
+            $this->getManager()->closeConnection($tmpConnection);
         }
     }
 
@@ -1297,22 +1292,18 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
         // Parse pdo dsn so we are aware of the connection information parts
         $info = $this->getManager()->parsePdoDsn($dsn);
 
+        if (!isset($info['dbname'])) {
+            throw new Doctrine_Connection_Exception('The connection dsn must specify a dbname in order to use the create/drop database functionality');
+        }
+
         // Get the temporary connection to issue the drop database command
         $tmpConnection = $this->getTmpConnection($info);
 
-        // Catch any exceptions and delay the throwing of it so we can close
-        // the tmp connection
         try {
             $tmpConnection->export->dropDatabase($info['dbname']);
-        } catch (Exception $e) {
-        }
-
-        // Close the temporary connection used to issue the drop database command
-        $this->getManager()->closeConnection($tmpConnection);
-
-
-        if (isset($e)) {
-            throw $e;
+        } finally {
+            // Close the temporary connection used to issue the drop database command
+            $this->getManager()->closeConnection($tmpConnection);
         }
     }
 

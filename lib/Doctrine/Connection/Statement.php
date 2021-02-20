@@ -63,7 +63,7 @@ class Doctrine_Connection_Statement
             $this->connection->getListener()->postStmtExecute($event);
 
             return $result;
-        } catch (PDOException|Doctrine_Adapter_Exception $e) {
+        } catch (PDOException $e) {
             $this->connection->rethrowException($e, $this);
         }
     }

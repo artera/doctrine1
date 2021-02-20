@@ -1,35 +1,5 @@
 <?php
-/*
- *  $Id: Import.php 2552 2007-09-19 19:33:00Z Jonathan.Wage $
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- * This software consists of voluntary contributions made by many individuals
- * and is licensed under the LGPL. For more information, see
- * <http://www.doctrine-project.org>.
- */
 
-/**
- * Doctrine_Data_Import
- *
- * @package Doctrine
- * @package Data
- * @author  Jonathan H. Wage <jwage@mac.com>
- * @license http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link    www.doctrine-project.org
- * @since   1.0
- * @version $Revision: 2552 $
- */
 class Doctrine_Data_Import extends Doctrine_Data
 {
     /**
@@ -41,18 +11,14 @@ class Doctrine_Data_Import extends Doctrine_Data
 
     /**
      * Array of the raw data parsed from yaml
-     *
-     * @var array
+     * @phpstan-var array<class-string<Doctrine_Record>, array<string, mixed>>
      */
-    protected $_rows = [];
+    protected array $_rows = [];
 
     /**
      * Optionally pass the directory/path to the yaml for importing
-     *
-     * @param  string $directory
-     * @return void
      */
-    public function __construct($directory = null)
+    public function __construct(?string $directory = null)
     {
         if ($directory !== null) {
             $this->setDirectory($directory);
@@ -61,10 +27,9 @@ class Doctrine_Data_Import extends Doctrine_Data
 
     /**
      * Do the parsing of the yaml files and return the final parsed array
-     *
-     * @return array $array
+     * @phpstan-return array<class-string<Doctrine_Record>, mixed>
      */
-    public function doParsing()
+    public function doParsing(): array
     {
         $recursiveMerge = Doctrine_Manager::getInstance()->getAttribute(Doctrine_Core::ATTR_RECURSIVE_MERGE_FIXTURES);
         $mergeFunction  = $recursiveMerge === true ? 'array_merge_recursive':'array_merge';
@@ -78,6 +43,7 @@ class Doctrine_Data_Import extends Doctrine_Data
 
                 // If they specified a specific yml file
                 if (end($e) == 'yml') {
+                    /** @var array<class-string<Doctrine_Record>, mixed> */
                     $array = $mergeFunction($array, Doctrine_Parser::load($dir, $this->getFormat()));
                     // If they specified a directory
                 } elseif (is_dir($dir)) {
@@ -94,6 +60,7 @@ class Doctrine_Data_Import extends Doctrine_Data
                     foreach ($filesOrdered as $file) {
                         $e = explode('.', $file->getFileName());
                         if (in_array(end($e), $this->getFormats())) {
+                            /** @var array<class-string<Doctrine_Record>, mixed> */
                             $array = $mergeFunction($array, Doctrine_Parser::load($file->getPathName(), $this->getFormat()));
                         }
                     }
@@ -106,11 +73,8 @@ class Doctrine_Data_Import extends Doctrine_Data
 
     /**
      * Do the importing of the data parsed from the fixtures
-     *
-     * @param  bool $append
-     * @return void
      */
-    public function doImport($append = false)
+    public function doImport(bool $append = false): void
     {
         $array = $this->doParsing();
 
@@ -123,12 +87,9 @@ class Doctrine_Data_Import extends Doctrine_Data
 
     /**
      * Recursively loop over all data fixtures and build the array of className rows
-     *
-     * @param  string $className
-     * @param  array  $data
-     * @return void
+     * @phpstan-param class-string<Doctrine_Record> $className
      */
-    protected function _buildRows($className, $data)
+    protected function _buildRows(string $className, array $data): void
     {
         $table = Doctrine_Core::getTable($className);
 
@@ -162,15 +123,9 @@ class Doctrine_Data_Import extends Doctrine_Data
     /**
      * Get the unsaved object for a specified row key and validate that it is the valid object class
      * for the passed record and relation name
-     *
-     * @param  string          $rowKey
-     * @param  Doctrine_Record $record
-     * @param  string          $relationName
-     * @param  string          $referringRowKey
-     * @return Doctrine_Record
      * @throws Doctrine_Data_Exception
      */
-    protected function _getImportedObject($rowKey, Doctrine_Record $record, $relationName, $referringRowKey)
+    protected function _getImportedObject(string $rowKey, Doctrine_Record $record, string $relationName, string $referringRowKey): Doctrine_Record
     {
         $relation = $record->getTable()->getRelation($relationName);
         $rowKey   = $this->_getRowKeyPrefix($relation->getTable()) . $rowKey;
@@ -200,12 +155,8 @@ class Doctrine_Data_Import extends Doctrine_Data
 
     /**
      * Process a row and make all the appropriate relations between the imported data
-     *
-     * @param  string       $rowKey
-     * @param  string|array $row
-     * @return void
      */
-    protected function _processRow($rowKey, $row)
+    protected function _processRow(string $rowKey, string|array $row): void
     {
         $obj = $this->_importedObjects[$rowKey];
 
@@ -255,10 +206,9 @@ class Doctrine_Data_Import extends Doctrine_Data
     /**
      * Perform the loading of the data from the passed array
      *
-     * @param  array $array
-     * @return void
+     * @phpstan-param array<class-string<Doctrine_Record>, mixed> $array
      */
-    protected function _loadData(array $array)
+    protected function _loadData(array $array): void
     {
         $specifiedModels = $this->getModels();
 
@@ -301,11 +251,8 @@ class Doctrine_Data_Import extends Doctrine_Data
 
     /**
      * Returns the prefix to use when indexing an object from the supplied table.
-     *
-     * @param  Doctrine_Table $table
-     * @return string
      */
-    protected function _getRowKeyPrefix(Doctrine_Table $table)
+    protected function _getRowKeyPrefix(Doctrine_Table $table): string
     {
         return sprintf('(%s) ', $table->getTableName());
     }

@@ -9,10 +9,10 @@ class Doctrine_Hydrator_ArrayDriver extends Doctrine_Hydrator_Graph
     }
 
     /**
-     * @param  string $component
+     * @phpstan-param class-string<Doctrine_Record> $component
      * @return array
      */
-    public function getElement(array $data, $component)
+    public function getElement(array $data, string $component)
     {
         return $data;
     }

@@ -433,6 +433,7 @@ class Doctrine_Import_Schema
 
             // Make sure that anything else that is specified in the schema makes it to the final array
             $build[$className] = Doctrine_Lib::arrayDeepMerge($table, $build[$className]);
+            assert(is_array($build[$className]));
 
             // We need to keep track of the className for the connection
             $build[$className]['connectionClassName'] = $build[$className]['className'];

@@ -15,18 +15,18 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
 
     protected ?Doctrine_Query_Registry $_queryRegistry = null;
 
-    /** Array of registered validators */
+    /** @var string[] */
     protected array $_validators = [];
 
-    /** @phpstan-var array<int, class-string<Doctrine_Hydrator_Abstract>> */
+    /** @phpstan-var (class-string<Doctrine_Hydrator_Abstract>|Doctrine_Hydrator_Abstract)[] */
     protected array $_hydrators = [
-        Doctrine_Core::HYDRATE_ARRAY            => Doctrine_Hydrator_ArrayDriver::class,
-        Doctrine_Core::HYDRATE_RECORD           => Doctrine_Hydrator_RecordDriver::class,
-        Doctrine_Core::HYDRATE_NONE             => Doctrine_Hydrator_NoneDriver::class,
-        Doctrine_Core::HYDRATE_SCALAR           => Doctrine_Hydrator_ScalarDriver::class,
-        Doctrine_Core::HYDRATE_SINGLE_SCALAR    => Doctrine_Hydrator_SingleScalarDriver::class,
-        Doctrine_Core::HYDRATE_ON_DEMAND        => Doctrine_Hydrator_RecordDriver::class,
-        Doctrine_Core::HYDRATE_ARRAY_SHALLOW    => Doctrine_Hydrator_ArrayShallowDriver::class,
+        Doctrine_Core::HYDRATE_ARRAY         => Doctrine_Hydrator_ArrayDriver::class,
+        Doctrine_Core::HYDRATE_RECORD        => Doctrine_Hydrator_RecordDriver::class,
+        Doctrine_Core::HYDRATE_NONE          => Doctrine_Hydrator_NoneDriver::class,
+        Doctrine_Core::HYDRATE_SCALAR        => Doctrine_Hydrator_ScalarDriver::class,
+        Doctrine_Core::HYDRATE_SINGLE_SCALAR => Doctrine_Hydrator_SingleScalarDriver::class,
+        Doctrine_Core::HYDRATE_ON_DEMAND     => Doctrine_Hydrator_RecordDriver::class,
+        Doctrine_Core::HYDRATE_ARRAY_SHALLOW => Doctrine_Hydrator_ArrayShallowDriver::class,
     ];
 
     /** @phpstan-var array<string, class-string<Doctrine_Connection_Common>> */
@@ -273,42 +273,61 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
      *
      * @param  string $dsn A DSN string (colon delimited parts)
      * @return array The array parsed
-     * @todo   package:dbal
+     * @phpstan-return array{
+     *   dsn: string,
+     *   scheme: string,
+     *   host: ?string,
+     *   port: ?string,
+     *   user: ?string,
+     *   pass: ?string,
+     *   path: ?string,
+     *   query: ?string,
+     *   fragment: ?string,
+     *   unix_socket: ?string,
+     *   dbname?: string,
+     * }
      */
-    public function parsePdoDsn($dsn)
+    public function parsePdoDsn(string $dsn): array
     {
-        $parts = [];
+        $parts = [
+            'dsn' => null,
+            'scheme' => null,
+            'host' => null,
+            'port' => null,
+            'user' => null,
+            'pass' => null,
+            'path' => null,
+            'query' => null,
+            'fragment' => null,
+            'unix_socket' => null,
+        ];
 
-        $names = ['dsn', 'scheme', 'host', 'port', 'user', 'pass', 'path', 'query', 'fragment', 'unix_socket'];
+        $e = explode(':', $dsn, 2);
+        $parts['scheme'] = $e[0] ?? '';
+        $parts['dsn'] = $dsn;
 
-        foreach ($names as $name) {
-            if (!isset($parts[$name])) {
-                $parts[$name] = null;
-            }
-        }
-
-        $e               = explode(':', $dsn);
-        $parts['scheme'] = $e[0];
-        $parts['dsn']    = $dsn;
-
-        $e = explode(';', $e[1]);
+        $e = explode(';', $e[1] ?? '');
         foreach ($e as $string) {
-            if ($string) {
-                $e2 = explode('=', $string);
-
-                if (isset($e2[0]) && isset($e2[1])) {
-                    if (count($e2) > 2) {
-                        $key = $e2[0];
-                        unset($e2[0]);
-                        $value = implode('=', $e2);
-                    } else {
-                        list($key, $value) = $e2;
-                    }
-                    $parts[$key] = $value;
-                }
+            $e2 = explode('=', $string, 2);
+            if (count($e2) === 2) {
+                $parts[$e2[0]] = $e2[1];
             }
         }
 
+        /**
+         * @phpstan-var array{
+         *   dsn: string,
+         *   scheme: string,
+         *   host: ?string,
+         *   port: ?string,
+         *   user: ?string,
+         *   pass: ?string,
+         *   path: ?string,
+         *   query: ?string,
+         *   fragment: ?string,
+         *   unix_socket: ?string,
+         * }
+         */
         return $parts;
     }
 
@@ -319,7 +338,7 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
      * @param  string $dsn
      * @return array $parts
      */
-    protected function _buildDsnPartsArray($dsn)
+    protected function _buildDsnPartsArray(string $dsn): array
     {
         // fix sqlite dsn so that it will parse correctly
         $dsn = str_replace('////', '/', $dsn);
@@ -349,9 +368,8 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
      *
      * @param  string $dsn
      * @return array Parsed contents of DSN
-     * @todo   package:dbal
      */
-    public function parseDsn($dsn)
+    public function parseDsn(string $dsn): array
     {
         $parts = $this->_buildDsnPartsArray($dsn);
 
@@ -426,10 +444,9 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
      * Get the connection instance for the passed name
      *
      * @param  string $name name of the connection, if empty numeric key is used
-     * @return Doctrine_Connection
      * @throws Doctrine_Manager_Exception   if trying to get a non-existent connection
      */
-    public function getConnection($name)
+    public function getConnection(string $name): Doctrine_Connection
     {
         if (!isset($this->_connections[$name])) {
             throw new Doctrine_Manager_Exception('Unknown connection: ' . $name);
@@ -443,9 +460,9 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
      *
      * @param Doctrine_Connection $conn connection object to be searched for
      *
-     * @return array-key|false the name of the connection
+     * @return int|string|false the name of the connection
      */
-    public function getConnectionName(Doctrine_Connection $conn)
+    public function getConnectionName(Doctrine_Connection $conn): int|string|bool
     {
         return array_search($conn, $this->_connections, true);
     }
@@ -454,26 +471,17 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
      * Binds given component to given connection
      * this means that when ever the given component uses a connection
      * it will be using the bound connection instead of the current connection
-     *
-     * @param  string $componentName
-     * @param  string $connectionName
-     * @return void
      */
-    public function bindComponent($componentName, $connectionName)
+    public function bindComponent(string $componentName, string $connectionName): void
     {
         $this->_bound[$componentName] = $connectionName;
     }
 
     /**
      * Get the connection instance for the specified component
-     *
-     * @param  string $componentName
-     * @return Doctrine_Connection
      */
-    public function getConnectionForComponent($componentName)
+    public function getConnectionForComponent(string $componentName): Doctrine_Connection
     {
-        Doctrine_Core::modelsAutoload($componentName);
-
         if (isset($this->_bound[$componentName])) {
             return $this->getConnection($this->_bound[$componentName]);
         }
@@ -483,22 +491,16 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
 
     /**
      * Check if a component is bound to a connection
-     *
-     * @param  string $componentName
-     * @return boolean
      */
-    public function hasConnectionForComponent($componentName = null)
+    public function hasConnectionForComponent(string $componentName = null): bool
     {
         return isset($this->_bound[$componentName]);
     }
 
     /**
      * Closes the specified connection
-     *
-     * @param  Doctrine_Connection $connection
-     * @return void
      */
-    public function closeConnection(Doctrine_Connection $connection)
+    public function closeConnection(Doctrine_Connection $connection): void
     {
         $connection->close();
 
@@ -518,10 +520,9 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
 
     /**
      * Returns all opened connections
-     *
-     * @return array
+     * @phpstan-return Doctrine_Connection[]
      */
-    public function getConnections()
+    public function getConnections(): array
     {
         return $this->_connections;
     }
@@ -529,11 +530,10 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
     /**
      * Sets the current connection to $key
      *
-     * @param  mixed $key the connection key
+     * @param string $key the connection key
      * @throws Doctrine_Manager_Exception
-     * @return void
      */
-    public function setCurrentConnection($key)
+    public function setCurrentConnection(string $key): void
     {
         $key = (string) $key;
         if (!isset($this->_connections[$key])) {
@@ -545,30 +545,26 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
     /**
      * Whether or not the manager contains specified connection
      *
-     * @param  mixed $key the connection key
-     * @return boolean
+     * @param mixed $key the connection key
      */
-    public function contains($key)
+    public function contains($key): bool
     {
         return isset($this->_connections[$key]);
     }
 
     /**
      * Returns the number of opened connections
-     *
-     * @return integer
      */
-    public function count()
+    public function count(): int
     {
         return count($this->_connections);
     }
 
     /**
      * Returns an ArrayIterator that iterates through all connections
-     *
-     * @return ArrayIterator
+     * @phpstan-return ArrayIterator<Doctrine_Connection>
      */
-    public function getIterator()
+    public function getIterator(): ArrayIterator
     {
         return new ArrayIterator($this->_connections);
     }
@@ -576,8 +572,7 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
     /**
      * Get the current connection instance
      *
-     * @throws Doctrine_Connection_Exception       if there are no open connections
-     * @return Doctrine_Connection
+     * @throws Doctrine_Connection_Exception if there are no open connections
      */
     public function getCurrentConnection(): Doctrine_Connection
     {
@@ -591,11 +586,9 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
     /**
      * Creates databases for all existing connections
      *
-     * @param  string|array $specifiedConnections Array of connections you wish to create the database for
-     * @return void
-     * @todo   package:dbal
+     * @param string|array $specifiedConnections Array of connections you wish to create the database for
      */
-    public function createDatabases($specifiedConnections = [])
+    public function createDatabases(string|array $specifiedConnections = []): void
     {
         if (!is_array($specifiedConnections)) {
             $specifiedConnections = (array) $specifiedConnections;
@@ -613,11 +606,9 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
     /**
      * Drops databases for all existing connections
      *
-     * @param  string|array $specifiedConnections Array of connections you wish to drop the database for
-     * @return void
-     * @todo   package:dbal
+     * @param string|array $specifiedConnections Array of connections you wish to drop the database for
      */
-    public function dropDatabases($specifiedConnections = [])
+    public function dropDatabases(string|array $specifiedConnections = []): void
     {
         if (!is_array($specifiedConnections)) {
             $specifiedConnections = (array) $specifiedConnections;
@@ -633,25 +624,11 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
     }
 
     /**
-     * Returns a string representation of this object
-     *
-     * @return string
-     */
-    public function __toString()
-    {
-        $r[] = '<pre>';
-        $r[] = 'Doctrine_Manager';
-        $r[] = 'Connections : ' . count($this->_connections);
-        $r[] = '</pre>';
-        return implode("\n", $r);
-    }
-
-    /**
      * Get available doctrine validators
      *
-     * @return array $validators
+     * @return string[]
      */
-    public function getValidators()
+    public function getValidators(): array
     {
         if (!$this->_loadedValidatorsFromDisk) {
             $this->_loadedValidatorsFromDisk = true;
@@ -662,7 +639,7 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
 
             $files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir), RecursiveIteratorIterator::LEAVES_ONLY);
             foreach ($files as $file) {
-                $e = explode('.', $file->getFileName());
+                $e = explode('.', $file->getFileName(), 2);
 
                 if (end($e) == 'php') {
                     $name = strtolower($e[0]);
@@ -680,10 +657,9 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
     /**
      * Register validators so that Doctrine is aware of them
      *
-     * @param  mixed $validators Name of validator or array of validators
-     * @return void
+     * @param string[] $validators
      */
-    public function registerValidators($validators)
+    public function registerValidators(array $validators): void
     {
         $validators = (array) $validators;
         foreach ($validators as $validator) {
@@ -698,7 +674,7 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
      *
      * @phpstan-param class-string<Doctrine_Hydrator_Abstract>|Doctrine_Hydrator_Abstract $class
      */
-    public function registerHydrator(string $name, string|Doctrine_Hydrator_Abstract $class): void
+    public function registerHydrator(int|string $name, string|Doctrine_Hydrator_Abstract $class): void
     {
         $this->_hydrators[$name] = $class;
     }
@@ -706,7 +682,7 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
     /**
      * Get all registered hydrators
      *
-     * @return array $hydrators
+     * @phpstan-return (class-string<Doctrine_Hydrator_Abstract>|Doctrine_Hydrator_Abstract)[]
      */
     public function getHydrators()
     {
@@ -716,11 +692,9 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
     /**
      * Register a custom connection driver
      *
-     * @param  string $name
-     * @param  string $class
-     * @return void
+     * @phpstan-param class-string<Doctrine_Connection_Common> $class
      */
-    public function registerConnectionDriver($name, $class)
+    public function registerConnectionDriver(string $name, string $class): void
     {
         $this->_connectionDrivers[$name] = $class;
     }
@@ -728,9 +702,9 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
     /**
      * Get all the available connection drivers
      *
-     * @return array $connectionDrivers
+     * @phpstan-return array<string, class-string<Doctrine_Connection_Common>>
      */
-    public function getConnectionDrivers()
+    public function getConnectionDrivers(): array
     {
         return $this->_connectionDrivers;
     }

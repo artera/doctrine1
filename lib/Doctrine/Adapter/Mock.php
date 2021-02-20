@@ -78,6 +78,7 @@ class Doctrine_Adapter_Mock extends PDO
         $this->_exception = [$name, $message, $code];
     }
 
+    /** @return Doctrine_Adapter_Statement_Mock|false */
     public function prepare(string $query, array $options = [])
     {
         $mock              = new Doctrine_Adapter_Statement_Mock($this);
@@ -90,6 +91,7 @@ class Doctrine_Adapter_Mock extends PDO
         $this->_queries[] = $query;
     }
 
+    /** @return Doctrine_Adapter_Statement_Mock */
     public function query(string $query, ?int $fetchMode = null, mixed ...$fetchModeArgs)
     {
         $this->_queries[] = $query;
@@ -113,14 +115,14 @@ class Doctrine_Adapter_Mock extends PDO
         return $stmt;
     }
 
-    public function getAll()
+    public function getAll(): array
     {
         return $this->_queries;
     }
 
     public function quote(string $string, int $type = PDO::PARAM_STR)
     {
-        return "'" . addslashes($input) . "'";
+        return "'" . addslashes($string) . "'";
     }
 
     public function exec($statement): int
@@ -208,9 +210,9 @@ class Doctrine_Adapter_Mock extends PDO
         return 0;
     }
 
-    public function errorInfo(): string
+    public function errorInfo(): array
     {
-        return '';
+        return [];
     }
 
     /**
@@ -223,10 +225,8 @@ class Doctrine_Adapter_Mock extends PDO
         return true;
     }
 
-    /**
-     * @return void
-     */
-    public function sqliteCreateFunction()
+    public function sqliteCreateFunction($function_name, $callback, $num_args = -1, int $flags = 0): bool
     {
+        return true;
     }
 }

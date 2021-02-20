@@ -10,7 +10,8 @@ abstract class Doctrine_Hydrator_Graph extends Doctrine_Hydrator_Abstract
      */
     protected ?string $_rootAlias = null;
 
-    protected ?array $_tables = [];
+    /** @phpstan-var Doctrine_Table[] */
+    protected array $_tables = [];
 
     /**
      * Gets the custom field used for indexing for the specified component alias.
@@ -353,10 +354,10 @@ abstract class Doctrine_Hydrator_Graph extends Doctrine_Hydrator_Abstract
     abstract public function getNullPointer(): ?Doctrine_Null;
 
     /**
-     * @param  string $component
+     * @phpstan-param class-string<Doctrine_Record> $component
      * @return Doctrine_Record|array
      */
-    abstract public function getElement(array $data, $component);
+    abstract public function getElement(array $data, string $component);
 
     /** @param  C $coll */
     abstract public function getLastKey(&$coll): mixed;
@@ -379,16 +380,18 @@ abstract class Doctrine_Hydrator_Graph extends Doctrine_Hydrator_Abstract
      * @todo this function could use reflection to check the first time it runs
      * if the subclassing option is not set.
      *
-     * @param  string $component
+     * @phpstan-param class-string<Doctrine_Record> $component
      * @return string The name of the class to create
      */
-    protected function _getClassnameToReturn(array &$data, $component)
+    protected function _getClassnameToReturn(array &$data, $component): string
     {
         if (!isset($this->_tables[$component])) {
             $this->_tables[$component] = Doctrine_Core::getTable($component);
         }
 
-        if (!($subclasses = $this->_tables[$component]->getOption('subclasses'))) {
+        /** @phpstan-var class-string<Doctrine_Record>[] */
+        $subclasses = $this->_tables[$component]->getOption('subclasses');
+        if (!$subclasses) {
             return $component;
         }
 

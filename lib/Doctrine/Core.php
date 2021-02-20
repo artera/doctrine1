@@ -459,43 +459,30 @@ class Doctrine_Core
 
     /**
      * Path to Doctrine root
-     *
-     * @var string|false $_path            doctrine root directory
      */
-    private static $_path;
+    private static ?string $_path = null;
 
     /**
      * Debug bool true/false option
-     *
-     * @var boolean $_debug
      */
-    private static $_debug = false;
+    private static bool $_debug = false;
 
     /**
      * Array of all the loaded models and the path to each one for autoloading
-     *
-     * @var array
      */
-    private static $_loadedModelFiles = [];
+    private static array $_loadedModelFiles = [];
 
     /**
      * Array of all the loaded validators
-     *
-     * @var array
      */
-    private static $_validators = [];
+    private static array $_validators = [];
 
     /**
      * Path to the models directory
-     *
-     * @var string
      */
-    private static $_modelsDirectory;
+    private static ?string $_modelsDirectory = null;
 
     /**
-     * __construct
-     *
-     * @return void
      * @throws Doctrine_Exception
      */
     public function __construct()
@@ -505,62 +492,48 @@ class Doctrine_Core
 
     /**
      * Returns an array of all the loaded models and the path where each of them exists
-     *
-     * @return array
      */
-    public static function getLoadedModelFiles()
+    public static function getLoadedModelFiles(): array
     {
         return self::$_loadedModelFiles;
     }
 
     /**
      * Turn on/off the debugging setting
-     *
-     * @param  string $bool
-     * @return bool
      */
-    public static function debug($bool = null)
+    public static function debug(?bool $bool = null): bool
     {
         if ($bool !== null) {
-            self::$_debug = (bool) $bool;
+            self::$_debug = $bool;
         }
-
         return self::$_debug;
     }
 
     /**
      * Set the path to your core Doctrine libraries
      *
-     * @param  string $path The path to your Doctrine libraries
-     * @return void
+     * @param string $path The path to your Doctrine libraries
      */
-    public static function setPath($path)
+    public static function setPath(string $path): void
     {
         self::$_path = $path;
     }
 
     /**
      * Get the root path to Doctrine
-     *
-     * @return string|false
      */
-    public static function getPath()
+    public static function getPath(): ?string
     {
         if (!self::$_path) {
-            self::$_path = realpath(dirname(__FILE__) . '/..');
+            self::$_path = realpath(dirname(__FILE__) . '/..') ?: null;
         }
-
         return self::$_path;
     }
 
     /**
      * Load an individual model name and path in to the model loading registry
-     *
-     * @param  string $className
-     * @param  string $path
-     * @return void
      */
-    public static function loadModel($className, $path = null)
+    public static function loadModel(string $className, ?string $path = null): void
     {
         self::$_loadedModelFiles[$className] = $path;
     }
@@ -568,11 +541,8 @@ class Doctrine_Core
     /**
      * Set the directory where your models are located for PEAR style
      * naming convention autoloading.
-     *
-     * @param  string $directory
-     * @return void
      */
-    public static function setModelsDirectory($directory)
+    public static function setModelsDirectory(?string $directory): void
     {
         self::$_modelsDirectory = $directory;
     }
@@ -580,11 +550,8 @@ class Doctrine_Core
     /**
      * Get the directory where your models are located for PEAR style naming
      * convention autoloading
-     *
-     * @return string
-     * @author Jonathan Wage
      */
-    public static function getModelsDirectory()
+    public static function getModelsDirectory(): ?string
     {
         return self::$_modelsDirectory;
     }
@@ -592,15 +559,13 @@ class Doctrine_Core
     /**
      * Recursively load all models from a directory or array of directories
      *
-     * @param string  $directory    Path to directory of models or array of directory paths
-     * @param integer $modelLoading Pass value of Doctrine_Core::ATTR_MODEL_LOADING to force a certain style of model loading
+     * @param string|string[]|null  $directory    Path to directory of models or array of directory paths
+     * @param integer|null $modelLoading Pass value of Doctrine_Core::ATTR_MODEL_LOADING to force a certain style of model loading
      *                              Allowed Doctrine_Core::MODEL_LOADING_AGGRESSIVE(default) or
      *                              Doctrine_Core::MODEL_LOADING_CONSERVATIVE
-     * @param string  $classPrefix  The class prefix of the models to load. This is useful if the class name and file name are not the same
-     *
-     * @return array
+     * @param string|null  $classPrefix  The class prefix of the models to load. This is useful if the class name and file name are not the same
      */
-    public static function loadModels($directory, $modelLoading = null, $classPrefix = null)
+    public static function loadModels(string|array|null $directory, ?int $modelLoading = null, ?string $classPrefix = null): array
     {
         $manager = Doctrine_Manager::getInstance();
 
@@ -687,10 +652,9 @@ class Doctrine_Core
      * Will filter through an array of classes and return the Doctrine_Records out of them.
      * If you do not specify $classes it will return all of the currently loaded Doctrine_Records
      *
-     * @param  array $classes Array of classes to filter through, otherwise uses get_declared_classes()
-     * @return array   $loadedModels
+     * @param  array|null $classes Array of classes to filter through, otherwise uses get_declared_classes()
      */
-    public static function getLoadedModels($classes = null)
+    public static function getLoadedModels(?array $classes = null): array
     {
         if ($classes === null) {
             $classes = get_declared_classes();
@@ -704,11 +668,8 @@ class Doctrine_Core
      * Initialize all models so everything is present and loaded in to memory
      * This will also inheritently initialize any model behaviors and add
      * them to the $models array
-     *
-     * @param  array $models
-     * @return array $models
      */
-    public static function initializeModels($models)
+    public static function initializeModels(array $models): array
     {
         $models = self::filterInvalidModels($models);
 
@@ -734,15 +695,12 @@ class Doctrine_Core
     /**
      * Filter through an array of classes and return all the classes that are valid models.
      * This will inflect the class, causing it to be loaded in to memory.
-     *
-     * @param  array $classes Array of classes to filter through
-     * @return array   $loadedModels
      */
-    public static function filterInvalidModels($classes)
+    public static function filterInvalidModels(array $classes): array
     {
         $validModels = [];
 
-        foreach ((array) $classes as $name) {
+        foreach ($classes as $name) {
             if (self::isValidModelClass($name) && !in_array($name, $validModels)) {
                 $validModels[] = $name;
             }
@@ -756,9 +714,8 @@ class Doctrine_Core
      * Will load class in to memory in order to inflect it and find out information about the class
      *
      * @param  mixed $class Can be a string named after the class, an instance of the class, or an instance of the class reflected
-     * @return boolean
      */
-    public static function isValidModelClass($class)
+    public static function isValidModelClass(mixed $class): bool
     {
         if ($class instanceof Doctrine_Record) {
             $class = get_class($class);
@@ -781,37 +738,13 @@ class Doctrine_Core
     }
 
     /**
-     * Get the connection object for a table by the actual table name
-     * FIXME: I think this method is flawed because a individual connections could have the same table name
-     *
-     * @param  string $tableName
-     * @return Doctrine_Connection
-     */
-    public static function getConnectionByTableName($tableName)
-    {
-        $loadedModels = self::getLoadedModels();
-
-        foreach ($loadedModels as $name) {
-            $table = Doctrine_Core::getTable($name);
-
-            if ($table->getTableName() == $tableName) {
-                return $table->getConnection();
-            }
-        }
-
-        return Doctrine_Manager::connection();
-    }
-
-    /**
      * Method for importing existing schema to Doctrine_Record classes
      *
      * @param  string $directory   Directory to write your models to
      * @param  array  $connections Array of connection names to generate models for
-     * @param  array  $options     Array of options
-     * @return array
      * @throws Exception
      */
-    public static function generateModelsFromDb($directory, array $connections = [], array $options = [])
+    public static function generateModelsFromDb(string $directory, array $connections = [], array $options = []): array
     {
         return Doctrine_Manager::connection()->import->importSchema($directory, $connections, $options);
     }
@@ -825,7 +758,7 @@ class Doctrine_Core
      * @param  array  $options     Array of options
      * @return int|false|string
      */
-    public static function generateYamlFromDb($yamlPath, array $connections = [], array $options = [])
+    public static function generateYamlFromDb(string $yamlPath, array $connections = [], array $options = []): int|string|bool
     {
         $directory = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'tmp_doctrine_models';
 
@@ -951,31 +884,15 @@ class Doctrine_Core
     }
 
     /**
-     * Dump data to a yaml fixtures file
-     *
-     * @param  string $yamlPath        Path to write the yaml data fixtures to
-     * @param  bool   $individualFiles Whether or not to dump data to individual fixtures files
-     * @return int|false|string|null
-     */
-    public static function dumpData($yamlPath, $individualFiles = false)
-    {
-        $data = new Doctrine_Data();
-
-        return $data->exportData($yamlPath, 'yml', [], $individualFiles);
-    }
-
-    /**
      * Load data from a yaml fixtures file.
      * The output of dumpData can be fed to loadData
      *
      * @param  string $yamlPath Path to your yaml data fixtures
      * @param  bool   $append   Whether or not to append the data
-     * @return void
      */
-    public static function loadData($yamlPath, $append = false)
+    public static function loadData(string $yamlPath, bool $append = false): void
     {
         $data = new Doctrine_Data();
-
         $data->importData($yamlPath, 'yml', [], $append);
     }
 
@@ -983,13 +900,13 @@ class Doctrine_Core
      * Migrate database to specified $to version. Migrates from current to latest if you do not specify.
      *
      * @param string $migrationsPath Path to migrations directory which contains your migration classes
-     * @param int    $to             Version you wish to migrate to.
+     * @param int|null    $to             Version you wish to migrate to.
      *
      * @return false|int|null
      *
      * @throws Doctrine_Migration_Exception
      */
-    public static function migrate($migrationsPath, $to = null)
+    public static function migrate(string $migrationsPath, ?int $to = null): int|bool|null
     {
         $migration = new Doctrine_Migration($migrationsPath);
 
@@ -1003,7 +920,7 @@ class Doctrine_Core
      * @param  string $migrationsPath Path to directory which contains your migration classes
      * @return mixed
      */
-    public static function generateMigrationClass($className, $migrationsPath)
+    public static function generateMigrationClass(string $className, string $migrationsPath): mixed
     {
         $builder = new Doctrine_Migration_Builder($migrationsPath);
 
@@ -1017,7 +934,7 @@ class Doctrine_Core
      * @return bool
      * @throws Doctrine_Migration_Exception
      */
-    public static function generateMigrationsFromDb($migrationsPath)
+    public static function generateMigrationsFromDb(string $migrationsPath): bool
     {
         $builder = new Doctrine_Migration_Builder($migrationsPath);
 
@@ -1028,11 +945,10 @@ class Doctrine_Core
      * Generate a set of migration classes from an existing set of models
      *
      * @param  string  $migrationsPath Path to your Doctrine migration classes
-     * @param  string  $modelsPath     Path to your Doctrine model classes
-     * @param  integer $modelLoading   Style of model loading to use for loading the models in order to generate migrations
-     * @return bool
+     * @param  string|null  $modelsPath     Path to your Doctrine model classes
+     * @param  integer|null $modelLoading   Style of model loading to use for loading the models in order to generate migrations
      */
-    public static function generateMigrationsFromModels($migrationsPath, $modelsPath = null, $modelLoading = null)
+    public static function generateMigrationsFromModels(string $migrationsPath, ?string $modelsPath = null, ?int $modelLoading = null): bool
     {
         $builder = new Doctrine_Migration_Builder($migrationsPath);
 
@@ -1046,9 +962,9 @@ class Doctrine_Core
      * @param  string       $migrationsPath Path to your Doctrine migration classes
      * @param  string|array $from           From schema information
      * @param  string       $to             To schema information
-     * @return array $changes
+     * @return array changes
      */
-    public static function generateMigrationsFromDiff($migrationsPath, $from, $to)
+    public static function generateMigrationsFromDiff(string $migrationsPath, string|array $from, string $to): array
     {
         $diff = new Doctrine_Migration_Diff($from, $to, $migrationsPath);
 
@@ -1058,43 +974,14 @@ class Doctrine_Core
     /**
      * Get the Doctrine_Table object for the passed model
      *
-     * @param  string $componentName
-     * @return Doctrine_Table
+     * @phpstan-param class-string<Doctrine_Record> $componentName
      */
-    public static function getTable($componentName)
+    public static function getTable(string $componentName): Doctrine_Table
     {
         return Doctrine_Manager::getInstance()->getConnectionForComponent($componentName)->getTable($componentName);
     }
 
-    /**
-     * simple autoload function
-     * returns true if the class was loaded, otherwise false
-     *
-     * @param  string $className
-     * @return boolean
-     */
-    public static function autoload($className)
-    {
-        if (0 !== stripos($className, 'Doctrine') || class_exists($className, false) || interface_exists($className, false)) {
-            return false;
-        }
-
-        $class = self::getPath() . DIRECTORY_SEPARATOR . str_replace('_', DIRECTORY_SEPARATOR, $className) . '.php';
-
-        if (file_exists($class)) {
-            include $class;
-
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * @param  string $className
-     * @return bool
-     */
-    public static function modelsAutoload($className)
+    public static function modelsAutoload(string $className): bool
     {
         if (class_exists($className, false) || interface_exists($className, false)) {
             return false;

@@ -11,11 +11,6 @@ parameters:
 			path: lib/Doctrine/Collection/Iterator/Expandable.php
 
 		-
-			message: "#^Return type \\(Doctrine_Collection_Iterator_Expandable\\) of method Doctrine_Collection_Offset\\:\\:getIterator\\(\\) should be compatible with return type \\(ArrayIterator\\<mixed, Doctrine_Record\\>\\) of method Doctrine_Collection\\<Doctrine_Record\\>\\:\\:getIterator\\(\\)$#"
-			count: 1
-			path: lib/Doctrine/Collection/Offset.php
-
-		-
 			message: "#^Constructor of class Doctrine_Connection_Mock has an unused parameter \\$adapter\\.$#"
 			count: 1
 			path: lib/Doctrine/Connection/Mock.php
@@ -41,16 +36,6 @@ parameters:
 			path: lib/Doctrine/Connection/Statement.php
 
 		-
-			message: "#^Result of method Doctrine_Connection_UnitOfWork\\:\\:_preDelete\\(\\) \\(void\\) is used\\.$#"
-			count: 1
-			path: lib/Doctrine/Connection/UnitOfWork.php
-
-		-
-			message: "#^Negated boolean expression is always true\\.$#"
-			count: 1
-			path: lib/Doctrine/Connection/UnitOfWork.php
-
-		-
 			message: "#^Parameter \\#2 \\$offset of function array_splice expects int, int\\|false given\\.$#"
 			count: 2
 			path: lib/Doctrine/Connection/UnitOfWork.php
@@ -61,44 +46,9 @@ parameters:
 			path: lib/Doctrine/Connection/UnitOfWork.php
 
 		-
-			message: "#^Parameter \\#1 \\$componentName of static method Doctrine_Core\\:\\:getTable\\(\\) expects string, int\\|string given\\.$#"
-			count: 1
-			path: lib/Doctrine/Data/Export.php
-
-		-
-			message: "#^Parameter \\#1 \\$filename of function is_dir expects string, string\\|null given\\.$#"
-			count: 1
-			path: lib/Doctrine/Data/Export.php
-
-		-
-			message: "#^Parameter \\#1 \\$filename of function is_file expects string, string\\|null given\\.$#"
-			count: 1
-			path: lib/Doctrine/Data/Export.php
-
-		-
-			message: "#^Parameter \\#1 \\$path of function dirname expects string, string\\|null given\\.$#"
-			count: 1
-			path: lib/Doctrine/Data/Export.php
-
-		-
-			message: "#^Parameter \\#1 \\$filename of function is_dir expects string, array\\|string\\|null given\\.$#"
-			count: 1
-			path: lib/Doctrine/Data/Export.php
-
-		-
-			message: "#^Binary operation \"\\.\\=\" between array\\|string\\|null and string results in an error\\.$#"
-			count: 1
-			path: lib/Doctrine/Data/Export.php
-
-		-
 			message: "#^Parameter \\#1 \\$haystack of function strstr expects string, string\\|false given\\.$#"
 			count: 1
 			path: lib/Doctrine/DataDict/Mysql.php
-
-		-
-			message: "#^Return type \\(array\\|true\\) of method Doctrine_Export_Pgsql\\:\\:alterTableSql\\(\\) should be compatible with return type \\(string\\) of method Doctrine_Export\\:\\:alterTableSql\\(\\)$#"
-			count: 1
-			path: lib/Doctrine/Export/Pgsql.php
 
 		-
 			message: "#^Argument of an invalid type array\\|true supplied for foreach, only iterables are supported\\.$#"
@@ -116,18 +66,8 @@ parameters:
 			path: lib/Doctrine/Hydrator/Graph.php
 
 		-
-			message: "#^Parameter \\#1 \\$table of static method Doctrine_Collection\\<Doctrine_Record\\>\\:\\:create\\(\\) expects class\\-string\\<Doctrine_Record\\>\\|Doctrine_Table\\<Doctrine_Record\\>, string given\\.$#"
-			count: 1
-			path: lib/Doctrine/Hydrator/RecordDriver.php
-
-		-
 			message: "#^Offset int does not exist on array\\|null\\.$#"
 			count: 1
-			path: lib/Doctrine/Hydrator/RecordDriver.php
-
-		-
-			message: "#^Offset string does not exist on array\\|null\\.$#"
-			count: 2
 			path: lib/Doctrine/Hydrator/RecordDriver.php
 
 		-
@@ -149,11 +89,6 @@ parameters:
 			message: "#^Parameter \\#1 \\$path of method Doctrine_Import_Builder\\:\\:setTargetPath\\(\\) expects string, string\\|null given\\.$#"
 			count: 1
 			path: lib/Doctrine/Import/Schema.php
-
-		-
-			message: "#^Call to an undefined method Doctrine_Connection\\:\\:fixSequenceName\\(\\)\\.$#"
-			count: 1
-			path: lib/Doctrine/Import/Sqlite.php
 
 		-
 			message: "#^Parameter \\#1 \\$string of function strtolower expects string, string\\|null given\\.$#"
@@ -234,16 +169,6 @@ parameters:
 			message: "#^Parameter \\#1 \\$simpleXml of method Doctrine_Parser_Xml\\:\\:prepareData\\(\\) expects SimpleXMLElement\\|string, SimpleXMLElement\\|false given\\.$#"
 			count: 1
 			path: lib/Doctrine/Parser/Xml.php
-
-		-
-			message: "#^Array \\(array\\<string, array\\>\\) does not accept array\\|bool\\|int\\.$#"
-			count: 2
-			path: lib/Doctrine/Query/Abstract.php
-
-		-
-			message: "#^Parameter \\#1 \\$params of method Doctrine_Query_Abstract\\<T of Doctrine_Record_Abstract\\>\\:\\:getSqlQuery\\(\\) expects array, array\\|bool\\|int given\\.$#"
-			count: 2
-			path: lib/Doctrine/Query/Abstract.php
 
 		-
 			message: "#^Parameter \\#1 \\$customComponent of method Doctrine_Query_Abstract\\<T of Doctrine_Record_Abstract\\>\\:\\:getCachedForm\\(\\) expects array\\|Doctrine_Collection\\|string\\|null, string\\|false given\\.$#"
@@ -369,11 +294,6 @@ parameters:
 			message: "#^Property Doctrine_Record_Listener_Chain\\:\\:\\$_options \\(array\\) does not accept array\\|false\\.$#"
 			count: 1
 			path: lib/Doctrine/Record/Listener/Chain.php
-
-		-
-			message: "#^Parameter \\#1 \\$str of method Doctrine_Formatter\\:\\:quoteIdentifier\\(\\) expects string, string\\|null given\\.$#"
-			count: 1
-			path: lib/Doctrine/Relation/Nest.php
 
 		-
 			message: "#^Variable \\$rel in isset\\(\\) always exists and is not nullable\\.$#"

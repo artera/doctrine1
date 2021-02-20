@@ -7,7 +7,7 @@ namespace Tests\Tickets {
         public function testTest()
         {
             $manager = \Doctrine_Manager::getInstance();
-            $manager->registerValidators('MyValidator');
+            $manager->registerValidators(['MyValidator']);
             $this->assertTrue(in_array('MyValidator', $manager->getValidators()));
         }
     }

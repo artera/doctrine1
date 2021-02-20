@@ -1,35 +1,8 @@
 <?php
-/*
- *  $Id: Pgsql.php 7680 2010-08-19 14:08:28Z lsmith $
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- * This software consists of voluntary contributions made by many individuals
- * and is licensed under the LGPL. For more information, see
- * <http://www.doctrine-project.org>.
- */
 
 /**
- * Doctrine_Export_Pgsql
- *
- * @package    Doctrine
- * @subpackage Export
- * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @author     Lukas Smith <smith@pooteeweet.org> (PEAR MDB2 library)
- * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link       www.doctrine-project.org
- * @since      1.0
- * @version    $Revision: 7680 $
+ * @template Connection of Doctrine_Connection_Pgsql
+ * @extends Doctrine_Export<Connection>
  */
 class Doctrine_Export_Pgsql extends Doctrine_Export
 {
@@ -37,12 +10,6 @@ class Doctrine_Export_Pgsql extends Doctrine_Export
      * @var string
      */
     public $tmpConnectionDatabase = 'postgres';
-
-    /**
-     * @var Doctrine_Connection_Pgsql $conn       Doctrine_Connection object, every connection
-     *                                            module holds an instance of Doctrine_Connection
-     */
-    protected $conn;
 
     /**
      * createDatabaseSql

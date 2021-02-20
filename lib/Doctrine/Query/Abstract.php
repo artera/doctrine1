@@ -927,10 +927,10 @@ abstract class Doctrine_Query_Abstract
     protected function _execute(array $params): Doctrine_Connection_Statement|int
     {
         // Apply boolean conversion in DQL params
-        $params = $this->_conn->convertBooleans($params);
+        $params = (array) $this->_conn->convertBooleans($params);
 
         foreach ($this->_params as $k => $v) {
-            $this->_params[$k] = $this->_conn->convertBooleans($v);
+            $this->_params[$k] = $this->_conn->convertBooleans($v); // @phpstan-ignore-line
         }
 
         $dqlParams = $this->getFlattenedParams($params);
@@ -2149,8 +2149,6 @@ abstract class Doctrine_Query_Abstract
     {
         if (!isset($this->_parsers[$name])) {
             $class = 'Doctrine_Query_' . ucwords(strtolower($name));
-
-            Doctrine_Core::autoload($class);
 
             if (!class_exists($class)) {
                 throw new Doctrine_Query_Exception('Unknown parser ' . $name);
