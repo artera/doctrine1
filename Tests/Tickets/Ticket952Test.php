@@ -36,12 +36,12 @@ namespace Tests\Tickets {
 namespace {
     class Ticket_952_Parent extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('name', 'string', 255);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany('Ticket_952_Child as Children', ['local' => 'id', 'foreign' => 'parent_id']);
         }
@@ -49,13 +49,13 @@ namespace {
 
     class Ticket_952_Child extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('name', 'string', 255);
             $this->hasColumn('parent_id', 'integer');
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasOne('Ticket_952_Parent as Parent', ['local' => 'parent_id', 'foreign' => 'id']);
         }

@@ -18,7 +18,7 @@ namespace Tests\Tickets {
             $test       = new \Ticket_1244_Test();
                 $test->test = null;
                 $test->save();
-                
+
             \Doctrine_Manager::getInstance()->setAttribute(\Doctrine_Core::ATTR_VALIDATE, $original);
         }
     }
@@ -27,7 +27,7 @@ namespace Tests\Tickets {
 namespace {
     class Ticket_1244_Test extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('test', 'integer', 4, ['range' => [5, 10]]);
         }

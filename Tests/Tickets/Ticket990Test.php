@@ -71,7 +71,7 @@ namespace Tests\Tickets {
 namespace {
     class Ticket_990_Person extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('person');
             $this->hasColumn('id', 'integer', 11, ['primary' => true, 'notnull' => true, 'autoincrement' => true]);

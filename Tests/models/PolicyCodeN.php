@@ -1,7 +1,7 @@
 <?php
 class PolicyCodeN extends Doctrine_Record
 {
-    public function setTableDefinition()
+    public function setTableDefinition(): void
     {
         $this->setTableName('policy_codes');
         $this->hasColumn('id', 'integer', 4, ['notnull' => true, 'primary' => true, 'autoincrement' => true]);

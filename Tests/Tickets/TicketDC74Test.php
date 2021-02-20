@@ -48,7 +48,7 @@ namespace Tests\Tickets {
 namespace {
     class Ticket_DC74_Test extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('id', 'integer', 4, ['primary', 'notnull', 'autoincrement']);
             $this->hasColumn('test1', 'string', 255);

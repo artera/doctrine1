@@ -1,7 +1,7 @@
 <?php
 class Task extends Doctrine_Record
 {
-    public function setUp()
+    public function setUp(): void
     {
         $this->hasMany(
             'Resource as ResourceAlias',
@@ -11,7 +11,7 @@ class Task extends Doctrine_Record
         );
         $this->hasMany('Task as Subtask', ['local' => 'id', 'foreign' => 'parent_id']);
     }
-    public function setTableDefinition()
+    public function setTableDefinition(): void
     {
         $this->hasColumn('name', 'string', 100);
         $this->hasColumn('parent_id', 'integer');

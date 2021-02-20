@@ -37,7 +37,7 @@ namespace Tests\Tickets {
 namespace {
     class Ticket_DC57_Article extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('title', 'string', 255);
             $this->hasColumn('date', 'date');

@@ -24,7 +24,7 @@ namespace Tests\Tickets {
 namespace {
     class Ticket_DC14_Search extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('name', 'string', 255);
             $this->hasColumn('date_from', 'timestamp');

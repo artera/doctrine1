@@ -27,12 +27,12 @@ namespace Tests\Tickets {
 namespace {
     class Ticket_DC25_Article extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('name', 'string', 255);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany(
                 'Ticket_DC25_Tag as Tags',
@@ -47,12 +47,12 @@ namespace {
 
     class Ticket_DC25_Tag extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('name', 'string', 255);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany(
                 'Ticket_DC25_Article as Article',
@@ -67,7 +67,7 @@ namespace {
 
     class Ticket_DC25_ArticleTag extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('article_id', 'integer');
             $this->hasColumn('tag_id', 'integer');

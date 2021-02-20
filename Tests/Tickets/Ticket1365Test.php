@@ -49,14 +49,14 @@ namespace Tests\Tickets {
 namespace {
     class T1365_Person extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('la__person');
 
             $this->hasColumn('name', 'string', 255);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany('T1365_PersonHasSkill', ['local' => 'id', 'foreign' => 'fk_person_id']);
         }
@@ -65,14 +65,14 @@ namespace {
 
     class T1365_Skill extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('la__skill');
 
             $this->hasColumn('name', 'string', 255);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany('T1365_PersonHasSkill', ['local' => 'id', 'foreign' => 'fk_skill_id']);
         }
@@ -81,7 +81,7 @@ namespace {
 
     class T1365_PersonHasSkill extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('la__person_has_skill');
 
@@ -126,7 +126,7 @@ namespace {
             );
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasOne('T1365_Person', ['local' => 'fk_person_id', 'foreign' => 'id']);
             $this->hasOne('T1365_Skill', ['local' => 'fk_skill_id', 'foreign' => 'id']);

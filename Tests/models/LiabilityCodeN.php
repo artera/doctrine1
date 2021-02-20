@@ -1,7 +1,7 @@
 <?php
 class LiabilityCodeN extends Doctrine_Record
 {
-    public function setTableDefinition()
+    public function setTableDefinition(): void
     {
         $this->setTableName('liability_codes');
         $this->hasColumn('id', 'integer', 4, ['notnull' => true, 'primary' => true, 'autoincrement' => true]);

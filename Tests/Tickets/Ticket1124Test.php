@@ -103,7 +103,7 @@ namespace Tests\Tickets {
 namespace {
     class Ticket_1124_Record extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('emb1_record');
             $this->hasColumn('id', 'integer', 15, ['autoincrement' => true, 'unsigned' => true, 'primary' => true, 'notnull' => true]);

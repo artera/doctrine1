@@ -1,7 +1,7 @@
 <?php
 class RecordFilterTest extends Doctrine_Record
 {
-    public function setTableDefinition()
+    public function setTableDefinition(): void
     {
         $this->hasColumn('name', 'string', 200);
         $this->hasColumn('password', 'string', 32);

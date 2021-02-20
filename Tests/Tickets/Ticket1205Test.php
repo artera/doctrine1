@@ -50,14 +50,14 @@ namespace {
 
     class Ticket1205TestUser extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('ticket1205_user');
             $this->hasColumn('first_name', 'string', 31);
             $this->hasColumn('last_name', 'string', 31);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->addListener(new \Ticket1205HydrationListener());
             $this->hasMany(
@@ -70,14 +70,14 @@ namespace {
 
     class Ticket1205TestAddress extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('ticket1205_address');
             $this->hasColumn('user_id', 'integer', 4, ['notnull' => true]);
             $this->hasColumn('city', 'string', 31);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasOne(
                 'Ticket1205TestUser as User',

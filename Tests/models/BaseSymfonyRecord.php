@@ -1,11 +1,11 @@
 <?php
 abstract class BaseSymfonyRecord extends Doctrine_Record
 {
-    public function setUp()
+    public function setUp(): void
     {
     }
 
-    public function setTableDefinition()
+    public function setTableDefinition(): void
     {
         $this->hasColumn('name', 'string', 30);
     }

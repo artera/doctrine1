@@ -31,12 +31,12 @@ namespace Tests\Tickets {
 namespace {
     class Ticket_1540_TableName extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('id', 'integer', 4, ['primary' => true, 'autoincrement' => true]);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
         }
     }

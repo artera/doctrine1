@@ -79,7 +79,7 @@ namespace Tests\Tickets {
 namespace {
     class T438_Student extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('t438_student_record');
 
@@ -87,7 +87,7 @@ namespace {
             $this->hasColumn('s_name as name', 'varchar', 50, []);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany('T438_Course as StudyCourses', ['refClass' => 'T438_StudentCourse', 'local' => 'sc_student_id', 'foreign' => 'sc_course_id']);
         }
@@ -96,7 +96,7 @@ namespace {
 
     class T438_Course extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('t438_course');
 
@@ -104,7 +104,7 @@ namespace {
             $this->hasColumn('c_name as name', 'varchar', 50, []);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany('T438_Student as Students', ['refClass' => 'T438_StudentCourse', 'local' => 'sc_course_id', 'foreign' => 'sc_student_id']);
         }
@@ -112,7 +112,7 @@ namespace {
 
     class T438_StudentCourse extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('t438_student_course');
 
@@ -121,7 +121,7 @@ namespace {
             $this->hasColumn('sc_remark  as remark', 'varchar', 500, []);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasOne('T438_Student as Student', ['local' => 'sc_student_id', 'foreign' => 's_id']);
             $this->hasOne('T438_Course as Course', ['local' => 'sc_course_id', 'foreign' => 'c_id']);

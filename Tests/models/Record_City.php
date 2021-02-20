@@ -1,14 +1,14 @@
 <?php
 class Record_City extends Doctrine_Record
 {
-    public function setTableDefinition()
+    public function setTableDefinition(): void
     {
         $this->hasColumn('name', 'string', 200);
         $this->hasColumn('country_id', 'integer');
         $this->hasColumn('district_id', 'integer');
     }
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->hasOne(
             'Record_Country as Country',

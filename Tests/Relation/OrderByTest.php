@@ -116,14 +116,14 @@ namespace Tests\Relation {
 namespace {
     class OrderByTest_Article extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('title', 'string', 255);
             $this->hasColumn('content', 'clob');
             $this->hasColumn('user_id', 'integer');
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasOne(
                 'OrderByTest_User as User',
@@ -136,7 +136,7 @@ namespace {
 
     class OrderByTest_Friend extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn(
                 'user_id1',
@@ -159,7 +159,7 @@ namespace {
 
     class OrderByTest_Group extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn(
                 'name',
@@ -172,7 +172,7 @@ namespace {
             );
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany(
                 'OrderByTest_User as User',
@@ -186,14 +186,14 @@ namespace {
 
     class OrderByTest_User extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('login AS username', 'string', 255);
             $this->hasColumn('password', 'string', 255);
             $this->hasColumn('parent_user_id', 'integer');
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany(
                 'OrderByTest_Article as Articles',
@@ -242,7 +242,7 @@ namespace {
 
     class OrderByTest_UserGroup extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn(
                 'user_id',
@@ -266,14 +266,14 @@ namespace {
 
     class OrderByTest_Category extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->option('orderBy', 'name ASC');
 
             $this->hasColumn('name', 'string', 255);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany(
                 'OrderByTest_BlogPost as Posts',
@@ -287,7 +287,7 @@ namespace {
 
     class OrderByTest_BlogPost extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->option('orderBy', 'title ASC, is_first DESC');
 
@@ -296,7 +296,7 @@ namespace {
             $this->hasColumn('category_id', 'integer');
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasOne(
                 'OrderByTest_Category',
@@ -310,7 +310,7 @@ namespace {
 
     class OrderByTest_WeirdSort extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->option('orderBy', 'RAND()');
 

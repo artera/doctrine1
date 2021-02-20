@@ -1,13 +1,13 @@
 <?php
 class ValidatorTest_Person extends Doctrine_Record
 {
-    public function setTableDefinition()
+    public function setTableDefinition(): void
     {
         $this->hasColumn('identifier', 'integer', 4, ['notblank', 'unique']);
         $this->hasColumn('is_football_player', 'boolean');
     }
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->hasOne(
             'ValidatorTest_FootballPlayer',

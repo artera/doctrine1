@@ -1,7 +1,7 @@
 <?php
 class ForeignKeyTest extends Doctrine_Record
 {
-    public function setTableDefinition()
+    public function setTableDefinition(): void
     {
         $this->hasColumn('name', 'string', null);
         $this->hasColumn('code', 'integer', 4);

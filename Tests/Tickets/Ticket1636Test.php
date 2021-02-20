@@ -80,7 +80,7 @@ namespace Tests\Tickets {
 namespace {
     class Ticket_1636_FileType extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             static $columns = [
             'id' => [
@@ -102,7 +102,7 @@ namespace {
             $this->hasColumns($columns);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany(
                 'Ticket_1636_File as files',
@@ -116,7 +116,7 @@ namespace {
 
     class Ticket_1636_File extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             static $columns = [
             'id' => [
@@ -143,7 +143,7 @@ namespace {
             $this->hasColumns($columns);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasOne(
                 'Ticket_1636_FileType as type',

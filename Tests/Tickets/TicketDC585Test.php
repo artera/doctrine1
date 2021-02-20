@@ -50,7 +50,7 @@ namespace Tests\Tickets {
 namespace {
     class DC585Site extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('Sites');
             $this->hasColumn(
@@ -82,7 +82,7 @@ namespace {
             );
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             parent::setUp();
             $this->hasMany(
@@ -96,7 +96,7 @@ namespace {
 
     class DC585PlaceholderValues extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('Placeholders_Values');
             $this->hasColumn(
@@ -156,7 +156,7 @@ namespace {
             );
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             parent::setUp();
             $this->hasOne(
@@ -177,7 +177,7 @@ namespace {
 
     class DC585Page extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('Pages');
             $this->hasColumn(
@@ -209,7 +209,7 @@ namespace {
             );
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             parent::setUp();
             $this->hasMany(
@@ -224,7 +224,7 @@ namespace {
 
     class DC585Placeholder extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('PlaceholderKeys');
             $this->hasColumn(
@@ -256,7 +256,7 @@ namespace {
             );
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             parent::setUp();
             $this->hasMany(
@@ -278,7 +278,7 @@ namespace {
 
     class DC585PagesPlaceholders extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('Pages_Placeholders');
             $this->hasColumn(
@@ -323,7 +323,7 @@ namespace {
             );
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             parent::setUp();
         }

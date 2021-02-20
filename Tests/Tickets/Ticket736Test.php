@@ -38,13 +38,13 @@ namespace Tests\Tickets {
 namespace {
     class T736_Module extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('lastchange', 'timestamp');
             $this->hasColumn('moduledelegateid', 'integer', 4, ['notnull' => true]);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->addListener(new \T736_ModuleLoaderListener());
         }
@@ -52,13 +52,13 @@ namespace {
 
     class T736_ModuleDelegate extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('moduleid', 'integer', 4, []);
             $this->hasColumn('content', 'string', 2000);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasOne('T736_Module as parent', ['local' => 'moduleid', 'foreign' => 'id']);
         }

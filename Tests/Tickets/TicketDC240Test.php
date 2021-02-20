@@ -29,13 +29,13 @@ namespace Tests\Tickets {
 namespace {
     class Ticket_DC240_User extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('username', 'string', 64, ['notnull' => true]);
             $this->hasColumn('password', 'string', 128, ['notnull' => true]);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany('Ticket_DC240_Role as Roles', ['local' => 'id_user', 'foreign' => 'id_role', 'refClass' => 'Ticket_DC240_UserRole', 'orderBy' => 'position ASC']);
         }
@@ -43,12 +43,12 @@ namespace {
 
     class Ticket_DC240_Role extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('name', 'string', 64);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany('Ticket_DC240_User as Users', ['local' => 'id_role', 'foreign' => 'id_user', 'refClass' => 'Ticket_DC240_UserRole', 'orderBy' => 'position ASC']);
             $this->hasMany('Ticket_DC240_Role as Parents', ['local' => 'id_role_child', 'foreign' => 'id_role_parent', 'refClass' => 'Ticket_DC240_RoleReference', 'orderBy' => 'position DESC']);
@@ -58,14 +58,14 @@ namespace {
 
     class Ticket_DC240_UserRole extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('id_user', 'integer', null, ['primary' => true]);
             $this->hasColumn('id_role', 'integer', null, ['primary' => true]);
             $this->hasColumn('position', 'integer', null, ['notnull' => true]);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasOne('Ticket_DC240_User as User', ['local' => 'id_user', 'foreign' => 'id', 'onDelete' => 'CASCADE']);
             $this->hasOne('Ticket_DC240_Role as Role', ['local' => 'id_role', 'foreign' => 'id', 'onDelete' => 'CASCADE']);
@@ -74,14 +74,14 @@ namespace {
 
     class Ticket_DC240_RoleReference extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('id_role_parent', 'integer', null, ['primary' => true]);
             $this->hasColumn('id_role_child', 'integer', null, ['primary' => true]);
             $this->hasColumn('position', 'integer', null, ['notnull' => true]);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasOne('Ticket_DC240_Role as Parent', ['local' => 'id_role_parent', 'foreign' => 'id', 'onDelete' => 'CASCADE']);
             $this->hasOne('Ticket_DC240_Role as Child', ['local' => 'id_role_child', 'foreign' => 'id', 'onDelete' => 'CASCADE']);

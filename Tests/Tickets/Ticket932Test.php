@@ -36,7 +36,7 @@ namespace Tests\Tickets {
 namespace {
     class UserNoAutoIncrement extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('id', 'integer', 4, ['primary' => true, 'autoincrement' => false, 'notnull' => true]);
             $this->hasColumn('display_name', 'string', 255, ['notnull' => true]);

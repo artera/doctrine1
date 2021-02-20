@@ -58,14 +58,14 @@ namespace Tests\Tickets {
 namespace {
     class T1015_Person extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('person');
             $this->hasColumn('id', 'integer', 15, ['autoincrement' => true, 'unsigned' => true, 'primary' => true, 'notnull' => true]);
             $this->hasColumn('name', 'string', 50);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             parent :: setUp();
             $this->hasOne('T1015_Points', ['local' => 'id', 'foreign' => 'person_id']);
@@ -74,14 +74,14 @@ namespace {
 
     class T1015_Points extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('points');
             $this->hasColumn('person_id', 'integer', 15, ['primary' => true, 'notnull' => true]);
             $this->hasColumn('total', 'integer', 3);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             parent :: setUp();
             $this->hasOne('T1015_Person', ['local' => 'person_id', 'foreign' => 'id']);

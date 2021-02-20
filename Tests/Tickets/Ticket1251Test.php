@@ -25,7 +25,7 @@ namespace Tests\Tickets {
 namespace {
     class Ticket_1251_Record extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('data', 'string', 255);
         }

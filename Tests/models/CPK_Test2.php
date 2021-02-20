@@ -1,11 +1,11 @@
 <?php
 class CPK_Test2 extends Doctrine_Record
 {
-    public function setTableDefinition()
+    public function setTableDefinition(): void
     {
         $this->hasColumn('name', 'string', 255);
     }
-    public function setUp()
+    public function setUp(): void
     {
         $this->hasMany(
             'CPK_Test as Test',

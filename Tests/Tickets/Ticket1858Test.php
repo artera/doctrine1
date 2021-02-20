@@ -34,7 +34,7 @@ namespace {
     {
         public $hooks = [];
 
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('quantity', 'integer');
         }

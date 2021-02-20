@@ -20,7 +20,7 @@ namespace Tests\Tickets {
                 $foo->Bar       = new \Ticket_1818_BarA();
                 $foo->Bar->type = 'A';
                 $foo->save();
-                
+
             \Doctrine_Manager::getInstance()->setAttribute(\Doctrine_Core::ATTR_VALIDATE, \Doctrine_Core::VALIDATE_NONE);
         }
     }
@@ -29,12 +29,12 @@ namespace Tests\Tickets {
 namespace {
     class Ticket_1818_Foo extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('bar_id', 'integer', null, ['type' => 'integer']);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasOne(
                 'Ticket_1818_Bar as Bar',
@@ -54,14 +54,14 @@ namespace {
 
     class Ticket_1818_Bar extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('type', 'string', null, ['type' => 'string']);
 
             $this->setSubClasses(['Ticket_1818_BarA' => ['type' => 'A'], 'Ticket_1818_BarB' => ['type' => 'B']]);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany(
                 'Ticket_1818_Foo as Foos',

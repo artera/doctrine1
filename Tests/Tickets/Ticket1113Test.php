@@ -47,11 +47,11 @@ namespace Tests\Tickets {
                 $registrar->Course = $course1;
                 // $registrar->Subjects; // if this is uncommented the test will pass
                 $registrar->save();
-            
+
             $reopend = \Doctrine_Core::getTable('VIH_Model_Course_Registration')->findOneById($registrar->id);
 
             $reopend->Subjects[] = $subject1;
-            
+
             $reopend->save();
 
             $subject = $reopend->Subjects[0];
@@ -64,14 +64,14 @@ namespace Tests\Tickets {
 namespace {
     class VIH_Model_Subject extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('identifier', 'string', 255);
             $this->hasColumn('navn', 'string', 255);
             $this->hasColumn('active', 'boolean');
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany(
                 'VIH_Model_Course_SubjectGroup as SubjectGroups',
@@ -95,13 +95,13 @@ namespace {
 
     class VIH_Model_Course extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('langtkursus');
             $this->hasColumn('navn', 'string', 255);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany(
                 'VIH_Model_Course_Period as Periods',
@@ -118,7 +118,7 @@ namespace {
 
     class VIH_Model_Course_Period extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('name', 'string', 255);
             $this->hasColumn('course_id', 'integer');
@@ -126,7 +126,7 @@ namespace {
             $this->hasColumn('date_end', 'date');
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasOne('VIH_Model_Course as Course', ['local' => 'course_id', 'foreign' => 'id']);
         }
@@ -134,7 +134,7 @@ namespace {
 
     class VIH_Model_Course_Registration extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('langtkursus_tilmelding');
             $this->hasColumn('vaerelse', 'integer');
@@ -143,7 +143,7 @@ namespace {
             $this->hasColumn('kontakt_adresse_id', 'integer');
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasOne(
                 'VIH_Model_Course as Course',
@@ -162,14 +162,14 @@ namespace {
 
     class VIH_Model_Course_SubjectGroup extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('name', 'string', 255);
             $this->hasColumn('period_id', 'integer');
             $this->hasColumn('course_id', 'integer');
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasOne(
                 'VIH_Model_Course_Period as Period',
@@ -194,7 +194,7 @@ namespace {
 
     class VIH_Model_Course_SubjectGroup_Subject extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('subject_group_id', 'integer', null, ['primary' => true]);
             $this->hasColumn('subject_id', 'integer', null, ['primary' => true]);
@@ -203,7 +203,7 @@ namespace {
 
     class VIH_Model_Course_Registration_Subject extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('registration_id', 'integer', null, ['primary' => true]);
             $this->hasColumn('subject_id', 'integer', null, ['primary' => true]);

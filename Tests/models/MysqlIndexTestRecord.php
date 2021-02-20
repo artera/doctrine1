@@ -1,7 +1,7 @@
 <?php
 class MysqlIndexTestRecord extends Doctrine_Record
 {
-    public function setTableDefinition()
+    public function setTableDefinition(): void
     {
         $this->hasColumn('name', 'string', null);
         $this->hasColumn('code', 'integer', 4);

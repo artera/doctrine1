@@ -34,7 +34,7 @@ namespace Tests\Tickets {
 namespace {
     class T2158_Model1 extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('title', 'string');
             $this->hasColumn('m2_id', 'integer');
@@ -43,12 +43,12 @@ namespace {
 
     class T2158_Model2 extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
         }
 
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany(
                 'T2158_Model1 as Relation',

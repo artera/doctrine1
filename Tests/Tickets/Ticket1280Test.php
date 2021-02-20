@@ -36,7 +36,7 @@ namespace Tests\Tickets {
 namespace {
     class Ticket_1280_User extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn(
                 'group_id',
@@ -49,7 +49,7 @@ namespace {
             $this->hasColumn('name', 'string', 255);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasOne(
                 'Ticket_1280_Group as Group',
@@ -64,12 +64,12 @@ namespace {
 
     class Ticket_1280_Group extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('name', 'string', 255);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany(
                 'Ticket_1280_User as Users',

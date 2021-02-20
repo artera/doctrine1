@@ -47,13 +47,13 @@ namespace Tests\Tickets {
 namespace {
     class RecordTest1 extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('name', 'string');
             $this->hasColumn('record_test2_id', 'integer');
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasOne(
                 'RecordTest2',
@@ -67,12 +67,12 @@ namespace {
 
     class RecordTest2 extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('name', 'string');
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany(
                 'RecordTest1',

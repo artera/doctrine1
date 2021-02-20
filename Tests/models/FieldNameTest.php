@@ -1,7 +1,7 @@
 <?php
 class FieldNameTest extends Doctrine_Record
 {
-    public function setTableDefinition()
+    public function setTableDefinition(): void
     {
         $this->hasColumn('someColumn', 'string', 200, ['default' => 'some string']);
         $this->hasColumn('someEnum', 'enum', 4, ['default' => 'php', 'values' => ['php', 'java', 'python']]);

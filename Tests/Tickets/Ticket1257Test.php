@@ -34,14 +34,14 @@ namespace Tests\Tickets {
 namespace {
     class Ticket_1257_User extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('username', 'string', 255);
             $this->hasColumn('password', 'string', 255);
             $this->hasColumn('role_id', 'integer');
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasOne('Ticket_1257_Role as Role', ['local' => 'role_id', 'foreign' => 'id']);
         }
@@ -49,13 +49,13 @@ namespace {
 
     class Ticket_1257_Role extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('name', 'string', 255);
             $this->hasColumn('description', 'string');
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany('Ticket_1257_User as Users', ['local' => 'id', 'foreign' => 'role_id']);
         }

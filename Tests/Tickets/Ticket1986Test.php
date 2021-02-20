@@ -17,7 +17,7 @@ namespace Tests\Tickets {
             $t1->get('others');
             $t1->save();
             $t1->get('others');
-            
+
 // this not: relation is not accessed before save and is gone afterwards
             $t2 = new \Testing_Ticket_1986_1();
             $t2->save();
@@ -29,12 +29,12 @@ namespace Tests\Tickets {
 namespace {
     class Testing_Ticket_1986_1 extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('testing_ticket_1986_1');
             $this->hasColumn('name', 'string', 64, []);
         }
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany('Testing_Ticket_1986_2 as others', ['refClass' => 'Testing_Ticket_1986Link', 'local' => 'id_1', 'foreign' => 'id_2']);
         }
@@ -42,13 +42,13 @@ namespace {
 
     class Testing_Ticket_1986_2 extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('testing_ticket_1986_2');
             $this->hasColumn('value', 'string', 64, []);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany('Testing_Ticket_1986_1', ['refClass' => 'Testing_Ticket_1986Link', 'local' => 'id_2', 'foreign' => 'id_1']);
         }
@@ -56,14 +56,14 @@ namespace {
 
     class Testing_Ticket_1986Link extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('testing_ticket_1986_link');
             $this->hasColumn('id_1', 'integer', null, []);
             $this->hasColumn('id_2', 'integer', null, []);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             // setup relations
             $this->hasOne('Testing_Ticket_1986_1 as rel1', ['local' => 'id_1', 'foreign' => 'id', 'onDelete' => 'CASCADE']);

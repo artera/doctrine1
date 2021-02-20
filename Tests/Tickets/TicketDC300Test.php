@@ -60,12 +60,12 @@ namespace Tests\Tickets {
 namespace {
     class Ticket_DC300_Group extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('name', 'string', 255);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany(
                 'Ticket_DC300_User as Users',
@@ -80,12 +80,12 @@ namespace {
 
     class Ticket_DC300_User extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('name', 'string', 255);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany(
                 'Ticket_DC300_Group as Groups',
@@ -100,7 +100,7 @@ namespace {
 
     class Ticket_DC300_UserGroup extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('user_id', 'integer');
             $this->hasColumn('group_id', 'integer');

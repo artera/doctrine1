@@ -1,7 +1,7 @@
 <?php
 class ResourceType extends Doctrine_Record
 {
-    public function setUp()
+    public function setUp(): void
     {
         $this->hasMany(
             'Resource as ResourceAlias',
@@ -10,7 +10,7 @@ class ResourceType extends Doctrine_Record
             'refClass' => 'ResourceReference']
         );
     }
-    public function setTableDefinition()
+    public function setTableDefinition(): void
     {
         $this->hasColumn('type', 'string', 100);
     }

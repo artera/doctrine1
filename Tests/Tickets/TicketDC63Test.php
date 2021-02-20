@@ -21,7 +21,7 @@ namespace Tests\Tickets {
 namespace {
     class Ticket_DC63_User extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('id', 'integer', null, ['primary' => true]);
             $this->hasColumn('email_address', 'string', 255, ['unique' => false]);

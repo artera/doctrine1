@@ -42,7 +42,7 @@ namespace Tests\Tickets {
 namespace {
     class Ticket_1385_User1 extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('username', 'string', 255);
             $this->hasColumn('password', 'string', 255);
@@ -52,7 +52,7 @@ namespace {
 
     class Ticket_1385_User2 extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('username', 'string', 255);
             $this->hasColumn('password', 'string', 255);
@@ -62,7 +62,7 @@ namespace {
 
     class Ticket_1385_User3 extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('username', 'string', 255);
             $this->hasColumn('password', 'string', 255);

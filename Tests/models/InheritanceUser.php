@@ -1,7 +1,7 @@
 <?php
 class InheritanceUser extends Doctrine_Record
 {
-    public function setTableDefinition()
+    public function setTableDefinition(): void
     {
         $this->setTableName('inheritance_user');
 
@@ -9,7 +9,7 @@ class InheritanceUser extends Doctrine_Record
         $this->hasColumn('username', 'string', 128, [  'notnull' => true,]);
     }
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->hasMany('InheritanceDeal as Deals', ['refClass' => 'InheritanceDealUser', 'local' => 'user_id', 'foreign' => 'entity_id']);
     }

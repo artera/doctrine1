@@ -60,7 +60,7 @@ namespace Tests\Tickets {
 namespace {
     class RelX extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('rel_x');
             $this->hasColumn('name', 'string', 25, []);
@@ -68,7 +68,7 @@ namespace {
             $this->hasColumn('created_at', 'timestamp', null, []);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->HasMany('RelY as y', ['local' => 'id', 'foreign' => 'rel_x_id']);
         }
@@ -76,14 +76,14 @@ namespace {
 
     class RelY extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('rel_y');
             $this->hasColumn('name', 'string', 25, []);
             $this->hasColumn('rel_x_id', 'integer', 10, []);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
         }
     }

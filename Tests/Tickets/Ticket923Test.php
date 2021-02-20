@@ -57,7 +57,7 @@ namespace Tests\Tickets {
 namespace {
     class T923_Diagnostic extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('diagnostics');
             $this->hasColumn('id_type', 'integer', 4);
@@ -67,7 +67,7 @@ namespace {
             $this->hasColumn('diag_timestamp', 'timestamp', null);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
         }
     }

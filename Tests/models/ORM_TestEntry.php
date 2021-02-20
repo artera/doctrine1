@@ -1,7 +1,7 @@
 <?php
 class ORM_TestEntry extends Doctrine_Record
 {
-    public function setTableDefinition()
+    public function setTableDefinition(): void
     {
         $this->setTableName('test_entries');
         $this->hasColumn('id', 'integer', 11, 'autoincrement|primary');
@@ -11,7 +11,7 @@ class ORM_TestEntry extends Doctrine_Record
         $this->hasColumn('itemID', 'integer');
     }
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->hasOne(
             'ORM_TestItem',

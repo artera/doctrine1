@@ -32,7 +32,7 @@ namespace Tests\Tickets {
 namespace {
     class T894_Day extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('t894_days');
             $this->hasColumn('id', 'integer', 3, ['autoincrement' => true, 'unsigned' => true, 'primary' => true, 'notnull' => true]);

@@ -35,7 +35,7 @@ namespace Tests\Tickets {
 namespace {
     class mkNode extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('mk_node');
             $this->hasColumn('id', 'integer', 4, ['type' => 'integer', 'autoincrement' => true, 'primary' => true, 'length' => 4]);
@@ -63,7 +63,7 @@ namespace {
 
     class mkOrganism extends mkNode
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             parent::setTableDefinition();
 

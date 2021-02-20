@@ -53,7 +53,7 @@ namespace Tests\Tickets {
 namespace {
     class Ticket1821_Record_Full_Aliased extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn(
                 'user_id as id',
@@ -79,7 +79,7 @@ namespace {
 
     class Ticket1821_Record_ID_Aliased extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn(
                 'user_id as id',
@@ -105,7 +105,7 @@ namespace {
 
     class Ticket1821_Record_Column_Aliased extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn(
                 'id',
@@ -131,7 +131,7 @@ namespace {
 
     class Ticket1821_Record extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn(
                 'id',

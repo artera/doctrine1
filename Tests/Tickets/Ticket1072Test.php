@@ -82,7 +82,7 @@ namespace Tests\Tickets {
 namespace {
     class T1072BankTransaction extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('t1072_bank_transaction');
             $this->hasColumn('payment_detail_id', 'integer', null);
@@ -90,7 +90,7 @@ namespace {
             $this->option('charset', 'utf8');
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             parent::setUp();
             $this->hasOne(
@@ -103,14 +103,14 @@ namespace {
 
     class T1072PaymentDetail extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('t1072_payment_detail');
             $this->hasColumn('name', 'string', 255, ['notnull' => true]);
             $this->option('charset', 'utf8');
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             parent::setUp();
             $this->hasOne(

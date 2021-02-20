@@ -40,13 +40,13 @@ namespace Tests\Tickets {
 namespace {
     class Ticket_1449_Document extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('name', 'string', 255);
             $this->hasColumn('test', 'string', 255);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany(
                 'Ticket_1449_Attachment as Attachments',
@@ -58,13 +58,13 @@ namespace {
 
     class Ticket_1449_Attachment extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('document_id', 'integer');
             $this->hasColumn('name', 'string', 255);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasOne(
                 'Ticket_1449_Document as Document',

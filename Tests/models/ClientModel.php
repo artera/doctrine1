@@ -1,7 +1,7 @@
 <?php
 class ClientModel extends Doctrine_Record
 {
-    public function setTableDefinition()
+    public function setTableDefinition(): void
     {
         $this->setTableName('clients');
 
@@ -17,7 +17,7 @@ class ClientModel extends Doctrine_Record
         $this->hasColumn('short_name', 'string', 32, ['notnull' => true, 'notblank', 'unique' => true]);
     }
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->hasMany('AddressModel', ['local' => 'client_id', 'foreign' => 'address_id', 'refClass' => 'ClientToAddressModel']);
     }
@@ -25,7 +25,7 @@ class ClientModel extends Doctrine_Record
 
 class ClientToAddressModel extends Doctrine_Record
 {
-    public function setTableDefinition()
+    public function setTableDefinition(): void
     {
         $this->setTableName('clients_to_addresses');
 
@@ -37,7 +37,7 @@ class ClientToAddressModel extends Doctrine_Record
     {
     }
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->hasOne('ClientModel', ['local' => 'client_id', 'foreign' => 'id', 'onDelete' => 'CASCADE']);
         $this->hasOne('AddressModel', ['local' => 'address_id', 'foreign' => 'id', 'onDelete' => 'CASCADE']);
@@ -46,7 +46,7 @@ class ClientToAddressModel extends Doctrine_Record
 
 class AddressModel extends Doctrine_Record
 {
-    public function setTableDefinition()
+    public function setTableDefinition(): void
     {
         $this->setTableName('addresses');
 
@@ -65,7 +65,7 @@ class AddressModel extends Doctrine_Record
         $this->hasColumn('zip', 'string', 15, ['notnull' => true, 'notblank', 'regexp' => '/^[0-9-]*$/']);
     }
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->hasMany('ClientModel', ['local' => 'address_id', 'foreign' => 'client_id', 'refClass' => 'ClientToAddressModel']);
     }

@@ -24,13 +24,13 @@ namespace Tests\Tickets {
 namespace {
     class Ticket_963_User extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('username', 'string', 255);
             $this->hasColumn('password', 'string', 255);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasOne(
                 'Ticket_963_Email as Email',
@@ -42,13 +42,13 @@ namespace {
 
     class Ticket_963_Email extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('user_id', 'integer', 4, ['primary' => true]);
             $this->hasColumn('address2', 'string', 255);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasOne(
                 'Ticket_963_User as User',

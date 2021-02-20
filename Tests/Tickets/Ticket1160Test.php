@@ -18,7 +18,7 @@ namespace Tests\Tickets {
 namespace {
     class Ticket_1160_Test extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('name', 'string', 255);
             $this->option('type', 'MYISAM');

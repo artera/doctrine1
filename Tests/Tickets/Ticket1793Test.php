@@ -85,7 +85,7 @@ namespace Tests\Tickets {
 namespace {
     class Ticket_1793_Order extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('ticket_1793_orders');
             $this->hasColumn('id', 'integer', 4, ['type' => 'integer', 'unsigned' => '1', 'primary' => true, 'autoincrement' => true, 'length' => '4']);

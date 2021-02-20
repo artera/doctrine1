@@ -51,13 +51,13 @@ namespace {
     {
         public $phonenumbersTest = null;
 
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('username', 'string', 255);
             $this->hasColumn('password', 'string', 255);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany(
                 'Ticket_1077_Phonenumber as Phonenumbers',
@@ -105,13 +105,13 @@ namespace {
 
     class Ticket_1077_Phonenumber extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('phonenumber', 'string', 55);
             $this->hasColumn('user_id', 'integer');
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasOne(
                 'Ticket_1077_User as User',

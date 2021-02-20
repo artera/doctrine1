@@ -45,7 +45,7 @@ namespace Tests\Tickets {
 namespace {
     class Ticket_1192_CPK extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('id', 'integer', 4, ['primary' => true, 'autoincrement' => true]);
             $this->hasColumn('user_id', 'integer', 4, ['primary' => true]);

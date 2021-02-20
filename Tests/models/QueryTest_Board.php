@@ -4,7 +4,7 @@ class QueryTest_Board extends Doctrine_Record
     /**
      * Initializes the table definition.
      */
-    public function setTableDefinition()
+    public function setTableDefinition(): void
     {
         $this->hasColumn('id', 'integer', 4, ['primary', 'autoincrement', 'notnull']);
         $this->hasColumn(
@@ -36,7 +36,7 @@ class QueryTest_Board extends Doctrine_Record
     /**
      * Initializes the relations.
      */
-    public function setUp()
+    public function setUp(): void
     {
         $this->hasOne(
             'QueryTest_Category as category',

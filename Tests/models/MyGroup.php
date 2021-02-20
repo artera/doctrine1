@@ -1,7 +1,7 @@
 <?php
 class MyGroup extends Doctrine_Record
 {
-    public function setTableDefinition()
+    public function setTableDefinition(): void
     {
         $this->setTableName('my_group');
 
@@ -10,7 +10,7 @@ class MyGroup extends Doctrine_Record
         $this->hasColumn('description', 'string', 4000, []);
     }
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->hasMany('MyUser as users', ['refClass' => 'MyUserGroup', 'local' => 'group_id', 'foreign' => 'user_id']);
     }

@@ -1,12 +1,12 @@
 <?php
 class MysqlUser extends Doctrine_Record
 {
-    public function setTableDefinition()
+    public function setTableDefinition(): void
     {
         $this->hasColumn('name', 'string', null);
     }
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->hasMany(
             'MysqlGroup',

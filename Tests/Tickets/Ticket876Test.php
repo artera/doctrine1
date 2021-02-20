@@ -73,7 +73,7 @@ namespace Tests\Tickets {
 namespace {
     class Person extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('person');
             $this->hasColumn('id', 'integer', 11, ['primary' => true, 'autoincrement' => true]);
@@ -81,7 +81,7 @@ namespace {
             $this->hasColumn('sf_guard_user_id', 'integer', 4);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             parent::setUp();
             $this->hasMany(
@@ -100,7 +100,7 @@ namespace {
 
     class Profile extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('profile');
             $this->hasColumn('id', 'integer', 11, ['primary' => true, 'autoincrement' => true]);
@@ -108,7 +108,7 @@ namespace {
             $this->hasColumn('person_id', 'integer', 11);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             parent::setUp();
             $this->hasOne(
@@ -121,14 +121,14 @@ namespace {
 
     class sfGuardUser extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('sf_guard_user');
             $this->hasColumn('id', 'integer', 4, ['primary' => true, 'autoincrement' => true]);
             $this->hasColumn('name', 'string', 128, ['notnull' => true, 'unique' => true]);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             parent::setUp();
             $this->hasOne(

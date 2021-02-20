@@ -24,12 +24,12 @@ namespace Tests\Tickets {
 namespace {
     class Ticket_1545_Foo extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('a', 'string');
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->unshiftFilter(new \Ticket_1545_FooFilter());
         }

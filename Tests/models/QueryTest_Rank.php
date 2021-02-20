@@ -4,7 +4,7 @@ class QueryTest_Rank extends Doctrine_Record
     /**
      * Initializes the table definition.
      */
-    public function setTableDefinition()
+    public function setTableDefinition(): void
     {
         $this->hasColumn(
             'title as title',
@@ -26,7 +26,7 @@ class QueryTest_Rank extends Doctrine_Record
         );
     }
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->hasMany(
             'QueryTest_User as users',

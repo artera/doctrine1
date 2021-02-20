@@ -160,12 +160,12 @@ namespace Tests\Tickets {
 namespace {
     class T1323User extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('name', 'string', 30);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany(
                 'T1323User as Parents',
@@ -202,7 +202,7 @@ namespace {
 
     class T1323UserReference extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('parent_id', 'integer', null, ['primary' => true]);
             $this->hasColumn('child_id', 'integer', null, ['primary' => true]);

@@ -40,7 +40,7 @@ namespace Tests\Tickets {
 namespace {
     class Ticket_255_User extends \Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('username', 'string', 255);
             $this->hasColumn('email_address', 'string', 255);

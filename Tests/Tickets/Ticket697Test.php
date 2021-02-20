@@ -29,7 +29,7 @@ namespace Tests\Tickets {
 namespace {
     class T697_Person extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('name', 'string', 30);
         }
@@ -38,7 +38,7 @@ namespace {
 //Class table inheritance
     class T697_User extends T697_Person
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('password', 'string', 30);
         }

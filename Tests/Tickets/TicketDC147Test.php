@@ -22,8 +22,8 @@ DC147_Multiple:
     name: isbn2
   ISBN3:
     name: isbn3
-DC147_Product: 
-  Product_1: 
+DC147_Product:
+  Product_1:
     name: book3
     MultipleValues:
       Multi_1:
@@ -32,7 +32,7 @@ DC147_Product:
       Multi_2:
         value: 232323233
         Multiple: ISBN3
-  Product_2: 
+  Product_2:
     name: book4
     MultipleValues:
       Multi_3:
@@ -74,7 +74,7 @@ END;
                 $this->assertEquals($product->MultipleValues[0]->Multiple->name, 'isbn2');
                 $this->assertEquals($product->MultipleValues[1]->Multiple->name, 'isbn3');
 
-                
+
             unlink('test.yml');
         }
     }
@@ -83,13 +83,13 @@ END;
 namespace {
     class DC147_Product extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('site_id', 'integer', null, ['type' => 'integer']);
             $this->hasColumn('name', 'string', 255, ['type' => 'string', 'notnull' => true, 'length' => '255']);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasOne(
                 'DC147_Site as Site',
@@ -105,12 +105,12 @@ namespace {
     }
     class DC147_Site extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('name', 'string', 255, ['type' => 'string', 'length' => '255']);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany(
                 'DC147_Product as Products',
@@ -121,12 +121,12 @@ namespace {
     }
     class DC147_Multiple extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('name', 'string', 255, ['type' => 'string', 'notnull' => true, 'length' => '255']);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany(
                 'DC147_MultipleValue as MultipleValues',
@@ -137,14 +137,14 @@ namespace {
     }
     class DC147_MultipleValue extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('product_id', 'integer', null, ['type' => 'integer', 'primary' => true]);
             $this->hasColumn('multiple_id', 'integer', null, ['type' => 'integer', 'primary' => true]);
             $this->hasColumn('value', 'clob', null, ['type' => 'clob']);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasOne(
                 'DC147_Multiple as Multiple',

@@ -26,7 +26,7 @@ namespace Tests\Tickets {
 namespace {
     class Ticket_1923_User extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('login as username', 'string', 255);
             $this->hasColumn('password', 'string', 255);
@@ -37,7 +37,7 @@ namespace {
 
     class Ticket_1923_User2 extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('login as username', 'string', 255);
             $this->hasColumn('password', 'string', 255);

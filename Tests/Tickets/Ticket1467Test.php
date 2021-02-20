@@ -22,12 +22,12 @@ namespace Tests\Tickets {
 namespace {
     class T1467_Item extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('name', 'string', 50);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany(
                 'T1467_Picture as Pictures',
@@ -52,12 +52,12 @@ namespace {
 
     class T1467_Picture extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('name', 'string', 50);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany(
                 'T1467_Item as Items',
@@ -73,12 +73,12 @@ namespace {
 
     class T1467_Puzzle extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('name', 'string', 50);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany(
                 'T1467_Item as Items',
@@ -94,7 +94,7 @@ namespace {
 
     class T1467_ItemPicture extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('item_id', 'integer', null, ['primary' => true]);
             $this->hasColumn('picture_id', 'integer', null, ['primary' => true]);
@@ -104,7 +104,7 @@ namespace {
 
     class T1467_ItemPuzzle extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('item_id', 'integer', null, ['primary' => true]);
             $this->hasColumn('puzzle_id', 'integer', null, ['primary' => true]);

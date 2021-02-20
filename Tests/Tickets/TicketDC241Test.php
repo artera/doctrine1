@@ -34,13 +34,13 @@ namespace Tests\Tickets {
 namespace {
     class Ticket_DC241_Poll extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('id_category', 'integer', null, ['notnull' => true]);
             $this->hasColumn('question', 'string', 256);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany('Ticket_DC241_PollAnswer as Answers', ['local' => 'id', 'foreign' => 'id_poll', 'orderBy' => 'position']);
         }
@@ -48,7 +48,7 @@ namespace {
 
     class Ticket_DC241_PollAnswer extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('module_polls_answers');
 
@@ -58,7 +58,7 @@ namespace {
             $this->hasColumn('position', 'integer');
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasOne('Ticket_DC241_Poll as Poll', ['local' => 'id_poll', 'foreign' => 'id', 'onDelete' => 'CASCADE']);
         }

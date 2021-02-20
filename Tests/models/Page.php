@@ -1,7 +1,7 @@
 <?php
 class Page extends Doctrine_Record
 {
-    public function setUp()
+    public function setUp(): void
     {
         $this->hasMany(
             'Bookmark as Bookmarks',
@@ -10,7 +10,7 @@ class Page extends Doctrine_Record
         );
     }
 
-    public function setTableDefinition()
+    public function setTableDefinition(): void
     {
         $this->hasColumn('name', 'string', 30);
         $this->hasColumn('url', 'string', 100);

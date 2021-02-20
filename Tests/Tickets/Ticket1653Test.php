@@ -56,12 +56,12 @@ namespace Tests\Tickets {
 namespace {
     class Ticket_1653_User extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('name', 'string', 255);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany(
                 'Ticket_1653_Email as emails',
@@ -82,13 +82,13 @@ namespace {
 
     class Ticket_1653_Email extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('user_id', 'integer');
             $this->hasColumn('address', 'string', 255, ['notnull' => true]);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasOne(
                 'Ticket_1653_User as user',

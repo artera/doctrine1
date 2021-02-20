@@ -1,11 +1,11 @@
 <?php
 class EventListenerChainTest extends Doctrine_Record
 {
-    public function setTableDefinition()
+    public function setTableDefinition(): void
     {
         $this->hasColumn('name', 'string', 100);
     }
-    public function setUp()
+    public function setUp(): void
     {
         $chain = new \Doctrine_EventListener_Chain();
         $chain->add(new \Doctrine_EventListener_TestA());

@@ -49,13 +49,13 @@ namespace Tests\Tickets {
 namespace {
     class Ticket_1133_Foo extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('name', 'string', 255);
             $this->hasColumn('bar_id', 'integer');
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasOne('Ticket_1133_Bar as Bar', ['local' => 'bar_id', 'foreign' => 'id']);
         }
@@ -63,7 +63,7 @@ namespace {
 
     class Ticket_1133_Bar extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('name', 'string', 255);
         }

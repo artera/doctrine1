@@ -43,13 +43,13 @@ namespace Tests\Tickets {
 namespace {
     class Ticket_2251_TestStringLength extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('test_string_length');
             $this->hasColumn('test_string', 'string');
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             parent::setUp();
         }

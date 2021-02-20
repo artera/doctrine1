@@ -77,7 +77,7 @@ END;
                 $this->assertEquals($n[0]->title, 'Date de retour de Smallville aux Etats-Unis');
                 $this->assertEquals($n[1]->title, 'Audiences de l\'épisode 8.22 Doomsday aux Etats-Unis');
 
-                
+
             unlink('test.yml');
         }
     }
@@ -86,7 +86,7 @@ END;
 namespace {
     class News extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn(
                 'title',
@@ -104,7 +104,7 @@ namespace {
 
     class Episode extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn(
                 'season',
@@ -162,7 +162,7 @@ namespace {
             );
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany(
                 'Writer as Writers',
@@ -198,7 +198,7 @@ namespace {
 
     class Writer extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn(
                 'name',
@@ -214,7 +214,7 @@ namespace {
             );
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany(
                 'Episode',
@@ -235,7 +235,7 @@ namespace {
 
     class WriterEpisode extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn(
                 'episode_id',
@@ -257,7 +257,7 @@ namespace {
             );
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasOne(
                 'Writer',
@@ -279,7 +279,7 @@ namespace {
 
     class Director extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn(
                 'name',
@@ -295,7 +295,7 @@ namespace {
             );
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany(
                 'Episode',
@@ -316,7 +316,7 @@ namespace {
 
     class DirectorEpisode extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn(
                 'episode_id',
@@ -338,7 +338,7 @@ namespace {
             );
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasOne(
                 'Director',

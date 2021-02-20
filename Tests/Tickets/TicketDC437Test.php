@@ -80,7 +80,7 @@ namespace Tests\Tickets {
 namespace {
     class Doctrine_Ticket_DC437_Record extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('dc437records');
 

@@ -1,7 +1,7 @@
 <?php
 class Entity extends Doctrine_Record
 {
-    public function setUp()
+    public function setUp(): void
     {
         $this->hasOne('Email', ['local' => 'email_id', 'onDelete' => 'CASCADE']);
         $this->hasMany('Phonenumber', ['local' => 'id', 'foreign' => 'entity_id']);
@@ -14,7 +14,7 @@ class Entity extends Doctrine_Record
             'equal'                            => true]
         );
     }
-    public function setTableDefinition()
+    public function setTableDefinition(): void
     {
         $this->hasColumn('id', 'integer', 20, ['autoincrement', 'primary']);
         $this->hasColumn('name', 'string', 50);

@@ -30,7 +30,7 @@ namespace Tests\Tickets {
 namespace {
     class Ticket_2377_Author extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('author');
             $this->hasColumn(
@@ -47,7 +47,7 @@ namespace {
             );
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany('Ticket_2377_Article as Article', ['local' => 'id', 'foreign' => 'author_id']);
         }
@@ -55,7 +55,7 @@ namespace {
 
     class Ticket_2377_Article extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('article');
             $this->hasColumn(
@@ -78,7 +78,7 @@ namespace {
             );
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasOne('Ticket_2377_Author as Author', ['local' => 'author_id', 'foreign' => 'id']);
         }

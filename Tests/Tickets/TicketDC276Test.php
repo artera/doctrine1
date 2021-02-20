@@ -27,7 +27,7 @@ namespace Tests\Tickets {
 namespace {
     class Ticket_DC276_Post extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn(
                 'content',
@@ -48,7 +48,7 @@ namespace {
             );
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasOne(
                 'Ticket_DC276_Comment as Comments',
@@ -61,7 +61,7 @@ namespace {
 
     class Ticket_DC276_Comment extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn(
                 'post_id',
@@ -82,7 +82,7 @@ namespace {
             );
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany(
                 'Ticket_DC276_Post',

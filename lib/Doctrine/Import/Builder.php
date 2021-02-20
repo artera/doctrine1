@@ -344,7 +344,7 @@ class Doctrine_Import_Builder extends Doctrine_Builder
 
         return <<<PHP
 
-            public function setTableDefinition()
+            public function setTableDefinition(): void
             {
                 $code
             }
@@ -451,7 +451,7 @@ class Doctrine_Import_Builder extends Doctrine_Builder
         // If we have some code for the function then lets define it and return it
         if ($code) {
             return <<<PHP
-                public function setUp()
+                public function setUp(): void
                 {
                     parent::setUp();
                     $code

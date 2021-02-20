@@ -27,7 +27,7 @@ namespace Tests\Tickets {
 namespace {
     class Parent741 extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn(
                 'id',
@@ -43,7 +43,7 @@ namespace {
             $this->hasColumn('amount', 'integer');
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany('Child741 as Cows', ['local' => 'id', 'foreign' => 'moo_id']);
         }
@@ -51,7 +51,7 @@ namespace {
 
     class Child741 extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn(
                 'id',
@@ -67,7 +67,7 @@ namespace {
             $this->hasColumn('moo_id', 'integer');
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasOne('Parent741 as Moo', ['local' => 'moo_id', 'foreign' => 'id']);
         }

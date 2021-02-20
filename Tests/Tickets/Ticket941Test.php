@@ -119,14 +119,14 @@ namespace {
 
     abstract class BaseSite extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('_site');
             $this->hasColumn('site_id', 'integer', 4, ['notnull' => true, 'primary' => true, 'autoincrement' => true]);
             $this->hasColumn('site_domain', 'string', 255, ['notnull' => true]);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             parent::setUp();
             $this->hasMany(
@@ -139,14 +139,14 @@ namespace {
     }
     abstract class BaseVariable extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('_variable');
             $this->hasColumn('variable_id', 'integer', 4, ['notnull' => true, 'primary' => true, 'autoincrement' => true]);
             $this->hasColumn('variable_name', 'string', 100, ['notnull' => true]);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             parent::setUp();
             $this->hasMany(
@@ -165,7 +165,7 @@ namespace {
     }
     abstract class BaseSiteVarvalue extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('_site_varvalue');
             $this->hasColumn('varvalue_id', 'integer', 4, ['notnull' => true, 'primary' => true, 'autoincrement' => true]);
@@ -174,7 +174,7 @@ namespace {
             $this->hasColumn('varvalue_value', 'string', null, ['notnull' => true]);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             parent::setUp();
             $this->hasOne(

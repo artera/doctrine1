@@ -37,12 +37,12 @@ namespace Tests\Tickets {
 namespace {
     class Ticket_1134_User extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('is_pimp', 'boolean', true);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
         }
     }

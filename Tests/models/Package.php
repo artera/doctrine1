@@ -1,12 +1,12 @@
 <?php
 class Package extends Doctrine_Record
 {
-    public function setTableDefinition()
+    public function setTableDefinition(): void
     {
         $this->hasColumn('description', 'string', 255);
     }
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->hasMany('PackageVersion as Version', ['local' => 'id', 'foreign' => 'package_id', 'onDelete' => 'CASCADE']);
     }

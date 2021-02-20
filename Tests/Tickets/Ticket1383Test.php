@@ -22,7 +22,7 @@ namespace Tests\Tickets {
                 $brand->Ticket_1383_Brand_Image[0]->owner_id   = 1;
                 $brand->Ticket_1383_Brand_Image[0]->owner_type = 0;
                 $brand->save();
-                
+
             \Doctrine_Manager::getInstance()->setAttribute(\Doctrine_Core::ATTR_VALIDATE, $orig);
         }
     }
@@ -31,7 +31,7 @@ namespace Tests\Tickets {
 namespace {
     class Ticket_1383_Image extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('id', 'integer', null, ['primary' => true, 'autoincrement' => true]);
             $this->hasColumn('owner_id', 'integer', null, ['notnull' => true]);
@@ -52,13 +52,13 @@ namespace {
 
     class Ticket_1383_Brand extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('id', 'integer', null, ['primary' => true, 'autoincrement' => true]);
             $this->hasColumn('name', 'string', 255, ['notnull' => true]);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany(
                 'Ticket_1383_Brand_Image',

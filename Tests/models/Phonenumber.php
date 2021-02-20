@@ -1,12 +1,12 @@
 <?php
 class Phonenumber extends Doctrine_Record
 {
-    public function setTableDefinition()
+    public function setTableDefinition(): void
     {
         $this->hasColumn('phonenumber', 'string', 20);
         $this->hasColumn('entity_id', 'integer');
     }
-    public function setUp()
+    public function setUp(): void
     {
         $this->hasOne(
             'Entity',

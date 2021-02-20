@@ -32,22 +32,16 @@
 abstract class Doctrine_Record_Abstract extends Doctrine_Access
 {
     /**
-     * @var         Doctrine_Table $_table     reference to associated Doctrine_Table instance
+     * reference to associated Doctrine_Table instance
      * @phpstan-var T
      */
-    protected $_table;
+    protected Doctrine_Table $_table;
 
-    /**
-     * @return void
-     */
-    public function setTableDefinition()
+    public function setTableDefinition(): void
     {
     }
 
-    /**
-     * @return void
-     */
-    public function setUp()
+    public function setUp(): void
     {
     }
 
@@ -106,7 +100,7 @@ abstract class Doctrine_Record_Abstract extends Doctrine_Access
      * @param  array  $definition the definition array
      * @return mixed
      */
-    public function index($name, array $definition = [])
+    public function index(string $name, array $definition = [])
     {
         if (!$definition) {
             return $this->_table->getIndex($name);
@@ -142,29 +136,17 @@ abstract class Doctrine_Record_Abstract extends Doctrine_Access
         $this->_table->setAttribute($attr, $value);
     }
 
-    /**
-     * @param  string $tableName
-     * @return void
-     */
-    public function setTableName($tableName)
+    public function setTableName(string $tableName): void
     {
         $this->_table->setTableName($tableName);
     }
 
-    /**
-     * @param  array $map
-     * @return void
-     */
-    public function setInheritanceMap($map)
+    public function setInheritanceMap(array $map): void
     {
         $this->_table->setOption('inheritanceMap', $map);
     }
 
-    /**
-     * @param  array $map
-     * @return void
-     */
-    public function setSubclasses($map)
+    public function setSubclasses(array $map): void
     {
         $class = get_class($this);
         // Set the inheritance map for subclasses
@@ -301,7 +283,7 @@ abstract class Doctrine_Record_Abstract extends Doctrine_Access
      * argument is an array of options.
      *
      *     [php]
-     *     public function setTableDefinition()
+     *     public function setTableDefinition(): void
      *     {
      *         parent::setTableDefinition();
      *         $this->setColumnOptions('username', array(

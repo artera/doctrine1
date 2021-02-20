@@ -1,36 +1,6 @@
 <?php
-/*
- *  $Id: Record.php 7673 2010-06-08 20:49:54Z jwage $
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- * This software consists of voluntary contributions made by many individuals
- * and is licensed under the LGPL. For more information, see
- * <http://www.doctrine-project.org>.
- */
 
 /**
- * Doctrine_Record
- * All record classes should inherit this super class
- *
- * @package    Doctrine
- * @subpackage Record
- * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link       www.doctrine-project.org
- * @since      1.0
- * @version    $Revision: 7673 $
- *
  * @phpstan-template T of Doctrine_Table
  * @phpstan-extends Doctrine_Record_Abstract<T>
  * @phpstan-implements IteratorAggregate<string, mixed>
@@ -92,9 +62,9 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
     const STATE_TLOCKED = 7;
 
     /**
-     * @var array $_id                    the primary keys of this object
+     * the primary keys of this object
      */
-    protected $_id = [];
+    protected array $_id = [];
 
     /**
      * each element is one of 3 following types:
@@ -102,105 +72,91 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
      * - null - field has NULL value in DB
      * - Doctrine_Null - field value is unknown, it wasn't loaded yet
      *
-     * @var array $_data                    the record data
-     * @phpstan-var array<string, mixed> $_data
+     * the record data
+     * @phpstan-var array<string, mixed>
      */
-    protected $_data = [];
+    protected array $_data = [];
 
     /**
-     * @var array $_values                  the values array, aggregate values and such are mapped into this array
+     * the values array, aggregate values and such are mapped into this array
      */
-    protected $_values = [];
+    protected array $_values = [];
 
     /**
-     * @var integer $_state                 the state of this record
-     * @see STATE_* constants
+     * the state of this record
      */
-    protected $_state;
+    protected int $_state;
 
     /**
-     * @var array $_lastModified             an array containing field names that were modified in the previous transaction
+     * an array containing field names that were modified in the previous transaction
      */
-    protected $_lastModified = [];
+    protected array $_lastModified = [];
 
     /**
-     * @var  array $_modified                an array containing field names that have been modified
-     * @todo Better name? $_modifiedFields?
+     * an array containing field names that have been modified
      */
-    protected $_modified = [];
+    protected array $_modified = [];
 
     /**
-     * @var array $_oldValues               an array of the old values from set properties
+     * an array of the old values from set properties
      */
-    protected $_oldValues = [];
+    protected array $_oldValues = [];
 
     /**
-     * @var Doctrine_Validator_ErrorStack   error stack object
+     * error stack object
      */
-    protected $_errorStack;
+    protected ?Doctrine_Validator_ErrorStack $_errorStack = null;
 
     /**
-     * @var array $_references              an array containing all the references
+     * an array containing all the references
      */
-    protected $_references = [];
+    protected array $_references = [];
 
     /**
      * Doctrine_Collection of objects needing to be deleted on save
-     *
-     * @var array
      */
-    protected $_pendingDeletes = [];
+    protected array $_pendingDeletes = [];
 
     /**
      * Array of pending un links in format alias => keys to be executed after save
-     *
-     * @var array $_pendingUnlinks
      */
-    protected $_pendingUnlinks = [];
+    protected array $_pendingUnlinks = [];
 
     /**
      * Array of custom accessors for cache
-     *
-     * @var array
      */
-    protected static $_customAccessors = [];
+    protected static array $_customAccessors = [];
 
     /**
      * Array of custom mutators for cache
-     *
-     * @var array
      */
-    protected static $_customMutators = [];
+    protected static array $_customMutators = [];
 
     /**
      * Whether or not to serialize references when a Doctrine_Record is serialized
-     *
-     * @var boolean
      */
-    protected $_serializeReferences = false;
+    protected bool $_serializeReferences = false;
 
     /**
      * Array containing the save hooks and events that have been invoked
-     *
-     * @var array
      */
-    protected $_invokedSaveHooks = [];
+    protected array $_invokedSaveHooks = [];
 
     /**
-     * @var integer $_index                  this index is used for creating object identifiers
+     * this index is used for creating object identifiers
      */
-    private static $_index = 1;
+    private static int $_index = 1;
 
     /**
-     * @var integer $_oid                    object identifier, each Record object has a unique object identifier
+     * object identifier, each Record object has a unique object identifier
      */
-    private $_oid;
+    private int $_oid;
 
     /**
-     * @var Doctrine_Table $_table     reference to associated Doctrine_Table instance
+     * reference to associated Doctrine_Table instance
      * @phpstan-var T
      */
-    protected $_table;
+    protected Doctrine_Table $_table;
 
     /**
      * constructor
@@ -217,9 +173,9 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
      *                                         open connections
      * @throws Doctrine_Record_Exception       if the cleanData operation fails somehow
      */
-    public function __construct($table = null, $isNewEntry = false)
+    public function __construct(?Doctrine_Table $table = null, bool $isNewEntry = false)
     {
-        if (isset($table) && $table instanceof Doctrine_Table) {
+        if ($table !== null) {
             $this->_table = $table;
             $exists       = !$isNewEntry;
         } else {
@@ -310,7 +266,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
     }
     /**
@@ -727,26 +683,23 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
      */
     public function getErrorStack()
     {
-        if (!$this->_errorStack) {
+        if ($this->_errorStack === null) {
             $this->_errorStack = new Doctrine_Validator_ErrorStack(static::class);
         }
-
         return $this->_errorStack;
     }
 
     /**
      * assigns the ErrorStack or returns it if called without parameters
      *
-     * @param  Doctrine_Validator_ErrorStack $stack errorStack to be assigned for this record
-     * @return void|Doctrine_Validator_ErrorStack    returns the errorStack associated with this record
+     * @param  Doctrine_Validator_ErrorStack|null $stack errorStack to be assigned for this record
+     * @return Doctrine_Validator_ErrorStack returns the errorStack associated with this record
      */
-    public function errorStack($stack = null)
+    public function errorStack(?Doctrine_Validator_ErrorStack $stack = null): Doctrine_Validator_ErrorStack
     {
         if ($stack !== null) {
-            if (!($stack instanceof Doctrine_Validator_ErrorStack)) {
-                throw new Doctrine_Record_Exception('Argument should be an instance of Doctrine_Validator_ErrorStack.');
-            }
             $this->_errorStack = $stack;
+            return $stack;
         } else {
             return $this->getErrorStack();
         }

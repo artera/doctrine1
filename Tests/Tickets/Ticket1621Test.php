@@ -55,7 +55,7 @@ namespace Tests\Tickets {
                 $user4->parents[]                  = $user3;
                 $user4->emailAddresses[0]->address = 'test@localhost';
                 $user4->save();
-            
+
 //here is the testcode
             $user      = \Doctrine_Core::getTable('Ticket_1621_User')->findOneByName('floriank');
                 $newChild  = \Doctrine_Core::getTable('Ticket_1621_User')->findOneByName('test');
@@ -76,13 +76,13 @@ namespace Tests\Tickets {
 namespace {
     class Ticket_1621_User extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('id', 'integer', null, ['primary' => true, 'autoincrement' => true]);
             $this->hasColumn('name', 'string', 30);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany(
                 'Ticket_1621_User as parents',
@@ -125,7 +125,7 @@ namespace {
 
     class Ticket_1621_UserReference extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('parent_id as parentId', 'integer', null, ['primary' => true]);
             $this->hasColumn('child_id as childId', 'integer', null, ['primary' => true]);
@@ -134,7 +134,7 @@ namespace {
 
     class Ticket_1621_UserReferenceFriends extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('left_id as leftId', 'integer', null, ['primary' => true]);
             $this->hasColumn('right_id as rightId', 'integer', null, ['primary' => true]);
@@ -143,7 +143,7 @@ namespace {
 
     class Ticket_1621_EmailAdresses extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('user_id as userId', 'integer', null);
             $this->hasColumn('address', 'string', 30);
@@ -153,7 +153,7 @@ namespace {
             $this->option('charset', 'utf8');
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasOne('Ticket_1621_User as user', ['local' => 'userId', 'foreign' => 'id']);
         }
@@ -161,12 +161,12 @@ namespace {
 
     class Ticket_1621_Group extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('name', 'string', 30);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany(
                 'Ticket_1621_User as users',
@@ -181,7 +181,7 @@ namespace {
 
     class Ticket_1621_GroupUser extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('user_id as userId', 'integer', null, ['primary' => true]);
             $this->hasColumn('group_id as groupId', 'integer', null, ['primary' => true]);

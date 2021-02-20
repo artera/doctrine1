@@ -87,13 +87,13 @@ namespace Tests\Tickets {
 namespace {
     class T1381_Article extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('id', 'integer', null, ['primary' => true, 'autoincrement' => true]);
             $this->hasColumn('title', 'string', 255, ['notnull' => true]);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany(
                 'T1381_Comment',
@@ -108,14 +108,14 @@ namespace {
 
     class T1381_Comment extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('id', 'integer', null, ['primary' => true, 'autoincrement' => true]);
             $this->hasColumn('body', 'string', null, ['notnull' => true]);
             $this->hasColumn('article_id', 'integer', null, ['notnull' => true]);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasOne(
                 'T1381_Article',

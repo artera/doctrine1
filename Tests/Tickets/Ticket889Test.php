@@ -21,7 +21,7 @@ namespace Tests\Tickets {
 
             $rel = $component->getTable()->getRelation('Children');
 
-                
+
             $this->assertEquals(get_class($rel), 'Doctrine_Relation_Nest');
 
             $this->assertTrue($component->Children instanceof \Doctrine_Collection);
@@ -34,7 +34,7 @@ namespace Tests\Tickets {
 
             $rel = $component->getTable()->getRelation('Parents');
 
-                
+
             $this->assertEquals(get_class($rel), 'Doctrine_Relation_Nest');
 
             $this->assertTrue($component->Parents instanceof \Doctrine_Collection);
@@ -63,7 +63,7 @@ namespace Tests\Tickets {
 namespace {
     class Ticket_889 extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             // set Table Name
             $this->setTableName('Ticket_889');
@@ -97,7 +97,7 @@ namespace {
             );
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             // Ticket_889_Relationship child_id
             $this->hasMany(
@@ -121,7 +121,7 @@ namespace {
 
     class Ticket_889_Relationship extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             // set Table Name
             $this->setTableName('Ticket_889_Relationship');
@@ -153,7 +153,7 @@ namespace {
             );
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasOne(
                 'Ticket_889 as Parent',

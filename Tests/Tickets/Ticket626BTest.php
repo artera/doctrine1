@@ -58,7 +58,7 @@ namespace Tests\Tickets {
             $this->newStudentCourse($student1, $course2);
 
             $group = $student1->get('Group');
-                
+
             $courses = $student1->get('StudyCourses');
         }
     }
@@ -67,7 +67,7 @@ namespace Tests\Tickets {
 namespace {
     class T626B_Student extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('T626B_Student_record');
 
@@ -76,7 +76,7 @@ namespace {
             $this->hasColumn('s_name as name', 'varchar', 50, []);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany('T626_Course as StudyCourses', ['refClass' => 'T626B_StudentCourse', 'local' => 'sc_student_id', 'foreign' => 'sc_course_id']);
             $this->hasOne('T626_Group as Group', ['local' => 's_g_id', 'foreign' => 'g_id']);
@@ -85,7 +85,7 @@ namespace {
 
     class T626_Group extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('T626B_Student_group');
 
@@ -93,7 +93,7 @@ namespace {
             $this->hasColumn('g_name as name', 'varchar', 50, []);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany(
                 'T626B_Student as Students',
@@ -105,7 +105,7 @@ namespace {
 
     class T626_Course extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('T626_course');
 
@@ -113,7 +113,7 @@ namespace {
             $this->hasColumn('c_name as name', 'varchar', 50, []);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany('T626B_Student as Students', ['refClass' => 'T626B_StudentCourse', 'local' => 'sc_course_id', 'foreign' => 'sc_student_id']);
         }
@@ -121,7 +121,7 @@ namespace {
 
     class T626B_StudentCourse extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('T626B_Student_course');
 
@@ -130,7 +130,7 @@ namespace {
             $this->hasColumn('sc_remark  as remark', 'varchar', 500, []);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasOne('T626B_Student as Student', ['local' => 'sc_student_id', 'foreign' => 's_id']);
             $this->hasOne('T626_Course as Course', ['local' => 'sc_course_id', 'foreign' => 'c_id']);

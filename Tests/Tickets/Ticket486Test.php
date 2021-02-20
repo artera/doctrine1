@@ -97,13 +97,13 @@ namespace Tests\Tickets {
 namespace {
     class Country extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('name', 'string', 255);
         }
 
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany('State', ['local' => 'id', 'foreign' => 'country_id']);
         }
@@ -112,14 +112,14 @@ namespace {
 
     class State extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('country_id', 'integer', 4);
             $this->hasColumn('name', 'string', 255);
         }
 
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasOne('Country', ['local' => 'country_id', 'foreign' => 'id']);
             $this->hasMany('Resort', ['local' => 'id', 'foreign' => 'state_id']);
@@ -129,14 +129,14 @@ namespace {
 
     class Resort extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('state_id', 'integer', 4);
             $this->hasColumn('name', 'string', 255);
         }
 
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasOne('State', ['local' => 'state_id', 'foreign' => 'id']);
         }

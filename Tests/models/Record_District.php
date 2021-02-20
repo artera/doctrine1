@@ -1,7 +1,7 @@
 <?php
 class Record_District extends Doctrine_Record
 {
-    public function setTableDefinition()
+    public function setTableDefinition(): void
     {
         $this->hasColumn('name', 'string', 200);
     }

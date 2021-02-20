@@ -234,14 +234,14 @@ namespace {
 
     class CTITestParent1 extends CTIAbstractBase
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('name', 'string', 200);
         }
     }
     class CTITestParent2 extends CTITestParent1
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             parent::setTableDefinition();
 
@@ -250,14 +250,14 @@ namespace {
     }
     class CTITestParent3 extends CTITestParent2
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('added', 'integer');
         }
     }
     class CTITestParent4 extends CTITestParent3
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('age', 'integer', 4);
         }
@@ -268,13 +268,13 @@ namespace {
 
     class CTITestOneToManyRelated extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('name', 'string');
             $this->hasColumn('cti_id', 'integer');
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany('CTITest', ['local' => 'cti_id', 'foreign' => 'id']);
         }
@@ -282,7 +282,7 @@ namespace {
 
     class NoIdTestParent extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('myid', 'integer', null, ['autoincrement' => true, 'primary' => true]);
             $this->hasColumn('name', 'string');
@@ -291,7 +291,7 @@ namespace {
 
     class NoIdTestChild extends NoIdTestParent
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('child_column', 'string');
         }

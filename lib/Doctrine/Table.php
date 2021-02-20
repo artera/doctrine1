@@ -1206,7 +1206,7 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
      * argument is an array of options.
      *
      *     [php]
-     *     public function setTableDefinition()
+     *     public function setTableDefinition(): void
      *     {
      *         parent::setTableDefinition();
      *         $this->setColumnOptions('username', array(

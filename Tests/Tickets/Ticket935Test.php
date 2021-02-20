@@ -25,7 +25,7 @@ namespace Tests\Tickets {
                 ->set('separator', '?', 'pipe')
                 ->where('id = 1')
                 ->execute();
-            
+
             $q   = new \Doctrine_Query();
             $row = $q->select('a.*')
             ->from('EnumUpdateBug a')
@@ -40,7 +40,7 @@ namespace Tests\Tickets {
 namespace {
     class EnumUpdateBug extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('enumupdatebug');
             $this->hasColumn('id', 'integer', 3, ['autoincrement' => true, 'unsigned' => true, 'primary' => true, 'notnull' => true]);
@@ -48,7 +48,7 @@ namespace {
             $this->hasColumn('separator', 'enum', 1, ['values' => [  0 => 'comma',   1 => 'pipe', ]]);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
         }
     }

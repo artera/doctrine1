@@ -1,7 +1,7 @@
 <?php
 class ValidatorTest_ClientToAddressModel extends Doctrine_Record
 {
-    public function setTableDefinition()
+    public function setTableDefinition(): void
     {
         $this->hasColumn('client_id', 'integer', 11, ['primary' => true]);
         $this->hasColumn('address_id', 'integer', 11, ['primary' => true]);
@@ -11,7 +11,7 @@ class ValidatorTest_ClientToAddressModel extends Doctrine_Record
     {
     }
 
-    public function setUp()
+    public function setUp(): void
     {
     }
 }

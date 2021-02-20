@@ -1,11 +1,11 @@
 <?php
 class ORM_AccessGroup extends Doctrine_Record
 {
-    public function setTableDefinition()
+    public function setTableDefinition(): void
     {
         $this->hasColumn('name', 'string', 255);
     }
-    public function setUp()
+    public function setUp(): void
     {
         $this->hasMany(
             'ORM_AccessControl as accessControls',

@@ -3,7 +3,7 @@ class RecordHookTest extends Doctrine_Record
 {
     protected $_messages = [];
 
-    public function setTableDefinition()
+    public function setTableDefinition(): void
     {
         $this->hasColumn('name', 'string', null, ['primary' => true]);
     }

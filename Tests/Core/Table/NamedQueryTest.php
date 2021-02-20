@@ -51,7 +51,7 @@ namespace Tests\Core\Table {
 namespace {
     class MyFoo extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('name', 'string', 255);
             $this->hasColumn('value0', 'integer', 4);

@@ -25,12 +25,12 @@ namespace Tests\Tickets {
 namespace {
     class Ticket_1123_User extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('name', 'string', 30);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany(
                 'Ticket_1123_User as Friend',
@@ -44,13 +44,13 @@ namespace {
 
     class Ticket_1123_UserReference extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('user1', 'integer', null, ['primary' => true]);
             $this->hasColumn('user2', 'integer', null, ['primary' => true]);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasOne('Ticket_1123_User as User1', ['local' => 'user1', 'foreign' => 'id', 'onDelete' => 'CASCADE']);
             $this->hasOne('Ticket_1123_User as User2', ['local' => 'user2', 'foreign' => 'id', 'onDelete' => 'CASCADE']);

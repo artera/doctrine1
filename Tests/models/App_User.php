@@ -1,7 +1,7 @@
 <?php
 class App_User extends Doctrine_Record
 {
-    public function setTableDefinition()
+    public function setTableDefinition(): void
     {
         $this->hasColumn('first_name', 'string', 32);
         $this->hasColumn('last_name', 'string', 32);
@@ -11,7 +11,7 @@ class App_User extends Doctrine_Record
         $this->hasColumn('country', 'string', 2, 'country');
         $this->hasColumn('zipcode', 'string', 9, 'nospace');
     }
-    public function setUp()
+    public function setUp(): void
     {
         $this->hasMany(
             'App',

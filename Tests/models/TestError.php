@@ -1,7 +1,7 @@
 <?php
 class TestError extends Doctrine_Record
 {
-    public function setUp()
+    public function setUp(): void
     {
         $this->hasMany(
             'Description',
@@ -9,7 +9,7 @@ class TestError extends Doctrine_Record
             'foreign' => 'file_md5']
         );
     }
-    public function setTableDefinition()
+    public function setTableDefinition(): void
     {
         $this->hasColumn('message', 'string', 200);
         $this->hasColumn('code', 'integer', 11);

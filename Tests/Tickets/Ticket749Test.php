@@ -56,7 +56,7 @@ namespace Tests\Tickets {
 namespace {
     class Parent749 extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('mytable');
             $this->hasColumn(
@@ -76,20 +76,20 @@ namespace {
             $this->setSubclasses(['Record749' => ['type' => 1]]);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
         }
     }
 
     class Record749 extends Parent749
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             parent::setTableDefinition();
             $this->setTableName('mytable');
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             parent::setUp();
             $this->hasOne(
@@ -102,7 +102,7 @@ namespace {
 
     class RelatedRecord749 extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn(
                 'id',
@@ -119,7 +119,7 @@ namespace {
             $this->hasColumn('record_id', 'integer', null, ['unique' => true,]);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasOne(
                 'Record749 as Record',

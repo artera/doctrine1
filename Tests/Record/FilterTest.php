@@ -43,11 +43,11 @@ namespace Tests\Record {
 namespace {
     class CompositeRecord extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('name', 'string');
         }
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasOne('RelatedCompositeRecord as Related', ['foreign' => 'foreign_id']);
 
@@ -56,7 +56,7 @@ namespace {
     }
     class RelatedCompositeRecord extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('address', 'string');
             $this->hasColumn('foreign_id', 'integer');

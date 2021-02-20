@@ -43,13 +43,13 @@ namespace Tests\Tickets {
 namespace {
     class Ticket_1341_User extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('username', 'string', 255);
             $this->hasColumn('password', 'string', 255);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasOne('Ticket_1341_Profile as Profile', ['local' => 'id', 'foreign' => 'user_id']);
         }
@@ -57,13 +57,13 @@ namespace {
 
     class Ticket_1341_Profile extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('name', 'string', 255);
             $this->hasColumn('userId as user_id', 'integer');
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasOne('Ticket_1341_User as User', ['local' => 'user_id', 'foreign' => 'id']);
         }

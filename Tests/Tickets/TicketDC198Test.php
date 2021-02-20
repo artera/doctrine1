@@ -44,7 +44,7 @@ namespace Tests\Tickets {
 namespace {
     class Ticket_DC198_Email extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn(
                 'user_id',
@@ -65,7 +65,7 @@ namespace {
             );
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasOne(
                 'Ticket_DC198_User',
@@ -78,7 +78,7 @@ namespace {
 
     class Ticket_DC198_User extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn(
                 'name',
@@ -91,7 +91,7 @@ namespace {
             );
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasOne(
                 'Ticket_DC198_Email as email',

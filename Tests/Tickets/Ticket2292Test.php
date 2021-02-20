@@ -28,14 +28,14 @@ namespace Tests\Tickets {
 namespace {
     class mkArticle extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('mk_article');
             $this->hasColumn('id', 'integer', 4, ['type' => 'integer', 'autoincrement' => true, 'primary' => true, 'length' => 4]);
             $this->hasColumn('title', 'string', 200);
         }
 
-        public function setup()
+        public function setUp(): void
         {
             $this->hasOne(
                 'mkContent as content',
@@ -48,14 +48,14 @@ namespace {
 
     class mkContent extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('mk_content');
             $this->hasColumn('id', 'integer', 4, ['type' => 'integer', 'autoincrement' => false, 'primary' => true, 'length' => 4]);
             $this->hasColumn('body', 'string');
         }
 
-        public function setup()
+        public function setUp(): void
         {
             $this->hasOne(
                 'mkArticle as article',

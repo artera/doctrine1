@@ -65,7 +65,7 @@ namespace Tests\Tickets {
 namespace {
     class gImage extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('id', 'integer', 4, ['primary' => true, 'autoincrement' => true]);
             $this->hasColumn('owner_id', 'integer', 4);
@@ -79,7 +79,7 @@ namespace {
 
     class gUserImage extends gImage
     {
-        public function setUp()
+        public function setUp(): void
         {
             parent::setUp();
             $this->hasOne('gUser as User', ['local' => 'owner_id','foreign' => 'id']);
@@ -88,7 +88,7 @@ namespace {
 
     class gBlogImage extends gImage
     {
-        public function setUp()
+        public function setUp(): void
         {
             parent::setUp();
             $this->hasOne('gBlog as Blog', ['local' => 'owner_id','foreign' => 'id']);
@@ -97,7 +97,7 @@ namespace {
 
     class gFile extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('id', 'integer', 4, ['primary' => true, 'autoincrement' => true]);
             $this->hasColumn('owner_id', 'integer', 4);
@@ -111,7 +111,7 @@ namespace {
 
     class gUserFile extends gFile
     {
-        public function setUp()
+        public function setUp(): void
         {
             parent::setUp();
             $this->hasOne('gUser as User', ['local' => 'owner_id','foreign' => 'id']);
@@ -120,7 +120,7 @@ namespace {
 
     class gBlogFile extends gFile
     {
-        public function setUp()
+        public function setUp(): void
         {
             parent::setUp();
             $this->hasOne('gBlog as Blog', ['local' => 'owner_id','foreign' => 'id']);
@@ -129,13 +129,13 @@ namespace {
 
     class gBlog extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('id', 'integer', 4, ['primary' => true, 'autoincrement' => true]);
             $this->hasColumn('title', 'string', 128);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             parent::setUp();
             $this->hasMany('gBlogImage as Images', ['local' => 'id','foreign' => 'owner_id']);
@@ -145,14 +145,14 @@ namespace {
 
     class gUser extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('id', 'integer', 4, ['primary' => true, 'autoincrement' => true]);
             $this->hasColumn('first_name', 'string', 128);
             $this->hasColumn('last_name', 'string', 128);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             parent::setUp();
             $this->hasMany('gUserImage as Images', ['local' => 'id','foreign' => 'owner_id']);

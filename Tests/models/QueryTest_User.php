@@ -1,7 +1,7 @@
 <?php
 class QueryTest_User extends Doctrine_Record
 {
-    public function setTableDefinition()
+    public function setTableDefinition(): void
     {
         $this->hasColumn(
             'username as username',
@@ -16,7 +16,7 @@ class QueryTest_User extends Doctrine_Record
     /**
      * Runtime definition of the relationships to other entities.
      */
-    public function setUp()
+    public function setUp(): void
     {
         $this->hasOne(
             'QueryTest_Rank as visibleRank',

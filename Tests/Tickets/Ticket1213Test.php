@@ -29,7 +29,7 @@ namespace Tests\Tickets {
 namespace {
     class Ticket1213_Birthday extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('person_guid', 'string', 32, ['primary' => true]);
             $this->hasColumn('Bday', 'timestamp');
@@ -40,7 +40,7 @@ namespace {
 
     class Ticket1213_Person extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('guid', 'string', 32, ['primary' => true]);
             $this->hasColumn('Name', 'string', 100);
@@ -48,7 +48,7 @@ namespace {
             $this->index('guid', ['fields' => ['guid']]);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasOne(
                 'Ticket1213_Birthday as Birthday',

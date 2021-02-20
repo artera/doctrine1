@@ -4,7 +4,7 @@ class QueryTest_Entry extends Doctrine_Record
     /**
      * Table structure.
      */
-    public function setTableDefinition()
+    public function setTableDefinition(): void
     {
         $this->hasColumn('id', 'integer', 4, ['primary', 'autoincrement', 'notnull']);
         $this->hasColumn(
@@ -24,7 +24,7 @@ class QueryTest_Entry extends Doctrine_Record
     /**
      * Runtime definition of the relationships to other entities.
      */
-    public function setUp()
+    public function setUp(): void
     {
         $this->hasOne(
             'QueryTest_User as author',

@@ -27,7 +27,7 @@ namespace Tests\Tickets {
 namespace {
     class Ticket_1783 extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('bigint', 'integer', null, ['type' => 'integer', 'unsigned' => true]);
         }

@@ -49,7 +49,7 @@ namespace Tests\Core\Table {
 namespace {
     class RemoveColumnTest extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('AA', 'integer', null, ['primary' => true]);
             $this->hasColumn('bb', 'integer');

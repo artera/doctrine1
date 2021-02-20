@@ -1,14 +1,14 @@
 <?php
 class MyUserOneThing extends Doctrine_Record
 {
-    public function setTableDefinition()
+    public function setTableDefinition(): void
     {
         $this->hasColumn('user_id', 'integer');
         $this->hasColumn('one_thing_id', 'integer');
     }
 
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->hasOne(
             'MyUser',

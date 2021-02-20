@@ -25,7 +25,7 @@ namespace Tests\Tickets {
 namespace {
     class stDummyObj extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('st_dummy_obj');
             $this->hasColumn(

@@ -64,7 +64,7 @@ namespace Tickets {
 namespace {
     class ticket384_Resume extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('resume');
             $this->hasColumn(
@@ -81,7 +81,7 @@ namespace {
             $this->hasColumn('title', 'string', 255);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany('ticket384_ResumeHasLanguage as KnownLanguages', ['local' => 'id', 'foreign' => 'resume_id']);
         }
@@ -89,7 +89,7 @@ namespace {
 
     class ticket384_ResumeHasLanguage extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('resume_has_language');
             $this->hasColumn(
@@ -134,7 +134,7 @@ namespace {
             $this->hasColumn('comments', 'string', 4000, []);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasOne(
                 'ticket384_Resume as Resume',
@@ -164,7 +164,7 @@ namespace {
 
     class ticket384_Language extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('language');
             $this->hasColumn(
@@ -181,7 +181,7 @@ namespace {
             $this->hasColumn('label', 'string', 100, ['notnull' => true]);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany('ticket384_Resume as Resumes', ['local' => 'id', 'foreign' => 'language_id']);
             $this->hasMany('ticket384_ResumeHasLanguage as ResumeKnownLanguages', ['local' => 'id', 'foreign' => 'language_id']);
@@ -190,7 +190,7 @@ namespace {
 
     class ticket384_LanguageLevel extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('language_level');
             $this->hasColumn(
@@ -207,7 +207,7 @@ namespace {
             $this->hasColumn('label', 'string', 100, ['notnull' => true]);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany(
                 'ticket384_ResumeHasLanguage as ResumeKnownLanguages',

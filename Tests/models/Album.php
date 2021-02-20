@@ -1,7 +1,7 @@
 <?php
 class Album extends Doctrine_Record
 {
-    public function setUp()
+    public function setUp(): void
     {
         $this->hasMany('Song', ['local' => 'id', 'foreign' => 'album_id']);
         $this->hasOne(
@@ -11,7 +11,7 @@ class Album extends Doctrine_Record
             'onDelete' => 'CASCADE']
         );
     }
-    public function setTableDefinition()
+    public function setTableDefinition(): void
     {
         $this->hasColumn('user_id', 'integer');
         $this->hasColumn('name', 'string', 20);

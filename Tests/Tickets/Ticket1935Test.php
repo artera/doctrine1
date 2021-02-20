@@ -43,7 +43,7 @@ namespace Tests\Tickets {
 namespace {
     class Ticket_1935_Article extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('ticket_1935_article');
             $this->hasColumn('title', 'string', 255, ['type' => 'string', 'length' => '255']);

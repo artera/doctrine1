@@ -23,7 +23,7 @@ namespace Tests\Tickets {
 namespace {
     class Ticket_1604_User extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('name', 'string', 30);
 
@@ -32,7 +32,7 @@ namespace {
             $this->option('charset', 'utf8');
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany('Ticket_1604_EmailAdresses as emailAdresses', ['local' => 'id', 'foreign' => 'userId', 'onDelete' => 'CASCADE']);
         }
@@ -40,7 +40,7 @@ namespace {
 
     class Ticket_1604_EmailAdresses extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('user_id as userId', 'integer');
             $this->hasColumn('address', 'string', 30);
@@ -50,7 +50,7 @@ namespace {
             $this->option('charset', 'utf8');
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasOne('Ticket_1604_User as user', ['local' => 'userId', 'foreign' => 'id']);
         }

@@ -1,7 +1,7 @@
 <?php
 class MyUser2 extends Doctrine_Record
 {
-    public function setTableDefinition()
+    public function setTableDefinition(): void
     {
         $this->setTableName('my_user');
 
@@ -16,7 +16,7 @@ class MyUser2 extends Doctrine_Record
         $this->hasColumn('is_super_admin', 'boolean', null, [  'default' => 0,  'notnull' => true,]);
     }
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->hasMany('MyGroup as groups', ['refClass' => 'MyUserGroup', 'local' => 'user_id', 'foreign' => 'group_id']);
     }

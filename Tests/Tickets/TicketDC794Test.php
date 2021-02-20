@@ -24,7 +24,7 @@ namespace Tests\Tickets {
 namespace {
     class Ticket_DC794_Model extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn(
                 'id',

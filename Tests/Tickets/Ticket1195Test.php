@@ -95,7 +95,7 @@ namespace Tests\Tickets {
 namespace {
     class T1195_Item extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('items');
             $this->hasColumn('id', 'integer', null, ['autoincrement' => true, 'primary' => true, 'notnull' => true]);
@@ -106,14 +106,14 @@ namespace {
 
     class T1195_Ref extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('ref');
             $this->hasColumn('id', 'integer', null, ['autoincrement' => true, 'primary' => true, 'notnull' => true]);
             $this->hasColumn('item_id', 'integer', null);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasOne('T1195_Item as Item', ['local' => 'item_id', 'foreign' => 'id']);
         }

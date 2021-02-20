@@ -12,7 +12,7 @@ class User extends Entity
 {
     public bool $customValidationEnabled = false;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->hasMany(

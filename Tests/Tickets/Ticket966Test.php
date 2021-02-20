@@ -103,14 +103,14 @@ namespace Tests\Tickets {
 namespace {
     class Semester extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('semester');
             $this->hasColumn('id', 'integer', 4, ['primary' => 'true', 'autoincrement' => 'true']);
             $this->hasColumn('name', 'string', 255, ['notnull' => true]);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             parent::setUp();
             $this->hasMany('Course as Courses', ['local' => 'id', 'foreign' => 'semester_id']);
@@ -119,14 +119,14 @@ namespace {
 
     class Weekday extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('weekday');
             $this->hasColumn('id', 'integer', 4, ['primary' => true, 'autoincrement' => true]);
             $this->hasColumn('name', 'string', 9, ['notnull' => true, 'unique' => true]);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             // need to make the many-many bidirectional in order for the lazy-loading test to work.
             // lazy-loading the weekdays ($course['Weekdays']) doesnt work when the relation is
@@ -140,7 +140,7 @@ namespace {
 
     class Course extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('course');
             $this->hasColumn('id', 'integer', 4, ['primary' => 'true', 'autoincrement' => 'true']);
@@ -148,7 +148,7 @@ namespace {
             $this->hasColumn('name', 'string', 255, ['notnull' => true]);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             parent::setUp();
             $this->hasOne(
@@ -166,7 +166,7 @@ namespace {
 
     class CourseWeekday extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('course_weekday');
             // Poor form to have an id on a join table, but that's what we were doing
@@ -175,7 +175,7 @@ namespace {
             $this->hasColumn('weekday_id', 'integer', 4, ['notnull' => true]);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             parent::setUp();
             $this->hasOne('Course', ['local' => 'course_id', 'foreign' => 'id', 'onDelete' => 'CASCADE']);

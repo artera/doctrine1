@@ -45,11 +45,11 @@ namespace Tests\Tickets {
 namespace {
     class Ticket_1865_Profile extends Doctrine_Record
     {
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasOne('Ticket_1865_User as User', ['local' => 'id', 'foreign' => 'id', 'onDelete' => 'CASCADE']);
         }
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('id', 'integer', 20, ['autoincrement', 'primary']);
             $this->hasColumn('user_id', 'integer', 20, ['notnull', 'unique']);
@@ -59,11 +59,11 @@ namespace {
 
     class Ticket_1865_User extends Doctrine_Record
     {
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasOne('Ticket_1865_Profile as Profile', ['local' => 'id', 'foreign' => 'user_id']);
         }
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('id', 'integer', 20, ['autoincrement', 'primary']);
             $this->hasColumn('name', 'string', 50);

@@ -1,12 +1,12 @@
 <?php
 class Policy extends Doctrine_Record
 {
-    public function setTableDefinition()
+    public function setTableDefinition(): void
     {
         $this->hasColumn('policy_number', 'integer', 11, ['unique' => true]);
     }
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->hasMany(
             'PolicyAsset as PolicyAssets',

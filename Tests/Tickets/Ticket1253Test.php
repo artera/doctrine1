@@ -41,13 +41,13 @@ namespace Tests\Tickets {
 namespace {
     class Ticket_1253_User extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('name', 'string');
             $this->hasColumn('type_name', 'enum', 9, ['values' => ['one', 'two']]);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasOne('Ticket_1253_UserType as Type', ['local' => 'type_name', 'foreign' => 'name']);
         }
@@ -55,12 +55,12 @@ namespace {
 
     class Ticket_1253_UserType extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('name', 'string');
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany('Ticket_1253_User as User', ['local' => 'name', 'foreign' => 'type_name', 'owningSide' => true]);
         }

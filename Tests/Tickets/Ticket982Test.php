@@ -61,13 +61,13 @@ namespace Tests\Tickets {
 namespace {
     class T982_MyModel extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('id', 'integer', 4, ['primary' => true, 'notnull' => true]);
             $this->hasColumn('parentid', 'integer', 4, ['notnull' => true]);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasOne('T982_MyModel as parent', ['local' => 'parentid', 'foreign' => 'id']);
         }

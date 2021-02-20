@@ -42,7 +42,7 @@ namespace Tests\Tickets {
 namespace {
     class T626C_Student1 extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('T626C_Student_record_1');
 
@@ -53,7 +53,7 @@ namespace {
 
     class T626C_Student2 extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('T626C_Student_record_2');
 

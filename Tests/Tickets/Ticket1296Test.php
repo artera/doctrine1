@@ -55,7 +55,7 @@ namespace Tests\Tickets {
             $this->assertEquals(0, static::$conn->transaction->getInternalTransactionLevel());
 
             static::$conn->beginTransaction();
-            
+
             $this->assertEquals(1, static::$conn->transaction->getTransactionLevel());
             $this->assertEquals(0, static::$conn->transaction->getInternalTransactionLevel());
 
@@ -65,7 +65,7 @@ namespace Tests\Tickets {
                 $this->assertEquals(1, static::$conn->transaction->getTransactionLevel());
                 $this->assertEquals(0, static::$conn->transaction->getInternalTransactionLevel());
                 $this->assertTrue(is_numeric($r->id));
-            
+
             $this->assertEquals(1, static::$conn->transaction->getTransactionLevel());
                 $this->assertEquals(0, static::$conn->transaction->getInternalTransactionLevel());
                 static::$conn->commit();
@@ -78,7 +78,7 @@ namespace Tests\Tickets {
 namespace {
     class NewTicket_Organization extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn(
                 'id',
@@ -104,7 +104,7 @@ namespace {
 
     class NewTicket_Role extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn(
                 'id',

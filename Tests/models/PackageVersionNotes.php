@@ -1,12 +1,12 @@
 <?php
 class PackageVersionNotes extends Doctrine_Record
 {
-    public function setTableDefinition()
+    public function setTableDefinition(): void
     {
         $this->hasColumn('package_version_id', 'integer');
         $this->hasColumn('description', 'string', 255);
     }
-    public function setUp()
+    public function setUp(): void
     {
         $this->hasOne(
             'PackageVersion',

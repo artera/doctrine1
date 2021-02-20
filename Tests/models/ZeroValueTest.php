@@ -1,7 +1,7 @@
 <?php
 class ZeroValueTest extends Doctrine_Record
 {
-    public function setTableDefinition()
+    public function setTableDefinition(): void
     {
         $this->hasColumn('id', 'integer', 4, ['primary' => true,  'autoincrement' => true,]);
         $this->hasColumn('username', 'string', 128, ['notnull' => true,]);
@@ -14,7 +14,7 @@ class ZeroValueTest extends Doctrine_Record
         $this->hasColumn('is_super_admin', 'boolean', null, ['default' => false, 'notnull' => true,]);
     }
 
-    public function setUp()
+    public function setUp(): void
     {
     }
 }

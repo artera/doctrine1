@@ -33,7 +33,7 @@ namespace Tests\Tickets {
 namespace {
     class Ticket_1372_ParentClass extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('parent_class');
 

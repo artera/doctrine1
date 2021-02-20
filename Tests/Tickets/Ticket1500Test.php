@@ -44,14 +44,14 @@ namespace Tests\Tickets {
 namespace {
     class T1500_User extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('user_id as id', 'integer', null, ['primary' => true, 'autoincrement' => true]);
             $this->hasColumn('group_id as groupId', 'integer', null);
             $this->hasColumn('name', 'string', 100);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasOne('T1500_Group as Group', ['local' => 'groupId', 'foreign' => 'id']);
         }
@@ -59,13 +59,13 @@ namespace {
 
     class T1500_Group extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('group_id as id', 'integer', null, ['primary' => true, 'autoincrement' => true]);
             $this->hasColumn('name', 'string', 100);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany('T1500_User as Users', ['local' => 'id', 'foreign' => 'groupId']);
         }

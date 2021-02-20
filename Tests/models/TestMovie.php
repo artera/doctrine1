@@ -1,7 +1,7 @@
 <?php
 class TestMovie extends Doctrine_Record
 {
-    public function setUp()
+    public function setUp(): void
     {
         $this->hasOne(
             'TestUser as User',
@@ -24,7 +24,7 @@ class TestMovie extends Doctrine_Record
         );
     }
 
-    public function setTableDefinition()
+    public function setTableDefinition(): void
     {
         $this->hasColumn('user_id', 'integer', null);
         $this->hasColumn('name', 'string', 30);

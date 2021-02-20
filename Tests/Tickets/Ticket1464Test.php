@@ -19,7 +19,7 @@ namespace Tests\Tickets {
                 $user->save();
                 $user->created_at = '2004-10-14 11:51:17';
                 $user->save();
-                
+
             \Doctrine_Manager::getInstance()->setAttribute(\Doctrine_Core::ATTR_VALIDATE, \Doctrine_Core::VALIDATE_NONE);
         }
     }
@@ -28,7 +28,7 @@ namespace Tests\Tickets {
 namespace {
     class Ticket_1464_User extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('username', 'string', 255);
             $this->hasColumn('created_at', 'timestamp');

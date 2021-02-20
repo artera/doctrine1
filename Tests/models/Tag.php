@@ -1,7 +1,7 @@
 <?php
 class Tag extends Doctrine_Record
 {
-    public function setUp()
+    public function setUp(): void
     {
         $this->hasMany(
             'Photo',
@@ -12,7 +12,7 @@ class Tag extends Doctrine_Record
             ]
         );
     }
-    public function setTableDefinition()
+    public function setTableDefinition(): void
     {
         $this->hasColumn('tag', 'string', 100);
     }

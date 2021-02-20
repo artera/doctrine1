@@ -32,13 +32,13 @@ namespace Tests\Tickets {
 namespace {
     class T1395_MyModel extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('id', 'integer', 4, ['primary' => true, 'notnull' => true]);
             $this->hasColumn('dt_created', 'date');
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->addListener(new \T1395_Listener());
         }

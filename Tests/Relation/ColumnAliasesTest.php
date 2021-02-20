@@ -39,7 +39,7 @@ namespace Tests\Relation {
 namespace {
     class ColumnAliasTest2 extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('column_alias_test2_id as id', 'integer', null, ['autoincrement' => true, 'primary' => true]);
             $this->hasColumn('column1 as alias1', 'string', 200);
@@ -47,7 +47,7 @@ namespace {
             $this->hasColumn('relation_id as column_alias_test3_id', 'integer', 4, ['notnull' => true]);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasOne('ColumnAliasTest3', ['local' => 'column_alias_test3_id', 'foreign' => 'id']);
         }
@@ -55,14 +55,14 @@ namespace {
 
     class ColumnAliasTest3 extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('column_alias_test3_id as id', 'integer', null, ['autoincrement' => true, 'primary' => true]);
             $this->hasColumn('column1 as alias1', 'string', 200);
             $this->hasColumn('column2 as alias2', 'integer', 4);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasOne('ColumnAliasTest2', ['local' => 'id', 'foreign' => 'column_alias_test3_id']);
         }

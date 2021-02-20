@@ -1,7 +1,7 @@
 <?php
 class ValidatorTest_ClientModel extends Doctrine_Record
 {
-    public function setTableDefinition()
+    public function setTableDefinition(): void
     {
         $this->hasColumn(
             'id',
@@ -15,7 +15,7 @@ class ValidatorTest_ClientModel extends Doctrine_Record
         $this->hasColumn('short_name', 'string', 32, ['notnull' => true, 'notblank', 'unique' => true]);
     }
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->hasMany('ValidatorTest_AddressModel', ['local' => 'client_id', 'foreign' => 'address_id', 'refClass' => 'ValidatorTest_ClientToAddressModel']);
     }

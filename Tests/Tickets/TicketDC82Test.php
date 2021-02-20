@@ -24,7 +24,7 @@ namespace Tests\Tickets {
 namespace {
     class Ticket_DC82_Article extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('title', 'string', 128, ['notnull', 'unique' => ['where' => 'deleted = false']]);
             $this->hasColumn('deleted', 'boolean', 1, ['notnull', 'default' => false]);

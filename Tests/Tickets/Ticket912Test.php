@@ -72,7 +72,7 @@ namespace {
        * setTableDefinition
        */
 
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('resume');
             $this->hasColumn('id', 'integer', 8, [
@@ -89,7 +89,7 @@ namespace {
          * setUp
          */
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany('ticket912_ResumeHasLanguage as KnownLanguages', ['local' => 'id', 'foreign' => 'resume_id']);
 
@@ -111,7 +111,7 @@ namespace {
          * setTableDefinition
          */
 
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('person');
             $this->hasColumn('id', 'integer', 8, [
@@ -135,7 +135,7 @@ namespace {
          * setTableDefinition
          */
 
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('resume_has_language');
             $this->hasColumn('id', 'integer', 8, [
@@ -164,7 +164,7 @@ namespace {
          * setUp
          */
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasOne('ticket912_Resume as Resume', ['local' => 'resume_id',
                                   'foreign'                       => 'id',
@@ -194,7 +194,7 @@ namespace {
          * setTableDefinition
          */
 
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('language');
             $this->hasColumn('id', 'integer', 2, [
@@ -210,7 +210,7 @@ namespace {
          * setup
          */
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany('ticket912_Resume as Resumes', ['local' => 'id', 'foreign' => 'language_id']);
             $this->hasMany('ticket912_ResumeHasLanguage as ResumeKnownLanguages', ['local' => 'id', 'foreign' => 'language_id']);
@@ -227,7 +227,7 @@ namespace {
          * setTableDefinition
          */
 
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('language_level');
             $this->hasColumn('id', 'integer', 2, [
@@ -243,7 +243,7 @@ namespace {
          * setUp
          */
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany('ticket912_ResumeHasLanguage as ResumeKnownLanguages', [
             'local'   => 'id',

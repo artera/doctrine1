@@ -1,7 +1,7 @@
 <?php
 class Address extends Doctrine_Record
 {
-    public function setUp()
+    public function setUp(): void
     {
         $this->hasMany(
             'User',
@@ -10,7 +10,7 @@ class Address extends Doctrine_Record
             'refClass' => 'EntityAddress']
         );
     }
-    public function setTableDefinition()
+    public function setTableDefinition(): void
     {
         $this->hasColumn('address', 'string', 200);
     }

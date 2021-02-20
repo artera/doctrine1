@@ -1,7 +1,7 @@
 <?php
 class RelationTest extends Doctrine_Record
 {
-    public function setTableDefinition()
+    public function setTableDefinition(): void
     {
         $this->hasColumn('name', 'string', 200);
         $this->hasColumn('parent_id', 'integer');
@@ -10,7 +10,7 @@ class RelationTest extends Doctrine_Record
 
 class RelationTestChild extends RelationTest
 {
-    public function setUp()
+    public function setUp(): void
     {
         $this->hasOne(
             'RelationTest as Parent',

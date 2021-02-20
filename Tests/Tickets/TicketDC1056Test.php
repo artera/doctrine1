@@ -35,7 +35,7 @@ namespace Tests\Tickets {
 namespace {
     class Ticket_DC1056_Test extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('id', 'integer', 4, ['primary', 'notnull']);
             $this->hasColumn('arraycol', 'array');

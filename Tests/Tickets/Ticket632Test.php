@@ -45,13 +45,13 @@ namespace Tests\Tickets {
 namespace {
     class Ticket_632_User extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('username', 'string', 255);
             $this->hasColumn('password', 'string', 255);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany(
                 'Ticket_632_Group as Groups',
@@ -64,12 +64,12 @@ namespace {
 
     class Ticket_632_Group extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('name', 'string', 255);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany(
                 'Ticket_632_User as Users',
@@ -82,13 +82,13 @@ namespace {
 
     class Ticket_632_UserGroup extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('user_id', 'integer', 4, ['primary' => true]);
             $this->hasColumn('group_id', 'integer', 4, ['primary' => true]);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasOne(
                 'Ticket_632_User as User',

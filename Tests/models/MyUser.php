@@ -1,12 +1,12 @@
 <?php
 class MyUser extends Doctrine_Record
 {
-    public function setTableDefinition()
+    public function setTableDefinition(): void
     {
         $this->hasColumn('name', 'string');
     }
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->hasMany(
             'MyOneThing',

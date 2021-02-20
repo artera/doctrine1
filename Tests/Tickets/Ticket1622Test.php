@@ -47,13 +47,13 @@ namespace Tests\Tickets {
 namespace {
     class Ticket_1622_User extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('id', 'integer', null, ['primary' => true, 'autoincrement' => true]);
             $this->hasColumn('name', 'string', 30);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany(
                 'Ticket_1622_User as parents',
@@ -77,7 +77,7 @@ namespace {
 
     class Ticket_1622_UserReference extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('parent_id', 'integer', null, ['primary' => true]);
             $this->hasColumn('child_id', 'integer', null, ['primary' => true]);

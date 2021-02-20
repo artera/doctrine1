@@ -10,7 +10,7 @@ class GroupTable
 
 class Group extends Entity
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->hasMany(

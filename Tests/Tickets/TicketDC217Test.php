@@ -23,7 +23,7 @@ namespace Tests\Tickets {
 namespace {
     class Ticket_DC217_Industry extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn(
                 'id',
@@ -60,7 +60,7 @@ namespace {
             );
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasOne(
                 'Ticket_DC217_Industry as ParentIndustry',

@@ -1,7 +1,7 @@
 <?php
 class Resource extends Doctrine_Record
 {
-    public function setUp()
+    public function setUp(): void
     {
         $this->hasMany(
             'Task as TaskAlias',
@@ -16,7 +16,7 @@ class Resource extends Doctrine_Record
             'refClass' => 'ResourceReference']
         );
     }
-    public function setTableDefinition()
+    public function setTableDefinition(): void
     {
         $this->hasColumn('name', 'string', 100);
     }

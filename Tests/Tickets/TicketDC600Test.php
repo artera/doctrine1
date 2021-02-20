@@ -1,7 +1,7 @@
 <?php
 class DC600Cache extends Doctrine_Record
 {
-    public function setTableDefinition()
+    public function setTableDefinition(): void
     {
         $this->setTableName('dc600_cache');
         $this->hasColumn(
@@ -46,7 +46,7 @@ class DC600Cache extends Doctrine_Record
         );
     }
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
     }

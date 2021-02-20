@@ -24,7 +24,7 @@ namespace Tests\Tickets {
 namespace {
     class Ticket_950_AdresseRecord extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('adresse_record');
             $this->hasColumn(
@@ -42,7 +42,7 @@ namespace {
             $this->hasColumn('pays', 'string', 2);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasOne('Ticket_950_CountryRecord as Country', ['local' => 'pays', 'foreign' => 'iso']);
         }
@@ -50,7 +50,7 @@ namespace {
 
     class Ticket_950_CountryRecord extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('country_record');
             $this->hasColumn(

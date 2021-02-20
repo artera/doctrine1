@@ -128,7 +128,7 @@ namespace Tests\Tickets {
 namespace {
     class T1277_User extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('t1277_users');
 

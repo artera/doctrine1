@@ -17,13 +17,13 @@ namespace Tests\Tickets {
 namespace {
     class T1513_Class1 extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('min', 'integer');
             $this->hasColumn('max', 'integer');
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany(
                 'T1513_Class2 as Classes2',
@@ -36,12 +36,12 @@ namespace {
 
     class T1513_Class2 extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('value', 'string', 255);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany(
                 'T1513_Class1 as Classes1',
@@ -55,7 +55,7 @@ namespace {
 
     class T1513_Relation extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('c1_id', 'integer');
             $this->hasColumn('c2_id', 'integer');

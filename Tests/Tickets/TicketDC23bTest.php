@@ -38,7 +38,7 @@ END;
                 $this->assertEquals(is_object($product->Site), true);
                 $this->assertEquals($product->Site->name, 'test');
 
-                
+
             unlink('test.yml');
         }
 
@@ -123,13 +123,13 @@ END;
 namespace {
     class Ticket_Product extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('site_id', 'integer', null, ['type' => 'integer']);
             $this->hasColumn('name', 'string', 255, ['type' => 'string', 'notnull' => true, 'length' => '255']);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasOne(
                 'Ticket_Site as Site',
@@ -145,12 +145,12 @@ namespace {
     }
     class Ticket_Site extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('name', 'string', 255, ['type' => 'string', 'length' => '255']);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany(
                 'Ticket_Product as Products',
@@ -161,12 +161,12 @@ namespace {
     }
     class Ticket_Multiple extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('name', 'string', 255, ['type' => 'string', 'notnull' => true, 'length' => '255']);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany(
                 'Ticket_MultipleValue as MultipleValues',
@@ -177,14 +177,14 @@ namespace {
     }
     class Ticket_MultipleValue extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('product_id', 'integer', null, ['type' => 'integer', 'primary' => true]);
             $this->hasColumn('multiple_id', 'integer', null, ['type' => 'integer', 'primary' => true]);
             $this->hasColumn('value', 'clob', null, ['type' => 'clob']);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasOne(
                 'Ticket_Multiple as Multiple',

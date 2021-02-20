@@ -1,7 +1,7 @@
 <?php
 class InheritanceEntityUser extends Doctrine_Record
 {
-    public function setTableDefinition()
+    public function setTableDefinition(): void
     {
         $this->setTableName('inheritance_entity_user');
 
@@ -10,14 +10,14 @@ class InheritanceEntityUser extends Doctrine_Record
         $this->hasColumn('entity_id', 'integer', 4, [  'primary' => true,]);
     }
 
-    public function setUp()
+    public function setUp(): void
     {
     }
 }
 
 class InheritanceDealUser extends InheritanceEntityUser
 {
-    public function setTableDefinition()
+    public function setTableDefinition(): void
     {
         parent::setTableDefinition();
 
@@ -27,7 +27,7 @@ class InheritanceDealUser extends InheritanceEntityUser
         $this->hasColumn('entity_id', 'integer', 4, [  'primary' => true,]);
     }
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 

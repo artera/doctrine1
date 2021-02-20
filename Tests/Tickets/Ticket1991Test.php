@@ -36,7 +36,7 @@ namespace Tests\Tickets {
 namespace {
     class NewTag extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('tag');
             $this->hasColumn('name', 'string', 100, ['type' => 'string', 'length' => '100']);

@@ -1,7 +1,7 @@
 <?php
 class ConcreteInheritanceTestParent extends Doctrine_Record
 {
-    public function setTableDefinition()
+    public function setTableDefinition(): void
     {
         $this->hasColumn('name', 'string');
     }
@@ -9,7 +9,7 @@ class ConcreteInheritanceTestParent extends Doctrine_Record
 
 class ConcreteInheritanceTestChild extends ConcreteInheritanceTestParent
 {
-    public function setTableDefinition()
+    public function setTableDefinition(): void
     {
         $this->hasColumn('age', 'integer');
 

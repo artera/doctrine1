@@ -58,7 +58,7 @@ namespace Tests\Validator {
 namespace {
     class TestPerson extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('id', 'integer', null, ['primary' => true, 'notnull' => true, 'autoincrement' => true]);
             $this->hasColumn('first_name', 'string');
@@ -66,7 +66,7 @@ namespace {
             $this->hasColumn('favorite_color_id', 'integer');
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany('TestAddress as Addresses', ['local' => 'id', 'foreign' => 'person_id']);
         }
@@ -74,7 +74,7 @@ namespace {
 
     class TestAddress extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('id', 'integer', null, ['primary' => true, 'notnull' => true, 'autoincrement' => true]);
             $this->hasColumn('person_id', 'integer', null, ['notnull' => true]);
@@ -84,7 +84,7 @@ namespace {
             $this->hasColumn('zip', 'string');
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasOne('TestPerson as Person', ['local' => 'person_id', 'foreign' => 'id']);
         }

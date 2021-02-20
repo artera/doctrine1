@@ -12,7 +12,7 @@ class QueryTest_Category extends Doctrine_Record
     /**
      * Table definition.
      */
-    public function setTableDefinition()
+    public function setTableDefinition(): void
     {
         $this->hasColumn('id', 'integer', 4, ['primary', 'autoincrement', 'notnull']);
         $this->hasColumn(
@@ -44,7 +44,7 @@ class QueryTest_Category extends Doctrine_Record
     /**
      * Relations definition.
      */
-    public function setUp()
+    public function setUp(): void
     {
         $this->hasMany(
             'QueryTest_Category as subCategories',

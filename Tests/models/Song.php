@@ -1,7 +1,7 @@
 <?php
 class Song extends Doctrine_Record
 {
-    public function setUp()
+    public function setUp(): void
     {
         $this->hasOne(
             'Album',
@@ -10,7 +10,7 @@ class Song extends Doctrine_Record
             'onDelete' => 'CASCADE']
         );
     }
-    public function setTableDefinition()
+    public function setTableDefinition(): void
     {
         $this->hasColumn('album_id', 'integer');
         $this->hasColumn('genre', 'string', 20);

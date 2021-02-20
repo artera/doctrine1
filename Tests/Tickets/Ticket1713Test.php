@@ -27,7 +27,7 @@ namespace Tests\Tickets {
 namespace {
     class Parent1713 extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('mytable');
             $this->hasColumn(
@@ -49,7 +49,7 @@ namespace {
             );
         }
 
-        public function setUp()
+        public function setUp(): void
         {
         }
     }

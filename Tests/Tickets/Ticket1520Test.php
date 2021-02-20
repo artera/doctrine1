@@ -32,7 +32,7 @@ namespace Tests\Tickets {
 namespace {
     class Ticket_1520_Product extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('title', 'string', 255);
             $this->hasColumn('price', 'decimal');

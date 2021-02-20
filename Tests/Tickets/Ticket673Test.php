@@ -21,7 +21,7 @@ namespace Tests\Tickets {
             $this->assertTrue(preg_match_all('/(s_id)/', $q->getSqlQuery(), $m) === 1);
 
             $q->execute();
-                
+
             $q = \Doctrine_Query::create()
             ->delete()
             ->from('T673_Student s')
@@ -38,7 +38,7 @@ namespace Tests\Tickets {
 namespace {
     class T673_Student extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('T673_Student_record');
 

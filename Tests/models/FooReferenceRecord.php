@@ -1,7 +1,7 @@
 <?php
 class FooReferenceRecord extends Doctrine_Record
 {
-    public function setTableDefinition()
+    public function setTableDefinition(): void
     {
         $this->setTableName('foo_reference');
 

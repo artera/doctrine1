@@ -129,7 +129,7 @@ namespace Tests\Tickets {
 namespace {
     class BaseConcept extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('concepts');
             $this->hasColumn('id', 'integer', 4, ['primary' => true, 'autoincrement' => true, 'type' => 'integer', 'length' => '4']);
@@ -146,7 +146,7 @@ namespace {
             $this->option('charset', 'utf8');
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany(
                 'Concept as broaderConcepts',
@@ -172,7 +172,7 @@ namespace {
  */
     class BaseConceptRelation extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('concepts_x_concepts');
             $this->hasColumn('concept_id as conceptId', 'integer', 4, ['type' => 'integer', 'notnull' => true, 'length' => '4', 'primary' => true]);
@@ -183,7 +183,7 @@ namespace {
             $this->option('charset', 'utf8');
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasOne(
                 'Concept as concept',

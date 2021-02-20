@@ -45,7 +45,7 @@ namespace Tests\Tickets {
 namespace {
     class Ticket_DC24_Master extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn(
                 'id',
@@ -79,7 +79,7 @@ namespace {
             );
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasOne(
                 'Ticket_DC24_Servant',
@@ -92,7 +92,7 @@ namespace {
 
     class Ticket_DC24_Servant extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn(
                 'id',
@@ -117,7 +117,7 @@ namespace {
             );
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             $this->hasMany(
                 'Ticket_DC24_Master as Masters',

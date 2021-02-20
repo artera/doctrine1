@@ -27,7 +27,7 @@ namespace Tests\Tickets {
 namespace {
     class Ticket_1875_Account extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->hasColumn('name', 'string', 255);
             $this->hasColumn('amount', 'decimal', 4, ['scale' => 2]);

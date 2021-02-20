@@ -1,7 +1,7 @@
 <?php
 class SerializeTest extends Doctrine_Record
 {
-    public function setTableDefinition()
+    public function setTableDefinition(): void
     {
         $this->setTableName('serialize_test');
 

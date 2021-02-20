@@ -66,14 +66,14 @@ namespace Tests\Tickets {
 namespace {
     class T1 extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('t1');
             $this->hasColumn('t1_id', 'integer', 3, ['autoincrement' => true, 'unsigned' => true, 'primary' => true, 'notnull' => true]);
             $this->hasColumn('t2_id', 'integer', 3);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             parent :: setUp();
             $this->hasOne('T2', ['local' => 't2_id', 'foreign' => 't2_id']);
@@ -82,14 +82,14 @@ namespace {
 
     class T2 extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('t2');
             $this->hasColumn('t2_id', 'integer', 3, ['autoincrement' => true, 'unsigned' => true, 'primary' => true, 'notnull' => true]);
             $this->hasColumn('hello_id', 'integer', 3);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             parent :: setUp();
             $this->hasMany('T3', ['local' => 'hello_id', 'foreign' => 'hello_id']);
@@ -98,14 +98,14 @@ namespace {
 
     class T3 extends Doctrine_Record
     {
-        public function setTableDefinition()
+        public function setTableDefinition(): void
         {
             $this->setTableName('t3');
             $this->hasColumn('t3_id', 'integer', 3, ['autoincrement' => true, 'unsigned' => true, 'primary' => true, 'notnull' => true]);
             $this->hasColumn('hello_id', 'integer', 3);
         }
 
-        public function setUp()
+        public function setUp(): void
         {
             parent :: setUp();
         }
