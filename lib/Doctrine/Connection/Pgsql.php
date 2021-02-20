@@ -34,18 +34,9 @@
  */
 class Doctrine_Connection_Pgsql extends Doctrine_Connection_Common
 {
-    /**
-     * @var string $driverName                  the name of this connection driver
-     */
-    protected $driverName = 'Pgsql';
+    protected string $driverName = 'Pgsql';
 
-    /**
-     * the constructor
-     *
-     * @param Doctrine_Manager               $manager
-     * @param PDO|Doctrine_Adapter_Interface $adapter database handle
-     */
-    public function __construct(Doctrine_Manager $manager, $adapter)
+    public function __construct(Doctrine_Manager $manager, PDO|array $adapter)
     {
         // initialize all driver options
         $this->supported = [
@@ -80,31 +71,14 @@ class Doctrine_Connection_Pgsql extends Doctrine_Connection_Common
         parent::__construct($manager, $adapter);
     }
 
-    /**
-     * Set the charset on the current connection
-     *
-     * @param string $charset
-     *
-     * @return void
-     */
-    public function setCharset($charset)
+    public function setCharset(string $charset): void
     {
         $query = 'SET NAMES ' . $this->quote($charset);
         $this->exec($query);
         parent::setCharset($charset);
     }
 
-    /**
-     * convertBoolean
-     * some drivers need the boolean values to be converted into integers
-     * when using DQL API
-     *
-     * This method takes care of that conversion
-     *
-     * @param  array|bool|string|int|float $item
-     * @return array|string
-     */
-    public function convertBooleans($item)
+    public function convertBooleans(array|string|bool|int|float $item): array|string|bool|int|float
     {
         if (is_array($item)) {
             foreach ($item as $key => $value) {
@@ -120,16 +94,7 @@ class Doctrine_Connection_Pgsql extends Doctrine_Connection_Common
         return $item;
     }
 
-    /**
-     * Changes a query string for various DBMS specific reasons
-     *
-     * @param  string        $query   query to modify
-     * @param  integer|false $limit   limit the number of rows
-     * @param  integer|false $offset  start reading from given offset
-     * @param  boolean       $isManip if the query is a DML query
-     * @return string               modified query
-     */
-    public function modifyLimitQuery($query, $limit = false, $offset = false, $isManip = false)
+    public function modifyLimitQuery(string $query, int|bool $limit = false, int|bool $offset = false, bool $isManip = false): string
     {
         if ($limit > 0) {
             $query = rtrim($query);
@@ -164,9 +129,9 @@ class Doctrine_Connection_Pgsql extends Doctrine_Connection_Common
      * return version information about the server
      *
      * @param  bool $native determines if the raw version string should be returned
-     * @return array|string     an array or string with version information
+     * @return array|string an array or string with version information
      */
-    public function getServerVersion($native = false)
+    public function getServerVersion(bool $native = false): array|string
     {
         $query = 'SHOW SERVER_VERSION';
 
@@ -198,16 +163,7 @@ class Doctrine_Connection_Pgsql extends Doctrine_Connection_Common
         return $serverInfo;
     }
 
-    /**
-     * Inserts a table row with specified data.
-     *
-     * @param  Doctrine_Table $table  The table to insert data into.
-     * @param  array          $fields An associative array containing column-value pairs.
-     *                                Values can be strings or Doctrine_Expression
-     *                                instances.
-     * @return integer                  the number of affected rows. Boolean false if empty value array was given,
-     */
-    public function insert(Doctrine_Table $table, array $fields)
+    public function insert(Doctrine_Table $table, array $fields): int
     {
         $tableName = $table->getTableName();
 

@@ -68,13 +68,13 @@ class Doctrine_Formatter extends Doctrine_Connection_Module
      *
      * This method takes care of that conversion
      *
-     * @param array|bool|int $item
+     * @param array|bool|int|float $item
      *
-     * @return mixed[]|bool|int
+     * @return mixed[]|bool|int|float
      *
      * @psalm-return array<array-key, int|mixed>|bool|int
      */
-    public function convertBooleans($item)
+    public function convertBooleans(array|string|bool|int|float $item): array|string|bool|int|float
     {
         if (is_array($item)) {
             foreach ($item as $k => $value) {

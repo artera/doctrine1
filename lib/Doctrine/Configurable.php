@@ -36,7 +36,7 @@ abstract class Doctrine_Configurable
     /**
      * @var array $attributes               an array of containing all attributes
      */
-    protected $attributes = [];
+    protected array $attributes = [];
 
     /**
      * @var Doctrine_Configurable $parent   the parent of this component
@@ -46,25 +46,28 @@ abstract class Doctrine_Configurable
     /**
      * @var array $_params                  an array of user defined parameters
      */
-    protected $_params = [];
+    protected array $_params = [];
 
     /**
-     * setAttribute
      * sets a given attribute
      *
      * <code>
      * $manager->setAttribute(Doctrine_Core::ATTR_PORTABILITY, Doctrine_Core::PORTABILITY_ALL);
      * </code>
      *
-     * @param  mixed $attribute either a Doctrine_Core::ATTR_* integer constant or a string
+     * @param  int|string $attribute either a Doctrine_Core::ATTR_* integer constant or a string
      *                          corresponding to a constant
      * @param  mixed $value     the value of the attribute
      * @see    Doctrine_Core::ATTR_* constants
      * @throws Doctrine_Exception           if the value is invalid
-     * @return void
+     *
+     * @return $this
      */
-    public function setAttribute($attribute, $value)
+    public function setAttribute(int|string $attribute, mixed $value): self
     {
+        if (is_string($attribute)) {
+            $attribute = (int) constant("Doctrine_Core::$attribute");
+        }
         switch ($attribute) {
             case Doctrine_Core::ATTR_LISTENER:
                 $this->setEventListener($value);
@@ -110,13 +113,10 @@ abstract class Doctrine_Configurable
         }
 
         $this->attributes[$attribute] = $value;
+        return $this;
     }
 
-    /**
-     * @param  int $namespace
-     * @return array|null
-     */
-    public function getParams($namespace = null)
+    public function getParams(?int $namespace = null): ?array
     {
         if ($namespace == null) {
             $namespace = $this->getAttribute(Doctrine_Core::ATTR_DEFAULT_PARAM_NAMESPACE);
@@ -129,21 +129,15 @@ abstract class Doctrine_Configurable
         return $this->_params[$namespace];
     }
 
-    /**
-     * @return array
-     */
-    public function getParamNamespaces()
+    public function getParamNamespaces(): array
     {
         return array_keys($this->_params);
     }
 
     /**
-     * @param  string $name
-     * @param  mixed  $value
-     * @param  string $namespace
      * @return $this
      */
-    public function setParam($name, $value, $namespace = null)
+    public function setParam(string $name, mixed $value, ?string $namespace = null): self
     {
         if ($namespace == null) {
             $namespace = $this->getAttribute(Doctrine_Core::ATTR_DEFAULT_PARAM_NAMESPACE);
@@ -154,12 +148,7 @@ abstract class Doctrine_Configurable
         return $this;
     }
 
-    /**
-     * @param  string $name
-     * @param  int    $namespace
-     * @return mixed
-     */
-    public function getParam($name, $namespace = null)
+    public function getParam(string $name, ?int $namespace = null): mixed
     {
         if ($namespace == null) {
             $namespace = $this->getAttribute(Doctrine_Core::ATTR_DEFAULT_PARAM_NAMESPACE);
@@ -176,17 +165,14 @@ abstract class Doctrine_Configurable
     }
 
     /**
-     * @param  Doctrine_EventListener $listener
      * @return $this
      */
-    public function setEventListener($listener)
+    public function setEventListener(Doctrine_EventListener $listener): self
     {
         return $this->setListener($listener);
     }
 
     /**
-     * addRecordListener
-     *
      * @phpstan-param Doctrine_Record_Listener_Interface|Doctrine_Overloadable<Doctrine_Record_Listener_Interface> $listener
      * @return $this
      */
@@ -203,12 +189,9 @@ abstract class Doctrine_Configurable
     }
 
     /**
-     * getListener
-     *
-     * @return Doctrine_Record_Listener_Interface|Doctrine_Overloadable
      * @phpstan-return Doctrine_Record_Listener_Interface|Doctrine_Overloadable<Doctrine_Record_Listener_Interface>
      */
-    public function getRecordListener()
+    public function getRecordListener(): Doctrine_Record_Listener_Interface|Doctrine_Overloadable
     {
         if (!isset($this->attributes[Doctrine_Core::ATTR_RECORD_LISTENER])) {
             if (isset($this->parent)) {
@@ -220,13 +203,10 @@ abstract class Doctrine_Configurable
     }
 
     /**
-     * setListener
-     *
-     * @param Doctrine_EventListener_Interface|Doctrine_Overloadable $listener
      * @phpstan-param Doctrine_Record_Listener_Interface|Doctrine_Overloadable<Doctrine_Record_Listener_Interface> $listener
-     * @return $this        this object
+     * @return $this
      */
-    public function setRecordListener($listener)
+    public function setRecordListener(Doctrine_Record_Listener_Interface|Doctrine_Overloadable $listener): self
     {
         // @phpstan-ignore-next-line
         if (!($listener instanceof Doctrine_Record_Listener_Interface)
@@ -240,14 +220,10 @@ abstract class Doctrine_Configurable
     }
 
     /**
-     * addListener
-     *
-     * @param Doctrine_EventListener_Interface|Doctrine_Overloadable $listener
      * @phpstan-param Doctrine_EventListener_Interface|Doctrine_Overloadable<Doctrine_EventListener_Interface> $listener
-     * @param  string                                                 $name
-     * @return $this    this object
+     * @return $this
      */
-    public function addListener($listener, $name = null)
+    public function addListener(Doctrine_EventListener_Interface|Doctrine_Overloadable $listener, ?string $name = null): self
     {
         if (!isset($this->attributes[Doctrine_Core::ATTR_LISTENER])
             || !($this->attributes[Doctrine_Core::ATTR_LISTENER] instanceof Doctrine_EventListener_Chain)
@@ -260,12 +236,9 @@ abstract class Doctrine_Configurable
     }
 
     /**
-     * getListener
-     *
-     * @return Doctrine_EventListener_Interface|Doctrine_Overloadable
      * @phpstan-return Doctrine_EventListener_Interface|Doctrine_Overloadable<Doctrine_EventListener_Interface>
      */
-    public function getListener()
+    public function getListener(): Doctrine_EventListener_Interface|Doctrine_Overloadable
     {
         if (!isset($this->attributes[Doctrine_Core::ATTR_LISTENER])) {
             if (isset($this->parent)) {
@@ -277,13 +250,10 @@ abstract class Doctrine_Configurable
     }
 
     /**
-     * setListener
-     *
-     * @param Doctrine_EventListener_Interface|Doctrine_Overloadable $listener
      * @phpstan-param Doctrine_EventListener_Interface|Doctrine_Overloadable<Doctrine_EventListener_Interface> $listener
-     * @return $this        this object
+     * @return $this
      */
-    public function setListener($listener)
+    public function setListener(Doctrine_EventListener_Interface|Doctrine_Overloadable $listener): self
     {
         // @phpstan-ignore-next-line
         if (!$listener instanceof Doctrine_EventListener_Interface
@@ -298,11 +268,8 @@ abstract class Doctrine_Configurable
 
     /**
      * returns the value of an attribute
-     *
-     * @param  integer $attribute
-     * @return mixed|null
      */
-    public function getAttribute($attribute)
+    public function getAttribute(int $attribute): mixed
     {
         if (isset($this->attributes[$attribute])) {
             return $this->attributes[$attribute];
@@ -316,11 +283,8 @@ abstract class Doctrine_Configurable
 
     /**
      * Unset an attribute from this levels attributes
-     *
-     * @param  integer $attribute
-     * @return void
      */
-    public function unsetAttribute($attribute)
+    public function unsetAttribute(int $attribute): void
     {
         if (isset($this->attributes[$attribute])) {
             unset($this->attributes[$attribute]);
@@ -328,56 +292,29 @@ abstract class Doctrine_Configurable
     }
 
     /**
-     * getAttributes
      * returns all attributes as an array
-     *
-     * @return array
      */
-    public function getAttributes()
+    public function getAttributes(): array
     {
         return $this->attributes;
     }
 
-    /**
-     * Set the charset
-     *
-     * @param string $charset
-     *
-     * @return void
-     */
-    public function setCharset($charset)
+    public function setCharset(string $charset): void
     {
         $this->setAttribute(Doctrine_Core::ATTR_DEFAULT_TABLE_CHARSET, $charset);
     }
 
-    /**
-     * Get the charset
-     *
-     * @return mixed
-     */
-    public function getCharset()
+    public function getCharset(): mixed
     {
         return $this->getAttribute(Doctrine_Core::ATTR_DEFAULT_TABLE_CHARSET);
     }
 
-    /**
-     * Set the collate
-     *
-     * @param string $collate
-     *
-     * @return void
-     */
-    public function setCollate($collate)
+    public function setCollate(string $collate): void
     {
         $this->setAttribute(Doctrine_Core::ATTR_DEFAULT_TABLE_COLLATE, $collate);
     }
 
-    /**
-     * Get the collate
-     *
-     * @return mixed $collate
-     */
-    public function getCollate()
+    public function getCollate(): mixed
     {
         return $this->getAttribute(Doctrine_Core::ATTR_DEFAULT_TABLE_COLLATE);
     }
@@ -385,17 +322,13 @@ abstract class Doctrine_Configurable
     /**
      * sets a parent for this configurable component
      * the parent must be configurable component itself
-     *
-     * @param  Doctrine_Configurable $component
-     * @return void
      */
-    public function setParent(Doctrine_Configurable $component)
+    public function setParent(Doctrine_Configurable $component): void
     {
         $this->parent = $component;
     }
 
     /**
-     * getParent
      * returns the parent of this component
      *
      * @return mixed

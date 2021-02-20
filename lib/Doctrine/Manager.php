@@ -1,106 +1,49 @@
 <?php
-/*
- *  $Id: Manager.php 7657 2010-06-08 17:57:01Z jwage $
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- * This software consists of voluntary contributions made by many individuals
- * and is licensed under the LGPL. For more information, see
- * <http://www.doctrine-project.org>.
- */
 
-/**
- * Doctrine_Manager is the base component of all doctrine based projects.
- * It opens and keeps track of all connections (database connections).
- *
- * @package    Doctrine
- * @subpackage Manager
- * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link       www.doctrine-project.org
- * @since      1.0
- * @version    $Revision: 7657 $
- * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
- */
 class Doctrine_Manager extends Doctrine_Configurable implements Countable, IteratorAggregate
 {
-    /**
-     * @var array $_connections          an array containing all the opened connections
-     */
-    protected $_connections = [];
+    /** array containing all the opened connections */
+    protected array $_connections = [];
 
-    /**
-     * @var array $_bound                an array containing all components that have a bound connection
-     */
-    protected $_bound = [];
+    /** array containing all components that have a bound connection */
+    protected array $_bound = [];
 
-    /**
-     * @var integer $_index              the incremented index
-     */
-    protected $_index = 0;
+    protected int $_index = 0;
 
-    /**
-     * @var integer|string $_currIndex          the current connection index
-     */
-    protected $_currIndex = 0;
+    /** the current connection index */
+    protected int|string $_currIndex = 0;
 
-    /**
-     * @var Doctrine_Query_Registry|null     the query registry
-     */
-    protected $_queryRegistry;
+    protected ?Doctrine_Query_Registry $_queryRegistry = null;
 
-    /**
-     * @var array                       Array of registered validators
-     */
-    protected $_validators = [];
+    /** Array of registered validators */
+    protected array $_validators = [];
 
-    /**
-     * @var array                       Array of registered hydrators
-     */
-    protected $_hydrators = [
-        Doctrine_Core::HYDRATE_ARRAY            => 'Doctrine_Hydrator_ArrayDriver',
-        Doctrine_Core::HYDRATE_RECORD           => 'Doctrine_Hydrator_RecordDriver',
-        Doctrine_Core::HYDRATE_NONE             => 'Doctrine_Hydrator_NoneDriver',
-        Doctrine_Core::HYDRATE_SCALAR           => 'Doctrine_Hydrator_ScalarDriver',
-        Doctrine_Core::HYDRATE_SINGLE_SCALAR    => 'Doctrine_Hydrator_SingleScalarDriver',
-        Doctrine_Core::HYDRATE_ON_DEMAND        => 'Doctrine_Hydrator_RecordDriver',
-        Doctrine_Core::HYDRATE_ARRAY_SHALLOW    => 'Doctrine_Hydrator_ArrayShallowDriver',
+    /** @phpstan-var array<int, class-string<Doctrine_Hydrator_Abstract>> */
+    protected array $_hydrators = [
+        Doctrine_Core::HYDRATE_ARRAY            => Doctrine_Hydrator_ArrayDriver::class,
+        Doctrine_Core::HYDRATE_RECORD           => Doctrine_Hydrator_RecordDriver::class,
+        Doctrine_Core::HYDRATE_NONE             => Doctrine_Hydrator_NoneDriver::class,
+        Doctrine_Core::HYDRATE_SCALAR           => Doctrine_Hydrator_ScalarDriver::class,
+        Doctrine_Core::HYDRATE_SINGLE_SCALAR    => Doctrine_Hydrator_SingleScalarDriver::class,
+        Doctrine_Core::HYDRATE_ON_DEMAND        => Doctrine_Hydrator_RecordDriver::class,
+        Doctrine_Core::HYDRATE_ARRAY_SHALLOW    => Doctrine_Hydrator_ArrayShallowDriver::class,
     ];
 
-    /**
-     * @var array
-     */
-    protected $_connectionDrivers = [
-        'mysql'  => 'Doctrine_Connection_Mysql',
-        'mysqli' => 'Doctrine_Connection_Mysql',
-        'sqlite' => 'Doctrine_Connection_Sqlite',
-        'pgsql'  => 'Doctrine_Connection_Pgsql',
-        'mock'   => 'Doctrine_Connection_Mock'
+    /** @phpstan-var array<string, class-string<Doctrine_Connection_Common>> */
+    protected array $_connectionDrivers = [
+        'mysql'  => Doctrine_Connection_Mysql::class,
+        'mysqli' => Doctrine_Connection_Mysql::class,
+        'sqlite' => Doctrine_Connection_Sqlite::class,
+        'pgsql'  => Doctrine_Connection_Pgsql::class,
+        'mock'   => Doctrine_Connection_Mock::class,
     ];
 
-    /**
-     * @var boolean                     Whether or not the validators from disk have been loaded
-     */
-    protected $_loadedValidatorsFromDisk = false;
+    /** Whether or not the validators from disk have been loaded */
+    protected bool $_loadedValidatorsFromDisk = false;
 
-    /**
-     * @var Doctrine_Manager|null
-     */
-    protected static $_instance;
+    protected static ?Doctrine_Manager $_instance;
 
-    /**
-     * @var bool
-     */
-    private $_initialized = false;
+    private bool $_initialized = false;
 
     /**
      * Sets default attributes values.
@@ -236,12 +179,12 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
      * if the adapter parameter is not set this method acts as
      * a short cut for Doctrine_Manager::getInstance()->getCurrentConnection()
      *
-     * @param  PDO|Doctrine_Adapter_Interface|array|string|null $adapter database driver, DSN or array of connection options
+     * @param  PDO|array|string|null $adapter database driver, DSN or array of connection options
      * @param  string                                           $name    name of the connection, if empty numeric key is used
      * @throws Doctrine_Manager_Exception                          if trying to bind a connection with an existing name
      * @return Doctrine_Connection
      */
-    public static function connection($adapter = null, $name = null)
+    public static function connection(PDO|array|string|null $adapter = null, $name = null)
     {
         if ($adapter === null) {
             return Doctrine_Manager::getInstance()->getCurrentConnection();
@@ -253,20 +196,16 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
     /**
      * Opens a new connection and saves it to Doctrine_Manager->connections
      *
-     * @param  PDO|Doctrine_Adapter_Interface|array|string $adapter    database driver, DSN or array of connection options
+     * @param  PDO|array|string $adapter    database driver, DSN or array of connection options
      * @param  string                                      $name       name of the connection, if empty numeric key is used
      * @param  bool                                        $setCurrent
      * @throws Doctrine_Manager_Exception                          if trying to bind a connection with an existing name
      * @throws Doctrine_Manager_Exception                          if trying to open connection for unknown driver
      * @return Doctrine_Connection
      */
-    public function openConnection($adapter, $name = null, $setCurrent = true)
+    public function openConnection(PDO|array|string $adapter, $name = null, $setCurrent = true)
     {
-        if (is_object($adapter)) {
-            if (!$adapter instanceof PDO && !in_array('Doctrine_Adapter_Interface', class_implements($adapter) ?: [])) {
-                throw new Doctrine_Manager_Exception('First argument should be an instance of PDO or implement Doctrine_Adapter_Interface');
-            }
-
+        if ($adapter instanceof PDO) {
             $driverName = $adapter->getAttribute(Doctrine_Core::ATTR_DRIVER_NAME);
         } elseif (is_array($adapter)) {
             if (!isset($adapter[0])) {
@@ -318,9 +257,6 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
         }
 
         $className = $this->_connectionDrivers[$driverName];
-        /**
- * @var Doctrine_Connection $conn
-*/
         $conn = new $className($this, $adapter);
         $conn->setName((string) $name);
 

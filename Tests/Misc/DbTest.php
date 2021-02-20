@@ -187,7 +187,7 @@ namespace Tests\Misc {
 
         public function testSetInvalidEventListener()
         {
-            $this->expectException(\Doctrine_EventListener_Exception::class);
+            $this->expectException(\TypeError::class);
             static::$conn->setListener(new \Doctrine_Connection_TestInvalidListener());
         }
 

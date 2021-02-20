@@ -33,23 +33,9 @@
  */
 class Doctrine_Connection_Sqlite extends Doctrine_Connection_Common
 {
-    /**
-     * @var string $driverName                  the name of this connection driver
-     */
-    protected $driverName = 'Sqlite';
+    protected string $driverName = 'Sqlite';
 
-    /**
-     * @var PDO  $dbh                                the database handler
-     */
-    protected $dbh;
-
-    /**
-     * the constructor
-     *
-     * @param Doctrine_Manager               $manager
-     * @param PDO|Doctrine_Adapter_Interface $adapter database handle
-     */
-    public function __construct(Doctrine_Manager $manager, $adapter)
+    public function __construct(Doctrine_Manager $manager, PDO|array $adapter)
     {
         $this->supported = ['sequences'     => 'emulated',
                           'indexes'              => true,
@@ -80,32 +66,24 @@ class Doctrine_Connection_Sqlite extends Doctrine_Connection_Common
         }
     }
 
-    /**
-     * initializes database functions missing in sqlite
-     *
-     * @see    Doctrine_Expression
-     * @return void|false
-     */
-    public function connect()
+    public function connect(): bool
     {
         if ($this->isConnected) {
             return false;
         }
 
-        parent::connect();
+        if (parent::connect()) {
+            $this->dbh->sqliteCreateFunction('mod', ['Doctrine_Expression_Sqlite', 'modImpl'], 2);
+            $this->dbh->sqliteCreateFunction('concat', ['Doctrine_Expression_Sqlite', 'concatImpl']);
+            $this->dbh->sqliteCreateFunction('md5', 'md5', 1);
+            $this->dbh->sqliteCreateFunction('now', ['Doctrine_Expression_Sqlite', 'nowImpl'], 0);
+            return true;
+        }
 
-        $this->dbh->sqliteCreateFunction('mod', ['Doctrine_Expression_Sqlite', 'modImpl'], 2);
-        $this->dbh->sqliteCreateFunction('concat', ['Doctrine_Expression_Sqlite', 'concatImpl']);
-        $this->dbh->sqliteCreateFunction('md5', 'md5', 1);
-        $this->dbh->sqliteCreateFunction('now', ['Doctrine_Expression_Sqlite', 'nowImpl'], 0);
+        return false;
     }
 
-    /**
-     * createDatabase
-     *
-     * @return void
-     */
-    public function createDatabase()
+    public function createDatabase(): void
     {
         if (!$dsn = $this->getOption('dsn')) {
             throw new Doctrine_Connection_Exception('You must create your Doctrine_Connection by using a valid Doctrine style dsn in order to use the create/drop database functionality');
@@ -116,12 +94,7 @@ class Doctrine_Connection_Sqlite extends Doctrine_Connection_Common
         $this->export->createDatabase($info['database']);
     }
 
-    /**
-     * dropDatabase
-     *
-     * @return void
-     */
-    public function dropDatabase()
+    public function dropDatabase(): void
     {
         if (!$dsn = $this->getOption('dsn')) {
             throw new Doctrine_Connection_Exception('You must create your Doctrine_Connection by using a valid Doctrine style dsn in order to use the create/drop database functionality');

@@ -22,21 +22,21 @@ namespace {
     {
     }
 
-    class Doctrine_Adapter_Test implements Doctrine_Adapter_Interface
+    class Doctrine_Adapter_Test extends PDO
     {
         public function __construct($dsn, $username, $password, $options)
         {
         }
 
-        public function prepare(string $prepareString): Doctrine_Connection_Statement
+        public function prepare(string $query, array $options = [])
         {
         }
 
-        public function query(string $queryString): Doctrine_Connection_Statement
+        public function query(string $query, ?int $fetchMode = null, mixed ...$fetchModeArgs)
         {
         }
 
-        public function quote(string $input): string
+        public function quote(string $string, int $type = PDO::PARAM_STR)
         {
             return '';
         }
@@ -45,7 +45,7 @@ namespace {
         {
         }
 
-        public function lastInsertId(): string
+        public function lastInsertId(?string $name = null): string
         {
             return '1';
         }

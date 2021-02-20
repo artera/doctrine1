@@ -1,6 +1,6 @@
 <?php
 
-class Doctrine_Adapter_Mock implements Doctrine_Adapter_Interface, Countable
+class Doctrine_Adapter_Mock extends PDO
 {
     /**
      * Name of the dbms to mock
@@ -78,38 +78,19 @@ class Doctrine_Adapter_Mock implements Doctrine_Adapter_Interface, Countable
         $this->_exception = [$name, $message, $code];
     }
 
-    /**
-     * Prepare a query statement
-     *
-     * @param  string $query Query to prepare
-     * @return Doctrine_Adapter_Statement_Mock $mock Mock prepared statement
-     */
-    public function prepare($query): Doctrine_Adapter_Statement_Mock
+    public function prepare(string $query, array $options = [])
     {
         $mock              = new Doctrine_Adapter_Statement_Mock($this);
         $mock->queryString = $query;
-
         return $mock;
     }
 
-    /**
-     * Add query to the stack of executed queries
-     *
-     * @param  string $query
-     * @return void
-     */
-    public function addQuery($query): void
+    public function addQuery(string $query): void
     {
         $this->_queries[] = $query;
     }
 
-    /**
-     * Fake the execution of query and add it to the stack of executed queries
-     *
-     * @param  string $query
-     * @return Doctrine_Adapter_Statement_Mock $stmt
-     */
-    public function query($query): Doctrine_Adapter_Statement_Mock
+    public function query(string $query, ?int $fetchMode = null, mixed ...$fetchModeArgs)
     {
         $this->_queries[] = $query;
 
@@ -132,33 +113,16 @@ class Doctrine_Adapter_Mock implements Doctrine_Adapter_Interface, Countable
         return $stmt;
     }
 
-    /**
-     * Get all the executed queries
-     *
-     * @return array $queries Array of all executed queries
-     */
     public function getAll()
     {
         return $this->_queries;
     }
 
-    /**
-     * Quote a value for the dbms
-     *
-     * @param  string $input
-     * @return string $quoted
-     */
-    public function quote($input): string
+    public function quote(string $string, int $type = PDO::PARAM_STR)
     {
         return "'" . addslashes($input) . "'";
     }
 
-    /**
-     * Execute a raw sql statement
-     *
-     * @param  string $statement
-     * @return int
-     */
     public function exec($statement): int
     {
         $this->_queries[] = $statement;
@@ -194,7 +158,7 @@ class Doctrine_Adapter_Mock implements Doctrine_Adapter_Interface, Countable
         }
     }
 
-    public function lastInsertId(): string
+    public function lastInsertId(?string $name = null): string
     {
         $this->_queries[] = 'LAST_INSERT_ID()';
         if ($this->_lastInsertIdFail) {
