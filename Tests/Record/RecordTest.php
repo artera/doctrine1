@@ -28,7 +28,7 @@ class RecordTest extends DoctrineUnitTestCase
         $account         = $user->Account;
         $account->amount = 1000;
         $this->assertTrue($account instanceof \Account);
-        $this->assertEquals($account->state(), \Doctrine_Record::STATE_TDIRTY);
+        $this->assertEquals($account->state(), \Doctrine_Record_State::TDIRTY());
         $this->assertEquals($account->entity_id->getOid(), $user->getOid());
         $this->assertEquals($account->amount, 1000);
         $this->assertEquals($user->name, 'Richard Linklater');
@@ -40,7 +40,7 @@ class RecordTest extends DoctrineUnitTestCase
 
         $account = $user->Account;
         $this->assertTrue($account instanceof \Account);
-        $this->assertEquals($account->state(), \Doctrine_Record::STATE_CLEAN);
+        $this->assertEquals($account->state(), \Doctrine_Record_State::CLEAN());
         $this->assertEquals($account->entity_id, $user->id);
         $this->assertEquals($account->amount, 1000);
         $this->assertEquals($user->name, 'Richard Linklater');
@@ -53,7 +53,7 @@ class RecordTest extends DoctrineUnitTestCase
         $this->assertEquals($account->getTable()->getColumnNames(), ['id', 'entity_id', 'amount']);
 
         static::$connection->flush();
-        $this->assertEquals($user->state(), \Doctrine_Record::STATE_CLEAN);
+        $this->assertEquals($user->state(), \Doctrine_Record_State::CLEAN());
         $this->assertTrue($account instanceof \Account);
 
         $this->assertEquals($account->getTable()->getColumnNames(), ['id', 'entity_id', 'amount']);
@@ -62,13 +62,13 @@ class RecordTest extends DoctrineUnitTestCase
 
 
         $user = $user->getTable()->find($user->id);
-        $this->assertEquals($user->state(), \Doctrine_Record::STATE_CLEAN);
+        $this->assertEquals($user->state(), \Doctrine_Record_State::CLEAN());
 
 
         $account = $user->Account;
         $this->assertTrue($account instanceof \Account);
 
-        $this->assertEquals($account->state(), \Doctrine_Record::STATE_CLEAN);
+        $this->assertEquals($account->state(), \Doctrine_Record_State::CLEAN());
         $this->assertEquals($account->getTable()->getColumnNames(), ['id', 'entity_id', 'amount']);
 
         $this->assertEquals($account->entity_id, $user->id);
@@ -230,23 +230,23 @@ class RecordTest extends DoctrineUnitTestCase
         $this->assertEquals($record->getTable()->getIdentifier(), ['entity1','entity2']);
         $this->assertEquals($record->getTable()->getIdentifierType(), \Doctrine_Core::IDENTIFIER_COMPOSITE);
         $this->assertEquals($record->identifier(), ['entity1' => null, 'entity2' => null]);
-        $this->assertEquals($record->state(), \Doctrine_Record::STATE_TCLEAN);
+        $this->assertEquals($record->state(), \Doctrine_Record_State::TCLEAN());
 
         $record->entity1 = 3;
         $record->entity2 = 4;
         $this->assertEquals($record->entity2, 4);
         $this->assertEquals($record->entity1, 3);
-        $this->assertEquals($record->state(), \Doctrine_Record::STATE_TDIRTY);
+        $this->assertEquals($record->state(), \Doctrine_Record_State::TDIRTY());
         $this->assertEquals($record->identifier(), ['entity1' => null, 'entity2' => null]);
 
         $record->save();
-        $this->assertEquals($record->state(), \Doctrine_Record::STATE_CLEAN);
+        $this->assertEquals($record->state(), \Doctrine_Record_State::CLEAN());
         $this->assertEquals($record->entity2, 4);
         $this->assertEquals($record->entity1, 3);
         $this->assertEquals($record->identifier(), ['entity1' => 3, 'entity2' => 4]);
 
         $record = $record->getTable()->find($record->identifier());
-        $this->assertEquals($record->state(), \Doctrine_Record::STATE_CLEAN);
+        $this->assertEquals($record->state(), \Doctrine_Record_State::CLEAN());
         $this->assertEquals($record->entity2, 4);
         $this->assertEquals($record->entity1, 3);
 
@@ -254,25 +254,25 @@ class RecordTest extends DoctrineUnitTestCase
 
         $record->entity2 = 5;
         $record->entity1 = 2;
-        $this->assertEquals($record->state(), \Doctrine_Record::STATE_DIRTY);
+        $this->assertEquals($record->state(), \Doctrine_Record_State::DIRTY());
         $this->assertEquals($record->entity2, 5);
         $this->assertEquals($record->entity1, 2);
         $this->assertEquals($record->identifier(), ['entity1' => 3, 'entity2' => 4]);
 
         $record->save();
-        $this->assertEquals($record->state(), \Doctrine_Record::STATE_CLEAN);
+        $this->assertEquals($record->state(), \Doctrine_Record_State::CLEAN());
         $this->assertEquals($record->entity2, 5);
         $this->assertEquals($record->entity1, 2);
         $this->assertEquals($record->identifier(), ['entity1' => 2, 'entity2' => 5]);
         $record = $record->getTable()->find($record->identifier());
 
-        $this->assertEquals($record->state(), \Doctrine_Record::STATE_CLEAN);
+        $this->assertEquals($record->state(), \Doctrine_Record_State::CLEAN());
         $this->assertEquals($record->entity2, 5);
         $this->assertEquals($record->entity1, 2);
         $this->assertEquals($record->identifier(), ['entity1' => 2, 'entity2' => 5]);
 
         $record->refresh();
-        $this->assertEquals($record->state(), \Doctrine_Record::STATE_CLEAN);
+        $this->assertEquals($record->state(), \Doctrine_Record_State::CLEAN());
         $this->assertEquals($record->entity2, 5);
         $this->assertEquals($record->entity1, 2);
         $this->assertEquals($record->identifier(), ['entity1' => 2, 'entity2' => 5]);
@@ -284,9 +284,9 @@ class RecordTest extends DoctrineUnitTestCase
 
         $coll = static::$connection->query('FROM EntityReference');
         $this->assertTrue($coll[0] instanceof \EntityReference);
-        $this->assertEquals($coll[0]->state(), \Doctrine_Record::STATE_CLEAN);
+        $this->assertEquals($coll[0]->state(), \Doctrine_Record_State::CLEAN());
         $this->assertTrue($coll[1] instanceof \EntityReference);
-        $this->assertEquals($coll[1]->state(), \Doctrine_Record::STATE_CLEAN);
+        $this->assertEquals($coll[1]->state(), \Doctrine_Record_State::CLEAN());
 
         $coll = static::$connection->query('FROM EntityReference WHERE EntityReference.entity2 = 5');
         $this->assertEquals($coll->count(), 1);
@@ -308,12 +308,12 @@ class RecordTest extends DoctrineUnitTestCase
 
         $task = new \Task();
         $this->assertTrue($task instanceof \Task);
-        $this->assertEquals($task->state(), \Doctrine_Record::STATE_TCLEAN);
+        $this->assertEquals($task->state(), \Doctrine_Record_State::TCLEAN());
         $this->assertTrue($task->Subtask[0] instanceof \Task);
 
-        //$this->assertEquals($task->Subtask[0]->state(), \Doctrine_Record::STATE_TDIRTY);
+        //$this->assertEquals($task->Subtask[0]->state(), \Doctrine_Record_State::TDIRTY());
         $this->assertTrue($task->ResourceAlias[0] instanceof \Resource);
-        $this->assertEquals($task->ResourceAlias[0]->state(), \Doctrine_Record::STATE_TCLEAN);
+        $this->assertEquals($task->ResourceAlias[0]->state(), \Doctrine_Record_State::TCLEAN());
 
         $task->name                   = 'Task 1';
         $task->ResourceAlias[0]->name = 'Resource 1';
@@ -380,13 +380,13 @@ class RecordTest extends DoctrineUnitTestCase
 
         $this->assertEquals(static::$connection->getTable('User')->getData(), []);
         $user = new \User();
-        $this->assertEquals(\Doctrine_Lib::getRecordStateAsString($user->state()), \Doctrine_Lib::getRecordStateAsString(\Doctrine_Record::STATE_TCLEAN));
+        $this->assertEquals(5, $user->state()->getValue());
         $user->name = 'John Locke';
 
         $this->assertEquals('John Locke', $user->name);
-        $this->assertEquals(\Doctrine_Record::STATE_TDIRTY, $user->state());
+        $this->assertEquals(\Doctrine_Record_State::TDIRTY(), $user->state());
         $user->save();
-        $this->assertEquals(\Doctrine_Record::STATE_CLEAN, $user->state());
+        $this->assertEquals(\Doctrine_Record_State::CLEAN(), $user->state());
         $this->assertEquals('John Locke', $user->name);
     }
 
@@ -528,10 +528,10 @@ class RecordTest extends DoctrineUnitTestCase
         $this->assertTrue(is_numeric($user->id) && $user->id > 0);
 
         $this->assertTrue($user->getModified() == []);
-        $this->assertTrue($user->state() == \Doctrine_Record::STATE_CLEAN);
+        $this->assertTrue($user->state() == \Doctrine_Record_State::CLEAN());
 
         $user->delete();
-        $this->assertEquals($user->state(), \Doctrine_Record::STATE_TCLEAN);
+        $this->assertEquals($user->state(), \Doctrine_Record_State::TCLEAN());
     }
 
     public function testUpdate()
@@ -553,7 +553,7 @@ class RecordTest extends DoctrineUnitTestCase
         $new  = $user->copy();
 
         $this->assertTrue($new instanceof \Doctrine_Record);
-        $this->assertTrue($new->state() == \Doctrine_Record::STATE_TDIRTY);
+        $this->assertTrue($new->state() == \Doctrine_Record_State::TDIRTY());
 
         $new = $user->copy();
         $new->save();
@@ -570,7 +570,7 @@ class RecordTest extends DoctrineUnitTestCase
         $new  = $user->copy();
 
         $this->assertTrue($new instanceof \Doctrine_Record);
-        $this->assertTrue($new->state() == \Doctrine_Record::STATE_TDIRTY);
+        $this->assertTrue($new->state() == \Doctrine_Record_State::TDIRTY());
 
         $new->loginname = 'jackd';
 
@@ -684,7 +684,7 @@ class RecordTest extends DoctrineUnitTestCase
 
             $this->assertTrue($user->Email instanceof \Email);
             $this->assertEquals($user->Email->id, $user->email_id);
-            $this->assertEquals($user->Email->state(), \Doctrine_Record::STATE_CLEAN);
+            $this->assertEquals($user->Email->state(), \Doctrine_Record_State::CLEAN());
             $this->assertEquals($user->Email->address, 'drinker@drinkmore.info');
             $id = $user->Email->id;
 

@@ -40,8 +40,8 @@ namespace Tests\Record {
             // should delete the first child
             $r[0]->delete();
 
-            $this->assertEquals(\Doctrine_Record::STATE_TCLEAN, $r[0]->state());
-            $this->assertEquals(\Doctrine_Record::STATE_TCLEAN, $r[0]->Children[0]->state());
+            $this->assertEquals(\Doctrine_Record_State::TCLEAN(), $r[0]->state());
+            $this->assertEquals(\Doctrine_Record_State::TCLEAN(), $r[0]->Children[0]->state());
 
             static::$connection->clear();
 
@@ -94,15 +94,15 @@ namespace Tests\Record {
             $house->owner     = $owner;
             $owner->save();
 
-            $this->assertEquals(\Doctrine_Record::STATE_CLEAN, $owner->state());
-            $this->assertEquals(\Doctrine_Record::STATE_CLEAN, $house->state());
+            $this->assertEquals(\Doctrine_Record_State::CLEAN(), $owner->state());
+            $this->assertEquals(\Doctrine_Record_State::CLEAN(), $house->state());
             $this->assertTrue($owner->exists());
             $this->assertTrue($house->exists());
 
             $house->delete();
 
-            $this->assertEquals(\Doctrine_Record::STATE_TCLEAN, $owner->state());
-            $this->assertEquals(\Doctrine_Record::STATE_TCLEAN, $house->state());
+            $this->assertEquals(\Doctrine_Record_State::TCLEAN(), $owner->state());
+            $this->assertEquals(\Doctrine_Record_State::TCLEAN(), $house->state());
             $this->assertFalse($owner->exists());
             $this->assertFalse($house->exists());
         }
@@ -123,7 +123,7 @@ namespace Tests\Record {
             $compItem->save();
             $compItem->delete();
 
-            $this->assertEquals(\Doctrine_Record::STATE_TCLEAN, $compItem->state());
+            $this->assertEquals(\Doctrine_Record_State::TCLEAN(), $compItem->state());
             $this->assertFalse($compItem->exists());
         }
 
@@ -140,9 +140,9 @@ namespace Tests\Record {
 
             $a1->delete();
 
-            $this->assertEquals(\Doctrine_Record::STATE_TCLEAN, $a1->state());
+            $this->assertEquals(\Doctrine_Record_State::TCLEAN(), $a1->state());
             $this->assertFalse($a1->exists());
-            $this->assertEquals(\Doctrine_Record::STATE_TCLEAN, $b1->state());
+            $this->assertEquals(\Doctrine_Record_State::TCLEAN(), $b1->state());
             $this->assertFalse($b1->exists());
 
             $a1->refreshRelated('assocsA');
@@ -171,14 +171,14 @@ namespace {
 
         public function preDelete(Doctrine_Event $event)
         {
-            $this->_test->assertEquals(\Doctrine_Record::STATE_CLEAN, $event->getInvoker()->state());
+            $this->_test->assertEquals(\Doctrine_Record_State::CLEAN(), $event->getInvoker()->state());
             $this->preDeleteInvoked = true;
             $this->preDeleteInvocationCount++;
         }
 
         public function postDelete(Doctrine_Event $event)
         {
-            $this->_test->assertEquals(\Doctrine_Record::STATE_TCLEAN, $event->getInvoker()->state());
+            $this->_test->assertEquals(\Doctrine_Record_State::TCLEAN(), $event->getInvoker()->state());
             $this->postDeleteInvoked = true;
             $this->postDeleteInvocationCount++;
         }

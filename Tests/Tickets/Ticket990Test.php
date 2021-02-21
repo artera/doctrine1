@@ -35,14 +35,14 @@ namespace Tests\Tickets {
 
             $person->firstname = 'Alice';
 
-            $this->assertEquals(\Doctrine_Record::STATE_DIRTY, $person->state());
+            $this->assertEquals(\Doctrine_Record_State::DIRTY(), $person->state());
             $this->assertTrue($person->isModified());
             $this->assertEquals(['firstname' => 'Alice'], $person->getModified());
 
             $person = \Doctrine_Core::getTable('Ticket_990_Person')->find($person->id);
 
             $this->assertEquals('Alice', $person->firstname);
-            $this->assertEquals(\Doctrine_Record::STATE_DIRTY, $person->state());
+            $this->assertEquals(\Doctrine_Record_State::DIRTY(), $person->state());
             $this->assertTrue($person->isModified());
             $this->assertEquals(['firstname' => 'Alice'], $person->getModified());
 

@@ -177,8 +177,8 @@ class ConnectionTest extends DoctrineUnitTestCase
 
     public function testGetState()
     {
-        $this->assertEquals(static::$connection->transaction->getState(), \Doctrine_Transaction::STATE_SLEEP);
-        $this->assertEquals(\Doctrine_Lib::getConnectionStateAsString(static::$connection->transaction->getState()), 'open');
+        $this->assertEquals(static::$connection->transaction->getState(), \Doctrine_Transaction_State::SLEEP());
+        $this->assertEquals('open', (string) static::$connection->transaction->getState());
     }
 
     public function testGetTables()
@@ -190,9 +190,9 @@ class ConnectionTest extends DoctrineUnitTestCase
     {
         static::$connection->beginTransaction();
         $this->assertEquals(static::$connection->transaction->getTransactionLevel(), 1);
-        $this->assertEquals(static::$connection->transaction->getState(), \Doctrine_Transaction::STATE_ACTIVE);
+        $this->assertEquals(static::$connection->transaction->getState(), \Doctrine_Transaction_State::ACTIVE());
         static::$connection->rollback();
-        $this->assertEquals(static::$connection->transaction->getState(), \Doctrine_Transaction::STATE_SLEEP);
+        $this->assertEquals(static::$connection->transaction->getState(), \Doctrine_Transaction_State::SLEEP());
         $this->assertEquals(static::$connection->transaction->getTransactionLevel(), 0);
     }
 
@@ -201,15 +201,15 @@ class ConnectionTest extends DoctrineUnitTestCase
         $this->assertEquals(static::$connection->transaction->getTransactionLevel(), 0);
         static::$connection->beginTransaction();
         $this->assertEquals(static::$connection->transaction->getTransactionLevel(), 1);
-        $this->assertEquals(static::$connection->transaction->getState(), \Doctrine_Transaction::STATE_ACTIVE);
+        $this->assertEquals(static::$connection->transaction->getState(), \Doctrine_Transaction_State::ACTIVE());
         static::$connection->beginTransaction();
-        $this->assertEquals(static::$connection->transaction->getState(), \Doctrine_Transaction::STATE_BUSY);
+        $this->assertEquals(static::$connection->transaction->getState(), \Doctrine_Transaction_State::BUSY());
         $this->assertEquals(static::$connection->transaction->getTransactionLevel(), 2);
         static::$connection->commit();
-        $this->assertEquals(static::$connection->transaction->getState(), \Doctrine_Transaction::STATE_ACTIVE);
+        $this->assertEquals(static::$connection->transaction->getState(), \Doctrine_Transaction_State::ACTIVE());
         $this->assertEquals(static::$connection->transaction->getTransactionLevel(), 1);
         static::$connection->commit();
-        $this->assertEquals(static::$connection->transaction->getState(), \Doctrine_Transaction::STATE_SLEEP);
+        $this->assertEquals(static::$connection->transaction->getState(), \Doctrine_Transaction_State::SLEEP());
         $this->assertEquals(static::$connection->transaction->getTransactionLevel(), 0);
     }
 

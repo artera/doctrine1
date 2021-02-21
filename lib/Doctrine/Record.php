@@ -1,5 +1,7 @@
 <?php
 
+use Doctrine_Record_State as State;
+
 /**
  * @phpstan-template T of Doctrine_Table
  * @phpstan-extends Doctrine_Record_Abstract<T>
@@ -7,60 +9,6 @@
  */
 abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Countable, IteratorAggregate, Serializable
 {
-    /**
-     * STATE CONSTANTS
-     */
-
-    /**
-     * DIRTY STATE
-     * a Doctrine_Record is in dirty state when its properties are changed
-     */
-    const STATE_DIRTY = 1;
-
-    /**
-     * TDIRTY STATE
-     * a Doctrine_Record is in transient dirty state when it is created
-     * and some of its fields are modified but it is NOT yet persisted into database
-     */
-    const STATE_TDIRTY = 2;
-
-    /**
-     * CLEAN STATE
-     * a Doctrine_Record is in clean state when all of its properties are loaded from the database
-     * and none of its properties are changed
-     */
-    const STATE_CLEAN = 3;
-
-    /**
-     * PROXY STATE
-     * a Doctrine_Record is in proxy state when its properties are not fully loaded
-     */
-    const STATE_PROXY = 4;
-
-    /**
-     * NEW TCLEAN
-     * a Doctrine_Record is in transient clean state when it is created and none of its fields are modified
-     */
-    const STATE_TCLEAN = 5;
-
-    /**
-     * LOCKED STATE
-     * a Doctrine_Record is temporarily locked during deletes and saves
-     *
-     * This state is used internally to ensure that circular deletes
-     * and saves will not cause infinite loops
-     */
-    const STATE_LOCKED = 6;
-
-    /**
-     * TLOCKED STATE
-     * a Doctrine_Record is temporarily locked (and transient) during deletes and saves
-     *
-     * This state is used internally to ensure that circular deletes
-     * and saves will not cause infinite loops
-     */
-    const STATE_TLOCKED = 7;
-
     /**
      * the primary keys of this object
      */
@@ -85,7 +33,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
     /**
      * the state of this record
      */
-    protected int $_state;
+    protected State $state;
 
     /**
      * an array containing field names that were modified in the previous transaction
@@ -207,18 +155,18 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
 
         if (!$exists) {
             if ($count > count($this->_values)) {
-                $this->_state = Doctrine_Record::STATE_TDIRTY;
+                $this->state = State::TDIRTY();
             } else {
-                $this->_state = Doctrine_Record::STATE_TCLEAN;
+                $this->state = State::TCLEAN();
             }
 
             // set the default values for this record
             $this->assignDefaultValues();
         } else {
-            $this->_state = Doctrine_Record::STATE_CLEAN;
+            $this->state = State::CLEAN();
 
             if ($this->isInProxyState()) {
-                $this->_state = Doctrine_Record::STATE_PROXY;
+                $this->state = State::PROXY();
             }
         }
 
@@ -354,7 +302,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
             return true;
         }
 
-        if ($this->_state == self::STATE_LOCKED || $this->_state == self::STATE_TLOCKED) {
+        if ($this->state->isLocked()) {
             return true;
         }
 
@@ -374,7 +322,8 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
         $validator = new Doctrine_Validator();
         $validator->validateRecord($this);
         $this->validate();
-        if ($this->_state == self::STATE_TDIRTY || $this->_state == self::STATE_TCLEAN) {
+
+        if ($this->state->isTransient()) {
             $this->validateOnInsert();
         } else {
             $this->validateOnUpdate();
@@ -385,8 +334,8 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
 
         $valid = $this->getErrorStack()->count() == 0 ? true : false;
         if ($valid && $deep) {
-            $stateBeforeLock = $this->_state;
-            $this->_state    = $this->exists() ? self::STATE_LOCKED : self::STATE_TLOCKED;
+            $stateBeforeLock = $this->state;
+            $this->state = $this->state->lock();
 
             foreach ($this->_references as $reference) {
                 if ($reference instanceof Doctrine_Record) {
@@ -401,7 +350,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
                     }
                 }
             }
-            $this->_state = $stateBeforeLock;
+            $this->state = $stateBeforeLock;
         }
 
         return $valid;
@@ -745,7 +694,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
             if ($value instanceof Doctrine_Null || $overwrite) {
                 $this->_data[$column] = $default;
                 $this->_modified[]    = $column;
-                $this->_state         = Doctrine_Record::STATE_TDIRTY;
+                $this->state          = State::TDIRTY();
             }
         }
 
@@ -801,7 +750,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
         }
 
         if (!$this->isModified() && $this->isInProxyState()) {
-            $this->_state = self::STATE_PROXY;
+            $this->state = State::PROXY();
         }
     }
 
@@ -864,6 +813,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
         unset($vars['_errorStack']);
         unset($vars['_filter']);
         unset($vars['_node']);
+        $vars['state'] = (string) $vars['state'];
 
         $data = $this->_data;
         if ($this->exists()) {
@@ -924,7 +874,11 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
         $array = unserialize($serialized);
 
         foreach ($array as $k => $v) {
-            $this->$k = $v;
+            if ($k === 'state') {
+                $this->state = State::from((int) $v);
+            } else {
+                $this->$k = $v;
+            }
         }
 
         foreach ($this->_data as $k => $v) {
@@ -974,46 +928,17 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
     /**
      * assigns the state of this record or returns it if called without parameters
      *
-     * @param integer|string|null $state if set, this method tries to set the record state to $state
-     * @see   Doctrine_Record::STATE_* constants
-     *
-     * @throws Doctrine_Record_State_Exception      if trying to set an unknown state
+     * @param State|null $state if set, this method tries to set the record state to $state
      */
-    public function state($state = null): ?int
+    public function state(?State $state = null): State
     {
-        if ($state == null) {
-            return $this->_state;
-        }
-
-        $err = false;
-        if (is_integer($state)) {
-            if ($state >= 1 && $state <= 7) {
-                $this->_state = $state;
-            } else {
-                $err = true;
-            }
-        } elseif (is_string($state)) {
-            $upper = strtoupper($state);
-
-            $const = 'Doctrine_Record::STATE_' . $upper;
-            if (defined($const)) {
-                $this->_state = constant($const);
-            } else {
-                $err = true;
+        if ($state !== null) {
+            $this->state = $state;
+            if ($state->isClean()) {
+                $this->_resetModified();
             }
         }
-
-        if ($this->_state === Doctrine_Record::STATE_TCLEAN
-            || $this->_state === Doctrine_Record::STATE_CLEAN
-        ) {
-            $this->_resetModified();
-        }
-
-        if ($err) {
-            throw new Doctrine_Record_State_Exception('Unknown record state ' . $state);
-        }
-
-        return null;
+        return $this->state;
     }
 
     /**
@@ -1069,7 +994,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
 
         $this->prepareIdentifiers();
 
-        $this->_state = Doctrine_Record::STATE_CLEAN;
+        $this->state = State::CLEAN();
 
         return $this;
     }
@@ -1241,9 +1166,9 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
             }
 
             if ($this->isModified()) {
-                $this->_state = Doctrine_Record::STATE_DIRTY;
+                $this->state = State::DIRTY();
             } elseif (!$this->isInProxyState()) {
-                $this->_state = Doctrine_Record::STATE_CLEAN;
+                $this->state = State::CLEAN();
             }
 
             return true;
@@ -1575,13 +1500,13 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
                 $this->_modified[]            = $fieldName;
                 $this->_oldValues[$fieldName] = $old;
 
-                switch ($this->_state) {
-                    case Doctrine_Record::STATE_CLEAN:
-                    case Doctrine_Record::STATE_PROXY:
-                        $this->_state = Doctrine_Record::STATE_DIRTY;
+                switch ($this->state) {
+                    case State::CLEAN():
+                    case State::PROXY():
+                        $this->state = State::DIRTY();
                         break;
-                    case Doctrine_Record::STATE_TCLEAN:
-                        $this->_state = Doctrine_Record::STATE_TDIRTY;
+                    case State::TCLEAN():
+                        $this->state = State::TDIRTY();
                         break;
                 }
             }
@@ -2008,12 +1933,12 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
      */
     public function toArray($deep = true, $prefixKey = false)
     {
-        if ($this->_state == self::STATE_LOCKED || $this->_state == self::STATE_TLOCKED) {
+        if ($this->state->isLocked()) {
             return false;
         }
 
-        $stateBeforeLock = $this->_state;
-        $this->_state    = $this->exists() ? self::STATE_LOCKED : self::STATE_TLOCKED;
+        $stateBeforeLock = $this->state;
+        $this->state = $this->state->lock();
 
         $a = [];
 
@@ -2053,7 +1978,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
                 ? $value->toArray($deep, $prefixKey) : $value;
         }
 
-        $this->_state = $stateBeforeLock;
+        $this->state = $stateBeforeLock;
 
         return $a;
     }
@@ -2195,10 +2120,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
      */
     public function exists()
     {
-        return ($this->_state !== Doctrine_Record::STATE_TCLEAN  &&
-                $this->_state !== Doctrine_Record::STATE_TDIRTY  &&
-                $this->_state !== Doctrine_Record::STATE_TLOCKED &&
-                $this->_state !== null);
+        return !$this->state->isTransient();
     }
 
     /**
@@ -2209,15 +2131,14 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
      */
     public function isModified($deep = false)
     {
-        $modified = ($this->_state === Doctrine_Record::STATE_DIRTY ||
-                $this->_state === Doctrine_Record::STATE_TDIRTY);
+        $modified = $this->state->isDirty();
         if (!$modified && $deep) {
-            if ($this->_state == self::STATE_LOCKED || $this->_state == self::STATE_TLOCKED) {
+            if ($this->state->isLocked()) {
                 return false;
             }
 
-            $stateBeforeLock = $this->_state;
-            $this->_state    = $this->exists() ? self::STATE_LOCKED : self::STATE_TLOCKED;
+            $stateBeforeLock = $this->state;
+            $this->state = $this->state->lock();
 
             foreach ($this->_references as $reference) {
                 if ($reference instanceof Doctrine_Record) {
@@ -2232,7 +2153,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
                     }
                 }
             }
-            $this->_state = $stateBeforeLock;
+            $this->state = $stateBeforeLock;
         }
         return $modified;
     }
@@ -2329,11 +2250,11 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
         if ($id === false) {
             $this->_id    = [];
             $this->_data  = $this->cleanData($this->_data);
-            $this->_state = Doctrine_Record::STATE_TCLEAN;
+            $this->state = State::TCLEAN();
             $this->_resetModified();
         } elseif ($id === true) {
             $this->prepareIdentifiers(true);
-            $this->_state = Doctrine_Record::STATE_CLEAN;
+            $this->state = State::CLEAN();
             $this->_resetModified();
         } else {
             if (is_array($id)) {
@@ -2347,7 +2268,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
                 $this->_id[$name] = $id;
                 $this->_data[$name] = $id;
             }
-            $this->_state = Doctrine_Record::STATE_CLEAN;
+            $this->state = State::CLEAN();
             $this->_resetModified();
         }
     }
@@ -2773,8 +2694,8 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
      */
     public function free($deep = false)
     {
-        if ($this->_state != self::STATE_LOCKED && $this->_state != self::STATE_TLOCKED) {
-            $this->_state = $this->exists() ? self::STATE_LOCKED : self::STATE_TLOCKED;
+        if (!$this->state->isLocked()) {
+            $this->state = $this->state->lock();
 
             $repo = $this->_table->getRepository();
             if ($repo !== null) {

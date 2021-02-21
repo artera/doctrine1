@@ -74,7 +74,7 @@ namespace {
 
         public function postInsert($e)
         {
-            $this->Moo->state(\Doctrine_Record::STATE_DIRTY);
+            $this->Moo->state(\Doctrine_Record_State::DIRTY());
             //echo "State: ". $this->Moo->state() . " \t Amount: " . $this->Moo->amount . "\n";
             $this->Moo->amount = 0;
             //echo "State: ". $this->Moo->state() . " \t Amount: " . $this->Moo->amount . "\n";

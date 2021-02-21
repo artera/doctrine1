@@ -1886,9 +1886,9 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
                 $record = $this->_identityMap[$id];
                 if ($record->getTable()->getAttribute(Doctrine_Core::ATTR_HYDRATE_OVERWRITE)) {
                     $record->hydrate($this->_data);
-                    if ($record->state() == Doctrine_Record::STATE_PROXY) {
+                    if ($record->state()->equals(Doctrine_Record_State::PROXY())) {
                         if (!$record->isInProxyState()) {
-                            $record->state(Doctrine_Record::STATE_CLEAN);
+                            $record->state(Doctrine_Record_State::CLEAN());
                         }
                     }
                 } else {

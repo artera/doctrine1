@@ -162,9 +162,9 @@ class UnitOfWorkTest extends DoctrineUnitTestCase
     public function testTransactions()
     {
         static::$connection->beginTransaction();
-        $this->assertEquals(static::$connection->transaction->getState(), \Doctrine_Transaction::STATE_ACTIVE);
+        $this->assertEquals(static::$connection->transaction->getState(), \Doctrine_Transaction_State::ACTIVE());
         static::$connection->commit();
-        $this->assertEquals(static::$connection->transaction->getState(), \Doctrine_Transaction::STATE_SLEEP);
+        $this->assertEquals(static::$connection->transaction->getState(), \Doctrine_Transaction_State::SLEEP());
 
         static::$connection->beginTransaction();
 

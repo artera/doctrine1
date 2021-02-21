@@ -31,7 +31,7 @@ namespace Tests\Tickets {
             $u = $q->select('u.id')->from('T1277_User u')->where('u.id=1')->fetchOne();
 
             $this->assertEquals(1, $u->id);
-            $this->assertEquals(\Doctrine_Record::STATE_PROXY, $u->state());
+            $this->assertEquals(\Doctrine_Record_State::PROXY(), $u->state());
 
             // In some other part of code I will query this table again and start making modifications to found records:
             $q     = new \Doctrine_Query();
@@ -40,7 +40,7 @@ namespace Tests\Tickets {
             $this->assertEquals(2, count($users));
 
             foreach ($users as $u) {
-                $this->assertEquals(\Doctrine_Record::STATE_CLEAN, $u->state());
+                $this->assertEquals(\Doctrine_Record_State::CLEAN(), $u->state());
 
                 $u->username = 'new \username' . $u->id;
                 $u->email    = 'some' . $u->id . '@email';
@@ -65,7 +65,7 @@ namespace Tests\Tickets {
             $u = $q->select('u.id')->from('T1277_User u')->where('u.id=1')->fetchOne();
 
             $this->assertEquals(1, $u->id);
-            $this->assertEquals(\Doctrine_Record::STATE_PROXY, $u->state());
+            $this->assertEquals(\Doctrine_Record_State::PROXY(), $u->state());
 
             // In some other part of code I will query this table again and start making modifications to found records:
             $q     = new \Doctrine_Query();
@@ -74,7 +74,7 @@ namespace Tests\Tickets {
             $this->assertEquals(2, count($users));
 
             foreach ($users as $u) {
-                $this->assertEquals(\Doctrine_Record::STATE_PROXY, $u->state());
+                $this->assertEquals(\Doctrine_Record_State::PROXY(), $u->state());
 
                 $u->username = 'new \username' . $u->id; // modify
                 $u->email    = 'some' . $u->id . '@email'; // triggers load() to fill uninitialized props
@@ -82,7 +82,7 @@ namespace Tests\Tickets {
                 $this->assertEquals('new \username' . $u->id, $u->username);
                 $this->assertEquals('some' . $u->id . '@email', $u->email);
 
-                $this->assertEquals(\Doctrine_Record::STATE_DIRTY, $u->state());
+                $this->assertEquals(\Doctrine_Record_State::DIRTY(), $u->state());
             }
         }
 
@@ -100,7 +100,7 @@ namespace Tests\Tickets {
             $u = $q->select('u.id')->from('T1277_User u')->where('u.id=1')->fetchOne();
 
             $this->assertEquals(1, $u->id);
-            $this->assertEquals(\Doctrine_Record::STATE_PROXY, $u->state());
+            $this->assertEquals(\Doctrine_Record_State::PROXY(), $u->state());
 
             // In some other part of code I will query this table again and start making modifications to found records:
             $q     = new \Doctrine_Query();
@@ -109,7 +109,7 @@ namespace Tests\Tickets {
             $this->assertEquals(2, count($users));
 
             foreach ($users as $u) {
-                $this->assertEquals(\Doctrine_Record::STATE_PROXY, $u->state());
+                $this->assertEquals(\Doctrine_Record_State::PROXY(), $u->state());
 
                 if ($u->id == 1) {
                     $this->assertEquals('User1', $u->username);
@@ -119,7 +119,7 @@ namespace Tests\Tickets {
                     $this->assertEquals('some@email', $u->email);
                 }
 
-                $this->assertEquals(\Doctrine_Record::STATE_CLEAN, $u->state());
+                $this->assertEquals(\Doctrine_Record_State::CLEAN(), $u->state());
             }
         }
     }

@@ -116,7 +116,7 @@ class TableTest extends DoctrineUnitTestCase
     {
         $record = static::$connection->getTable('User')->create();
         $this->assertTrue($record instanceof \Doctrine_Record);
-        $this->assertTrue($record->state() == \Doctrine_Record::STATE_TCLEAN);
+        $this->assertTrue($record->state() == \Doctrine_Record_State::TCLEAN());
     }
 
     public function testFind()

@@ -22,11 +22,11 @@ class Doctrine_Connection_UnitOfWork extends Doctrine_Connection_Module
         $conn->connect();
 
         $state = $record->state();
-        if ($state === Doctrine_Record::STATE_LOCKED || $state === Doctrine_Record::STATE_TLOCKED) {
+        if ($state->isLocked()) {
             return false;
         }
 
-        $record->state($record->exists() ? Doctrine_Record::STATE_LOCKED : Doctrine_Record::STATE_TLOCKED);
+        $record->state($state->lock());
 
         try {
             $conn->beginInternalTransaction();
@@ -39,26 +39,18 @@ class Doctrine_Connection_UnitOfWork extends Doctrine_Connection_Module
 
             $this->saveRelatedLocalKeys($record);
 
-            switch ($state) {
-                case Doctrine_Record::STATE_TDIRTY:
-                case Doctrine_Record::STATE_TCLEAN:
-                    if ($replace) {
-                        $isValid = $this->replace($record);
-                    } else {
-                        $isValid = $this->insert($record);
-                    }
-                    break;
-                case Doctrine_Record::STATE_DIRTY:
-                case Doctrine_Record::STATE_PROXY:
-                    if ($replace) {
-                        $isValid = $this->replace($record);
-                    } else {
-                        $isValid = $this->update($record);
-                    }
-                    break;
-                case Doctrine_Record::STATE_CLEAN:
-                    // do nothing
-                    break;
+            if ($state->isTransient()) {
+                if ($replace) {
+                    $isValid = $this->replace($record);
+                } else {
+                    $isValid = $this->insert($record);
+                }
+            } elseif (!$state->isClean()) {
+                if ($replace) {
+                    $isValid = $this->replace($record);
+                } else {
+                    $isValid = $this->update($record);
+                }
             }
 
             $aliasesUnlinkInDb = [];
@@ -87,7 +79,7 @@ class Doctrine_Connection_UnitOfWork extends Doctrine_Connection_Module
 
             $state = $record->state();
 
-            $record->state($record->exists() ? Doctrine_Record::STATE_LOCKED : Doctrine_Record::STATE_TLOCKED);
+            $record->state($state->lock());
 
             if ($isValid) {
                 $saveLater = $this->saveRelatedForeignKeys($record);
@@ -228,7 +220,7 @@ class Doctrine_Connection_UnitOfWork extends Doctrine_Connection_Module
                     // currently just for bc!
                     $this->_deleteCTIParents($table, $record);
                     //--
-                    $record->state(Doctrine_Record::STATE_TCLEAN);
+                    $record->state(Doctrine_Record_State::TCLEAN());
                     $record->getTable()->removeRecord($record);
                     $this->_postDelete($record);
                 }
@@ -359,7 +351,7 @@ class Doctrine_Connection_UnitOfWork extends Doctrine_Connection_Module
     public function saveRelatedLocalKeys(Doctrine_Record $record): void
     {
         $state = $record->state();
-        $record->state($record->exists() ? Doctrine_Record::STATE_LOCKED : Doctrine_Record::STATE_TLOCKED);
+        $record->state($state->lock());
 
         foreach ($record->getReferences() as $k => $v) {
             $rel = $record->getTable()->getRelation($k);

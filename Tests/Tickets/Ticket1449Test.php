@@ -29,9 +29,9 @@ namespace Tests\Tickets {
             ->leftJoin('d.Attachments a')
             ->limit(1)
             ->fetchOne();
-            $this->assertEquals($document->state(), 4);
+            $this->assertEquals($document->state()->getValue(), 4);
             foreach ($document->Attachments as $attachment) {
-                $this->assertEquals($attachment->state(), 4);
+                $this->assertEquals($attachment->state()->getValue(), 4);
             }
         }
     }

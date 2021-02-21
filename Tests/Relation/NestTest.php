@@ -19,8 +19,8 @@ class NestTest extends DoctrineUnitTestCase
         $this->assertTrue($e->Entity[0] instanceof \Entity);
         $this->assertTrue($e->Entity[1] instanceof \Entity);
 
-        $this->assertEquals($e->Entity[0]->state(), \Doctrine_Record::STATE_TCLEAN);
-        $this->assertEquals($e->Entity[1]->state(), \Doctrine_Record::STATE_TCLEAN);
+        $this->assertEquals($e->Entity[0]->state(), \Doctrine_Record_State::TCLEAN());
+        $this->assertEquals($e->Entity[1]->state(), \Doctrine_Record_State::TCLEAN());
 
         $e->Entity[0]->name = 'Friend 1';
         $e->Entity[1]->name = 'Friend 2';
@@ -40,8 +40,8 @@ class NestTest extends DoctrineUnitTestCase
         $this->assertEquals($e->Entity[1]->Entity[0]->name, 'Friend 2 1');
         $this->assertEquals($e->Entity[1]->Entity[1]->name, 'Friend 2 2');
 
-        $this->assertEquals($e->Entity[0]->state(), \Doctrine_Record::STATE_TDIRTY);
-        $this->assertEquals($e->Entity[1]->state(), \Doctrine_Record::STATE_TDIRTY);
+        $this->assertEquals($e->Entity[0]->state(), \Doctrine_Record_State::TDIRTY());
+        $this->assertEquals($e->Entity[1]->state(), \Doctrine_Record_State::TDIRTY());
 
         $count = count(static::$conn);
 
@@ -55,7 +55,7 @@ class NestTest extends DoctrineUnitTestCase
         static::$connection->clear();
 
         $e = static::$conn->queryOne('FROM Entity e LEFT JOIN e.Entity e2 LEFT JOIN e2.Entity e3 WHERE (e.id = 1) ORDER BY e.name, e2.name, e3.name');
-        $this->assertEquals($e->state(), \Doctrine_Record::STATE_CLEAN);
+        $this->assertEquals($e->state(), \Doctrine_Record_State::CLEAN());
 
         $this->assertTrue($e->Entity[0] instanceof \Entity);
         $this->assertTrue($e->Entity[1] instanceof \Entity);
@@ -71,8 +71,8 @@ class NestTest extends DoctrineUnitTestCase
         $this->assertEquals($e->Entity[1]->Entity[1]->name, 'Friend 2 1');
         $this->assertEquals($e->Entity[1]->Entity[2]->name, 'Friend 2 2');
 
-        $this->assertEquals($e->Entity[0]->state(), \Doctrine_Record::STATE_CLEAN);
-        $this->assertEquals($e->Entity[1]->state(), \Doctrine_Record::STATE_CLEAN);
+        $this->assertEquals($e->Entity[0]->state(), \Doctrine_Record_State::CLEAN());
+        $this->assertEquals($e->Entity[1]->state(), \Doctrine_Record_State::CLEAN());
 
         $this->assertTrue(is_numeric($e->id));
 
@@ -113,12 +113,12 @@ class NestTest extends DoctrineUnitTestCase
 
         $this->assertEquals(count(static::$conn), ($count + 3));
 
-        $this->assertEquals($e->Entity[0]->state(), \Doctrine_Record::STATE_CLEAN);
-        $this->assertEquals($e->Entity[1]->state(), \Doctrine_Record::STATE_CLEAN);
+        $this->assertEquals($e->Entity[0]->state(), \Doctrine_Record_State::CLEAN());
+        $this->assertEquals($e->Entity[1]->state(), \Doctrine_Record_State::CLEAN());
 
         $coll = static::$connection->query("FROM Entity WHERE Entity.name = 'Friend 1'");
         $this->assertEquals($coll->count(), 1);
-        $this->assertEquals($coll[0]->state(), \Doctrine_Record::STATE_CLEAN);
+        $this->assertEquals($coll[0]->state(), \Doctrine_Record_State::CLEAN());
 
         $this->assertEquals($coll[0]->name, 'Friend 1');
 

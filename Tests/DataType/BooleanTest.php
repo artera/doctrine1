@@ -16,7 +16,7 @@ class BooleanTest extends DoctrineUnitTestCase
         $test->is_working = false;
 
         $this->assertSame($test->is_working, false);
-        $this->assertEquals($test->state(), \Doctrine_Record::STATE_TDIRTY);
+        $this->assertEquals($test->state(), \Doctrine_Record_State::TDIRTY());
         $test->save();
 
         $test->refresh();
@@ -77,7 +77,7 @@ class BooleanTest extends DoctrineUnitTestCase
         $test->is_working = null;
 
         $this->assertSame($test->is_working, null);
-        $this->assertEquals($test->state(), \Doctrine_Record::STATE_TDIRTY);
+        $this->assertEquals($test->state(), \Doctrine_Record_State::TDIRTY());
         $test->save();
 
         $test->refresh();
@@ -87,7 +87,7 @@ class BooleanTest extends DoctrineUnitTestCase
         $test->is_working_notnull = null;
 
         $this->assertSame($test->is_working_notnull, false);
-        $this->assertEquals($test->state(), \Doctrine_Record::STATE_TDIRTY);
+        $this->assertEquals($test->state(), \Doctrine_Record_State::TDIRTY());
         $test->save();
 
         $test->refresh();

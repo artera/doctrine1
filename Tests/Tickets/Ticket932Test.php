@@ -27,7 +27,7 @@ namespace Tests\Tickets {
             $newUser->id           = 1;
             $newUser->display_name = 'Mah Name';
             $newUser->save();
-            $this->assertEquals(\Doctrine_Record::STATE_CLEAN, $newUser->state());
+            $this->assertEquals(\Doctrine_Record_State::CLEAN(), $newUser->state());
             $this->assertEquals(1, $newUser->id);
         }
     }

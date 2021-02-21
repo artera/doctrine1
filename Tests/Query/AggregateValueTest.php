@@ -55,7 +55,7 @@ class AggregateValueTest extends DoctrineUnitTestCase
 
         $this->assertEquals(count($users), 1);
 
-        $this->assertEquals($users[0]->state(), \Doctrine_Record::STATE_TCLEAN);
+        $this->assertEquals($users[0]->state(), \Doctrine_Record_State::TCLEAN());
     }
 
     public function testAggregateValueIsMappedToRecord()
@@ -68,8 +68,8 @@ class AggregateValueTest extends DoctrineUnitTestCase
 
         $this->assertEquals($users->count(), 2);
 
-        $this->assertEquals($users[0]->state(), \Doctrine_Record::STATE_PROXY);
-        $this->assertEquals($users[1]->state(), \Doctrine_Record::STATE_PROXY);
+        $this->assertEquals($users[0]->state(), \Doctrine_Record_State::PROXY());
+        $this->assertEquals($users[1]->state(), \Doctrine_Record_State::PROXY());
 
         $this->assertEquals($users[0]->count, 2);
         $this->assertEquals($users[1]->count, 2);
@@ -85,8 +85,8 @@ class AggregateValueTest extends DoctrineUnitTestCase
 
         $this->assertEquals($users->count(), 2);
 
-        $this->assertEquals($users[0]->state(), \Doctrine_Record::STATE_PROXY);
-        $this->assertEquals($users[1]->state(), \Doctrine_Record::STATE_PROXY);
+        $this->assertEquals($users[0]->state(), \Doctrine_Record_State::PROXY());
+        $this->assertEquals($users[1]->state(), \Doctrine_Record_State::PROXY());
 
         $this->assertEquals($users[0]->count, 2);
         $this->assertEquals($users[1]->count, 2);

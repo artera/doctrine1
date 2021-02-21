@@ -75,7 +75,7 @@ class TransactionTest extends DoctrineUnitTestCase
 
     public function testGetStateReturnsStateConstant()
     {
-        $this->assertEquals(static::$transaction->getState(), \Doctrine_Transaction::STATE_SLEEP);
+        $this->assertEquals(static::$transaction->getState(), \Doctrine_Transaction_State::SLEEP());
     }
 
     public function testCommittingWithNoActiveTransactionThrowsException()

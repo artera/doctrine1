@@ -227,7 +227,7 @@ class Doctrine_Data_Import extends Doctrine_Data
                 $rowKey                          = $rowKeyPrefix . $rowKey;
                 $buildRows[$rowKey]              = $row;
                 $this->_importedObjects[$rowKey] = new $className();
-                $this->_importedObjects[$rowKey]->state('TDIRTY');
+                $this->_importedObjects[$rowKey]->state(Doctrine_Record_State::TDIRTY());
             }
         }
 
