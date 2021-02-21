@@ -30,7 +30,8 @@
     "require": {
         "php": ">=7.0",
         "ext-pdo": "*",
-        "myclabs/php-enum": "^1.8"
+        "myclabs/php-enum": "^1.8",
+        "laminas/laminas-code": "^4.0"
     },
     "require-dev": {
         "phpstan/phpstan": "^0.12.54",

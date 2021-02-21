@@ -326,15 +326,13 @@ class Doctrine_Import extends Doctrine_Connection_Module
     }
 
     /**
-     * importSchema
-     *
      * method for importing existing schema to Doctrine_Record classes
      *
      * @param  string $directory
      * @param  array  $connections Array of connection names to generate models for
      * @return array                the names of the imported classes
      */
-    public function importSchema($directory, array $connections = [], array $options = [])
+    public function importSchema(string $directory, array $connections = [], array $options = []): array
     {
         $classes = [];
 

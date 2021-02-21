@@ -209,19 +209,16 @@ class Doctrine_Import_Schema
     }
 
     /**
-     * buildSchema
-     *
      * Loop throug directories of schema files and parse them all in to one complete array of schema information
      *
-     * @param  string|array $schema Array of schema files or single schema file. Array of directories with schema files or single directory
-     * @param  string       $format Format of the files we are parsing and building from
-     * @return array    $array
+     * @param array $schema Array of schema files or single schema file. Array of directories with schema files or single directory
+     * @param string $format Format of the files we are parsing and building from
      */
-    public function buildSchema($schema, $format)
+    public function buildSchema(array $schema, string $format): array
     {
         $array = [];
 
-        foreach ((array) $schema as $s) {
+        foreach ($schema as $s) {
             if (is_file($s)) {
                 $e = explode('.', $s);
                 if (end($e) === $format) {
@@ -251,33 +248,28 @@ class Doctrine_Import_Schema
     }
 
     /**
-     * importSchema
-     *
      * A method to import a Schema and translate it into a Doctrine_Record object
      *
-     * @param string $schema    The file containing the XML schema
+     * @param array $schemaPath    The file containing the XML schema
      * @param string $format    Format of the schema file
      * @param string $directory The directory where the Doctrine_Record class will be written
-     * @param array  $models    Optional array of models to import
+     * @param array $models    Optional array of models to import
      *
      * @return void
      */
-    public function importSchema($schema, $format = 'yml', $directory = null, $models = [])
+    public function importSchema(array $schemaPath, string $format = 'yml', ?string $directory = null, array $models = []): void
     {
-        $schema  = (array) $schema;
         $builder = new Doctrine_Import_Builder();
         $builder->setTargetPath($directory);
         $builder->setOptions($this->getOptions());
 
-        $array = $this->buildSchema($schema, $format);
+        $schema = $this->buildSchema($schemaPath, $format);
 
-        if (count($array) == 0) {
-            throw new Doctrine_Import_Exception(
-                sprintf('No ' . $format . ' schema found in ' . implode(', ', $schema))
-            );
+        if (count($schema) == 0) {
+            throw new Doctrine_Import_Exception("No $format schema found in " . implode(', ', $schemaPath));
         }
 
-        foreach ($array as $name => $definition) {
+        foreach ($schema as $name => $definition) {
             if (!empty($models) && !in_array($definition['className'], $models)) {
                 continue;
             }

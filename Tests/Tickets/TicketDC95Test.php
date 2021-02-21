@@ -24,15 +24,13 @@ class TicketDC95Test extends DoctrineUnitTestCase
         $import = new \Doctrine_Import_Schema();
         $import->setOptions(
             [
-            'pearStyle'            => true,
-            'baseClassesDirectory' => null,
+            'baseClassesDirectory' => '',
             'baseClassPrefix'      => 'Base_',
             'classPrefix'          => 'DC95_',
-            'classPrefixFiles'     => true
             ]
         );
         $modelsPath = __DIR__ . '/DC95/models';
-        $import->importSchema(__DIR__ . '/DC95/schema.yml', 'yml', $modelsPath);
+        $import->importSchema([__DIR__ . '/DC95/schema.yml'], 'yml', $modelsPath);
 
         \Doctrine_Core::setModelsDirectory(null);
         \Doctrine_Lib::removeDirectories(__DIR__ . '/DC95/models');

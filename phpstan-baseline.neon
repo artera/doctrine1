@@ -131,21 +131,6 @@ parameters:
 			path: lib/Doctrine/Migration/Builder.php
 
 		-
-			message: "#^Binary operation \"\\.\" between array\\|string and string results in an error\\.$#"
-			count: 1
-			path: lib/Doctrine/Migration/Diff.php
-
-		-
-			message: "#^Cannot access offset 0 on array\\<int, string\\>\\|false\\.$#"
-			count: 1
-			path: lib/Doctrine/Migration/Diff.php
-
-		-
-			message: "#^Offset 'extension' does not exist on array\\('dirname' \\=\\> string, 'basename' \\=\\> string, 'filename' \\=\\> string, \\?'extension' \\=\\> string\\)\\.$#"
-			count: 1
-			path: lib/Doctrine/Migration/Diff.php
-
-		-
 			message: "#^Method Doctrine_Parser\\:\\:doLoad\\(\\) should return string but returns string\\|false\\.$#"
 			count: 1
 			path: lib/Doctrine/Parser.php

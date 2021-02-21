@@ -1,6 +1,9 @@
 <?php
 use MyCLabs\Enum\Enum;
 
+/**
+ * @extends Enum<int>
+ */
 class Doctrine_Record_State extends Enum
 {
     private const DIRTY = 1;
@@ -34,5 +37,11 @@ class Doctrine_Record_State extends Enum
     public function lock(): self
     {
         return $this->isTransient() ? self::TLOCKED() : self::LOCKED();
+    }
+
+    public static function from($value): Doctrine_Record_State
+    {
+        /** @var Doctrine_Record_State */
+        return parent::from($value);
     }
 }

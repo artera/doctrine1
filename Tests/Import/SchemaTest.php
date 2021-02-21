@@ -13,7 +13,7 @@ class SchemaTest extends DoctrineUnitTestCase
         $path = __DIR__ . '/import_builder_test';
 
         $import = new \Doctrine_Import_Schema();
-        $import->importSchema(dirname(__DIR__) . '/schema.yml', 'yml', $path);
+        $import->importSchema([dirname(__DIR__) . '/schema.yml'], 'yml', $path);
 
         $this->assertTrue(file_exists($path . '/SchemaTestUser.php'));
         $this->assertTrue(file_exists($path . '/SchemaTestProfile.php'));
@@ -26,7 +26,7 @@ class SchemaTest extends DoctrineUnitTestCase
     public function testBuildSchema()
     {
         $schema = new \Doctrine_Import_Schema();
-        $array  = $schema->buildSchema(dirname(__DIR__) . '/schema.yml', 'yml');
+        $array  = $schema->buildSchema([dirname(__DIR__) . '/schema.yml'], 'yml');
 
         $model = $array['SchemaTestUser'];
 
@@ -47,7 +47,7 @@ class SchemaTest extends DoctrineUnitTestCase
     public function testSchemaRelationshipCompletion()
     {
         $this->buildSchema = new \Doctrine_Import_Schema();
-        $this->schema      = $this->buildSchema->buildSchema(dirname(__DIR__) . '/schema.yml', 'yml');
+        $this->schema      = $this->buildSchema->buildSchema([dirname(__DIR__) . '/schema.yml'], 'yml');
 
         foreach ($this->schema as $name => $properties) {
             foreach ($properties['relations'] as $alias => $relation) {

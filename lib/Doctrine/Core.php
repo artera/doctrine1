@@ -784,14 +784,13 @@ class Doctrine_Core
      * @param  string $yamlPath  Path to your yaml schema files
      * @param  string $directory Directory to generate your models in
      * @param  array  $options   Array of options to pass to the schema importer
-     * @return void
      */
-    public static function generateModelsFromYaml($yamlPath, $directory, $options = [])
+    public static function generateModelsFromYaml(string $yamlPath, string $directory, array $options = []): void
     {
         $import = new Doctrine_Import_Schema();
         $import->setOptions($options);
 
-        $import->importSchema($yamlPath, 'yml', $directory);
+        $import->importSchema([$yamlPath], 'yml', $directory);
     }
 
     /**
@@ -953,22 +952,6 @@ class Doctrine_Core
         $builder = new Doctrine_Migration_Builder($migrationsPath);
 
         return $builder->generateMigrationsFromModels($modelsPath, $modelLoading);
-    }
-
-    /**
-     * Generate a set of migration classes by generating differences between two sets
-     * of schema information
-     *
-     * @param  string       $migrationsPath Path to your Doctrine migration classes
-     * @param  string|array $from           From schema information
-     * @param  string       $to             To schema information
-     * @return array changes
-     */
-    public static function generateMigrationsFromDiff(string $migrationsPath, string|array $from, string $to): array
-    {
-        $diff = new Doctrine_Migration_Diff($from, $to, $migrationsPath);
-
-        return $diff->generateMigrationClasses();
     }
 
     /**

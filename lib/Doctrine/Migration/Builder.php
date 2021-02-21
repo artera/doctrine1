@@ -1,37 +1,8 @@
 <?php
-/*
- *  $Id: Builder.php 2939 2007-10-19 14:23:42Z Jonathan.Wage $
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- * This software consists of voluntary contributions made by many individuals
- * and is licensed under the LGPL. For more information, see
- * <http://www.doctrine-project.org>.
- */
 
-/**
- * Doctrine_Migration_Builder
- *
- * @package    Doctrine
- * @subpackage Migration
- * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @author     Jonathan H. Wage <jwage@mac.com>
- * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link       www.doctrine-project.org
- * @since      1.0
- * @version    $Revision: 2939 $
- */
-class Doctrine_Migration_Builder extends Doctrine_Builder
+use Laminas\Code\Generator\ValueGenerator;
+
+class Doctrine_Migration_Builder
 {
     /**
      * The path to your migration classes directory
@@ -135,132 +106,6 @@ class %s extends %s
     }
 }
 END;
-    }
-
-    /**
-     * Generate migrations from a Doctrine_Migration_Diff instance
-     *
-     * @param  Doctrine_Migration_Diff $diff Instance to generate changes from
-     * @return array $changes  Array of changes produced from the diff
-     */
-    public function generateMigrationsFromDiff(Doctrine_Migration_Diff $diff)
-    {
-        $changes = $diff->generateChanges();
-
-        $up   = [];
-        $down = [];
-
-        if (!empty($changes['dropped_tables'])) {
-            foreach ($changes['dropped_tables'] as $tableName => $table) {
-                $up[]   = $this->buildDropTable($table);
-                $down[] = $this->buildCreateTable($table);
-            }
-        }
-
-        if (!empty($changes['created_tables'])) {
-            foreach ($changes['created_tables'] as $tableName => $table) {
-                $up[]   = $this->buildCreateTable($table);
-                $down[] = $this->buildDropTable($table);
-            }
-        }
-
-        if (!empty($changes['dropped_columns'])) {
-            foreach ($changes['dropped_columns'] as $tableName => $removedColumns) {
-                foreach ($removedColumns as $name => $column) {
-                    $up[]   = $this->buildRemoveColumn($tableName, $name, $column);
-                    $down[] = $this->buildAddColumn($tableName, $name, $column);
-                }
-            }
-        }
-
-        if (!empty($changes['created_columns'])) {
-            foreach ($changes['created_columns'] as $tableName => $addedColumns) {
-                foreach ($addedColumns as $name => $column) {
-                    $up[]   = $this->buildAddColumn($tableName, $name, $column);
-                    $down[] = $this->buildRemoveColumn($tableName, $name, $column);
-                }
-            }
-        }
-
-        if (!empty($changes['changed_columns'])) {
-            foreach ($changes['changed_columns'] as $tableName => $changedColumns) {
-                foreach ($changedColumns as $name => $column) {
-                    $up[] = $this->buildChangeColumn($tableName, $name, $column);
-                }
-            }
-        }
-
-        if (!empty($up) || !empty($down)) {
-            $up        = implode("\n", $up);
-            $down      = implode("\n", $down);
-            $className = 'Version' . $this->migration->getNextMigrationClassVersion();
-            $this->generateMigrationClass($className, [], $up, $down);
-        }
-
-        $up   = [];
-        $down = [];
-        if (!empty($changes['dropped_foreign_keys'])) {
-            foreach ($changes['dropped_foreign_keys'] as $tableName => $droppedFks) {
-                if (!empty($changes['dropped_tables']) && isset($changes['dropped_tables'][$tableName])) {
-                    continue;
-                }
-
-                foreach ($droppedFks as $name => $foreignKey) {
-                    $up[]   = $this->buildDropForeignKey($tableName, $foreignKey);
-                    $down[] = $this->buildCreateForeignKey($tableName, $foreignKey);
-                }
-            }
-        }
-
-        if (!empty($changes['dropped_indexes'])) {
-            foreach ($changes['dropped_indexes'] as $tableName => $removedIndexes) {
-                if (!empty($changes['dropped_tables']) && isset($changes['dropped_tables'][$tableName])) {
-                    continue;
-                }
-
-                foreach ($removedIndexes as $name => $index) {
-                    $up[]   = $this->buildRemoveIndex($tableName, $name, $index);
-                    $down[] = $this->buildAddIndex($tableName, $name, $index);
-                }
-            }
-        }
-
-        if (!empty($changes['created_foreign_keys'])) {
-            foreach ($changes['created_foreign_keys'] as $tableName => $createdFks) {
-                if (!empty($changes['dropped_tables']) && isset($changes['dropped_tables'][$tableName])) {
-                    continue;
-                }
-
-                foreach ($createdFks as $name => $foreignKey) {
-                    $up[]   = $this->buildCreateForeignKey($tableName, $foreignKey);
-                    $down[] = $this->buildDropForeignKey($tableName, $foreignKey);
-                }
-            }
-        }
-
-        if (!empty($changes['created_indexes'])) {
-            foreach ($changes['created_indexes'] as $tableName => $addedIndexes) {
-                if (!empty($changes['dropped_tables']) && isset($changes['dropped_tables'][$tableName])) {
-                    continue;
-                }
-
-                foreach ($addedIndexes as $name => $index) {
-                    if (isset($changes['created_tables'][$tableName]['options']['indexes'][$name])) {
-                        continue;
-                    }
-                    $up[]   = $this->buildAddIndex($tableName, $name, $index);
-                    $down[] = $this->buildRemoveIndex($tableName, $name, $index);
-                }
-            }
-        }
-
-        if (!empty($up) || !empty($down)) {
-            $up        = implode("\n", $up);
-            $down      = implode("\n", $down);
-            $className = 'Version' . $this->migration->getNextMigrationClassVersion();
-            $this->generateMigrationClass($className, [], $up, $down);
-        }
-        return $changes;
     }
 
     /**
@@ -537,5 +382,10 @@ END;
             $up,
             $down
         );
+    }
+
+    private function varExport(mixed $var): string
+    {
+        return (string) (new ValueGenerator($var));
     }
 }

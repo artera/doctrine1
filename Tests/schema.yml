@@ -56,7 +56,6 @@ SchemaTestPhonenumber:
       foreignAlias: Phonenumbers
 
 SchemaTestInheritanceParent:
-  package: Parent
   columns:
     id:
       type: integer(4)
@@ -68,14 +67,12 @@ SchemaTestInheritanceParent:
       type: string(255)
 
 SchemaTestInheritanceChild1:
-  package: Child1
   inheritance:
     extends: SchemaTestInheritanceParent
     keyField: type
     keyValue: child1
 
 SchemaTestInheritanceChild2:
-  package: Child2
   inheritance:
     extends: SchemaTestInheritanceChild1
     keyField: type
