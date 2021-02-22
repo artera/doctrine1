@@ -1,6 +1,6 @@
 <?php
 
-/** @extends Doctrine_Hydrator_Graph<array> */
+/** @phpstan-extends Doctrine_Hydrator_Graph<array, array> */
 class Doctrine_Hydrator_ArrayDriver extends Doctrine_Hydrator_Graph
 {
     public function getElementCollection(string $component): array
@@ -8,10 +8,6 @@ class Doctrine_Hydrator_ArrayDriver extends Doctrine_Hydrator_Graph
         return [];
     }
 
-    /**
-     * @phpstan-param class-string<Doctrine_Record> $component
-     * @return array
-     */
     public function getElement(array $data, string $component)
     {
         return $data;
@@ -22,12 +18,9 @@ class Doctrine_Hydrator_ArrayDriver extends Doctrine_Hydrator_Graph
     }
 
     /**
-     * @param  Doctrine_Record $record
-     * @param  string          $name
-     * @param  string          $keyColumn
      * @return true
      */
-    public function initRelated(&$record, $name, $keyColumn = null)
+    public function initRelated(&$record, string $name, ?string $keyColumn = null): bool
     {
         if (!isset($record[$name])) {
             $record[$name] = [];

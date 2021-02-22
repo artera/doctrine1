@@ -1,7 +1,8 @@
 <?php
 
 /**
- * @template C
+ * @phpstan-template Collection
+ * @phpstan-template Item
  */
 abstract class Doctrine_Hydrator_Graph extends Doctrine_Hydrator_Abstract
 {
@@ -25,7 +26,7 @@ abstract class Doctrine_Hydrator_Graph extends Doctrine_Hydrator_Abstract
         return isset($this->_queryComponents[$alias]['map']) ? $this->_queryComponents[$alias]['map'] : null;
     }
 
-    /** @return C */
+    /** @return Collection */
     public function hydrateResultSet(Doctrine_Connection_Statement $stmt): iterable
     {
         // Used variables during hydration
@@ -338,31 +339,26 @@ abstract class Doctrine_Hydrator_Graph extends Doctrine_Hydrator_Abstract
         return $rowData;
     }
 
-    /** @return C */
+    /** @return Collection */
     abstract public function getElementCollection(string $component);
 
     abstract public function registerCollection(Doctrine_Collection $coll): void;
 
-    /**
-     * @param  Doctrine_Record $record
-     * @param  string          $name
-     * @param  string          $keyColumn
-     * @return bool
-     */
-    abstract public function initRelated(&$record, $name, $keyColumn = null);
+    /** @param Item $record */
+    abstract public function initRelated(&$record, string $name, ?string $keyColumn = null): bool;
 
     abstract public function getNullPointer(): ?Doctrine_Null;
 
     /**
      * @phpstan-param class-string<Doctrine_Record> $component
-     * @return Doctrine_Record|array
+     * @return Item
      */
     abstract public function getElement(array $data, string $component);
 
-    /** @param  C $coll */
+    /** @param Collection $coll */
     abstract public function getLastKey(&$coll): mixed;
 
-    /** @param null|Doctrine_Null|C $coll */
+    /** @param null|Doctrine_Null|Collection $coll */
     abstract public function setLastElement(array &$prev, &$coll, int|bool $index, string $dqlAlias, bool $oneToOne): void;
 
     public function flush(): void

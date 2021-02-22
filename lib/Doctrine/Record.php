@@ -229,19 +229,9 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
     }
 
     /**
-     * @see $_oid;
-     *
      * @return integer  the object identifier
      */
-    public function getOid()
-    {
-        return $this->_oid;
-    }
-
-    /**
-     * @return int
-     */
-    public function oid()
+    public function getOid(): int
     {
         return $this->_oid;
     }

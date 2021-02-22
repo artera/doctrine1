@@ -1,48 +1,44 @@
 <?php
 
-/** @extends Doctrine_Hydrator_Graph<Doctrine_Collection> */
+/** @extends Doctrine_Hydrator_Graph<Doctrine_Collection<Doctrine_Record>, Doctrine_Record> */
 class Doctrine_Hydrator_RecordDriver extends Doctrine_Hydrator_Graph
 {
     /**
-     * @var array|null
+     * @phpstan-var Doctrine_Collection[]
      */
-    protected $_collections = [];
+    protected array $collections = [];
 
     /**
-     * @var array|null
+     * @phpstan-var array<string, bool>[]
      */
-    private $_initializedRelations = [];
+    private array $initializedRelations = [];
 
     /** @phpstan-param class-string<Doctrine_Record> $component */
-    public function getElementCollection(string $component): Doctrine_Collection
+    public function getElementCollection(string $component)
     {
         $coll = Doctrine_Collection::create($component);
-        $this->_collections[] = $coll;
-
+        $this->collections[] = $coll;
         return $coll;
     }
 
     /**
-     * @param  Doctrine_Record $record
-     * @param  string          $name
-     * @param  string          $keyColumn
      * @return true
      */
-    public function initRelated(&$record, $name, $keyColumn = null)
+    public function initRelated(&$record, string $name, ?string $keyColumn = null): bool
     {
-        if (!isset($this->_initializedRelations[$record->getOid()][$name])) {
+        if (!isset($this->initializedRelations[$record->getOid()][$name])) {
             $relation = $record->getTable()->getRelation($name);
             $coll = Doctrine_Collection::create($relation->getTable()->getComponentName(), $keyColumn);
             $coll->setReference($record, $relation);
             $record[$name]                                         = $coll;
-            $this->_initializedRelations[$record->getOid()][$name] = true;
+            $this->initializedRelations[$record->getOid()][$name] = true;
         }
         return true;
     }
 
     public function registerCollection(Doctrine_Collection $coll): void
     {
-        $this->_collections[] = $coll;
+        $this->collections[] = $coll;
     }
 
     public function getNullPointer(): ?Doctrine_Null
@@ -50,10 +46,6 @@ class Doctrine_Hydrator_RecordDriver extends Doctrine_Hydrator_Graph
         return Doctrine_Null::instance();
     }
 
-    /**
-     * @phpstan-param class-string<Doctrine_Record> $component
-     * @return Doctrine_Record
-     */
     public function getElement(array $data, string $component)
     {
         $component = $this->_getClassnameToReturn($data, $component);
@@ -64,10 +56,6 @@ class Doctrine_Hydrator_RecordDriver extends Doctrine_Hydrator_Graph
         return $record;
     }
 
-    /**
-     * @param  Doctrine_Collection $coll
-     * @return mixed
-     */
     public function getLastKey(&$coll): mixed
     {
         $coll->end();
@@ -96,11 +84,11 @@ class Doctrine_Hydrator_RecordDriver extends Doctrine_Hydrator_Graph
     public function flush(): void
     {
         // take snapshots from all initialized collections
-        foreach ($this->_collections as $key => $coll) {
+        foreach ($this->collections as $coll) {
             $coll->takeSnapshot();
         }
-        $this->_initializedRelations = null;
-        $this->_collections          = null;
+        $this->initializedRelations = [];
+        $this->collections = [];
         $this->_tables = [];
     }
 }

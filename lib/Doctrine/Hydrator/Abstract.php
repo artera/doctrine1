@@ -73,15 +73,6 @@ abstract class Doctrine_Hydrator_Abstract
     }
 
     /**
-     * @return Doctrine_Table
-     */
-    public function getRootComponent()
-    {
-        $queryComponents = array_values($this->_queryComponents);
-        return $queryComponents[0]['table'];
-    }
-
-    /**
      * @return void
      */
     public function onDemandReset()

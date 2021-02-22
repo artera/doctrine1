@@ -66,16 +66,6 @@ parameters:
 			path: lib/Doctrine/Hydrator/Graph.php
 
 		-
-			message: "#^Offset int does not exist on array\\|null\\.$#"
-			count: 1
-			path: lib/Doctrine/Hydrator/RecordDriver.php
-
-		-
-			message: "#^Argument of an invalid type array\\|null supplied for foreach, only iterables are supported\\.$#"
-			count: 1
-			path: lib/Doctrine/Hydrator/RecordDriver.php
-
-		-
 			message: "#^Parameter \\#1 \\$objectOrClass of class ReflectionClass constructor expects class\\-string\\<T of object\\>\\|T of object, string given\\.$#"
 			count: 1
 			path: lib/Doctrine/Import/Builder.php
