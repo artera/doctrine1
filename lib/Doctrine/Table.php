@@ -621,7 +621,24 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
     /**
      * Retrieves all options of this table and the associated values.
      *
-     * @return array<string,mixed>    all options and their values
+     * @return array{
+     *   name: string,
+     *   tableName: string,
+     *   sequenceName: ?string,
+     *   inheritanceMap: array,
+     *   enumMap: array,
+     *   type: ?string,
+     *   charset: ?string,
+     *   collate: ?string,
+     *   treeImpl: mixed,
+     *   treeOptions: array,
+     *   indexes: array,
+     *   parents: array,
+     *   queryParts: array,
+     *   subclasses: array,
+     *   orderBy: mixed,
+     *   checks: array,
+     * }
      */
     public function getOptions()
     {
@@ -1361,7 +1378,7 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
     }
 
     /**
-     * @phpstan-return Doctrine_Collection<T>|array<string,mixed>[]|T|array<string,mixed>|false
+     * @phpstan-return T|Doctrine_Collection<T>|array<string,mixed>|false
      */
     public function find(array|int|string $params = [], bool $hydrate_array = false, ?string $name = null): Doctrine_Collection|Doctrine_Record|array|bool
     {
@@ -1384,6 +1401,7 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
                 }
 
                 $q = $this->createNamedQuery($name);
+                /** @var Doctrine_Collection<T>|array<string,mixed>[]|T|array<string,mixed>|false */
                 return $q->execute($params, $hydrationMode);
             }
 
@@ -1393,6 +1411,7 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
                 ->limit(1);
 
             // Executing query
+            /** @var T|array<string,mixed>|false */
             return $q->fetchOne($params, $hydrationMode);
         } finally {
             if (isset($q)) {
