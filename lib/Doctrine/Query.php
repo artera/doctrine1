@@ -1147,7 +1147,7 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
             }
 
             // FIX #1667: _sqlParts are cleaned inside _processDqlQueryPart.
-            if ($queryPartName != 'forUpdate') {
+            if ($queryPartName != 'forUpdate' && is_array($queryParts)) {
                 $this->_processDqlQueryPart($queryPartName, $queryParts);
             }
 
@@ -2104,27 +2104,6 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
     {
         $this->parseDqlQuery($query);
         return $this->execute($params, $hydrationMode);
-    }
-
-    /**
-     * Copies a Doctrine_Query object.
-     *
-     * @param            Doctrine_Query|null $query
-     * @return           Doctrine_Query Copy of the Doctrine_Query instance.
-     * @phpstan-template Tquery of Doctrine_Query
-     * @phpstan-param    Tquery|null $query
-     * @phpstan-return   Tquery|Doctrine_Query<T>
-     */
-    public function copy(?Doctrine_Query $query = null)
-    {
-        if (!$query) {
-            $query = $this;
-        }
-
-        /** @var Doctrine_Query $new */
-        $new = clone $query;
-
-        return $new;
     }
 
     /**

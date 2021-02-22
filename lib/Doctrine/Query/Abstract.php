@@ -94,9 +94,9 @@ abstract class Doctrine_Query_Abstract
     protected $_resultCache;
 
     /**
-     * @var string  Key to use for result cache entry in the cache driver
+     * Key to use for result cache entry in the cache driver
      */
-    protected $_resultCacheHash;
+    protected ?string $_resultCacheHash = null;
 
     /**
      * @var boolean $_expireResultCache  A boolean value that indicates whether or not
@@ -947,6 +947,7 @@ abstract class Doctrine_Query_Abstract
                 if ($cached) {
                     // Rebuild query from cache
                     $query = $this->_constructQueryFromCache($cached);
+                    assert(is_string($query));
 
                     // Assign building/execution specific params
                     $this->_params['exec'] = $params;
@@ -962,7 +963,7 @@ abstract class Doctrine_Query_Abstract
 
                     // Check again because getSqlQuery() above could have flipped the _queryCache flag
                     // if this query contains the limit sub query algorithm we don't need to cache it
-                    if ($query !== false && $this->_queryCache !== false && ($this->_queryCache || $this->_conn->getAttribute(Doctrine_Core::ATTR_QUERY_CACHE))) {
+                    if ($this->_queryCache || $this->_conn->getAttribute(Doctrine_Core::ATTR_QUERY_CACHE)) {
                         // Convert query into a serialized form
                         $serializedQuery = $this->getCachedForm($query);
 
@@ -1006,62 +1007,68 @@ abstract class Doctrine_Query_Abstract
      */
     public function execute(array $params = [], int|string|null $hydrationMode = null): Doctrine_Collection|Doctrine_Collection_OnDemand|array|int|string|float|bool
     {
-        // Clean any possible processed params
-        $this->_execParams = [];
+        try {
+            // Clean any possible processed params
+            $this->_execParams = [];
 
-        if (empty($this->_dqlParts['from']) && empty($this->_sqlParts['from'])) {
-            throw new Doctrine_Query_Exception('You must have at least one component specified in your from.');
-        }
-
-        $dqlParams = $this->getFlattenedParams($params);
-
-        $this->_preQuery($dqlParams);
-
-        if ($hydrationMode !== null) {
-            $this->_hydrator->setHydrationMode($hydrationMode);
-        }
-
-        $hydrationMode = $this->_hydrator->getHydrationMode();
-
-        if ($this->_resultCache && $this->_type == self::SELECT) {
-            $cacheDriver = $this->getResultCacheDriver();
-            $hash        = $this->getResultCacheHash($params);
-            $cached      = ($this->_expireResultCache) ? false : $cacheDriver->fetch($hash);
-
-            if ($cached === false) {
-                // cache miss
-                $stmt = $this->_execute($params);
-                assert($stmt instanceof Doctrine_Connection_Statement);
-                $this->_hydrator->setQueryComponents($this->_queryComponents);
-                $result = $this->_hydrator->hydrateResultSet($stmt, $this->_hydrator instanceof Doctrine_Hydrator ? $this->_tableAliasMap : []);
-
-                $cached = $this->getCachedForm($result);
-                $cacheDriver->save($hash, $cached, $this->getResultCacheLifeSpan());
-            } else {
-                $result = $this->_constructQueryFromCache($cached);
+            if (empty($this->_dqlParts['from']) && empty($this->_sqlParts['from'])) {
+                throw new Doctrine_Query_Exception('You must have at least one component specified in your from.');
             }
-        } else {
-            $stmt = $this->_execute($params);
 
-            if (is_integer($stmt)) {
-                $result = $stmt;
-            } else {
-                $this->_hydrator->setQueryComponents($this->_queryComponents);
-                if ($this->_type == self::SELECT && $hydrationMode == Doctrine_Core::HYDRATE_ON_DEMAND) {
-                    $hydrationDriver = $this->_hydrator->getHydratorDriver($hydrationMode, $this->_tableAliasMap);
-                    $result          = new Doctrine_Collection_OnDemand($stmt, $hydrationDriver, $this->_tableAliasMap);
-                } elseif ($this->_hydrator instanceof Doctrine_Hydrator) {
-                    $result = $this->_hydrator->hydrateResultSet($stmt, $this->_tableAliasMap);
-                } else {
-                    $result = $this->_hydrator->hydrateResultSet($stmt);
+            $dqlParams = $this->getFlattenedParams($params);
+
+            $this->_preQuery($dqlParams);
+
+            if ($hydrationMode !== null) {
+                $this->_hydrator->setHydrationMode($hydrationMode);
+            }
+
+            $hydrationMode = $this->_hydrator->getHydrationMode();
+
+            if ($this->_resultCache && $this->_type == self::SELECT) {
+                $cacheDriver = $this->getResultCacheDriver();
+                $hash        = $this->getResultCacheHash($params);
+                $cached      = ($this->_expireResultCache) ? false : $cacheDriver->fetch($hash);
+
+                if ($cached === false) {
+                    // cache miss
+                    $stmt = $this->_execute($params);
+                    assert($stmt instanceof Doctrine_Connection_Statement);
+                    $this->_hydrator->setQueryComponents($this->_queryComponents);
+                    $result = $this->_hydrator->hydrateResultSet($stmt, $this->_hydrator instanceof Doctrine_Hydrator ? $this->_tableAliasMap : []);
+
+                    $cached = $this->getCachedForm($result);
+                    $cacheDriver->save($hash, $cached, $this->getResultCacheLifeSpan());
+
+                    return $result;
                 }
+
+                return $this->_constructQueryFromCache($cached);
+            } else {
+                $stmt = $this->_execute($params);
+
+                if (is_integer($stmt)) {
+                    return $stmt;
+                }
+
+                $this->_hydrator->setQueryComponents($this->_queryComponents);
+                if ($this->_hydrator instanceof Doctrine_Hydrator) {
+                    if ($this->_type == self::SELECT && $hydrationMode == Doctrine_Core::HYDRATE_ON_DEMAND) {
+                        $hydrationDriver = $this->_hydrator->getHydratorDriver($hydrationMode, $this->_tableAliasMap);
+                        /** @var Doctrine_Collection_OnDemand<T> */
+                        $result = new Doctrine_Collection_OnDemand($stmt, $hydrationDriver, $this->_tableAliasMap);
+                        return $result;
+                    }
+                    return $this->_hydrator->hydrateResultSet($stmt, $this->_tableAliasMap);
+                }
+
+                return $this->_hydrator->hydrateResultSet($stmt);
+            }
+        } finally {
+            if ($this->getConnection()->getAttribute(Doctrine_Core::ATTR_AUTO_FREE_QUERY_OBJECTS)) {
+                $this->free();
             }
         }
-        if ($this->getConnection()->getAttribute(Doctrine_Core::ATTR_AUTO_FREE_QUERY_OBJECTS)) {
-            $this->free();
-        }
-
-        return $result;
     }
 
     /**
@@ -1156,7 +1163,7 @@ abstract class Doctrine_Query_Abstract
             $componentsBefore = $this->getQueryComponents();
         }
 
-        $copy = $this->copy();
+        $copy = clone $this;
         $copy->getSqlQuery($params, false);
         $componentsAfter = $copy->getQueryComponents();
 
@@ -1184,11 +1191,11 @@ abstract class Doctrine_Query_Abstract
      * Constructs the query from the cached form.
      *
      * @param  string $cached The cached query, in a serialized form.
-     * @return array  The custom component that was cached together with the essential
+     * @return mixed  The custom component that was cached together with the essential
      *                query data. This can be either a result set (result caching)
      *                or an SQL query string (query caching).
      */
-    protected function _constructQueryFromCache($cached)
+    protected function _constructQueryFromCache($cached): mixed
     {
         $cached               = unserialize($cached);
         $this->_tableAliasMap = $cached[2];
@@ -1878,20 +1885,16 @@ abstract class Doctrine_Query_Abstract
     }
 
     /**
-     * useResultCache
-     *
-     * @param  Doctrine_Cache_Interface|true|null $driver          cache driver
-     * @param  integer                            $timeToLive      how long the cache entry is valid
-     * @param  string                             $resultCacheHash The key to use for storing the queries result cache entry
-     * @return $this         this object
+     * @param  integer|null $timeToLive how long the cache entry is valid
+     * @param  string|null $resultCacheHash The key to use for storing the queries result cache entry
+     * @return $this
      */
-    public function useResultCache($driver = true, $timeToLive = null, $resultCacheHash = null)
+    public function useResultCache(Doctrine_Cache_Interface|bool|null $driver = true, ?int $timeToLive = null, ?string $resultCacheHash = null): self
     {
-        if ($driver !== null && $driver !== true && !($driver instanceof Doctrine_Cache_Interface)) {
-            $msg = 'First argument should be instance of Doctrine_Cache_Interface or null.';
-            throw new Doctrine_Query_Exception($msg);
+        if ($driver === false) {
+            $driver = null;
         }
-        $this->_resultCache     = $driver;
+        $this->_resultCache = $driver;
         $this->_resultCacheHash = $resultCacheHash;
 
         if ($timeToLive !== null) {
@@ -1927,20 +1930,15 @@ abstract class Doctrine_Query_Abstract
     }
 
     /**
-     * useQueryCache
-     *
-     * @param  Doctrine_Cache_Interface|bool|null $driver     cache driver
-     * @param  integer                            $timeToLive how long the cache entry is valid
-     * @return $this         this object
+     * @param  integer|null $timeToLive how long the cache entry is valid
+     * @return $this
      */
-    public function useQueryCache($driver = true, $timeToLive = null)
+    public function useQueryCache(Doctrine_Cache_Interface|bool|null $driver = true, ?int $timeToLive = null): self
     {
-        if ($driver !== null && $driver !== true && $driver !== false && !($driver instanceof Doctrine_Cache_Interface)) {
-            $msg = 'First argument should be instance of Doctrine_Cache_Interface or null.';
-            throw new Doctrine_Query_Exception($msg);
+        if ($driver === false) {
+            $driver = null;
         }
         $this->_queryCache = $driver;
-
         if ($timeToLive !== null) {
             $this->setQueryCacheLifeSpan($timeToLive);
         }
@@ -1948,8 +1946,6 @@ abstract class Doctrine_Query_Abstract
     }
 
     /**
-     * expireCache
-     *
      * @param  boolean $expire whether or not to force cache expiration
      * @return $this     this object
      */
@@ -1960,8 +1956,6 @@ abstract class Doctrine_Query_Abstract
     }
 
     /**
-     * expireQueryCache
-     *
      * @param  boolean $expire whether or not to force cache expiration
      * @return $this     this object
      */
@@ -1972,8 +1966,6 @@ abstract class Doctrine_Query_Abstract
     }
 
     /**
-     * setResultCacheLifeSpan
-     *
      * @param  integer $timeToLive how long the cache entry is valid (in seconds)
      * @return $this     this object
      */
@@ -2090,13 +2082,8 @@ abstract class Doctrine_Query_Abstract
      *                                   get overridden).
      * @return $this
      */
-    protected function _addDqlQueryPart($queryPartName, $queryPart, $append = false)
+    protected function _addDqlQueryPart(string $queryPartName, string|int $queryPart, bool $append = false): self
     {
-        // We should prevent nullable query parts
-        if ($queryPart === null) {
-            throw new Doctrine_Query_Exception('Cannot define NULL as part of query when defining \'' . $queryPartName . '\'.');
-        }
-
         if ($append) {
             $this->_dqlParts[$queryPartName][] = $queryPart;
         } else {
@@ -2108,29 +2095,22 @@ abstract class Doctrine_Query_Abstract
     }
 
     /**
-     * _processDqlQueryPart
-     * parses given query part
-     *
-     * @param  string $queryPartName the name of the query part
-     * @param  array  $queryParts    an array containing the query part data
-     * @return void
-     * @todo   Better description. "parses given query part" ??? Then wheres the difference
-     *       between process/parseQueryPart? I suppose this does something different.
+     * @param string $queryPartName the name of the query part
+     * @param string[] $queryParts an array containing the query part data
      */
-    protected function _processDqlQueryPart($queryPartName, $queryParts)
+    protected function _processDqlQueryPart(string $queryPartName, array $queryParts): void
     {
         $this->removeSqlQueryPart($queryPartName);
 
-        if (is_array($queryParts) && !empty($queryParts)) {
-            foreach ($queryParts as $queryPart) {
-                $parser = $this->_getParser($queryPartName);
-                $sql    = $parser->parse($queryPart);
-                if (isset($sql)) {
-                    if ($queryPartName == 'limit' || $queryPartName == 'offset') {
-                        $this->setSqlQueryPart($queryPartName, $sql);
-                    } else {
-                        $this->addSqlQueryPart($queryPartName, $sql);
-                    }
+        foreach ($queryParts as $queryPart) {
+            $parser = $this->_getParser($queryPartName);
+            assert(method_exists($parser, 'parse'));
+            $sql = $parser->parse($queryPart);
+            if (isset($sql)) {
+                if ($queryPartName == 'limit' || $queryPartName == 'offset') {
+                    $this->setSqlQueryPart($queryPartName, $sql);
+                } else {
+                    $this->addSqlQueryPart($queryPartName, $sql);
                 }
             }
         }
@@ -2164,10 +2144,6 @@ abstract class Doctrine_Query_Abstract
      * Gets the SQL query that corresponds to this query object.
      * The returned SQL syntax depends on the connection driver that is used
      * by this query object at the time of this method call.
-     *
-     * @param  array $params
-     * @param  bool  $limitSubquery
-     * @return string|false
      */
     abstract public function getSqlQuery(array $params = [], bool $limitSubquery = true): string;
 

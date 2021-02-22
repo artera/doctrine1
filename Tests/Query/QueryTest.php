@@ -127,7 +127,7 @@ namespace Tests\Query {
             $sql = $query->getSqlQuery();
 
             $data   = $query->execute();
-            $query2 = $query->copy();
+            $query2 = clone $query;
 
             $this->assertEquals($sql, $query2->getSqlQuery());
 

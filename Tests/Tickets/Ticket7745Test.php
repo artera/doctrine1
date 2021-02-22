@@ -30,10 +30,10 @@ namespace Tests\Tickets {
             $test2->free();
 
             $test2 = \Doctrine_Core::getTable('RecordTest2')
-            ->createQuery('a')
-            ->select('a.id')
-            ->where('a.id = ?', $id)
-            ->fetchOne();
+                ->createQuery('a')
+                ->select('a.id')
+                ->where('a.id = ?', $id)
+                ->fetchOne();
 
             $test2->load();
 
