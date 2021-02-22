@@ -1361,98 +1361,57 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
     }
 
     /**
-     * Finds a record by its identifier.
-     *
-     * <code>
-     * $table->find(11);
-     * $table->find(11, Doctrine_Core::HYDRATE_RECORD);
-     * $table->find('namedQueryForYearArchive', array(2009), Doctrine_Core::HYDRATE_ARRAY);
-     * </code>
-     *
-     * @param          mixed ...$args First param: Database Row ID or Query Name defined previously as a NamedQuery
-     *                                Second param: This argument is the hydration mode
-     *                                (Doctrine_Core::HYDRATE_ARRAY or Doctrine_Core::HYDRATE_RECORD) if first
-     *                                param is a Database Row ID. Otherwise this argument expect an array of query
-     *                                params. Third param: Optional Doctrine_Core::HYDRATE_ARRAY or
-     *                                Doctrine_Core::HYDRATE_RECORD if first argument is a NamedQuery
-     * @return         Doctrine_Collection|Doctrine_Record[]|Doctrine_Record|false    Doctrine_Collection, array, Doctrine_Record or false if no result
-     * @phpstan-return Doctrine_Collection<T>|Doctrine_Collection_OnDemand<T>|T[]|T|array<string,mixed>|scalar
+     * @phpstan-return Doctrine_Collection<T>|array<string,mixed>[]|T|array<string,mixed>|false
      */
-    public function find(...$args)
+    public function find(array|int|string $params = [], bool $hydrate_array = false, ?string $name = null): Doctrine_Collection|Doctrine_Record|array|bool
     {
-        $num_args = count($args);
+        $hydrationMode = $hydrate_array ? Doctrine_Core::HYDRATE_ARRAY : Doctrine_Core::HYDRATE_RECORD;
+        $params = array_values((array) $params);
 
-        // Named Query or IDs
-        $name = $args[0];
-
-        if (is_null($name)) {
-            return false;
-        }
-
-        $ns = $this->getComponentName();
-        $m  = $name;
-
-        // Check for possible cross-access
-        if (!is_array($name) && strpos($name, '/') !== false) {
-            list($ns, $m) = explode('/', $name);
-        }
-
-        // Define query to be used
-        if (!is_array($name)
-            && Doctrine_Manager::getInstance()->getQueryRegistry()->has($m, $ns)
-        ) {
+        try {
             // We're dealing with a named query
-            $q = $this->createNamedQuery($name);
+            if ($name !== null) {
+                // Check for possible cross-access
+                if (strpos($name, '/') !== false) {
+                    list($ns, $name) = explode('/', $name);
+                } else {
+                    $ns = $this->getComponentName();
+                }
 
-            // Parameters construction
-            $params = ($num_args >= 2) ? $args[1] : [];
+                // Define query to be used
+                if (!Doctrine_Manager::getInstance()->getQueryRegistry()->has($name, $ns)) {
+                    throw new Doctrine_Table_Exception("Could not find query named $name.");
+                }
 
-            // Hydration mode
-            $hydrationMode = ($num_args == 3) ? $args[2] : null;
+                $q = $this->createNamedQuery($name);
+                return $q->execute($params, $hydrationMode);
+            }
 
-            // Executing query
-            $res = $q->execute($params, $hydrationMode);
-        } else {
             // We're passing a single ID or an array of IDs
             $q = $this->createQuery('dctrn_find')
                 ->where('dctrn_find.' . implode(' = ? AND dctrn_find.', (array) $this->getIdentifier()) . ' = ?')
                 ->limit(1);
 
-            // Parameters construction
-            $params = is_array($name) ? array_values($name) : [$name];
-
-            // Hydration mode
-            $hydrationMode = ($num_args == 2) ? $args[1] : null;
-
             // Executing query
-            $res = $q->fetchOne($params, $hydrationMode);
+            return $q->fetchOne($params, $hydrationMode);
+        } finally {
+            if (isset($q)) {
+                $q->free();
+            }
         }
-
-        $q->free();
-
-        return $res;
     }
 
     /**
      * Retrieves all the records stored in this table.
      *
-     * @param int $hydrationMode Doctrine_Core::HYDRATE_ARRAY or Doctrine_Core::HYDRATE_RECORD
-     *
-     * @return Doctrine_Collection|array
-     *
      * @psalm-return Doctrine_Collection<Doctrine_Record>|array
-     * @phpstan-return Doctrine_Collection<T>|array
+     * @phpstan-return Doctrine_Collection<T>|array<string,mixed>[]
      */
-    public function findAll($hydrationMode = null)
+    public function findAll(bool $hydrate_array = false): Doctrine_Collection|array
     {
-        if ($hydrationMode === null) {
-            $hydrationMode = Doctrine_Core::HYDRATE_RECORD;
-        } elseif (!in_array($hydrationMode, [Doctrine_Core::HYDRATE_ARRAY, Doctrine_Core::HYDRATE_RECORD])) {
-            throw new \InvalidArgumentException("Hydration mode for findAll can only be ony of HYDRATE_ARRAY or HYDRATE_RECORD");
-        }
-        $result = $this->createQuery('dctrn_find')->execute([], $hydrationMode);
-        assert(!is_int($result));
-        return $result;
+        $hydrationMode = $hydrate_array ? Doctrine_Core::HYDRATE_ARRAY : Doctrine_Core::HYDRATE_RECORD;
+        /** @phpstan-var Doctrine_Collection<T>|array<string,mixed>[] */
+        return $this->createQuery('dctrn_find')->execute([], $hydrationMode);
     }
 
     /**
@@ -1460,15 +1419,11 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
      *
      * @param          string $dql           DQL WHERE clause to use
      * @param          array  $params        query parameters (a la PDO)
-     * @param          int    $hydrationMode Doctrine_Core::HYDRATE_ARRAY or Doctrine_Core::HYDRATE_RECORD
-     * @return         Doctrine_Collection|array<string,mixed>[]
      * @phpstan-return Doctrine_Collection<T>|array<string,mixed>[]
-     *
-     * @todo This actually takes DQL, not SQL, but it requires column names
-     *       instead of field names. This should be fixed to use raw SQL instead.
      */
-    public function findBySql($dql, $params = [], $hydrationMode = null)
+    public function findBySql($dql, $params = [], bool $hydrate_array = false): Doctrine_Collection|array
     {
+        $hydrationMode = $hydrate_array ? Doctrine_Core::HYDRATE_ARRAY : Doctrine_Core::HYDRATE_RECORD;
         /** @phpstan-var Doctrine_Collection<T>|array<string,mixed>[] */
         return $this->createQuery('dctrn_find')
             ->where($dql)->execute($params, $hydrationMode);
@@ -1479,15 +1434,15 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
      *
      * @param          string  $dql           DQL WHERE clause
      * @param          mixed[] $params        preparated statement parameters
-     * @param          int     $hydrationMode Doctrine_Core::HYDRATE_ARRAY or Doctrine_Core::HYDRATE_RECORD
-     * @return         Doctrine_Collection|array<string,mixed>[]
      * @phpstan-return Doctrine_Collection<T>|array<string,mixed>[]
      */
-    public function findByDql($dql, $params = [], $hydrationMode = null)
+    public function findByDql($dql, $params = [], bool $hydrate_array = false): Doctrine_Collection|array
     {
+        $hydrationMode = $hydrate_array ? Doctrine_Core::HYDRATE_ARRAY : Doctrine_Core::HYDRATE_RECORD;
         $parser = $this->createQuery();
         $query  = 'FROM ' . $this->getComponentName() . ' dctrn_find WHERE ' . $dql;
 
+        /** @phpstan-var Doctrine_Collection<T>|array<string,mixed>[] */
         return $parser->query($query, $params, $hydrationMode);
     }
 
@@ -1496,12 +1451,11 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
      *
      * @param          string $fieldName     field for the WHERE clause
      * @param          string $value         prepared statement parameter
-     * @param          int    $hydrationMode Doctrine_Core::HYDRATE_ARRAY or Doctrine_Core::HYDRATE_RECORD
-     * @return         Doctrine_Collection|array<string,mixed>[]
      * @phpstan-return Doctrine_Collection<T>|array<string,mixed>[]
      */
-    public function findBy($fieldName, $value, $hydrationMode = null)
+    public function findBy($fieldName, $value, bool $hydrate_array = false): Doctrine_Collection|array
     {
+        $hydrationMode = $hydrate_array ? Doctrine_Core::HYDRATE_ARRAY : Doctrine_Core::HYDRATE_RECORD;
         /** @phpstan-var Doctrine_Collection<T>|array<string,mixed>[] */
         return $this->createQuery('dctrn_find')
             ->where($this->buildFindByWhere($fieldName), (array) $value)
@@ -1513,12 +1467,13 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
      *
      * @param          string $fieldName     field for the WHERE clause
      * @param          scalar $value         prepared statement parameter
-     * @param          int    $hydrationMode Doctrine_Core::HYDRATE_ARRAY or Doctrine_Core::HYDRATE_RECORD
-     * @return         Doctrine_Record|array<string,mixed>|false
-     * @phpstan-return T|array<string,mixed>|scalar
+     * @return         Doctrine_Record|array|false
+     * @phpstan-return T|array<string,mixed>|false
      */
-    public function findOneBy($fieldName, $value, $hydrationMode = null)
+    public function findOneBy($fieldName, $value, bool $hydrate_array = false): Doctrine_Record|array|bool
     {
+        $hydrationMode = $hydrate_array ? Doctrine_Core::HYDRATE_ARRAY : Doctrine_Core::HYDRATE_RECORD;
+        /** @phpstan-var T|array<string,mixed>|false */
         return $this->createQuery('dctrn_find')
             ->where($this->buildFindByWhere($fieldName), (array) $value)
             ->limit(1)
@@ -1533,12 +1488,12 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
      *
      * @param          string  $queryKey      the query key
      * @param          mixed[] $params        prepared statement params (if any)
-     * @param          int     $hydrationMode Doctrine_Core::HYDRATE_ARRAY or Doctrine_Core::HYDRATE_RECORD
-     * @return         Doctrine_Record|array<string,mixed>[]
-     * @phpstan-return T|array<string,mixed>[]
+     * @phpstan-return Doctrine_Collection<T>|array<string,mixed>[]
      */
-    public function execute($queryKey, $params = [], $hydrationMode = Doctrine_Core::HYDRATE_RECORD)
+    public function execute($queryKey, $params = [], bool $hydrate_array = false): Doctrine_Collection|array
     {
+        $hydrationMode = $hydrate_array ? Doctrine_Core::HYDRATE_ARRAY : Doctrine_Core::HYDRATE_RECORD;
+        /** @phpstan-var Doctrine_Collection<T>|array<string,mixed>[] */
         return $this->createNamedQuery($queryKey)->execute($params, $hydrationMode);
     }
 
@@ -1550,12 +1505,13 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
      *
      * @param          string  $queryKey      the query key
      * @param          mixed[] $params        prepared statement params (if any)
-     * @param          int     $hydrationMode Doctrine_Core::HYDRATE_ARRAY or Doctrine_Core::HYDRATE_RECORD
-     * @return         Doctrine_Record|array<string,mixed>|false
-     * @phpstan-return T|array<string,mixed>|scalar
+     * @return         Doctrine_Record|array|false
+     * @phpstan-return T|array<string,mixed>|false
      */
-    public function executeOne($queryKey, $params = [], $hydrationMode = Doctrine_Core::HYDRATE_RECORD)
+    public function executeOne($queryKey, $params = [], bool $hydrate_array = false): Doctrine_Record|array|bool
     {
+        $hydrationMode = $hydrate_array ? Doctrine_Core::HYDRATE_ARRAY : Doctrine_Core::HYDRATE_RECORD;
+        /** @phpstan-var T|array<string,mixed>|false */
         return $this->createNamedQuery($queryKey)->fetchOne($params, $hydrationMode);
     }
 
@@ -2498,26 +2454,27 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
             }
 
             $fieldName = $this->_resolveFindByFieldName($by);
-            $count     = count(explode('Or', $by)) + (count(explode('And', $by)) - 1);
+            $count = count(explode('Or', $by)) + (count(explode('And', $by)) - 1);
             if (count($arguments) > $count) {
-                $hydrationMode = end($arguments);
+                $hydrate_array = end($arguments);
                 unset($arguments[count($arguments) - 1]);
-            } else {
-                $hydrationMode = null;
             }
+
             if ($fieldName !== false && $this->hasField($fieldName)) {
-                return $this->$method($fieldName, $arguments[0], $hydrationMode);
-            } elseif ($this->hasRelation($by)) {
+                return $this->$method($fieldName, $arguments[0], $hydrate_array ?? false);
+            }
+
+            if ($this->hasRelation($by)) {
                 $relation = $this->getRelation($by);
 
                 if ($relation['type'] === Doctrine_Relation::MANY) {
                     throw new Doctrine_Table_Exception('Cannot findBy many relationship.');
                 }
 
-                return $this->$method($relation['local'], $arguments[0], $hydrationMode);
-            } else {
-                return $this->$method($by, $arguments, $hydrationMode);
+                return $this->$method($relation['local'], $arguments[0], $hydrate_array ?? false);
             }
+
+            return $this->$method($by, $arguments, $hydrate_array ?? false);
         }
 
         // Forward the method on to the record instance and see if it has anything or one of its behaviors

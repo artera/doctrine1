@@ -27,10 +27,10 @@ namespace Tests\Tickets {
 
         public function testForHydrationOverwrintingLocalInstancesWhenItShouldnt()
         {
-            $module                      = \Doctrine_Core::getTable('T736_Module')->find(1);
+            $module = \Doctrine_Core::getTable('T736_Module')->find(1);
             $module->moduledata->content = 'foo';
             $module->moduledata->save();
-            $this->assertTrue($module->moduledata->content == 'foo'); // should be "foo" is "Lorem Ipsum and so on..."
+            $this->assertEquals('foo', $module->moduledata->content); // should be "foo" is "Lorem Ipsum and so on..."
         }
     }
 }
@@ -77,7 +77,7 @@ namespace {
         public function postHydrate(Doctrine_Event $event)
         {
             $contents = $event->data;
-            $delegate = \Doctrine_Core::getTable('T736_ModuleDelegate')->find($contents['moduledelegateid'], ($contents instanceof \Doctrine_Record) ? \Doctrine_Core::HYDRATE_RECORD :Doctrine_Core::HYDRATE_ARRAY);
+            $delegate = \Doctrine_Core::getTable('T736_ModuleDelegate')->find($contents['moduledelegateid'], hydrate_array: !$contents instanceof \Doctrine_Record);
             if ($contents instanceof \Doctrine_Record) {
                 $contents->mapValue('moduledata', $delegate);
                 $delegate->parent = $contents;

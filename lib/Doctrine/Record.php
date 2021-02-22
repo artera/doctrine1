@@ -970,7 +970,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
         } else {
             // Use HYDRATE_ARRAY to avoid clearing object relations
             /** @phpstan-var array<string, mixed>|false */
-            $record = $this->getTable()->find($id, Doctrine_Core::HYDRATE_ARRAY);
+            $record = $this->getTable()->find($id, hydrate_array: true);
             if ($record) {
                 $this->hydrate($record);
             }
@@ -1147,7 +1147,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
             }
 
             $table = $this->getTable();
-            $data  = empty($data) ? $table->find($id, Doctrine_Core::HYDRATE_ARRAY) : $data;
+            $data  = empty($data) ? $table->find($id, hydrate_array: true) : $data;
 
             if (is_array($data)) {
                 foreach ($data as $field => $value) {

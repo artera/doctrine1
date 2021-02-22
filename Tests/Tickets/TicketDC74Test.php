@@ -25,9 +25,9 @@ namespace Tests\Tickets {
         {
             // we are selecting "id" and "test1" fields and ommiting "test2"
             $r1 = \Doctrine_Query::create()
-            ->select('id, test1')
-            ->from('Ticket_DC74_Test')
-            ->fetchOne();
+                ->select('id, test1')
+                ->from('Ticket_DC74_Test')
+                ->fetchOne();
 
             // so we have object in PROXY state
             $this->assertEquals(\Doctrine_Record_State::PROXY(), $r1->state());

@@ -41,7 +41,7 @@ namespace Tests\Core\Table {
 
             $this->assertEquals($table->createNamedQuery('get.by.similar.names')->count(['%jon%wage%']), 2);
 
-            $items = $table->find('get.by.similar.names', ['%jon%wage%']);
+            $items = $table->find(['%jon%wage%'], name: 'get.by.similar.names');
 
             $this->assertEquals(count($items), 2);
         }
