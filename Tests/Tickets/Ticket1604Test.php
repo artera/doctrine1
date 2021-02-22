@@ -27,9 +27,9 @@ namespace {
         {
             $this->hasColumn('name', 'string', 30);
 
-            $this->option('type', 'INNODB');
-            $this->option('collate', 'utf8_unicode_ci');
-            $this->option('charset', 'utf8');
+            $this->getTable()->type = 'INNODB';
+            $this->getTable()->collate = 'utf8_unicode_ci';
+            $this->getTable()->charset = 'utf8';
         }
 
         public function setUp(): void
@@ -45,9 +45,9 @@ namespace {
             $this->hasColumn('user_id as userId', 'integer');
             $this->hasColumn('address', 'string', 30);
 
-            $this->option('type', 'INNODB');
-            $this->option('collate', 'utf8_unicode_ci');
-            $this->option('charset', 'utf8');
+            $this->getTable()->type = 'INNODB';
+            $this->getTable()->collate = 'utf8_unicode_ci';
+            $this->getTable()->charset = 'utf8';
         }
 
         public function setUp(): void

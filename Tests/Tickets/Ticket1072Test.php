@@ -87,7 +87,7 @@ namespace {
             $this->setTableName('t1072_bank_transaction');
             $this->hasColumn('payment_detail_id', 'integer', null);
             $this->hasColumn('name', 'string', 255, ['notnull' => true]);
-            $this->option('charset', 'utf8');
+            $this->getTable()->charset = 'utf8';
         }
 
         public function setUp(): void
@@ -107,7 +107,7 @@ namespace {
         {
             $this->setTableName('t1072_payment_detail');
             $this->hasColumn('name', 'string', 255, ['notnull' => true]);
-            $this->option('charset', 'utf8');
+            $this->getTable()->charset = 'utf8';
         }
 
         public function setUp(): void

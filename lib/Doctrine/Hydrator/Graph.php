@@ -51,17 +51,17 @@ abstract class Doctrine_Hydrator_Graph extends Doctrine_Hydrator_Abstract
         // separated by a pipe '|' and grouped by component alias (r, u, i, ... whatever)
         // the $idTemplate is a prepared template. $id is set to a fresh template when
         // starting to process a row.
-        $id         = [];
+        $id = [];
         $idTemplate = [];
 
         // Initialize
         foreach ($this->_queryComponents as $dqlAlias => $data) {
-            $componentName             = $data['table']->getComponentName();
+            $componentName = $data['table']->getComponentName();
             $instances[$componentName] = $data['table']->getRecordInstance();
             $listeners[$componentName] = $data['table']->getRecordListener();
-            $identifierMap[$dqlAlias]  = [];
-            $prev[$dqlAlias]           = null;
-            $idTemplate[$dqlAlias]     = '';
+            $identifierMap[$dqlAlias] = [];
+            $prev[$dqlAlias] = null;
+            $idTemplate[$dqlAlias] = '';
         }
         $cache = [];
 
@@ -100,15 +100,15 @@ abstract class Doctrine_Hydrator_Graph extends Doctrine_Hydrator_Abstract
                 array_map('rtrim', $data);
             }
 
-            $id                 = $idTemplate; // initialize the id-memory
+            $id = $idTemplate; // initialize the id-memory
             $nonemptyComponents = [];
-            $rowData            = $this->_gatherRowData($data, $cache, $id, $nonemptyComponents);
+            $rowData = $this->_gatherRowData($data, $cache, $id, $nonemptyComponents);
 
             if ($this->_hydrationMode == Doctrine_Core::HYDRATE_ON_DEMAND) {
-                if (is_null($activeRootIdentifier)) {
+                if (!isset($activeRootIdentifier)) {
                     // first row for this record
                     $activeRootIdentifier = $id[$rootAlias];
-                } elseif ($activeRootIdentifier != $id[$rootAlias]) {
+                } elseif ($activeRootIdentifier !== $id[$rootAlias]) {
                     // first row for the next record
                     $this->_priorRow = $data;
                     return $result;
@@ -386,7 +386,7 @@ abstract class Doctrine_Hydrator_Graph extends Doctrine_Hydrator_Abstract
         }
 
         /** @phpstan-var class-string<Doctrine_Record>[] */
-        $subclasses = $this->_tables[$component]->getOption('subclasses');
+        $subclasses = $this->_tables[$component]->subclasses;
         if (!$subclasses) {
             return $component;
         }
@@ -394,7 +394,7 @@ abstract class Doctrine_Hydrator_Graph extends Doctrine_Hydrator_Abstract
         $matchedComponents = [$component];
         foreach ($subclasses as $subclass) {
             $table          = Doctrine_Core::getTable($subclass);
-            $inheritanceMap = $table->getOption('inheritanceMap');
+            $inheritanceMap = $table->inheritanceMap;
             $needMatches    = count($inheritanceMap);
             foreach ($inheritanceMap as $key => $value) {
                 $key = $this->_tables[$component]->getFieldName($key);

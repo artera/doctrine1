@@ -3,7 +3,7 @@
 class Doctrine_Relation_Association extends Doctrine_Relation
 {
     /**
-     * @var array $definition   @see __construct()
+     * @var array $definition @see __construct()
      * @phpstan-var array{
      *   alias: string,
      *   foreign: string,

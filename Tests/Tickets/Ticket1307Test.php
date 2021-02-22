@@ -13,8 +13,8 @@ namespace Tests\Tickets {
             $conn->setCollate($collate);
 
             $userTable = \Doctrine_Core::getTable('Ticket_1307_User');
-            $this->assertEquals($charset, $userTable->getOption('charset'));
-            $this->assertEquals($collate, $userTable->getOption('collate'));
+            $this->assertEquals($charset, $userTable->charset);
+            $this->assertEquals($collate, $userTable->collate);
         }
     }
 }

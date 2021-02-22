@@ -4,53 +4,56 @@ use Laminas\Code\Generator\ClassGenerator;
 use Laminas\Code\Generator\DocBlockGenerator;
 use Laminas\Code\Generator\MethodGenerator;
 use Laminas\Code\Generator\ValueGenerator;
+use Laminas\Code\Generator\DocBlock\Tag\PropertyTag;
 
 class Doctrine_Import_Builder
 {
     /**
      * Path where to generated files
      */
-    protected string $_path = '';
+    protected string $path = '';
 
     /**
      * File suffix to use when writing class definitions
      */
-    protected string $_suffix = '.php';
+    protected string $suffix = '.php';
 
     /**
      * Bool true/false for whether or not to generate base classes
      */
-    protected bool $_generateBaseClasses = true;
+    protected bool $generateBaseClasses = true;
 
     /**
      * Bool true/false for whether or not to generate child table classes
      */
-    protected bool $_generateTableClasses = false;
+    protected bool $generateTableClasses = false;
 
     /**
      * Prefix to use for generated base classes
      */
-    protected string $_baseClassPrefix = 'Base';
+    protected string $baseClassPrefix = 'Base';
 
     /**
      * Directory to put the generate base classes in
      */
-    protected string $_baseClassesDirectory = 'generated';
+    protected string $baseClassesDirectory = 'generated';
 
     /**
      * Base class name for generated classes
+     * @phpstan-var class-string<Doctrine_Record>
      */
-    protected string $_baseClassName = Doctrine_Record::class;
+    protected string $baseClassName = Doctrine_Record::class;
 
     /**
      * Base table class name for generated classes
+     * @phpstan-var class-string<Doctrine_Table>
      */
-    protected string $_baseTableClassName = Doctrine_Table::class;
+    protected string $baseTableClassName = Doctrine_Table::class;
 
     /**
      * Format to use for generating the model table classes
      */
-    protected string $_tableClassFormat = '%sTable';
+    protected string $tableClassFormat = '%sTable';
 
     /**
      * Prefix to all generated classes
@@ -61,13 +64,13 @@ class Doctrine_Import_Builder
     {
         $manager = Doctrine_Manager::getInstance();
         if ($tableClass = $manager->getAttribute(Doctrine_Core::ATTR_TABLE_CLASS)) {
-            $this->_baseTableClassName = $tableClass;
+            $this->baseTableClassName = $tableClass;
         }
         if ($classPrefix = $manager->getAttribute(Doctrine_Core::ATTR_MODEL_CLASS_PREFIX)) {
             $this->classPrefix = $classPrefix ?? '';
         }
         if ($tableClassFormat = $manager->getAttribute(Doctrine_Core::ATTR_TABLE_CLASS_FORMAT)) {
-            $this->_tableClassFormat = $tableClassFormat;
+            $this->tableClassFormat = $tableClassFormat;
         }
     }
 
@@ -76,9 +79,7 @@ class Doctrine_Import_Builder
      */
     public function setTargetPath(string $path): void
     {
-        if ($path) {
-            $this->_path = $path;
-        }
+        $this->path = $path;
     }
 
     /**
@@ -87,10 +88,10 @@ class Doctrine_Import_Builder
     public function generateBaseClasses(?bool $bool = null): bool
     {
         if ($bool !== null) {
-            $this->_generateBaseClasses = $bool;
+            $this->generateBaseClasses = $bool;
         }
 
-        return $this->_generateBaseClasses;
+        return $this->generateBaseClasses;
     }
 
     /**
@@ -99,10 +100,10 @@ class Doctrine_Import_Builder
     public function generateTableClasses(?bool $bool = null): bool
     {
         if ($bool !== null) {
-            $this->_generateTableClasses = $bool;
+            $this->generateTableClasses = $bool;
         }
 
-        return $this->_generateTableClasses;
+        return $this->generateTableClasses;
     }
 
     /**
@@ -110,7 +111,7 @@ class Doctrine_Import_Builder
      */
     public function getTargetPath(): string
     {
-        return $this->_path;
+        return $this->path;
     }
 
     public function setOptions(array $options): void
@@ -127,7 +128,6 @@ class Doctrine_Import_Builder
         if (method_exists($this, $name)) {
             $this->$name($value);
         } else {
-            $key = '_' . $key;
             $this->$key = $value;
         }
     }
@@ -266,7 +266,7 @@ class Doctrine_Import_Builder
     public function buildColumns(array $columns): ?string
     {
         $manager = Doctrine_Manager::getInstance();
-        $refl    = new ReflectionClass($this->_baseClassName);
+        $refl = new ReflectionClass($this->baseClassName);
 
         $build = null;
         foreach ($columns as $name => $column) {
@@ -343,6 +343,7 @@ class Doctrine_Import_Builder
     public function buildPhpDocs(ClassGenerator $gen, array $columns, array $relations, string $topLevelClass): void
     {
         $docBlock = new DocBlockGenerator();
+        $docBlock->setWordWrap(false);
 
         foreach ($columns as $name => &$column) {
             $name = $column['name'] ?? $name;
@@ -353,6 +354,7 @@ class Doctrine_Import_Builder
 
         usort($columns, fn($a, $b) => $a['name'] <=> $b['name']);
         foreach ($columns as &$column) {
+            $types = [];
             switch (strtolower($column['type'])) {
                 case 'boolean':
                 case 'integer':
@@ -361,13 +363,13 @@ class Doctrine_Import_Builder
                 case 'array':
                 case 'object':
                 default:
-                    $type = strtolower($column['type']);
+                    $types[] = strtolower($column['type']);
                     break;
                 case 'decimal':
-                    $type = 'float';
+                    $types[] = 'float';
                     break;
                 case 'set':
-                    $type = 'string[]';
+                    $types[] = 'string[]';
                     break;
                 case 'json':
                 case 'blob':
@@ -378,20 +380,17 @@ class Doctrine_Import_Builder
                 case 'datetime':
                 case 'enum':
                 case 'gzip':
-                    $type = 'string';
+                    $types[] = 'string';
                     break;
             }
 
             // Add "null" union types for columns that aren't marked as notnull = true
             // But not our primary columns, as they're notnull = true implicitly in Doctrine
             if (empty($column['notnull']) && empty($column['primary'])) {
-                $type .= '|null';
+                $types[] = 'null';
             }
 
-            $docBlock->setTag([
-                'name' => 'property',
-                'content' => "$type \${$column['field_name']}",
-            ]);
+            $docBlock->setTag(new PropertyTag($column['field_name'], $types));
         }
 
         usort($relations, fn($a, $b) => $a['alias'] <=> $b['alias']);
@@ -402,13 +401,10 @@ class Doctrine_Import_Builder
             } else {
                 $fieldType = $this->classPrefix . $relation['class'];
             }
-            $docBlock->setTag([
-                'name' => 'property',
-                'content' => "$fieldType \$$fieldName",
-            ]);
+            $docBlock->setTag(new PropertyTag($fieldName, [$fieldType]));
         }
 
-        $genericOver = sprintf($this->_tableClassFormat, $topLevelClass);
+        $genericOver = sprintf($this->tableClassFormat, $topLevelClass);
         $docBlock->setTag([
             'name' => 'phpstan-extends',
             'content' => "{$gen->getExtendedClass()}<{$genericOver}>",
@@ -467,7 +463,7 @@ class Doctrine_Import_Builder
     {
         $build = '';
         foreach ($options as $name => $value) {
-            $build .= "\$this->option({$this->varExport($name)}, {$this->varExport($value)});\n";
+            $build .= "\$this->getTable()->$name = {$this->varExport($value)};\n";
         }
         return $build;
     }
@@ -508,7 +504,7 @@ class Doctrine_Import_Builder
         }
 
         $gen->setName($this->classPrefix . $className);
-        $gen->setExtendedClass($definition['inheritance']['extends'] ?? $this->_baseClassName);
+        $gen->setExtendedClass($definition['inheritance']['extends'] ?? $this->baseClassName);
         $gen->setAbstract($definition['abstract'] ?? false);
 
         if (empty($definition['no_definition'])) {
@@ -540,17 +536,17 @@ class Doctrine_Import_Builder
 
             // If we have a package then we need to make this extend the package definition and not the base definition
             // The package definition will then extends the base definition
-            $topLevel['inheritance']['extends'] = $this->_baseClassPrefix . $topLevel['className'];
+            $topLevel['inheritance']['extends'] = $this->baseClassPrefix . $topLevel['className'];
             $topLevel['no_definition']          = true;
             $topLevel['generate_once']          = true;
             $topLevel['is_main_class']          = true;
             unset($topLevel['connection']);
 
-            $topLevel['tableClassName']              = sprintf($this->_tableClassFormat, $topLevel['className']);
-            $topLevel['inheritance']['tableExtends'] = isset($definition['inheritance']['extends']) ? sprintf($this->_tableClassFormat, $definition['inheritance']['extends']):$this->_baseTableClassName;
+            $topLevel['tableClassName']              = sprintf($this->tableClassFormat, $topLevel['className']);
+            $topLevel['inheritance']['tableExtends'] = isset($definition['inheritance']['extends']) ? sprintf($this->tableClassFormat, $definition['inheritance']['extends']) : $this->baseTableClassName;
 
             $baseClass                    = $definition;
-            $baseClass['className']       = $this->_baseClassPrefix . $baseClass['className'];
+            $baseClass['className']       = $this->baseClassPrefix . $baseClass['className'];
             $baseClass['abstract']        = true;
             $baseClass['override_parent'] = false;
             $baseClass['is_base_class']   = true;
@@ -565,8 +561,8 @@ class Doctrine_Import_Builder
 
     public function buildTableClassDefinition(string $className, array $definition, array $options = []): string
     {
-        $extends = isset($options['extends']) ? $options['extends']:$this->_baseTableClassName;
-        if ($extends !== $this->_baseTableClassName) {
+        $extends = $options['extends'] ?? $this->baseTableClassName;
+        if ($extends !== $this->baseTableClassName) {
             $extends = $this->classPrefix . $extends;
         }
 
@@ -574,6 +570,7 @@ class Doctrine_Import_Builder
         $docBlock = null;
         if (isset($definition['topLevelClassName'])) {
             $docBlock = new DocBlockGenerator();
+            $docBlock->setWordWrap(false);
             $docBlock->setTag([
                 'name' => 'phpstan-extends',
                 'content' => sprintf('%s<%s>', $extends, $definition['topLevelClassName']),
@@ -601,10 +598,10 @@ class Doctrine_Import_Builder
     {
         if ($this->classPrefix) {
             $className = $this->classPrefix . $definition['tableClassName'];
-            $fileName = $className . $this->_suffix;
+            $fileName = $className . $this->suffix;
         } else {
             $className = $definition['tableClassName'];
-            $fileName  = $className . $this->_suffix;
+            $fileName  = $className . $this->suffix;
         }
 
         Doctrine_Lib::makeDirectories($path);
@@ -625,15 +622,15 @@ class Doctrine_Import_Builder
     {
         $className = $definition['className'];
         $code = $this->buildDefinition($className, $definition);
-        $fileName = $className . $this->_suffix;
-        $path = $this->_path;
+        $fileName = $className . $this->suffix;
+        $path = $this->path;
 
         if (!empty($definition['is_main_class'])) {
             if ($this->generateTableClasses()) {
                 $this->writeTableClassDefinition($definition, $path, ['extends' => $definition['inheritance']['tableExtends']]);
             }
         } elseif (!empty($definition['is_base_class'])) {
-            $path .= DIRECTORY_SEPARATOR . $this->_baseClassesDirectory;
+            $path .= DIRECTORY_SEPARATOR . $this->baseClassesDirectory;
         }
 
         // If we have a writePath from the if else conditionals above then use it

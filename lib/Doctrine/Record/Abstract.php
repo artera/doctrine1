@@ -1,32 +1,6 @@
 <?php
-/* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- * This software consists of voluntary contributions made by many individuals
- * and is licensed under the LGPL. For more information, see
- * <http://www.doctrine-project.org>.
- */
 
 /**
- * Doctrine_Record_Abstract
- *
- * @package    Doctrine
- * @subpackage Record
- * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link       www.doctrine-project.org
- * @since      1.0
- * @version    $Revision$
- *
  * @phpstan-template T of Doctrine_Table
  */
 abstract class Doctrine_Record_Abstract extends Doctrine_Access
@@ -143,7 +117,7 @@ abstract class Doctrine_Record_Abstract extends Doctrine_Access
 
     public function setInheritanceMap(array $map): void
     {
-        $this->_table->setOption('inheritanceMap', $map);
+        $this->_table->inheritanceMap = $map;
     }
 
     public function setSubclasses(array $map): void
@@ -159,7 +133,7 @@ abstract class Doctrine_Record_Abstract extends Doctrine_Access
                 $mapColumnNames[$this->getTable()->getColumnName($fieldName)] = $val;
             }
 
-            $this->_table->setOption('inheritanceMap', $mapColumnNames);
+            $this->_table->inheritanceMap = $mapColumnNames;
             return;
         } else {
             // Put an index on the key column
@@ -168,7 +142,7 @@ abstract class Doctrine_Record_Abstract extends Doctrine_Access
         }
 
         // Set the subclasses array for the parent class
-        $this->_table->setOption('subclasses', array_keys($map));
+        $this->_table->subclasses = array_keys($map);
     }
 
     /**
@@ -192,30 +166,6 @@ abstract class Doctrine_Record_Abstract extends Doctrine_Access
             }
         } else {
             $this->_table->setAttribute($attr, $value);
-        }
-    }
-
-    /**
-     * option
-     * sets or retrieves an option
-     *
-     * @see    Doctrine_Table::$options    availible options
-     * @param  mixed $name  the name of the option
-     * @param  mixed $value options value
-     * @return mixed
-     */
-    public function option($name, $value = null)
-    {
-        if ($value === null) {
-            if (is_array($name)) {
-                foreach ($name as $k => $v) {
-                    $this->_table->setOption($k, $v);
-                }
-            } else {
-                return $this->_table->getOption($name);
-            }
-        } else {
-            $this->_table->setOption($name, $value);
         }
     }
 

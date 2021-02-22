@@ -141,9 +141,9 @@ namespace {
             $this->hasColumn('creator', 'string', 255, ['notnull' => true, 'type' => 'string', 'length' => '255']);
             $this->hasColumn('creation_identifier as creationIdentifier', 'string', 255, ['notnull' => true, 'type' => 'string', 'length' => '255']);
 
-            $this->option('type', 'INNODB');
-            $this->option('collate', 'utf8_unicode_ci');
-            $this->option('charset', 'utf8');
+            $this->getTable()->type = 'INNODB';
+            $this->getTable()->collate = 'utf8_unicode_ci';
+            $this->getTable()->charset = 'utf8';
         }
 
         public function setUp(): void
@@ -178,9 +178,9 @@ namespace {
             $this->hasColumn('concept_id as conceptId', 'integer', 4, ['type' => 'integer', 'notnull' => true, 'length' => '4', 'primary' => true]);
             $this->hasColumn('parent_concept_id as conceptIdParent', 'integer', 4, ['type' => 'integer', 'notnull' => true, 'length' => '4', 'primary' => true]);
 
-            $this->option('type', 'INNODB');
-            $this->option('collate', 'utf8_unicode_ci');
-            $this->option('charset', 'utf8');
+            $this->getTable()->type = 'INNODB';
+            $this->getTable()->collate = 'utf8_unicode_ci';
+            $this->getTable()->charset = 'utf8';
         }
 
         public function setUp(): void

@@ -6,6 +6,6 @@ class MysqlTestRecord extends Doctrine_Record
         $this->hasColumn('name', 'string', null, 'primary');
         $this->hasColumn('code', 'integer', null, 'primary');
 
-        $this->option('type', 'INNODB');
+        $this->getTable()->type = 'INNODB';
     }
 }

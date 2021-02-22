@@ -268,7 +268,7 @@ namespace {
     {
         public function setTableDefinition(): void
         {
-            $this->option('orderBy', 'name ASC');
+            $this->getTable()->orderBy = 'name ASC';
 
             $this->hasColumn('name', 'string', 255);
         }
@@ -289,7 +289,7 @@ namespace {
     {
         public function setTableDefinition(): void
         {
-            $this->option('orderBy', 'title ASC, is_first DESC');
+            $this->getTable()->orderBy = 'title ASC, is_first DESC';
 
             $this->hasColumn('title', 'string', 255);
             $this->hasColumn('is_first', 'boolean');
@@ -312,7 +312,7 @@ namespace {
     {
         public function setTableDefinition(): void
         {
-            $this->option('orderBy', 'RAND()');
+            $this->getTable()->orderBy = 'RAND()';
 
             $this->hasColumn('title', 'string', 255);
         }

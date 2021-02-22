@@ -135,6 +135,11 @@ abstract class Doctrine_Query_Abstract
     protected $_passedConn = false;
 
     /**
+     * whether or not this query object is a subquery of another query object
+     */
+    protected bool $isSubquery = false;
+
+    /**
      * @var array<string,mixed> $_sqlParts  The SQL query string parts. Filled during the DQL parsing process.
      */
     protected $_sqlParts = [
@@ -760,24 +765,20 @@ abstract class Doctrine_Query_Abstract
     }
 
     /**
-     * copySubqueryInfo
      * copy aliases from another Hydrate object
      *
      * this method is needed by DQL subqueries which need the aliases
      * of the parent query
      *
-     * @param         Doctrine_Query_Abstract $query the query object from which the
-     *                                               aliases are copied from
+     * @param Doctrine_Query_Abstract $query the query object from which the aliases are copied from
      * @phpstan-param Doctrine_Query_Abstract<T> $query
-     * @return        $this         this object
      */
-    public function copySubqueryInfo(Doctrine_Query_Abstract $query)
+    public function copySubqueryInfo(Doctrine_Query_Abstract $query): void
     {
-        $this->_params          = & $query->_params;
-        $this->_tableAliasMap   = & $query->_tableAliasMap;
-        $this->_queryComponents = & $query->_queryComponents;
+        $this->_params          = &$query->_params;
+        $this->_tableAliasMap   = &$query->_tableAliasMap;
+        $this->_queryComponents = &$query->_queryComponents;
         $this->_tableAliasSeeds = $query->_tableAliasSeeds;
-        return $this;
     }
 
     /**
@@ -961,7 +962,7 @@ abstract class Doctrine_Query_Abstract
 
                     // Check again because getSqlQuery() above could have flipped the _queryCache flag
                     // if this query contains the limit sub query algorithm we don't need to cache it
-                    if ($this->_queryCache !== false && ($this->_queryCache || $this->_conn->getAttribute(Doctrine_Core::ATTR_QUERY_CACHE))) {
+                    if ($query !== false && $this->_queryCache !== false && ($this->_queryCache || $this->_conn->getAttribute(Doctrine_Core::ATTR_QUERY_CACHE))) {
                         // Convert query into a serialized form
                         $serializedQuery = $this->getCachedForm($query);
 
@@ -982,6 +983,7 @@ abstract class Doctrine_Query_Abstract
         if ($this->isLimitSubqueryUsed()
             && $this->_conn->getAttribute(Doctrine_Core::ATTR_DRIVER_NAME) !== 'mysql'
         ) {
+            // double the parameters
             $params = array_merge((array) $params, (array) $params);
         }
 
@@ -2238,5 +2240,19 @@ abstract class Doctrine_Query_Abstract
             }
         }
         return $difference;
+    }
+
+    /**
+     * if $bool parameter is set this method sets the value of
+     * Doctrine_Query::$isSubquery. If this value is set to true
+     * the query object will not load the primary key fields of the selected
+     * components.
+     */
+    public function isSubquery(?bool $bool = null): bool
+    {
+        if ($bool !== null) {
+            $this->isSubquery = $bool;
+        }
+        return $this->isSubquery;
     }
 }

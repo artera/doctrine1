@@ -69,10 +69,10 @@ namespace {
             $this->setTableName('Ticket_889');
 
             // set table type
-            $this->option('type', 'INNODB');
+            $this->getTable()->type = 'INNODB';
 
             // set character set
-            $this->option('charset', 'utf8');
+            $this->getTable()->charset = 'utf8';
 
             // id
             $this->hasColumn(
@@ -127,10 +127,10 @@ namespace {
             $this->setTableName('Ticket_889_Relationship');
 
             // set table type
-            $this->option('type', 'INNODB');
+            $this->getTable()->type = 'INNODB';
 
             // set character set
-            $this->option('charset', 'utf8');
+            $this->getTable()->charset = 'utf8';
 
             // parent_id
             $this->hasColumn(

@@ -260,7 +260,9 @@ class Doctrine_Import_Schema
     public function importSchema(array $schemaPath, string $format = 'yml', ?string $directory = null, array $models = []): void
     {
         $builder = new Doctrine_Import_Builder();
-        $builder->setTargetPath($directory);
+        if ($directory !== null) {
+            $builder->setTargetPath($directory ?? '');
+        }
         $builder->setOptions($this->getOptions());
 
         $schema = $this->buildSchema($schemaPath, $format);

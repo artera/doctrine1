@@ -22,6 +22,6 @@ class ForeignKeyTest extends Doctrine_Record
             'local' => 'id', 'foreign' => 'parent_id', 'cascade' => ['delete']]
         );
 
-        $this->option('type', 'INNODB');
+        $this->getTable()->type = 'INNODB';
     }
 }

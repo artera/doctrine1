@@ -12,9 +12,9 @@ class Cms_Category extends Doctrine_Record
         $this->hasColumn('parent', 'integer', 11);
         $this->hasColumn('position', 'integer', 3);
         $this->hasColumn('active', 'integer', 11);
-        $this->option('collate', 'utf8_unicode_ci');
-        $this->option('charset', 'utf8');
-        $this->option('type', 'INNODB');
+        $this->getTable()->collate = 'utf8_unicode_ci';
+        $this->getTable()->charset = 'utf8';
+        $this->getTable()->type = 'INNODB';
         $this->index('index_parent', ['fields' => ['parent']]);
     }
 }

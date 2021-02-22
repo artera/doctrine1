@@ -102,7 +102,7 @@ class Doctrine_Data_Import extends Doctrine_Data
                     // Skip associative arrays defining keys to relationships
                     if (!isset($value[0]) || (isset($value[0]) && is_array($value[0]))) {
                         $rel          = $table->getRelation($key);
-                        $relClassName = $rel->getTable()->getOption('name');
+                        $relClassName = $rel->getTable()->name;
                         $relRowKey    = $rowKey . '_' . $relClassName;
 
                         if ($rel->getType() == Doctrine_Relation::ONE) {

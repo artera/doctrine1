@@ -14,6 +14,6 @@ class MysqlIndexTestRecord extends Doctrine_Record
             'type'   => 'unique']
         );
 
-        $this->option('type', 'MYISAM');
+        $this->getTable()->type = 'MYISAM';
     }
 }

@@ -12,9 +12,9 @@ class Cms_CategoryLanguages extends Doctrine_Record
         $this->hasColumn('name', 'string', 256);
         $this->hasColumn('category_id', 'integer', 11);
         $this->hasColumn('language_id', 'integer', 11);
-        $this->option('collate', 'utf8_unicode_ci');
-        $this->option('charset', 'utf8');
-        $this->option('type', 'INNODB');
+        $this->getTable()->collate = 'utf8_unicode_ci';
+        $this->getTable()->charset = 'utf8';
+        $this->getTable()->type = 'INNODB';
         $this->index('index_category', ['fields' => ['category_id']]);
         $this->index('index_language', ['fields' => ['language_id']]);
     }

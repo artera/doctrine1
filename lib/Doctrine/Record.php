@@ -1322,7 +1322,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
     /**
      * returns a value of a property or a related component
      *
-     * @param  mixed   $fieldName name of the property or related component
+     * @param  string  $fieldName name of the property or related component
      * @param  boolean $load      whether or not to invoke the loading procedure
      * @throws Doctrine_Record_Exception        if trying to get a value of unknown property / related component
      * @return mixed
@@ -1375,7 +1375,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
         try {
             if (!isset($this->_references[$fieldName])) {
                 if ($load) {
-                    $rel                           = $this->_table->getRelation($fieldName);
+                    $rel = $this->_table->getRelation($fieldName);
                     $this->_references[$fieldName] = $rel->fetchRelatedFor($this);
                 } else {
                     $this->_references[$fieldName] = null;

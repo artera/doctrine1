@@ -21,8 +21,8 @@ namespace {
         public function setTableDefinition(): void
         {
             $this->hasColumn('name', 'string', 255);
-            $this->option('type', 'MYISAM');
-            $this->option('collate', 'latin1_german2_ci');
+            $this->getTable()->type = 'MYISAM';
+            $this->getTable()->collate = 'latin1_german2_ci';
         }
     }
 }

@@ -82,12 +82,6 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
     protected $_needsSubquery = false;
 
     /**
-     * @var boolean $_isSubquery           whether or not this query object is a subquery of another
-     *                                      query object
-     */
-    protected $_isSubquery;
-
-    /**
      * @var array $_neededTables            an array containing the needed table aliases
      */
     protected $_neededTables = [];
@@ -177,19 +171,12 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
     }
 
     /**
-     * createSubquery
-     * creates a subquery
-     *
-     * @return         Doctrine_Query
+     * @return static
      * @phpstan-return Doctrine_Query<T>
      */
-    public function createSubquery()
+    public function createSubquery(): self
     {
-        $class = get_class($this);
-        /**
- * @var Doctrine_Query $obj
-*/
-        $obj = new $class();
+        $obj = new static();
 
         // copy the aliases to the subquery
         $obj->copySubqueryInfo($this);
@@ -263,29 +250,6 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
         }
 
         return false;
-    }
-
-    /**
-     * isSubquery
-     * if $bool parameter is set this method sets the value of
-     * Doctrine_Query::$isSubquery. If this value is set to true
-     * the query object will not load the primary key fields of the selected
-     * components.
-     *
-     * If null is given as the first parameter this method retrieves the current
-     * value of Doctrine_Query::$isSubquery.
-     *
-     * @param  boolean|null $bool whether or not this query acts as a subquery
-     * @return $this|bool
-     */
-    public function isSubquery($bool = null)
-    {
-        if ($bool === null) {
-            return $this->_isSubquery;
-        }
-
-        $this->_isSubquery = (bool) $bool;
-        return $this;
     }
 
     /**
@@ -412,7 +376,7 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
 
         if (!isset($this->_pendingFields[$componentAlias])) {
             if ($this->_hydrator->getHydrationMode() != Doctrine_Core::HYDRATE_NONE) {
-                if (!$this->_isSubquery && $componentAlias == $this->getRootAlias()) {
+                if (!$this->isSubquery && $componentAlias == $this->getRootAlias()) {
                     throw new Doctrine_Query_Exception(
                         "The root class of the query (alias $componentAlias) "
                         . ' must have at least one field selected.'
@@ -451,7 +415,7 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
             // only auto-add the primary key fields if this query object is not
             // a subquery of another query object or we're using a child of the Object Graph
             // hydrator
-            if (!$this->_isSubquery && is_subclass_of($driverClassName, 'Doctrine_Hydrator_Graph')) {
+            if (!$this->isSubquery && is_subclass_of($driverClassName, 'Doctrine_Hydrator_Graph')) {
                 $fields = array_unique(array_merge((array) $table->getIdentifier(), $fields));
             }
         }

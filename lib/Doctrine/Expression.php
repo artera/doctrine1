@@ -125,7 +125,7 @@ class Doctrine_Expression
             $args[] = $this->parseClause($arg);
         }
 
-        return call_user_func_array([$this->getConnection()->expression, $name], $args);
+        return $this->getConnection()->expression->$name(...$args);
     }
 
     /**

@@ -448,18 +448,16 @@ class Doctrine_DataDict_Mysql extends Doctrine_DataDict
     {
         $dbType = strtolower($field['type']);
         $dbType = strtok($dbType, '(), ');
-        if ($dbType == 'national') {
+        if ($dbType === 'national') {
             $dbType = strtok('(), ');
         }
+        assert($dbType !== false);
         if (isset($field['length'])) {
             $length  = $field['length'];
             $decimal = '';
         } else {
-            $length  = strtok('(), ');
-            $decimal = strtok('(), ');
-            if (!$decimal) {
-                $decimal = null;
-            }
+            $length  = strtok('(), ') ?: 0;
+            $decimal = strtok('(), ') ?: null;
         }
         $type     = [];
         $unsigned = $fixed = null;
