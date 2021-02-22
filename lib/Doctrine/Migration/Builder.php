@@ -333,10 +333,6 @@ END;
      */
     public function generateMigrationClass($className, $options = [], $up = null, $down = null, $return = false)
     {
-        $className = Doctrine_Inflector::urlize($className);
-        $className = str_replace('-', '_', $className);
-        $className = Doctrine_Inflector::classify($className);
-
         if ($return || !$this->getMigrationsPath()) {
             return $this->buildMigrationClass($className, null, $options, $up, $down);
         } else {
@@ -344,19 +340,20 @@ END;
                 throw new Doctrine_Migration_Exception('You must specify the path to your migrations.');
             }
 
-            $next     = time() + $this->migration->getNextMigrationClassVersion();
+            $next = time() + $this->migration->getNextMigrationClassVersion();
             $fileName = $next . '_' . Doctrine_Inflector::tableize($className) . $this->suffix;
 
             $class = $this->buildMigrationClass($className, $fileName, $options, $up, $down);
 
-            $path = $this->getMigrationsPath() . DIRECTORY_SEPARATOR . $fileName;
-            if (class_exists($className) || file_exists($path)) {
+            if (class_exists($className)) {
                 $this->migration->loadMigrationClass($className);
                 return false;
             }
 
+            $path = $this->getMigrationsPath() . DIRECTORY_SEPARATOR . $fileName;
             file_put_contents($path, $class);
             include_once $path;
+            assert(class_exists($className));
             $this->migration->loadMigrationClass($className);
 
             return true;

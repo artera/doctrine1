@@ -25,7 +25,7 @@ namespace Tests\Tickets {
             $this->assertEquals(1, count($matches));
 
             $r2 = new \Ticket_DC1056_Test();
-            $r2->unserialize('a:12:{s:3:"_id";a:1:{s:2:"id";s:1:"1";}s:5:"_data";a:2:{s:2:"id";s:1:"1";s:8:"arraycol";a:1:{i:0;i:1;}}s:7:"_values";a:0:{}s:5:"state";i:3;s:13:"_lastModified";a:0:{}s:9:"_modified";a:0:{}s:10:"_oldValues";a:0:{}s:15:"_pendingDeletes";a:0:{}s:15:"_pendingUnlinks";a:0:{}s:20:"_serializeReferences";b:0;s:17:"_invokedSaveHooks";a:0:{}s:4:"_oid";i:41;}');
+            $r2->unserialize('a:12:{s:3:"_id";a:1:{s:2:"id";s:1:"1";}s:5:"_data";a:2:{s:2:"id";s:1:"1";s:8:"arraycol";a:1:{i:0;i:1;}}s:7:"_values";a:0:{}s:5:"state";i:3;s:12:"lastModified";a:0:{}s:8:"modified";a:0:{}s:10:"_oldValues";a:0:{}s:15:"_pendingDeletes";a:0:{}s:15:"_pendingUnlinks";a:0:{}s:20:"_serializeReferences";b:0;s:17:"_invokedSaveHooks";a:0:{}s:4:"_oid";i:41;}');
             $this->assertEquals([1], $r2->arraycol);
             $r2 = unserialize($r->serialize());
         }

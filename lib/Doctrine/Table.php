@@ -6,9 +6,9 @@
 class Doctrine_Table extends Doctrine_Configurable implements Countable
 {
     /**
-     * @var mixed[] $_data                                 temporary data which is then loaded into Doctrine_Record::$_data
+     * temporary data which is then loaded into Doctrine_Record::$_data
      */
-    protected $_data = [];
+    protected array $_data = [];
 
     /**
      * @var string[] $_identifier   The field names of all fields that are part of the identifier/primary key
@@ -17,24 +17,24 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
 
     /**
      * @see Doctrine_Identifier constants
-     * @var integer $_identifierType                     the type of identifier this table uses
+     * the type of identifier this table uses
      */
-    protected $_identifierType;
+    protected ?int $_identifierType = null;
 
     /**
-     * @var Doctrine_Connection $_conn                   Doctrine_Connection object that created this table
+     * Doctrine_Connection object that created this table
      */
-    protected $_conn;
+    protected Doctrine_Connection $_conn;
 
     /**
-     * @var array $_identityMap                          first level cache
+     * first level cache
      */
-    protected $_identityMap = [];
+    protected array $_identityMap = [];
 
     /**
-     * @var Doctrine_Table_Repository|null $_repository       record repository
+     * record repository
      */
-    protected $_repository;
+    protected ?Doctrine_Table_Repository $_repository = null;
 
     /**
      * @var array<string,array<string,mixed>> $_columns                  an array of column definitions,
@@ -51,42 +51,42 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
      *                                      -- notblank     notblank validator + notnull constraint
      *                                      ... many more
      */
-    protected $_columns = [];
+    protected array $_columns = [];
 
     /**
      * Array of unique sets of fields. These values are validated on save
      *
      * @var mixed[] $_uniques
      */
-    protected $_uniques = [];
+    protected array $_uniques = [];
 
     /**
-     * @var string[] $_fieldNames            an array of field names, used to look up field names
-     *                                    from column names. Keys are column
-     *                                    names and values are field names.
-     *                                    Alias for columns are here.
+     * @var string[] $_fieldNames an array of field names, used to look up field names
+     *                            from column names. Keys are column
+     *                            names and values are field names.
+     *                            Alias for columns are here.
      */
-    protected $_fieldNames = [];
+    protected array $_fieldNames = [];
 
     /**
      *
-     * @var string[] $_columnNames             an array of column names
-     *                                      keys are field names and values column names.
-     *                                      used to look up column names from field names.
-     *                                      this is the reverse lookup map of $_fieldNames.
+     * @var string[] $_columnNames an array of column names
+     *                             keys are field names and values column names.
+     *                             used to look up column names from field names.
+     *                             this is the reverse lookup map of $_fieldNames.
      */
-    protected $_columnNames = [];
+    protected array $_columnNames = [];
 
     /**
-     * @var integer $columnCount            cached column count, Doctrine_Record uses this column count in when
-     *                                      determining its state
+     * cached column count, Doctrine_Record uses this column count in when
+     * determining its state
      */
-    protected $columnCount;
+    protected int $columnCount = 0;
 
     /**
-     * @var boolean $hasDefaultValues       whether or not this table has default values
+     * whether or not this table has default values
      */
-    protected $hasDefaultValues;
+    protected bool $hasDefaultValues = false;
 
     /**
      * name of the component, for example component name of the GroupTable is 'Group'
@@ -130,20 +130,15 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
 
     /**
      * @see Doctrine_Record_Filter
-     * @var array $_filters                     an array containing all record filters attached to this table
+     * an array containing all record filters attached to this table
      */
-    protected $_filters = [];
+    protected array $_filters = [];
 
     /**
-     * @var mixed[] $_invokedMethods              method invoker cache
-     */
-    protected $_invokedMethods = [];
-
-    /**
-     * @var         Doctrine_Record $record             empty instance of the given model
+     * empty instance of the given model
      * @phpstan-var T
      */
-    protected $record;
+    protected ?Doctrine_Record $record = null;
 
     /**
      * the constructor
@@ -172,11 +167,9 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
         }
 
         if ($initDefinition) {
-            $this->record = $this->initDefinition();
-
+            $this->record = $record = $this->initDefinition();
             $this->initIdentifier();
-
-            $this->record->setUp();
+            $record->setUp();
         } elseif (empty($this->tableName)) {
             $this->setTableName(Doctrine_Inflector::tableize($this->name));
         }
@@ -203,10 +196,10 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
     /**
      * Initializes the in-memory table definition.
      *
-     * @return         Doctrine_Record
+     * @return Doctrine_Record
      * @phpstan-return T
      */
-    public function initDefinition()
+    public function initDefinition(): Doctrine_Record
     {
         $name = $this->name;
         if (!class_exists($name) || empty($name)) {
@@ -306,15 +299,15 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
      * copying in the schema the list of the fields which constitutes
      * the primary key.
      *
-     * @return void
+     * @return int the identifier type
      */
-    public function initIdentifier(): void
+    public function initIdentifier(): int
     {
         $id_count = count($this->_identifier);
 
         if ($id_count > 1) {
             $this->_identifierType = Doctrine_Core::IDENTIFIER_COMPOSITE;
-            return;
+            return $this->_identifierType;
         }
 
         if ($id_count == 1) {
@@ -338,7 +331,7 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
                         case 'autoinc':
                             if ($value !== false) {
                                 $this->_identifierType = Doctrine_Core::IDENTIFIER_AUTOINC;
-                                $found                 = true;
+                                $found = true;
                             }
                             break;
                         case 'seq':
@@ -358,14 +351,18 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
                             break;
                     }
                 }
+
                 if (!isset($this->_identifierType)) {
                     $this->_identifierType = Doctrine_Core::IDENTIFIER_NATURAL;
                 }
             }
 
             if (isset($pk)) {
+                if (!isset($this->_identifierType)) {
+                    $this->_identifierType = Doctrine_Core::IDENTIFIER_NATURAL;
+                }
                 $this->_identifier = [$pk];
-                return;
+                return $this->_identifierType;
             }
         }
 
@@ -390,6 +387,7 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
         $this->_identifierType = Doctrine_Core::IDENTIFIER_AUTOINC;
 
         $this->columnCount++;
+        return $this->_identifierType;
     }
 
     /**
@@ -418,12 +416,12 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
      * but primarily it is first used to instantiate all the internal
      * in memory schema definition.
      *
-     * @return         Doctrine_Record  Empty instance of the record
+     * @return Doctrine_Record  Empty instance of the record
      * @phpstan-return T
      */
-    public function getRecordInstance()
+    public function getRecordInstance(): Doctrine_Record
     {
-        if (!$this->record) {
+        if ($this->record === null) {
             $this->record = new $this->name;
         }
         return $this->record;
@@ -477,31 +475,6 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
     public function isIdentifierComposite()
     {
         return $this->getIdentifierType() === Doctrine_Core::IDENTIFIER_COMPOSITE;
-    }
-
-    /**
-     * getMethodOwner
-     *
-     * @param  string $method
-     * @return false|string
-     */
-    public function getMethodOwner($method)
-    {
-        return (isset($this->_invokedMethods[$method])) ?
-                      $this->_invokedMethods[$method] : false;
-    }
-
-    /**
-     * setMethodOwner
-     *
-     * @param string $method
-     * @param string $class
-     *
-     * @return void
-     */
-    public function setMethodOwner($method, $class)
-    {
-        $this->_invokedMethods[$method] = $class;
     }
 
     /**
@@ -1262,11 +1235,8 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
      * Retrieves the type of primary key.
      *
      * This method finds out if the primary key is multifield.
-     *
-     * @see    Doctrine_Identifier constants
-     * @return integer
      */
-    public function getIdentifierType()
+    public function getIdentifierType(): ?int
     {
         return $this->_identifierType;
     }
@@ -1996,9 +1966,7 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
     public function validateUniques(Doctrine_Record $record)
     {
         $errorStack = $record->getErrorStack();
-        /**
- * @var Doctrine_Validator_Unique $validator
-*/
+        /** @var Doctrine_Validator_Unique $validator */
         $validator          = Doctrine_Validator::getValidator('unique');
         $validator->invoker = $record;
 
@@ -2018,10 +1986,7 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
         }
     }
 
-    /**
-     * @return integer      the number of columns in this table
-     */
-    public function getColumnCount()
+    public function getColumnCount(): int
     {
         return $this->columnCount;
     }

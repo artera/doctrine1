@@ -200,15 +200,7 @@ class Doctrine_RawSql extends Doctrine_Query_Abstract
         return $this;
     }
 
-    /**
-     * getSqlQuery
-     * builds the sql query.
-     *
-     * @param  array $params
-     * @param  bool  $limitSubquery
-     * @return string       the built sql query
-     */
-    public function getSqlQuery($params = [], $limitSubquery = true)
+    public function getSqlQuery(array $params = [], bool $limitSubquery = true): string
     {
         // Assign building/execution specific params
         $this->_params['exec'] = $params;

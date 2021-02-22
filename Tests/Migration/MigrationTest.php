@@ -84,24 +84,6 @@ namespace Tests\Migration {
             $this->assertFalse($migration->hasErrors());
             $this->assertEquals(0, $migration->getNumErrors());
         }
-
-        public function testMigrationClassNameInflected()
-        {
-            $tests = ['test-class-Name',
-                       'test_class_name',
-                       'test:class:name',
-                       'test(class)name',
-                       'test*class*name',
-                       'test class name',
-                       'test&class&name'];
-
-            $builder = new \Doctrine_Migration_Builder();
-
-            foreach ($tests as $test) {
-                $code = $builder->generateMigrationClass($test);
-                $this->assertNotEmpty($code);
-            }
-        }
     }
 }
 

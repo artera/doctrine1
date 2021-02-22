@@ -216,39 +216,35 @@ class Doctrine_Migration
      * @param  string $name
      * @phpstan-param class-string $name
      * @param  string $path
-     * @return false|null
+     * @return bool
      */
-    public function loadMigrationClass($name, $path = null)
+    public function loadMigrationClass(string $name, ?string $path = null): bool
     {
         $class = new ReflectionClass($name);
 
         while ($class->isSubclassOf($this->_reflectionClass)) {
             $class = $class->getParentClass();
             if ($class === false) {
-                break;
+                return false;
             }
-        }
-
-        if ($class === false) {
-            return false;
         }
 
         if (empty($this->_migrationClasses)) {
             $classMigrationNum = 1;
         } else {
-            $nums              = array_keys($this->_migrationClasses);
-            $num               = end($nums);
+            $nums = array_keys($this->_migrationClasses);
+            $num = end($nums);
             $classMigrationNum = $num + 1;
         }
 
         $this->_migrationClasses[$classMigrationNum] = $name;
 
         if ($path) {
-            $dir                                                             = dirname($path);
+            $dir = dirname($path);
             self::$_migrationClassesForDirectories[$dir][$classMigrationNum] = $name;
         }
 
-        return null;
+        return true;
     }
 
     /**

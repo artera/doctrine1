@@ -37,13 +37,15 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
 
     /**
      * an array containing field names that were modified in the previous transaction
+     * @var string[]
      */
-    protected array $_lastModified = [];
+    protected array $lastModified = [];
 
     /**
      * an array containing field names that have been modified
+     * @var string[]
      */
-    protected array $_modified = [];
+    protected array $modified = [];
 
     /**
      * an array of the old values from set properties
@@ -656,7 +658,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
             $k   = $this->_table->getFieldName($k);
             $old = $this->get($k, false);
 
-            if (((string) $old !== (string) $v || $old === null) && !in_array($k, $this->_modified)) {
+            if (((string) $old !== (string) $v || $old === null) && !in_array($k, $this->modified)) {
                 $this->set($k, $v);
             }
         }
@@ -683,8 +685,8 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
 
             if ($value instanceof Doctrine_Null || $overwrite) {
                 $this->_data[$column] = $default;
-                $this->_modified[]    = $column;
-                $this->state          = State::TDIRTY();
+                $this->modified[] = $column;
+                $this->state = State::TDIRTY();
             }
         }
 
@@ -732,7 +734,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
         if ($overwriteLocalChanges) {
             $this->_values    = array_merge($this->_values, $this->cleanData($data));
             $this->_data      = array_merge($this->_data, $data);
-            $this->_modified  = [];
+            $this->modified  = [];
             $this->_oldValues = [];
         } else {
             $this->_values = array_merge($this->cleanData($data), $this->_values);
@@ -1331,10 +1333,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
     {
         if ($this->_table->getAttribute(Doctrine_Core::ATTR_AUTO_ACCESSOR_OVERRIDE) || $this->hasAccessor($fieldName)) {
             $componentName = $this->_table->getComponentName();
-
-            $accessor = $this->hasAccessor($fieldName)
-                ? $this->getAccessor($fieldName)
-                : 'get' . Doctrine_Inflector::classify($fieldName);
+            $accessor = $this->getAccessor($fieldName) ?? 'get' . Doctrine_Inflector::classify($fieldName);
 
             if ($this->hasAccessor($fieldName) || method_exists($this, $accessor)) {
                 $this->hasAccessor($fieldName, $accessor);
@@ -1444,9 +1443,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
     {
         if ($this->_table->getAttribute(Doctrine_Core::ATTR_AUTO_ACCESSOR_OVERRIDE) || $this->hasMutator($fieldName)) {
             $componentName = $this->_table->getComponentName();
-            $mutator       = $this->hasMutator($fieldName)
-                ? $this->getMutator($fieldName):
-                'set' . Doctrine_Inflector::classify($fieldName);
+            $mutator       = $this->getMutator($fieldName) ?? 'set' . Doctrine_Inflector::classify($fieldName);
 
             if ($this->hasMutator($fieldName) || method_exists($this, $mutator)) {
                 $this->hasMutator($fieldName, $mutator);
@@ -1486,8 +1483,8 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
                 if ($value === null) {
                     $value = $this->_table->getDefaultValueOf($fieldName);
                 }
-                $this->_data[$fieldName]      = $value;
-                $this->_modified[]            = $fieldName;
+                $this->_data[$fieldName] = $value;
+                $this->modified[] = $fieldName;
                 $this->_oldValues[$fieldName] = $old;
 
                 switch ($this->state) {
@@ -1787,11 +1784,10 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
      * @return         array $a
      * @phpstan-return array<string, mixed>
      */
-    public function getModified($old = false, $last = false)
+    public function getModified(bool $old = false, bool $last = false): array
     {
         $a = [];
-
-        $modified = $last ? $this->_lastModified:$this->_modified;
+        $modified = $last ? $this->lastModified : $this->modified;
         foreach ($modified as $fieldName) {
             if ($old) {
                 $a[$fieldName] = isset($this->_oldValues[$fieldName])
@@ -1839,7 +1835,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
         $modifiedFields = [];
 
         if (empty($array)) {
-            $modifiedFields = $this->_modified;
+            $modifiedFields = $this->modified;
         }
 
         foreach ($modifiedFields as $field) {
@@ -2210,7 +2206,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
 
         foreach ($data as $key => $val) {
             if (!($val instanceof Doctrine_Null)) {
-                $ret->_modified[] = $key;
+                $ret->modified[] = $key;
             }
         }
 
@@ -2641,34 +2637,10 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
      */
     protected function _resetModified()
     {
-        if (!empty($this->_modified)) {
-            $this->_lastModified = $this->_modified;
-            $this->_modified     = [];
+        if (!empty($this->modified)) {
+            $this->lastModified = $this->modified;
+            $this->modified     = [];
         }
-    }
-
-    /**
-     * magic method used for method overloading
-     *
-     * the function of this method is to try to find a given method from the templates (behaviors)
-     * the record is using, and if found, execute it. Note that already existing methods would not be
-     * overloaded.
-     *
-     * So, in sense, this method replicates the usage of mixins (as seen in some programming languages)
-     *
-     * @param  string $method name of the method
-     * @param  array  $args   method arguments
-     * @return mixed                the return value of the given method
-     */
-    public function __call($method, $args)
-    {
-        $template = $this->_table->getMethodOwner($method);
-        if ($template !== false) {
-            $template->setInvoker($this);
-            return call_user_func_array([$template, $method], $args);
-        }
-
-        throw new Doctrine_Record_UnknownPropertyException(sprintf('Unknown method %s::%s', static::class, $method));
     }
 
     /**

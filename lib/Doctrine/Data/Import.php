@@ -196,7 +196,7 @@ class Doctrine_Data_Import extends Doctrine_Data
                         $func = 'set' . Doctrine_Inflector::classify($key);
                         $obj->$func($value);
                     } else {
-                        throw new Doctrine_Data_Exception('Invalid fixture element "' . $key . '" under "' . $rowKey . '"');
+                        throw $e;
                     }
                 }
             }

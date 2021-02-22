@@ -2171,7 +2171,7 @@ abstract class Doctrine_Query_Abstract
      * @param  bool  $limitSubquery
      * @return string|false
      */
-    abstract public function getSqlQuery($params = [], $limitSubquery = true);
+    abstract public function getSqlQuery(array $params = [], bool $limitSubquery = true): string;
 
     /**
      * parseDqlQuery

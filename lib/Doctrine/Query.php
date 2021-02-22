@@ -1100,9 +1100,8 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
      * @param  mixed[] $params        an array of prepared statement params (needed only in mysql driver
      *                                when limit subquery algorithm is used)
      * @param  bool    $limitSubquery Whether or not to try and apply the limit subquery algorithm
-     * @return string|false                   the built sql query
      */
-    public function getSqlQuery($params = [], $limitSubquery = true)
+    public function getSqlQuery(array $params = [], bool $limitSubquery = true): string
     {
         // Assign building/execution specific params
         $this->_params['exec'] = $params;
@@ -1123,9 +1122,8 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
      * Build the SQL query from the DQL
      *
      * @param  bool $limitSubquery Whether or not to try and apply the limit subquery algorithm
-     * @return string|false $sql The generated SQL string
      */
-    public function buildSqlQuery($limitSubquery = true)
+    public function buildSqlQuery(bool $limitSubquery = true): string
     {
         // reset the state
         if (!$this->isSubquery()) {
@@ -1170,7 +1168,7 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
 
         // Proceed with the generated SQL
         if (empty($this->_sqlParts['from'])) {
-            return false;
+            throw new Doctrine_Query_Exception('Missing from part.');
         }
 
         $needsSubQuery = false;
