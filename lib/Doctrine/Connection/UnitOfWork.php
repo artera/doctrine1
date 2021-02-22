@@ -217,9 +217,6 @@ class Doctrine_Connection_UnitOfWork extends Doctrine_Connection_Module
 
                 // adjust state, remove from identity map and inform postDelete listeners
                 foreach ($deletedRecords as $record) {
-                    // currently just for bc!
-                    $this->_deleteCTIParents($table, $record);
-                    //--
                     $record->state(Doctrine_Record_State::TCLEAN());
                     $record->getTable()->removeRecord($record);
                     $this->_postDelete($record);
@@ -490,13 +487,8 @@ class Doctrine_Connection_UnitOfWork extends Doctrine_Connection_Module
         if ($record->isValid(false, false)) {
             $table = $record->getTable();
             $identifier = $record->identifier();
-            if ($table->getOption('joinedParents')) {
-                // currrently just for bc!
-                $this->_updateCTIRecord($table, $record);
-            } else {
-                $array = $record->getPrepared();
-                $this->conn->update($table, $array, $identifier);
-            }
+            $array = $record->getPrepared();
+            $this->conn->update($table, $array, $identifier);
             $record->assignIdentifier(true);
 
             $record->invokeSaveHooks('post', 'update', $event);
@@ -524,14 +516,7 @@ class Doctrine_Connection_UnitOfWork extends Doctrine_Connection_Module
 
         if ($record->isValid(false, false)) {
             $table = $record->getTable();
-
-            if ($table->getOption('joinedParents')) {
-                // just for bc!
-                $this->_insertCTIRecord($table, $record);
-                //--
-            } else {
-                $this->processSingleInsert($record);
-            }
+            $this->processSingleInsert($record);
 
             $table->addRecord($record);
             $record->invokeSaveHooks('post', 'insert', $event);
@@ -647,7 +632,7 @@ class Doctrine_Connection_UnitOfWork extends Doctrine_Connection_Module
 
             if ($index === false) {
                 $flushList[] = $currentClass;
-                $index       = max(array_keys($flushList));
+                $index = max(array_keys($flushList));
             }
 
             $rels = $table->getRelations();
@@ -668,7 +653,7 @@ class Doctrine_Connection_UnitOfWork extends Doctrine_Connection_Module
                 }
 
                 $relatedCompIndex = array_search($relatedClassName, $flushList);
-                $type             = $rel->getType();
+                $type = $rel->getType();
 
                 // skip self-referenced relations
                 if ($relatedClassName === $currentClass) {
@@ -679,39 +664,33 @@ class Doctrine_Connection_UnitOfWork extends Doctrine_Connection_Module
                     // the related component needs to come after this component in
                     // the list (since it holds the fk)
 
-                    if ($relatedCompIndex !== false) {
-                        // the component is already in the list
-                        if ($relatedCompIndex >= $index) {
-                            // it's already in the right place
-                            continue;
-                        }
-
+                    if ($relatedCompIndex === false) {
+                        $flushList[] = $relatedClassName;
+                    } elseif ($relatedCompIndex >= $index) {
+                        // it's already in the right place
+                        continue;
+                    } else {
                         unset($flushList[$index]);
                         // the related comp has the fk. so put "this" comp immediately
                         // before it in the list
                         array_splice($flushList, $relatedCompIndex, 0, $currentClass);
                         $index = $relatedCompIndex;
-                    } else {
-                        $flushList[] = $relatedClassName;
                     }
                 } elseif ($rel instanceof Doctrine_Relation_LocalKey) {
                     // the related component needs to come before the current component
                     // in the list (since this component holds the fk).
 
-                    if ($relatedCompIndex !== false) {
-                        // already in flush list
-                        if ($relatedCompIndex <= $index) {
-                            // it's in the right place
-                            continue;
-                        }
-
+                    if ($relatedCompIndex === false) {
+                        array_unshift($flushList, $relatedClassName);
+                        $index++;
+                    } elseif ($relatedCompIndex <= $index) {
+                        // it's already in the right place
+                        continue;
+                    } else {
                         unset($flushList[$relatedCompIndex]);
                         // "this" comp has the fk. so put the related comp before it
                         // in the list
                         array_splice($flushList, $index, 0, $relatedClassName);
-                    } else {
-                        array_unshift($flushList, $relatedClassName);
-                        $index++;
                     }
                 } elseif ($rel instanceof Doctrine_Relation_Association) {
                     // the association class needs to come after both classes
@@ -730,152 +709,20 @@ class Doctrine_Connection_UnitOfWork extends Doctrine_Connection_Module
 
                     $index3 = array_search($assocClassName, $flushList);
 
-                    if ($index3 !== false) {
-                        if ($index3 >= $index) {
-                            continue;
-                        }
-
+                    if ($index3 === false) {
+                        $flushList[] = $assocClassName;
+                    } elseif ($index3 >= $index || $relatedCompIndex === false) {
+                        continue;
+                    } else {
                         unset($flushList[$index3]);
                         array_splice($flushList, $index - 1, 0, $assocClassName);
                         $index = $relatedCompIndex;
-                    } else {
-                        $flushList[] = $assocClassName;
                     }
                 }
             }
         }
 
         return array_values($flushList);
-    }
-
-
-    /* The following is all the Class Table Inheritance specific code. Support dropped
-       for 0.10/1.0. */
-
-    /**
-     * Class Table Inheritance code.
-     * Support dropped for 0.10/1.0.
-     *
-     * Note: This is flawed. We also need to delete from subclass tables.
-     *
-     * @param  Doctrine_Record $record
-     * @return void
-     */
-    private function _deleteCTIParents(Doctrine_Table $table, $record)
-    {
-        if ($table->getOption('joinedParents')) {
-            foreach (array_reverse($table->getOption('joinedParents')) as $parent) {
-                $parentTable = $table->getConnection()->getTable($parent);
-                $this->conn->delete($parentTable, $record->identifier());
-            }
-        }
-    }
-
-    /**
-     * Class Table Inheritance code.
-     * Support dropped for 0.10/1.0.
-     *
-     * @return void
-     */
-    private function _insertCTIRecord(Doctrine_Table $table, Doctrine_Record $record)
-    {
-        $dataSet   = $this->_formatDataSet($record);
-        $component = $table->getComponentName();
-
-        $classes   = $table->getOption('joinedParents');
-        $classes[] = $component;
-
-        foreach ($classes as $k => $parent) {
-            if ($k === 0) {
-                $rootRecord = new $parent();
-                $rootRecord->merge($dataSet[$parent]);
-                $this->processSingleInsert($rootRecord);
-                $record->assignIdentifier($rootRecord->identifier());
-            } else {
-                foreach ((array) $rootRecord->identifier() as $id => $value) {
-                    $dataSet[$parent][$id] = $value;
-                }
-
-                $this->conn->insert($this->conn->getTable($parent), $dataSet[$parent]);
-            }
-        }
-    }
-
-    /**
-     * Class Table Inheritance code.
-     * Support dropped for 0.10/1.0.
-     *
-     * @return void
-     */
-    private function _updateCTIRecord(Doctrine_Table $table, Doctrine_Record $record)
-    {
-        $identifier = $record->identifier();
-        $dataSet    = $this->_formatDataSet($record);
-
-        $component = $table->getComponentName();
-
-        $classes   = $table->getOption('joinedParents');
-        $classes[] = $component;
-
-        foreach ($record as $field => $value) {
-            if ($value instanceof Doctrine_Record) {
-                if (!$value->exists()) {
-                    $value->save();
-                }
-                $record->set($field, $value->getIncremented());
-            }
-        }
-
-        foreach ($classes as $class) {
-            $parentTable = $this->conn->getTable($class);
-
-            if (!array_key_exists($class, $dataSet)) {
-                continue;
-            }
-
-            $this->conn->update($this->conn->getTable($class), $dataSet[$class], $identifier);
-        }
-    }
-
-    /**
-     * Class Table Inheritance code.
-     * Support dropped for 0.10/1.0.
-     *
-     * @return array[]
-     */
-    private function _formatDataSet(Doctrine_Record $record)
-    {
-        $table     = $record->getTable();
-        $dataSet   = [];
-        $component = $table->getComponentName();
-        $array     = $record->getPrepared();
-
-        foreach ($table->getColumns() as $columnName => $definition) {
-            if (!isset($dataSet[$component])) {
-                $dataSet[$component] = [];
-            }
-
-            if (isset($definition['owner']) && !isset($dataSet[$definition['owner']])) {
-                $dataSet[$definition['owner']] = [];
-            }
-
-            $fieldName = $table->getFieldName($columnName);
-            if (isset($definition['primary']) && $definition['primary']) {
-                continue;
-            }
-
-            if (!array_key_exists($fieldName, $array)) {
-                continue;
-            }
-
-            if (isset($definition['owner'])) {
-                $dataSet[$definition['owner']][$fieldName] = $array[$fieldName];
-            } else {
-                $dataSet[$component][$fieldName] = $array[$fieldName];
-            }
-        }
-
-        return $dataSet;
     }
 
     /**

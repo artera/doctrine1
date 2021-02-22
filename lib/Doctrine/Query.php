@@ -1827,7 +1827,6 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
                     $queryPart = $this->buildSimpleRelationSql($relation, $foreignAlias, $localAlias, $overrideJoin, $join);
                 }
 
-                $queryPart .= $this->buildInheritanceJoinSql($table->getComponentName(), $componentAlias);
                 $this->_sqlParts['from'][$componentAlias] = $queryPart;
 
                 if (!empty($joinCondition)) {
@@ -1984,59 +1983,11 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
 
         $this->_tableAliasMap[$tableAlias] = $componentAlias;
 
-        $queryPart .= $this->buildInheritanceJoinSql($name, $componentAlias);
-
         $this->_sqlParts['from'][] = $queryPart;
 
         $this->_queryComponents[$componentAlias] = ['table' => $table, 'map' => null];
 
         return $table;
-    }
-
-    /**
-     * @todo   DESCRIBE ME!
-     * @param  string $name           component class name
-     * @param  string $componentAlias alias of the component in the dql
-     * @return string                   query part
-     */
-    public function buildInheritanceJoinSql($name, $componentAlias)
-    {
-        // get the connection for the component
-        $manager = Doctrine_Manager::getInstance();
-        if (!$this->_passedConn && $manager->hasConnectionForComponent($name)) {
-            $this->_conn = $manager->getConnectionForComponent($name);
-        }
-
-        $table     = $this->_conn->getTable($name);
-        $tableName = $table->getTableName();
-
-        // get the short alias for this table
-        $tableAlias = $this->getSqlTableAlias($componentAlias, $tableName);
-
-        $queryPart = '';
-
-        foreach ($table->getOption('joinedParents') as $parent) {
-            $parentTable = $this->_conn->getTable($parent);
-
-            $parentAlias = $componentAlias . '.' . $parent;
-
-            // get the short alias for the parent table
-            $parentTableAlias = $this->getSqlTableAlias($parentAlias, $parentTable->getTableName());
-
-            $queryPart .= ' LEFT JOIN ' . $this->_conn->quoteIdentifier($parentTable->getTableName())
-                        . ' ' . $this->_conn->quoteIdentifier($parentTableAlias) . ' ON ';
-
-            foreach ((array) $table->getIdentifier() as $identifier) {
-                $column = $table->getColumnName($identifier);
-
-                $queryPart .= $this->_conn->quoteIdentifier($tableAlias)
-                            . '.' . $this->_conn->quoteIdentifier($column)
-                            . ' = ' . $this->_conn->quoteIdentifier($parentTableAlias)
-                            . '.' . $this->_conn->quoteIdentifier($column);
-            }
-        }
-
-        return $queryPart;
     }
 
     /**

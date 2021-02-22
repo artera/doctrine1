@@ -44,7 +44,6 @@
  * @property   array $treeOptions
  * @property   array $indexes
  * @property   array $parents
- * @property   array $joinedParents
  * @property   array $queryParts
  * @property   array $subclasses
  * @property   mixed $orderBy
@@ -189,7 +188,6 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
                                      'treeOptions'    => [],
                                      'indexes'        => [],
                                      'parents'        => [],
-                                     'joinedParents'  => [],
                                      'queryParts'     => [],
                                      'subclasses'     => [],
                                      'orderBy'        => null
@@ -321,8 +319,6 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
             $class = new ReflectionClass($class);
         }
 
-        $this->_options['joinedParents'] = [];
-
         foreach (array_reverse($this->_options['parents']) as $parent) {
             if ($parent === $class->getName()) {
                 continue;
@@ -342,12 +338,8 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
                     if (isset($this->_columns[$columnName])) {
                         $found = true;
                         break;
-                    } else {
-                        if (!isset($parentColumns[$columnName]['owner'])) {
-                            $parentColumns[$columnName]['owner'] = $parentTable->getComponentName();
-                        }
-
-                        $this->_options['joinedParents'][] = $parentColumns[$columnName]['owner'];
+                    } elseif (!isset($parentColumns[$columnName]['owner'])) {
+                        $parentColumns[$columnName]['owner'] = $parentTable->getComponentName();
                     }
                 } else {
                     unset($parentColumns[$columnName]);
@@ -365,8 +357,6 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
 
             break;
         }
-
-        $this->_options['joinedParents'] = array_values(array_unique($this->_options['joinedParents']));
 
         $this->_options['declaringClass'] = $class;
 
@@ -449,59 +439,26 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
             }
         }
 
-        if (!empty($this->_options['joinedParents'])) {
-            $root = current($this->_options['joinedParents']);
+        $identifierOptions = $this->getAttribute(Doctrine_Core::ATTR_DEFAULT_IDENTIFIER_OPTIONS);
+        $name              = (isset($identifierOptions['name']) && $identifierOptions['name']) ? $identifierOptions['name']:'id';
+        $name              = sprintf($name, $this->getTableName());
 
-            $table = $this->_conn->getTable($root);
+        $definition = ['type'          => (isset($identifierOptions['type']) && $identifierOptions['type']) ? $identifierOptions['type']:'integer',
+                        'length'        => (isset($identifierOptions['length']) && $identifierOptions['length']) ? $identifierOptions['length']:8,
+                        'autoincrement' => isset($identifierOptions['autoincrement']) ? $identifierOptions['autoincrement']:true,
+                        'primary'       => isset($identifierOptions['primary']) ? $identifierOptions['primary']:true];
 
-            $this->_identifier = (array) $table->getIdentifier();
-
-            $this->_identifierType = ($table->getIdentifierType() !== Doctrine_Core::IDENTIFIER_AUTOINC)
-                                ? $table->getIdentifierType() : Doctrine_Core::IDENTIFIER_NATURAL;
-
-            // add all inherited primary keys
-            foreach ($this->_identifier as $id) {
-                $definition = $table->getDefinitionOf($id);
-                if (!$definition) {
-                    continue;
-                }
-
-                // inherited primary keys shouldn't contain autoinc
-                // and sequence definitions
-                unset($definition['autoincrement']);
-                unset($definition['sequence']);
-
-                // add the inherited primary key column
-                $fullName = $id . ' as ' . $table->getFieldName($id);
-                $this->setColumn(
-                    $fullName,
-                    $definition['type'],
-                    $definition['length'],
-                    $definition,
-                    true
-                );
+        unset($identifierOptions['name'], $identifierOptions['type'], $identifierOptions['length']);
+        foreach ($identifierOptions as $key => $value) {
+            if (!isset($definition[$key]) || !$definition[$key]) {
+                $definition[$key] = $value;
             }
-        } else {
-            $identifierOptions = $this->getAttribute(Doctrine_Core::ATTR_DEFAULT_IDENTIFIER_OPTIONS);
-            $name              = (isset($identifierOptions['name']) && $identifierOptions['name']) ? $identifierOptions['name']:'id';
-            $name              = sprintf($name, $this->getTableName());
-
-            $definition = ['type'          => (isset($identifierOptions['type']) && $identifierOptions['type']) ? $identifierOptions['type']:'integer',
-                            'length'        => (isset($identifierOptions['length']) && $identifierOptions['length']) ? $identifierOptions['length']:8,
-                            'autoincrement' => isset($identifierOptions['autoincrement']) ? $identifierOptions['autoincrement']:true,
-                            'primary'       => isset($identifierOptions['primary']) ? $identifierOptions['primary']:true];
-
-            unset($identifierOptions['name'], $identifierOptions['type'], $identifierOptions['length']);
-            foreach ($identifierOptions as $key => $value) {
-                if (!isset($definition[$key]) || !$definition[$key]) {
-                    $definition[$key] = $value;
-                }
-            }
-
-            $this->setColumn($name, $definition['type'], $definition['length'], $definition, true);
-            $this->_identifier = [$name];
-            $this->_identifierType = Doctrine_Core::IDENTIFIER_AUTOINC;
         }
+
+        $this->setColumn($name, $definition['type'], $definition['length'], $definition, true);
+        $this->_identifier = [$name];
+        $this->_identifierType = Doctrine_Core::IDENTIFIER_AUTOINC;
+
         $this->columnCount++;
     }
 

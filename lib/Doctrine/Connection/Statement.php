@@ -76,7 +76,7 @@ class Doctrine_Connection_Statement
         $event->cursorOrientation = $cursor_orientation;
         $event->cursorOffset      = $cursor_offset;
 
-        $data = $this->connection->getListener()->preFetch($event);
+        $this->connection->getListener()->preFetch($event);
         $data = $this->statement->fetch($fetch_style, $cursor_orientation, $cursor_offset);
         $this->connection->getListener()->postFetch($event);
 

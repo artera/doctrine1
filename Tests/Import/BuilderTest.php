@@ -49,10 +49,6 @@ class BuilderTest extends DoctrineUnitTestCase
         $this->assertTrue($schemaTestSimpleInheritanceParent->hasMethod('setTableDefinition'));
         $this->assertTrue($schemaTestSimpleInheritanceChild->isSubClassOf(\SchemaTestSimpleInheritanceParent::class));
 
-        // Class Table Inheritance
-        $schemaTestClassTableInheritanceParent = new \ReflectionClass(\SchemaTestClassTableInheritanceParent::class);
-        $schemaTestClassTableInheritanceChild  = new \ReflectionClass(\SchemaTestClassTableInheritanceChild::class);
-
         // Concrete Inheritance
         $schemaTestConcreteInheritanceParent = new \ReflectionClass(\SchemaTestConcreteInheritanceParent::class);
         $schemaTestConcreteInheritanceChild  = new \ReflectionClass(\SchemaTestConcreteInheritanceChild::class);
@@ -64,11 +60,6 @@ class BuilderTest extends DoctrineUnitTestCase
         $sql = \Doctrine_Core::generateSqlFromArray([\SchemaTestSimpleInheritanceParent::class, \SchemaTestSimpleInheritanceChild::class]);
         $this->assertEquals(count($sql), 1);
         $this->assertEquals($sql[0], 'CREATE TABLE schema_test_simple_inheritance_parent (id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(255), description VARCHAR(255))');
-
-        $sql = \Doctrine_Core::generateSqlFromArray([\SchemaTestClassTableInheritanceParent::class, \SchemaTestClassTableInheritanceChild::class]);
-        $this->assertEquals(count($sql), 2);
-        $this->assertEquals($sql[0], 'CREATE TABLE schema_test_class_table_inheritance_parent (id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(255))');
-        $this->assertEquals($sql[1], 'CREATE TABLE schema_test_class_table_inheritance_child (id INTEGER, title VARCHAR(255), description VARCHAR(255), PRIMARY KEY(id))');
 
         $sql = \Doctrine_Core::generateSqlFromArray([\SchemaTestConcreteInheritanceParent::class, \SchemaTestConcreteInheritanceChild::class]);
         $this->assertEquals(count($sql), 2);

@@ -125,8 +125,6 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
         unset($vars['reference']);
         unset($vars['referenceField']);
         unset($vars['relation']);
-        unset($vars['expandable']);
-        unset($vars['expanded']);
 
         $vars['_table'] = $vars['_table']->getComponentName();
 

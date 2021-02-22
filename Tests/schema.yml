@@ -91,20 +91,6 @@ SchemaTestSimpleInheritanceChild:
   columns:
     description: string(255)
 
-# Class Table Inheritance
-# Individual tables, each model has its own columns, and they share id primary keys
-SchemaTestClassTableInheritanceParent:
-  columns:
-    name: string(255)
-
-SchemaTestClassTableInheritanceChild:
-  inheritance:
-    type: class_table
-    extends: SchemaTestClassTableInheritanceParent
-  columns:
-    title: string(255)
-    description: string(255)
-
 # Concrete Inheritance
 # Individual tables, all children share the columns of its parents
 SchemaTestConcreteInheritanceParent:
@@ -114,7 +100,7 @@ SchemaTestConcreteInheritanceParent:
 SchemaTestConcreteInheritanceChild:
   inheritance:
     type: concrete
-    extends: SchemaTestClassTableInheritanceParent
+    extends: SchemaTestConcreteInheritanceParent
   columns:
     title: string(255)
     description: string(255)
