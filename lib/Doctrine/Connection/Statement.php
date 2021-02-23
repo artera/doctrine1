@@ -115,18 +115,14 @@ class Doctrine_Connection_Statement
     /**
      * Filter query parameters that are not present in the query string
      * @param string $query
-     * @param iterable<mixed, string>|null $params
-     * @param iterable<string, string> $aliases
+     * @param string[] $params
+     * @param array<string, string> $aliases
      * @return mixed[]
      */
-    public function filterParams(string $query, ?iterable $params = null, iterable $aliases = []): array
+    public function filterParams(string $query, array $params = [], iterable $aliases = []): array
     {
         if (empty($params) || strpos($query, '?') !== false) {
-            return $params ?? [];
-        }
-
-        if (!is_array($params)) {
-            $params = iterator_to_array($params);
+            return $params;
         }
 
         if (preg_match_all('/:\w+/', $query, $m)) {

@@ -139,8 +139,8 @@ class Doctrine_Query_Tokenizer
      * would return an array:
      *     array("email", "LIKE", "'John@example.com'")
      *
-     * @param string|array $str String to be quote exploded
-     * @param string $d   Delimeter which explodes the string
+     * @param string $str String to be quote exploded
+     * @param string|array $d   Delimeter which explodes the string
      */
     public function quoteExplode(string $str, string|array $d = ' '): array
     {
