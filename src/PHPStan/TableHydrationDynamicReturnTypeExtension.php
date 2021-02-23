@@ -1,7 +1,6 @@
 <?php declare(strict_types = 1);
 namespace Doctrine1\PHPStan;
 
-use Amf\utils\iter;
 use PhpParser\Node\Arg;
 use PHPStan\Type\Type;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
@@ -14,6 +13,7 @@ use PHPStan\Type\StringType;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\Constant\ConstantBooleanType;
 use PHPStan\Reflection\MethodReflection;
+use PHPStan\Reflection\ParameterReflection;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
 
@@ -38,6 +38,28 @@ class TableHydrationDynamicReturnTypeExtension implements DynamicMethodReturnTyp
     public function isMethodSupported(MethodReflection $methodReflection): bool
     {
         return $methodReflection->getName() === 'findAll';
+    }
+
+    /** @param ParameterReflection[] $parameters */
+    private function findArg(string $name, MethodCall $methodCall, array $parameters): ?Arg
+    {
+        // find the hydrate_array argument by name or position
+        foreach ($methodCall->args as $arg) {
+            if ($arg->name?->name === $name) {
+                return $arg;
+            }
+        }
+
+        foreach ($parameters as $position => $param) {
+            if ($param->getName() === $name) {
+                if (count($methodCall->args) > $position) {
+                    return $methodCall->args[$position];
+                }
+                return null;
+            }
+        }
+
+        return null;
     }
 
     public function getTypeFromMethodCall(MethodReflection $methodReflection, MethodCall $methodCall, Scope $scope): Type
@@ -66,16 +88,9 @@ class TableHydrationDynamicReturnTypeExtension implements DynamicMethodReturnTyp
         }
 
         // find the hydrate_array argument by name or position
-        $arg = iter::find($methodCall->args, fn($a) => $a->name?->name === 'hydrate_array');
+        $arg = $this->findArg('hydrate_array', $methodCall, $parametersAcceptor->getParameters());
 
-        if ($arg === false) {
-            $position = iter::search($parametersAcceptor->getParameters(), fn($p) => $p->getName() === 'hydrate_array');
-            if ($position !== false && count($methodCall->args) > $position) {
-                $arg = $methodCall->args[$position];
-            }
-        }
-
-        if ($arg === false) {
+        if ($arg === null) {
             // argument not used, imply default of false
             $hydrate_array = false;
         } else {
@@ -88,15 +103,15 @@ class TableHydrationDynamicReturnTypeExtension implements DynamicMethodReturnTyp
             }
         }
 
-        $arrayType = iter::find($returnType->getTypes(), fn($t) => $t instanceof ArrayType);
-        if ($arrayType === false) {
-            return $returnType;
+        foreach ($returnType->getTypes() as $type) {
+            if ($type instanceof ArrayType) {
+                if ($hydrate_array) {
+                    return $type;
+                }
+                return TypeCombinator::remove($returnType, $type);
+            }
         }
 
-        if ($hydrate_array) {
-            return $arrayType;
-        }
-
-        return TypeCombinator::remove($returnType, $arrayType);
+        return $returnType;
     }
 }
