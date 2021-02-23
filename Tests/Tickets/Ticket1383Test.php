@@ -17,11 +17,11 @@ namespace Tests\Tickets {
             $orig = \Doctrine_Manager::getInstance()->getAttribute(\Doctrine_Core::ATTR_VALIDATE);
             \Doctrine_Manager::getInstance()->setAttribute(\Doctrine_Core::ATTR_VALIDATE, \Doctrine_Core::VALIDATE_ALL);
             $brand                                         = new \Ticket_1383_Brand;
-                $brand->name                                   = 'The Great Brand';
-                $brand->Ticket_1383_Brand_Image[0]->name       = 'imagename';
-                $brand->Ticket_1383_Brand_Image[0]->owner_id   = 1;
-                $brand->Ticket_1383_Brand_Image[0]->owner_type = 0;
-                $brand->save();
+            $brand->name                                   = 'The Great Brand';
+            $brand->Ticket_1383_Brand_Image[0]->name       = 'imagename';
+            $brand->Ticket_1383_Brand_Image[0]->owner_id   = 1;
+            $brand->Ticket_1383_Brand_Image[0]->owner_type = 0;
+            $brand->save();
 
             \Doctrine_Manager::getInstance()->setAttribute(\Doctrine_Core::ATTR_VALIDATE, $orig);
         }

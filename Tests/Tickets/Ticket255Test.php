@@ -15,7 +15,7 @@ namespace Tests\Tickets {
             $user->password      = 'changeme';
             $user->save();
 
-            $this->expectException(\Doctrine_Validator_Exception::class);
+            $this->expectExceptionMessage('SQLSTATE[23000]: Integrity constraint violation: 19 UNIQUE constraint failed: ticket_255__user.username, ticket_255__user.email_address');
 
             $user                = new \Ticket_255_User();
             $user->username      = 'jwage';

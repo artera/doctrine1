@@ -1,5 +1,7 @@
 <?php
 
+use Laminas\Validator\AbstractValidator;
+
 /**
  * @phpstan-template T of Doctrine_Record
  */
@@ -1909,56 +1911,29 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
         }
 
         // Run all custom validators
-        foreach ($this->getFieldValidators($fieldName) as $validatorName => $args) {
+        $validators = $this->getFieldValidators($fieldName);
+
+        // Skip rest of validation if value is allowed to be null
+        if ($value === null && !isset($validators['notnull']) && !isset($validators['notblank'])) {
+            return $errorStack;
+        }
+
+        foreach ($validators as $validatorName => $options) {
             if (!is_string($validatorName)) {
-                $validatorName = $args;
-                $args          = [];
+                $validatorName = $options;
+                $options = [];
             }
 
-            $validator          = Doctrine_Validator::getValidator($validatorName);
-            $validator->invoker = $record;
-            $validator->field   = $fieldName;
-            $validator->args    = $args;
-            if (!$validator->validate($value)) {
+            $validator = Doctrine_Validator::getValidator($validatorName);
+            if (!empty($options) && $validator instanceof AbstractValidator) {
+                $validator->setOptions($options);
+            }
+            if (!$validator->isValid($value)) {
                 $errorStack->add($fieldName, $validator);
             }
         }
 
         return $errorStack;
-    }
-
-    /**
-     * Validates all the unique indexes.
-     *
-     * This methods validates 'unique' sets of fields for the given Doctrine_Record instance.
-     * Pushes error to the record error stack if they are generated.
-     *
-     * @param Doctrine_Record $record
-     *
-     * @return        void
-     * @phpstan-param T $record
-     */
-    public function validateUniques(Doctrine_Record $record)
-    {
-        $errorStack = $record->getErrorStack();
-        /** @var Doctrine_Validator_Unique $validator */
-        $validator          = Doctrine_Validator::getValidator('unique');
-        $validator->invoker = $record;
-
-        foreach ($this->_uniques as $unique) {
-            list($fields, $options) = $unique;
-            $validator->args        = $options;
-            $validator->field       = $fields;
-            $values                 = [];
-            foreach ($fields as $field) {
-                $values[] = $record->$field;
-            }
-            if (!$validator->validate($values)) {
-                foreach ($fields as $field) {
-                    $errorStack->add($field, $validator);
-                }
-            }
-        }
     }
 
     public function getColumnCount(): int
@@ -2246,10 +2221,9 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
     /**
      * Gets the names of all validators being applied on a field.
      *
-     * @param  string $fieldName
-     * @return array<string,mixed>                names of validators
+     * @return array<string, mixed[]> names of validators
      */
-    public function getFieldValidators($fieldName)
+    public function getFieldValidators(string $fieldName)
     {
         $validators = [];
         $columnName = $this->getColumnName($fieldName);
@@ -2274,6 +2248,7 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
                 'extra',
                 'virtual',
                 'meta',
+                'unique',
             ])) {
                 continue;
             }
@@ -2286,7 +2261,7 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
             if ($args === false) {
                 continue;
             }
-            $validators[$name] = $args;
+            $validators[$name] = $args === true ? [] : (array) $args;
         }
 
         return $validators;

@@ -108,12 +108,12 @@ class ValidatorTest extends DoctrineUnitTestCase
 
         $stack = $test->errorStack();
 
-        $this->assertTrue($stack instanceof \Doctrine_Validator_ErrorStack);
+        $this->assertInstanceOf(\Doctrine_Validator_ErrorStack::class, $stack);
 
-        $this->assertTrue(in_array('notnull', $stack['mystring']));
-        $this->assertTrue(in_array('notblank', $stack['myemail2']));
-        $this->assertTrue(in_array('range', $stack['myrange']));
-        $this->assertTrue(in_array('regexp', $stack['myregexp']));
+        $this->assertContains('The input must not be null', $stack['mystring']);
+        $this->assertContains('Value is required and can\'t be empty', $stack['myemail2']);
+        $this->assertContains('The input is not between \'4\' and \'123\', inclusively', $stack['myrange']);
+        $this->assertContains("The input does not match against pattern '/^[0-9]+$/'", $stack['myregexp']);
         $test->mystring = 'str';
 
         $test->save();
@@ -140,39 +140,16 @@ class ValidatorTest extends DoctrineUnitTestCase
 
         $stack = $user->errorStack();
 
-        $this->assertTrue($stack instanceof \Doctrine_Validator_ErrorStack);
-        $this->assertTrue(in_array('length', $stack['loginname']));
-        $this->assertTrue(in_array('length', $stack['password']));
-        $this->assertTrue(in_array('type', $stack['created']));
+        $this->assertInstanceOf(\Doctrine_Validator_ErrorStack::class, $stack);
+        $this->assertContains('length', $stack['loginname']);
+        $this->assertContains('length', $stack['password']);
+        $this->assertContains('type', $stack['created']);
 
         $validator->validateRecord($email);
         $stack = $email->errorStack();
-        $this->assertTrue(in_array('email', $stack['address']));
-        $email->address = 'arnold@example.com';
+        $this->assertContains("'invalid' is not a valid hostname for the email address", $stack['address']);
 
-        $validator->validateRecord($email);
-        $stack = $email->errorStack();
-
-        $this->assertTrue(in_array('unique', $stack['address']));
         static::$manager->setAttribute(\Doctrine_Core::ATTR_VALIDATE, \Doctrine_Core::VALIDATE_NONE);
-    }
-
-    /**
-     * Tests the Email validator. (Doctrine_Validator_Email)
-     */
-    public function testIsValidEmail()
-    {
-        $validator = new \Doctrine_Validator_Email();
-
-        $this->assertFalse($validator->validate('example@example'));
-        $this->assertFalse($validator->validate('example@@example'));
-        $this->assertFalse($validator->validate('example@example.'));
-        $this->assertFalse($validator->validate('example@e..'));
-
-        $this->assertTrue($validator->validate('null+doctrine@pookey.co.uk'));
-        $this->assertTrue($validator->validate('null@pookey.co.uk'));
-        $this->assertTrue($validator->validate('null@pookey.com'));
-        $this->assertTrue($validator->validate('null@users.doctrine.pengus.net'));
     }
 
     /**
@@ -191,7 +168,7 @@ class ValidatorTest extends DoctrineUnitTestCase
             $invalidRecords = $e->getInvalidRecords();
             $this->assertEquals(1, count($invalidRecords));
             $stack = $invalidRecords[0]->errorStack();
-            $this->assertTrue(in_array('length', $stack['name']));
+            $this->assertContains('length', $stack['name']);
         }
         $this->assertInstanceOf(\Exception::class, $e);
         unset($e);
@@ -206,8 +183,8 @@ class ValidatorTest extends DoctrineUnitTestCase
             $this->assertTrue(is_array($a));
             $emailStack = $user->Email->errorStack();
             $userStack  = $user->errorStack();
-            $this->assertTrue(in_array('email', $emailStack['address']));
-            $this->assertTrue(in_array('length', $userStack['name']));
+            $this->assertContains('The input is not a valid email address. Use the basic format local-part@hostname', $emailStack['address']);
+            $this->assertContains('length', $userStack['name']);
         }
         $this->assertInstanceOf(\Exception::class, $e);
         unset($e);
@@ -240,8 +217,8 @@ class ValidatorTest extends DoctrineUnitTestCase
             $stack = $invalidRecords[0]->errorStack();
 
             $this->assertEquals($stack->count(), 2);
-            $this->assertTrue(in_array('notTheSaint', $stack['name']));  // validate() hook constraint
-            $this->assertTrue(in_array('pwNotTopSecret', $stack['password'])); // validateOnInsert() hook constraint
+            $this->assertContains('notTheSaint', $stack['name']);  // validate() hook constraint
+            $this->assertContains('pwNotTopSecret', $stack['password']); // validateOnInsert() hook constraint
         }
 
         // Tests validateOnUpdate()
@@ -261,7 +238,7 @@ class ValidatorTest extends DoctrineUnitTestCase
             $stack = $invalidRecords[0]->errorStack();
 
             $this->assertEquals($stack->count(), 1);
-            $this->assertTrue(in_array('notNobody', $stack['loginname']));  // validateOnUpdate() hook constraint
+            $this->assertContains('notNobody', $stack['loginname']);  // validateOnUpdate() hook constraint
         }
 
         static::$manager->setAttribute(\Doctrine_Core::ATTR_VALIDATE, \Doctrine_Core::VALIDATE_NONE);
@@ -284,44 +261,8 @@ class ValidatorTest extends DoctrineUnitTestCase
             $this->assertFalse('Should not be reached');
         } catch (\Doctrine_Validator_Exception $ex) {
             $errors = $user->errorStack();
-            $this->assertTrue(in_array('pwNotTopSecret', $errors['password']));
+            $this->assertContains('pwNotTopSecret', $errors['password']);
         }
-
-        static::$manager->setAttribute(\Doctrine_Core::ATTR_VALIDATE, \Doctrine_Core::VALIDATE_NONE);
-    }
-
-    // @todo move to a separate test file (tests/Validator/UniqueTestCase) .
-
-    public function testSetSameUniqueValueOnSameRecordThrowsNoException()
-    {
-        static::$manager->setAttribute(\Doctrine_Core::ATTR_VALIDATE, \Doctrine_Core::VALIDATE_ALL);
-
-        $r             = new \ValidatorTest_Person();
-        $r->identifier = '1234';
-        $r->save();
-
-        $r             = static::$connection->getTable('ValidatorTest_Person')->findAll()->getFirst();
-        $r->identifier = 1234;
-        $r->save();
-
-        $r->delete(); // clean up
-
-        static::$manager->setAttribute(\Doctrine_Core::ATTR_VALIDATE, \Doctrine_Core::VALIDATE_NONE);
-    }
-
-    public function testSetSameUniqueValueOnDifferentRecordThrowsException()
-    {
-        static::$manager->setAttribute(\Doctrine_Core::ATTR_VALIDATE, \Doctrine_Core::VALIDATE_ALL);
-
-        $r             = new \ValidatorTest_Person();
-        $r->identifier = '1234';
-        $r->save();
-
-        $r             = new \ValidatorTest_Person();
-        $r->identifier = 1234;
-
-        $this->expectException(\Doctrine_Validator_Exception::class);
-        $r->save();
 
         static::$manager->setAttribute(\Doctrine_Core::ATTR_VALIDATE, \Doctrine_Core::VALIDATE_NONE);
     }
@@ -341,14 +282,13 @@ class ValidatorTest extends DoctrineUnitTestCase
             $invalids = $dve->getInvalidRecords();
             $stack = $client->ValidatorTest_AddressModel[0]->getErrorStack();
 
-            $this->assertTrue(in_array('notnull', $stack['address1']));
-            $this->assertTrue(in_array('notblank', $stack['address1']));
-            $this->assertTrue(in_array('notnull', $stack['address2']));
-            $this->assertTrue(in_array('notnull', $stack['city']));
-            $this->assertTrue(in_array('notblank', $stack['city']));
-            $this->assertTrue(in_array('usstate', $stack['state']));
-            $this->assertTrue(in_array('notnull', $stack['zip']));
-            $this->assertTrue(in_array('notblank', $stack['zip']));
+            $this->assertContains('The input must not be null', $stack['address1']);
+            $this->assertContains('Value is required and can\'t be empty', $stack['address1']);
+            $this->assertContains('The input must not be null', $stack['address2']);
+            $this->assertContains('The input must not be null', $stack['city']);
+            $this->assertContains('Value is required and can\'t be empty', $stack['city']);
+            $this->assertContains('The input must not be null', $stack['zip']);
+            $this->assertContains('Value is required and can\'t be empty', $stack['zip']);
         }
 
         static::$manager->setAttribute(\Doctrine_Core::ATTR_VALIDATE, \Doctrine_Core::VALIDATE_NONE);
@@ -370,14 +310,13 @@ class ValidatorTest extends DoctrineUnitTestCase
             $this->assertEquals(1, count($dve->getInvalidRecords()));
             $stack = $client->ValidatorTest_AddressModel[0]->getErrorStack();
 
-            $this->assertTrue(in_array('notnull', $stack['address1']));
-            $this->assertTrue(in_array('notblank', $stack['address1']));
-            $this->assertTrue(in_array('notnull', $stack['address2']));
-            $this->assertTrue(in_array('notnull', $stack['city']));
-            $this->assertTrue(in_array('notblank', $stack['city']));
-            $this->assertTrue(in_array('usstate', $stack['state']));
-            $this->assertTrue(in_array('notnull', $stack['zip']));
-            $this->assertTrue(in_array('notblank', $stack['zip']));
+            $this->assertContains('The input must not be null', $stack['address1']);
+            $this->assertContains('Value is required and can\'t be empty', $stack['address1']);
+            $this->assertContains('The input must not be null', $stack['address2']);
+            $this->assertContains('The input must not be null', $stack['city']);
+            $this->assertContains('Value is required and can\'t be empty', $stack['city']);
+            $this->assertContains('The input must not be null', $stack['zip']);
+            $this->assertContains('Value is required and can\'t be empty', $stack['zip']);
         }
 
         static::$manager->setAttribute(\Doctrine_Core::ATTR_VALIDATE, \Doctrine_Core::VALIDATE_NONE);
@@ -415,11 +354,8 @@ class ValidatorTest extends DoctrineUnitTestCase
         static::$conn->clear();
 
         $r             = new \ValidatorTest_Person();
-        $r->identifier = '5678';
-        $r->save();
+        $r->is_football_player = 'abc';
 
-        $r             = new \ValidatorTest_Person();
-        $r->identifier = 5678;
         $this->expectException(\Doctrine_Validator_Exception::class);
         static::$conn->flush();
         static::$manager->setAttribute(\Doctrine_Core::ATTR_VALIDATE, \Doctrine_Core::VALIDATE_NONE);

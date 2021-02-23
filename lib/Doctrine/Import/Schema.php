@@ -1,37 +1,5 @@
 <?php
-/*
- * $Id: Schema.php 1838 2007-06-26 00:58:21Z nicobn $
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- * This software consists of voluntary contributions made by many individuals
- * and is licensed under the LGPL. For more information, see
- * <http://www.doctrine-project.org>.
- */
 
-/**
- * Doctrine_Import_Schema
- *
- * Class for importing Doctrine_Record classes from a yaml schema definition
- *
- * @package    Doctrine
- * @subpackage Import
- * @link       www.doctrine-project.org
- * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @version    $Revision: 1838 $
- * @author     Nicolas Bérard-Nault <nicobn@gmail.com>
- * @author     Jonathan H. Wage <jonwage@gmail.com>
- */
 class Doctrine_Import_Schema
 {
     /**
@@ -46,7 +14,8 @@ class Doctrine_Import_Schema
         'package',
         'package_custom_path',
         'inheritance',
-        'detect_relations'];
+        'detect_relations',
+    ];
 
     /**
      * _relations
@@ -65,16 +34,18 @@ class Doctrine_Import_Schema
      *
      * @var array
      */
-    protected $_options = ['packagesPrefix'       => 'Package',
-                                'packagesPath'         => '',
-                                'packagesFolderName'   => 'packages',
-                                'suffix'               => '.php',
-                                'generateBaseClasses'  => true,
-                                'generateTableClasses' => false,
-                                'generateAccessors'    => false,
-                                'baseClassPrefix'      => 'Base',
-                                'baseClassesDirectory' => 'generated',
-                                'baseClassName'        => 'Doctrine_Record'];
+    protected $_options = [
+        'packagesPrefix'       => 'Package',
+        'packagesPath'         => '',
+        'packagesFolderName'   => 'packages',
+        'suffix'               => '.php',
+        'generateBaseClasses'  => true,
+        'generateTableClasses' => false,
+        'generateAccessors'    => false,
+        'baseClassPrefix'      => 'Base',
+        'baseClassesDirectory' => 'generated',
+        'baseClassName'        => 'Doctrine_Record',
+    ];
 
     /**
      * _validation
@@ -84,69 +55,79 @@ class Doctrine_Import_Schema
      *
      * @var array
      */
-    protected $_validation = ['root' => ['abstract',
-                                                          'connection',
-                                                          'className',
-                                                          'tableName',
-                                                          'connection',
-                                                          'relations',
-                                                          'columns',
-                                                          'indexes',
-                                                          'attributes',
-                                                          'options',
-                                                          'package',
-                                                          'package_custom_path',
-                                                          'inheritance',
-                                                          'detect_relations',
-                                                          'listeners',
-                                                          'checks',
-                                                          'comment'],
+    protected $_validation = [
+        'root' => [
+            'abstract',
+            'connection',
+            'className',
+            'tableName',
+            'connection',
+            'relations',
+            'columns',
+            'indexes',
+            'attributes',
+            'options',
+            'package',
+            'package_custom_path',
+            'inheritance',
+            'detect_relations',
+            'listeners',
+            'checks',
+            'comment',
+        ],
 
-                                   'column' => ['name',
-                                                          'format',
-                                                          'fixed',
-                                                          'primary',
-                                                          'autoincrement',
-                                                          'type',
-                                                          'length',
-                                                          'size',
-                                                          'default',
-                                                          'scale',
-                                                          'values',
-                                                          'comment',
-                                                          'sequence',
-                                                          'protected',
-                                                          'zerofill',
-                                                          'owner',
-                                                          'extra',
-                                                          'comment',
-                                                          'charset',
-                                                          'collation'],
+        'column' => [
+            'name',
+            'format',
+            'fixed',
+            'primary',
+            'autoincrement',
+            'type',
+            'length',
+            'size',
+            'default',
+            'scale',
+            'values',
+            'comment',
+            'sequence',
+            'protected',
+            'zerofill',
+            'owner',
+            'extra',
+            'comment',
+            'charset',
+            'collation',
+        ],
 
-                                   'relation' => ['key',
-                                                          'class',
-                                                          'alias',
-                                                          'type',
-                                                          'refClass',
-                                                          'local',
-                                                          'foreign',
-                                                          'foreignClass',
-                                                          'foreignAlias',
-                                                          'foreignType',
-                                                          'autoComplete',
-                                                          'cascade',
-                                                          'onDelete',
-                                                          'onUpdate',
-                                                          'equal',
-                                                          'owningSide',
-                                                          'refClassRelationAlias',
-                                                          'foreignKeyName',
-                                                          'orderBy'],
+        'relation' => [
+            'key',
+            'class',
+            'alias',
+            'type',
+            'refClass',
+            'local',
+            'foreign',
+            'foreignClass',
+            'foreignAlias',
+            'foreignType',
+            'autoComplete',
+            'cascade',
+            'onDelete',
+            'onUpdate',
+            'equal',
+            'owningSide',
+            'refClassRelationAlias',
+            'foreignKeyName',
+            'orderBy',
+        ],
 
-                                   'inheritance' => ['type',
-                                                          'extends',
-                                                          'keyField',
-                                                          'keyValue']];
+        'inheritance' => [
+            'type',
+            'extends',
+            'keyField',
+            'keyValue',
+        ],
+    ];
 
     /**
      * Returns an array of definition keys that can be applied at the global level.
@@ -292,17 +273,19 @@ class Doctrine_Import_Schema
      */
     public function parseSchema($schema, $type)
     {
-        $defaults = ['abstract'         => false,
-                          'className'        => null,
-                          'tableName'        => null,
-                          'connection'       => null,
-                          'relations'        => [],
-                          'indexes'          => [],
-                          'attributes'       => [],
-                          'options'          => [],
-                          'package'          => null,
-                          'inheritance'      => [],
-                          'detect_relations' => false];
+        $defaults = [
+            'abstract'         => false,
+            'className'        => null,
+            'tableName'        => null,
+            'connection'       => null,
+            'relations'        => [],
+            'indexes'          => [],
+            'attributes'       => [],
+            'options'          => [],
+            'package'          => null,
+            'inheritance'      => [],
+            'detect_relations' => false,
+        ];
 
         $array = Doctrine_Parser::load($schema, $type);
 
@@ -400,7 +383,7 @@ class Doctrine_Import_Schema
                     $colDesc['values'] = isset($field['values']) ? (array) $field['values']:null;
 
                     // Include all the specified and valid validators in the colDesc
-                    $validators = Doctrine_Manager::getInstance()->getValidators();
+                    $validators = array_keys(Doctrine_Manager::getInstance()->getValidators());
 
                     foreach ($validators as $validator) {
                         if (isset($field[$validator])) {
@@ -747,7 +730,7 @@ class Doctrine_Import_Schema
         // Validators are a part of the column validation
         // This should be fixed, made cleaner
         if ($name == 'column') {
-            $validators = Doctrine_Manager::getInstance()->getValidators();
+            $validators = array_keys(Doctrine_Manager::getInstance()->getValidators());
             $validation = array_merge($validation, $validators);
         }
 

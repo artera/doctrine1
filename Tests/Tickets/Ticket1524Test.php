@@ -1,5 +1,7 @@
 <?php
 namespace Tests\Tickets {
+
+    use MyValidator;
     use Tests\DoctrineUnitTestCase;
 
     class Ticket1524Test extends DoctrineUnitTestCase
@@ -7,7 +9,7 @@ namespace Tests\Tickets {
         public function testTest()
         {
             $manager = \Doctrine_Manager::getInstance();
-            $manager->registerValidators(['MyValidator']);
+            $manager->registerValidator(MyValidator::class, 'MyValidator');
             $this->assertTrue(in_array('MyValidator', $manager->getValidators()));
         }
     }

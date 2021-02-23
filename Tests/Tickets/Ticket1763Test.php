@@ -32,11 +32,11 @@ namespace Tests\Tickets {
 
         protected function _validateErrorString($string)
         {
-            $this->assertNotFalse(strstr($string, 'Validation failed in class Ticket_1763_User'));
-            $this->assertNotFalse(strstr($string, '3 fields had validation errors:'));
-            $this->assertNotFalse(strstr($string, '* 1 validator failed on email_address (notnull)'));
-            $this->assertNotFalse(strstr($string, '* 1 validator failed on username (notnull)'));
-            $this->assertNotFalse(strstr($string, '* 1 validator failed on ip_address (notnull)'));
+            $this->assertStringContainsString('Validation failed in class Ticket_1763_User', $string);
+            $this->assertStringContainsString('3 fields had validation errors:', $string);
+            $this->assertStringContainsString('* 2 validators failed on email_address (The input must not be null, Invalid type given. String expected)', $string);
+            $this->assertStringContainsString('* 1 validator failed on username (The input must not be null)', $string);
+            $this->assertStringContainsString('* 2 validators failed on ip_address (The input must not be null, Invalid type given. String expected)', $string);
         }
     }
 }

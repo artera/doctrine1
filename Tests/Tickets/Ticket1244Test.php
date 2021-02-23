@@ -16,8 +16,8 @@ namespace Tests\Tickets {
             \Doctrine_Manager::getInstance()->setAttribute(\Doctrine_Core::ATTR_VALIDATE, \Doctrine_Core::VALIDATE_ALL);
 
             $test       = new \Ticket_1244_Test();
-                $test->test = null;
-                $test->save();
+            $test->test = null;
+            $test->save();
 
             \Doctrine_Manager::getInstance()->setAttribute(\Doctrine_Core::ATTR_VALIDATE, $original);
         }
@@ -29,7 +29,10 @@ namespace {
     {
         public function setTableDefinition(): void
         {
-            $this->hasColumn('test', 'integer', 4, ['range' => [5, 10]]);
+            $this->hasColumn('test', 'integer', 4, ['range' => [
+                'min' => 5,
+                'max' => 10,
+            ]]);
         }
     }
 }

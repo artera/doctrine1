@@ -369,29 +369,13 @@ requiring needless code duplication.</description>
       <file name="NestedSet.php" role="php" />
      </dir> <!-- /lib/Doctrine/Tree -->
      <dir name="Validator">
-      <file name="Country.php" role="php" />
-      <file name="Creditcard.php" role="php" />
       <file name="Date.php" role="php" />
-      <file name="Driver.php" role="php" />
-      <file name="Email.php" role="php" />
       <file name="ErrorStack.php" role="php" />
       <file name="Exception.php" role="php" />
-      <file name="Future.php" role="php" />
-      <file name="Htmlcolor.php" role="php" />
-      <file name="Ip.php" role="php" />
-      <file name="Minlength.php" role="php" />
-      <file name="Nospace.php" role="php" />
-      <file name="Notblank.php" role="php" />
       <file name="Notnull.php" role="php" />
-      <file name="Past.php" role="php" />
-      <file name="Range.php" role="php" />
-      <file name="Readonly.php" role="php" />
-      <file name="Regexp.php" role="php" />
+      <file name="Notblank.php" role="php" />
       <file name="Time.php" role="php" />
       <file name="Timestamp.php" role="php" />
-      <file name="Unique.php" role="php" />
-      <file name="Unsigned.php" role="php" />
-      <file name="Usstate.php" role="php" />
      </dir> <!-- /lib/Doctrine/Validator -->
      <dir name="View">
       <file name="Exception.php" role="php" />
@@ -442,14 +426,6 @@ requiring needless code duplication.</description>
      <file name="Validator.php" role="php" />
      <file name="View.php" role="php" />
     </dir> <!-- /lib/Doctrine -->
-    <dir name="vendor">
-     <dir name="sfYaml">
-      <file name="sfYaml.php" role="php" />
-      <file name="sfYamlDumper.php" role="php" />
-      <file name="sfYamlInline.php" role="php" />
-      <file name="sfYamlParser.php" role="php" />
-     </dir> <!-- /lib/vendor/sfYaml -->
-    </dir> <!-- /lib/vendor -->
     <file name="Doctrine.php" role="php" />
    </dir> <!-- /lib -->
    <dir name="tests">

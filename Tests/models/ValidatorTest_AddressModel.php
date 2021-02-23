@@ -14,7 +14,7 @@ class ValidatorTest_AddressModel extends Doctrine_Record
         $this->hasColumn('address1', 'string', 255, ['notnull' => true, 'notblank']);
         $this->hasColumn('address2', 'string', 255, ['notnull' => true]);
         $this->hasColumn('city', 'string', 255, ['notnull' => true, 'notblank']);
-        $this->hasColumn('state', 'string', 10, ['notnull' => true, 'notblank', 'usstate']);
+        $this->hasColumn('state', 'string', 10, ['notnull' => true, 'notblank']);
         $this->hasColumn('zip', 'string', 15, ['notnull' => true, 'notblank', 'regexp' => '/^[0-9-]*$/']);
     }
 

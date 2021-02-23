@@ -1,5 +1,8 @@
 <?php
 
+use Laminas\Validator\ValidatorInterface;
+use Laminas\Validator;
+
 class Doctrine_Manager extends Doctrine_Configurable implements Countable, IteratorAggregate
 {
     /** array containing all the opened connections */
@@ -15,8 +18,38 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
 
     protected ?Doctrine_Query_Registry $_queryRegistry = null;
 
-    /** @var string[] */
-    protected array $_validators = [];
+    /** @phpstan-var array<string, class-string<ValidatorInterface>|array{class: class-string<ValidatorInterface>, options: array<string, mixed>}>  */
+    protected array $validators = [
+        'notnull' => Doctrine_Validator_Notnull::class,
+        'date' => Validator\Date::class,
+        'time' => Doctrine_Validator_Time::class,
+        'timestamp' => Doctrine_Validator_Timestamp::class,
+
+        // backwards compatibility
+        'range' => [
+            'class' => Validator\Between::class,
+            'options' => [
+                'min' => -2147483648,
+                'max' => 2147483647,
+            ],
+        ],
+        'notblank' => Validator\NotEmpty::class,
+        'email' => Validator\EmailAddress::class,
+        'ip' => Validator\Ip::class,
+        'regexp' => [
+            'class' => Validator\Regex::class,
+            'options' => [
+                'pattern' => '/^/',
+            ],
+        ],
+        'unsigned' => [
+            'class' => Validator\GreaterThan::class,
+            'options' => [
+                'min' => 0,
+                'inclusive' => true,
+            ],
+        ],
+    ];
 
     /** @phpstan-var (class-string<Doctrine_Hydrator_Abstract>|Doctrine_Hydrator_Abstract)[] */
     protected array $_hydrators = [
@@ -140,7 +173,7 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
         $this->_connections              = [];
         $this->_queryRegistry            = null;
         $this->_bound                    = [];
-        $this->_validators               = [];
+        $this->validators               = [];
         $this->_loadedValidatorsFromDisk = false;
         $this->_index                    = 0;
         $this->_currIndex                = 0;
@@ -623,50 +656,19 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
         }
     }
 
-    /**
-     * Get available doctrine validators
-     *
-     * @return string[]
-     */
+    /** @phpstan-return array<string, class-string<ValidatorInterface>|array{class: class-string<ValidatorInterface>, options: array<string, mixed>}> */
     public function getValidators(): array
     {
-        if (!$this->_loadedValidatorsFromDisk) {
-            $this->_loadedValidatorsFromDisk = true;
-
-            $validators = [];
-
-            $dir = Doctrine_Core::getPath() . DIRECTORY_SEPARATOR . 'Doctrine' . DIRECTORY_SEPARATOR . 'Validator';
-
-            $files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir), RecursiveIteratorIterator::LEAVES_ONLY);
-            foreach ($files as $file) {
-                $e = explode('.', $file->getFileName(), 2);
-
-                if (end($e) == 'php') {
-                    $name = strtolower($e[0]);
-
-                    $validators[] = $name;
-                }
-            }
-
-            $this->registerValidators($validators);
-        }
-
-        return $this->_validators;
+        return $this->validators;
     }
 
     /**
-     * Register validators so that Doctrine is aware of them
-     *
-     * @param string[] $validators
-     */
-    public function registerValidators(array $validators): void
+     * @phpstan-param class-string<ValidatorInterface> $validatorClass
+     * @phpstan-param array<string, mixed> $options
+     * */
+    public function registerValidator(string $alias, string $validatorClass, array $options = []): void
     {
-        $validators = (array) $validators;
-        foreach ($validators as $validator) {
-            if (!in_array($validator, $this->_validators)) {
-                $this->_validators[] = $validator;
-            }
-        }
+        $this->validators[$alias] = $validatorClass;
     }
 
     /**

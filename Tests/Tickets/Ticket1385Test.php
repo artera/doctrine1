@@ -8,7 +8,6 @@ namespace Tests\Tickets {
         {
             static::$tables[] = 'Ticket_1385_User1';
             static::$tables[] = 'Ticket_1385_User2';
-            static::$tables[] = 'Ticket_1385_User3';
             parent::prepareTables();
         }
 
@@ -28,12 +27,6 @@ namespace Tests\Tickets {
             $user->email_address = 'jonwage@ertoihertionerti.com';
             $this->assertFalse($user->isValid());
 
-            $user                = new \Ticket_1385_User3();
-            $user->username      = 'jwage';
-            $user->password      = 'changeme';
-            $user->email_address = 'jonwage@ertoihertionerti.com';
-            $this->assertFalse($user->isValid());
-
             \Doctrine_Manager::getInstance()->setAttribute(\Doctrine_Core::ATTR_VALIDATE, \Doctrine_Core::VALIDATE_NONE);
         }
     }
@@ -46,7 +39,7 @@ namespace {
         {
             $this->hasColumn('username', 'string', 255);
             $this->hasColumn('password', 'string', 255);
-            $this->hasColumn('email_address', 'string', 255, ['email' => ['check_mx' => false]]);
+            $this->hasColumn('email_address', 'string', 255, ['email' => ['useMxCheck' => false]]);
         }
     }
 
@@ -56,17 +49,7 @@ namespace {
         {
             $this->hasColumn('username', 'string', 255);
             $this->hasColumn('password', 'string', 255);
-            $this->hasColumn('email_address', 'string', 255, ['email' => ['check_mx' => true]]);
-        }
-    }
-
-    class Ticket_1385_User3 extends Doctrine_Record
-    {
-        public function setTableDefinition(): void
-        {
-            $this->hasColumn('username', 'string', 255);
-            $this->hasColumn('password', 'string', 255);
-            $this->hasColumn('email_address', 'string', 255, ['email']);
+            $this->hasColumn('email_address', 'string', 255, ['email' => ['useMxCheck' => true]]);
         }
     }
 }

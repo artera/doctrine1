@@ -1,43 +1,9 @@
 <?php
-/*
- *  $Id: Validator.php 7490 2010-03-29 19:53:27Z jwage $
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- * This software consists of voluntary contributions made by many individuals
- * and is licensed under the LGPL. For more information, see
- * <http://www.doctrine-project.org>.
- */
 
-/**
- * This class is responsible for performing all validations on record properties
- *
- * @package    Doctrine
- * @subpackage Validator
- * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link       www.doctrine-project.org
- * @since      1.0
- * @version    $Revision: 7490 $
- * @author     Roman Borschel <roman@code-factory.org>
- * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
- */
+use Laminas\Validator\ValidatorInterface;
+
 class Doctrine_Validator
 {
-    /**
-     * @var array $validators           an array of validator objects
-     */
-    private static $validators = [];
-
     /**
      * This was undefined, added for static analysis and set to public so api isn't changed
      *
@@ -48,31 +14,32 @@ class Doctrine_Validator
     /**
      * Get a validator instance for the passed $name
      *
-     * @param  string $name Name of the validator or the validator class name
-     * @return Doctrine_Validator_Driver $validator
+     * @param string $name Name of the validator or the validator class name
+     * @param mixed[] $options The validator options
      */
-    public static function getValidator($name)
+    public static function getValidator(string $name, array $options = []): ValidatorInterface
     {
-        if (!isset(self::$validators[$name])) {
-            $class = 'Doctrine_Validator_' . ucwords(strtolower($name));
-            if (class_exists($class)) {
-                self::$validators[$name] = new $class;
-            } elseif (class_exists($name)) {
-                self::$validators[$name] = new $name;
-            } else {
-                throw new Doctrine_Exception("Validator named '$name' not available.");
+        $validators = Doctrine_Manager::getInstance()->getValidators();
+
+        if (isset($validators[$name])) {
+            $validatorClass = $validators[$name];
+            if (is_array($validatorClass)) {
+                $options = array_merge($validatorClass['options'], $options);
+                $validatorClass = $validatorClass['class'];
             }
+        } elseif (class_exists($name) && in_array(ValidatorInterface::class, class_implements($name) ?: [])) {
+            $validatorClass = $name;
+        } else {
+            throw new Doctrine_Exception("Validator named '$name' not available.");
         }
-        return self::$validators[$name];
+
+        return new $validatorClass($options);
     }
 
     /**
      * Validates a given record and saves possible errors in Doctrine_Validator::$stack
-     *
-     * @param  Doctrine_Record $record
-     * @return void
      */
-    public function validateRecord(Doctrine_Record $record)
+    public function validateRecord(Doctrine_Record $record): void
     {
         /** @phpstan-var Doctrine_Table */
         $table = $record->getTable();
@@ -83,7 +50,6 @@ class Doctrine_Validator
         foreach ($fields as $fieldName => $value) {
             $table->validateField($fieldName, $value, $record);
         }
-        $table->validateUniques($record);
     }
 
     /**
@@ -92,9 +58,8 @@ class Doctrine_Validator
      * @param  string          $value         Value to validate
      * @param  string          $type          Type of field being validated
      * @param  string|null|int $maximumLength Maximum length allowed for the column
-     * @return boolean $success       True/false for whether the value passed validation
      */
-    public static function validateLength($value, $type, $maximumLength)
+    public static function validateLength($value, $type, $maximumLength): bool
     {
         if ($maximumLength === null) {
             return true;
@@ -106,9 +71,9 @@ class Doctrine_Validator
         } elseif ($type == 'decimal' || $type == 'float') {
             $value = abs($value);
 
-            $localeInfo   = localeconv();
+            $localeInfo = localeconv();
             $decimalPoint = $localeInfo['mon_decimal_point'] ? $localeInfo['mon_decimal_point'] : $localeInfo['decimal_point'];
-            $e            = explode($decimalPoint, (string) $value);
+            $e = explode($decimalPoint, (string) $value);
 
             $length = strlen($e[0]);
 
@@ -118,7 +83,10 @@ class Doctrine_Validator
         } elseif ($type == 'blob') {
             $length = strlen($value);
         } else {
-            $length = self::getStringLength($value);
+            $validator = new Laminas\Validator\StringLength([
+                'max' => $maximumLength,
+            ]);
+            return $validator->isValid($value);
         }
         if ($length > $maximumLength) {
             return false;
@@ -127,28 +95,11 @@ class Doctrine_Validator
     }
 
     /**
-     * Get length of passed string. Will use multibyte character functions if they exist
-     *
-     * @param  string $string
-     * @return integer $length
-     */
-    public static function getStringLength($string)
-    {
-        if (function_exists('mb_strlen')) {
-            return mb_strlen($string, 'utf8');
-        } else {
-            return strlen(utf8_decode($string));
-        }
-    }
-
-    /**
      * Whether or not errors exist on this validator
-     *
-     * @return boolean True/false for whether or not this validate instance has error
      */
-    public function hasErrors()
+    public function hasErrors(): bool
     {
-        return (count($this->stack) > 0);
+        return count($this->stack) > 0;
     }
 
     /**
@@ -156,9 +107,8 @@ class Doctrine_Validator
      *
      * @param  mixed  $var  Variable to validate
      * @param  string $type Type of the variable expected
-     * @return boolean
      */
-    public static function isValidType($var, $type)
+    public static function isValidType($var, $type): bool
     {
         if ($var instanceof Doctrine_Expression) {
             return true;
@@ -191,17 +141,14 @@ class Doctrine_Validator
             case 'boolean':
                 return is_bool($var) || (is_numeric($var) && ($var == 0 || $var == 1));
             case 'timestamp':
-                /** @var Doctrine_Validator_Timestamp $validator */
-                $validator = self::getValidator('timestamp');
-                return $validator->validate($var);
+                $validator = new Doctrine_Validator_Timestamp();
+                return $validator->isValid($var);
             case 'time':
-                /** @var Doctrine_Validator_Time $validator */
-                $validator = self::getValidator('time');
-                return $validator->validate($var);
+                $validator = new Doctrine_Validator_Time();
+                return $validator->isValid($var);
             case 'date':
-                /** @var Doctrine_Validator_Date $validator */
-                $validator = self::getValidator('date');
-                return $validator->validate($var);
+                $validator = new Doctrine_Validator_Date();
+                return $validator->isValid($var);
             case 'enum':
                 return is_string($var) || is_int($var);
             case 'set':
