@@ -140,9 +140,8 @@ class Doctrine_Export_Schema
      * @param  string  $directory
      * @param  array   $models
      * @param  integer $modelLoading The model loading strategy to use to load the models from the passed directory
-     * @return int|false|string
      */
-    public function exportSchema($schema, $format = 'yml', $directory = null, $models = [], $modelLoading = null)
+    public function exportSchema($schema, $format = 'yml', $directory = null, $models = [], $modelLoading = null): int|string|null
     {
         $array = $this->buildSchema($directory, $models, $modelLoading);
 

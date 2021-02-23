@@ -103,15 +103,7 @@ class Doctrine_Cache_Db extends Doctrine_Cache_Driver
         return isset($result[0]);
     }
 
-    /**
-     * Save a cache record directly. This method is implemented by the cache
-     * drivers and used in Doctrine_Cache_Driver::save()
-     *
-     * @param  string    $id       cache id
-     * @param  string    $data     data to cache
-     * @param  int|false $lifeTime if != false, set a specific lifetime for this cache record (null => infinite lifeTime)
-     */
-    protected function doSave(string $id, $data, $lifeTime = false): bool
+    protected function doSave(string $id, $data, ?int $lifeTime = null): bool
     {
         if ($this->contains($id)) {
             //record is in database, do update

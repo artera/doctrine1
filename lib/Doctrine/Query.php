@@ -224,8 +224,8 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
      *
      * @param  mixed[] $params        Query parameters
      * @param  int     $hydrationMode Hydration mode: see Doctrine_Core::HYDRATE_* constants
-     * @return Doctrine_Record|scalar         Array or Doctrine_Record, depending on hydration mode. False if no result.
-     * @phpstan-return T|array<string,mixed>|scalar
+     * @return Doctrine_Record|scalar Array or Doctrine_Record, depending on hydration mode. null if no result.
+     * @phpstan-return T|array<string,mixed>|scalar|null
      */
     public function fetchOne($params = [], $hydrationMode = null)
     {
@@ -236,7 +236,7 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
         }
 
         if (is_countable($collection) && count($collection) === 0) {
-            return false;
+            return null;
         }
 
         if ($collection instanceof Iterator) {
@@ -249,7 +249,7 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
             return array_shift($collection);
         }
 
-        return false;
+        return null;
     }
 
     /**

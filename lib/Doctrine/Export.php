@@ -616,8 +616,6 @@ class Doctrine_Export extends Doctrine_Connection_Module
             if (method_exists($this->conn->dataDict, $method)) {
                 return $this->conn->dataDict->$method($name, $field);
             } else {
-                // if getNativeDeclaration does not exist on specific dataDict, let it throw an exception
-                // @phpstan-ignore-next-line
                 $dec = $this->conn->dataDict->getNativeDeclaration($field);
             }
 

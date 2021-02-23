@@ -26,37 +26,37 @@ class TableTest extends DoctrineUnitTestCase
         $obj           = new \StdClass();
         $t->someObject = $obj;
 
-        $this->assertEquals($t->someColumn, 'abc');
-        $this->assertEquals($t->someEnum, 'php');
-        $this->assertEquals($t->someInt, 1);
-        $this->assertEquals($t->someArray, []);
-        $this->assertEquals($t->someObject, $obj);
+        $this->assertEquals('abc', $t->someColumn);
+        $this->assertEquals('php', $t->someEnum);
+        $this->assertEquals(1, $t->someInt);
+        $this->assertEquals([], $t->someArray);
+        $this->assertEquals($obj, $t->someObject);
 
         $t->save();
 
-        $this->assertEquals($t->someColumn, 'abc');
-        $this->assertEquals($t->someEnum, 'php');
-        $this->assertEquals($t->someInt, 1);
-        $this->assertEquals($t->someArray, []);
-        $this->assertEquals($t->someObject, $obj);
+        $this->assertEquals('abc', $t->someColumn);
+        $this->assertEquals('php', $t->someEnum);
+        $this->assertEquals(1, $t->someInt);
+        $this->assertEquals([], $t->someArray);
+        $this->assertEquals($obj, $t->someObject);
 
         $t->refresh();
 
-        $this->assertEquals($t->someColumn, 'abc');
-        $this->assertEquals($t->someEnum, 'php');
-        $this->assertEquals($t->someInt, 1);
-        $this->assertEquals($t->someArray, []);
-        $this->assertEquals($t->someObject, $obj);
+        $this->assertEquals('abc', $t->someColumn);
+        $this->assertEquals('php', $t->someEnum);
+        $this->assertEquals(1, $t->someInt);
+        $this->assertEquals([], $t->someArray);
+        $this->assertEquals($obj, $t->someObject);
 
         static::$connection->clear();
 
         $t = static::$connection->getTable('FieldNameTest')->find(1);
 
-        $this->assertEquals($t->someColumn, 'abc');
-        $this->assertEquals($t->someEnum, 'php');
-        $this->assertEquals($t->someInt, 1);
-        $this->assertEquals($t->someArray, []);
-        $this->assertEquals($t->someObject, $obj);
+        $this->assertEquals('abc', $t->someColumn);
+        $this->assertEquals('php', $t->someEnum);
+        $this->assertEquals(1, $t->someInt);
+        $this->assertEquals([], $t->someArray);
+        $this->assertEquals($obj, $t->someObject);
 
         static::$dbh->setAttribute(\PDO::ATTR_CASE, \PDO::CASE_NATURAL);
     }
@@ -135,7 +135,7 @@ class TableTest extends DoctrineUnitTestCase
         $this->assertTrue(!$record instanceof \Doctrine_Record);
 
         $record = static::$connection->getTable('User')->find(123);
-        $this->assertFalse($record);
+        $this->assertNull($record);
     }
 
     public function testFindAll()

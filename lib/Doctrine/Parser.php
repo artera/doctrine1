@@ -2,50 +2,21 @@
 
 abstract class Doctrine_Parser
 {
-    /**
-     * loadData
-     *
-     * Override in the parser driver
-     *
-     * @param  string $array
-     * @return mixed
-     * @author Jonathan H. Wage
-     */
-    abstract public function loadData($array);
+    abstract public function loadData(string $path): array;
+
+    abstract public function dumpData(array $array, ?string $path = null, ?string $charset = null): int|string|null;
 
     /**
-     * dumpData
-     *
-     * Override in the parser driver
-     *
-     * @param  array  $array
-     * @param  string $path
-     * @param  string $charset The charset of the data being dumped
-     * @return int|false|string
-     * @author Jonathan H. Wage
-     */
-    abstract public function dumpData($array, $path = null, $charset = null);
-
-    /**
-     * getParser
-     *
      * Get instance of the specified parser
-     *
-     * @param  string $type
-     * @return Doctrine_Parser
-     * @author Jonathan H. Wage
      */
-    public static function getParser($type)
+    public static function getParser(string $type): Doctrine_Parser
     {
-        /** * @psalm-var class-string $class */
+        /** * @phpstan-var class-string<Doctrine_Parser> $class */
         $class = 'Doctrine_Parser_' . ucfirst($type);
-
         return new $class;
     }
 
     /**
-     * load
-     *
      * Interface for loading and parsing data from a file
      *
      * @param  string $path
@@ -53,23 +24,20 @@ abstract class Doctrine_Parser
      * @return array
      * @author Jonathan H. Wage
      */
-    public static function load($path, $type = 'xml')
+    public static function load(string $path, string $type = 'xml'): array
     {
         $parser = self::getParser($type);
-
         return (array) $parser->loadData($path);
     }
 
     /**
-     * dump
-     *
      * Interface for pulling and dumping data to a file
      *
      * @param  array  $array
      * @param  string $path
      * @param  string $type
      * @param  string $charset The charset of the data being dumped
-     * @return int|false|string
+     * @return int|string|null
      * @author Jonathan H. Wage
      */
     public static function dump($array, $type = 'xml', $path = null, $charset = null)
@@ -80,15 +48,10 @@ abstract class Doctrine_Parser
     }
 
     /**
-     * doLoad
-     *
      * Get contents whether it is the path to a file file or a string of txt.
      * Either should allow php code in it.
-     *
-     * @param  string $path
-     * @return string
      */
-    public function doLoad($path)
+    public function doLoad(string $path): string
     {
         ob_start();
         if (!file_exists($path)) {
@@ -101,22 +64,16 @@ abstract class Doctrine_Parser
         include $path;
 
         // Fix #1569. Need to check if it's still all valid
-        $contents = ob_get_clean();
+        $contents = ob_get_clean() ?: '';
 
         return $contents;
     }
 
-    /**
-     * doDump
-     *
-     * @param  string $data
-     * @param  string $path
-     * @return int|false|string
-     */
-    public function doDump($data, $path = null)
+    public function doDump(string $data, ?string $path = null): int|string|null
     {
         if ($path !== null) {
-            return file_put_contents($path, $data);
+            $res = file_put_contents($path, $data);
+            return $res === false ? null : $res;
         } else {
             return $data;
         }

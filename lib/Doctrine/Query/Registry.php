@@ -1,45 +1,10 @@
 <?php
-/* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- * This software consists of voluntary contributions made by many individuals
- * and is licensed under the LGPL. For more information, see
- * <http://www.doctrine-project.org>.
- */
 
-/**
- * Doctrine_Query_Registry
- *
- * @package    Doctrine
- * @subpackage Query
- * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link       www.doctrine-project.org
- * @since      1.0
- * @version    $Revision$
- */
 class Doctrine_Query_Registry
 {
-    /**
-     * @var array
-     */
-    protected $_queries = [];
+    protected array $_queries = [];
 
-    /**
-     * @param  string                $key
-     * @param  Doctrine_Query|string $query
-     * @return void
-     */
-    public function add($key, $query)
+    public function add(string $key, Doctrine_Query|string $query): void
     {
         if ($query instanceof Doctrine_Query) {
             $query = clone $query;
@@ -56,12 +21,7 @@ class Doctrine_Query_Registry
         }
     }
 
-    /**
-     * @param  string $key
-     * @param  string $namespace
-     * @return Doctrine_Query
-     */
-    public function get($key, $namespace = null)
+    public function get(string $key, ?string $namespace = null): Doctrine_Query
     {
         if (isset($namespace)) {
             if (!isset($this->_queries[$namespace][$key])) {
@@ -83,13 +43,7 @@ class Doctrine_Query_Registry
         return clone $query;
     }
 
-
-    /**
-     * @param  string $key
-     * @param  string $namespace
-     * @return bool
-     */
-    public function has($key, $namespace = null)
+    public function has(string $key, ?string $namespace = null): bool
     {
         return isset($namespace)
             ? isset($this->_queries[$namespace][$key])

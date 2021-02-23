@@ -103,10 +103,10 @@ abstract class Doctrine_Cache_Driver implements Doctrine_Cache_Interface
      *
      * @param  string    $id       cache id
      * @param  string    $data     data to cache
-     * @param  int|false|null $lifeTime if != false, set a specific lifetime for this cache record (null => infinite lifeTime)
+     * @param  int|null $lifeTime if != false, set a specific lifetime for this cache record (null => infinite lifeTime)
      * @return boolean true if no problem
      */
-    public function save(string $id, $data, $lifeTime = false): bool
+    public function save(string $id, $data, ?int $lifeTime = null): bool
     {
         $key = $this->getKey($id);
         return $this->doSave($key, $data, $lifeTime);
@@ -251,10 +251,10 @@ abstract class Doctrine_Cache_Driver implements Doctrine_Cache_Interface
      *
      * @param  string    $id       cache id
      * @param  string    $data     data to cache
-     * @param  int|false|null $lifeTime if != false, set a specific lifetime for this cache record (null => infinite lifeTime)
+     * @param  int|null $lifeTime if != null, set a specific lifetime for this cache record (null => infinite lifeTime)
      * @return boolean true if no problem
      */
-    abstract protected function doSave(string $id, $data, $lifeTime = false): bool;
+    abstract protected function doSave(string $id, $data, ?int $lifeTime = null): bool;
 
     /**
      * Remove a cache record directly. This method is implemented by the cache

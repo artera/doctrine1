@@ -1,37 +1,7 @@
 <?php
-/* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- * This software consists of voluntary contributions made by many individuals
- * and is licensed under the LGPL. For more information, see
- * <http://www.doctrine-project.org>.
- */
 
-/**
- * Doctrine_Query_Tokenizer
- *
- * @package    Doctrine
- * @subpackage Query
- * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link       www.doctrine-project.org
- * @since      1.0
- * @version    $Revision$
- * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @author     Guilherme Blanco <guilhermeblanco@hotmail.com>
- * @author     Stefan Klug <stefan.klug@googlemail.com>
- */
 class Doctrine_Query_Tokenizer
 {
-
     /**
      * Splits the given dql query into an array where keys represent different
      * query part names and values are arrays splitted using sqlExplode method
@@ -53,7 +23,7 @@ class Doctrine_Query_Tokenizer
      *
      * @return array                    An array containing the query string parts
      */
-    public function tokenizeQuery($query)
+    public function tokenizeQuery(string $query): array
     {
         $tokens = $this->sqlExplode($query, ' ');
         $parts  = [];
@@ -110,13 +80,11 @@ class Doctrine_Query_Tokenizer
      * @param string $str String to remove the brackets
      * @param string $e1  First bracket, usually '('
      * @param string $e2  Second bracket, usually ')'
-     *
-     * @return string
      */
-    public function bracketTrim($str, $e1 = '(', $e2 = ')')
+    public function bracketTrim(string $str, string $e1 = '(', string $e2 = ')'): string
     {
         if (substr($str, 0, 1) === $e1 && substr($str, -1) === $e2) {
-            return substr($str, 1, -1);
+            return substr($str, 1, -1) ?: '';
         } else {
             return $str;
         }
@@ -140,17 +108,11 @@ class Doctrine_Query_Tokenizer
      * @param string|array $d   Delimeter which explodes the string
      * @param string       $e1  First bracket, usually '('
      * @param string       $e2  Second bracket, usually ')'
-     *
-     * @return array
      */
-    public function bracketExplode($str, $d = ' ', $e1 = '(', $e2 = ')')
+    public function bracketExplode(string $str, string|array $d = ' ', string $e1 = '(', string $e2 = ')'): array
     {
-        if (is_string($d)) {
-            $d = [$d];
-        }
-
         // Bracket explode has to be case insensitive
-        $regexp = $this->getSplitRegExpFromArray($d) . 'i';
+        $regexp = $this->getSplitRegExpFromArray((array) $d) . 'i';
         $terms  = $this->clauseExplodeRegExp($str, $regexp, $e1, $e2);
 
         $res = [];
@@ -177,19 +139,13 @@ class Doctrine_Query_Tokenizer
      * would return an array:
      *     array("email", "LIKE", "'John@example.com'")
      *
-     * @param string $str String to be quote exploded
+     * @param string|array $str String to be quote exploded
      * @param string $d   Delimeter which explodes the string
-     *
-     * @return array
      */
-    public function quoteExplode($str, $d = ' ')
+    public function quoteExplode(string $str, string|array $d = ' '): array
     {
-        if (is_string($d)) {
-            $d = [$d];
-        }
-
         // According to the testcases quoteExplode is case insensitive
-        $regexp = $this->getSplitRegExpFromArray($d) . 'i';
+        $regexp = $this->getSplitRegExpFromArray((array) $d) . 'i';
         $terms  = $this->clauseExplodeCountBrackets($str, $regexp);
 
         $res = [];
@@ -227,16 +183,10 @@ class Doctrine_Query_Tokenizer
      * @param string|array $d   Delimeter which explodes the string
      * @param string       $e1  First bracket, usually '('
      * @param string       $e2  Second bracket, usually ')'
-     *
-     * @return array
      */
-    public function sqlExplode($str, $d = ' ', $e1 = '(', $e2 = ')')
+    public function sqlExplode(string $str, string|array $d = ' ', string $e1 = '(', string $e2 = ')'): array
     {
-        if (is_string($d)) {
-            $d = [$d];
-        }
-
-        $terms = $this->clauseExplode($str, $d, $e1, $e2);
+        $terms = $this->clauseExplode($str, (array) $d, $e1, $e2);
         $res   = [];
 
         foreach ($terms as $value) {
@@ -273,10 +223,8 @@ class Doctrine_Query_Tokenizer
      * @param array  $d   Delimeter which explodes the string
      * @param string $e1  First bracket, usually '('
      * @param string $e2  Second bracket, usually ')'
-     *
-     * @return array
      */
-    public function clauseExplode($str, array $d, $e1 = '(', $e2 = ')')
+    public function clauseExplode(string $str, array $d, string $e1 = '(', string $e2 = ')'): array
     {
         $regexp = $this->getSplitRegExpFromArray($d);
 
@@ -286,12 +234,8 @@ class Doctrine_Query_Tokenizer
     /**
      * Builds regular expression for split from array. Return regular
      * expression to be applied
-     *
-     * @param array $d
-     *
-     * @return string
      */
-    private function getSplitRegExpFromArray(array $d)
+    private function getSplitRegExpFromArray(array $d): string
     {
         foreach ($d as $key => $string) {
             $escapedString = preg_quote($string);
@@ -310,15 +254,8 @@ class Doctrine_Query_Tokenizer
 
     /**
      * Same as clauseExplode, but you give a regexp, which splits the string
-     *
-     * @param string $str
-     * @param string $regexp
-     * @param string $e1
-     * @param string $e2
-     *
-     * @return array
      */
-    private function clauseExplodeRegExp($str, $regexp, $e1 = '(', $e2 = ')')
+    private function clauseExplodeRegExp(string $str, string $regexp, string $e1 = '(', string $e2 = ')'): array
     {
         $terms = $this->clauseExplodeCountBrackets($str, $regexp, $e1, $e2);
         $terms = $this->mergeBracketTerms($terms);
@@ -333,15 +270,8 @@ class Doctrine_Query_Tokenizer
 
     /**
      * this function is like clauseExplode, but it doesn't merge bracket terms
-     *
-     * @param string $str
-     * @param string $regexp
-     * @param string $e1
-     * @param string $e2
-     *
-     * @return array
      */
-    private function clauseExplodeCountBrackets($str, $regexp, $e1 = '(', $e2 = ')')
+    private function clauseExplodeCountBrackets(string $str, string $regexp, string $e1 = '(', string $e2 = ')'): array
     {
         $quoteTerms = $this->quotedStringExplode($str);
         $terms      = [];
@@ -408,13 +338,8 @@ class Doctrine_Query_Tokenizer
      *        array("'(c", '+', 1),
      *        array("d))'", '', -2)
      *     );
-     *
-     * @param string $str
-     * @param string $regexp
-     *
-     * @return array
      */
-    private function clauseExplodeNonQuoted($str, $regexp)
+    private function clauseExplodeNonQuoted(string $str, string $regexp): array
     {
         $str  = preg_split($regexp, $str, -1, PREG_SPLIT_DELIM_CAPTURE);
         $term = [];
@@ -456,12 +381,8 @@ class Doctrine_Query_Tokenizer
      *         array('(2+3)', '-', 0),
      *         array('5'    , '' , 0)
      *     );
-     *
-     * @param array $terms
-     *
-     * @return array
      */
-    private function mergeBracketTerms(array $terms)
+    private function mergeBracketTerms(array $terms): array
     {
         $res = [];
         $i   = 0;
@@ -499,10 +420,8 @@ class Doctrine_Query_Tokenizer
      * Note the trailing empty string. In the result, all even elements are quoted strings.
      *
      * @param string $str the string to split
-     *
-     * @return array
      */
-    public function quotedStringExplode($str)
+    public function quotedStringExplode(string $str): array
     {
         // Split by all possible incarnations of a quote
         $split = array_map('preg_quote', ["\\'","''","'", '\\"', '""', '"']);

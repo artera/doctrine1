@@ -190,34 +190,33 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
     /**
      * Get the first record in the collection
      *
-     * @return         Doctrine_Record|false
-     * @phpstan-return T|false
+     * @phpstan-return ?T
      */
-    public function getFirst(): Doctrine_Record|bool
+    public function getFirst(): ?Doctrine_Record
     {
-        return reset($this->data);
+        $r = reset($this->data);
+        return $r === false ? null : $r;
     }
 
     /**
      * Get the last record in the collection
      *
-     * @return         Doctrine_Record|false
-     * @phpstan-return T|false
+     * @phpstan-return ?T
      */
-    public function getLast(): Doctrine_Record|bool
+    public function getLast(): ?Doctrine_Record
     {
-        return end($this->data);
+        $r = end($this->data);
+        return $r === false ? null : $r;
     }
 
     /**
      * Get the last record in the collection
      *
-     * @return         Doctrine_Record|false
-     * @phpstan-return T|false
+     * @phpstan-return ?T
      */
-    public function end(): Doctrine_Record|bool
+    public function end(): ?Doctrine_Record
     {
-        return end($this->data);
+        return $this->getLast();
     }
 
     /**
@@ -291,11 +290,11 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
      *
      * @param         Doctrine_Record $record
      * @phpstan-param T $record
-     * @return        int|string|false
      */
-    public function search(Doctrine_Record $record): int|string|bool
+    public function search(Doctrine_Record $record): int|string|null
     {
-        return array_search($record, $this->data, true);
+        $result = array_search($record, $this->data, true);
+        return $result === false ? null : $result;
     }
 
     /**
@@ -644,37 +643,37 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
 
     /**
      * Mimics the result of a $query->execute(array(), Doctrine_Core::HYDRATE_ARRAY);
-     * @return ((array|false|int|mixed|null)[]|false)[]
-     * @psalm-return array<array-key|mixed, array<array-key|array, array|false|int|mixed|null>|false>
+     * @phpstan-return array<string, array<string, mixed>|null>
      */
     public function toArray(bool $deep = true, bool $prefixKey = false): array
     {
         $data = [];
+        /** @var Doctrine_Record $record */
         foreach ($this as $key => $record) {
-            $key = $prefixKey ? get_class($record) . '_' . $key:$key;
-
-            $data[$key] = $record->toArray($deep, $prefixKey);
+            $key = $prefixKey ? get_class($record) . '_' . $key : $key;
+            $data[(string) $key] = $record->toArray($deep, $prefixKey);
         }
-
         return $data;
     }
 
     /**
      * Build an array made up of the values from the 2 specified columns
-     * @return mixed[] $result
+     * @phpstan-return array<string, mixed>
      */
     public function toKeyValueArray(string $key, string $value): array
     {
         $result = [];
+        /** @var Doctrine_Record $record */
         foreach ($this as $record) {
-            $result[$record->$key] = $record->$value;
+            $result[(string) $record->$key] = $record->$value;
         }
         return $result;
     }
 
     /**
      * Populate a Doctrine_Collection from an array of data
-     * @param  mixed[] $array
+     * @param mixed[] $array
+     * @phpstan-param array<string, mixed>[] $array
      */
     public function fromArray(array $array, bool $deep = true): void
     {
@@ -691,10 +690,11 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
      * value of the toArray() method. It will create Dectrine_Records that don't exist
      * on the collection, update the ones that do and remove the ones missing in the $array
      *
-     * @param array<mixed>[] $array representation of a Doctrine_Collection
+     * @param mixed[][] $array representation of a Doctrine_Collection
      */
     public function synchronizeWithArray(array $array): void
     {
+        /** @var Doctrine_Record $record */
         foreach ($this as $key => $record) {
             if (isset($array[$key])) {
                 $record->synchronizeWithArray($array[$key]);

@@ -36,7 +36,7 @@ namespace Tests\Tickets {
 
             // If I fetch the email I shouldn't find any
             $e = \Doctrine_Query::create()->from('Ticket_DC198_Email')->fetchOne();
-            $this->assertFalse($e);
+            $this->assertNull($e);
         }
     }
 }

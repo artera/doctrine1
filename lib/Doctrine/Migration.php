@@ -345,14 +345,14 @@ class Doctrine_Migration
      * migrate to. It will automatically know whether you are migrating up or down
      * based on the current version of the database.
      *
-     * @param integer $to     Version to migrate to
+     * @param int|null $to     Version to migrate to
      * @param boolean $dryRun Whether or not to run the migrate process as a dry run
      *
-     * @return false|int|null $to Version number migrated to
+     * @return int|null $to Version number migrated to
      *
      * @throws Doctrine_Exception
      */
-    public function migrate($to = null, $dryRun = false)
+    public function migrate(?int $to = null, bool $dryRun = false): ?int
     {
         $this->clearErrors();
 
@@ -374,103 +374,79 @@ class Doctrine_Migration
 
         if ($this->hasErrors()) {
             $this->_connection->rollback();
-
             if ($dryRun) {
-                return false;
+                return null;
             } else {
                 $this->_throwErrorsException();
             }
         } else {
             if ($dryRun) {
                 $this->_connection->rollback();
-                if ($this->hasErrors()) {
-                    return false;
-                } else {
-                    return $to;
-                }
+                return $this->hasErrors() ? null : $to;
             } else {
                 $this->_connection->commit();
                 $this->setCurrentVersion($to);
                 return $to;
             }
         }
-        return false;
+        return null;
     }
 
     /**
      * Run the migration process but rollback at the very end. Returns true or
      * false for whether or not the migration can be ran
-     *
-     * @param int $to
-     *
-     * @return false|int|null
      */
-    public function migrateDryRun($to = null)
+    public function migrateDryRun(?int $to = null): ?int
     {
         return $this->migrate($to, true);
     }
 
     /**
      * Get the number of errors
-     *
-     * @return integer $numErrors
      */
-    public function getNumErrors()
+    public function getNumErrors(): int
     {
         return count($this->_errors);
     }
 
     /**
      * Get all the error exceptions
-     *
-     * @return array $errors
      */
-    public function getErrors()
+    public function getErrors(): array
     {
         return $this->_errors;
     }
 
     /**
      * Clears the error exceptions
-     *
-     * @return void
      */
-    public function clearErrors()
+    public function clearErrors(): void
     {
         $this->_errors = [];
     }
 
     /**
      * Add an error to the stack. Excepts some type of Exception
-     *
-     * @param  Exception $e
-     * @return void
      */
-    public function addError(Exception $e)
+    public function addError(Exception $e): void
     {
         $this->_errors[] = $e;
     }
 
     /**
      * Whether or not the migration instance has errors
-     *
-     * @return boolean
      */
-    public function hasErrors()
+    public function hasErrors(): bool
     {
-        return $this->getNumErrors() > 0 ? true:false;
+        return $this->getNumErrors() > 0;
     }
 
     /**
      * Get instance of migration class for number/version specified
      *
-     * @param integer $num
-     *
      * @throws Doctrine_Migration_Exception $e
-     *
-     * @return Doctrine_Migration_Base
      */
-    public function getMigrationClass($num)
+    public function getMigrationClass(int $num): Doctrine_Migration_Base
     {
         if (isset($this->_migrationClasses[$num])) {
             $className = $this->_migrationClasses[$num];
@@ -483,10 +459,9 @@ class Doctrine_Migration
     /**
      * Throw an exception with all the errors trigged during the migration
      *
-     * @return void
      * @throws Doctrine_Migration_Exception $e
      */
-    protected function _throwErrorsException()
+    protected function _throwErrorsException(): void
     {
         $messages = [];
         $num      = 0;
@@ -506,11 +481,9 @@ class Doctrine_Migration
     /**
      * Do the actual migration process
      *
-     * @param  integer $to
-     * @return integer $to
      * @throws Doctrine_Exception
      */
-    protected function _doMigrate($to)
+    protected function _doMigrate(int $to): int
     {
         $from = $this->getCurrentVersion();
 
@@ -537,11 +510,10 @@ class Doctrine_Migration
      * Perform a single migration step. Executes a single migration class and
      * processes the changes
      *
-     * @param  string  $direction Direction to go, 'up' or 'down'
-     * @param  integer $num
-     * @return void
+     * @param string $direction Direction to go, 'up' or 'down'
+     * @phpstan-param 'up'|'down' $direction
      */
-    protected function _doMigrateStep($direction, $num)
+    protected function _doMigrateStep(string $direction, int $num): void
     {
         try {
             $migration = $this->getMigrationClass($num);
@@ -589,7 +561,7 @@ class Doctrine_Migration
      * @return boolean $created Whether or not the table was created. Exceptions
      *                          are silenced when table already exists
      */
-    protected function _createMigrationTable()
+    protected function _createMigrationTable(): bool
     {
         if ($this->_migrationTableCreated) {
             return true;

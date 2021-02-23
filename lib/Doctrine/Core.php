@@ -753,17 +753,16 @@ class Doctrine_Core
      * Generates models from database to temporary location then uses those models to generate a yaml schema file.
      * This should probably be fixed. We should write something to generate a yaml schema file directly from the database.
      *
-     * @param  string $yamlPath    Path to write oyur yaml schema file to
-     * @param  array  $connections Array of connection names to generate yaml for
-     * @param  array  $options     Array of options
-     * @return int|false|string
+     * @param string $yamlPath Path to write oyur yaml schema file to
+     * @param array $connections Array of connection names to generate yaml for
+     * @param array $options Array of options
      */
-    public static function generateYamlFromDb(string $yamlPath, array $connections = [], array $options = []): int|string|bool
+    public static function generateYamlFromDb(string $yamlPath, array $connections = [], array $options = []): int|string|null
     {
         $directory = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'tmp_doctrine_models';
 
         $options['generateBaseClasses'] = isset($options['generateBaseClasses']) ? $options['generateBaseClasses']:false;
-        $result                         = Doctrine_Core::generateModelsFromDb($directory, $connections, $options);
+        $result = Doctrine_Core::generateModelsFromDb($directory, $connections, $options);
 
         if (empty($result) && !is_dir($directory)) {
             throw new Doctrine_Exception('No models generated from your databases');
@@ -849,11 +848,10 @@ class Doctrine_Core
     /**
      * Generate yaml schema file for the models in the specified directory
      *
-     * @param  string $yamlPath  Path to your yaml schema files
-     * @param  string $directory Directory to generate your models in
-     * @return int|false|string
+     * @param string $yamlPath  Path to your yaml schema files
+     * @param string $directory Directory to generate your models in
      */
-    public static function generateYamlFromModels($yamlPath, $directory)
+    public static function generateYamlFromModels(string $yamlPath, string $directory): int|string|null
     {
         $export = new Doctrine_Export_Schema();
 
@@ -863,10 +861,9 @@ class Doctrine_Core
     /**
      * Creates databases for connections
      *
-     * @param  array $specifiedConnections Array of connections you wish to create the database for
-     * @return void
+     * @param array $specifiedConnections Array of connections you wish to create the database for
      */
-    public static function createDatabases($specifiedConnections = [])
+    public static function createDatabases(array $specifiedConnections = []): void
     {
         Doctrine_Manager::getInstance()->createDatabases($specifiedConnections);
     }
@@ -874,10 +871,9 @@ class Doctrine_Core
     /**
      * Drops databases for connections
      *
-     * @param  array $specifiedConnections Array of connections you wish to drop the database for
-     * @return void
+     * @param array $specifiedConnections Array of connections you wish to drop the database for
      */
-    public static function dropDatabases($specifiedConnections = [])
+    public static function dropDatabases(array $specifiedConnections = []): void
     {
         Doctrine_Manager::getInstance()->dropDatabases($specifiedConnections);
     }
@@ -886,8 +882,8 @@ class Doctrine_Core
      * Load data from a yaml fixtures file.
      * The output of dumpData can be fed to loadData
      *
-     * @param  string $yamlPath Path to your yaml data fixtures
-     * @param  bool   $append   Whether or not to append the data
+     * @param string $yamlPath Path to your yaml data fixtures
+     * @param bool   $append   Whether or not to append the data
      */
     public static function loadData(string $yamlPath, bool $append = false): void
     {
@@ -901,14 +897,11 @@ class Doctrine_Core
      * @param string $migrationsPath Path to migrations directory which contains your migration classes
      * @param int|null    $to             Version you wish to migrate to.
      *
-     * @return false|int|null
-     *
      * @throws Doctrine_Migration_Exception
      */
     public static function migrate(string $migrationsPath, ?int $to = null): int|bool|null
     {
         $migration = new Doctrine_Migration($migrationsPath);
-
         return $migration->migrate($to);
     }
 

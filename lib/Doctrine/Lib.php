@@ -23,48 +23,33 @@ class Doctrine_Lib
      *
      * Different from array_merge
      *  If string keys have arrays for values, these arrays will merge recursively.
-     *
-     * @return array|false
      */
-    public static function arrayDeepMerge()
+    public static function arrayDeepMerge(array $first, ?array $second = null, array ...$rest): array
     {
-        switch (func_num_args()) {
-            case 0:
-                return false;
-            case 1:
-                return func_get_arg(0);
-            case 2:
-                $args    = func_get_args();
-                $args[2] = [];
-
-                if (is_array($args[0]) && is_array($args[1])) {
-                    foreach (array_unique(array_merge(array_keys($args[0]), array_keys($args[1]))) as $key) {
-                        $isKey0 = array_key_exists($key, $args[0]);
-                        $isKey1 = array_key_exists($key, $args[1]);
-
-                        if ($isKey0 && $isKey1 && is_array($args[0][$key]) && is_array($args[1][$key])) {
-                            $args[2][$key] = self::arrayDeepMerge($args[0][$key], $args[1][$key]);
-                        } elseif ($isKey0 && $isKey1) {
-                            $args[2][$key] = $args[1][$key];
-                        } elseif (!$isKey1) {
-                            $args[2][$key] = $args[0][$key];
-                        } elseif (!$isKey0) {
-                            $args[2][$key] = $args[1][$key];
-                        }
-                    }
-
-                    return $args[2];
-                } else {
-                    return $args[1];
-                }
-                 // no break
-            default:
-                $args    = func_get_args();
-                $args[1] = self::arrayDeepMerge($args[0], $args[1]);
-                array_shift($args);
-
-                return call_user_func_array(['Doctrine_Lib', 'arrayDeepMerge'], $args);
+        if ($second === null) {
+            return $first;
         }
+
+        if (empty($rest)) {
+            foreach (array_unique(array_merge(array_keys($first), array_keys($second))) as $key) {
+                $isKey0 = array_key_exists($key, $first);
+                $isKey1 = array_key_exists($key, $second);
+
+                if ($isKey0 && $isKey1 && is_array($first[$key]) && is_array($second[$key])) {
+                    $rest[$key] = self::arrayDeepMerge($first[$key], $second[$key]);
+                } elseif ($isKey0 && $isKey1) {
+                    $rest[$key] = $second[$key];
+                } elseif (!$isKey1) {
+                    $rest[$key] = $first[$key];
+                } elseif (!$isKey0) {
+                    $rest[$key] = $second[$key];
+                }
+            }
+            return $rest;
+        }
+
+        $first = self::arrayDeepMerge($first, $second);
+        return self::arrayDeepMerge($first, ...$rest);
     }
 
     /**
@@ -78,7 +63,7 @@ class Doctrine_Lib
      *                       created directories
      * @return boolean  true if succeeded
      */
-    public static function makeDirectories($path, $mode = 0777)
+    public static function makeDirectories(string $path, $mode = 0777): bool
     {
         if (!$path) {
             return false;
@@ -100,7 +85,7 @@ class Doctrine_Lib
      * @param  string $folderPath
      * @return boolean  success of the operation
      */
-    public static function removeDirectories($folderPath)
+    public static function removeDirectories(string $folderPath): bool
     {
         if (is_dir($folderPath)) {
             foreach (scandir($folderPath) ?: [] as $value) {
@@ -131,7 +116,7 @@ class Doctrine_Lib
      * @param  string $dest   a directory path
      * @return bool
      */
-    public static function copyDirectory($source, $dest)
+    public static function copyDirectory(string $source, string $dest): bool
     {
         // Simple copy for a file
         if (is_file($source)) {

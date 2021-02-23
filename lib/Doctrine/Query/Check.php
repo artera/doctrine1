@@ -1,57 +1,21 @@
 <?php
-/*
- *  $Id: From.php 1080 2007-02-10 18:17:08Z romanb $
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- * This software consists of voluntary contributions made by many individuals
- * and is licensed under the LGPL. For more information, see
- * <http://www.doctrine-project.org>.
- */
 
-/**
- * Doctrine_Query_Check
- *
- * @package    Doctrine
- * @subpackage Query
- * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link       www.doctrine-project.org
- * @since      1.0
- * @version    $Revision: 1080 $
- * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
- */
 class Doctrine_Query_Check
 {
-    /**
-     * @var Doctrine_Table $table           Doctrine_Table object
-     */
-    protected $table;
+    protected Doctrine_Table $table;
 
     /**
-     * @var string $sql                     database specific sql CHECK constraint definition
-     *                                      parsed from the given dql CHECK definition
+     * database specific sql CHECK constraint definition
+     * parsed from the given dql CHECK definition
      */
-    protected $sql;
+    protected string $sql;
 
-    /**
-     * @var Doctrine_Query_Tokenizer
-     */
-    protected $_tokenizer;
+    protected Doctrine_Query_Tokenizer $_tokenizer;
 
     /**
      * @param Doctrine_Table|string $table Doctrine_Table object
      */
-    public function __construct($table)
+    public function __construct(Doctrine_Table|string $table)
     {
         if (!($table instanceof Doctrine_Table)) {
             $table = Doctrine_Manager::getInstance()
@@ -63,34 +27,22 @@ class Doctrine_Query_Check
     }
 
     /**
-     * getTable
      * returns the table object associated with this object
-     *
-     * @return Doctrine_Table
      */
-    public function getTable()
+    public function getTable(): Doctrine_Table
     {
         return $this->table;
     }
 
     /**
-     * parse
-     *
-     * @param  string $dql DQL CHECK constraint definition
-     * @return void
+     * @param string $dql DQL CHECK constraint definition
      */
-    public function parse($dql)
+    public function parse(string $dql): void
     {
         $this->sql = $this->parseClause($dql);
     }
 
-    /**
-     * parseClause
-     *
-     * @param  string $dql
-     * @return string
-     */
-    public function parseClause($dql)
+    public function parseClause(string $dql): string
     {
         $parts = $this->_tokenizer->sqlExplode($dql, ' AND ');
 
@@ -118,11 +70,7 @@ class Doctrine_Query_Check
         return '(' . $r . ')';
     }
 
-    /**
-     * @param  string $part
-     * @return string
-     */
-    public function parseSingle($part)
+    public function parseSingle(string $part): string
     {
         $e = explode(' ', $part);
 
@@ -142,11 +90,7 @@ class Doctrine_Query_Check
         return implode(' ', $e);
     }
 
-    /**
-     * @param  string $dql
-     * @return mixed
-     */
-    public function parseFunction($dql)
+    public function parseFunction(string $dql): mixed
     {
         if (($pos = strpos($dql, '(')) !== false) {
             $func  = substr($dql, 0, $pos);
@@ -164,14 +108,10 @@ class Doctrine_Query_Check
     }
 
     /**
-     * getSql
-     *
      * returns database specific sql CHECK constraint definition
      * parsed from the given dql CHECK definition
-     *
-     * @return string
      */
-    public function getSql()
+    public function getSql(): string
     {
         return $this->sql;
     }

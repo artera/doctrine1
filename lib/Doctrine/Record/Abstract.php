@@ -2,6 +2,7 @@
 
 /**
  * @phpstan-template T of Doctrine_Table
+ * @phpstan-extends Doctrine_Access<string, mixed>
  */
 abstract class Doctrine_Record_Abstract extends Doctrine_Access
 {

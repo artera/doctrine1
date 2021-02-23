@@ -549,16 +549,16 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
      * Updates table row(s) with specified data.
      *
      * @throws Doctrine_Connection_Exception    if something went wrong at the database level
-     * @param  Doctrine_Table $table  The table to insert data into
-     * @param  array          $fields An associative array containing column-value pairs.
-     *                                Values can be strings or Doctrine_Expression
-     *                                instances.
-     * @return int|false            the number of affected rows. bool false if empty value array was given,
+     * @param Doctrine_Table $table  The table to insert data into
+     * @param array $fields An associative array containing column-value pairs.
+     *              Values can be strings or Doctrine_Expression
+     *              instances.
+     * @return int|null the number of affected rows. bool false if empty value array was given,
      */
-    public function update(Doctrine_Table $table, array $fields, array $identifier): int|bool
+    public function update(Doctrine_Table $table, array $fields, array $identifier): ?int
     {
         if (empty($fields)) {
-            return false;
+            return null;
         }
 
         $set = [];
@@ -853,16 +853,16 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
      * @param  string $query  DQL query
      * @param  array  $params query parameters
      * @see    Doctrine_Query
-     * @return Doctrine_Record|false    Doctrine_Record object on success,
+     * @return Doctrine_Record|null    Doctrine_Record object on success,
      *                                  bool false on failure
      */
-    public function queryOne(string $query, array $params = []): Doctrine_Record|bool
+    public function queryOne(string $query, array $params = []): ?Doctrine_Record
     {
         $parser = Doctrine_Query::create();
 
         $coll = $parser->query($query, $params);
         if (!$coll->contains(0)) {
-            return false;
+            return null;
         }
         return $coll[0];
     }
@@ -870,10 +870,6 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
     /**
      * queries the database with limit and offset
      * added to the query and returns a Doctrine_Connection_Statement object
-     *
-     * @param  string  $query
-     * @param  int $limit
-     * @param  int $offset
      */
     public function select(string $query, int $limit = 0, int $offset = 0): Doctrine_Connection_Statement
     {
@@ -1345,7 +1341,7 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
     /**
      * Some dbms require specific functionality for this. Check the other connection adapters for examples
      */
-    public function modifyLimitQuery(string $query, int|bool $limit = false, int|bool $offset = false, bool $isManip = false): string
+    public function modifyLimitQuery(string $query, ?int $limit = null, ?int $offset = null, bool $isManip = false): string
     {
         return $query;
     }
@@ -1353,14 +1349,8 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
     /**
      * Creates dbms specific LIMIT/OFFSET SQL for the subqueries that are used in the
      * context of the limit-subquery algorithm.
-     *
-     * @param  string    $query
-     * @param  int|false $limit
-     * @param  int|false $offset
-     * @param  bool      $isManip
-     * @return string
      */
-    public function modifyLimitSubquery(Doctrine_Table $rootTable, string $query, int|bool $limit = false, int|bool $offset = false, bool $isManip = false): string
+    public function modifyLimitSubquery(Doctrine_Table $rootTable, string $query, ?int $limit = null, ?int $offset = null, bool $isManip = false): string
     {
         return $this->modifyLimitQuery($query, $limit, $offset, $isManip);
     }

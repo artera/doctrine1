@@ -1,42 +1,8 @@
 <?php
-/*
- *  $Id: Where.php 7672 2010-06-08 20:46:54Z jwage $
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- * This software consists of voluntary contributions made by many individuals
- * and is licensed under the LGPL. For more information, see
- * <http://www.doctrine-project.org>.
- */
 
-/**
- * Doctrine_Query_Where
- *
- * @package    Doctrine
- * @subpackage Query
- * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link       www.doctrine-project.org
- * @since      1.0
- * @version    $Revision: 7672 $
- * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
- */
 class Doctrine_Query_Where extends Doctrine_Query_Condition
 {
-    /**
-     * @param  string $where
-     * @return string
-     */
-    public function load($where)
+    public function load(string $where): string
     {
         // Handle operator ("AND" | "OR"), reducing overhead of this method processment
         $possibleOp = strtolower($where);
@@ -89,13 +55,7 @@ class Doctrine_Query_Where extends Doctrine_Query_Condition
         }
     }
 
-    /**
-     * @param  string $leftExpr
-     * @param  string $operator
-     * @param  string $rightExpr
-     * @return string
-     */
-    protected function _buildSql($leftExpr, $operator, $rightExpr)
+    protected function _buildSql(string $leftExpr, string $operator, string $rightExpr): string
     {
         $leftExprOriginal = $leftExpr;
         $leftExpr         = $this->query->parseClause($leftExpr);
@@ -132,11 +92,7 @@ class Doctrine_Query_Where extends Doctrine_Query_Condition
     }
 
 
-    /**
-     * @param  string $rightExpr
-     * @return string
-     */
-    protected function _buildWhereInArraySqlPart($rightExpr)
+    protected function _buildWhereInArraySqlPart(string $rightExpr): string
     {
         $params = $this->query->getInternalParams();
         $value  = [];
@@ -158,9 +114,8 @@ class Doctrine_Query_Where extends Doctrine_Query_Condition
      *
      * @param  string  $where    query where part to be parsed
      * @param  boolean $negation whether or not to use the NOT keyword
-     * @return string
      */
-    public function parseExists($where, $negation)
+    public function parseExists(string $where, bool $negation): string
     {
         $operator = ($negation) ? 'EXISTS' : 'NOT EXISTS';
 

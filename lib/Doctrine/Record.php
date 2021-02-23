@@ -5,7 +5,6 @@ use Doctrine_Record_State as State;
 /**
  * @phpstan-template T of Doctrine_Table
  * @phpstan-extends Doctrine_Record_Abstract<T>
- * @phpstan-implements IteratorAggregate<string, mixed>
  */
 abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Countable, IteratorAggregate, Serializable
 {
@@ -597,24 +596,22 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
     /**
      * Get the record error stack as a human readable string.
      * Useful for outputting errors to user via web browser
-     *
-     * @return string|false $message
      */
-    public function getErrorStackAsString()
+    public function getErrorStackAsString(): ?string
     {
         $errorStack = $this->getErrorStack();
 
-        if (count($errorStack)) {
-            $message = sprintf("Validation failed in class %s\n\n", static::class);
-
-            $message .= '  ' . count($errorStack) . ' field' . (count($errorStack) > 1 ?  's' : null) . ' had validation error' . (count($errorStack) > 1 ?  's' : null) . ":\n\n";
-            foreach ($errorStack as $field => $errors) {
-                $message .= '    * ' . count($errors) . ' validator' . (count($errors) > 1 ?  's' : null) . " failed on $field (" . implode(', ', $errors) . ")\n";
-            }
-            return $message;
-        } else {
-            return false;
+        if (!count($errorStack)) {
+            return null;
         }
+
+        $message = sprintf("Validation failed in class %s\n\n", static::class);
+
+        $message .= '  ' . count($errorStack) . ' field' . (count($errorStack) > 1 ?  's' : null) . ' had validation error' . (count($errorStack) > 1 ?  's' : null) . ":\n\n";
+        foreach ($errorStack as $field => $errors) {
+            $message .= '    * ' . count($errors) . ' validator' . (count($errors) > 1 ?  's' : null) . " failed on $field (" . implode(', ', $errors) . ")\n";
+        }
+        return $message;
     }
 
     /**
@@ -669,13 +666,13 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
      * sets the default values for records internal data
      *
      * @param  boolean $overwrite whether or not to overwrite the already set values
-     * @return false|null
      */
-    public function assignDefaultValues($overwrite = false)
+    public function assignDefaultValues(bool $overwrite = false): bool
     {
         if (!$this->_table->hasDefaultValues()) {
             return false;
         }
+
         foreach ($this->_data as $column => $value) {
             $default = $this->_table->getDefaultValueOf($column);
 
@@ -690,7 +687,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
             }
         }
 
-        return null;
+        return true;
     }
 
     /**
@@ -813,25 +810,31 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
         }
 
         foreach ($data as $k => $v) {
-            if ($v instanceof Doctrine_Record && $this->_table->getTypeOf($k) != 'object') {
+            if ($v instanceof Doctrine_Null) {
                 unset($vars['_data'][$k]);
-            } elseif ($v instanceof Doctrine_Null) {
+                continue;
+            }
+
+            $type = $this->_table->getTypeOf($k);
+
+            if ($v instanceof Doctrine_Record && $type != 'object') {
                 unset($vars['_data'][$k]);
-            } else {
-                switch ($this->_table->getTypeOf($k)) {
-                    case 'array':
-                    case 'object':
-                        if (version_compare(PHP_VERSION, '5.4.0', '<')) {
-                            $vars['_data'][$k] = serialize($vars['_data'][$k]);
-                        }
-                        break;
-                    case 'gzip':
-                        $vars['_data'][$k] = gzcompress($vars['_data'][$k]);
-                        break;
-                    case 'enum':
-                        $vars['_data'][$k] = $this->_table->enumIndex($k, $vars['_data'][$k]);
-                        break;
-                }
+                continue;
+            }
+
+            switch ($type) {
+                case 'array':
+                case 'object':
+                    if (version_compare(PHP_VERSION, '5.4.0', '<')) {
+                        $vars['_data'][$k] = serialize($vars['_data'][$k]);
+                    }
+                    break;
+                case 'gzip':
+                    $vars['_data'][$k] = gzcompress($vars['_data'][$k]);
+                    break;
+                case 'enum':
+                    $vars['_data'][$k] = $this->_table->enumIndex($k, $vars['_data'][$k]);
+                    break;
             }
         }
 
@@ -943,16 +946,16 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
      * @throws Doctrine_Record_Exception        When the refresh operation fails (when the database row
      *                                          this record represents does not exist anymore)
      *
-     * @return $this|false
+     * @return $this|null
      */
-    public function refresh($deep = false)
+    public function refresh(bool $deep = false): ?self
     {
         $id = $this->identifier();
         if (!is_array($id)) {
             $id = [$id];
         }
         if (empty($id)) {
-            return false;
+            return null;
         }
         $id = array_values($id);
 
@@ -969,7 +972,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
             $record = $query->fetchOne($id);
         } else {
             // Use HYDRATE_ARRAY to avoid clearing object relations
-            /** @phpstan-var array<string, mixed>|false */
+            /** @phpstan-var array<string, mixed>|null */
             $record = $this->getTable()->find($id, hydrate_array: true);
             if ($record) {
                 $this->hydrate($record);
@@ -978,7 +981,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
 
         $this->getTable()->setAttribute(Doctrine_Core::ATTR_HYDRATE_OVERWRITE, $overwrite);
 
-        if ($record === false) {
+        if ($record === null) {
             throw new Doctrine_Record_Exception('Failed to refresh. Record does not exist.');
         }
 
@@ -1464,7 +1467,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
         if (array_key_exists($fieldName, $this->_values)) {
             $this->_values[$fieldName] = $value;
         } elseif (array_key_exists($fieldName, $this->_data)) {
-            $type = $this->_table->getTypeOf($fieldName);
+            $type = $this->_table->requireTypeOf($fieldName);
             if ($value instanceof Doctrine_Record) {
                 $id = $value->getIncremented();
 
@@ -1839,12 +1842,12 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
         }
 
         foreach ($modifiedFields as $field) {
-            $type = $this->_table->getTypeOf($field);
-
             if ($this->_data[$field] instanceof Doctrine_Null) {
                 $a[$field] = null;
                 continue;
             }
+
+            $type = $this->_table->getTypeOf($field);
 
             switch ($type) {
                 case 'array':
@@ -1873,12 +1876,6 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
                     } else {
                         $a[$field] = $this->_data[$field];
                     }
-                    /**
-     * TODO:
-                    if ($this->_data[$v] === null) {
-                        throw new Doctrine_Record_Exception('Unexpected null value.');
-                    }
-                    */
             }
         }
 
@@ -1908,19 +1905,14 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
     /**
      * returns the record representation as an array
      *
-     * @link http://www.doctrine-project.org/documentation/manual/1_1/en/working-with-models
-     *
      * @param boolean $deep      whether to include relations
      * @param boolean $prefixKey not used
-     *
-     * @return (array|false|int|mixed|null)[]|false
-     *
-     * @psalm-return array<array-key|array, array|false|int|mixed|null>|false
+     * @phpstan-return array<string, mixed>|null
      */
-    public function toArray($deep = true, $prefixKey = false)
+    public function toArray($deep = true, $prefixKey = false): ?array
     {
         if ($this->state->isLocked()) {
-            return false;
+            return null;
         }
 
         $stateBeforeLock = $this->state;
@@ -2570,7 +2562,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
             $modelClassName = $rel->getAssociationTable()->getComponentName();
             $localFieldName = $rel->getLocalFieldName();
             $localFieldDef  = $rel->getAssociationTable()->getColumnDefinition($localFieldName);
-            assert($localFieldDef !== false);
+            assert($localFieldDef !== null);
 
             if ($localFieldDef['type'] == 'integer') {
                 $identifier = (integer) $identifier;
@@ -2578,7 +2570,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
 
             $foreignFieldName = $rel->getForeignFieldName();
             $foreignFieldDef  = $rel->getAssociationTable()->getColumnDefinition($foreignFieldName);
-            assert($foreignFieldDef !== false);
+            assert($foreignFieldDef !== null);
 
             if ($foreignFieldDef['type'] == 'integer') {
                 foreach ($ids as $i => $id) {

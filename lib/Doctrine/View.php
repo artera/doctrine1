@@ -65,14 +65,14 @@ class Doctrine_View
     protected $_conn;
 
     /**
-     * @var string $_dql The view dql string
+     * The view dql string
      */
-    protected $_dql;
+    protected string $_dql;
 
     /**
-     * @var string|false $_sql The view sql string
+     * The view sql string
      */
-    protected $_sql;
+    protected ?string $_sql;
 
     /**
      * constructor
@@ -172,20 +172,16 @@ class Doctrine_View
 
     /**
      * Get the view sql string
-     *
-     * @return string|false $sql
      */
-    public function getViewSql()
+    public function getViewSql(): ?string
     {
         return $this->_sql;
     }
 
     /**
      * Get the view dql string
-     *
-     * @return string $dql
      */
-    public function getViewDql()
+    public function getViewDql(): string
     {
         return $this->_dql;
     }

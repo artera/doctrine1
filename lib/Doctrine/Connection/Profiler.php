@@ -162,13 +162,11 @@ class Doctrine_Connection_Profiler implements Doctrine_Overloadable, IteratorAgg
     /**
      * Get the Doctrine_Event object for the last query that was run, regardless if it has
      * ended or not. If the event has not ended, it's end time will be Null.
-     *
-     * @return Doctrine_Event|false
      */
-    public function lastEvent()
+    public function lastEvent(): ?Doctrine_Event
     {
         if (empty($this->events)) {
-            return false;
+            return null;
         }
 
         end($this->events);

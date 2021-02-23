@@ -1083,35 +1083,29 @@ abstract class Doctrine_Query_Abstract
     /**
      * Get the dql call back for this query
      *
-     * @return array{callback:string,const:int}|false $callback
+     * @return array{callback:string,const:int}|null $callback
      */
-    protected function _getDqlCallback()
+    protected function _getDqlCallback(): ?array
     {
-        $callback = false;
-        if (!empty($this->_dqlParts['from'])) {
-            switch ($this->_type) {
-                case self::DELETE:
-                    $callback = [
-                    'callback' => 'preDqlDelete',
-                    'const'    => Doctrine_Event::RECORD_DQL_DELETE
-                    ];
-                    break;
-                case self::UPDATE:
-                    $callback = [
-                    'callback' => 'preDqlUpdate',
-                    'const'    => Doctrine_Event::RECORD_DQL_UPDATE
-                    ];
-                    break;
-                case self::SELECT:
-                    $callback = [
-                    'callback' => 'preDqlSelect',
-                    'const'    => Doctrine_Event::RECORD_DQL_SELECT
-                    ];
-                    break;
-            }
+        if (empty($this->_dqlParts['from'])) {
+            return null;
         }
 
-        return $callback;
+        return match ($this->_type) {
+            self::DELETE => [
+                'callback' => 'preDqlDelete',
+                'const'    => Doctrine_Event::RECORD_DQL_DELETE
+            ],
+            self::UPDATE => [
+                'callback' => 'preDqlUpdate',
+                'const'    => Doctrine_Event::RECORD_DQL_UPDATE
+            ],
+            self::SELECT => [
+                'callback' => 'preDqlSelect',
+                'const'    => Doctrine_Event::RECORD_DQL_SELECT
+            ],
+            default => null,
+        };
     }
 
     /**

@@ -55,10 +55,10 @@ interface Doctrine_Cache_Interface
      *
      * @param  string    $id       cache id
      * @param  string    $data     data to cache
-     * @param  int|false|null $lifeTime if != false, set a specific lifetime for this cache record (null => infinite lifeTime)
+     * @param  int|null $lifeTime if != null, set a specific lifetime for this cache record (null => infinite lifeTime)
      * @return boolean true if no problem
      */
-    public function save(string $id, $data, $lifeTime = false): bool;
+    public function save(string $id, $data, ?int $lifeTime = null): bool;
 
     /**
      * Remove a cache record

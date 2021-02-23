@@ -1,6 +1,11 @@
 parameters:
 	ignoreErrors:
 		-
+			message: "#^Return type \\(Doctrine_Adapter_Statement_Mock\\|null\\) of method Doctrine_Adapter_Mock\\:\\:prepare\\(\\) should be compatible with return type \\(PDOStatement\\|false\\) of method PDO\\:\\:prepare\\(\\)$#"
+			count: 1
+			path: lib/Doctrine/Adapter/Mock.php
+
+		-
 			message: "#^Call to sprintf contains 1 placeholder, 2 values given\\.$#"
 			count: 1
 			path: lib/Doctrine/Cli/Formatter.php
@@ -76,6 +81,11 @@ parameters:
 			path: lib/Doctrine/Parser/Xml.php
 
 		-
+			message: "#^Type Doctrine_Record_Abstract in generic type Doctrine_Collection\\<Doctrine_Record_Abstract\\> in PHPDoc tag @return is not subtype of template type T of Doctrine_Record of class Doctrine_Collection\\.$#"
+			count: 1
+			path: lib/Doctrine/Query/Abstract.php
+
+		-
 			message: "#^Variable \\$func might not be defined\\.$#"
 			count: 1
 			path: lib/Doctrine/Query/Check.php
@@ -111,47 +121,12 @@ parameters:
 			path: lib/Doctrine/Record/Filter/Standard.php
 
 		-
-			message: "#^Property Doctrine_Record_Listener\\:\\:\\$_options \\(array\\) does not accept array\\|false\\.$#"
-			count: 1
-			path: lib/Doctrine/Record/Listener.php
-
-		-
-			message: "#^Property Doctrine_Record_Listener_Chain\\:\\:\\$_options \\(array\\) does not accept array\\|false\\.$#"
-			count: 1
-			path: lib/Doctrine/Record/Listener/Chain.php
-
-		-
 			message: "#^Variable \\$rel in isset\\(\\) always exists and is not nullable\\.$#"
 			count: 1
 			path: lib/Doctrine/Relation/Parser.php
 
 		-
 			message: "#^Variable \\$table might not be defined\\.$#"
-			count: 1
-			path: lib/Doctrine/Relation/Parser.php
-
-		-
-			message: "#^Cannot access offset 'type' on array\\<string, mixed\\>\\|false\\.$#"
-			count: 2
-			path: lib/Doctrine/Relation/Parser.php
-
-		-
-			message: "#^Cannot access offset 'length' on array\\<string, mixed\\>\\|false\\.$#"
-			count: 2
-			path: lib/Doctrine/Relation/Parser.php
-
-		-
-			message: "#^Cannot access offset 'autoincrement' on array\\<string, mixed\\>\\|false\\.$#"
-			count: 1
-			path: lib/Doctrine/Relation/Parser.php
-
-		-
-			message: "#^Cannot access offset 'sequence' on array\\<string, mixed\\>\\|false\\.$#"
-			count: 1
-			path: lib/Doctrine/Relation/Parser.php
-
-		-
-			message: "#^Cannot access offset 'primary' on array\\<string, mixed\\>\\|false\\.$#"
 			count: 1
 			path: lib/Doctrine/Relation/Parser.php
 
@@ -175,27 +150,3 @@ parameters:
 			count: 1
 			path: lib/Doctrine/Validator/ErrorStack.php
 
-		-
-			message: "#^Comparison operation \"\\<\" between int\\<0, max\\> and array results in an error\\.$#"
-			count: 1
-			path: lib/Doctrine/Validator/Minlength.php
-
-		-
-			message: "#^Strict comparison using \\=\\=\\= between mixed and null will always evaluate to false\\.$#"
-			count: 1
-			path: lib/Doctrine/Validator/Nospace.php
-
-		-
-			message: "#^Parameter \\#1 \\$key of function array_key_exists expects int\\|string, array\\|string given\\.$#"
-			count: 1
-			path: lib/Doctrine/Validator/Readonly.php
-
-		-
-			message: "#^Else branch is unreachable because previous condition is always true\\.$#"
-			count: 1
-			path: lib/Doctrine/Validator/Regexp.php
-
-		-
-			message: "#^Unreachable statement \\- code above always terminates\\.$#"
-			count: 1
-			path: lib/Doctrine/Validator/Regexp.php

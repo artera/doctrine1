@@ -73,53 +73,34 @@ class Doctrine_Expression_Sqlite extends Doctrine_Expression_Driver
      *
      * @param  string $substr literal string to find
      * @param  string $str    literal string
-     * @return int|false
      */
-    public static function locateImpl($substr, $str)
+    public static function locateImpl(string $substr, string $str): ?int
     {
-        return strpos($str, $substr);
+        $res = strpos($str, $substr);
+        return $res === false ? null : $res;
     }
 
-    /**
-     * @param  string $str
-     * @return string
-     */
-    public static function sha1Impl($str)
+    public static function sha1Impl(string $str): string
     {
         return sha1($str);
     }
 
-    /**
-     * @param  string $str
-     * @return string
-     */
-    public static function ltrimImpl($str)
+    public static function ltrimImpl(string $str): string
     {
         return ltrim($str);
     }
 
-    /**
-     * @param  string $str
-     * @return string
-     */
-    public static function rtrimImpl($str)
+    public static function rtrimImpl(string $str): string
     {
         return rtrim($str);
     }
 
-    /**
-     * @param  string $str
-     * @return string
-     */
-    public static function trimImpl($str)
+    public static function trimImpl(string $str): string
     {
         return trim($str);
     }
 
-    /**
-     * @return string
-     */
-    public static function nowImpl()
+    public static function nowImpl(): string
     {
         return date('Y-m-d h:i:s');
     }

@@ -78,8 +78,8 @@ class Doctrine_Adapter_Mock extends PDO
         $this->_exception = [$name, $message, $code];
     }
 
-    /** @return Doctrine_Adapter_Statement_Mock|false */
-    public function prepare(string $query, array $options = [])
+    /** @return Doctrine_Adapter_Statement_Mock|null */
+    public function prepare(string $query, array $options = []): ?Doctrine_Adapter_Statement_Mock
     {
         $mock              = new Doctrine_Adapter_Statement_Mock($this);
         $mock->queryString = $query;

@@ -116,13 +116,7 @@ abstract class Doctrine_Task
         return implode('-', $nameParts);
     }
 
-    /**
-     * notify
-     *
-     * @param  string $notification
-     * @return false|string
-     */
-    public function notify($notification = null)
+    public function notify(?string $notification = null): ?string
     {
         if (is_object($this->dispatcher) && method_exists($this->dispatcher, 'notify')) {
             $args = func_get_args();
@@ -131,7 +125,7 @@ abstract class Doctrine_Task
         } elseif ($notification !== null) {
             return $notification;
         } else {
-            return false;
+            return null;
         }
     }
 

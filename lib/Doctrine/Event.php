@@ -350,14 +350,12 @@ class Doctrine_Event
 
     /**
      * Get the elapsed time (in microseconds) that the event ran.  If the event has
-     * not yet ended, return false.
-     *
-     * @return float|false
+     * not yet ended, return null.
      */
-    public function getElapsedSecs()
+    public function getElapsedSecs(): ?float
     {
-        if (is_null($this->_endedMicrotime)) {
-            return false;
+        if ($this->_endedMicrotime === null) {
+            return null;
         }
         return ($this->_endedMicrotime - $this->_startedMicrotime);
     }

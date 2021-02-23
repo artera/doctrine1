@@ -512,6 +512,7 @@ class Doctrine_Relation_Parser
                             . '_' . $id;
 
                     $col    = $this->_table->getColumnDefinition($id);
+                    assert($col !== null);
                     $type   = $col['type'];
                     $length = $col['length'];
 

@@ -2,7 +2,7 @@
 
 class Doctrine_Connection_Common extends Doctrine_Connection
 {
-    public function modifyLimitQuery(string $query, int|bool $limit = false, int|bool $offset = false, bool $isManip = false): string
+    public function modifyLimitQuery(string $query, ?int $limit = null, ?int $offset = null, bool $isManip = false): string
     {
         $limit  = (int) $limit;
         $offset = (int) $offset;

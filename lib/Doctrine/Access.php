@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @phpstan-template K
+ * @phpstan-template V
+ * @phpstan-implements ArrayAccess<K, V>
+ */
 abstract class Doctrine_Access implements ArrayAccess
 {
     /**
