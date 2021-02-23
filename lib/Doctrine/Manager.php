@@ -62,7 +62,7 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
         Doctrine_Core::HYDRATE_ARRAY_SHALLOW => Doctrine_Hydrator_ArrayShallowDriver::class,
     ];
 
-    /** @phpstan-var array<string, class-string<Doctrine_Connection_Common>> */
+    /** @phpstan-var array<string, class-string<Doctrine_Connection>> */
     protected array $_connectionDrivers = [
         'mysql'  => Doctrine_Connection_Mysql::class,
         'mysqli' => Doctrine_Connection_Mysql::class,
@@ -695,7 +695,7 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
     /**
      * Register a custom connection driver
      *
-     * @phpstan-param class-string<Doctrine_Connection_Common> $class
+     * @phpstan-param class-string<Doctrine_Connection> $class
      */
     public function registerConnectionDriver(string $name, string $class): void
     {
@@ -705,7 +705,7 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
     /**
      * Get all the available connection drivers
      *
-     * @phpstan-return array<string, class-string<Doctrine_Connection_Common>>
+     * @phpstan-return array<string, class-string<Doctrine_Connection>>
      */
     public function getConnectionDrivers(): array
     {

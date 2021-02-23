@@ -89,32 +89,38 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
      * @see Doctrine_Connection_UnitOfWork
      * @see Doctrine_Formatter
      */
-    private array $modules = ['transaction' => false,
-                             'expression'  => false,
-                             'dataDict'    => false,
-                             'export'      => false,
-                             'import'      => false,
-                             'sequence'    => false,
-                             'unitOfWork'  => false,
-                             'formatter'   => false,
-                             'util'        => false,
-                             ];
+    private array $modules = [
+        'transaction' => false,
+        'expression'  => false,
+        'dataDict'    => false,
+        'export'      => false,
+        'import'      => false,
+        'sequence'    => false,
+        'unitOfWork'  => false,
+        'formatter'   => false,
+        'util'        => false,
+    ];
 
     /**
      * @var array $properties               an array of connection properties
      */
-    protected array $properties = ['sql_comments' => [['start' => '--', 'end' => "\n", 'escape' => false],
-                                                                 ['start' => '/*', 'end' => '*/', 'escape' => false]],
-                                  'identifier_quoting' => ['start' => '"', 'end' => '"','escape' => '"'],
-                                  'string_quoting'     => ['start'           => "'",
-                                                                 'end'            => "'",
-                                                                 'escape'         => false,
-                                                                 'escape_pattern' => false],
-                                  'wildcards'             => ['%', '_'],
-                                  'varchar_max_length'    => 255,
-                                  'sql_file_delimiter'    => ";\n",
-                                  'max_identifier_length' => 64,
-                                  ];
+    protected array $properties = [
+        'sql_comments' => [
+            ['start' => '--', 'end' => "\n", 'escape' => false],
+            ['start' => '/*', 'end' => '*/', 'escape' => false],
+        ],
+        'identifier_quoting' => ['start' => '"', 'end' => '"','escape' => '"'],
+        'string_quoting'     => [
+            'start'          => "'",
+            'end'            => "'",
+            'escape'         => false,
+            'escape_pattern' => false,
+        ],
+        'wildcards'             => ['%', '_'],
+        'varchar_max_length'    => 255,
+        'sql_file_delimiter'    => ";\n",
+        'max_identifier_length' => 64,
+    ];
 
     protected array $serverInfo = [];
 
@@ -124,10 +130,10 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
      * @var array $supportedDrivers         an array containing all supported drivers
      */
     private static array $supportedDrivers = [
-                                        'Mysql',
-                                        'Pgsql',
-                                        'Sqlite',
-                                        ];
+        'Mysql',
+        'Pgsql',
+        'Sqlite',
+    ];
 
     protected int $_count = 0;
 
@@ -135,9 +141,9 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
      * @var array $_usedNames                 array of foreign key names that have been used
      */
     protected array $_usedNames = [
-            'foreign_keys' => [],
-            'indexes'      => []
-        ];
+        'foreign_keys' => [],
+        'indexes'      => []
+    ];
 
     /**
      * @var Doctrine_Manager $parent   the parent of this component
@@ -821,6 +827,9 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
 
     public function prepare(string $statement): Doctrine_Connection_Statement
     {
+        $aliases = [];
+        $statement = $this->rewriteQuery($statement, $aliases);
+
         $this->connect();
 
         try {
@@ -830,7 +839,9 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
             $stmt = $this->dbh->prepare($statement);
             $this->getAttribute(Doctrine_Core::ATTR_LISTENER)->postPrepare($event);
             if ($stmt instanceof PDOStatement) {
-                $stmt = new Doctrine_Connection_Statement($this, $stmt);
+                $stmt = new Doctrine_Connection_Statement($this, $stmt, $aliases);
+            } else {
+                $stmt->setBindAliases($aliases);
             }
             return $stmt;
         } catch (PDOException $e) {
@@ -1343,6 +1354,17 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
      */
     public function modifyLimitQuery(string $query, ?int $limit = null, ?int $offset = null, bool $isManip = false): string
     {
+        $limit  = (int) $limit;
+        $offset = (int) $offset;
+
+        if ($limit && $offset) {
+            $query .= ' LIMIT ' . $limit . ' OFFSET ' . $offset;
+        } elseif ($limit && !$offset) {
+            $query .= ' LIMIT ' . $limit;
+        } elseif (!$limit && $offset) {
+            $query .= ' LIMIT 999999999999 OFFSET ' . $offset;
+        }
+
         return $query;
     }
 
@@ -1463,5 +1485,31 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
         $this->_usedNames[$type][$key] = $name;
 
         return $name;
+    }
+
+    /**
+     * Rewrites the query generating aliases for bind parameters that are referenced multiple times
+     * @phpstan-param array<string, string> $aliases
+     */
+    public function rewriteQuery(string $query, array &$aliases): string
+    {
+        $tokens = [];
+
+        if (preg_match_all('/:\w+/', $query, $m)) {
+            /** @var array<string, int> */
+            $tokens = array_count_values($m[0]);
+        }
+
+        foreach ($tokens as $token => $count) {
+            for ($x = $count; $x > 1; --$x) {
+                $alias = substr($token, 0, 1)."_alias{$x}_".substr($token, 1);
+                $aliases[$alias] = $token;
+
+                $ptoken = preg_quote($token);
+                $query = preg_replace("#$ptoken(\W)#", "$alias\\1", $query, 1) ?? $query;
+            }
+        }
+
+        return $query;
     }
 }

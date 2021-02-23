@@ -1,6 +1,6 @@
 <?php
 
-class Doctrine_Connection_Mock extends Doctrine_Connection_Common
+class Doctrine_Connection_Mock extends Doctrine_Connection
 {
     protected string $driverName = 'Mock';
 

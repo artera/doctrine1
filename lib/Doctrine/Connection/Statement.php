@@ -7,11 +7,15 @@ class Doctrine_Connection_Statement
 {
     protected Doctrine_Connection $connection;
     protected PDOStatement $statement;
+    /** @phpstan-var array<string, string> */
+    protected array $bindAliases;
 
-    public function __construct(Doctrine_Connection $connection, PDOStatement $statement)
+    /** @phpstan-param array<string, string> $bindAliases */
+    public function __construct(Doctrine_Connection $connection, PDOStatement $statement, array $bindAliases = [])
     {
         $this->connection = $connection;
         $this->statement = $statement;
+        $this->bindAliases = $bindAliases;
     }
 
     public function __call(string $method, array $arguments): mixed
@@ -34,10 +38,17 @@ class Doctrine_Connection_Statement
         return $this->statement->queryString;
     }
 
+    public function setBindAliases(array $bindAliases): void
+    {
+        $this->bindAliases = $bindAliases;
+    }
+
     public function execute(array $input_parameters = null): bool
     {
+        $input_parameters = $this->filterParams($this->statement->queryString, $input_parameters ?? [], $this->bindAliases);
+
         try {
-            $event = new Doctrine_Event($this, Doctrine_Event::STMT_EXECUTE, $this->getQuery(), $input_parameters ?? []);
+            $event = new Doctrine_Event($this, Doctrine_Event::STMT_EXECUTE, $this->getQuery(), $input_parameters);
             $this->connection->getListener()->preStmtExecute($event);
 
             if ($input_parameters) {
@@ -99,5 +110,46 @@ class Doctrine_Connection_Statement
         $this->connection->getListener()->postFetchAll($event);
 
         return $data;
+    }
+
+    /**
+     * Filter query parameters that are not present in the query string
+     * @param string $query
+     * @param iterable<mixed, string>|null $params
+     * @param iterable<string, string> $aliases
+     * @return mixed[]
+     */
+    public function filterParams(string $query, ?iterable $params = null, iterable $aliases = []): array
+    {
+        if (empty($params) || strpos($query, '?') !== false) {
+            return $params ?? [];
+        }
+
+        if (!is_array($params)) {
+            $params = iterator_to_array($params);
+        }
+
+        if (preg_match_all('/:\w+/', $query, $m)) {
+            $new_params = [];
+            foreach ($m[0] as $var) {
+                if (array_key_exists($var, $params)) {
+                    $new_params[$var] = $params[$var];
+                } else {
+                    $vark = substr($var, 1);
+                    if (array_key_exists($vark, $params)) {
+                        $new_params[$var] = $params[$vark];
+                    }
+                }
+            }
+            $params = $new_params;
+        }
+
+        foreach ($aliases as $alias => $var) {
+            if (isset($params[$var])) {
+                $params[$alias] = $params[$var];
+            }
+        }
+
+        return $params;
     }
 }

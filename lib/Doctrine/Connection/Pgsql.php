@@ -1,6 +1,6 @@
 <?php
 
-class Doctrine_Connection_Pgsql extends Doctrine_Connection_Common
+class Doctrine_Connection_Pgsql extends Doctrine_Connection
 {
     protected string $driverName = 'Pgsql';
 

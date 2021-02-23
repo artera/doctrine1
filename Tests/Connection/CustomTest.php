@@ -18,7 +18,7 @@ namespace Tests\Connection {
 }
 
 namespace {
-    class Doctrine_Connection_Test extends Doctrine_Connection_Common
+    class Doctrine_Connection_Test extends Doctrine_Connection
     {
     }
 

@@ -153,7 +153,7 @@ class Doctrine_Cache_Db extends Doctrine_Cache_Driver
 
         $fields = [
             'id' => [
-                'type'   => 'string',
+                'type' => 'string',
                 'length' => 255
             ],
             'data' => [
