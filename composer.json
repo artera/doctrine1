@@ -56,5 +56,12 @@
             "@psalm"
         ],
         "style-check": "php-cs-fixer fix --dry-run -vv"
+    },
+    "extra": {
+        "phpstan": {
+            "includes": [
+                "extension.neon"
+            ]
+        }
     }
 }
