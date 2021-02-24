@@ -143,7 +143,7 @@ class TableDynamicReturnTypeExtension extends AbstractExtension implements Dynam
                     $types[] = $type;
                 }
             } elseif ($type instanceof ObjectType) {
-                if (!$hydrate_array && ($allowedObjectType === null || $type->isSuperTypeOf($allowedObjectType)->yes())) {
+                if (!$hydrate_array && ($allowedObjectType === null || $allowedObjectType->isSuperTypeOf($type)->yes())) {
                     $types[] = $type;
                 }
             } else {

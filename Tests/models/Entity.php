@@ -1,4 +1,8 @@
 <?php
+/**
+ * @phpstan-template T of Doctrine_Table
+ * @phpstan-extends Doctrine_Record<T>
+ */
 class Entity extends Doctrine_Record
 {
     public function setUp(): void
