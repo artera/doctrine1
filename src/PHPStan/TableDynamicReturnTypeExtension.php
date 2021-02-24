@@ -103,20 +103,36 @@ class TableDynamicReturnTypeExtension extends AbstractExtension implements Dynam
         }
 
         $vartype = $scope->getType($methodCall->var);
+        $parameters = $parametersAcceptor->getParameters();
 
         // find the hydrate_array argument by name or position
-        $arg = $this->findArg('hydrate_array', $methodCall, $parametersAcceptor->getParameters());
+        $hydrateArg = $this->findArg('hydrate_array', $methodCall, $parameters);
 
-        if ($arg === null) {
+        if ($hydrateArg === null) {
             // argument not used, imply default of false
             $hydrate_array = false;
         } else {
             // argument used, read value if static
-            $argType = $scope->getType($arg->value);
+            $argType = $scope->getType($hydrateArg->value);
             if ($argType instanceof ConstantBooleanType) {
                 $hydrate_array = $argType->getValue();
             } else {
                 return $returnType;
+            }
+        }
+
+        $allowedObjectType = null;
+
+        if (!$hydrate_array && $methodReflection->getName() === 'find') {
+            $allowedObjectType = new ObjectType(\Doctrine_Record::class);
+
+            $nameArg = $this->findArg('name', $methodCall, $parameters);
+            if ($nameArg !== null) {
+                // argument used, read value if static
+                $argType = $scope->getType($nameArg->value);
+                if (!$argType instanceof NullType) {
+                    $allowedObjectType = null;
+                }
             }
         }
 
@@ -127,7 +143,7 @@ class TableDynamicReturnTypeExtension extends AbstractExtension implements Dynam
                     $types[] = $type;
                 }
             } elseif ($type instanceof ObjectType) {
-                if (!$hydrate_array) {
+                if (!$hydrate_array && ($allowedObjectType === null || $type->isSuperTypeOf($allowedObjectType)->yes())) {
                     $types[] = $type;
                 }
             } else {
