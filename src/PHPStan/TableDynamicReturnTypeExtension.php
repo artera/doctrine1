@@ -9,8 +9,10 @@ use PHPStan\Type\ArrayType;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\StringType;
 use PHPStan\Type\ObjectType;
+use PHPStan\Type\IntegerType;
 use PHPStan\Type\NullType;
 use PHPStan\Type\Constant\ConstantBooleanType;
+use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Analyser\OutOfClassScope;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ObjectTypeMethodReflection;
@@ -72,8 +74,9 @@ class TableDynamicReturnTypeExtension extends AbstractExtension implements Dynam
         $recordAsArray = new ArrayType(new StringType(), new MixedType());
 
         if (str_starts_with($methodName, 'findBy')) {
+            $collectionClassType = new GenericObjectType(\Doctrine_Collection::class, [$recordClassType]);
             $by = substr($methodName, 6);
-            $returnType = new ArrayType(new IntegerType(), $recordClassType, $recordAsArray);
+            $returnType = TypeCombinator::union($collectionClassType, new ArrayType(new IntegerType(), $recordAsArray));
         } elseif (str_starts_with($methodName, 'findOneBy')) {
             $by = substr($methodName, 9);
             $returnType = TypeCombinator::union($recordClassType, $recordAsArray, new NullType());
@@ -82,7 +85,7 @@ class TableDynamicReturnTypeExtension extends AbstractExtension implements Dynam
         }
 
         // find out how many parameters are needed by looking at the method name
-        $parameters = preg_split('/And|Or/', $by);
+        $parameters = preg_split('/And|Or/', $by) ?: [];
         return new MagicTableMethodReflection($classReflection, $methodName, $returnType, $parameters);
     }
 

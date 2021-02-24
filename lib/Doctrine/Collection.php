@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @phpstan-template   T of \Doctrine_Record
+ * @phpstan-template T of \Doctrine_Record
  * @phpstan-implements \IteratorAggregate<T>
  */
 class Doctrine_Collection extends Doctrine_Access implements Countable, IteratorAggregate, Serializable
