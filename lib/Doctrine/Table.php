@@ -26,7 +26,7 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
     /**
      * Doctrine_Connection object that created this table
      */
-    protected Doctrine_Connection $_conn;
+    protected Doctrine_Connection $connection;
 
     /**
      * first level cache
@@ -153,11 +153,11 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
      */
     public function __construct(string $name, Doctrine_Connection $conn, $initDefinition = false)
     {
-        $this->_conn = $conn;
+        $this->connection = $conn;
         $this->name = $name;
 
-        $this->setParent($this->_conn);
-        $this->_conn->addTable($this);
+        $this->setParent($this->connection);
+        $this->connection->addTable($this);
 
         $this->_parser = new Doctrine_Relation_Parser($this);
 
@@ -253,7 +253,7 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
             if ($ref->isAbstract() || !$class->isSubClassOf($parent)) {
                 continue;
             }
-            $parentTable = $this->_conn->getTable($parent);
+            $parentTable = $this->connection->getTable($parent);
 
             $found         = false;
             $parentColumns = $parentTable->getColumns();
@@ -347,7 +347,7 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
                                 if (($sequence = $this->getAttribute(Doctrine_Core::ATTR_DEFAULT_SEQUENCE)) !== null) {
                                     $this->sequenceName = $sequence;
                                 } else {
-                                    $this->sequenceName = $this->_conn->formatter->getSequenceName($this->tableName);
+                                    $this->sequenceName = $this->connection->formatter->getSequenceName($this->tableName);
                                 }
                             }
                             break;
@@ -491,7 +491,7 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
      */
     public function export()
     {
-        $this->_conn->export->exportTable($this);
+        $this->connection->export->exportTable($this);
     }
 
     /**
@@ -1292,9 +1292,9 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
      */
     public function setConnection(Doctrine_Connection $conn)
     {
-        $this->_conn = $conn;
+        $this->connection = $conn;
 
-        $this->setParent($this->_conn);
+        $this->setParent($this->connection);
 
         return $this;
     }
@@ -1306,7 +1306,7 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
      */
     public function getConnection()
     {
-        return $this->_conn;
+        return $this->connection;
     }
 
     /**
@@ -1684,7 +1684,7 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
             return $this->name;
         }
         foreach ($this->subclasses as $subclass) {
-            $table          = $this->_conn->getTable($subclass);
+            $table          = $this->connection->getTable($subclass);
             $inheritanceMap = $table->inheritanceMap;
             $nomatch        = false;
             foreach ($inheritanceMap as $key => $value) {
@@ -1716,7 +1716,7 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
 
             $params = array_merge([$id], array_values($this->inheritanceMap));
 
-            $this->_data = $this->_conn->execute($query, $params)->fetch(PDO::FETCH_ASSOC);
+            $this->_data = $this->connection->execute($query, $params)->fetch(PDO::FETCH_ASSOC);
 
             if ($this->_data === false) {
                 return null;
@@ -1800,7 +1800,7 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
             return false;
         }
 
-        if ($this->_conn->getAttribute(Doctrine_Core::ATTR_USE_NATIVE_ENUM)) {
+        if ($this->connection->getAttribute(Doctrine_Core::ATTR_USE_NATIVE_ENUM)) {
             return $index;
         }
 
@@ -1821,7 +1821,7 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
     {
         $values = $this->getEnumValues($fieldName);
 
-        if ($this->_conn->getAttribute(Doctrine_Core::ATTR_USE_NATIVE_ENUM)) {
+        if ($this->connection->getAttribute(Doctrine_Core::ATTR_USE_NATIVE_ENUM)) {
             return $value;
         }
         $res = array_search($value, $values);
@@ -2173,7 +2173,7 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
      */
     public function setTableName(string $tableName): void
     {
-        $this->tableName = $this->_conn->formatter->getTableName($tableName);
+        $this->tableName = $this->connection->formatter->getTableName($tableName);
     }
 
     /**

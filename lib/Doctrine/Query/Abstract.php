@@ -35,9 +35,6 @@ abstract class Doctrine_Query_Abstract
     const CREATE = 4;
 
     /**
- * @todo document the query states (and the transitions between them).
-*/
-    /**
      * A query object is in CLEAN state when it has NO unparsed/unprocessed DQL parts.
      */
     const STATE_CLEAN = 1;
@@ -59,39 +56,41 @@ abstract class Doctrine_Query_Abstract
     const STATE_LOCKED = 4;
 
     /**
-     * @var array<string,string>  Table alias map. Keys are SQL aliases and values DQL aliases.
+     * @var array<string, string> Table alias map. Keys are SQL aliases and values DQL aliases.
      */
-    protected $_tableAliasMap = [];
+    protected array $_tableAliasMap = [];
 
     /**
-     * @var Doctrine_View|null  The view object used by this query, if any.
+     * The view object used by this query, if any.
      */
-    protected $_view;
+    protected ?Doctrine_View $_view = null;
 
     /**
-     * @var integer $_state   The current state of this query.
+     * The current state of this query.
      */
-    protected $_state = Doctrine_Query::STATE_CLEAN;
+    protected int $_state = Doctrine_Query::STATE_CLEAN;
 
     /**
-     * @var array<string,mixed[]> $_params  The parameters of this query.
+     * @var array<string, mixed[]> $_params The parameters of this query.
      */
-    protected $_params = ['exec'   => [],
-                               'join'   => [],
-                               'where'  => [],
-                               'set'    => [],
-                               'having' => []];
+    protected array $_params = [
+        'exec'   => [],
+        'join'   => [],
+        'where'  => [],
+        'set'    => [],
+        'having' => [],
+    ];
 
     /**
      * @var mixed[] $_execParams The parameters passed to connection statement
      */
-    protected $_execParams = [];
+    protected array $_execParams = [];
 
     /* Caching properties */
     /**
-     * @var Doctrine_Cache_Interface|true|null  The cache driver used for caching result sets.
+     * @var Doctrine_Cache_Interface|true|null The cache driver used for caching result sets.
      */
-    protected $_resultCache;
+    protected Doctrine_Cache_Interface|bool|null $_resultCache = null;
 
     /**
      * Key to use for result cache entry in the cache driver
@@ -102,37 +101,28 @@ abstract class Doctrine_Query_Abstract
      * @var boolean $_expireResultCache  A boolean value that indicates whether or not
      *                                   expire the result cache.
      */
-    protected $_expireResultCache = false;
+    protected bool $_expireResultCache = false;
+
+    protected ?int $_resultCacheTTL = null;
 
     /**
-     * @var int
+     * The cache driver used for caching queries.
      */
-    protected $_resultCacheTTL;
+    protected Doctrine_Cache_Interface|bool|null $_queryCache = null;
+
+    protected bool $_expireQueryCache = false;
+
+    protected ?int $_queryCacheTTL = null;
 
     /**
-     * @var Doctrine_Cache_Interface|bool|null  The cache driver used for caching queries.
+     * The connection used by this query object.
      */
-    protected $_queryCache;
+    protected Doctrine_Connection $connection;
 
     /**
-     * @var bool
+     * Whether or not a connection was passed to this query object to use
      */
-    protected $_expireQueryCache = false;
-
-    /**
-     * @var int
-     */
-    protected $_queryCacheTTL;
-
-    /**
-     * @var Doctrine_Connection  The connection used by this query object.
-     */
-    protected Doctrine_Connection $_conn;
-
-    /**
-     * @var bool Whether or not a connection was passed to this query object to use
-     */
-    protected $_passedConn = false;
+    protected bool $passedConn = false;
 
     /**
      * whether or not this query object is a subquery of another query object
@@ -142,37 +132,37 @@ abstract class Doctrine_Query_Abstract
     /**
      * @var array<string,mixed> $_sqlParts  The SQL query string parts. Filled during the DQL parsing process.
      */
-    protected $_sqlParts = [
-            'select'    => [],
-            'distinct'  => false,
-            'forUpdate' => false,
-            'from'      => [],
-            'set'       => [],
-            'join'      => [],
-            'where'     => [],
-            'groupby'   => [],
-            'having'    => [],
-            'orderby'   => [],
-            'limit'     => false,
-            'offset'    => false,
-            ];
+    protected array $_sqlParts = [
+        'select'    => [],
+        'distinct'  => false,
+        'forUpdate' => false,
+        'from'      => [],
+        'set'       => [],
+        'join'      => [],
+        'where'     => [],
+        'groupby'   => [],
+        'having'    => [],
+        'orderby'   => [],
+        'limit'     => false,
+        'offset'    => false,
+    ];
 
     /**
      * @var array<string,mixed> $_dqlParts    an array containing all DQL query parts; @see Doctrine_Query::getDqlPart()
      */
-    protected $_dqlParts = [
-                            'from'      => [],
-                            'select'    => [],
-                            'forUpdate' => false,
-                            'set'       => [],
-                            'join'      => [],
-                            'where'     => [],
-                            'groupby'   => [],
-                            'having'    => [],
-                            'orderby'   => [],
-                            'limit'     => [],
-                            'offset'    => [],
-                            ];
+    protected array $_dqlParts = [
+        'from'      => [],
+        'select'    => [],
+        'forUpdate' => false,
+        'set'       => [],
+        'join'      => [],
+        'where'     => [],
+        'groupby'   => [],
+        'having'    => [],
+        'orderby'   => [],
+        'limit'     => [],
+        'offset'    => [],
+    ];
 
 
     /**
@@ -201,75 +191,61 @@ abstract class Doctrine_Query_Abstract
      *
      * @var string
      */
-    protected $_rootAlias = '';
+    protected string $_rootAlias = '';
+
+    protected int $_type = self::SELECT;
 
     /**
-     * @var integer $_type                   the query type
-     *
-     * @see Doctrine_Query::* constants
+     * The hydrator object used to hydrate query results.
      */
-    protected $_type = self::SELECT;
+    protected Doctrine_Hydrator|Doctrine_Hydrator_Abstract $_hydrator;
 
     /**
-     * @var Doctrine_Hydrator|Doctrine_Hydrator_Abstract   The hydrator object used to hydrate query results.
+     * The tokenizer that is used during the query parsing process.
      */
-    protected $_hydrator;
+    protected Doctrine_Query_Tokenizer $_tokenizer;
 
     /**
-     * @var Doctrine_Query_Tokenizer  The tokenizer that is used during the query parsing process.
+     * The parser that is used for query parsing.
      */
-    protected $_tokenizer;
-
-    /**
-     * @var Doctrine_Query_Parser  The parser that is used for query parsing.
-     */
-    protected $_parser;
+    protected Doctrine_Query_Parser $_parser;
 
     /**
      * @var array $_tableAliasSeeds         A simple array keys representing table aliases and values
      *                                      table alias seeds. The seeds are used for generating short table
      *                                      aliases.
      */
-    protected $_tableAliasSeeds = [];
+    protected array $_tableAliasSeeds = [];
 
-    /**
-     * @var array $_options                 an array of options
-     */
-    protected $_options = [
+    protected array $_options = [
         'hydrationMode' => Doctrine_Core::HYDRATE_RECORD
     ];
 
-    /**
-     * @var boolean
-     */
-    protected $_isLimitSubqueryUsed = false;
+    protected bool $_isLimitSubqueryUsed = false;
+
+    protected array $_components;
 
     /**
-     * @var array components used in the DQL statement
+     * whether or not the preQuery process has been executed
      */
-    protected $_components;
-
-    /**
-     * @var bool Boolean variable for whether or not the preQuery process has been executed
-     */
-    protected $_preQueried = false;
+    protected bool $_preQueried = false;
 
     /**
      * Fix for http://www.doctrine-project.org/jira/browse/DC-701
      *
      * @var bool Boolean variable for whether the limitSubquery method of accessing tables via a many relationship should be used.
      */
-    protected $disableLimitSubquery = false;
+    protected bool $disableLimitSubquery = false;
 
     /**
-     * @var array $_pendingJoinConditions    an array containing pending joins
+     * an array containing pending joins
      */
-    protected $_pendingJoinConditions = [];
+    protected array $_pendingJoinConditions = [];
 
     /**
-     * @var array $_parsers                 an array of parser objects, each DQL query part has its own parser
+     * an array of parser objects, each DQL query part has its own parser
      */
-    protected $_parsers = [];
+    protected array $_parsers = [];
 
     /**
      * Constructor.
@@ -278,34 +254,28 @@ abstract class Doctrine_Query_Abstract
      * @param Doctrine_Hydrator_Abstract|null $hydrator   The hydrator that will be used for generating result sets.
      */
     public function __construct(
-        Doctrine_Connection $connection = null,
-        Doctrine_Hydrator_Abstract $hydrator = null
+        ?Doctrine_Connection $connection = null,
+        ?Doctrine_Hydrator_Abstract $hydrator = null
     ) {
-        if ($connection === null) {
-            $connection = Doctrine_Manager::getInstance()->getCurrentConnection();
-        } else {
-            $this->_passedConn = true;
-        }
+        $this->passedConn = $connection !== null;
+
         if ($hydrator === null) {
             $hydrator = new Doctrine_Hydrator();
         }
-        $this->_conn           = $connection;
+        $this->connection = $connection ?? Doctrine_Manager::getInstance()->getCurrentConnection();
         $this->_hydrator       = $hydrator;
         $this->_tokenizer      = new Doctrine_Query_Tokenizer();
-        $this->_resultCacheTTL = $this->_conn->getAttribute(Doctrine_Core::ATTR_RESULT_CACHE_LIFESPAN);
-        $this->_queryCacheTTL  = $this->_conn->getAttribute(Doctrine_Core::ATTR_QUERY_CACHE_LIFESPAN);
+        $this->_resultCacheTTL = $this->connection->getAttribute(Doctrine_Core::ATTR_RESULT_CACHE_LIFESPAN);
+        $this->_queryCacheTTL  = $this->connection->getAttribute(Doctrine_Core::ATTR_QUERY_CACHE_LIFESPAN);
     }
 
     /**
      * Set the connection this query object should use
-     *
-     * @param  Doctrine_Connection $connection
-     * @return void
      */
-    public function setConnection(Doctrine_Connection $connection)
+    public function setConnection(Doctrine_Connection $connection): void
     {
-        $this->_passedConn = true;
-        $this->_conn       = $connection;
+        $this->passedConn = true;
+        $this->connection = $connection;
     }
 
     /**
@@ -660,8 +630,8 @@ abstract class Doctrine_Query_Abstract
                 $retVal .= ' AND ';
             }
 
-            $identifier = $this->_conn->quoteIdentifier($tableAlias . $field);
-            $retVal .= $identifier . ' = ' . $this->_conn->quote($value);
+            $identifier = $this->connection->quoteIdentifier($tableAlias . $field);
+            $retVal .= $identifier . ' = ' . $this->connection->quote($value);
         }
 
         return $retVal;
@@ -928,17 +898,17 @@ abstract class Doctrine_Query_Abstract
     protected function _execute(array $params): Doctrine_Connection_Statement|int
     {
         // Apply boolean conversion in DQL params
-        $params = (array) $this->_conn->convertBooleans($params);
+        $params = (array) $this->connection->convertBooleans($params);
 
         foreach ($this->_params as $k => $v) {
-            $this->_params[$k] = $this->_conn->convertBooleans($v); // @phpstan-ignore-line
+            $this->_params[$k] = $this->connection->convertBooleans($v); // @phpstan-ignore-line
         }
 
         $dqlParams = $this->getFlattenedParams($params);
 
         // Check if we're not using a Doctrine_View
         if (!$this->_view) {
-            if ($this->_queryCache !== false && ($this->_queryCache || $this->_conn->getAttribute(Doctrine_Core::ATTR_QUERY_CACHE))) {
+            if ($this->_queryCache !== false && ($this->_queryCache || $this->connection->getAttribute(Doctrine_Core::ATTR_QUERY_CACHE))) {
                 $queryCacheDriver = $this->getQueryCacheDriver();
                 $hash             = $this->calculateQueryCacheHash($params);
                 $cached           = $queryCacheDriver->fetch($hash);
@@ -963,7 +933,7 @@ abstract class Doctrine_Query_Abstract
 
                     // Check again because getSqlQuery() above could have flipped the _queryCache flag
                     // if this query contains the limit sub query algorithm we don't need to cache it
-                    if ($this->_queryCache || $this->_conn->getAttribute(Doctrine_Core::ATTR_QUERY_CACHE)) {
+                    if ($this->_queryCache || $this->connection->getAttribute(Doctrine_Core::ATTR_QUERY_CACHE)) {
                         // Convert query into a serialized form
                         $serializedQuery = $this->getCachedForm($query);
 
@@ -982,17 +952,17 @@ abstract class Doctrine_Query_Abstract
         $params = $this->getInternalParams();
 
         if ($this->isLimitSubqueryUsed()
-            && $this->_conn->getAttribute(Doctrine_Core::ATTR_DRIVER_NAME) !== 'mysql'
+            && $this->connection->getAttribute(Doctrine_Core::ATTR_DRIVER_NAME) !== 'mysql'
         ) {
             // double the parameters
             $params = array_merge((array) $params, (array) $params);
         }
 
         if ($this->_type !== self::SELECT) {
-            return $this->_conn->exec($query, $params);
+            return $this->connection->exec($query, $params);
         }
 
-        $stmt = $this->_conn->execute($query, $params);
+        $stmt = $this->connection->execute($query, $params);
 
         $this->_params['exec'] = [];
 
@@ -1205,10 +1175,10 @@ abstract class Doctrine_Query_Abstract
             $e = explode('.', $components['name']);
             if (count($e) === 1) {
                 $manager = Doctrine_Manager::getInstance();
-                if (!$this->_passedConn && $manager->hasConnectionForComponent($e[0])) {
-                    $this->_conn = $manager->getConnectionForComponent($e[0]);
+                if (!$this->passedConn && $manager->hasConnectionForComponent($e[0])) {
+                    $this->connection = $manager->getConnectionForComponent($e[0]);
                 }
-                $component['table'] = $this->_conn->getTable($e[0]);
+                $component['table'] = $this->connection->getTable($e[0]);
             } else {
                 /** @var array{table: Doctrine_Table} */
                 $parentComponent = $queryComponents[$e[0]];
@@ -2020,7 +1990,7 @@ abstract class Doctrine_Query_Abstract
         if ($this->_resultCache instanceof Doctrine_Cache_Interface) {
             return $this->_resultCache;
         } else {
-            return $this->_conn->getResultCacheDriver();
+            return $this->connection->getResultCacheDriver();
         }
     }
 
@@ -2035,7 +2005,7 @@ abstract class Doctrine_Query_Abstract
         if ($this->_queryCache instanceof Doctrine_Cache_Interface) {
             return $this->_queryCache;
         } else {
-            return $this->_conn->getQueryCacheDriver();
+            return $this->connection->getQueryCacheDriver();
         }
     }
 
@@ -2046,7 +2016,7 @@ abstract class Doctrine_Query_Abstract
      */
     public function getConnection(): Doctrine_Connection
     {
-        return $this->_conn;
+        return $this->connection;
     }
 
     /**

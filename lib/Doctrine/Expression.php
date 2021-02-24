@@ -1,38 +1,5 @@
 <?php
-/*
- *  $Id: Expression.php 7490 2010-03-29 19:53:27Z jwage $
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- * This software consists of voluntary contributions made by many individuals
- * and is licensed under the LGPL. For more information, see
- * <http://www.doctrine-project.org>.
- */
 
-/**
- * Doctrine_Expression memorizes a dql expression that use a db function.
- *
- * This class manages abstractions of dql expressions like query parts
- * that use CONCAT(), MIN(), SUM().
- *
- * @package    Doctrine
- * @subpackage Expression
- * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link       www.doctrine-project.org
- * @since      1.0
- * @version    $Revision: 7490 $
- * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
- */
 class Doctrine_Expression
 {
     /**
@@ -40,10 +7,7 @@ class Doctrine_Expression
      */
     protected $_expression;
 
-    /**
-     * @var Doctrine_Connection
-     */
-    protected $_conn;
+    protected Doctrine_Connection $connection;
 
     /**
      * @var Doctrine_Query_Tokenizer
@@ -65,7 +29,7 @@ class Doctrine_Expression
     public function __construct($expr, $conn = null)
     {
         if ($conn !== null) {
-            $this->_conn = $conn;
+            $this->connection = $conn;
         }
         $this->_tokenizer = new Doctrine_Query_Tokenizer();
         $this->setExpression($expr);
@@ -79,11 +43,11 @@ class Doctrine_Expression
      */
     public function getConnection()
     {
-        if (!isset($this->_conn)) {
+        if (!isset($this->connection)) {
             return Doctrine_Manager::connection();
         }
 
-        return $this->_conn;
+        return $this->connection;
     }
 
     /**
