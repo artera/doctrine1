@@ -85,7 +85,7 @@ class TableDynamicReturnTypeExtension extends AbstractExtension implements Dynam
         }
 
         // find out how many parameters are needed by looking at the method name
-        $parameters = preg_split('/And|Or/', $by) ?: [];
+        $parameters = preg_split('/(?:And|Or)(?>[A-Z])/', $by) ?: [];
         return new MagicTableMethodReflection($classReflection, $methodName, $returnType, $parameters);
     }
 
