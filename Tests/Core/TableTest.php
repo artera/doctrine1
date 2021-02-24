@@ -165,6 +165,13 @@ class TableTest extends DoctrineUnitTestCase
         $this->assertTrue($users instanceof \Doctrine_Collection);
     }
 
+    public function testFindByXXXHydration()
+    {
+        $users = static::$connection->getTable('User')->findByName('zYne', hydrate_array: true);
+        $this->assertIsArray($users);
+        $this->assertCount(1, $users);
+    }
+
     public function testGetProxy()
     {
         $user = static::$connection->getTable('User')->getProxy(4);

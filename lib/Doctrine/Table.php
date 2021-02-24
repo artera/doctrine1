@@ -2410,15 +2410,25 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
                 throw new Doctrine_Table_Exception('You must specify the value to ' . $method);
             }
 
-            $fieldName = $this->_resolveFindByFieldName($by);
-            $count = count(explode('Or', $by)) + (count(explode('And', $by)) - 1);
-            if (count($arguments) > $count) {
-                $hydrate_array = end($arguments);
-                unset($arguments[count($arguments) - 1]);
+            // separate positional arguments from named ones
+            $positional = [];
+            $named = [];
+
+            foreach ($arguments as $k => $v) {
+                if (is_int($k)) {
+                    $positional[] = $v;
+                } else {
+                    $named[$k] = $v;
+                }
             }
 
+            // options can only be passed with named arguments
+            $hydrate_array = $named['hydrate_array'] ?? false;
+
+            $fieldName = $this->_resolveFindByFieldName($by);
+
             if ($fieldName !== null && $this->hasField($fieldName)) {
-                return $this->$method($fieldName, $arguments[0], $hydrate_array ?? false);
+                return $this->$method($fieldName, $positional[0], $hydrate_array);
             }
 
             if ($this->hasRelation($by)) {
@@ -2428,16 +2438,16 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
                     throw new Doctrine_Table_Exception('Cannot findBy many relationship.');
                 }
 
-                return $this->$method($relation['local'], $arguments[0], $hydrate_array ?? false);
+                return $this->$method($relation['local'], $positional[0], $hydrate_array);
             }
 
-            return $this->$method($by, $arguments, $hydrate_array ?? false);
+            return $this->$method($by, $positional, $hydrate_array);
         }
 
         // Forward the method on to the record instance and see if it has anything or one of its behaviors
         try {
-            // @phpstan-ignore-next-line
-            return call_user_func_array([$this->getRecordInstance(), $method . 'TableProxy'], $arguments);
+            $method .= 'TableProxy';
+            return $this->getRecordInstance()->$method(...$arguments);
         } catch (Doctrine_Record_UnknownPropertyException $e) {
         }
 
