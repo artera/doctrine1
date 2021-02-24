@@ -9,6 +9,7 @@
 /vendor
 /tools/phpstan
 /tools/psalm
+/analysis-test.php
 tmp
 test.yml
 *.cache

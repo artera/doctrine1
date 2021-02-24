@@ -14,6 +14,7 @@ parameters:
     processTimeout: 300.0
   paths:
     - lib
+    - src
   ignoreErrors:
     - '#with type mixed is not subtype of native type iterable#'
     - '#Unsafe usage of new static#'

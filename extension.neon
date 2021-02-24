@@ -1,4 +1,9 @@
 services:
-  - class: Doctrine1\PHPStan\TableHydrationDynamicReturnTypeExtension
+  - class: Doctrine1\PHPStan\TableDynamicReturnTypeExtension
     tags:
+      - phpstan.broker.methodsClassReflectionExtension
       - phpstan.broker.dynamicMethodReturnTypeExtension
+
+  - class: Doctrine1\PHPStan\CoreDynamicReturnTypeExtension
+    tags:
+      - phpstan.broker.dynamicStaticMethodReturnTypeExtension
