@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @template T of Doctrine_Record_Abstract
+ * @template T of Doctrine_Record
  */
 abstract class Doctrine_Query_Abstract
 {

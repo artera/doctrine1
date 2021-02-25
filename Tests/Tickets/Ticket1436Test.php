@@ -65,6 +65,7 @@ class Ticket1436Test extends DoctrineUnitTestCase
 
         $user->synchronizeWithArray($userArray);
 
+        isset($user->Groups);
         $this->assertTrue(!isset($user->Groups));
         $user->save();
 

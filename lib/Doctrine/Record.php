@@ -4,9 +4,9 @@ use Doctrine_Record_State as State;
 
 /**
  * @phpstan-template T of Doctrine_Table
- * @phpstan-extends Doctrine_Record_Abstract<T>
+ * @phpstan-implements ArrayAccess<string, mixed>
  */
-abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Countable, IteratorAggregate, Serializable
+abstract class Doctrine_Record implements Countable, IteratorAggregate, Serializable, ArrayAccess
 {
     /**
      * the primary keys of this object
@@ -108,12 +108,10 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
     protected Doctrine_Table $_table;
 
     /**
-     * constructor
-     *
-     * @param         Doctrine_Table|null $table      a Doctrine_Table object or null,
-     *                                                if null the table object is
-     *                                                retrieved from current
-     *                                                connection
+     * @param Doctrine_Table|null $table a Doctrine_Table object or null,
+     *                                   if null the table object is
+     *                                   retrieved from current
+     *                                   connection
      * @phpstan-param T|null $table
      *
      * @param boolean $isNewEntry whether or not this record is transient
@@ -199,7 +197,6 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
     }
 
     /**
-     * setUp
      * this method is used for setting up relations and attributes
      * it should be implemented by child classes
      *
@@ -208,6 +205,11 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
     public function setUp(): void
     {
     }
+
+    public function setTableDefinition(): void
+    {
+    }
+
     /**
      * construct
      * Empty template method to provide concrete Record classes with the possibility
@@ -1387,7 +1389,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
                 } catch (Doctrine_Exception $e) {
                 }
             }
-            if (!$success && isset($e)) {
+            if (!$success) {
                 throw $e;
             }
 
@@ -1477,7 +1479,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
                     } catch (Doctrine_Exception $e) {
                     }
                 }
-                if (!$success && isset($e)) {
+                if (!$success) {
                     throw $e;
                 }
             }
@@ -1486,31 +1488,69 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
         return $this;
     }
 
-    public function __set(string $name, $value)
+    public function __set(string $name, mixed $value): void
     {
         $this->set($name, $value, mutators: true);
     }
 
-    public function __get(string $name)
+    public function __get(string $name): mixed
     {
         return $this->get($name, accessors: true);
     }
 
-    public function offsetGet($offset)
+    public function __isset(string $name): bool
+    {
+        return $this->contains($name);
+    }
+
+    /**
+     * deletes a column or a related component.
+     *
+     * @param  string $name
+     * @return void
+     */
+    public function __unset($name)
+    {
+        if (array_key_exists($name, $this->_data)) {
+            $this->_data[$name] = [];
+        } elseif (isset($this->_references[$name])) {
+            if ($this->_references[$name] instanceof Doctrine_Record) {
+                $this->_pendingDeletes[]  = $this->$name;
+                $this->_references[$name] = Doctrine_Null::instance();
+            } elseif ($this->_references[$name] instanceof Doctrine_Collection) {
+                $this->_pendingDeletes[] = $this->$name;
+                $this->_references[$name]->setData([]);
+            }
+        }
+    }
+
+    public function offsetExists($offset): bool
+    {
+        return $this->contains($offset);
+    }
+
+    public function offsetGet($offset): mixed
     {
         if (!is_string($offset)) {
             return null;
         }
-        return $this->get($offset, accessors: true);
+        return $this->__get($offset);
     }
 
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         if (!is_string($offset)) {
             return;
-        } else {
-            $this->set($offset, $value, mutators: true);
         }
+        $this->__set($offset, $value);
+    }
+
+    public function offsetUnset($offset): void
+    {
+        if (!is_string($offset)) {
+            return;
+        }
+        $this->__unset($offset);
     }
 
     /**
@@ -1660,44 +1700,10 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
      */
     public function contains($fieldName)
     {
-        if (array_key_exists($fieldName, $this->_data)) {
-            // this also returns true if the field is a Doctrine_Null.
-            // imho this is not correct behavior.
-            return true;
-        }
-        if (isset($this->_id[$fieldName])) {
-            return true;
-        }
-        if (isset($this->_values[$fieldName])) {
-            return true;
-        }
-        if (isset($this->_references[$fieldName])
-            && !$this->_references[$fieldName] instanceof Doctrine_Null
-        ) {
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * deletes a column or a related component.
-     *
-     * @param  string $name
-     * @return void
-     */
-    public function __unset($name)
-    {
-        if (array_key_exists($name, $this->_data)) {
-            $this->_data[$name] = [];
-        } elseif (isset($this->_references[$name])) {
-            if ($this->_references[$name] instanceof Doctrine_Record) {
-                $this->_pendingDeletes[]  = $this->$name;
-                $this->_references[$name] = Doctrine_Null::instance();
-            } elseif ($this->_references[$name] instanceof Doctrine_Collection) {
-                $this->_pendingDeletes[] = $this->$name;
-                $this->_references[$name]->setData([]);
-            }
-        }
+        return array_key_exists($fieldName, $this->_data)
+            || isset($this->_id[$fieldName])
+            || isset($this->_values[$fieldName])
+            || (isset($this->_references[$fieldName]) && !$this->_references[$fieldName] instanceof Doctrine_Null);
     }
 
     /**
@@ -2358,12 +2364,12 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
     /**
      * set a related component
      *
-     * @param string          $alias
-     * @param Doctrine_Access $coll
+     * @param string $alias
+     * @param Doctrine_Record|Doctrine_Collection $coll
      *
      * @return void
      */
-    final public function setRelated($alias, Doctrine_Access $coll)
+    final public function setRelated($alias, Doctrine_Record|Doctrine_Collection $coll)
     {
         $this->_references[$alias] = $coll;
     }
@@ -2407,10 +2413,9 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
     }
 
     /**
-     * @return         Doctrine_Table
      * @phpstan-return T
      */
-    public function unshiftFilter(Doctrine_Record_Filter $filter)
+    public function unshiftFilter(Doctrine_Record_Filter $filter): Doctrine_Table
     {
         return $this->_table->unshiftFilter($filter);
     }
@@ -2686,16 +2691,6 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
     }
 
     /**
-     * __toString alias
-     *
-     * @return string
-     */
-    public function toString()
-    {
-        return json_encode(get_object_vars($this), JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT);
-    }
-
-    /**
      * magic method
      *
      * @return string representation of this object
@@ -2703,5 +2698,284 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
     public function __toString()
     {
         return (string) $this->_oid;
+    }
+
+    /**
+     * addListener
+     *
+     * @phpstan-param Doctrine_Record_Listener_Interface|Doctrine_Overloadable<Doctrine_Record_Listener_Interface> $listener
+     * @return $this
+     */
+    public function addListener(Doctrine_Record_Listener_Interface|Doctrine_Overloadable $listener, ?string $name = null): self
+    {
+        $this->_table->addRecordListener($listener, $name);
+        return $this;
+    }
+
+    /**
+     * getListener
+     *
+     * @phpstan-return Doctrine_Record_Listener_Interface|Doctrine_Overloadable<Doctrine_Record_Listener_Interface>|null
+     */
+    public function getListener(): Doctrine_Record_Listener_Interface|Doctrine_Overloadable|null
+    {
+        return $this->_table->getRecordListener();
+    }
+
+    /**
+     * setListener
+     *
+     * @phpstan-param Doctrine_Record_Listener_Interface|Doctrine_Overloadable<Doctrine_Record_Listener_Interface> $listener
+     * @return $this
+     */
+    public function setListener(Doctrine_Record_Listener_Interface|Doctrine_Overloadable $listener): self
+    {
+        $this->_table->setRecordListener($listener);
+        return $this;
+    }
+
+    /**
+     * defines or retrieves an index
+     * if the second parameter is set this method defines an index
+     * if not this method retrieves index named $name
+     *
+     * @param  string $name       the name of the index
+     * @param  array  $definition the definition array
+     * @return mixed
+     */
+    public function index(string $name, array $definition = [])
+    {
+        if (!$definition) {
+            return $this->_table->getIndex($name);
+        }
+
+        $this->_table->addIndex($name, $definition);
+    }
+
+    /**
+     * Defines a n-uple of fields that must be unique for every record.
+     *
+     * This method Will automatically add UNIQUE index definition
+     * and validate the values on save. The UNIQUE index is not created in the
+     * database until you use @see export().
+     *
+     * @param  array $fields            values are fieldnames
+     * @param  array $options           array of options for unique validator
+     * @param  bool  $createUniqueIndex Whether or not to create a unique index in the database
+     * @return void
+     */
+    public function unique($fields, $options = [], $createUniqueIndex = true)
+    {
+        $this->_table->unique($fields, $options, $createUniqueIndex);
+    }
+
+    /**
+     * @param  string|int $attr
+     * @param  mixed      $value
+     * @return void
+     */
+    public function setAttribute($attr, $value)
+    {
+        $this->_table->setAttribute($attr, $value);
+    }
+
+    public function setTableName(string $tableName): void
+    {
+        $this->_table->setTableName($tableName);
+    }
+
+    public function setInheritanceMap(array $map): void
+    {
+        $this->_table->inheritanceMap = $map;
+    }
+
+    public function setSubclasses(array $map): void
+    {
+        $class = get_class($this);
+        // Set the inheritance map for subclasses
+        if (isset($map[$class])) {
+            // fix for #1621
+            $mapFieldNames  = $map[$class];
+            $mapColumnNames = [];
+
+            foreach ($mapFieldNames as $fieldName => $val) {
+                $mapColumnNames[$this->getTable()->getColumnName($fieldName)] = $val;
+            }
+
+            $this->_table->inheritanceMap = $mapColumnNames;
+            return;
+        } else {
+            // Put an index on the key column
+            $mapFieldName = array_keys(end($map));
+            $this->index($this->getTable()->getTableName() . '_' . $mapFieldName[0], ['fields' => [$mapFieldName[0]]]);
+        }
+
+        // Set the subclasses array for the parent class
+        $this->_table->subclasses = array_keys($map);
+    }
+
+    /**
+     * attribute
+     * sets or retrieves an option
+     *
+     * @see    Doctrine_Core::ATTR_* constants   availible attributes
+     * @param  mixed $attr
+     * @param  mixed $value
+     * @return mixed
+     */
+    public function attribute($attr, $value)
+    {
+        if ($value == null) {
+            if (is_array($attr)) {
+                foreach ($attr as $k => $v) {
+                    $this->_table->setAttribute($k, $v);
+                }
+            } else {
+                return $this->_table->getAttribute($attr);
+            }
+        } else {
+            $this->_table->setAttribute($attr, $value);
+        }
+    }
+
+    /**
+     * Binds One-to-One aggregate relation
+     *
+     * @param  string|array ...$args First: the name of the related component
+     *                               Second: relation options
+     * @see    Doctrine_Relation::_$definition
+     * @return $this          this object
+     */
+    public function hasOne(...$args)
+    {
+        $this->_table->bind($args, Doctrine_Relation::ONE);
+
+        return $this;
+    }
+
+    /**
+     * Binds One-to-Many / Many-to-Many aggregate relation
+     *
+     * @param  string|array ...$args First: the name of the related component
+     *                               Second: relation options
+     * @see    Doctrine_Relation::_$definition
+     * @return $this          this object
+     */
+    public function hasMany(...$args)
+    {
+        $this->_table->bind($args, Doctrine_Relation::MANY);
+
+        return $this;
+    }
+
+    /**
+     * Sets a column definition
+     *
+     * @param  string  $name
+     * @param  string  $type
+     * @param  integer $length
+     * @param  mixed   $options
+     * @return void
+     */
+    public function hasColumn($name, $type = null, $length = null, $options = [])
+    {
+        $this->_table->setColumn($name, $type, $length, $options);
+    }
+
+    /**
+     * Set multiple column definitions at once
+     *
+     * @param  array $definitions
+     * @return void
+     */
+    public function hasColumns(array $definitions)
+    {
+        foreach ($definitions as $name => $options) {
+            $length = isset($options['length']) ? $options['length']:null;
+            $this->hasColumn($name, $options['type'], $length, $options);
+        }
+    }
+
+    /**
+     * Customize the array of options for a column or multiple columns. First
+     * argument can be a single field/column name or an array of them. The second
+     * argument is an array of options.
+     *
+     *     [php]
+     *     public function setTableDefinition(): void
+     *     {
+     *         parent::setTableDefinition();
+     *         $this->setColumnOptions('username', array(
+     *             'unique' => true
+     *         ));
+     *     }
+     *
+     * @param  string $name
+     * @param  array  $options
+     * @return void
+     */
+    public function setColumnOptions($name, array $options)
+    {
+        $this->_table->setColumnOptions($name, $options);
+    }
+
+    /**
+     * Set an individual column option
+     *
+     * @param  string $columnName
+     * @param  string $option
+     * @param  mixed  $value
+     * @return void
+     */
+    public function setColumnOption($columnName, $option, $value)
+    {
+        $this->_table->setColumnOption($columnName, $option, $value);
+    }
+
+    /**
+     * bindQueryParts
+     * binds query parts to given component
+     *
+     * @param  array $queryParts an array of pre-bound query parts
+     * @return $this          this object
+     */
+    public function bindQueryParts(array $queryParts)
+    {
+        $this->_table->bindQueryParts($queryParts);
+
+        return $this;
+    }
+
+    /**
+     * Adds a check constraint.
+     *
+     * This method will add a CHECK constraint to the record table.
+     *
+     * @param  mixed  $constraint either a SQL constraint portion or an array of CHECK constraints. If array, all values will be added as constraint
+     * @param  string $name       optional constraint name. Not used if $constraint is an array.
+     * @return $this      this object
+     */
+    public function check($constraint, $name = null)
+    {
+        if (is_array($constraint)) {
+            foreach ($constraint as $name => $def) {
+                $this->_table->addCheckConstraint($def, $name);
+            }
+        } else {
+            $this->_table->addCheckConstraint($constraint, $name);
+        }
+        return $this;
+    }
+
+    /**
+     * @phpstan-param array<string, mixed> $array
+     * @return $this
+     */
+    public function setArray(array $array): self
+    {
+        foreach ($array as $k => $v) {
+            $this->__set($k, $v);
+        }
+        return $this;
     }
 }

@@ -81,11 +81,6 @@ parameters:
 			path: lib/Doctrine/Parser/Xml.php
 
 		-
-			message: "#^Type Doctrine_Record_Abstract in generic type Doctrine_Collection\\<Doctrine_Record_Abstract\\> in PHPDoc tag @return is not subtype of template type T of Doctrine_Record of class Doctrine_Collection\\.$#"
-			count: 1
-			path: lib/Doctrine/Query/Abstract.php
-
-		-
 			message: "#^Variable \\$func might not be defined\\.$#"
 			count: 1
 			path: lib/Doctrine/Query/Check.php
@@ -149,4 +144,3 @@ parameters:
 			message: "#^Parameter \\#1 \\$key of function array_key_exists expects int\\|string, bool\\|float\\|int\\|string\\|null given\\.$#"
 			count: 1
 			path: lib/Doctrine/Validator/ErrorStack.php
-

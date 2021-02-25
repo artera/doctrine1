@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @template T of Doctrine_Record_Abstract
+ * @template T of Doctrine_Record
  * @implements Iterator<T>
  */
 class Doctrine_Collection_OnDemand implements Iterator
