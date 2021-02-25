@@ -1,5 +1,6 @@
 <?php
 
+use Doctrine1\Serializer\WithSerializers;
 use Laminas\Validator\AbstractValidator;
 
 /**
@@ -7,6 +8,8 @@ use Laminas\Validator\AbstractValidator;
  */
 class Doctrine_Table extends Doctrine_Configurable implements Countable
 {
+    use WithSerializers;
+
     /**
      * temporary data which is then loaded into Doctrine_Record::$data
      */
@@ -39,19 +42,16 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
     protected ?Doctrine_Table_Repository $repository = null;
 
     /**
-     * @var array<string,array<string,mixed>> $columns                  an array of column definitions,
-     *                                      keys are column names and values are column definitions
+     * an array of column definitions,
+     * keys are column names and values are column definitions
      *
-     *                                      the definition array has atleast the following values:
-     *
-     *                                      -- type         the column type, eg. 'integer'
-     *                                      -- length       the column length, eg. 11
-     *
-     *                                      additional keys:
-     *                                      -- notnull      whether or not the column is marked as notnull
-     *                                      -- values       enum values
-     *                                      -- notblank     notblank validator + notnull constraint
-     *                                      ... many more
+     * @var array<string, array<string,mixed>> $columns
+     * @phpstan-var array<string, array{
+     *   type: string,
+     *   length: int,
+     *   notnull?: bool,
+     *   values?: array,
+     * }>
      */
     protected array $columns = [];
 

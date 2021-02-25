@@ -1,10 +1,13 @@
 <?php
 
+use Doctrine1\Serializer\WithSerializers;
 use Laminas\Validator\ValidatorInterface;
 use Laminas\Validator;
 
 class Doctrine_Manager extends Doctrine_Configurable implements Countable, IteratorAggregate
 {
+    use WithSerializers;
+
     /** array containing all the opened connections */
     protected array $connections = [];
 
@@ -131,6 +134,17 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
             return true;
         }
         return false;
+    }
+
+    public function __construct()
+    {
+        $this->clearSerializers();
+        $this->registerSerializer(\Doctrine1\Serializer\Boolean::class, 10);
+        $this->registerSerializer(\Doctrine1\Serializer\SetFromArray::class, 20);
+
+        // last resort, these shouldn't exist imho
+        $this->registerSerializer(\Doctrine1\Serializer\Gzip::class, 0);
+        $this->registerSerializer(\Doctrine1\Serializer\ArrayOrObject::class, 0);
     }
 
     /**

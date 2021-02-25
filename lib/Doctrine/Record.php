@@ -849,7 +849,7 @@ abstract class Doctrine_Record implements Countable, IteratorAggregate, Serializ
     {
         $event = new Doctrine_Event($this, Doctrine_Event::RECORD_UNSERIALIZE);
 
-        $manager    = Doctrine_Manager::getInstance();
+        $manager = Doctrine_Manager::getInstance();
         $connection = $manager->getConnectionForComponent(static::class);
 
         // @phpstan-ignore-next-line
@@ -1841,65 +1841,54 @@ abstract class Doctrine_Record implements Countable, IteratorAggregate, Serializ
      * adds column aggregation inheritance and converts Records into primary
      * key values.
      *
-     * @param  array $array
      * @return array
      * @todo   What about a little bit more expressive name? getPreparedData?
      */
-    public function getPrepared(array $array = [])
+    public function getPrepared()
     {
-        $a = [];
+        $prepared = [];
+        $modifiedFields = $this->_modified;
 
-        /**
-         * This was previously unset (unless the if condition below is true),
-         * setting to empty array, which won't change behavior.
-         *
-         * @todo It seems like this is meant to be set to what's in $array, but not sure
-         */
-        $modifiedFields = [];
-
-        if (empty($array)) {
-            $modifiedFields = $this->_modified;
-        }
+        /** @var Doctrine1\Serializer\SerializerInterface[] */
+        $serializers = array_merge(
+            Doctrine_Manager::getInstance()->getSerializers(),
+            $this->_table->getSerializers(),
+        );
+        $connection = $this->_table->getConnection();
 
         foreach ($modifiedFields as $field) {
-            if ($this->_data[$field] instanceof Doctrine_Null) {
-                $a[$field] = null;
+            $dataValue = $this->_data[$field];
+
+            if ($dataValue instanceof Doctrine_Null) {
+                $prepared[$field] = null;
                 continue;
             }
 
-            $type = $this->_table->getTypeOf($field);
-
-            switch ($type) {
-                case 'array':
-                case 'object':
-                    $a[$field] = serialize($this->_data[$field]);
-                    break;
-                case 'gzip':
-                    $a[$field] = gzcompress($this->_data[$field], 5);
-                    break;
-                case 'boolean':
-                    $a[$field] = $this->getTable()->getConnection()->convertBooleans($this->_data[$field]);
-                    break;
-                case 'set':
-                    if (is_array($this->_data[$field])) {
-                        $a[$field] = implode(',', $this->_data[$field]);
-                    } else {
-                        $a[$field] = $this->_data[$field];
-                    }
-                    break;
-                default:
-                    if ($this->_data[$field] instanceof Doctrine_Record) {
-                        $a[$field] = $this->_data[$field]->getIncremented();
-                        if ($a[$field] !== null) {
-                            $this->_data[$field] = $a[$field];
-                        }
-                    } else {
-                        $a[$field] = $this->_data[$field];
-                    }
+            $column = $this->_table->getColumnDefinition($this->_table->getColumnName($field));
+            if ($column === null) {
+                continue;
             }
+
+            // we cannot use serializers in this case but it should be fine
+            if ($dataValue instanceof Doctrine_Record && $column['type'] !== 'object') {
+                $prepared[$field] = $dataValue->getIncremented();
+                if ($prepared[$field] !== null) {
+                    $this->_data[$field] = $prepared[$field];
+                }
+                continue;
+            }
+
+            foreach ($serializers as $serializer) {
+                if ($serializer->canSerialize($dataValue, $column['type'])) {
+                    $prepared[$field] = $serializer->serialize($dataValue, $connection);
+                    continue 2;
+                }
+            }
+
+            $prepared[$field] = $dataValue;
         }
 
-        return $a;
+        return $prepared;
     }
 
     /**

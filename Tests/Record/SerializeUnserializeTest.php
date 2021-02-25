@@ -59,17 +59,17 @@ namespace Tests\Record {
             $test = new \TestRecord();
             $test->save();
 
-            $object             = new \SerializeTest();
+            $object = new \SerializeTest();
             $object->objecttest = $test;
 
             $object->save();
 
             $object_before = clone($object);
 
-            $serialized   = serialize($object);
+            $serialized = serialize($object);
             $object_after = unserialize($serialized);
 
-            $this->assertSame(get_class($object_after->objecttest), 'TestRecord');
+            $this->assertInstanceOf(\TestRecord::class, $object_after->objecttest);
         }
     }
 }
