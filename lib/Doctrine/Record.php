@@ -1382,16 +1382,16 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
             $success = false;
             foreach ($this->_table->getFilters() as $filter) {
                 try {
-                    $value   = $filter->filterGet($this, $fieldName);
+                    $value = $filter->filterGet($this, $fieldName);
                     $success = true;
                 } catch (Doctrine_Exception $e) {
                 }
             }
-            if ($success) {
-                return $value;
-            } else {
+            if (!$success && isset($e)) {
                 throw $e;
             }
+
+            return $value;
         }
     }
 
@@ -1420,7 +1420,8 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
                 $this->hasMutator($fieldName, $mutator);
                 $inMutator = true;
                 try {
-                    return $this->$mutator($value, $load, $fieldName);
+                    $this->$mutator($value, $load, $fieldName);
+                    return $this;
                 } finally {
                     $inMutator = false;
                 }
@@ -1471,14 +1472,12 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
                 $success = false;
                 foreach ($this->_table->getFilters() as $filter) {
                     try {
-                        $value   = $filter->filterSet($this, $fieldName, $value);
+                        $value = $filter->filterSet($this, $fieldName, $value);
                         $success = true;
                     } catch (Doctrine_Exception $e) {
                     }
                 }
-                if ($success) {
-                    return $value;
-                } else {
+                if (!$success && isset($e)) {
                     throw $e;
                 }
             }
