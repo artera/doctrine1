@@ -99,7 +99,7 @@
     </include>
 
     <exclude>
-      <directory>tools</directory>
+      <directory>src/PHPStan</directory>
     </exclude>
 
     <report>
