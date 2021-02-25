@@ -35,11 +35,11 @@ class Doctrine_Migration_Process
     /**
      * @var Doctrine_Migration
      */
-    protected $_migration;
+    protected $migration;
 
     public function __construct(Doctrine_Migration $migration)
     {
-        $this->_migration = $migration;
+        $this->migration = $migration;
     }
 
     /**
@@ -47,7 +47,7 @@ class Doctrine_Migration_Process
      */
     public function getConnection()
     {
-        return $this->_migration->getConnection();
+        return $this->migration->getConnection();
     }
 
     /**

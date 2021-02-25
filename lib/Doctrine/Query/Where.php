@@ -11,9 +11,9 @@ class Doctrine_Query_Where extends Doctrine_Query_Condition
             return $where;
         }
 
-        $where = $this->_tokenizer->bracketTrim(trim($where));
+        $where = $this->tokenizer->bracketTrim(trim($where));
         $conn  = $this->query->getConnection();
-        $terms = $this->_tokenizer->sqlExplode($where);
+        $terms = $this->tokenizer->sqlExplode($where);
 
         if (count($terms) > 1) {
             if (substr($where, 0, 6) == 'EXISTS') {
@@ -24,7 +24,7 @@ class Doctrine_Query_Where extends Doctrine_Query_Condition
         }
 
         if (count($terms) < 3) {
-            $terms = $this->_tokenizer->sqlExplode($where, ['=', '<', '<>', '>', '!=']);
+            $terms = $this->tokenizer->sqlExplode($where, ['=', '<', '<>', '>', '!=']);
         }
 
         if (count($terms) > 1) {
@@ -47,7 +47,7 @@ class Doctrine_Query_Where extends Doctrine_Query_Condition
                 }
             }
 
-            $sql = $this->_buildSql($leftExpr, $operator, $rightExpr);
+            $sql = $this->buildSql($leftExpr, $operator, $rightExpr);
 
             return $sql;
         } else {
@@ -55,7 +55,7 @@ class Doctrine_Query_Where extends Doctrine_Query_Condition
         }
     }
 
-    protected function _buildSql(string $leftExpr, string $operator, string $rightExpr): string
+    protected function buildSql(string $leftExpr, string $operator, string $rightExpr): string
     {
         $leftExprOriginal = $leftExpr;
         $leftExpr         = $this->query->parseClause($leftExpr);
@@ -85,14 +85,14 @@ class Doctrine_Query_Where extends Doctrine_Query_Condition
 
         // Right Expression
         $rightExpr = ($rightExpr == '?' && $isInX)
-            ? $this->_buildWhereInArraySqlPart($rightExpr)
+            ? $this->buildWhereInArraySqlPart($rightExpr)
             : $this->query->parseClause($rightExpr);
 
         return $leftExpr . ' ' . $operator . ' ' . $rightExpr;
     }
 
 
-    protected function _buildWhereInArraySqlPart(string $rightExpr): string
+    protected function buildWhereInArraySqlPart(string $rightExpr): string
     {
         $params = $this->query->getInternalParams();
         $value  = [];
@@ -125,7 +125,7 @@ class Doctrine_Query_Where extends Doctrine_Query_Condition
             throw new Doctrine_Query_Exception('Unknown expression, expected a subquery with () -marks');
         }
 
-        $sub = $this->_tokenizer->bracketTrim(substr($where, $pos));
+        $sub = $this->tokenizer->bracketTrim(substr($where, $pos));
 
         $q   = $this->query->createSubquery()->parseDqlQuery($sub, false);
         $sql = $q->getSqlQuery();

@@ -51,7 +51,7 @@ class Doctrine_RawSql extends Doctrine_Query_Abstract
      *
      * @var bool
      */
-    public $_preQuery;
+    public $preQuery;
 
     /**
      * Constructor.
@@ -70,8 +70,8 @@ class Doctrine_RawSql extends Doctrine_Query_Abstract
 
     protected function clear()
     {
-        $this->_preQuery              = false;
-        $this->_pendingJoinConditions = [];
+        $this->preQuery              = false;
+        $this->pendingJoinConditions = [];
     }
 
     /**
@@ -92,17 +92,17 @@ class Doctrine_RawSql extends Doctrine_Query_Abstract
     public function parseDqlQueryPart($queryPartName, $queryPart, $append = false)
     {
         if ($queryPartName == 'select') {
-            $this->_parseSelectFields($queryPart);
+            $this->parseSelectFields($queryPart);
             return $this;
         }
-        if (!isset($this->_sqlParts[$queryPartName])) {
-            $this->_sqlParts[$queryPartName] = [];
+        if (!isset($this->sqlParts[$queryPartName])) {
+            $this->sqlParts[$queryPartName] = [];
         }
 
         if (!$append) {
-            $this->_sqlParts[$queryPartName] = [$queryPart];
+            $this->sqlParts[$queryPartName] = [$queryPart];
         } else {
-            $this->_sqlParts[$queryPartName][] = $queryPart;
+            $this->sqlParts[$queryPartName][] = $queryPart;
         }
         return $this;
     }
@@ -112,7 +112,7 @@ class Doctrine_RawSql extends Doctrine_Query_Abstract
      * This implementation for RawSql parses the new parts right away, generating the SQL.
      * @return $this
      */
-    protected function _addDqlQueryPart(string $queryPartName, string|int $queryPart, bool $append = false): self
+    protected function addDqlQueryPart(string $queryPartName, string|int $queryPart, bool $append = false): self
     {
         return $this->parseDqlQueryPart($queryPartName, (string) $queryPart, $append);
     }
@@ -124,11 +124,11 @@ class Doctrine_RawSql extends Doctrine_Query_Abstract
      *
      * @return void
      */
-    private function _parseSelectFields($queryPart)
+    private function parseSelectFields($queryPart)
     {
         preg_match_all('/{([^}{]*)}/U', $queryPart, $m);
         $this->fields              = $m[1];
-        $this->_sqlParts['select'] = [];
+        $this->sqlParts['select'] = [];
     }
 
     /**
@@ -143,10 +143,10 @@ class Doctrine_RawSql extends Doctrine_Query_Abstract
      */
     public function parseDqlQuery($query)
     {
-        $this->_parseSelectFields($query);
+        $this->parseSelectFields($query);
         $this->clear();
 
-        $tokens = $this->_tokenizer->sqlExplode($query, ' ');
+        $tokens = $this->tokenizer->sqlExplode($query, ' ');
 
         $parts = [];
         $type  = null;
@@ -190,8 +190,8 @@ class Doctrine_RawSql extends Doctrine_Query_Abstract
             }
         }
 
-        $this->_sqlParts           = $parts;
-        $this->_sqlParts['select'] = [];
+        $this->sqlParts           = $parts;
+        $this->sqlParts['select'] = [];
 
         return $this;
     }
@@ -199,13 +199,13 @@ class Doctrine_RawSql extends Doctrine_Query_Abstract
     public function getSqlQuery(array $params = [], bool $limitSubquery = true): string
     {
         // Assign building/execution specific params
-        $this->_params['exec'] = $params;
+        $this->params['exec'] = $params;
 
         // Initialize prepared parameters array
-        $this->_execParams = $this->getFlattenedParams();
+        $this->execParams = $this->getFlattenedParams();
 
         // Initialize prepared parameters array
-        $this->fixArrayParameterValues($this->_execParams);
+        $this->fixArrayParameterValues($this->execParams);
 
         $select = [];
 
@@ -228,7 +228,7 @@ class Doctrine_RawSql extends Doctrine_Query_Abstract
             $componentAlias = $this->getComponentAlias($e[0]);
 
             if ($e[1] == '*') {
-                foreach ($this->_queryComponents[$componentAlias]['table']->getColumnNames() as $name) {
+                foreach ($this->queryComponents[$componentAlias]['table']->getColumnNames() as $name) {
                     $field = $formatter->quoteIdentifier($e[0]) . '.' . $formatter->quoteIdentifier($name);
 
                     $select[$componentAlias][$field] = $field . ' AS ' . $formatter->quoteIdentifier($e[0] . '__' . $name);
@@ -240,14 +240,14 @@ class Doctrine_RawSql extends Doctrine_Query_Abstract
         }
 
         // force-add all primary key fields
-        if (!isset($this->_sqlParts['distinct']) || $this->_sqlParts['distinct'] != true) {
+        if (!isset($this->sqlParts['distinct']) || $this->sqlParts['distinct'] != true) {
             foreach ($this->getTableAliasMap() as $tableAlias => $componentAlias) {
-                $map = $this->_queryComponents[$componentAlias];
+                $map = $this->queryComponents[$componentAlias];
 
                 foreach ((array) $map['table']->getIdentifierColumnNames() as $key) {
                     $field = $formatter->quoteIdentifier($tableAlias) . '.' . $formatter->quoteIdentifier($key);
 
-                    if (!isset($this->_sqlParts['select'][$field])) {
+                    if (!isset($this->sqlParts['select'][$field])) {
                         $select[$componentAlias][$field] = $field . ' AS ' . $formatter->quoteIdentifier($tableAlias . '__' . $key);
                     }
                 }
@@ -256,19 +256,19 @@ class Doctrine_RawSql extends Doctrine_Query_Abstract
 
         $q = 'SELECT ';
 
-        if (isset($this->_sqlParts['distinct']) && $this->_sqlParts['distinct'] == true) {
+        if (isset($this->sqlParts['distinct']) && $this->sqlParts['distinct'] == true) {
             $q .= 'DISTINCT ';
         }
 
         // first add the fields of the root component
-        reset($this->_queryComponents);
-        $componentAlias = key($this->_queryComponents);
+        reset($this->queryComponents);
+        $componentAlias = key($this->queryComponents);
 
         if ($componentAlias === null) {
             throw new Doctrine_RawSql_Exception('Missing component alias.');
         }
 
-        $this->_rootAlias = $componentAlias;
+        $this->rootAlias = $componentAlias;
 
         $q .= implode(', ', $select[$componentAlias]);
         unset($select[$componentAlias]);
@@ -282,19 +282,19 @@ class Doctrine_RawSql extends Doctrine_Query_Abstract
         $string = $this->getInheritanceCondition($this->getRootAlias());
 
         if (!empty($string)) {
-            $this->_sqlParts['where'][] = $string;
+            $this->sqlParts['where'][] = $string;
         }
 
-        $q .= (!empty($this->_sqlParts['from']))?    ' FROM ' . implode(' ', $this->_sqlParts['from']) : '';
-        $q .= (!empty($this->_sqlParts['where']))?   ' WHERE ' . implode(' AND ', $this->_sqlParts['where']) : '';
-        $q .= (!empty($this->_sqlParts['groupby']))? ' GROUP BY ' . implode(', ', $this->_sqlParts['groupby']) : '';
-        $q .= (!empty($this->_sqlParts['having']))?  ' HAVING ' . implode(' AND ', $this->_sqlParts['having']) : '';
-        $q .= (!empty($this->_sqlParts['orderby']))? ' ORDER BY ' . implode(', ', $this->_sqlParts['orderby']) : '';
-        $q .= (!empty($this->_sqlParts['limit']))?   ' LIMIT ' . implode(' ', $this->_sqlParts['limit']) : '';
-        $q .= (!empty($this->_sqlParts['offset']))?  ' OFFSET ' . implode(' ', $this->_sqlParts['offset']) : '';
+        $q .= (!empty($this->sqlParts['from']))?    ' FROM ' . implode(' ', $this->sqlParts['from']) : '';
+        $q .= (!empty($this->sqlParts['where']))?   ' WHERE ' . implode(' AND ', $this->sqlParts['where']) : '';
+        $q .= (!empty($this->sqlParts['groupby']))? ' GROUP BY ' . implode(', ', $this->sqlParts['groupby']) : '';
+        $q .= (!empty($this->sqlParts['having']))?  ' HAVING ' . implode(' AND ', $this->sqlParts['having']) : '';
+        $q .= (!empty($this->sqlParts['orderby']))? ' ORDER BY ' . implode(', ', $this->sqlParts['orderby']) : '';
+        $q .= (!empty($this->sqlParts['limit']))?   ' LIMIT ' . implode(' ', $this->sqlParts['limit']) : '';
+        $q .= (!empty($this->sqlParts['offset']))?  ' OFFSET ' . implode(' ', $this->sqlParts['offset']) : '';
 
         if (!empty($string)) {
-            array_pop($this->_sqlParts['where']);
+            array_pop($this->sqlParts['where']);
         }
         return $q;
     }
@@ -310,19 +310,19 @@ class Doctrine_RawSql extends Doctrine_Query_Abstract
     {
         //Doing COUNT( DISTINCT rootComponent.id )
         //This is not correct, if the result is not hydrated by doctrine, but it mimics the behaviour of Doctrine_Query::getCountQuery
-        reset($this->_queryComponents);
-        $componentAlias = key($this->_queryComponents);
+        reset($this->queryComponents);
+        $componentAlias = key($this->queryComponents);
 
         if ($componentAlias === null) {
             throw new Doctrine_RawSql_Exception('Missing component alias.');
         }
 
-        $this->_rootAlias = $componentAlias;
+        $this->rootAlias = $componentAlias;
 
         $tableAlias = $this->getSqlTableAlias($componentAlias);
         $fields     = [];
 
-        foreach ((array) $this->_queryComponents[$componentAlias]['table']->getIdentifierColumnNames() as $key) {
+        foreach ((array) $this->queryComponents[$componentAlias]['table']->getIdentifierColumnNames() as $key) {
             $fields[] = $tableAlias . '.' . $key;
         }
 
@@ -330,18 +330,18 @@ class Doctrine_RawSql extends Doctrine_Query_Abstract
 
         $string = $this->getInheritanceCondition($this->getRootAlias());
         if (!empty($string)) {
-            $this->_sqlParts['where'][] = $string;
+            $this->sqlParts['where'][] = $string;
         }
 
-        $q .= (!empty($this->_sqlParts['from']))?    ' FROM ' . implode(' ', $this->_sqlParts['from']) : '';
-        $q .= (!empty($this->_sqlParts['where']))?   ' WHERE ' . implode(' AND ', $this->_sqlParts['where']) : '';
-        $q .= (!empty($this->_sqlParts['groupby']))? ' GROUP BY ' . implode(', ', $this->_sqlParts['groupby']) : '';
-        $q .= (!empty($this->_sqlParts['having']))?  ' HAVING ' . implode(' AND ', $this->_sqlParts['having']) : '';
+        $q .= (!empty($this->sqlParts['from']))?    ' FROM ' . implode(' ', $this->sqlParts['from']) : '';
+        $q .= (!empty($this->sqlParts['where']))?   ' WHERE ' . implode(' AND ', $this->sqlParts['where']) : '';
+        $q .= (!empty($this->sqlParts['groupby']))? ' GROUP BY ' . implode(', ', $this->sqlParts['groupby']) : '';
+        $q .= (!empty($this->sqlParts['having']))?  ' HAVING ' . implode(' AND ', $this->sqlParts['having']) : '';
 
         $q .= ') as results';
 
         if (!empty($string)) {
-            array_pop($this->_sqlParts['where']);
+            array_pop($this->sqlParts['where']);
         }
 
         return $q;
@@ -413,8 +413,8 @@ class Doctrine_RawSql extends Doctrine_Query_Abstract
         $parent = '';
         $currPath = '';
 
-        if (isset($this->_queryComponents[$e[0]])) {
-            $table = $this->_queryComponents[$e[0]]['table'];
+        if (isset($this->queryComponents[$e[0]])) {
+            $table = $this->queryComponents[$e[0]]['table'];
 
             $currPath = $parent = array_shift($e);
         }
@@ -439,11 +439,11 @@ class Doctrine_RawSql extends Doctrine_Query_Abstract
                         ->getConnectionForComponent($component);
 
                 $table                                   = $conn->getTable($component);
-                $this->_queryComponents[$componentAlias] = ['table' => $table];
+                $this->queryComponents[$componentAlias] = ['table' => $table];
             } else {
                 $relation = $table->getRelation($component);
 
-                $this->_queryComponents[$componentAlias] = [
+                $this->queryComponents[$componentAlias] = [
                     'table' => $relation->getTable(),
                     'parent' => $parent,
                     'relation' => $relation,
@@ -469,7 +469,7 @@ class Doctrine_RawSql extends Doctrine_Query_Abstract
         $sql    = $this->getSqlQuery();
         $conn   = $this->getConnection();
         $params = $this->getFlattenedParams($params);
-        $hash   = md5($this->_hydrator->getHydrationMode() . $conn->getName() . $conn->getOption('dsn') . $sql . var_export($params, true));
+        $hash   = md5($this->hydrator->getHydrationMode() . $conn->getName() . $conn->getOption('dsn') . $sql . var_export($params, true));
         return $hash;
     }
 }

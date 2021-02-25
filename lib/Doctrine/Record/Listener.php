@@ -30,9 +30,9 @@
 class Doctrine_Record_Listener implements Doctrine_Record_Listener_Interface
 {
     /**
-     * @var array $_options        an array containing options
+     * @var array $options        an array containing options
      */
-    protected $_options = ['disabled' => false];
+    protected $options = ['disabled' => false];
 
     /**
      * setOption
@@ -46,9 +46,9 @@ class Doctrine_Record_Listener implements Doctrine_Record_Listener_Interface
     public function setOption($name, $value = null)
     {
         if (is_array($name)) {
-            $this->_options = Doctrine_Lib::arrayDeepMerge($this->_options, $name);
+            $this->options = Doctrine_Lib::arrayDeepMerge($this->options, $name);
         } else {
-            $this->_options[$name] = $value;
+            $this->options[$name] = $value;
         }
     }
 
@@ -60,7 +60,7 @@ class Doctrine_Record_Listener implements Doctrine_Record_Listener_Interface
      */
     public function getOptions()
     {
-        return $this->_options;
+        return $this->options;
     }
 
     /**
@@ -72,8 +72,8 @@ class Doctrine_Record_Listener implements Doctrine_Record_Listener_Interface
      */
     public function getOption($name)
     {
-        if (isset($this->_options[$name])) {
-            return $this->_options[$name];
+        if (isset($this->options[$name])) {
+            return $this->options[$name];
         }
 
         return null;

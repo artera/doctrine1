@@ -34,9 +34,9 @@
 class Doctrine_Cache_Memcache extends Doctrine_Cache_Driver
 {
     /**
-     * @var Memcache $_memcache     memcache object
+     * @var Memcache $memcache     memcache object
      */
-    protected $_memcache = null;
+    protected $memcache = null;
 
     /**
      * constructor
@@ -59,16 +59,16 @@ class Doctrine_Cache_Memcache extends Doctrine_Cache_Driver
             $this->setOption('servers', $value);
         }
 
-        $this->_memcache = new Memcache;
+        $this->memcache = new Memcache;
 
-        foreach ($this->_options['servers'] as $server) {
+        foreach ($this->options['servers'] as $server) {
             if (!array_key_exists('persistent', $server)) {
                 $server['persistent'] = true;
             }
             if (!array_key_exists('port', $server)) {
                 $server['port'] = 11211;
             }
-            $this->_memcache->addServer($server['host'], $server['port'], $server['persistent']);
+            $this->memcache->addServer($server['host'], $server['port'], $server['persistent']);
         }
     }
 
@@ -81,18 +81,18 @@ class Doctrine_Cache_Memcache extends Doctrine_Cache_Driver
      */
     protected function doFetch(string $id, bool $testCacheValidity = true)
     {
-        return $this->_memcache->get($id);
+        return $this->memcache->get($id);
     }
 
     protected function doContains(string $id): bool
     {
-        return (bool) $this->_memcache->get($id);
+        return (bool) $this->memcache->get($id);
     }
 
     protected function doSave(string $id, $data, ?int $lifeTime = null): bool
     {
-        $flag = $this->_options['compression'] ? MEMCACHE_COMPRESSED : 0;
-        return $this->_memcache->set($id, $data, $flag, $lifeTime ?: 0);
+        $flag = $this->options['compression'] ? MEMCACHE_COMPRESSED : 0;
+        return $this->memcache->set($id, $data, $flag, $lifeTime ?: 0);
     }
 
     /**
@@ -104,7 +104,7 @@ class Doctrine_Cache_Memcache extends Doctrine_Cache_Driver
      */
     protected function doDelete(string $id): bool
     {
-        return $this->_memcache->delete($id);
+        return $this->memcache->delete($id);
     }
 
     /**
@@ -115,11 +115,11 @@ class Doctrine_Cache_Memcache extends Doctrine_Cache_Driver
     protected function getCacheKeys(): array
     {
         $keys     = [];
-        $allSlabs = $this->_memcache->getExtendedStats('slabs');
+        $allSlabs = $this->memcache->getExtendedStats('slabs');
 
         foreach ($allSlabs as $server => $slabs) {
             foreach (array_keys($slabs) as $slabId) {
-                $dump = $this->_memcache->getExtendedStats('cachedump', (int) $slabId);
+                $dump = $this->memcache->getExtendedStats('cachedump', (int) $slabId);
                 foreach ($dump as $entries) {
                     if ($entries) {
                         $keys = array_merge($keys, array_keys($entries));

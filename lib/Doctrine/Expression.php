@@ -5,14 +5,14 @@ class Doctrine_Expression
     /**
      * @var string
      */
-    protected $_expression;
+    protected $expression;
 
     protected Doctrine_Connection $connection;
 
     /**
      * @var Doctrine_Query_Tokenizer
      */
-    protected $_tokenizer;
+    protected $tokenizer;
 
     /**
      * Creates an expression.
@@ -31,7 +31,7 @@ class Doctrine_Expression
         if ($conn !== null) {
             $this->connection = $conn;
         }
-        $this->_tokenizer = new Doctrine_Query_Tokenizer();
+        $this->tokenizer = new Doctrine_Query_Tokenizer();
         $this->setExpression($expr);
     }
 
@@ -61,7 +61,7 @@ class Doctrine_Expression
      */
     public function setExpression($clause)
     {
-        $this->_expression = $this->parseClause($clause);
+        $this->expression = $this->parseClause($clause);
     }
 
     /**
@@ -85,7 +85,7 @@ class Doctrine_Expression
         $args   = [];
 
         // parse args
-        foreach ($this->_tokenizer->bracketExplode($argStr, ',') as $arg) {
+        foreach ($this->tokenizer->bracketExplode($argStr, ',') as $arg) {
             $args[] = $this->parseClause($arg);
         }
 
@@ -102,7 +102,7 @@ class Doctrine_Expression
      */
     public function parseClause($clause)
     {
-        $e = $this->_tokenizer->bracketExplode($clause, ' ');
+        $e = $this->tokenizer->bracketExplode($clause, ' ');
 
         foreach ($e as $k => $expr) {
             $e[$k] = $this->parseExpression($expr);
@@ -118,7 +118,7 @@ class Doctrine_Expression
      */
     public function getSql()
     {
-        return $this->_expression;
+        return $this->expression;
     }
 
     /**

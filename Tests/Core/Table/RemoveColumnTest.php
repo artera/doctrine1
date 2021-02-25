@@ -10,7 +10,7 @@ namespace Tests\Core\Table {
             parent::prepareTables();
         }
 
-        protected function _verifyNrColumnsAndFields($table, $nrExpected)
+        protected function verifyNrColumnsAndFields($table, $nrExpected)
         {
             $nrColumns = $table->getColumnCount();
 
@@ -33,7 +33,7 @@ namespace Tests\Core\Table {
         public function testAfterDefinition()
         {
             $table = static::$connection->getTable('RemoveColumnTest');
-            $this->_verifyNrColumnsAndFields($table, 4);
+            $this->verifyNrColumnsAndFields($table, 4);
         }
 
         public function testAfterRemoveColumn()
@@ -41,7 +41,7 @@ namespace Tests\Core\Table {
             $table = static::$connection->getTable('RemoveColumnTest');
             $table->removeColumn('bb');
             $table->removeColumn('CC');
-            $this->_verifyNrColumnsAndFields($table, 2);
+            $this->verifyNrColumnsAndFields($table, 2);
         }
     }
 }

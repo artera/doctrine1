@@ -42,12 +42,12 @@ abstract class Doctrine_Migration_Base
     /**
      * @var array
      */
-    protected $_changes = [];
+    protected $changes = [];
 
     /**
      * @var array
      */
-    protected static $_opposites = ['created_table'       => 'dropped_table',
+    protected static $opposites = ['created_table'       => 'dropped_table',
                                          'dropped_table'       => 'created_table',
                                          'created_constraint'  => 'dropped_constraint',
                                          'dropped_constraint'  => 'created_constraint',
@@ -66,7 +66,7 @@ abstract class Doctrine_Migration_Base
      */
     public function getChanges()
     {
-        return $this->_changes;
+        return $this->changes;
     }
 
     /**
@@ -74,7 +74,7 @@ abstract class Doctrine_Migration_Base
      */
     public function getNumChanges()
     {
-        return count($this->_changes);
+        return count($this->changes);
     }
 
     /**
@@ -84,17 +84,17 @@ abstract class Doctrine_Migration_Base
      * @param  array  $change The array of information for the change
      * @return array
      */
-    protected function _addChange($type, array $change = [])
+    protected function addChange($type, array $change = [])
     {
-        if (isset($change['upDown']) && $change['upDown'] !== null && isset(self::$_opposites[$type])) {
+        if (isset($change['upDown']) && $change['upDown'] !== null && isset(self::$opposites[$type])) {
             $upDown = $change['upDown'];
             unset($change['upDown']);
             if ($upDown == 'down') {
-                $opposite                = self::$_opposites[$type];
-                return $this->_changes[] = [$opposite, $change];
+                $opposite                = self::$opposites[$type];
+                return $this->changes[] = [$opposite, $change];
             }
         }
-        return $this->_changes[] = [$type, $change];
+        return $this->changes[] = [$type, $change];
     }
 
     /**
@@ -132,7 +132,7 @@ abstract class Doctrine_Migration_Base
     {
         $options = get_defined_vars();
 
-        $this->_addChange('created_table', $options);
+        $this->addChange('created_table', $options);
     }
 
     /**
@@ -170,7 +170,7 @@ abstract class Doctrine_Migration_Base
     {
         $options = get_defined_vars();
 
-        $this->_addChange('renamed_table', $options);
+        $this->addChange('renamed_table', $options);
     }
 
     /**
@@ -186,7 +186,7 @@ abstract class Doctrine_Migration_Base
     {
         $options = get_defined_vars();
 
-        $this->_addChange('created_constraint', $options);
+        $this->addChange('created_constraint', $options);
     }
 
     /**
@@ -351,7 +351,7 @@ abstract class Doctrine_Migration_Base
         $definition['name'] = $name;
         $options            = get_defined_vars();
 
-        $this->_addChange('created_foreign_key', $options);
+        $this->addChange('created_foreign_key', $options);
     }
 
     /**
@@ -398,7 +398,7 @@ abstract class Doctrine_Migration_Base
         $options = array_merge($options, $options['options']);
         unset($options['options']);
 
-        $this->_addChange('created_column', $options);
+        $this->addChange('created_column', $options);
     }
 
     /**
@@ -440,7 +440,7 @@ abstract class Doctrine_Migration_Base
     {
         $options = get_defined_vars();
 
-        $this->_addChange('renamed_column', $options);
+        $this->addChange('renamed_column', $options);
     }
 
     /**
@@ -458,7 +458,7 @@ abstract class Doctrine_Migration_Base
         $options                      = get_defined_vars();
         $options['options']['length'] = $length;
 
-        $this->_addChange('changed_column', $options);
+        $this->addChange('changed_column', $options);
     }
 
     /**
@@ -474,7 +474,7 @@ abstract class Doctrine_Migration_Base
     {
         $options = get_defined_vars();
 
-        $this->_addChange('created_index', $options);
+        $this->addChange('created_index', $options);
     }
 
     /**

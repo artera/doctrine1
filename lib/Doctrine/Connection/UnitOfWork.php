@@ -127,8 +127,8 @@ class Doctrine_Connection_UnitOfWork extends Doctrine_Connection_Module
     public function delete(Doctrine_Record $record)
     {
         $deletions = [];
-        $this->_collectDeletions($record, $deletions);
-        return $this->_executeDeletions($deletions);
+        $this->collectDeletions($record, $deletions);
+        return $this->executeDeletions($deletions);
     }
 
     /**
@@ -139,14 +139,14 @@ class Doctrine_Connection_UnitOfWork extends Doctrine_Connection_Module
      *
      * @return void
      */
-    private function _collectDeletions(Doctrine_Record $record, array &$deletions)
+    private function collectDeletions(Doctrine_Record $record, array &$deletions)
     {
         if (!$record->exists()) {
             return;
         }
 
         $deletions[$record->getOid()] = $record;
-        $this->_cascadeDelete($record, $deletions);
+        $this->cascadeDelete($record, $deletions);
     }
 
     /**
@@ -156,7 +156,7 @@ class Doctrine_Connection_UnitOfWork extends Doctrine_Connection_Module
      * @param  array $deletions Map of the records to delete. Keys=Oids Values=Records.
      * @return true
      */
-    private function _executeDeletions(array $deletions)
+    private function executeDeletions(array $deletions)
     {
         // collect class names
         $classNames = [];
@@ -181,7 +181,7 @@ class Doctrine_Connection_UnitOfWork extends Doctrine_Connection_Module
                 $deletedRecords = [];
                 foreach ($deletions as $oid => $record) {
                     if ($record->getTable()->getComponentName() == $className) {
-                        $this->_preDelete($record);
+                        $this->preDelete($record);
                         $identifierMaps[] = $record->identifier();
                         $deletedRecords[] = $record;
                         unset($deletions[$oid]);
@@ -208,10 +208,10 @@ class Doctrine_Connection_UnitOfWork extends Doctrine_Connection_Module
                 $sql       = 'DELETE FROM ' . $this->conn->quoteIdentifier($tableName) . ' WHERE ';
 
                 if ($table->isIdentifierComposite()) {
-                    $sql .= $this->_buildSqlCompositeKeyCondition($columnNames, count($identifierMaps));
+                    $sql .= $this->buildSqlCompositeKeyCondition($columnNames, count($identifierMaps));
                     $this->conn->exec($sql, $params);
                 } else {
-                    $sql .= $this->_buildSqlSingleKeyCondition($columnNames, count($params));
+                    $sql .= $this->buildSqlSingleKeyCondition($columnNames, count($params));
                     $this->conn->exec($sql, $params);
                 }
 
@@ -219,13 +219,13 @@ class Doctrine_Connection_UnitOfWork extends Doctrine_Connection_Module
                 foreach ($deletedRecords as $record) {
                     $record->state(Doctrine_Record_State::TCLEAN());
                     $record->getTable()->removeRecord($record);
-                    $this->_postDelete($record);
+                    $this->postDelete($record);
                 }
             }
 
             // trigger postDelete for records skipped during the deletion (veto!)
             foreach ($deletions as $skippedRecord) {
-                $this->_postDelete($skippedRecord);
+                $this->postDelete($skippedRecord);
             }
 
             $this->conn->commit();
@@ -245,7 +245,7 @@ class Doctrine_Connection_UnitOfWork extends Doctrine_Connection_Module
      * @param  integer $numRecords  The number of records that are going to be deleted.
      * @return string  The SQL condition "pk = ? OR pk = ? OR pk = ? ..."
      */
-    private function _buildSqlSingleKeyCondition($columnNames, $numRecords)
+    private function buildSqlSingleKeyCondition($columnNames, $numRecords)
     {
         $idColumn = $this->conn->quoteIdentifier($columnNames[0]);
         return implode(' OR ', array_fill(0, $numRecords, "$idColumn = ?"));
@@ -258,7 +258,7 @@ class Doctrine_Connection_UnitOfWork extends Doctrine_Connection_Module
      * @param  integer $numRecords  The number of records that are going to be deleted.
      * @return string  The SQL condition "(pk1 = ? AND pk2 = ?) OR (pk1 = ? AND pk2 = ?) ..."
      */
-    private function _buildSqlCompositeKeyCondition($columnNames, $numRecords)
+    private function buildSqlCompositeKeyCondition($columnNames, $numRecords)
     {
         $singleCondition = '';
         foreach ($columnNames as $columnName) {
@@ -287,7 +287,7 @@ class Doctrine_Connection_UnitOfWork extends Doctrine_Connection_Module
      * @throws PDOException    If something went wrong at database level
      * @return void
      */
-    protected function _cascadeDelete(Doctrine_Record $record, array &$deletions)
+    protected function cascadeDelete(Doctrine_Record $record, array &$deletions)
     {
         foreach ($record->getTable()->getRelations() as $relation) {
             if ($relation->isCascadeDelete()) {
@@ -301,12 +301,12 @@ class Doctrine_Connection_UnitOfWork extends Doctrine_Connection_Module
                 if ($relatedObjects instanceof Doctrine_Record && $relatedObjects->exists()
                     && !isset($deletions[$relatedObjects->getOid()])
                 ) {
-                    $this->_collectDeletions($relatedObjects, $deletions);
+                    $this->collectDeletions($relatedObjects, $deletions);
                 } elseif ($relatedObjects instanceof Doctrine_Collection && count($relatedObjects) > 0) {
                     // cascade the delete to the other objects
                     foreach ($relatedObjects as $object) {
                         if (!isset($deletions[$object->getOid()])) {
-                            $this->_collectDeletions($object, $deletions);
+                            $this->collectDeletions($object, $deletions);
                         }
                     }
                 }
@@ -430,7 +430,7 @@ class Doctrine_Connection_UnitOfWork extends Doctrine_Connection_Module
     /**
      * Invokes preDelete event listeners.
      */
-    private function _preDelete(Doctrine_Record $record): void
+    private function preDelete(Doctrine_Record $record): void
     {
         $event = new Doctrine_Event($record, Doctrine_Event::RECORD_DELETE);
         $record->preDelete($event);
@@ -442,7 +442,7 @@ class Doctrine_Connection_UnitOfWork extends Doctrine_Connection_Module
      *
      * @return void
      */
-    private function _postDelete(Doctrine_Record $record): void
+    private function postDelete(Doctrine_Record $record): void
     {
         $event = new Doctrine_Event($record, Doctrine_Event::RECORD_DELETE);
         $record->postDelete($event);
@@ -539,7 +539,7 @@ class Doctrine_Connection_UnitOfWork extends Doctrine_Connection_Module
             return $this->update($record);
         } else {
             if ($record->isValid()) {
-                $this->_assignSequence($record);
+                $this->assignSequence($record);
 
                 $saveEvent   = $record->invokeSaveHooks('pre', 'save');
                 $insertEvent = $record->invokeSaveHooks('pre', 'insert');
@@ -559,7 +559,7 @@ class Doctrine_Connection_UnitOfWork extends Doctrine_Connection_Module
                 $record->invokeSaveHooks('post', 'insert', $insertEvent);
                 $record->invokeSaveHooks('post', 'save', $saveEvent);
 
-                $this->_assignIdentifier($record);
+                $this->assignIdentifier($record);
 
                 return true;
             } else {
@@ -589,9 +589,9 @@ class Doctrine_Connection_UnitOfWork extends Doctrine_Connection_Module
             }
         }
 
-        $this->_assignSequence($record, $fields);
+        $this->assignSequence($record, $fields);
         $this->conn->insert($table, $fields);
-        $this->_assignIdentifier($record);
+        $this->assignIdentifier($record);
     }
 
     /**
@@ -729,7 +729,7 @@ class Doctrine_Connection_UnitOfWork extends Doctrine_Connection_Module
      * @param  array $fields
      * @return int|null
      */
-    protected function _assignSequence(Doctrine_Record $record, &$fields = null)
+    protected function assignSequence(Doctrine_Record $record, &$fields = null)
     {
         $table = $record->getTable();
         $seq   = $table->sequenceName;
@@ -755,7 +755,7 @@ class Doctrine_Connection_UnitOfWork extends Doctrine_Connection_Module
     /**
      * @return void
      */
-    protected function _assignIdentifier(Doctrine_Record $record)
+    protected function assignIdentifier(Doctrine_Record $record)
     {
         $table      = $record->getTable();
         $identifier = $table->getIdentifier();

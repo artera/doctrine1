@@ -7,7 +7,7 @@ class Doctrine_Hydrator_ArrayShallowDriver extends Doctrine_Hydrator_ScalarDrive
         $cache  = [];
         $result = [];
         while ($data = $stmt->fetch(Doctrine_Core::FETCH_ASSOC)) {
-            $result[] = $this->_gatherRowData($data, $cache, false);
+            $result[] = $this->gatherRowData($data, $cache, false);
         }
         return $result;
     }

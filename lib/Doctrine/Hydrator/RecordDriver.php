@@ -48,10 +48,10 @@ class Doctrine_Hydrator_RecordDriver extends Doctrine_Hydrator_Graph
 
     public function getElement(array $data, string $component)
     {
-        $component = $this->_getClassnameToReturn($data, $component);
+        $component = $this->getClassnameToReturn($data, $component);
 
-        $this->_tables[$component]->setData($data);
-        $record = $this->_tables[$component]->getRecord();
+        $this->tables[$component]->setData($data);
+        $record = $this->tables[$component]->getRecord();
 
         return $record;
     }
@@ -89,6 +89,6 @@ class Doctrine_Hydrator_RecordDriver extends Doctrine_Hydrator_Graph
         }
         $this->initializedRelations = [];
         $this->collections = [];
-        $this->_tables = [];
+        $this->tables = [];
     }
 }

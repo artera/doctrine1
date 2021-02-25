@@ -17,20 +17,20 @@ namespace Tests\Tickets {
             $valid = $user->isValid();
             $this->assertFalse($valid);
             $string = $user->getErrorStackAsString();
-            $this->_validateErrorString($string);
+            $this->validateErrorString($string);
 
             $this->expectException(\Exception::class);
             try {
                 $user->save();
                 $this->assertTrue(false);
             } catch (Exception $e) {
-                $this->_validateErrorString($e->getMessage());
+                $this->validateErrorString($e->getMessage());
             }
 
             \Doctrine_Manager::getInstance()->setAttribute(\Doctrine_Core::ATTR_VALIDATE, \Doctrine_Core::VALIDATE_NONE);
         }
 
-        protected function _validateErrorString($string)
+        protected function validateErrorString($string)
         {
             $this->assertStringContainsString('Validation failed in class Ticket_1763_User', $string);
             $this->assertStringContainsString('3 fields had validation errors:', $string);

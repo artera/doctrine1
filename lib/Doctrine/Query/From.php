@@ -11,7 +11,7 @@ class Doctrine_Query_From extends Doctrine_Query_Part
     public function parse(string $str, bool $return = false): ?array
     {
         $str   = trim($str);
-        $parts = $this->_tokenizer->bracketExplode($str, 'JOIN ');
+        $parts = $this->tokenizer->bracketExplode($str, 'JOIN ');
 
         $from = $return ? [] : null;
 
@@ -42,7 +42,7 @@ class Doctrine_Query_From extends Doctrine_Query_Part
             }
             $part = implode(' ', $e);
 
-            foreach ($this->_tokenizer->bracketExplode($part, ',') as $reference) {
+            foreach ($this->tokenizer->bracketExplode($part, ',') as $reference) {
                 $reference = trim($reference);
                 $e         = explode(' ', $reference);
                 $e2        = explode('.', $e[0]);

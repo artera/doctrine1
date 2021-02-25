@@ -3,12 +3,12 @@ namespace Tests\Cache;
 
 class ArrayTest extends AbstractTestCase
 {
-    protected function _clearCache()
+    protected function clearCache()
     {
         // do nothing
     }
 
-    protected function _getCacheDriver()
+    protected function getCacheDriver()
     {
         return new \Doctrine_Cache_Array();
     }

@@ -6,17 +6,17 @@ use Laminas\Validator;
 class Doctrine_Manager extends Doctrine_Configurable implements Countable, IteratorAggregate
 {
     /** array containing all the opened connections */
-    protected array $_connections = [];
+    protected array $connections = [];
 
     /** array containing all components that have a bound connection */
-    protected array $_bound = [];
+    protected array $bound = [];
 
-    protected int $_index = 0;
+    protected int $index = 0;
 
     /** the current connection index */
-    protected int|string $_currIndex = 0;
+    protected int|string $currIndex = 0;
 
-    protected ?Doctrine_Query_Registry $_queryRegistry = null;
+    protected ?Doctrine_Query_Registry $queryRegistry = null;
 
     /** @phpstan-var array<string, class-string<ValidatorInterface>|array{class: class-string<ValidatorInterface>, options: array<string, mixed>}>  */
     protected array $validators = [
@@ -52,7 +52,7 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
     ];
 
     /** @phpstan-var (class-string<Doctrine_Hydrator_Abstract>|Doctrine_Hydrator_Abstract)[] */
-    protected array $_hydrators = [
+    protected array $hydrators = [
         Doctrine_Core::HYDRATE_ARRAY         => Doctrine_Hydrator_ArrayDriver::class,
         Doctrine_Core::HYDRATE_RECORD        => Doctrine_Hydrator_RecordDriver::class,
         Doctrine_Core::HYDRATE_NONE          => Doctrine_Hydrator_NoneDriver::class,
@@ -63,7 +63,7 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
     ];
 
     /** @phpstan-var array<string, class-string<Doctrine_Connection>> */
-    protected array $_connectionDrivers = [
+    protected array $connectionDrivers = [
         'mysql'  => Doctrine_Connection_Mysql::class,
         'mysqli' => Doctrine_Connection_Mysql::class,
         'sqlite' => Doctrine_Connection_Sqlite::class,
@@ -72,11 +72,11 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
     ];
 
     /** Whether or not the validators from disk have been loaded */
-    protected bool $_loadedValidatorsFromDisk = false;
+    protected bool $loadedValidatorsFromDisk = false;
 
-    protected static ?Doctrine_Manager $_instance;
+    protected static ?Doctrine_Manager $instance;
 
-    private bool $_initialized = false;
+    private bool $initialized = false;
 
     /**
      * Sets default attributes values.
@@ -89,8 +89,8 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
      */
     public function setDefaultAttributes()
     {
-        if (!$this->_initialized) {
-            $this->_initialized = true;
+        if (!$this->initialized) {
+            $this->initialized = true;
             $attributes         = [
                 Doctrine_Core::ATTR_CACHE                      => null,
                 Doctrine_Core::ATTR_QUERY_CACHE                => null,
@@ -141,10 +141,10 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
      */
     public static function getInstance()
     {
-        if (!isset(self::$_instance)) {
-            self::$_instance = new self();
+        if (!isset(self::$instance)) {
+            self::$instance = new self();
         }
-        return self::$_instance;
+        return self::$instance;
     }
 
     /**
@@ -154,9 +154,9 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
      */
     public static function resetInstance()
     {
-        if (self::$_instance) {
-            self::$_instance->reset();
-            self::$_instance = null;
+        if (self::$instance) {
+            self::$instance->reset();
+            self::$instance = null;
         }
     }
 
@@ -167,17 +167,17 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
      */
     public function reset()
     {
-        foreach ($this->_connections as $conn) {
+        foreach ($this->connections as $conn) {
             $conn->close();
         }
-        $this->_connections              = [];
-        $this->_queryRegistry            = null;
-        $this->_bound                    = [];
+        $this->connections              = [];
+        $this->queryRegistry            = null;
+        $this->bound                    = [];
         $this->validators               = [];
-        $this->_loadedValidatorsFromDisk = false;
-        $this->_index                    = 0;
-        $this->_currIndex                = 0;
-        $this->_initialized              = false;
+        $this->loadedValidatorsFromDisk = false;
+        $this->index                    = 0;
+        $this->currIndex                = 0;
+        $this->initialized              = false;
     }
 
     /**
@@ -187,10 +187,10 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
      */
     public function getQueryRegistry()
     {
-        if (!isset($this->_queryRegistry)) {
-            $this->_queryRegistry = new Doctrine_Query_Registry();
+        if (!isset($this->queryRegistry)) {
+            $this->queryRegistry = new Doctrine_Query_Registry();
         }
-        return $this->_queryRegistry;
+        return $this->queryRegistry;
     }
 
     /**
@@ -200,7 +200,7 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
      */
     public function setQueryRegistry(Doctrine_Query_Registry $registry)
     {
-        $this->_queryRegistry = $registry;
+        $this->queryRegistry = $registry;
 
         return $this;
     }
@@ -274,31 +274,31 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
 
         if ($name !== null) {
             $name = (string) $name;
-            if (isset($this->_connections[$name])) {
+            if (isset($this->connections[$name])) {
                 if ($setCurrent) {
-                    $this->_currIndex = $name;
+                    $this->currIndex = $name;
                 }
-                return $this->_connections[$name];
+                return $this->connections[$name];
             }
         } else {
-            $name = $this->_index;
-            $this->_index++;
+            $name = $this->index;
+            $this->index++;
         }
 
-        if (!isset($this->_connectionDrivers[$driverName])) {
+        if (!isset($this->connectionDrivers[$driverName])) {
             throw new Doctrine_Manager_Exception('Unknown driver ' . $driverName);
         }
 
-        $className = $this->_connectionDrivers[$driverName];
+        $className = $this->connectionDrivers[$driverName];
         $conn = new $className($this, $adapter);
         $conn->setName((string) $name);
 
-        $this->_connections[$name] = $conn;
+        $this->connections[$name] = $conn;
 
         if ($setCurrent) {
-            $this->_currIndex = $name;
+            $this->currIndex = $name;
         }
-        return $this->_connections[$name];
+        return $this->connections[$name];
     }
 
     /**
@@ -371,7 +371,7 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
      * @param  string $dsn
      * @return array $parts
      */
-    protected function _buildDsnPartsArray(string $dsn): array
+    protected function buildDsnPartsArray(string $dsn): array
     {
         // fix sqlite dsn so that it will parse correctly
         $dsn = str_replace('////', '/', $dsn);
@@ -404,7 +404,7 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
      */
     public function parseDsn(string $dsn): array
     {
-        $parts = $this->_buildDsnPartsArray($dsn);
+        $parts = $this->buildDsnPartsArray($dsn);
 
         switch ($parts['scheme']) {
             case 'sqlite':
@@ -481,11 +481,11 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
      */
     public function getConnection(string $name): Doctrine_Connection
     {
-        if (!isset($this->_connections[$name])) {
+        if (!isset($this->connections[$name])) {
             throw new Doctrine_Manager_Exception('Unknown connection: ' . $name);
         }
 
-        return $this->_connections[$name];
+        return $this->connections[$name];
     }
 
     /**
@@ -497,7 +497,7 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
      */
     public function getConnectionName(Doctrine_Connection $conn): int|string|null
     {
-        $res = array_search($conn, $this->_connections, true);
+        $res = array_search($conn, $this->connections, true);
         return $res === false ? null : $res;
     }
 
@@ -508,7 +508,7 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
      */
     public function bindComponent(string $componentName, string $connectionName): void
     {
-        $this->_bound[$componentName] = $connectionName;
+        $this->bound[$componentName] = $connectionName;
     }
 
     /**
@@ -516,8 +516,8 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
      */
     public function getConnectionForComponent(string $componentName): Doctrine_Connection
     {
-        if (isset($this->_bound[$componentName])) {
-            return $this->getConnection($this->_bound[$componentName]);
+        if (isset($this->bound[$componentName])) {
+            return $this->getConnection($this->bound[$componentName]);
         }
 
         return $this->getCurrentConnection();
@@ -528,7 +528,7 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
      */
     public function hasConnectionForComponent(string $componentName = null): bool
     {
-        return isset($this->_bound[$componentName]);
+        return isset($this->bound[$componentName]);
     }
 
     /**
@@ -538,14 +538,14 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
     {
         $connection->close();
 
-        $key = array_search($connection, $this->_connections, true);
+        $key = array_search($connection, $this->connections, true);
 
         if ($key !== false) {
-            unset($this->_connections[$key]);
+            unset($this->connections[$key]);
 
-            if ($key === $this->_currIndex) {
-                $key              = key($this->_connections);
-                $this->_currIndex = ($key !== null) ? $key : 0;
+            if ($key === $this->currIndex) {
+                $key              = key($this->connections);
+                $this->currIndex = ($key !== null) ? $key : 0;
             }
         }
 
@@ -558,7 +558,7 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
      */
     public function getConnections(): array
     {
-        return $this->_connections;
+        return $this->connections;
     }
 
     /**
@@ -570,10 +570,10 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
     public function setCurrentConnection(string $key): void
     {
         $key = (string) $key;
-        if (!isset($this->_connections[$key])) {
+        if (!isset($this->connections[$key])) {
             throw new Doctrine_Manager_Exception("Connection key '$key' does not exist.");
         }
-        $this->_currIndex = $key;
+        $this->currIndex = $key;
     }
 
     /**
@@ -583,7 +583,7 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
      */
     public function contains($key): bool
     {
-        return isset($this->_connections[$key]);
+        return isset($this->connections[$key]);
     }
 
     /**
@@ -591,7 +591,7 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
      */
     public function count(): int
     {
-        return count($this->_connections);
+        return count($this->connections);
     }
 
     /**
@@ -600,7 +600,7 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
      */
     public function getIterator(): ArrayIterator
     {
-        return new ArrayIterator($this->_connections);
+        return new ArrayIterator($this->connections);
     }
 
     /**
@@ -610,11 +610,11 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
      */
     public function getCurrentConnection(): Doctrine_Connection
     {
-        $i = $this->_currIndex;
-        if (!isset($this->_connections[$i])) {
+        $i = $this->currIndex;
+        if (!isset($this->connections[$i])) {
             throw new Doctrine_Connection_Exception('There is no open connection');
         }
-        return $this->_connections[$i];
+        return $this->connections[$i];
     }
 
     /**
@@ -679,7 +679,7 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
      */
     public function registerHydrator(int|string $name, string|Doctrine_Hydrator_Abstract $class): void
     {
-        $this->_hydrators[$name] = $class;
+        $this->hydrators[$name] = $class;
     }
 
     /**
@@ -689,7 +689,7 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
      */
     public function getHydrators()
     {
-        return $this->_hydrators;
+        return $this->hydrators;
     }
 
     /**
@@ -699,7 +699,7 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
      */
     public function registerConnectionDriver(string $name, string $class): void
     {
-        $this->_connectionDrivers[$name] = $class;
+        $this->connectionDrivers[$name] = $class;
     }
 
     /**
@@ -709,6 +709,6 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
      */
     public function getConnectionDrivers(): array
     {
-        return $this->_connectionDrivers;
+        return $this->connectionDrivers;
     }
 }

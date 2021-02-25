@@ -5,14 +5,14 @@ abstract class Doctrine_Hydrator_Abstract
     /**
      * @phpstan-var array<string, array{table: Doctrine_Table, map: ?string, parent?: string, relation?: Doctrine_Relation, ref?: bool, agg?: array<string, string>}>
      */
-    protected array $_queryComponents = [];
+    protected array $queryComponents = [];
 
-    protected array $_tableAliases = [];
+    protected array $tableAliases = [];
 
-    protected ?array $_priorRow = null;
+    protected ?array $priorRow = null;
 
     /** @phpstan-var int|class-string<Doctrine_Hydrator_Abstract> */
-    protected int|string $_hydrationMode;
+    protected int|string $hydrationMode;
 
     /**
      * @param array $queryComponents
@@ -34,7 +34,7 @@ abstract class Doctrine_Hydrator_Abstract
      */
     public function setQueryComponents(array $queryComponents): void
     {
-        $this->_queryComponents = $queryComponents;
+        $this->queryComponents = $queryComponents;
     }
 
     /**
@@ -45,7 +45,7 @@ abstract class Doctrine_Hydrator_Abstract
      */
     public function setTableAliases($tableAliases)
     {
-        $this->_tableAliases = $tableAliases;
+        $this->tableAliases = $tableAliases;
     }
 
     /**
@@ -56,7 +56,7 @@ abstract class Doctrine_Hydrator_Abstract
      */
     public function getHydrationMode(): int|string
     {
-        return $this->_hydrationMode;
+        return $this->hydrationMode;
     }
 
     /**
@@ -69,7 +69,7 @@ abstract class Doctrine_Hydrator_Abstract
      */
     public function setHydrationMode(int|string $hydrationMode): void
     {
-        $this->_hydrationMode = $hydrationMode;
+        $this->hydrationMode = $hydrationMode;
     }
 
     /**
@@ -77,7 +77,7 @@ abstract class Doctrine_Hydrator_Abstract
      */
     public function onDemandReset()
     {
-        $this->_priorRow = null;
+        $this->priorRow = null;
     }
 
     /**
@@ -88,7 +88,7 @@ abstract class Doctrine_Hydrator_Abstract
      * @param  string $name
      * @return boolean
      */
-    protected function _isIgnoredName($name)
+    protected function isIgnoredName($name)
     {
         return $name == 'DOCTRINE_ROWNUM';
     }

@@ -7,7 +7,7 @@ class CacheTest extends DoctrineUnitTestCase
 {
     public function testQueryCacheAddsQueryIntoCache()
     {
-        $cache = $this->_getCacheDriver();
+        $cache = $this->getCacheDriver();
 
         $q = \Doctrine_Query::create()
             ->select('u.id, u.name, p.id')
@@ -29,7 +29,7 @@ class CacheTest extends DoctrineUnitTestCase
 
     public function testQueryCacheWorksWithGlobalConfiguration()
     {
-        $cache = $this->_getCacheDriver();
+        $cache = $this->getCacheDriver();
 
         \Doctrine_Manager::getInstance()->setAttribute(\Doctrine_Core::ATTR_QUERY_CACHE, $cache);
 
@@ -53,7 +53,7 @@ class CacheTest extends DoctrineUnitTestCase
     {
         $q = new \Doctrine_Query();
 
-        $cache = $this->_getCacheDriver();
+        $cache = $this->getCacheDriver();
         $q->useResultCache($cache)->select('u.name')->from('User u');
         $coll = $q->execute();
 
@@ -70,7 +70,7 @@ class CacheTest extends DoctrineUnitTestCase
     {
         $q = new \Doctrine_Query();
 
-        $cache = $this->_getCacheDriver();
+        $cache = $this->getCacheDriver();
         $q->useResultCache($cache);
         $q->select('u.name')->from('User u')->leftJoin('u.Phonenumber p');
         $coll = $q->execute();
@@ -88,7 +88,7 @@ class CacheTest extends DoctrineUnitTestCase
     {
         $q = new \Doctrine_Query();
 
-        $cache = $this->_getCacheDriver();
+        $cache = $this->getCacheDriver();
         $q->useResultCache($cache);
         $q->select('u.name')->from('User u')->leftJoin('u.Phonenumber p')
             ->where('u.id = ?');
@@ -121,7 +121,7 @@ class CacheTest extends DoctrineUnitTestCase
     {
         $q = new \Doctrine_Query();
 
-        $cache = $this->_getCacheDriver();
+        $cache = $this->getCacheDriver();
         static::$conn->setAttribute(\Doctrine_Core::ATTR_CACHE, $cache);
 
         $q->useResultCache(true);
@@ -207,7 +207,7 @@ class CacheTest extends DoctrineUnitTestCase
 
     public function testQueryCacheCanBeDisabledForSingleQuery()
     {
-        $cache = $this->_getCacheDriver();
+        $cache = $this->getCacheDriver();
         $q     = new \Doctrine_Query();
         $q->select('u.name')->from('User u')->leftJoin('u.Phonenumber p')->where('u.name = ?', 'walhala')
             ->useQueryCache(false);
@@ -223,7 +223,7 @@ class CacheTest extends DoctrineUnitTestCase
         $this->assertEquals(count($coll), 0);
     }
 
-    protected function _getCacheDriver()
+    protected function getCacheDriver()
     {
         return new \Doctrine_Cache_Array();
     }

@@ -44,29 +44,29 @@ class Doctrine_Cli
     /**
      * @var string
      */
-    protected $_scriptName = null;
+    protected $scriptName = null;
 
     /**
      * @var array
      */
-    private $_config;
+    private $config;
 
     /**
      * @var Doctrine_Cli_Formatter
      */
-    private $_formatter;
+    private $formatter;
 
     /**
      * An array, keyed on class name, containing task instances
      *
      * @var array
      */
-    private $_registeredTask = [];
+    private $registeredTask = [];
 
     /**
      * @var Doctrine_Task
      */
-    private $_taskInstance;
+    private $taskInstance;
 
     /**
      * __construct
@@ -88,7 +88,7 @@ class Doctrine_Cli
      */
     public function setConfig(array $config)
     {
-        $this->_config = $config;
+        $this->config = $config;
     }
 
     /**
@@ -96,7 +96,7 @@ class Doctrine_Cli
      */
     public function getConfig()
     {
-        return $this->_config;
+        return $this->config;
     }
 
     /**
@@ -106,7 +106,7 @@ class Doctrine_Cli
      */
     public function setFormatter(Doctrine_Cli_Formatter $formatter)
     {
-        $this->_formatter = $formatter;
+        $this->formatter = $formatter;
     }
 
     /**
@@ -114,7 +114,7 @@ class Doctrine_Cli
      */
     public function getFormatter()
     {
-        return $this->_formatter;
+        return $this->formatter;
     }
 
     /**
@@ -126,7 +126,7 @@ class Doctrine_Cli
      */
     public function getConfigValue($name/*, $defaultValue*/)
     {
-        if (!isset($this->_config[$name])) {
+        if (!isset($this->config[$name])) {
             if (func_num_args() > 1) {
                 return func_get_arg(1);
             }
@@ -134,7 +134,7 @@ class Doctrine_Cli
             throw new OutOfBoundsException("The element \"{$name}\" does not exist in the config");
         }
 
-        return $this->_config[$name];
+        return $this->config[$name];
     }
 
     /**
@@ -152,16 +152,16 @@ class Doctrine_Cli
      */
     public function hasConfigValue($name, $value = null, $strict = false)
     {
-        if (isset($this->_config[$name])) {
+        if (isset($this->config[$name])) {
             if (func_num_args() < 2) {
                 return true;
             }
 
             if ($strict) {
-                return $this->_config[$name] === $value;
+                return $this->config[$name] === $value;
             }
 
-            return $this->_config[$name] == $value;
+            return $this->config[$name] == $value;
         }
 
         return false;
@@ -176,7 +176,7 @@ class Doctrine_Cli
      */
     public function setRegisteredTasks(array $registeredTask)
     {
-        $this->_registeredTask = $registeredTask;
+        $this->registeredTask = $registeredTask;
     }
 
     /**
@@ -186,7 +186,7 @@ class Doctrine_Cli
      */
     public function getRegisteredTasks()
     {
-        return $this->_registeredTask;
+        return $this->registeredTask;
     }
 
     /**
@@ -197,7 +197,7 @@ class Doctrine_Cli
      */
     public function taskClassIsRegistered($className)
     {
-        return isset($this->_registeredTask[$className]);
+        return isset($this->registeredTask[$className]);
     }
 
     /**
@@ -229,7 +229,7 @@ class Doctrine_Cli
      */
     public function setTaskInstance(Doctrine_Task $task)
     {
-        $this->_taskInstance = $task;
+        $this->taskInstance = $task;
     }
 
     /**
@@ -237,7 +237,7 @@ class Doctrine_Cli
      */
     public function getTaskInstance()
     {
-        return $this->_taskInstance;
+        return $this->taskInstance;
     }
 
     /**
@@ -363,7 +363,7 @@ class Doctrine_Cli
             throw new DomainException("The class \"{$className}\" is not a Doctrine Task");
         }
 
-        $this->_registeredTask[$className] = $this->createTaskInstance($className, $this);
+        $this->registeredTask[$className] = $this->createTaskInstance($className, $this);
     }
 
     /**
@@ -467,14 +467,31 @@ class Doctrine_Cli
     public function run(array $args)
     {
         try {
-            $this->_run($args);
+            $this->scriptName = $args[0];
+            $requestedTaskName = $args[1] ?? null;
+
+            if (!$requestedTaskName || $requestedTaskName == 'help') {
+                $this->printTasks(null, $requestedTaskName == 'help' ? true : false);
+                return;
+            }
+
+            if (isset($args[2]) && $args[2] === 'help') {
+                $this->printTasks($requestedTaskName, true);
+                return;
+            }
+
+            if (!$this->taskNameIsRegistered($requestedTaskName, $taskClassName)) {
+                throw new Doctrine_Cli_Exception("The task \"{$requestedTaskName}\" has not been registered");
+            }
+
+            $taskInstance = $this->createTaskInstance($taskClassName, $this);
+            $this->setTaskInstance($taskInstance);
+            $this->executeTask($taskInstance, $this->prepareArgs(array_slice($args, 2)));
         } catch (Exception $exception) {
-            //Do not rethrow exceptions by default
+            // Do not rethrow exceptions by default
             if ($this->getConfigValue('rethrow_exceptions', false)) {
                 $exceptionClass = get_class($exception);
-                /**
- * @var Exception $exception
-*/
+                /** * @var Exception $exception */
                 $exception = new $exceptionClass($this->formatExceptionMessage($exception));
                 throw $exception;
             }
@@ -486,38 +503,6 @@ class Doctrine_Cli
                 $this->printTasks();
             }
         }
-    }
-
-    /**
-     * Run the actual task execution with the passed arguments
-     *
-     * @param  array $args Array of arguments for this task being executed
-     * @return void
-     * @throws Doctrine_Cli_Exception If the requested task has not been registered or if required arguments are missing
-     * @todo   Continue refactoring for testing
-     */
-    protected function _run(array $args)
-    {
-        $this->_scriptName = $args[0];
-        $requestedTaskName = $args[1] ?? null;
-
-        if (!$requestedTaskName || $requestedTaskName == 'help') {
-            $this->printTasks(null, $requestedTaskName == 'help' ? true : false);
-            return;
-        }
-
-        if (isset($args[2]) && $args[2] === 'help') {
-            $this->printTasks($requestedTaskName, true);
-            return;
-        }
-
-        if (!$this->taskNameIsRegistered($requestedTaskName, $taskClassName)) {
-            throw new Doctrine_Cli_Exception("The task \"{$requestedTaskName}\" has not been registered");
-        }
-
-        $taskInstance = $this->createTaskInstance($taskClassName, $this);
-        $this->setTaskInstance($taskInstance);
-        $this->executeTask($taskInstance, $this->prepareArgs(array_slice($args, 2)));
     }
 
     /**
@@ -610,7 +595,7 @@ class Doctrine_Cli
                 continue;
             }
 
-            $taskIndex .= $formatter->format($this->_scriptName . ' ' . $task->getTaskName(), 'INFO');
+            $taskIndex .= $formatter->format($this->scriptName . ' ' . $task->getTaskName(), 'INFO');
 
             if ($full) {
                 $taskIndex .= ' - ' . $task->getDescription() . "\n";
@@ -696,7 +681,7 @@ class Doctrine_Cli
      *
      * @return string
      */
-    protected function _getTaskClassFromArgs(array $args)
+    protected function getTaskClassFromArgs(array $args)
     {
         return self::TASK_BASE_CLASS . '_' . Doctrine_Inflector::classify(str_replace('-', '_', $args[1]));
     }

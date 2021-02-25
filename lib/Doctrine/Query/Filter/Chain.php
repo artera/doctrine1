@@ -30,9 +30,9 @@
 class Doctrine_Query_Filter_Chain
 {
     /**
-     * @var array $_filters         an array of Doctrine_Query_Filter objects
+     * @var array $filters         an array of Doctrine_Query_Filter objects
      */
-    protected $_filters = [];
+    protected $filters = [];
 
     /**
      * add
@@ -42,7 +42,7 @@ class Doctrine_Query_Filter_Chain
      */
     public function add(Doctrine_Query_Filter $filter)
     {
-        $this->_filters[] = $filter;
+        $this->filters[] = $filter;
     }
 
     /**
@@ -54,10 +54,10 @@ class Doctrine_Query_Filter_Chain
      */
     public function get($key)
     {
-        if (!isset($this->_filters[$key])) {
+        if (!isset($this->filters[$key])) {
             throw new Doctrine_Query_Exception('Unknown filter ' . $key);
         }
-        return $this->_filters[$key];
+        return $this->filters[$key];
     }
 
     /**
@@ -69,7 +69,7 @@ class Doctrine_Query_Filter_Chain
      */
     public function set($key, Doctrine_Query_Filter $listener)
     {
-        $this->_filters[$key] = $listener;
+        $this->filters[$key] = $listener;
     }
 
     /**
@@ -83,7 +83,7 @@ class Doctrine_Query_Filter_Chain
      */
     public function preQuery(Doctrine_Query $query)
     {
-        foreach ($this->_filters as $filter) {
+        foreach ($this->filters as $filter) {
             $filter->preQuery($query);
         }
     }
@@ -99,7 +99,7 @@ class Doctrine_Query_Filter_Chain
      */
     public function postQuery(Doctrine_Query $query)
     {
-        foreach ($this->_filters as $filter) {
+        foreach ($this->filters as $filter) {
             $filter->postQuery($query);
         }
     }

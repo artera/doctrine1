@@ -43,9 +43,9 @@ namespace Tests\Core\Hydrate {
 namespace {
     class MyHydrator extends Doctrine_Hydrator_Abstract
     {
-        protected array $_queryComponents;
-        protected array $_tableAliases;
-        protected int|string $_hydrationMode;
+        protected array $queryComponents;
+        protected array $tableAliases;
+        protected int|string $hydrationMode;
 
         public function hydrateResultSet(Doctrine_Connection_Statement $stmt): string
         {

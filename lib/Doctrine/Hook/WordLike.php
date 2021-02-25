@@ -49,7 +49,7 @@ class Doctrine_Hook_WordLike extends Doctrine_Hook_Parser_Complex
         $a = [];
 
         if (strpos($value, "'") !== false) {
-            $value = $this->_tokenizer->bracketTrim($value, "'", "'");
+            $value = $this->tokenizer->bracketTrim($value, "'", "'");
 
             $a[]            = $alias . '.' . $field . ' LIKE ?';
             $this->params[] = '%' . $value . '%';

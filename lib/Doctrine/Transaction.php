@@ -35,9 +35,9 @@ class Doctrine_Transaction extends Doctrine_Connection_Module
     protected $savePoints = [];
 
     /**
-     * @var array $_collections             an array of Doctrine_Collection objects that were affected during the Transaction
+     * @var array $collections             an array of Doctrine_Collection objects that were affected during the Transaction
      */
-    protected $_collections = [];
+    protected $collections = [];
 
     /**
      * addCollection
@@ -52,7 +52,7 @@ class Doctrine_Transaction extends Doctrine_Connection_Module
      */
     public function addCollection(Doctrine_Collection $coll)
     {
-        $this->_collections[] = $coll;
+        $this->collections[] = $coll;
 
         return $this;
     }
@@ -147,7 +147,7 @@ class Doctrine_Transaction extends Doctrine_Connection_Module
                 $event = new Doctrine_Event($this, Doctrine_Event::TX_BEGIN);
                 $listener->preTransactionBegin($event);
                 try {
-                    $this->_doBeginTransaction();
+                    $this->doBeginTransaction();
                 } catch (Exception $e) {
                     throw new Doctrine_Transaction_Exception($e->getMessage());
                 }
@@ -200,14 +200,14 @@ class Doctrine_Transaction extends Doctrine_Connection_Module
                 }
                 if ($this->nestingLevel == 1) {
                     // take snapshots of all collections used within this transaction
-                    foreach ($this->_collections as $coll) {
+                    foreach ($this->collections as $coll) {
                         $coll->takeSnapshot();
                     }
-                    $this->_collections = [];
+                    $this->collections = [];
 
                     $event = new Doctrine_Event($this, Doctrine_Event::TX_COMMIT);
                     $listener->preTransactionCommit($event);
-                    $this->_doCommit();
+                    $this->doCommit();
                     $listener->postTransactionCommit($event);
                 }
             }
@@ -275,7 +275,7 @@ class Doctrine_Transaction extends Doctrine_Connection_Module
             $this->nestingLevel         = 0;
             $this->internalNestingLevel = 0;
             try {
-                $this->_doRollback();
+                $this->doRollback();
             } catch (Exception $e) {
                 throw new Doctrine_Transaction_Exception($e->getMessage());
             }
@@ -323,7 +323,7 @@ class Doctrine_Transaction extends Doctrine_Connection_Module
      *
      * @return void
      */
-    protected function _doRollback()
+    protected function doRollback()
     {
         $this->conn->getDbh()->rollBack();
     }
@@ -333,7 +333,7 @@ class Doctrine_Transaction extends Doctrine_Connection_Module
      *
      * @return void
      */
-    protected function _doCommit()
+    protected function doCommit()
     {
         $this->conn->getDbh()->commit();
     }
@@ -343,7 +343,7 @@ class Doctrine_Transaction extends Doctrine_Connection_Module
      *
      * @return void
      */
-    protected function _doBeginTransaction()
+    protected function doBeginTransaction()
     {
         $this->conn->getDbh()->beginTransaction();
     }

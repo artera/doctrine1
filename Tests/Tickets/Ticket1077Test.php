@@ -19,9 +19,9 @@ namespace Tests\Tickets {
             $user->username = 'jwage';
             $user->password = 'changeme';
             $user->save();
-            $this->assertEquals($user->getPassword(), '4cb9c8a8048fd02294477fcb1a41191a');
-            $this->assertEquals($user->getUsername(), 'Username: jwage');
-            $this->assertEquals($user->username, $user->getUsername());
+            $this->assertEquals('4cb9c8a8048fd02294477fcb1a41191a', $user->getPassword());
+            $this->assertEquals('Username: jwage', $user->getUsername());
+            $this->assertEquals($user->getUsername(), $user->username);
 
             $numbers            = new \Doctrine_Collection('Phonenumber');
             $user->Phonenumbers = $numbers;
@@ -40,8 +40,8 @@ namespace Tests\Tickets {
             $user->hasMutator('username', 'usernameMutator');
             $username = 'test';
             $user->usernameMutator($username);
-            $this->assertEquals($user->usernameAccessor(), $user->username);
-            $this->assertEquals($user->usernameAccessor(), $username);
+            $this->assertEquals($user->username, $user->usernameAccessor());
+            $this->assertEquals($username, $user->usernameAccessor());
         }
     }
 }
@@ -68,12 +68,12 @@ namespace {
 
         public function usernameAccessor()
         {
-            return $this->_get('username');
+            return $this->get('username');
         }
 
         public function usernameMutator($value)
         {
-            $this->_set('username', $value);
+            $this->set('username', $value);
         }
 
         public function getPhonenumbers()
@@ -84,22 +84,22 @@ namespace {
         public function setPhonenumbers($phonenumbers)
         {
             $this->phonenumbersTest = $phonenumbers;
-            return $this->_set('Phonenumbers', $phonenumbers);
+            return $this->set('Phonenumbers', $phonenumbers);
         }
 
         public function getUsername($load = true)
         {
-            return 'Username: ' . $this->_get('username', $load);
+            return 'Username: ' . $this->get('username', $load);
         }
 
         public function setPassword($password)
         {
-            return $this->_set('password', md5($password));
+            return $this->set('password', md5($password));
         }
 
         public function getPassword($load = true)
         {
-            return $this->_get('password', $load);
+            return $this->get('password', $load);
         }
     }
 

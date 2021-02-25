@@ -121,7 +121,7 @@ namespace {
     {
         public function setTableDefinition(): void
         {
-            $this->setTableName('_site');
+            $this->setTableName('site');
             $this->hasColumn('site_id', 'integer', 4, ['notnull' => true, 'primary' => true, 'autoincrement' => true]);
             $this->hasColumn('site_domain', 'string', 255, ['notnull' => true]);
         }
@@ -141,7 +141,7 @@ namespace {
     {
         public function setTableDefinition(): void
         {
-            $this->setTableName('_variable');
+            $this->setTableName('variable');
             $this->hasColumn('variable_id', 'integer', 4, ['notnull' => true, 'primary' => true, 'autoincrement' => true]);
             $this->hasColumn('variable_name', 'string', 100, ['notnull' => true]);
         }

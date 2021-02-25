@@ -7,7 +7,7 @@ class Doctrine_Import_Schema
      *
      * @var array
      */
-    protected static $_globalDefinitionKeys = [
+    protected static $globalDefinitionKeys = [
         'connection',
         'attributes',
         'options',
@@ -24,7 +24,7 @@ class Doctrine_Import_Schema
      *
      * @var array
      */
-    protected $_relations = [];
+    protected $relations = [];
 
     /**
      * _options
@@ -34,7 +34,7 @@ class Doctrine_Import_Schema
      *
      * @var array
      */
-    protected $_options = [
+    protected $options = [
         'packagesPrefix'       => 'Package',
         'packagesPath'         => '',
         'packagesFolderName'   => 'packages',
@@ -55,7 +55,7 @@ class Doctrine_Import_Schema
      *
      * @var array
      */
-    protected $_validation = [
+    protected $validation = [
         'root' => [
             'abstract',
             'connection',
@@ -136,7 +136,7 @@ class Doctrine_Import_Schema
      */
     public static function getGlobalDefinitionKeys()
     {
-        return self::$_globalDefinitionKeys;
+        return self::$globalDefinitionKeys;
     }
 
     /**
@@ -147,8 +147,8 @@ class Doctrine_Import_Schema
      */
     public function getOption($name)
     {
-        if (isset($this->_options[$name])) {
-            return $this->_options[$name];
+        if (isset($this->options[$name])) {
+            return $this->options[$name];
         }
     }
 
@@ -159,7 +159,7 @@ class Doctrine_Import_Schema
      */
     public function getOptions()
     {
-        return $this->_options;
+        return $this->options;
     }
 
     /**
@@ -171,8 +171,8 @@ class Doctrine_Import_Schema
      */
     public function setOption($name, $value)
     {
-        if (isset($this->_options[$name])) {
-            $this->_options[$name] = $value;
+        if (isset($this->options[$name])) {
+            $this->options[$name] = $value;
         }
     }
 
@@ -185,7 +185,7 @@ class Doctrine_Import_Schema
     public function setOptions($options)
     {
         if (!empty($options)) {
-            $this->_options = $options;
+            $this->options = $options;
         }
     }
 
@@ -222,8 +222,8 @@ class Doctrine_Import_Schema
             }
         }
 
-        $array = $this->_buildRelationships($array);
-        $array = $this->_processInheritance($array);
+        $array = $this->buildRelationships($array);
+        $array = $this->processInheritance($array);
 
         return $array;
     }
@@ -292,7 +292,7 @@ class Doctrine_Import_Schema
         // Loop over and build up all the global values and remove them from the array
         $globals = [];
         foreach ($array as $key => $value) {
-            if (in_array($key, self::$_globalDefinitionKeys)) {
+            if (in_array($key, self::$globalDefinitionKeys)) {
                 unset($array[$key]);
                 $globals[$key] = $value;
             }
@@ -307,7 +307,7 @@ class Doctrine_Import_Schema
 
         foreach ($array as $className => $table) {
             $table = (array) $table;
-            $this->_validateSchemaElement('root', array_keys($table), $className);
+            $this->validateSchemaElement('root', array_keys($table), $className);
 
             $columns = [];
 
@@ -347,7 +347,7 @@ class Doctrine_Import_Schema
                         $colDesc['name'] = $columnName;
                     }
 
-                    $this->_validateSchemaElement('column', array_keys($field), $className . '->columns->' . $colDesc['name']);
+                    $this->validateSchemaElement('column', array_keys($field), $className . '->columns->' . $colDesc['name']);
 
                     // Support short type(length) syntax: my_column: { type: integer(4) }
                     $e = explode('(', $field['type']);
@@ -428,12 +428,12 @@ class Doctrine_Import_Schema
      * @param  array $array
      * @return array
      */
-    protected function _processInheritance($array)
+    protected function processInheritance($array)
     {
         // Apply default inheritance configuration
         foreach ($array as $className => $definition) {
             if (!empty($array[$className]['inheritance'])) {
-                $this->_validateSchemaElement('inheritance', array_keys($definition['inheritance']), $className . '->inheritance');
+                $this->validateSchemaElement('inheritance', array_keys($definition['inheritance']), $className . '->inheritance');
 
                 // Default inheritance to concrete inheritance
                 if (!isset($array[$className]['inheritance']['type'])) {
@@ -453,7 +453,7 @@ class Doctrine_Import_Schema
                         $array[$className]['inheritance']['keyValue'] = $className;
                     }
 
-                    $parent = $this->_findBaseSuperClass($array, $definition['className']);
+                    $parent = $this->findBaseSuperClass($array, $definition['className']);
                     // Add the keyType column to the parent if a definition does not already exist
                     if (!isset($array[$parent]['columns'][$array[$className]['inheritance']['keyField']])) {
                         $array[$parent]['columns'][$array[$className]['inheritance']['keyField']] = ['name' => $array[$className]['inheritance']['keyField'], 'type' => 'string', 'length' => 255];
@@ -473,7 +473,7 @@ class Doctrine_Import_Schema
         foreach ($array as $className => $definition) {
             // Move any definitions on the schema to the parent
             if (isset($definition['inheritance']['extends']) && isset($definition['inheritance']['type']) && ($definition['inheritance']['type'] == 'simple' || $definition['inheritance']['type'] == 'column_aggregation')) {
-                $parent = $this->_findBaseSuperClass($array, $definition['className']);
+                $parent = $this->findBaseSuperClass($array, $definition['className']);
                 foreach ($moves as $move => $resetValue) {
                     if (isset($array[$parent][$move]) && isset($definition[$move])) {
                         $array[$parent][$move]                  = Doctrine_Lib::arrayDeepMerge($array[$parent][$move], $definition[$move]);
@@ -516,10 +516,10 @@ class Doctrine_Import_Schema
      * @param  string $class
      * @return string $class  Class to get find the parent for
      */
-    protected function _findBaseSuperClass($array, $class)
+    protected function findBaseSuperClass($array, $class)
     {
         if (isset($array[$class]['inheritance']['extends']) && isset($array[$class]['inheritance']['type']) && ($array[$class]['inheritance']['type'] == 'simple' || $array[$class]['inheritance']['type'] == 'column_aggregation')) {
-            return $this->_findBaseSuperClass($array, $array[$class]['inheritance']['extends']);
+            return $this->findBaseSuperClass($array, $array[$class]['inheritance']['extends']);
         } else {
             return $class;
         }
@@ -535,7 +535,7 @@ class Doctrine_Import_Schema
      * @param  array $array
      * @return array
      */
-    protected function _buildRelationships($array)
+    protected function buildRelationships($array)
     {
         // Handle auto detecting relations by the names of columns
         // User.contact_id will automatically create User hasOne Contact local => contact_id, foreign => id
@@ -600,22 +600,22 @@ class Doctrine_Import_Schema
                     $relation['foreignType'] = $relation['foreignType'] === 'one' ? Doctrine_Relation::ONE:Doctrine_Relation::MANY;
                 }
 
-                $relation['key'] = $this->_buildUniqueRelationKey($relation);
+                $relation['key'] = $this->buildUniqueRelationKey($relation);
 
-                $this->_validateSchemaElement('relation', array_keys($relation), $className . '->relation->' . $relation['alias']);
+                $this->validateSchemaElement('relation', array_keys($relation), $className . '->relation->' . $relation['alias']);
 
-                $this->_relations[$className][$alias] = $relation;
+                $this->relations[$className][$alias] = $relation;
             }
         }
 
         // Now we auto-complete opposite ends of relationships
-        $this->_autoCompleteOppositeRelations();
+        $this->autoCompleteOppositeRelations();
 
         // Make sure we do not have any duplicate relations
-        $this->_fixDuplicateRelations();
+        $this->fixDuplicateRelations();
 
         // Set the full array of relationships for each class to the final array
-        foreach ($this->_relations as $className => $relations) {
+        foreach ($this->relations as $className => $relations) {
             $array[$className]['relations'] = $relations;
         }
 
@@ -630,9 +630,9 @@ class Doctrine_Import_Schema
      *
      * @return void
      */
-    protected function _autoCompleteOppositeRelations()
+    protected function autoCompleteOppositeRelations()
     {
-        foreach ($this->_relations as $className => $relations) {
+        foreach ($this->relations as $className => $relations) {
             foreach ($relations as $alias => $relation) {
                 if ((isset($relation['equal']) && $relation['equal']) || (isset($relation['autoComplete']) && $relation['autoComplete'] === false)) {
                     continue;
@@ -661,9 +661,9 @@ class Doctrine_Import_Schema
                 }
 
                 // Make sure it doesn't already exist
-                if (!isset($this->_relations[$relation['class']][$newRelation['alias']])) {
-                    $newRelation['key']                                          = $this->_buildUniqueRelationKey($newRelation);
-                    $this->_relations[$relation['class']][$newRelation['alias']] = $newRelation;
+                if (!isset($this->relations[$relation['class']][$newRelation['alias']])) {
+                    $newRelation['key']                                          = $this->buildUniqueRelationKey($newRelation);
+                    $this->relations[$relation['class']][$newRelation['alias']] = $newRelation;
                 }
             }
         }
@@ -677,9 +677,9 @@ class Doctrine_Import_Schema
      *
      * @return void
      */
-    protected function _fixDuplicateRelations()
+    protected function fixDuplicateRelations()
     {
-        foreach ($this->_relations as $className => $relations) {
+        foreach ($this->relations as $className => $relations) {
             // This is for checking for duplicates between alias-relations and a auto-generated relations to ensure the result set of unique relations
             $existingRelations = [];
             $uniqueRelations   = [];
@@ -695,7 +695,7 @@ class Doctrine_Import_Schema
                 }
             }
 
-            $this->_relations[$className] = $uniqueRelations;
+            $this->relations[$className] = $uniqueRelations;
         }
     }
 
@@ -708,7 +708,7 @@ class Doctrine_Import_Schema
      * @param  array $relation
      * @return string
      */
-    protected function _buildUniqueRelationKey($relation)
+    protected function buildUniqueRelationKey($relation)
     {
         return md5($relation['local'] . $relation['foreign'] . $relation['class'] . (isset($relation['refClass']) ? $relation['refClass']:null));
     }
@@ -721,11 +721,11 @@ class Doctrine_Import_Schema
      * @param  string       $path
      * @return void
      */
-    protected function _validateSchemaElement($name, $element, $path)
+    protected function validateSchemaElement($name, $element, $path)
     {
         $element = (array) $element;
 
-        $validation = $this->_validation[$name];
+        $validation = $this->validation[$name];
 
         // Validators are a part of the column validation
         // This should be fixed, made cleaner

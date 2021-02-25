@@ -9,11 +9,11 @@ class RecordFilterTest extends Doctrine_Record
 
     public function setPassword($value, $load, $fieldName)
     {
-        $this->_set($fieldName, md5($value), $load);
+        $this->set($fieldName, md5($value), $load);
     }
 
     public function getName($load, $fieldName)
     {
-        return strtoupper($this->_get($fieldName, $load));
+        return strtoupper($this->get($fieldName, $load));
     }
 }

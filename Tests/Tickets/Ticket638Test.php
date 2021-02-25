@@ -93,7 +93,7 @@ namespace {
         {
         }
 
-        public function set($fieldName, $value, $load = true)
+        public function set($fieldName, $value, $load = true, bool $mutators = false)
         {
             parent::set($fieldName, $value, $load);
         }

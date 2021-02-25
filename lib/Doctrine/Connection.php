@@ -35,7 +35,7 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
     /**
      * Name of the connection
      */
-    protected string $_name;
+    protected string $name;
 
     /**
      * The name of this connection driver.
@@ -135,12 +135,12 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
         'Sqlite',
     ];
 
-    protected int $_count = 0;
+    protected int $count = 0;
 
     /**
-     * @var array $_usedNames                 array of foreign key names that have been used
+     * @var array $usedNames                 array of foreign key names that have been used
      */
-    protected array $_usedNames = [
+    protected array $usedNames = [
         'foreign_keys' => [],
         'indexes'      => []
     ];
@@ -298,7 +298,7 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
      */
     public function getName(): string
     {
-        return $this->_name;
+        return $this->name;
     }
 
     /**
@@ -306,7 +306,7 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
      */
     public function setName(string $name): void
     {
-        $this->_name = $name;
+        $this->name = $name;
     }
 
     /**
@@ -436,7 +436,7 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
 
     public function incrementQueryCount(): void
     {
-        $this->_count++;
+        $this->count++;
     }
 
     /**
@@ -1047,7 +1047,7 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
      */
     public function count(): int
     {
-        return $this->_count;
+        return $this->count;
     }
 
     /**
@@ -1382,8 +1382,8 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
      */
     public function serialize(): string
     {
-        $vars                = get_object_vars($this);
-        $vars['dbh']         = null;
+        $vars = get_object_vars($this);
+        $vars['dbh'] = null;
         $vars['isConnected'] = false;
         return serialize($vars);
     }
@@ -1416,7 +1416,7 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
         $key    = implode('_', array_merge($parts, [$relation['onDelete']], [$relation['onUpdate']]));
         $format = $this->getAttribute(Doctrine_Core::ATTR_FKNAME_FORMAT);
 
-        return $this->_generateUniqueName('foreign_keys', $parts, $key, $format, $this->getAttribute(Doctrine_Core::ATTR_MAX_IDENTIFIER_LENGTH));
+        return $this->generateUniqueName('foreign_keys', $parts, $key, $format, $this->getAttribute(Doctrine_Core::ATTR_MAX_IDENTIFIER_LENGTH));
     }
 
     /**
@@ -1434,7 +1434,7 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
         $key    = implode('_', $parts);
         $format = $this->getAttribute(Doctrine_Core::ATTR_IDXNAME_FORMAT);
 
-        return $this->_generateUniqueName('indexes', $parts, $key, $format, $this->getAttribute(Doctrine_Core::ATTR_MAX_IDENTIFIER_LENGTH));
+        return $this->generateUniqueName('indexes', $parts, $key, $format, $this->getAttribute(Doctrine_Core::ATTR_MAX_IDENTIFIER_LENGTH));
     }
 
     /**
@@ -1445,10 +1445,10 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
      * @param  int|null    $maxLength
      * @return string
      */
-    protected function _generateUniqueName(string $type, array $parts, string $key, string $format = '%s', ?int $maxLength = null): string
+    protected function generateUniqueName(string $type, array $parts, string $key, string $format = '%s', ?int $maxLength = null): string
     {
-        if (isset($this->_usedNames[$type][$key])) {
-            return $this->_usedNames[$type][$key];
+        if (isset($this->usedNames[$type][$key])) {
+            return $this->usedNames[$type][$key];
         }
         if ($maxLength === null) {
             $maxLength = $this->properties['max_identifier_length'];
@@ -1469,7 +1469,7 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
             $name = $generated;
         }
 
-        while (in_array($name, $this->_usedNames[$type])) {
+        while (in_array($name, $this->usedNames[$type])) {
             $e   = explode('_', $name);
             $end = end($e);
 
@@ -1482,7 +1482,7 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
             }
         }
 
-        $this->_usedNames[$type][$key] = $name;
+        $this->usedNames[$type][$key] = $name;
 
         return $name;
     }

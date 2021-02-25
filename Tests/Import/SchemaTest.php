@@ -51,12 +51,12 @@ class SchemaTest extends DoctrineUnitTestCase
 
         foreach ($this->schema as $name => $properties) {
             foreach ($properties['relations'] as $alias => $relation) {
-                $this->assertTrue($this->_verifyMultiDirectionalRelationship($name, $alias, $relation));
+                $this->assertTrue($this->verifyMultiDirectionalRelationship($name, $alias, $relation));
             }
         }
     }
 
-    protected function _verifyMultiDirectionalRelationship($class, $relationAlias, $relation)
+    protected function verifyMultiDirectionalRelationship($class, $relationAlias, $relation)
     {
         $foreignClass = $relation['class'];
         $foreignAlias = isset($relation['foreignAlias']) ? $relation['foreignAlias']:$class;

@@ -45,7 +45,7 @@ abstract class Doctrine_Relation implements ArrayAccess
      */
     protected array $definition;
 
-    protected ?bool $_isRefClass = null;
+    protected ?bool $isRefClass = null;
 
     /**
      * constructor
@@ -478,19 +478,19 @@ abstract class Doctrine_Relation implements ArrayAccess
      */
     public function isRefClass()
     {
-        if ($this->_isRefClass === null) {
-            $this->_isRefClass = false;
+        if ($this->isRefClass === null) {
+            $this->isRefClass = false;
             $table             = $this->getTable();
             foreach ($table->getRelations() as $name => $relation) {
                 foreach ($relation['table']->getRelations() as $relation) {
                     if (isset($relation['refTable']) && $relation['refTable'] === $table) {
-                        $this->_isRefClass = true;
+                        $this->isRefClass = true;
                         break(2);
                     }
                 }
             }
         }
 
-        return $this->_isRefClass;
+        return $this->isRefClass;
     }
 }

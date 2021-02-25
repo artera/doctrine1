@@ -63,7 +63,7 @@ class Doctrine_Cache_Db extends Doctrine_Cache_Driver
      */
     public function getConnection()
     {
-        return $this->_options['connection'];
+        return $this->options['connection'];
     }
 
     /**
@@ -75,7 +75,7 @@ class Doctrine_Cache_Db extends Doctrine_Cache_Driver
      */
     protected function doFetch(string $id, bool $testCacheValidity = true)
     {
-        $sql = "SELECT data, expire FROM {$this->_options['tableName']} WHERE id = ?";
+        $sql = "SELECT data, expire FROM {$this->options['tableName']} WHERE id = ?";
 
         if ($testCacheValidity) {
             $sql .= " AND (expire is null OR expire > '" . date('Y-m-d H:i:s') . "')";
@@ -98,7 +98,7 @@ class Doctrine_Cache_Db extends Doctrine_Cache_Driver
      */
     protected function doContains(string $id): bool
     {
-        $sql = "SELECT id, expire FROM {$this->_options['tableName']} WHERE id = ?";
+        $sql = "SELECT id, expire FROM {$this->options['tableName']} WHERE id = ?";
         $result = $this->getConnection()->fetchOne($sql, [$id]);
         return isset($result[0]);
     }
@@ -107,7 +107,7 @@ class Doctrine_Cache_Db extends Doctrine_Cache_Driver
     {
         if ($this->contains($id)) {
             //record is in database, do update
-            $sql = "UPDATE {$this->_options['tableName']} SET data = ?, expire=?  WHERE id = ?";
+            $sql = "UPDATE {$this->options['tableName']} SET data = ?, expire=?  WHERE id = ?";
 
             if ($lifeTime) {
                 $expire = date('Y-m-d H:i:s', time() + $lifeTime);
@@ -118,7 +118,7 @@ class Doctrine_Cache_Db extends Doctrine_Cache_Driver
             $params = [bin2hex(serialize($data)), $expire, $id];
         } else {
             //record is not in database, do insert
-            $sql = "INSERT INTO {$this->_options['tableName']} (id, data, expire) VALUES (?, ?, ?)";
+            $sql = "INSERT INTO {$this->options['tableName']} (id, data, expire) VALUES (?, ?, ?)";
 
             if ($lifeTime) {
                 $expire = date('Y-m-d H:i:s', time() + $lifeTime);
@@ -140,7 +140,7 @@ class Doctrine_Cache_Db extends Doctrine_Cache_Driver
      */
     protected function doDelete(string $id): bool
     {
-        $sql = "DELETE FROM {$this->_options['tableName']} WHERE id = ?";
+        $sql = "DELETE FROM {$this->options['tableName']} WHERE id = ?";
         return (bool) $this->getConnection()->exec($sql, [$id]);
     }
 
@@ -149,7 +149,7 @@ class Doctrine_Cache_Db extends Doctrine_Cache_Driver
      */
     public function createTable(): void
     {
-        $name = $this->_options['tableName'];
+        $name = $this->options['tableName'];
 
         $fields = [
             'id' => [
@@ -193,7 +193,7 @@ class Doctrine_Cache_Db extends Doctrine_Cache_Driver
      */
     protected function getCacheKeys(): array
     {
-        $sql     = "SELECT id FROM {$this->_options['tableName']}";
+        $sql     = "SELECT id FROM {$this->options['tableName']}";
         $keys    = [];
         /** @phpstan-var array<int, mixed>[] */
         $results = $this->getConnection()->execute($sql)->fetchAll(Doctrine_Core::FETCH_NUM);

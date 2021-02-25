@@ -7,28 +7,28 @@ class Doctrine_Adapter_Mock extends PDO
      *
      * @var string
      */
-    private string $_name;
+    private string $name;
 
     /**
      * Array of queries executed through this instance of the mock adapter
      *
-     * @var array $_queries
+     * @var array $queries
      */
-    private $_queries = [];
+    private $queries = [];
 
     /**
      * Array of exceptions thrown
      *
-     * @var array $_exception
+     * @var array $exception
      */
-    private $_exception = [];
+    private $exception = [];
 
     /**
      * Bool true/false variable for whether or not the last insert failed
      *
-     * @var boolean $_lastInsertIdFail
+     * @var boolean $lastInsertIdFail
      */
-    private $_lastInsertIdFail = false;
+    private $lastInsertIdFail = false;
 
     /**
      * Doctrine mock adapter constructor
@@ -42,7 +42,7 @@ class Doctrine_Adapter_Mock extends PDO
      */
     public function __construct(string $name)
     {
-        $this->_name = $name;
+        $this->name = $name;
     }
 
     /**
@@ -52,7 +52,7 @@ class Doctrine_Adapter_Mock extends PDO
      */
     public function getName(): string
     {
-        return $this->_name;
+        return $this->name;
     }
 
     /**
@@ -62,7 +62,7 @@ class Doctrine_Adapter_Mock extends PDO
      */
     public function pop()
     {
-        return array_pop($this->_queries);
+        return array_pop($this->queries);
     }
 
     /**
@@ -75,7 +75,7 @@ class Doctrine_Adapter_Mock extends PDO
      */
     public function forceException($name, $message = '', $code = 0): void
     {
-        $this->_exception = [$name, $message, $code];
+        $this->exception = [$name, $message, $code];
     }
 
     /** @return Doctrine_Adapter_Statement_Mock|null */
@@ -88,20 +88,20 @@ class Doctrine_Adapter_Mock extends PDO
 
     public function addQuery(string $query): void
     {
-        $this->_queries[] = $query;
+        $this->queries[] = $query;
     }
 
     /** @return Doctrine_Adapter_Statement_Mock */
     public function query(string $query, ?int $fetchMode = null, mixed ...$fetchModeArgs)
     {
-        $this->_queries[] = $query;
+        $this->queries[] = $query;
 
-        $e = $this->_exception;
+        $e = $this->exception;
 
         if (!empty($e)) {
             $name = $e[0];
 
-            $this->_exception = [];
+            $this->exception = [];
 
             /** @var Exception $exception */
             $exception = new $name($e[1], $e[2]);
@@ -117,7 +117,7 @@ class Doctrine_Adapter_Mock extends PDO
 
     public function getAll(): array
     {
-        return $this->_queries;
+        return $this->queries;
     }
 
     public function quote(string $string, int $type = PDO::PARAM_STR)
@@ -127,14 +127,14 @@ class Doctrine_Adapter_Mock extends PDO
 
     public function exec($statement): int
     {
-        $this->_queries[] = $statement;
+        $this->queries[] = $statement;
 
-        $e = $this->_exception;
+        $e = $this->exception;
 
         if (!empty($e)) {
             $name = $e[0];
 
-            $this->_exception = [];
+            $this->exception = [];
 
             /** @var Exception $exception */
             $exception = new $name($e[1], $e[2]);
@@ -154,16 +154,16 @@ class Doctrine_Adapter_Mock extends PDO
     public function forceLastInsertIdFail($fail = true): void
     {
         if ($fail) {
-            $this->_lastInsertIdFail = true;
+            $this->lastInsertIdFail = true;
         } else {
-            $this->_lastInsertIdFail = false;
+            $this->lastInsertIdFail = false;
         }
     }
 
     public function lastInsertId(?string $name = null): string
     {
-        $this->_queries[] = 'LAST_INSERT_ID()';
-        if ($this->_lastInsertIdFail) {
+        $this->queries[] = 'LAST_INSERT_ID()';
+        if ($this->lastInsertIdFail) {
             return '';
         } else {
             return '1';
@@ -172,26 +172,26 @@ class Doctrine_Adapter_Mock extends PDO
 
     public function count(): int
     {
-        return count($this->_queries);
+        return count($this->queries);
     }
 
     public function beginTransaction(): bool
     {
-        $this->_queries[] = 'BEGIN TRANSACTION';
+        $this->queries[] = 'BEGIN TRANSACTION';
 
         return true;
     }
 
     public function commit(): bool
     {
-        $this->_queries[] = 'COMMIT';
+        $this->queries[] = 'COMMIT';
 
         return true;
     }
 
     public function rollBack(): bool
     {
-        $this->_queries[] = 'ROLLBACK';
+        $this->queries[] = 'ROLLBACK';
 
         return true;
     }
@@ -199,7 +199,7 @@ class Doctrine_Adapter_Mock extends PDO
     public function getAttribute(int $attribute): mixed
     {
         if ($attribute == Doctrine_Core::ATTR_DRIVER_NAME) {
-            return strtolower($this->_name);
+            return strtolower($this->name);
         }
 
         return null;

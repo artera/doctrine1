@@ -33,23 +33,23 @@
  */
 class Doctrine_Hydrator
 {
-    protected static int $_totalHydrationTime = 0;
+    protected static int $totalHydrationTime = 0;
 
-    protected array $_hydrators;
+    protected array $hydrators;
 
-    protected ?string $_rootAlias = null;
+    protected ?string $rootAlias = null;
 
     /** @phpstan-var int|class-string<Doctrine_Hydrator_Abstract> */
-    protected int|string $_hydrationMode = Doctrine_Core::HYDRATE_RECORD;
+    protected int|string $hydrationMode = Doctrine_Core::HYDRATE_RECORD;
 
     /**
      * @phpstan-var array<string, array{table: Doctrine_Table, map: ?string, parent?: string, relation?: Doctrine_Relation, ref?: bool, agg?: array<string, string>}>
      */
-    protected array $_queryComponents = [];
+    protected array $queryComponents = [];
 
     public function __construct()
     {
-        $this->_hydrators = Doctrine_Manager::getInstance()->getHydrators();
+        $this->hydrators = Doctrine_Manager::getInstance()->getHydrators();
     }
 
     /**
@@ -60,7 +60,7 @@ class Doctrine_Hydrator
      */
     public function getHydrationMode(): int|string
     {
-        return $this->_hydrationMode;
+        return $this->hydrationMode;
     }
 
     /**
@@ -73,7 +73,7 @@ class Doctrine_Hydrator
      */
     public function setHydrationMode(int|string $hydrationMode): void
     {
-        $this->_hydrationMode = $hydrationMode;
+        $this->hydrationMode = $hydrationMode;
     }
 
     /**
@@ -83,7 +83,7 @@ class Doctrine_Hydrator
      */
     public function setQueryComponents(array $queryComponents): void
     {
-        $this->_queryComponents = $queryComponents;
+        $this->queryComponents = $queryComponents;
     }
 
     /**
@@ -93,7 +93,7 @@ class Doctrine_Hydrator
      */
     public function getQueryComponents(): array
     {
-        return $this->_queryComponents;
+        return $this->queryComponents;
     }
 
     /**
@@ -105,14 +105,14 @@ class Doctrine_Hydrator
     public function getHydratorDriverClassName(int|string|null $mode = null): string|Doctrine_Hydrator_Abstract
     {
         if ($mode === null) {
-            $mode = $this->_hydrationMode;
+            $mode = $this->hydrationMode;
         }
 
-        if (!isset($this->_hydrators[$mode])) {
-            throw new Doctrine_Hydrator_Exception('Invalid hydration mode specified: ' . $this->_hydrationMode);
+        if (!isset($this->hydrators[$mode])) {
+            throw new Doctrine_Hydrator_Exception('Invalid hydration mode specified: ' . $this->hydrationMode);
         }
 
-        return $this->_hydrators[$mode];
+        return $this->hydrators[$mode];
     }
 
     /**
@@ -127,11 +127,11 @@ class Doctrine_Hydrator
                 throw new Doctrine_Hydrator_Exception('Invalid hydration class specified: ' . get_class($driverClass));
             }
             $driver = $driverClass;
-            $driver->setQueryComponents($this->_queryComponents);
+            $driver->setQueryComponents($this->queryComponents);
             $driver->setTableAliases($tableAliases);
             $driver->setHydrationMode($mode);
         } else {
-            $driver = new $driverClass($this->_queryComponents, $tableAliases, $mode);
+            $driver = new $driverClass($this->queryComponents, $tableAliases, $mode);
         }
 
         return $driver;
@@ -143,7 +143,7 @@ class Doctrine_Hydrator
      */
     public function hydrateResultSet(Doctrine_Connection_Statement $stmt, array $tableAliases): mixed
     {
-        $driver = $this->getHydratorDriver($this->_hydrationMode, $tableAliases);
+        $driver = $this->getHydratorDriver($this->hydrationMode, $tableAliases);
         return $driver->hydrateResultSet($stmt);
     }
 }

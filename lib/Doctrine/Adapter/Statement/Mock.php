@@ -2,13 +2,13 @@
 
 class Doctrine_Adapter_Statement_Mock extends Doctrine_Connection_Statement
 {
-    private Doctrine_Adapter_Mock $_mock;
+    private Doctrine_Adapter_Mock $mock;
 
     public string $queryString;
 
     public function __construct(Doctrine_Adapter_Mock $mock)
     {
-        $this->_mock = $mock;
+        $this->mock = $mock;
     }
 
     public function bindColumn(int|string $column, string &$param, mixed ...$args): bool
@@ -58,8 +58,8 @@ class Doctrine_Adapter_Statement_Mock extends Doctrine_Connection_Statement
 
     public function execute(array $input_parameters = null): bool
     {
-        if (is_object($this->_mock)) {
-            $this->_mock->addQuery($this->queryString);
+        if (is_object($this->mock)) {
+            $this->mock->addQuery($this->queryString);
         }
         return true;
     }

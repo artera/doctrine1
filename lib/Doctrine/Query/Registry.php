@@ -2,7 +2,7 @@
 
 class Doctrine_Query_Registry
 {
-    protected array $_queries = [];
+    protected array $queries = [];
 
     public function add(string $key, Doctrine_Query|string $query): void
     {
@@ -11,28 +11,28 @@ class Doctrine_Query_Registry
         }
 
         if (strpos($key, '/') === false) {
-            $this->_queries[$key] = $query;
+            $this->queries[$key] = $query;
         } else {
             // namespace found
 
             $e = explode('/', $key);
 
-            $this->_queries[$e[0]][$e[1]] = $query;
+            $this->queries[$e[0]][$e[1]] = $query;
         }
     }
 
     public function get(string $key, ?string $namespace = null): Doctrine_Query
     {
         if (isset($namespace)) {
-            if (!isset($this->_queries[$namespace][$key])) {
+            if (!isset($this->queries[$namespace][$key])) {
                 throw new Doctrine_Query_Registry_Exception('A query with the name ' . $namespace . '/' . $key . ' does not exist.');
             }
-            $query = $this->_queries[$namespace][$key];
+            $query = $this->queries[$namespace][$key];
         } else {
-            if (!isset($this->_queries[$key])) {
+            if (!isset($this->queries[$key])) {
                 throw new Doctrine_Query_Registry_Exception('A query with the name ' . $key . ' does not exist.');
             }
-            $query = $this->_queries[$key];
+            $query = $this->queries[$key];
         }
 
         if (!($query instanceof Doctrine_Query)) {
@@ -46,7 +46,7 @@ class Doctrine_Query_Registry
     public function has(string $key, ?string $namespace = null): bool
     {
         return isset($namespace)
-            ? isset($this->_queries[$namespace][$key])
-            : isset($this->_queries[$key]);
+            ? isset($this->queries[$namespace][$key])
+            : isset($this->queries[$key]);
     }
 }

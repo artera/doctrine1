@@ -4,7 +4,7 @@ class Doctrine_Query_Set extends Doctrine_Query_Part
 {
     public function parse(string $dql): string
     {
-        $terms            = $this->_tokenizer->sqlExplode($dql, ' ');
+        $terms            = $this->tokenizer->sqlExplode($dql, ' ');
         $termsTranslation = [];
 
         foreach ($terms as $term) {
@@ -12,7 +12,7 @@ class Doctrine_Query_Set extends Doctrine_Query_Part
 
             // We need to check for agg functions here
             $matches          = [];
-            $hasAggExpression = $this->_processPossibleAggExpression($term, $matches);
+            $hasAggExpression = $this->processPossibleAggExpression($term, $matches);
 
             $lftExpr = (($hasAggExpression) ? $matches[1] . '(' : '');
             $rgtExpr = (($hasAggExpression) ? $matches[3] . ')' : '');
@@ -47,7 +47,7 @@ class Doctrine_Query_Set extends Doctrine_Query_Part
         return strtr($dql, $termsTranslation);
     }
 
-    protected function _processPossibleAggExpression(string &$expr, array &$matches = []): ?int
+    protected function processPossibleAggExpression(string &$expr, array &$matches = []): ?int
     {
         $hasAggExpr = preg_match('/(.*[^\s\(\=])\(([^\)]*)\)(.*)/', $expr, $matches);
         if (!$hasAggExpr) {
@@ -58,7 +58,7 @@ class Doctrine_Query_Set extends Doctrine_Query_Part
 
         // We need to process possible comma separated items
         if (substr(trim($matches[3]), 0, 1) == ',') {
-            $xplod = $this->_tokenizer->sqlExplode(trim($matches[3], ' )'), ',');
+            $xplod = $this->tokenizer->sqlExplode(trim($matches[3], ' )'), ',');
 
             $matches[3] = [];
 

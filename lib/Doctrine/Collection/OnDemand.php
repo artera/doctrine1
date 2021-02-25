@@ -6,22 +6,22 @@
  */
 class Doctrine_Collection_OnDemand implements Iterator
 {
-    protected Doctrine_Connection_Statement $_stmt;
+    protected Doctrine_Connection_Statement $stmt;
 
     /**
      * @var mixed
      */
-    protected $_current;
+    protected $current;
 
     /**
      * @var array
      */
-    protected $_tableAliasMap;
+    protected $tableAliasMap;
 
     /**
      * @var Doctrine_Hydrator_Abstract
      */
-    protected $_hydrator;
+    protected $hydrator;
 
     /**
      * @var int
@@ -34,29 +34,29 @@ class Doctrine_Collection_OnDemand implements Iterator
      */
     public function __construct(Doctrine_Connection_Statement $stmt, $hydrator, $tableAliasMap)
     {
-        $this->_stmt          = $stmt;
-        $this->_hydrator      = $hydrator;
-        $this->_tableAliasMap = $tableAliasMap;
-        $this->_current       = null;
+        $this->stmt          = $stmt;
+        $this->hydrator      = $hydrator;
+        $this->tableAliasMap = $tableAliasMap;
+        $this->current       = null;
         $this->index          = 0;
 
-        $this->_hydrateCurrent();
+        $this->hydrateCurrent();
     }
 
     /**
      * @return void
      */
-    private function _hydrateCurrent()
+    private function hydrateCurrent()
     {
-        $record = $this->_hydrator->hydrateResultSet($this->_stmt);
+        $record = $this->hydrator->hydrateResultSet($this->stmt);
         if ($record instanceof Doctrine_Collection) {
-            $this->_current = $record->getFirst();
+            $this->current = $record->getFirst();
         } elseif (is_array($record) && count($record) == 0) {
-            $this->_current = null;
+            $this->current = null;
         } elseif (is_array($record) && isset($record[0])) {
-            $this->_current = $record[0];
+            $this->current = $record[0];
         } else {
-            $this->_current = $record;
+            $this->current = $record;
         }
     }
 
@@ -66,10 +66,10 @@ class Doctrine_Collection_OnDemand implements Iterator
     public function rewind()
     {
         $this->index = 0;
-        $this->_stmt->closeCursor();
-        $this->_stmt->execute();
-        $this->_hydrator->onDemandReset();
-        $this->_hydrateCurrent();
+        $this->stmt->closeCursor();
+        $this->stmt->execute();
+        $this->hydrator->onDemandReset();
+        $this->hydrateCurrent();
     }
 
     /**
@@ -85,7 +85,7 @@ class Doctrine_Collection_OnDemand implements Iterator
      */
     public function current()
     {
-        return $this->_current;
+        return $this->current;
     }
 
     /**
@@ -93,9 +93,9 @@ class Doctrine_Collection_OnDemand implements Iterator
      */
     public function next()
     {
-        $this->_current = null;
+        $this->current = null;
         $this->index++;
-        $this->_hydrateCurrent();
+        $this->hydrateCurrent();
     }
 
     /**
@@ -103,7 +103,7 @@ class Doctrine_Collection_OnDemand implements Iterator
      */
     public function valid()
     {
-        if (!is_null($this->_current) && $this->_current !== false) {
+        if (!is_null($this->current) && $this->current !== false) {
             return true;
         }
         return false;

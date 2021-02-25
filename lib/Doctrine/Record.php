@@ -32,19 +32,19 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
     /**
      * the state of this record
      */
-    protected State $state;
+    protected State $_state;
 
     /**
      * an array containing field names that were modified in the previous transaction
      * @var string[]
      */
-    protected array $lastModified = [];
+    protected array $_lastModified = [];
 
     /**
      * an array containing field names that have been modified
      * @var string[]
      */
-    protected array $modified = [];
+    protected array $_modified = [];
 
     /**
      * an array of the old values from set properties
@@ -156,18 +156,18 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
 
         if (!$exists) {
             if ($count > count($this->_values)) {
-                $this->state = State::TDIRTY();
+                $this->_state = State::TDIRTY();
             } else {
-                $this->state = State::TCLEAN();
+                $this->_state = State::TCLEAN();
             }
 
             // set the default values for this record
             $this->assignDefaultValues();
         } else {
-            $this->state = State::CLEAN();
+            $this->_state = State::CLEAN();
 
             if ($this->isInProxyState()) {
-                $this->state = State::PROXY();
+                $this->_state = State::PROXY();
             }
         }
 
@@ -196,16 +196,6 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
             $this->_serializeReferences = $bool;
         }
         return $this->_serializeReferences;
-    }
-
-    /**
-     * the current instance counter used to generate unique ids for php objects. Contains the next identifier.
-     *
-     * @return integer
-     */
-    public static function _index()
-    {
-        return self::$_index;
     }
 
     /**
@@ -293,7 +283,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
             return true;
         }
 
-        if ($this->state->isLocked()) {
+        if ($this->_state->isLocked()) {
             return true;
         }
 
@@ -314,7 +304,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
         $validator->validateRecord($this);
         $this->validate();
 
-        if ($this->state->isTransient()) {
+        if ($this->_state->isTransient()) {
             $this->validateOnInsert();
         } else {
             $this->validateOnUpdate();
@@ -325,8 +315,8 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
 
         $valid = $this->getErrorStack()->count() == 0 ? true : false;
         if ($valid && $deep) {
-            $stateBeforeLock = $this->state;
-            $this->state = $this->state->lock();
+            $stateBeforeLock = $this->_state;
+            $this->_state = $this->_state->lock();
 
             foreach ($this->_references as $reference) {
                 if ($reference instanceof Doctrine_Record) {
@@ -341,7 +331,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
                     }
                 }
             }
-            $this->state = $stateBeforeLock;
+            $this->_state = $stateBeforeLock;
         }
 
         return $valid;
@@ -653,10 +643,10 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
         $map = $this->_table->inheritanceMap;
         foreach ($map as $k => $v) {
             $k   = $this->_table->getFieldName($k);
-            $old = $this->get($k, false);
+            $old = $this->get($k, false, accessors: true);
 
-            if (((string) $old !== (string) $v || $old === null) && !in_array($k, $this->modified)) {
-                $this->set($k, $v);
+            if (((string) $old !== (string) $v || $old === null) && !in_array($k, $this->_modified)) {
+                $this->set($k, $v, mutators: true);
             }
         }
     }
@@ -682,8 +672,8 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
 
             if ($value instanceof Doctrine_Null || $overwrite) {
                 $this->_data[$column] = $default;
-                $this->modified[] = $column;
-                $this->state = State::TDIRTY();
+                $this->_modified[] = $column;
+                $this->_state = State::TDIRTY();
             }
         }
 
@@ -731,7 +721,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
         if ($overwriteLocalChanges) {
             $this->_values    = array_merge($this->_values, $this->cleanData($data));
             $this->_data      = array_merge($this->_data, $data);
-            $this->modified  = [];
+            $this->_modified  = [];
             $this->_oldValues = [];
         } else {
             $this->_values = array_merge($this->cleanData($data), $this->_values);
@@ -739,7 +729,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
         }
 
         if (!$this->isModified() && $this->isInProxyState()) {
-            $this->state = State::PROXY();
+            $this->_state = State::PROXY();
         }
     }
 
@@ -802,7 +792,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
         unset($vars['_errorStack']);
         unset($vars['_filter']);
         unset($vars['_node']);
-        $vars['state'] = (string) $vars['state'];
+        $vars['_state'] = (string) $vars['_state'];
 
         $data = $this->_data;
         if ($this->exists()) {
@@ -869,8 +859,8 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
         $array = unserialize($serialized);
 
         foreach ($array as $k => $v) {
-            if ($k === 'state') {
-                $this->state = State::from((int) $v);
+            if ($k === '_state') {
+                $this->_state = State::from((int) $v);
             } else {
                 $this->$k = $v;
             }
@@ -928,12 +918,12 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
     public function state(?State $state = null): State
     {
         if ($state !== null) {
-            $this->state = $state;
+            $this->_state = $state;
             if ($state->isClean()) {
-                $this->_resetModified();
+                $this->resetModified();
             }
         }
-        return $this->state;
+        return $this->_state;
     }
 
     /**
@@ -985,11 +975,11 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
             throw new Doctrine_Record_Exception('Failed to refresh. Record does not exist.');
         }
 
-        $this->_resetModified();
+        $this->resetModified();
 
         $this->prepareIdentifiers();
 
-        $this->state = State::CLEAN();
+        $this->_state = State::CLEAN();
 
         return $this;
     }
@@ -1161,9 +1151,9 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
             }
 
             if ($this->isModified()) {
-                $this->state = State::DIRTY();
+                $this->_state = State::DIRTY();
             } elseif (!$this->isInProxyState()) {
-                $this->state = State::CLEAN();
+                $this->_state = State::CLEAN();
             }
 
             return true;
@@ -1332,28 +1322,27 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
      * @throws Doctrine_Record_Exception        if trying to get a value of unknown property / related component
      * @return mixed
      */
-    public function get($fieldName, $load = true)
+    public function get($fieldName, $load = true, bool $accessors = false)
     {
-        if ($this->_table->getAttribute(Doctrine_Core::ATTR_AUTO_ACCESSOR_OVERRIDE) || $this->hasAccessor($fieldName)) {
+        static $inAccessor = false;
+
+        if (!$inAccessor && $accessors
+        && ($this->_table->getAttribute(Doctrine_Core::ATTR_AUTO_ACCESSOR_OVERRIDE) || $this->hasAccessor($fieldName))) {
             $componentName = $this->_table->getComponentName();
             $accessor = $this->getAccessor($fieldName) ?? 'get' . Doctrine_Inflector::classify($fieldName);
 
             if ($this->hasAccessor($fieldName) || method_exists($this, $accessor)) {
                 $this->hasAccessor($fieldName, $accessor);
-                return $this->$accessor($load, $fieldName);
+                $inAccessor = true;
+                try {
+                    return $this->$accessor($load, $fieldName);
+                } finally {
+                    $inAccessor = false;
+                }
             }
         }
 
-        return $this->_get($fieldName, $load);
-    }
-
-    /**
-     * @param  string $fieldName
-     * @param  bool   $load
-     * @return mixed
-     */
-    protected function _get($fieldName, $load = true)
-    {
+        // old _get
         $value = Doctrine_Null::instance();
 
         if (array_key_exists($fieldName, $this->_values)) {
@@ -1407,30 +1396,6 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
     }
 
     /**
-     * sets a value that will be managed as if it were a field by magic accessor and mutators, @see get() and @see set().
-     * Normally used by Doctrine for the mapping of aggregate values.
-     *
-     * @param  string $name  the name of the mapped value
-     * @param  mixed  $value mixed value to be mapped
-     * @return void
-     */
-    public function mapValue($name, $value = null)
-    {
-        $this->_values[$name] = $value;
-    }
-
-    /**
-     * Tests whether a mapped value exists
-     *
-     * @param  string $name the name of the property
-     * @return boolean
-     */
-    public function hasMappedValue($name)
-    {
-        return array_key_exists($name, $this->_values);
-    }
-
-    /**
      * alters mapped values, properties and related components.
      *
      * @param mixed   $fieldName name of the property or reference
@@ -1442,28 +1407,27 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
      *
      * @return $this
      */
-    public function set($fieldName, $value, $load = true)
+    public function set($fieldName, $value, $load = true, bool $mutators = false)
     {
-        if ($this->_table->getAttribute(Doctrine_Core::ATTR_AUTO_ACCESSOR_OVERRIDE) || $this->hasMutator($fieldName)) {
+        static $inMutator = false;
+
+        if (!$inMutator && $mutators
+        && ($this->_table->getAttribute(Doctrine_Core::ATTR_AUTO_ACCESSOR_OVERRIDE) || $this->hasMutator($fieldName))) {
             $componentName = $this->_table->getComponentName();
             $mutator       = $this->getMutator($fieldName) ?? 'set' . Doctrine_Inflector::classify($fieldName);
 
             if ($this->hasMutator($fieldName) || method_exists($this, $mutator)) {
                 $this->hasMutator($fieldName, $mutator);
-                return $this->$mutator($value, $load, $fieldName);
+                $inMutator = true;
+                try {
+                    return $this->$mutator($value, $load, $fieldName);
+                } finally {
+                    $inMutator = false;
+                }
             }
         }
-        return $this->_set($fieldName, $value, $load);
-    }
 
-    /**
-     * @param  string $fieldName
-     * @param  mixed  $value
-     * @param  bool   $load
-     * @return $this
-     */
-    protected function _set($fieldName, $value, $load = true)
-    {
+        // old _set
         if (array_key_exists($fieldName, $this->_values)) {
             $this->_values[$fieldName] = $value;
         } elseif (array_key_exists($fieldName, $this->_data)) {
@@ -1482,21 +1446,21 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
                 $old = $this->_data[$fieldName];
             }
 
-            if ($this->_isValueModified($type, $old, $value)) {
+            if ($this->isValueModified($type, $old, $value)) {
                 if ($value === null) {
                     $value = $this->_table->getDefaultValueOf($fieldName);
                 }
                 $this->_data[$fieldName] = $value;
-                $this->modified[] = $fieldName;
+                $this->_modified[] = $fieldName;
                 $this->_oldValues[$fieldName] = $old;
 
-                switch ($this->state) {
+                switch ($this->_state) {
                     case State::CLEAN():
                     case State::PROXY():
-                        $this->state = State::DIRTY();
+                        $this->_state = State::DIRTY();
                         break;
                     case State::TCLEAN():
-                        $this->state = State::TDIRTY();
+                        $this->_state = State::TDIRTY();
                         break;
                 }
             }
@@ -1523,6 +1487,57 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
         return $this;
     }
 
+    public function __set(string $name, $value)
+    {
+        $this->set($name, $value, mutators: true);
+    }
+
+    public function __get(string $name)
+    {
+        return $this->get($name, accessors: true);
+    }
+
+    public function offsetGet($offset)
+    {
+        if (!is_string($offset)) {
+            return null;
+        }
+        return $this->get($offset, accessors: true);
+    }
+
+    public function offsetSet($offset, $value)
+    {
+        if (!is_string($offset)) {
+            return;
+        } else {
+            $this->set($offset, $value, mutators: true);
+        }
+    }
+
+    /**
+     * sets a value that will be managed as if it were a field by magic accessor and mutators, @see get() and @see set().
+     * Normally used by Doctrine for the mapping of aggregate values.
+     *
+     * @param  string $name  the name of the mapped value
+     * @param  mixed  $value mixed value to be mapped
+     * @return void
+     */
+    public function mapValue($name, $value = null)
+    {
+        $this->_values[$name] = $value;
+    }
+
+    /**
+     * Tests whether a mapped value exists
+     *
+     * @param  string $name the name of the property
+     * @return boolean
+     */
+    public function hasMappedValue($name)
+    {
+        return array_key_exists($name, $this->_values);
+    }
+
     /**
      * Check if a value has changed according to Doctrine
      * Doctrine is loose with type checking in the same ways PHP is for consistancy of behavior
@@ -1538,7 +1553,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
      * @param  string|bool|int|float|null|Doctrine_Null|Doctrine_Expression $new  New value
      * @return boolean $modified  Whether or not Doctrine considers the value modified
      */
-    protected function _isValueModified($type, $old, $new)
+    protected function isValueModified($type, $old, $new)
     {
         if ($new instanceof Doctrine_Expression) {
             return true;
@@ -1616,10 +1631,10 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
 
                 if ($rel instanceof Doctrine_Relation_LocalKey) {
                     if (!$value instanceof Doctrine_Null && !empty($foreignFieldName) && $foreignFieldName != $value->getTable()->getIdentifier()) {
-                        $this->set($localFieldName, $value->rawGet($foreignFieldName), false);
+                        $this->set($localFieldName, $value->rawGet($foreignFieldName), false, mutators: true);
                     } else {
                         // FIX: Ticket #1280 fits in this situation
-                        $this->set($localFieldName, $value, false);
+                        $this->set($localFieldName, $value, false, mutators: true);
                     }
                 } elseif (!$value instanceof Doctrine_Null) {
                     // We should only be able to reach $foreignFieldName if we have a Doctrine_Record on hands
@@ -1790,7 +1805,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
     public function getModified(bool $old = false, bool $last = false): array
     {
         $a = [];
-        $modified = $last ? $this->lastModified : $this->modified;
+        $modified = $last ? $this->_lastModified : $this->_modified;
         foreach ($modified as $fieldName) {
             if ($old) {
                 $a[$fieldName] = isset($this->_oldValues[$fieldName])
@@ -1838,7 +1853,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
         $modifiedFields = [];
 
         if (empty($array)) {
-            $modifiedFields = $this->modified;
+            $modifiedFields = $this->_modified;
         }
 
         foreach ($modifiedFields as $field) {
@@ -1911,12 +1926,12 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
      */
     public function toArray($deep = true, $prefixKey = false): ?array
     {
-        if ($this->state->isLocked()) {
+        if ($this->_state->isLocked()) {
             return null;
         }
 
-        $stateBeforeLock = $this->state;
-        $this->state = $this->state->lock();
+        $stateBeforeLock = $this->_state;
+        $this->_state = $this->_state->lock();
 
         $a = [];
 
@@ -1925,7 +1940,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
                 $value = null;
             }
 
-            $columnValue = $this->get($column, false);
+            $columnValue = $this->get($column, false, accessors: true);
 
             if ($columnValue instanceof Doctrine_Record) {
                 $a[$column] = $columnValue->getIncremented();
@@ -1956,7 +1971,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
                 ? $value->toArray($deep, $prefixKey) : $value;
         }
 
-        $this->state = $stateBeforeLock;
+        $this->_state = $stateBeforeLock;
 
         return $a;
     }
@@ -2016,7 +2031,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
                     }
                 }
             } elseif ($this->getTable()->hasField($key) || array_key_exists($key, $this->_values)) {
-                $this->set($key, $value);
+                $this->set($key, $value, mutators: true);
             } else {
                 $method = 'set' . Doctrine_Inflector::classify($key);
 
@@ -2098,7 +2113,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
      */
     public function exists()
     {
-        return !$this->state->isTransient();
+        return !$this->_state->isTransient();
     }
 
     /**
@@ -2109,14 +2124,14 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
      */
     public function isModified($deep = false)
     {
-        $modified = $this->state->isDirty();
+        $modified = $this->_state->isDirty();
         if (!$modified && $deep) {
-            if ($this->state->isLocked()) {
+            if ($this->_state->isLocked()) {
                 return false;
             }
 
-            $stateBeforeLock = $this->state;
-            $this->state = $this->state->lock();
+            $stateBeforeLock = $this->_state;
+            $this->_state = $this->_state->lock();
 
             foreach ($this->_references as $reference) {
                 if ($reference instanceof Doctrine_Record) {
@@ -2131,7 +2146,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
                     }
                 }
             }
-            $this->state = $stateBeforeLock;
+            $this->_state = $stateBeforeLock;
         }
         return $modified;
     }
@@ -2198,7 +2213,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
 
         foreach ($data as $key => $val) {
             if (!($val instanceof Doctrine_Null)) {
-                $ret->modified[] = $key;
+                $ret->_modified[] = $key;
             }
         }
 
@@ -2228,12 +2243,12 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
         if ($id === false) {
             $this->_id    = [];
             $this->_data  = $this->cleanData($this->_data);
-            $this->state = State::TCLEAN();
-            $this->_resetModified();
+            $this->_state = State::TCLEAN();
+            $this->resetModified();
         } elseif ($id === true) {
             $this->prepareIdentifiers(true);
-            $this->state = State::CLEAN();
-            $this->_resetModified();
+            $this->_state = State::CLEAN();
+            $this->resetModified();
         } else {
             if (is_array($id)) {
                 foreach ($id as $fieldName => $value) {
@@ -2246,8 +2261,8 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
                 $this->_id[$name] = $id;
                 $this->_data[$name] = $id;
             }
-            $this->state = State::CLEAN();
-            $this->_resetModified();
+            $this->_state = State::CLEAN();
+            $this->resetModified();
         }
     }
 
@@ -2383,7 +2398,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
 
         if (isset($args[0])) {
             $fieldName = $args[0];
-            $args[0]   = $this->get($fieldName);
+            $args[0]   = $this->get($fieldName, accessors: true);
 
             $newvalue = call_user_func_array($callback, $args);
 
@@ -2428,7 +2443,7 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
                     unset($this->_references[$alias]);
                 }
             } else {
-                $allIds = $this->get($alias)->getPrimaryKeys();
+                $allIds = $this->get($alias, accessors: true)->getPrimaryKeys();
                 foreach ($this->_references[$alias] as $k => $record) {
                     if (in_array(current($record->identifier()), $ids) || empty($ids)) {
                         $this->_references[$alias]->remove($k);
@@ -2522,12 +2537,12 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
 
             foreach ($records as $record) {
                 if ($this->$alias instanceof Doctrine_Record) {
-                    $this->set($alias, $record);
+                    $this->set($alias, $record, mutators: true);
                 } else {
-                    if ($c = $this->get($alias)) {
+                    if ($c = $this->get($alias, accessors: true)) {
                         $c->add($record);
                     } else {
-                        $this->set($alias, $record);
+                        $this->set($alias, $record, mutators: true);
                     }
                 }
             }
@@ -2627,11 +2642,11 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
      *
      * @return void
      */
-    protected function _resetModified()
+    protected function resetModified()
     {
-        if (!empty($this->modified)) {
-            $this->lastModified = $this->modified;
-            $this->modified     = [];
+        if (!empty($this->_modified)) {
+            $this->_lastModified = $this->_modified;
+            $this->_modified     = [];
         }
     }
 
@@ -2648,8 +2663,8 @@ abstract class Doctrine_Record extends Doctrine_Record_Abstract implements Count
      */
     public function free($deep = false)
     {
-        if (!$this->state->isLocked()) {
-            $this->state = $this->state->lock();
+        if (!$this->_state->isLocked()) {
+            $this->_state = $this->_state->lock();
 
             $repo = $this->_table->getRepository();
             if ($repo !== null) {

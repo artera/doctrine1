@@ -7,7 +7,7 @@ abstract class Doctrine_Query_Part
      */
     protected Doctrine_Query $query;
 
-    protected Doctrine_Query_Tokenizer $_tokenizer;
+    protected Doctrine_Query_Tokenizer $tokenizer;
 
     /**
      * @param Doctrine_Query $query the query object associated with this parser
@@ -19,7 +19,7 @@ abstract class Doctrine_Query_Part
         if (!$tokenizer) {
             $tokenizer = new Doctrine_Query_Tokenizer();
         }
-        $this->_tokenizer = $tokenizer;
+        $this->tokenizer = $tokenizer;
     }
 
     /**

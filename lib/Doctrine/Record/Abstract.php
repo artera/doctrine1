@@ -66,7 +66,6 @@ abstract class Doctrine_Record_Abstract extends Doctrine_Access
     }
 
     /**
-     * index
      * defines or retrieves an index
      * if the second parameter is set this method defines an index
      * if not this method retrieves index named $name

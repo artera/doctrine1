@@ -26,11 +26,10 @@ abstract class Doctrine_Access implements ArrayAccess
      * Set key and value to data
      *
      * @see    set, offsetSet
-     * @param  scalar|null $name
-     * @param  mixed       $value
+     * @param  mixed $value
      * @return void
      */
-    public function __set($name, $value)
+    public function __set(string $name, $value)
     {
         $this->set($name, $value);
     }
@@ -39,10 +38,9 @@ abstract class Doctrine_Access implements ArrayAccess
      * Get key from data
      *
      * @see    get, offsetGet
-     * @param  scalar|null $name
      * @return mixed
      */
-    public function __get($name)
+    public function __get(string $name)
     {
         return $this->get($name);
     }
@@ -50,10 +48,9 @@ abstract class Doctrine_Access implements ArrayAccess
     /**
      * Check if key exists in data
      *
-     * @param  scalar|null $name
      * @return boolean whether or not this object contains $name
      */
-    public function __isset($name)
+    public function __isset(string $name)
     {
         return $this->contains($name);
     }

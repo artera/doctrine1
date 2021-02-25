@@ -33,9 +33,9 @@
 class Doctrine_Exception extends Exception
 {
     /**
-     * @var array $_errorMessages       an array of error messages
+     * @var array $errorMessages       an array of error messages
      */
-    protected static $_errorMessages = [
+    protected static $errorMessages = [
         Doctrine_Core::ERR                     => 'unknown error',
         Doctrine_Core::ERR_ALREADY_EXISTS      => 'already exists',
         Doctrine_Core::ERR_CANNOT_CREATE       => 'can not create',
@@ -81,10 +81,10 @@ class Doctrine_Exception extends Exception
     public function errorMessage($value = null)
     {
         if (is_null($value)) {
-            return self::$_errorMessages;
+            return self::$errorMessages;
         }
 
-        return isset(self::$_errorMessages[$value]) ?
-           self::$_errorMessages[$value] : self::$_errorMessages[Doctrine_Core::ERR];
+        return isset(self::$errorMessages[$value]) ?
+           self::$errorMessages[$value] : self::$errorMessages[Doctrine_Core::ERR];
     }
 }

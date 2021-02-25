@@ -37,7 +37,7 @@ namespace {
 
     class Ticket_1545_FooFilter extends Doctrine_Record_Filter
     {
-        public function init()
+        public function init(): void
         {
         }
 

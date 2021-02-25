@@ -16,8 +16,8 @@ abstract class AbstractTestCase extends DoctrineUnitTestCase
 
     public function testAsResultCache()
     {
-        $this->_clearCache();
-        $cache = $this->_getCacheDriver();
+        $this->clearCache();
+        $cache = $this->getCacheDriver();
 
         static::$conn->setAttribute(\Doctrine_Core::ATTR_RESULT_CACHE, $cache);
 
@@ -46,8 +46,8 @@ abstract class AbstractTestCase extends DoctrineUnitTestCase
 
     public function testCacheCore()
     {
-        $this->_clearCache();
-        $cache = $this->_getCacheDriver();
+        $this->clearCache();
+        $cache = $this->getCacheDriver();
 
         $object = 'test_data';
         $cache->save('foo', $object, 3600);
@@ -61,8 +61,8 @@ abstract class AbstractTestCase extends DoctrineUnitTestCase
 
     public function testDeleteByPrefix()
     {
-        $this->_clearCache();
-        $cache = $this->_getCacheDriver();
+        $this->clearCache();
+        $cache = $this->getCacheDriver();
 
         $object = 'test_data';
         $cache->save('prefix_foo', $object, 3600);
@@ -77,15 +77,15 @@ abstract class AbstractTestCase extends DoctrineUnitTestCase
 
     public function testDeleteBySuffix()
     {
-        $this->_clearCache();
-        $cache = $this->_getCacheDriver();
+        $this->clearCache();
+        $cache = $this->getCacheDriver();
 
         $object = 'test_data';
         $cache->save('foo_suffix', $object, 3600);
         $cache->save('bar_suffix', $object, 3600);
         $cache->save('foo', $object, 3600);
 
-        $cache->deleteBySuffix('_suffix');
+        $cache->deleteBySuffix('suffix');
         $this->assertFalse($cache->contains('foo_suffix'));
         $this->assertFalse($cache->contains('bar_suffix'));
         $this->assertTrue($cache->contains('foo'));
@@ -93,8 +93,8 @@ abstract class AbstractTestCase extends DoctrineUnitTestCase
 
     public function testDeleteByRegex()
     {
-        $this->_clearCache();
-        $cache = $this->_getCacheDriver();
+        $this->clearCache();
+        $cache = $this->getCacheDriver();
 
         $object = 'test_data';
         $cache->save('foo_match_me', $object, 3600);
@@ -107,6 +107,6 @@ abstract class AbstractTestCase extends DoctrineUnitTestCase
         $this->assertTrue($cache->contains('foo'));
     }
 
-    abstract protected function _clearCache();
-    abstract protected function _getCacheDriver();
+    abstract protected function clearCache();
+    abstract protected function getCacheDriver();
 }

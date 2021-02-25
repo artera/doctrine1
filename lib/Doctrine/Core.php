@@ -460,27 +460,27 @@ class Doctrine_Core
     /**
      * Path to Doctrine root
      */
-    private static ?string $_path = null;
+    private static ?string $path = null;
 
     /**
      * Debug bool true/false option
      */
-    private static bool $_debug = false;
+    private static bool $debug = false;
 
     /**
      * Array of all the loaded models and the path to each one for autoloading
      */
-    private static array $_loadedModelFiles = [];
+    private static array $loadedModelFiles = [];
 
     /**
      * Array of all the loaded validators
      */
-    private static array $_validators = [];
+    private static array $validators = [];
 
     /**
      * Path to the models directory
      */
-    private static ?string $_modelsDirectory = null;
+    private static ?string $modelsDirectory = null;
 
     /**
      * @throws Doctrine_Exception
@@ -495,7 +495,7 @@ class Doctrine_Core
      */
     public static function getLoadedModelFiles(): array
     {
-        return self::$_loadedModelFiles;
+        return self::$loadedModelFiles;
     }
 
     /**
@@ -504,9 +504,9 @@ class Doctrine_Core
     public static function debug(?bool $bool = null): bool
     {
         if ($bool !== null) {
-            self::$_debug = $bool;
+            self::$debug = $bool;
         }
-        return self::$_debug;
+        return self::$debug;
     }
 
     /**
@@ -516,7 +516,7 @@ class Doctrine_Core
      */
     public static function setPath(string $path): void
     {
-        self::$_path = $path;
+        self::$path = $path;
     }
 
     /**
@@ -524,10 +524,10 @@ class Doctrine_Core
      */
     public static function getPath(): ?string
     {
-        if (!self::$_path) {
-            self::$_path = realpath(dirname(__FILE__) . '/..') ?: null;
+        if (!self::$path) {
+            self::$path = realpath(dirname(__FILE__) . '/..') ?: null;
         }
-        return self::$_path;
+        return self::$path;
     }
 
     /**
@@ -535,7 +535,7 @@ class Doctrine_Core
      */
     public static function loadModel(string $className, ?string $path = null): void
     {
-        self::$_loadedModelFiles[$className] = $path;
+        self::$loadedModelFiles[$className] = $path;
     }
 
     /**
@@ -544,7 +544,7 @@ class Doctrine_Core
      */
     public static function setModelsDirectory(?string $directory): void
     {
-        self::$_modelsDirectory = $directory;
+        self::$modelsDirectory = $directory;
     }
 
     /**
@@ -553,7 +553,7 @@ class Doctrine_Core
      */
     public static function getModelsDirectory(): ?string
     {
-        return self::$_modelsDirectory;
+        return self::$modelsDirectory;
     }
 
     /**
@@ -626,7 +626,7 @@ class Doctrine_Core
                                     }
                                 }
 
-                                $previouslyLoaded = array_keys(self::$_loadedModelFiles, $file->getPathName());
+                                $previouslyLoaded = array_keys(self::$loadedModelFiles, $file->getPathName());
 
                                 if (!empty($previouslyLoaded)) {
                                     $previouslyLoaded = array_combine(array_values($previouslyLoaded), array_values($previouslyLoaded));
@@ -658,7 +658,7 @@ class Doctrine_Core
     {
         if ($classes === null) {
             $classes = get_declared_classes();
-            $classes = array_merge($classes, array_keys(self::$_loadedModelFiles));
+            $classes = array_merge($classes, array_keys(self::$loadedModelFiles));
         }
 
         return self::filterInvalidModels($classes);
@@ -963,8 +963,8 @@ class Doctrine_Core
             return false;
         }
 
-        if (!self::$_modelsDirectory) {
-            $loadedModels = self::$_loadedModelFiles;
+        if (!self::$modelsDirectory) {
+            $loadedModels = self::$loadedModelFiles;
 
             if (isset($loadedModels[$className]) && file_exists($loadedModels[$className])) {
                 include $loadedModels[$className];
@@ -972,7 +972,7 @@ class Doctrine_Core
                 return true;
             }
         } else {
-            $class = self::$_modelsDirectory . DIRECTORY_SEPARATOR . str_replace('_', DIRECTORY_SEPARATOR, $className) . '.php';
+            $class = self::$modelsDirectory . DIRECTORY_SEPARATOR . str_replace('_', DIRECTORY_SEPARATOR, $className) . '.php';
 
             if (file_exists($class)) {
                 include $class;

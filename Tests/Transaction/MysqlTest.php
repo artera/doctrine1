@@ -111,67 +111,67 @@ namespace Tests\Transaction {
 namespace {
     class TransactionListener extends Doctrine_EventListener
     {
-        protected $_messages = [];
+        protected $messages = [];
 
         public function preTransactionCommit(Doctrine_Event $event)
         {
-            $this->_messages[] = __FUNCTION__;
+            $this->messages[] = __FUNCTION__;
         }
         public function postTransactionCommit(Doctrine_Event $event)
         {
-            $this->_messages[] = __FUNCTION__;
+            $this->messages[] = __FUNCTION__;
         }
 
         public function preTransactionRollback(Doctrine_Event $event)
         {
-            $this->_messages[] = __FUNCTION__;
+            $this->messages[] = __FUNCTION__;
         }
         public function postTransactionRollback(Doctrine_Event $event)
         {
-            $this->_messages[] = __FUNCTION__;
+            $this->messages[] = __FUNCTION__;
         }
 
         public function preTransactionBegin(Doctrine_Event $event)
         {
-            $this->_messages[] = __FUNCTION__;
+            $this->messages[] = __FUNCTION__;
         }
         public function postTransactionBegin(Doctrine_Event $event)
         {
-            $this->_messages[] = __FUNCTION__;
+            $this->messages[] = __FUNCTION__;
         }
 
 
         public function preSavepointCommit(Doctrine_Event $event)
         {
-            $this->_messages[] = __FUNCTION__;
+            $this->messages[] = __FUNCTION__;
         }
         public function postSavepointCommit(Doctrine_Event $event)
         {
-            $this->_messages[] = __FUNCTION__;
+            $this->messages[] = __FUNCTION__;
         }
 
         public function preSavepointRollback(Doctrine_Event $event)
         {
-            $this->_messages[] = __FUNCTION__;
+            $this->messages[] = __FUNCTION__;
         }
         public function postSavepointRollback(Doctrine_Event $event)
         {
-            $this->_messages[] = __FUNCTION__;
+            $this->messages[] = __FUNCTION__;
         }
 
         public function preSavepointCreate(Doctrine_Event $event)
         {
-            $this->_messages[] = __FUNCTION__;
+            $this->messages[] = __FUNCTION__;
         }
 
         public function postSavepointCreate(Doctrine_Event $event)
         {
-            $this->_messages[] = __FUNCTION__;
+            $this->messages[] = __FUNCTION__;
         }
 
         public function pop()
         {
-            return array_pop($this->_messages);
+            return array_pop($this->messages);
         }
     }
 }

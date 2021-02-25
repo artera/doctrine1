@@ -158,7 +158,7 @@ namespace {
        delete procedure, as well as to verify the object states at the defined points. */
     class CascadeDeleteListener extends Doctrine_Record_Listener
     {
-        private $_test;
+        private $test;
         public $preDeleteInvoked          = false;
         public $preDeleteInvocationCount  = 0;
         public $postDeleteInvoked         = false;
@@ -166,19 +166,19 @@ namespace {
 
         public function __construct($test)
         {
-            $this->_test = $test;
+            $this->test = $test;
         }
 
         public function preDelete(Doctrine_Event $event)
         {
-            $this->_test->assertEquals(\Doctrine_Record_State::CLEAN(), $event->getInvoker()->state());
+            $this->test->assertEquals(\Doctrine_Record_State::CLEAN(), $event->getInvoker()->state());
             $this->preDeleteInvoked = true;
             $this->preDeleteInvocationCount++;
         }
 
         public function postDelete(Doctrine_Event $event)
         {
-            $this->_test->assertEquals(\Doctrine_Record_State::TCLEAN(), $event->getInvoker()->state());
+            $this->test->assertEquals(\Doctrine_Record_State::TCLEAN(), $event->getInvoker()->state());
             $this->postDeleteInvoked = true;
             $this->postDeleteInvocationCount++;
         }

@@ -7,37 +7,37 @@ class Doctrine_Data
      *
      * @phpstan-var string[]
      */
-    protected array $_formats = ['csv', 'yml', 'xml'];
+    protected array $formats = ['csv', 'yml', 'xml'];
 
     /**
      * the default and current format we are working with
      *
      * @var string
      */
-    protected string $_format = 'yml';
+    protected string $format = 'yml';
 
     /**
      * single directory/yml file
      */
-    protected string|array|null $_directory = null;
+    protected string|array|null $directory = null;
 
     /**
      * specified array of models to use
      * @phpstan-var class-string<Doctrine_Record>[]
      */
-    protected array $_models = [];
+    protected array $models = [];
 
     /**
      * whether or not to export data to individual files instead of 1
      */
-    protected bool $_exportIndividualFiles = false;
+    protected bool $exportIndividualFiles = false;
 
     /**
      * Set the current format we are working with
      */
     public function setFormat(string $format): void
     {
-        $this->_format = $format;
+        $this->format = $format;
     }
 
     /**
@@ -45,7 +45,7 @@ class Doctrine_Data
      */
     public function getFormat(): string
     {
-        return $this->_format;
+        return $this->format;
     }
 
     /**
@@ -55,7 +55,7 @@ class Doctrine_Data
      */
     public function getFormats(): array
     {
-        return $this->_formats;
+        return $this->formats;
     }
 
     /**
@@ -63,7 +63,7 @@ class Doctrine_Data
      */
     public function setDirectory(string|array $directory): void
     {
-        $this->_directory = $directory;
+        $this->directory = $directory;
     }
 
     /**
@@ -71,7 +71,7 @@ class Doctrine_Data
      */
     public function getDirectory(): string|array|null
     {
-        return $this->_directory;
+        return $this->directory;
     }
 
     /**
@@ -79,7 +79,7 @@ class Doctrine_Data
      */
     public function setModels(array $models): void
     {
-        $this->_models = $models;
+        $this->models = $models;
     }
 
     /**
@@ -88,7 +88,7 @@ class Doctrine_Data
      */
     public function getModels(): array
     {
-        return $this->_models;
+        return $this->models;
     }
 
     /**
@@ -97,9 +97,9 @@ class Doctrine_Data
     public function exportIndividualFiles(?bool $bool = null): bool
     {
         if ($bool !== null) {
-            $this->_exportIndividualFiles = $bool;
+            $this->exportIndividualFiles = $bool;
         }
-        return $this->_exportIndividualFiles;
+        return $this->exportIndividualFiles;
     }
 
     /**

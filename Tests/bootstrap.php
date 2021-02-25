@@ -1,7 +1,7 @@
 <?php
 
-$_SERVER['DOCTRINE_DIR'] = realpath(dirname(__FILE__) . '/../');
-define('DOCTRINE_DIR', $_SERVER['DOCTRINE_DIR']);
+$SERVER['DOCTRINE_DIR'] = realpath(dirname(__FILE__) . '/../');
+define('DOCTRINE_DIR', $SERVER['DOCTRINE_DIR']);
 
 $startTime = time();
 

@@ -18,26 +18,26 @@ class Doctrine_View
     const SELECT = 'SELECT * FROM %s';
 
     /**
-     * @var string $_name                the name of the view
+     * @var string $name                the name of the view
      */
-    protected $_name;
+    protected $name;
 
     /**
-     * @var Doctrine_Query $_query       the DQL query object this view is hooked into
+     * @var Doctrine_Query $query       the DQL query object this view is hooked into
      */
-    protected $_query;
+    protected $query;
 
     protected Doctrine_Connection $connection;
 
     /**
      * The view dql string
      */
-    protected string $_dql;
+    protected string $dql;
 
     /**
      * The view sql string
      */
-    protected ?string $_sql;
+    protected ?string $sql;
 
     /**
      * @param Doctrine_Query $query
@@ -45,12 +45,12 @@ class Doctrine_View
      */
     public function __construct(Doctrine_Query $query, string $viewName)
     {
-        $this->_name = $viewName;
-        $this->_query = $query;
-        $this->_query->setView($this);
+        $this->name = $viewName;
+        $this->query = $query;
+        $this->query->setView($this);
         $this->connection = $query->getConnection();
-        $this->_dql = $query->getDql();
-        $this->_sql = $query->getSqlQuery();
+        $this->dql = $query->getDql();
+        $this->sql = $query->getSqlQuery();
     }
 
     /**
@@ -58,7 +58,7 @@ class Doctrine_View
      */
     public function getQuery(): Doctrine_Query
     {
-        return $this->_query;
+        return $this->query;
     }
 
     /**
@@ -66,7 +66,7 @@ class Doctrine_View
      */
     public function getName(): string
     {
-        return $this->_name;
+        return $this->name;
     }
 
     /**
@@ -82,9 +82,9 @@ class Doctrine_View
      */
     public function create(): void
     {
-        $sql = sprintf(self::CREATE, $this->_name, $this->_query->getSqlQuery());
+        $sql = sprintf(self::CREATE, $this->name, $this->query->getSqlQuery());
         try {
-            $this->connection->execute($sql, $this->_query->getFlattenedParams());
+            $this->connection->execute($sql, $this->query->getFlattenedParams());
         } catch (Doctrine_Exception $e) {
             throw new Doctrine_View_Exception($e->__toString());
         }
@@ -99,7 +99,7 @@ class Doctrine_View
     public function drop(): void
     {
         try {
-            $this->connection->execute(sprintf(self::DROP, $this->_name));
+            $this->connection->execute(sprintf(self::DROP, $this->name));
         } catch (Doctrine_Exception $e) {
             throw new Doctrine_View_Exception($e->__toString());
         }
@@ -111,7 +111,7 @@ class Doctrine_View
      */
     public function execute(): array|bool|Doctrine_Collection|Doctrine_Collection_OnDemand|float|int|string
     {
-        return $this->_query->execute();
+        return $this->query->execute();
     }
 
     /**
@@ -119,7 +119,7 @@ class Doctrine_View
      */
     public function getSelectSql(): string
     {
-        return sprintf(self::SELECT, $this->_name);
+        return sprintf(self::SELECT, $this->name);
     }
 
     /**
@@ -127,7 +127,7 @@ class Doctrine_View
      */
     public function getViewSql(): ?string
     {
-        return $this->_sql;
+        return $this->sql;
     }
 
     /**
@@ -135,6 +135,6 @@ class Doctrine_View
      */
     public function getViewDql(): string
     {
-        return $this->_dql;
+        return $this->dql;
     }
 }

@@ -18,9 +18,9 @@ namespace Tests\Tickets {
             $user->fromArray(['username' => 'jwage', 'password' => 'changeme', 'email_address' => 'jonwage@gmail.com']);
 
             $userArray = $user->toArray();
-            $this->assertEquals($userArray['username'], 'jwage-modified');
-            $this->assertEquals($userArray['password'], md5('changeme'));
-            $this->assertEquals($userArray['email_address'], 'jonwage@gmail.com-modified-modified');
+            $this->assertEquals('jwage-modified', $userArray['username']);
+            $this->assertEquals(md5('changeme'), $userArray['password']);
+            $this->assertEquals('jonwage@gmail.com-modified-modified', $userArray['email_address']);
 
             \Doctrine_Manager::getInstance()->setAttribute(\Doctrine_Core::ATTR_AUTO_ACCESSOR_OVERRIDE, false);
         }
@@ -42,22 +42,22 @@ namespace {
 
         public function getEmailAddress()
         {
-            return $this->_get('email_address') . '-modified';
+            return $this->get('email_address') . '-modified';
         }
 
         public function setEmailAddress($emailAddress)
         {
-            $this->_set('email_address', $emailAddress . '-modified');
+            $this->set('email_address', $emailAddress . '-modified');
         }
 
         public function customGetUsername()
         {
-            return $this->_get('username') . '-modified';
+            return $this->get('username') . '-modified';
         }
 
         public function customSetPassword($value)
         {
-            return $this->_set('password', md5($value));
+            return $this->set('password', md5($value));
         }
     }
 }

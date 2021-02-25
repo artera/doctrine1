@@ -13,16 +13,16 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
     protected array $data = [];
 
     /**
-     * @var Doctrine_Table $_table each collection has only records of specified table
+     * @var Doctrine_Table $table each collection has only records of specified table
      * @phpstan-var Doctrine_Table<T>
      */
-    protected Doctrine_Table $_table;
+    protected Doctrine_Table $table;
 
     /**
-     * @var Doctrine_Record[] $_snapshot a snapshot of the fetched data
+     * @var Doctrine_Record[] $snapshot a snapshot of the fetched data
      * @phpstan-var T[]
      */
-    protected array $_snapshot = [];
+    protected array $snapshot = [];
 
     /**
      * @var Doctrine_Record|null $reference collection can belong to a record
@@ -60,7 +60,7 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
             $table = Doctrine_Core::getTable($table);
         }
 
-        $this->_table = $table;
+        $this->table = $table;
 
         if ($keyColumn === null) {
             $keyColumn = $table->getBoundQueryPart('indexBy');
@@ -101,7 +101,7 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
      */
     public function getTable(): Doctrine_Table
     {
-        return $this->_table;
+        return $this->table;
     }
 
     /**
@@ -126,7 +126,7 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
         unset($vars['referenceField']);
         unset($vars['relation']);
 
-        $vars['_table'] = $vars['_table']->getComponentName();
+        $vars['table'] = $vars['table']->getComponentName();
 
         return serialize($vars);
     }
@@ -142,7 +142,7 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
         $array = unserialize($serialized);
 
         foreach ($array as $name => $values) {
-            if ($name === '_table') {
+            if ($name === 'table') {
                 $values = $connection->getTable((string) $values);
             }
             $this->$name = $values;
@@ -150,7 +150,7 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
 
         $keyColumn = isset($array['keyColumn']) ? $array['keyColumn'] : null;
         if ($keyColumn === null) {
-            $keyColumn = $this->_table->getBoundQueryPart('indexBy');
+            $keyColumn = $this->table->getBoundQueryPart('indexBy');
         }
 
         if ($keyColumn !== null) {
@@ -317,7 +317,7 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
     public function get(mixed $key): Doctrine_Record
     {
         if (!isset($this->data[$key])) {
-            $record = $this->_table->create();
+            $record = $this->table->create();
 
             if (isset($this->referenceField) && $this->reference !== null) {
                 $value = $this->reference->get($this->relation->getLocalFieldName());
@@ -347,7 +347,7 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
     public function getPrimaryKeys(): array
     {
         $list = [];
-        $name = $this->_table->getIdentifier();
+        $name = $this->table->getIdentifier();
 
         foreach ($this->data as $record) {
             // @phpstan-ignore-next-line
@@ -440,7 +440,7 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
         if (isset($this->keyColumn)) {
             $value = $record->get($this->keyColumn);
             if ($value === null) {
-                throw new Doctrine_Collection_Exception("Couldn't create collection index. Record field '" . $this->keyColumn . "' was null.");
+                throw new Doctrine_Collection_Exception("Couldn't create collection index. Record field '{$this->keyColumn}' was null.");
             }
             $this->data[$value] = $record;
         } else {
@@ -478,7 +478,7 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
     public function loadRelated(?string $name = null): ?Doctrine_Query
     {
         $list  = [];
-        $query = $this->_table->createQuery();
+        $query = $this->table->createQuery();
 
         if (!isset($name)) {
             foreach ($this->data as $record) {
@@ -487,15 +487,15 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
                     $list[] = $value;
                 }
             }
-            $query->where($this->_table->getComponentName() . '.id IN (' . substr(str_repeat('?, ', count($list)), 0, -2) . ')');
+            $query->where($this->table->getComponentName() . '.id IN (' . substr(str_repeat('?, ', count($list)), 0, -2) . ')');
             if (!$list) {
-                $query->where($this->_table->getComponentName() . '.id IN (' . substr(str_repeat('?, ', count($list)), 0, -2) . ')', $list);
+                $query->where($this->table->getComponentName() . '.id IN (' . substr(str_repeat('?, ', count($list)), 0, -2) . ')', $list);
             }
 
             return $query;
         }
 
-        $rel = $this->_table->getRelation($name);
+        $rel = $this->table->getRelation($name);
 
         if ($rel instanceof Doctrine_Relation_LocalKey || $rel instanceof Doctrine_Relation_ForeignKey) {
             foreach ($this->data as $record) {
@@ -534,7 +534,7 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
      */
     public function populateRelated(string $name, Doctrine_Collection $coll): void
     {
-        $rel     = $this->_table->getRelation($name);
+        $rel     = $this->table->getRelation($name);
         $table   = $rel->getTable();
         $foreign = $rel->getForeign();
         $local   = $rel->getLocal();
@@ -564,7 +564,7 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
                 $this->data[$key]->setRelated($name, $sub);
             }
         } elseif ($rel instanceof Doctrine_Relation_Association) {
-            $identifier = $this->_table->getIdentifier();
+            $identifier = $this->table->getIdentifier();
             $asf        = $rel->getAssociationFactory();
             $name       = $table->getComponentName();
 
@@ -605,7 +605,7 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
      */
     public function takeSnapshot(): self
     {
-        $this->_snapshot = $this->data;
+        $this->snapshot = $this->data;
 
         return $this;
     }
@@ -618,7 +618,7 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
      */
     public function getSnapshot(): array
     {
-        return $this->_snapshot;
+        return $this->snapshot;
     }
 
     /**
@@ -634,7 +634,7 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
      */
     public function processDiff(): self
     {
-        foreach (array_udiff($this->_snapshot, $this->data, [$this, 'compareRecords']) as $record) {
+        foreach (array_udiff($this->snapshot, $this->data, [$this, 'compareRecords']) as $record) {
             $record->delete();
         }
 
@@ -726,7 +726,7 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
      */
     public function getDeleteDiff(): array
     {
-        return array_udiff($this->_snapshot, $this->data, [$this, 'compareRecords']);
+        return array_udiff($this->snapshot, $this->data, [$this, 'compareRecords']);
     }
 
     /**
@@ -737,7 +737,7 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
      */
     public function getInsertDiff(): array
     {
-        return array_udiff($this->data, $this->_snapshot, [$this, 'compareRecords']);
+        return array_udiff($this->data, $this->snapshot, [$this, 'compareRecords']);
     }
 
     /**
@@ -765,7 +765,7 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
     public function save(?Doctrine_Connection $conn = null, bool $processDiff = true): self
     {
         if ($conn == null) {
-            $conn = $this->_table->getConnection();
+            $conn = $this->table->getConnection();
         }
 
         try {
@@ -800,7 +800,7 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
     public function replace(?Doctrine_Connection $conn = null, bool $processDiff = true): self
     {
         if ($conn == null) {
-            $conn = $this->_table->getConnection();
+            $conn = $this->table->getConnection();
         }
 
         try {
@@ -833,7 +833,7 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
     public function delete(?Doctrine_Connection $conn = null, bool $clearColl = true): self
     {
         if ($conn == null) {
-            $conn = $this->_table->getConnection();
+            $conn = $this->table->getConnection();
         }
 
         try {

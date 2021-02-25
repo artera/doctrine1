@@ -26,7 +26,7 @@ namespace {
         public function setEncryptedPassword($value)
         {
             $this->use_encrypted_password = true;
-            return $this->_set('password', md5($value));
+            return $this->set('password', md5($value));
         }
     }
 }

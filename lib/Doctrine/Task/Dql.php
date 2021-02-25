@@ -63,14 +63,14 @@ class Doctrine_Task_Dql extends Doctrine_Task
 
         $results = $query->query($dql, $params, Doctrine_Core::HYDRATE_ARRAY);
 
-        $this->_printResults($results);
+        $this->printResults($results);
     }
 
     /**
      * @param  array $array
      * @return void
      */
-    protected function _printResults($array)
+    protected function printResults($array)
     {
         $yaml  = Doctrine_Parser::dump($array, 'yml');
         $lines = explode("\n", (string) $yaml);

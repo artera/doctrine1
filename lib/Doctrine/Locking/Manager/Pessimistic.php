@@ -48,7 +48,7 @@ class Doctrine_Locking_Manager_Pessimistic
      *
      * @var string
      */
-    private $_lockTable = 'doctrine_lock_tracking';
+    private $lockTable = 'doctrine_lock_tracking';
 
     /**
      * Constructs a new locking manager object
@@ -84,7 +84,7 @@ class Doctrine_Locking_Manager_Pessimistic
 
             $options = ['primary' => ['object_type', 'object_key']];
             try {
-                $this->conn->export->createTable($this->_lockTable, $columns, $options);
+                $this->conn->export->createTable($this->lockTable, $columns, $options);
             } catch (Exception $e) {
             }
         }
@@ -117,7 +117,7 @@ class Doctrine_Locking_Manager_Pessimistic
             $this->conn->beginTransaction();
 
             $stmt = $dbh->prepare(
-                'INSERT INTO ' . $this->_lockTable
+                'INSERT INTO ' . $this->lockTable
                                   . ' (object_type, object_key, user_ident, timestamp_obtained)'
                 . ' VALUES (:object_type, :object_key, :user_ident, :ts_obtained)'
             );
@@ -137,12 +137,12 @@ class Doctrine_Locking_Manager_Pessimistic
             }
 
             if (!$gotLock) {
-                $lockingUserIdent = $this->_getLockingUserIdent($objectType, $key);
+                $lockingUserIdent = $this->getLockingUserIdent($objectType, $key);
                 if ($lockingUserIdent !== null && $lockingUserIdent == $userIdent) {
                     $gotLock = true; // The requesting user already has a lock
                     // Update timestamp
                     $stmt = $dbh->prepare(
-                        'UPDATE ' . $this->_lockTable
+                        'UPDATE ' . $this->lockTable
                                           . ' SET timestamp_obtained = :ts'
                                           . ' WHERE object_type = :object_type AND'
                                           . ' object_key  = :object_key  AND'
@@ -185,7 +185,7 @@ class Doctrine_Locking_Manager_Pessimistic
         try {
             $dbh  = $this->conn->getDbh();
             $stmt = $dbh->prepare(
-                "DELETE FROM $this->_lockTable WHERE
+                "DELETE FROM $this->lockTable WHERE
                                         object_type = :object_type AND
                                         object_key  = :object_key  AND
                                         user_ident  = :user_ident"
@@ -213,7 +213,7 @@ class Doctrine_Locking_Manager_Pessimistic
      *
      * @throws Doctrine_Locking_Exception If the query failed due to database errors
      */
-    private function _getLockingUserIdent($objectType, $key)
+    private function getLockingUserIdent($objectType, $key)
     {
         if (is_array($key)) {
             // Composite key
@@ -223,7 +223,7 @@ class Doctrine_Locking_Manager_Pessimistic
         try {
             $dbh  = $this->conn->getDbh();
             $stmt = $dbh->prepare(
-                'SELECT user_ident FROM ' . $this->_lockTable
+                'SELECT user_ident FROM ' . $this->lockTable
                 . ' WHERE object_type = :object_type AND object_key = :object_key'
             );
             $stmt->bindParam(':object_type', $objectType);
@@ -254,7 +254,7 @@ class Doctrine_Locking_Manager_Pessimistic
     {
         $objectType = $lockedRecord->getTable()->getComponentName();
         $key        = $lockedRecord->getTable()->getIdentifier();
-        return $this->_getLockingUserIdent($objectType, $key);
+        return $this->getLockingUserIdent($objectType, $key);
     }
 
     /**
@@ -274,9 +274,9 @@ class Doctrine_Locking_Manager_Pessimistic
 
         try {
             $dbh  = $this->conn->getDbh();
-            $stmt = $dbh->prepare('DELETE FROM ' . $this->_lockTable . ' WHERE timestamp_obtained < :age');
+            $stmt = $dbh->prepare('DELETE FROM ' . $this->lockTable . ' WHERE timestamp_obtained < :age');
             $stmt->bindParam(':age', $age);
-            $query = 'DELETE FROM ' . $this->_lockTable . ' WHERE timestamp_obtained < :age';
+            $query = 'DELETE FROM ' . $this->lockTable . ' WHERE timestamp_obtained < :age';
             if ($objectType) {
                 $query .= ' AND object_type = :object_type';
             }

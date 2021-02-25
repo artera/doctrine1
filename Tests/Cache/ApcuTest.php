@@ -6,12 +6,12 @@ namespace Tests\Cache;
  */
 class ApcuTest extends AbstractTestCase
 {
-    protected function _clearCache()
+    protected function clearCache()
     {
         apcu_clear_cache();
     }
 
-    protected function _getCacheDriver()
+    protected function getCacheDriver()
     {
         return new \Doctrine_Cache_Apcu();
     }

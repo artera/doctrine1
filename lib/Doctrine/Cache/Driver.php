@@ -34,9 +34,9 @@
 abstract class Doctrine_Cache_Driver implements Doctrine_Cache_Interface
 {
     /**
-     * @var array $_options      an array of options
+     * @var array $options      an array of options
      */
-    protected $_options = [];
+    protected $options = [];
 
     /**
      * Configure cache driver with an array of options
@@ -45,7 +45,7 @@ abstract class Doctrine_Cache_Driver implements Doctrine_Cache_Interface
      */
     public function __construct($options = [])
     {
-        $this->_options = $options;
+        $this->options = $options;
     }
 
     /**
@@ -57,8 +57,8 @@ abstract class Doctrine_Cache_Driver implements Doctrine_Cache_Interface
      */
     public function setOption($option, $value)
     {
-        if (isset($this->_options[$option])) {
-            $this->_options[$option] = $value;
+        if (isset($this->options[$option])) {
+            $this->options[$option] = $value;
             return true;
         }
         return false;
@@ -72,11 +72,11 @@ abstract class Doctrine_Cache_Driver implements Doctrine_Cache_Interface
      */
     public function getOption($option)
     {
-        if (!isset($this->_options[$option])) {
+        if (!isset($this->options[$option])) {
             return null;
         }
 
-        return $this->_options[$option];
+        return $this->options[$option];
     }
 
     /**
@@ -219,7 +219,7 @@ abstract class Doctrine_Cache_Driver implements Doctrine_Cache_Interface
      */
     protected function getKey(string $id): string
     {
-        $prefix = isset($this->_options['prefix']) ? $this->_options['prefix'] : '';
+        $prefix = isset($this->options['prefix']) ? $this->options['prefix'] : '';
 
         if (!$prefix || strpos($id, $prefix) === 0) {
             return $id;

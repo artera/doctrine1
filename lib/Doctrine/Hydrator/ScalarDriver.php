@@ -8,7 +8,7 @@ class Doctrine_Hydrator_ScalarDriver extends Doctrine_Hydrator_Abstract
         $result = [];
 
         while ($data = $stmt->fetch(Doctrine_Core::FETCH_ASSOC)) {
-            $result[] = $this->_gatherRowData($data, $cache);
+            $result[] = $this->gatherRowData($data, $cache);
         }
 
         return $result;
@@ -20,7 +20,7 @@ class Doctrine_Hydrator_ScalarDriver extends Doctrine_Hydrator_Abstract
      * @param  bool  $aliasPrefix
      * @return array
      */
-    protected function _gatherRowData($data, &$cache, $aliasPrefix = true)
+    protected function gatherRowData($data, &$cache, $aliasPrefix = true)
     {
         $rowData = [];
         foreach ($data as $key => $value) {
@@ -32,11 +32,11 @@ class Doctrine_Hydrator_ScalarDriver extends Doctrine_Hydrator_Abstract
                 // cache general information like the column name <-> field name mapping
                 $e                       = explode('__', $key);
                 $columnName              = strtolower(array_pop($e));
-                $cache[$key]['dqlAlias'] = $this->_tableAliases[strtolower(implode('__', $e))];
-                $table                   = $this->_queryComponents[$cache[$key]['dqlAlias']]['table'];
+                $cache[$key]['dqlAlias'] = $this->tableAliases[strtolower(implode('__', $e))];
+                $table                   = $this->queryComponents[$cache[$key]['dqlAlias']]['table'];
                 // check whether it's an aggregate value or a regular field
-                if (isset($this->_queryComponents[$cache[$key]['dqlAlias']]['agg']) && isset($this->_queryComponents[$cache[$key]['dqlAlias']]['agg'][$columnName])) {
-                    $fieldName            = $this->_queryComponents[$cache[$key]['dqlAlias']]['agg'][$columnName];
+                if (isset($this->queryComponents[$cache[$key]['dqlAlias']]['agg']) && isset($this->queryComponents[$cache[$key]['dqlAlias']]['agg'][$columnName])) {
+                    $fieldName            = $this->queryComponents[$cache[$key]['dqlAlias']]['agg'][$columnName];
                     $cache[$key]['isAgg'] = true;
                 } else {
                     $fieldName            = $table->getFieldName($columnName);
@@ -55,7 +55,7 @@ class Doctrine_Hydrator_ScalarDriver extends Doctrine_Hydrator_Abstract
                 }
             }
 
-            $table     = $this->_queryComponents[$cache[$key]['dqlAlias']]['table'];
+            $table     = $this->queryComponents[$cache[$key]['dqlAlias']]['table'];
             $dqlAlias  = $cache[$key]['dqlAlias'];
             $fieldName = $cache[$key]['fieldName'];
 

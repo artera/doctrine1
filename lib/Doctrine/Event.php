@@ -72,50 +72,50 @@ class Doctrine_Event
     const RECORD_VALIDATE    = 30;
 
     /**
-     * @var mixed $_nextSequence        the sequence of the next event that will be created
+     * @var mixed $nextSequence        the sequence of the next event that will be created
      */
-    protected static $_nextSequence = 0;
+    protected static $nextSequence = 0;
 
     /**
-     * @var mixed $_sequence            the sequence of this event
+     * @var mixed $sequence            the sequence of this event
      */
-    protected $_sequence;
+    protected $sequence;
 
     /**
-     * @var mixed $_invoker             the handler which invoked this event
+     * @var mixed $invoker             the handler which invoked this event
      */
-    protected $_invoker;
+    protected $invoker;
 
     /**
-     * @var string|Doctrine_Query_Abstract|null $_query              the sql query associated with this event (if any)
+     * @var string|Doctrine_Query_Abstract|null $query              the sql query associated with this event (if any)
      */
-    protected $_query;
+    protected $query;
 
     /**
-     * @var array $_params             the parameters associated with the query (if any)
+     * @var array $params             the parameters associated with the query (if any)
      */
-    protected $_params;
+    protected $params;
 
     /**
      * @see Doctrine_Event constants
-     * @var integer $_code              the event code
+     * @var integer $code              the event code
      */
-    protected $_code;
+    protected $code;
 
     /**
-     * @var float $_startedMicrotime  the time point in which this event was started
+     * @var float $startedMicrotime  the time point in which this event was started
      */
-    protected $_startedMicrotime;
+    protected $startedMicrotime;
 
     /**
-     * @var float|null $_endedMicrotime    the time point in which this event was ended
+     * @var float|null $endedMicrotime    the time point in which this event was ended
      */
-    protected $_endedMicrotime;
+    protected $endedMicrotime;
 
     /**
-     * @var array $_options             an array of options
+     * @var array $options             an array of options
      */
-    protected $_options = [];
+    protected $options = [];
 
     /**
      * constructor
@@ -127,11 +127,11 @@ class Doctrine_Event
      */
     public function __construct($invoker, $code, $query = null, $params = [])
     {
-        $this->_sequence = self::$_nextSequence++;
-        $this->_invoker  = $invoker;
-        $this->_code     = $code;
-        $this->_query    = $query;
-        $this->_params   = $params;
+        $this->sequence = self::$nextSequence++;
+        $this->invoker  = $invoker;
+        $this->code     = $code;
+        $this->query    = $query;
+        $this->params   = $params;
     }
 
     /**
@@ -141,7 +141,7 @@ class Doctrine_Event
      */
     public function getQuery()
     {
-        return $this->_query;
+        return $this->query;
     }
 
     /**
@@ -152,7 +152,7 @@ class Doctrine_Event
      */
     public function getName()
     {
-        switch ($this->_code) {
+        switch ($this->code) {
             case self::CONN_QUERY:
                 return 'query';
             case self::CONN_EXEC:
@@ -219,7 +219,7 @@ class Doctrine_Event
      */
     public function getCode()
     {
-        return $this->_code;
+        return $this->code;
     }
 
     /**
@@ -231,11 +231,11 @@ class Doctrine_Event
      */
     public function __get($option)
     {
-        if (!isset($this->_options[$option])) {
+        if (!isset($this->options[$option])) {
             return null;
         }
 
-        return $this->_options[$option];
+        return $this->options[$option];
     }
 
     /**
@@ -248,7 +248,7 @@ class Doctrine_Event
      */
     public function __set($option, $value)
     {
-        $this->_options[$option] = $value;
+        $this->options[$option] = $value;
 
         return $this;
     }
@@ -263,7 +263,7 @@ class Doctrine_Event
      */
     public function set($option, &$value)
     {
-        $this->_options[$option] = & $value;
+        $this->options[$option] = & $value;
 
         return $this;
     }
@@ -276,7 +276,7 @@ class Doctrine_Event
      */
     public function start()
     {
-        $this->_startedMicrotime = microtime(true);
+        $this->startedMicrotime = microtime(true);
     }
 
     /**
@@ -287,7 +287,7 @@ class Doctrine_Event
      */
     public function hasEnded()
     {
-        return ($this->_endedMicrotime != null);
+        return ($this->endedMicrotime != null);
     }
 
     /**
@@ -298,7 +298,7 @@ class Doctrine_Event
      */
     public function end()
     {
-        $this->_endedMicrotime = microtime(true);
+        $this->endedMicrotime = microtime(true);
 
         return $this;
     }
@@ -311,7 +311,7 @@ class Doctrine_Event
      */
     public function getSequence()
     {
-        return $this->_sequence;
+        return $this->sequence;
     }
 
     /**
@@ -322,7 +322,7 @@ class Doctrine_Event
      */
     public function getInvoker()
     {
-        return $this->_invoker;
+        return $this->invoker;
     }
 
     /**
@@ -334,7 +334,7 @@ class Doctrine_Event
      */
     public function setInvoker($invoker)
     {
-        $this->_invoker = $invoker;
+        $this->invoker = $invoker;
     }
 
     /**
@@ -345,7 +345,7 @@ class Doctrine_Event
      */
     public function getParams()
     {
-        return $this->_params;
+        return $this->params;
     }
 
     /**
@@ -354,9 +354,9 @@ class Doctrine_Event
      */
     public function getElapsedSecs(): ?float
     {
-        if ($this->_endedMicrotime === null) {
+        if ($this->endedMicrotime === null) {
             return null;
         }
-        return ($this->_endedMicrotime - $this->_startedMicrotime);
+        return ($this->endedMicrotime - $this->startedMicrotime);
     }
 }

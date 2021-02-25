@@ -7,13 +7,13 @@ class Doctrine_Data_Import extends Doctrine_Data
      *
      * @var Doctrine_Record[]
      */
-    protected $_importedObjects = [];
+    protected $importedObjects = [];
 
     /**
      * Array of the raw data parsed from yaml
      * @phpstan-var array<class-string<Doctrine_Record>, array<string, mixed>>
      */
-    protected array $_rows = [];
+    protected array $rows = [];
 
     /**
      * Optionally pass the directory/path to the yaml for importing
@@ -82,20 +82,20 @@ class Doctrine_Data_Import extends Doctrine_Data
             $this->purge(array_reverse(array_keys($array)));
         }
 
-        $this->_loadData($array);
+        $this->loadData($array);
     }
 
     /**
      * Recursively loop over all data fixtures and build the array of className rows
      * @phpstan-param class-string<Doctrine_Record> $className
      */
-    protected function _buildRows(string $className, array $data): void
+    protected function buildRows(string $className, array $data): void
     {
         $table = Doctrine_Core::getTable($className);
 
         foreach ($data as $rowKey => $row) {
             // do the same for the row information
-            $this->_rows[$className][$rowKey] = $row;
+            $this->rows[$className][$rowKey] = $row;
 
             foreach ((array) $row as $key => $value) {
                 if ($table->hasRelation($key) && is_array($value)) {
@@ -107,13 +107,13 @@ class Doctrine_Data_Import extends Doctrine_Data
 
                         if ($rel->getType() == Doctrine_Relation::ONE) {
                             $val                                    = [$relRowKey => $value];
-                            $this->_rows[$className][$rowKey][$key] = $relRowKey;
+                            $this->rows[$className][$rowKey][$key] = $relRowKey;
                         } else {
                             $val                                    = $value;
-                            $this->_rows[$className][$rowKey][$key] = array_keys($val);
+                            $this->rows[$className][$rowKey][$key] = array_keys($val);
                         }
 
-                        $this->_buildRows($relClassName, $val);
+                        $this->buildRows($relClassName, $val);
                     }
                 }
             }
@@ -125,18 +125,18 @@ class Doctrine_Data_Import extends Doctrine_Data
      * for the passed record and relation name
      * @throws Doctrine_Data_Exception
      */
-    protected function _getImportedObject(string $rowKey, Doctrine_Record $record, string $relationName, string $referringRowKey): Doctrine_Record
+    protected function getImportedObject(string $rowKey, Doctrine_Record $record, string $relationName, string $referringRowKey): Doctrine_Record
     {
         $relation = $record->getTable()->getRelation($relationName);
-        $rowKey   = $this->_getRowKeyPrefix($relation->getTable()) . $rowKey;
+        $rowKey   = $this->getRowKeyPrefix($relation->getTable()) . $rowKey;
 
-        if (!isset($this->_importedObjects[$rowKey])) {
+        if (!isset($this->importedObjects[$rowKey])) {
             throw new Doctrine_Data_Exception(
                 sprintf('Invalid row key specified: %s, referred to in %s', $rowKey, $referringRowKey)
             );
         }
 
-        $relatedRowKeyObject = $this->_importedObjects[$rowKey];
+        $relatedRowKeyObject = $this->importedObjects[$rowKey];
 
         $relationClass = $relation->getClass();
         if (!$relatedRowKeyObject instanceof $relationClass) {
@@ -156,9 +156,9 @@ class Doctrine_Data_Import extends Doctrine_Data
     /**
      * Process a row and make all the appropriate relations between the imported data
      */
-    protected function _processRow(string $rowKey, string|array $row): void
+    protected function processRow(string $rowKey, string|array $row): void
     {
-        $obj = $this->_importedObjects[$rowKey];
+        $obj = $this->importedObjects[$rowKey];
 
         foreach ((array) $row as $key => $value) {
             if (method_exists($obj, 'set' . Doctrine_Inflector::classify($key))) {
@@ -174,18 +174,18 @@ class Doctrine_Data_Import extends Doctrine_Data
                     if (isset($value[0]) && !is_array($value[0])) {
                         foreach ($value as $link) {
                             if ($obj->getTable()->getRelation($key)->getType() === Doctrine_Relation::ONE) {
-                                $obj->set($key, $this->_getImportedObject($link, $obj, $key, $rowKey));
+                                $obj->set($key, $this->getImportedObject($link, $obj, $key, $rowKey));
                             } elseif ($obj->getTable()->getRelation($key)->getType() === Doctrine_Relation::MANY) {
                                 $relation = $obj->$key;
 
-                                $relation[] = $this->_getImportedObject($link, $obj, $key, $rowKey);
+                                $relation[] = $this->getImportedObject($link, $obj, $key, $rowKey);
                             }
                         }
                     } else {
                         $obj->$key->fromArray($value);
                     }
                 } else {
-                    $obj->set($key, $this->_getImportedObject($value, $obj, $key, $rowKey));
+                    $obj->set($key, $this->getImportedObject($value, $obj, $key, $rowKey));
                 }
             } else {
                 try {
@@ -208,7 +208,7 @@ class Doctrine_Data_Import extends Doctrine_Data
      *
      * @phpstan-param array<class-string<Doctrine_Record>, mixed> $array
      */
-    protected function _loadData(array $array): void
+    protected function loadData(array $array): void
     {
         $specifiedModels = $this->getModels();
 
@@ -217,22 +217,22 @@ class Doctrine_Data_Import extends Doctrine_Data
                 continue;
             }
 
-            $this->_buildRows($className, $data);
+            $this->buildRows($className, $data);
         }
 
         $buildRows = [];
-        foreach ($this->_rows as $className => $classRows) {
-            $rowKeyPrefix = $this->_getRowKeyPrefix(Doctrine_Core::getTable($className));
+        foreach ($this->rows as $className => $classRows) {
+            $rowKeyPrefix = $this->getRowKeyPrefix(Doctrine_Core::getTable($className));
             foreach ($classRows as $rowKey => $row) {
                 $rowKey                          = $rowKeyPrefix . $rowKey;
                 $buildRows[$rowKey]              = $row;
-                $this->_importedObjects[$rowKey] = new $className();
-                $this->_importedObjects[$rowKey]->state(Doctrine_Record_State::TDIRTY());
+                $this->importedObjects[$rowKey] = new $className();
+                $this->importedObjects[$rowKey]->state(Doctrine_Record_State::TDIRTY());
             }
         }
 
         foreach ($buildRows as $rowKey => $row) {
-            $this->_processRow($rowKey, $row);
+            $this->processRow($rowKey, $row);
         }
 
         $manager = Doctrine_Manager::getInstance();
@@ -240,7 +240,7 @@ class Doctrine_Data_Import extends Doctrine_Data
             $tree = $connection->unitOfWork->buildFlushTree(array_keys($array));
 
             foreach ($tree as $model) {
-                foreach ($this->_importedObjects as $obj) {
+                foreach ($this->importedObjects as $obj) {
                     if ($obj instanceof $model) {
                         $obj->save();
                     }
@@ -252,7 +252,7 @@ class Doctrine_Data_Import extends Doctrine_Data
     /**
      * Returns the prefix to use when indexing an object from the supplied table.
      */
-    protected function _getRowKeyPrefix(Doctrine_Table $table): string
+    protected function getRowKeyPrefix(Doctrine_Table $table): string
     {
         return sprintf('(%s) ', $table->getTableName());
     }

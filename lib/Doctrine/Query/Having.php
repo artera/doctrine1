@@ -12,7 +12,7 @@ class Doctrine_Query_Having extends Doctrine_Query_Condition
         // Check for subqueries
         if ($pos === 0 && substr($func, 1, 6) == 'SELECT') {
             // This code is taken from WHERE.php
-            $sub = $this->_tokenizer->bracketTrim($func);
+            $sub = $this->tokenizer->bracketTrim($func);
             $q   = $this->query->createSubquery()->parseDqlQuery($sub, false);
             $sql = $q->getSqlQuery();
             $q->free();
@@ -24,7 +24,7 @@ class Doctrine_Query_Having extends Doctrine_Query_Condition
 
             $name   = substr($func, 0, $pos);
             $func   = substr($func, ($pos + 1), -1);
-            $params = $this->_tokenizer->bracketExplode($func, ',', '(', ')');
+            $params = $this->tokenizer->bracketExplode($func, ',', '(', ')');
 
             foreach ($params as $k => $param) {
                 $params[$k] = $this->parseAggregateFunction($param);
@@ -34,14 +34,14 @@ class Doctrine_Query_Having extends Doctrine_Query_Condition
 
             return $funcs;
         } else {
-            return $this->_parseAliases($func);
+            return $this->parseAliases($func);
         }
     }
 
     /**
      * Processes part of the query not being an aggregate function
      */
-    private function _parseAliases(mixed $value): string
+    private function parseAliases(mixed $value): string
     {
         if (!is_numeric($value)) {
             $a = explode('.', $value);
@@ -68,7 +68,7 @@ class Doctrine_Query_Having extends Doctrine_Query_Condition
      */
     final public function load(string $having): string
     {
-        $tokens   = $this->_tokenizer->bracketExplode($having, ' ', '(', ')');
+        $tokens   = $this->tokenizer->bracketExplode($having, ' ', '(', ')');
         $part     = $this->parseAggregateFunction(array_shift($tokens));
         $operator = array_shift($tokens);
         $value    = implode(' ', $tokens);

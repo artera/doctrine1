@@ -15,20 +15,20 @@ class DbTest extends AbstractTestCase
         $this->cache->createTable();
     }
 
-    protected function _clearCache()
+    protected function clearCache()
     {
         static::$connection->exec('DELETE FROM d_cache');
     }
 
-    protected function _getCacheDriver()
+    protected function getCacheDriver()
     {
         return $this->cache;
     }
 
     public function testAsResultCache()
     {
-        $this->_clearCache();
-        $cache = $this->_getCacheDriver();
+        $this->clearCache();
+        $cache = $this->getCacheDriver();
 
         static::$conn->setAttribute(\Doctrine_Core::ATTR_RESULT_CACHE, $cache);
 
