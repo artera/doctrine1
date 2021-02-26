@@ -6,8 +6,9 @@ use Doctrine_Connection;
 
 interface SerializerInterface
 {
-    public function canSerialize(mixed $value, string $forDbType): bool;
-
-    /** @return scalar */
-    public function serialize(mixed $value, Doctrine_Connection $connection): mixed;
+    /**
+     * @phpstan-param array{type: string} $column
+     * @return scalar
+     */
+    public function serialize(mixed $value, array $column, \Doctrine_Table $table): mixed;
 }

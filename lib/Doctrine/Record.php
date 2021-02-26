@@ -1,6 +1,7 @@
 <?php
 
 use Doctrine_Record_State as State;
+use Doctrine1\Serializer;
 
 /**
  * @phpstan-template T of Doctrine_Table
@@ -1849,12 +1850,11 @@ abstract class Doctrine_Record implements Countable, IteratorAggregate, Serializ
         $prepared = [];
         $modifiedFields = $this->_modified;
 
-        /** @var Doctrine1\Serializer\SerializerInterface[] */
+        /** @var Serializer\SerializerInterface[] */
         $serializers = array_merge(
             Doctrine_Manager::getInstance()->getSerializers(),
             $this->_table->getSerializers(),
         );
-        $connection = $this->_table->getConnection();
 
         foreach ($modifiedFields as $field) {
             $dataValue = $this->_data[$field];
@@ -1879,9 +1879,10 @@ abstract class Doctrine_Record implements Countable, IteratorAggregate, Serializ
             }
 
             foreach ($serializers as $serializer) {
-                if ($serializer->canSerialize($dataValue, $column['type'])) {
-                    $prepared[$field] = $serializer->serialize($dataValue, $connection);
+                try {
+                    $prepared[$field] = $serializer->serialize($dataValue, $column, $this->_table);
                     continue 2;
+                } catch (Serializer\Exception\Incompatible) {
                 }
             }
 

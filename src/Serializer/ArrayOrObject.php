@@ -6,14 +6,11 @@ use Doctrine_Connection;
 
 class ArrayOrObject implements SerializerInterface
 {
-    public function canSerialize(mixed $value, string $forDbType): bool
+    public function serialize(mixed $value, array $column, \Doctrine_Table $table): mixed
     {
-        return in_array($forDbType, ['array', 'object']) && (is_array($value) || is_object($value));
-    }
-
-    /** @param array|object $value */
-    public function serialize(mixed $value, Doctrine_Connection $connection): mixed
-    {
+        if (!in_array($column['type'], ['array', 'object']) || !(is_array($value) || is_object($value))) {
+            throw new Exception\Incompatible();
+        }
         return serialize($value);
     }
 }

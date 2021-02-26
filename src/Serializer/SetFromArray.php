@@ -6,14 +6,11 @@ use Doctrine_Connection;
 
 class SetFromArray implements SerializerInterface
 {
-    public function canSerialize(mixed $value, string $forDbType): bool
+    public function serialize(mixed $value, array $column, \Doctrine_Table $table): mixed
     {
-        return $forDbType === 'set' && is_array($value);
-    }
-
-    /** @param array $value */
-    public function serialize(mixed $value, Doctrine_Connection $connection): mixed
-    {
+        if ($column['type'] !== 'set' || !is_array($value)) {
+            throw new Exception\Incompatible();
+        }
         return implode(',', $value);
     }
 }

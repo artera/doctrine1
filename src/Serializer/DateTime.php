@@ -4,13 +4,13 @@ namespace Doctrine1\Serializer;
 
 use Doctrine_Connection;
 
-class Boolean implements SerializerInterface
+class DateTime implements SerializerInterface
 {
     public function serialize(mixed $value, array $column, \Doctrine_Table $table): mixed
     {
-        if ($column['type'] !== 'boolean') {
+        if (!$value instanceof DateTime) {
             throw new Exception\Incompatible();
         }
-        return $table->getConnection()->convertBooleans($value);
+        return $value->format('Y-m-d H:i:s');
     }
 }
