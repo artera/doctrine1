@@ -2,6 +2,7 @@
 
 use Doctrine_Record_State as State;
 use Doctrine1\Serializer;
+use Doctrine1\Deserializer;
 
 /**
  * @phpstan-template T of Doctrine_Table
@@ -684,25 +685,37 @@ abstract class Doctrine_Record implements Countable, IteratorAggregate, Serializ
     }
 
     /**
-     * cleanData
      * leaves the $data array only with values whose key is a field inside this
-     * record and returns the values that were removed from $data.  Also converts
+     * record and returns the values that were removed from $data. Also converts
      * any values of 'null' to objects of type Doctrine_Null.
      *
      * @param  array $data data array to be cleaned
-     * @return array        values cleaned from data
+     * @return array values cleaned from data
      */
-    public function cleanData(&$data)
+    public function cleanData(array &$data, bool $deserialize = true): array
     {
         $tmp  = $data;
         $data = [];
 
-        foreach ($this->getTable()->getFieldNames() as $fieldName) {
-            if (isset($tmp[$fieldName])) {
+        $deserializers = $deserialize ? $this->getDeserializers() : [];
+
+        foreach ($this->_table->getFieldNames() as $fieldName) {
+            if (isset($tmp[$fieldName])) { // value present
+                if (!empty($deserializers)) {
+                    $column = $this->_table->getColumnDefinition($this->_table->getColumnName($fieldName));
+
+                    foreach ($deserializers as $deserializer) {
+                        try {
+                            $tmp[$fieldName] = $deserializer->deserialize($tmp[$fieldName], $column, $this->_table);
+                            break;
+                        } catch (Deserializer\Exception\Incompatible) {
+                        }
+                    }
+                }
                 $data[$fieldName] = $tmp[$fieldName];
-            } elseif (array_key_exists($fieldName, $tmp)) {
+            } elseif (array_key_exists($fieldName, $tmp)) { // null
                 $data[$fieldName] = null;
-            } elseif (!isset($this->_data[$fieldName])) {
+            } elseif (!isset($this->_data[$fieldName])) { // column not in data
                 $data[$fieldName] = Doctrine_Null::instance();
             }
             unset($tmp[$fieldName]);
@@ -712,23 +725,23 @@ abstract class Doctrine_Record implements Countable, IteratorAggregate, Serializ
     }
 
     /**
-     * hydrate
      * hydrates this object from given array
      *
-     * @param  array   $data
-     * @param  boolean $overwriteLocalChanges whether to overwrite the unsaved (dirty) data
-     * @return void
+     * @param array $data
+     * @param boolean $overwriteLocalChanges whether to overwrite the unsaved (dirty) data
      */
-    public function hydrate(array $data, $overwriteLocalChanges = true)
+    public function hydrate(array $data, bool $overwriteLocalChanges = true): void
     {
+        $cleanData = $this->cleanData($data);
+
         if ($overwriteLocalChanges) {
-            $this->_values    = array_merge($this->_values, $this->cleanData($data));
-            $this->_data      = array_merge($this->_data, $data);
-            $this->_modified  = [];
+            $this->_values = array_merge($this->_values, $cleanData);
+            $this->_data = array_merge($this->_data, $data);
+            $this->_modified = [];
             $this->_oldValues = [];
         } else {
-            $this->_values = array_merge($this->cleanData($data), $this->_values);
-            $this->_data   = array_merge($data, $this->_data);
+            $this->_values = array_merge($cleanData, $this->_values);
+            $this->_data = array_merge($data, $this->_data);
         }
 
         if (!$this->isModified() && $this->isInProxyState()) {
@@ -1435,7 +1448,6 @@ abstract class Doctrine_Record implements Countable, IteratorAggregate, Serializ
         if (array_key_exists($fieldName, $this->_values)) {
             $this->_values[$fieldName] = $value;
         } elseif (array_key_exists($fieldName, $this->_data)) {
-            // $type = $this->_table->requireTypeOf($fieldName);
             $column = $this->_table->getColumnDefinition($this->_table->getColumnName($fieldName));
             assert($column !== null);
 
@@ -1455,7 +1467,7 @@ abstract class Doctrine_Record implements Countable, IteratorAggregate, Serializ
 
             if ($this->isValueModified($column, $old, $value)) {
                 if ($value === null) {
-                    $value = $this->_table->getDefaultValueOf($fieldName);
+                    $value = $column['default'] ?? null;
                 }
                 $this->_data[$fieldName] = $value;
                 $this->_modified[] = $fieldName;
@@ -1591,12 +1603,9 @@ abstract class Doctrine_Record implements Countable, IteratorAggregate, Serializ
      * Simply doing $old !== $new will return false for boolean columns would mark the field as modified
      * and change it in the database when it is not necessary
      *
-     * @param  string                                                       $type Doctrine type of the column
-     * @param  string|bool|int|float|null|Doctrine_Null                     $old  Old value
-     * @param  string|bool|int|float|null|Doctrine_Null|Doctrine_Expression $new  New value
-     * @return boolean $modified  Whether or not Doctrine considers the value modified
+     * @return bool Whether or not Doctrine considers the value modified
      */
-    protected function isValueModified($column, $old, $new)
+    protected function isValueModified(array $column, mixed $old, mixed $new): bool
     {
         if ($new instanceof Doctrine_Expression) {
             return true;
@@ -1620,23 +1629,25 @@ abstract class Doctrine_Record implements Countable, IteratorAggregate, Serializ
 
         $type = $column['type'];
 
-        if ($type == 'boolean' && (is_bool($old) || is_numeric($old)) && (is_bool($new) || is_numeric($new)) && $old == $new) {
-            return false;
-        } elseif (in_array($type, ['decimal', 'float']) && is_numeric($old) && is_numeric($new)) {
-            return $old * 100 != $new * 100;
-        } elseif (in_array($type, ['integer', 'int']) && is_numeric($old) && is_numeric($new)) {
-            return $old != $new;
-        } elseif ($type == 'timestamp' || $type == 'date') {
-            $oldStrToTime = strtotime((string) $old);
-            $newStrToTime = strtotime((string) $new);
-            if ($oldStrToTime && $newStrToTime) {
-                return $oldStrToTime !== $newStrToTime;
-            } else {
-                return $old !== $new;
+        if (is_numeric($old) && is_numeric($new)) {
+            if (in_array($type, ['decimal', 'float'])) {
+                return $old * 100 != $new * 100;
             }
-        } else {
+
+            if (in_array($type, ['integer', 'int'])) {
+                return $old != $new;
+            }
+        }
+
+        if (in_array($type, ['timestamp', 'date', 'datetime'])) {
+            $oldStrToTime = strtotime((string) $old);
+            if ($oldStrToTime) {
+                return $oldStrToTime !== strtotime((string) $new);
+            }
             return $old !== $new;
         }
+
+        return $old !== $new;
     }
 
     /**
@@ -1850,6 +1861,15 @@ abstract class Doctrine_Record implements Countable, IteratorAggregate, Serializ
     public function getLastModified($old = false)
     {
         return $this->getModified($old, true);
+    }
+
+    /** @return Deserializer\DeserializerInterface[] */
+    public function getDeserializers(): array
+    {
+        return array_merge(
+            Doctrine_Manager::getInstance()->getDeserializers(),
+            $this->_table->getDeserializers(),
+        );
     }
 
     /** @return Serializer\SerializerInterface[] */
@@ -2257,7 +2277,7 @@ abstract class Doctrine_Record implements Countable, IteratorAggregate, Serializ
     {
         if ($id === false) {
             $this->_id    = [];
-            $this->_data  = $this->cleanData($this->_data);
+            $this->_data  = $this->cleanData($this->_data, unserialize: false);
             $this->_state = State::TCLEAN();
             $this->resetModified();
         } elseif ($id === true) {

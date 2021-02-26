@@ -17,32 +17,23 @@ class User extends Entity
     public function setUp(): void
     {
         parent::setUp();
-        $this->hasMany(
-            'Address',
-            [
+        $this->hasMany('Address', [
             'local'    => 'user_id',
             'foreign'  => 'address_id',
             'refClass' => 'EntityAddress',
-            ]
-        );
-        $this->hasMany(
-            'Address as Addresses',
-            [
+        ]);
+        $this->hasMany('Address as Addresses', [
             'local'    => 'user_id',
             'foreign'  => 'address_id',
             'refClass' => 'EntityAddress',
-            ]
-        );
+        ]);
         $this->hasMany('Album', ['local' => 'id', 'foreign' => 'user_id']);
         $this->hasMany('Book', ['local' => 'id', 'foreign' => 'user_id']);
-        $this->hasMany(
-            'Group',
-            [
+        $this->hasMany('Group', [
             'local'    => 'user_id',
             'foreign'  => 'group_id',
             'refClass' => 'GroupUser',
-            ]
-        );
+        ]);
     }
 
     /**

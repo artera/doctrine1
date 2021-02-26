@@ -1,4 +1,9 @@
 ---
+SchemaTestSerializeTest:
+  columns:
+    booleantest:
+      type: boolean
+
 SchemaTestUser:
   columns:
     id:

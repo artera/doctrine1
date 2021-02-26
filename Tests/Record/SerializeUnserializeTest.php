@@ -29,9 +29,10 @@ namespace Tests\Record {
             $object->blobtest      = 'blobtest';
             $object->clobtest      = 'clobtest';
             $object->gziptest      = 'gziptest';
-            $object->timestamptest = '2007-08-07 11:55:00';
+            // $object->timestamptest = '2007-08-07 11:55:00';
+            $object->timestamptest = \DateTimeImmutable::createFromFormat('Y-m-d H:i:s O', '2007-08-07 11:55:00 GMT+0');
             $object->timetest      = '11:55:00';
-            $object->datetest      = '2007-08-07';
+            $object->datetest      = \DateTimeImmutable::createFromFormat('Y-m-d', '2007-08-07');
 
             $object->save();
 
@@ -49,9 +50,9 @@ namespace Tests\Record {
             $this->assertSame($object_before->blobtest, $object_after->blobtest);
             $this->assertSame($object_before->clobtest, $object_after->clobtest);
             $this->assertSame($object_before->gziptest, $object_after->gziptest);
-            $this->assertSame($object_before->timestamptest, $object_after->timestamptest);
+            $this->assertEquals($object_before->timestamptest, $object_after->timestamptest);
             $this->assertSame($object_before->timetest, $object_after->timetest);
-            $this->assertSame($object_before->datetest, $object_after->datetest);
+            $this->assertEquals($object_before->datetest, $object_after->datetest);
         }
 
         public function testSerializeUnserializeRecord()

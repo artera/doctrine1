@@ -15,19 +15,15 @@ class SerializeTest extends Doctrine_Record
         $this->hasColumn('clobtest', 'clob');
         $this->hasColumn('timestamptest', 'timestamp');
         $this->hasColumn('timetest', 'time');
-        $this->hasColumn('datetest', 'date');
-        $this->hasColumn(
-            'enumtest',
-            'enum',
-            4,
-            [
-                            'values' => [
-                                        'php',
-                                        'java',
-                                        'python'
-                                        ]
-                               ]
-        );
+        $this->hasColumn('datetest', 'date', ['type' => 'date']);
+        $this->hasColumn('datetimetest', 'date', ['type' => 'datetime']);
+        $this->hasColumn('enumtest', 'enum', 4, [
+            'values' => [
+                'php',
+                'java',
+                'python',
+            ],
+        ]);
         $this->hasColumn('gziptest', 'gzip');
     }
 }

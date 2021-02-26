@@ -1,6 +1,7 @@
 <?php
 
 use Doctrine1\Serializer\WithSerializers;
+use Doctrine1\Deserializer\WithDeserializers;
 use Laminas\Validator\AbstractValidator;
 
 /**
@@ -9,6 +10,7 @@ use Laminas\Validator\AbstractValidator;
 class Doctrine_Table extends Doctrine_Configurable implements Countable
 {
     use WithSerializers;
+    use WithDeserializers;
 
     /**
      * temporary data which is then loaded into Doctrine_Record::$data
@@ -1606,59 +1608,55 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
      */
     public function getRecord()
     {
-        if (!empty($this->data)) {
-            $identifierFieldNames = $this->getIdentifier();
+        if (empty($this->data)) {
+            $recordName = $this->getComponentName();
+            return new $recordName($this, true);
+        }
 
-            if (!is_array($identifierFieldNames)) {
-                $identifierFieldNames = [$identifierFieldNames];
+        $identifierFieldNames = $this->getIdentifier();
+
+        if (!is_array($identifierFieldNames)) {
+            $identifierFieldNames = [$identifierFieldNames];
+        }
+
+        $found = false;
+        $id = [];
+        foreach ($identifierFieldNames as $fieldName) {
+            if (!isset($this->data[$fieldName])) {
+                // primary key column not found return new record
+                $found = true;
+                break;
             }
+            $id[] = $this->data[$fieldName];
+        }
 
-            $found = false;
-            $id    = [];
-            foreach ($identifierFieldNames as $fieldName) {
-                if (!isset($this->data[$fieldName])) {
-                    // primary key column not found return new record
-                    $found = true;
-                    break;
-                }
-                $id[] = $this->data[$fieldName];
-            }
+        if ($found) {
+            $recordName = $this->getComponentName();
+            $record = new $recordName($this, true);
+            $this->data = [];
+            return $record;
+        }
 
-            if ($found) {
-                $recordName = $this->getComponentName();
-                /**
-                 * @var Doctrine_Record $record
-                 * @phpstan-var T $record
-                 */
-                $record      = new $recordName($this, true);
-                $this->data = [];
-                return $record;
-            }
+        $id = implode(' ', $id);
 
-            $id = implode(' ', $id);
-
-            if (isset($this->identityMap[$id])) {
-                $record = $this->identityMap[$id];
-                if ($record->getTable()->getAttribute(Doctrine_Core::ATTR_HYDRATE_OVERWRITE)) {
-                    $record->hydrate($this->data);
-                    if ($record->state()->equals(Doctrine_Record_State::PROXY())) {
-                        if (!$record->isInProxyState()) {
-                            $record->state(Doctrine_Record_State::CLEAN());
-                        }
+        if (isset($this->identityMap[$id])) {
+            $record = $this->identityMap[$id];
+            if ($record->getTable()->getAttribute(Doctrine_Core::ATTR_HYDRATE_OVERWRITE)) {
+                $record->hydrate($this->data);
+                if ($record->state()->equals(Doctrine_Record_State::PROXY())) {
+                    if (!$record->isInProxyState()) {
+                        $record->state(Doctrine_Record_State::CLEAN());
                     }
-                } else {
-                    $record->hydrate($this->data, false);
                 }
             } else {
-                $recordName              = $this->getComponentName();
-                $record                  = new $recordName($this);
-                $this->identityMap[$id] = $record;
+                $record->hydrate($this->data, false);
             }
-            $this->data = [];
         } else {
             $recordName = $this->getComponentName();
-            $record     = new $recordName($this, true);
+            $record = new $recordName($this);
+            $this->identityMap[$id] = $record;
         }
+        $this->data = [];
 
         return $record;
     }
