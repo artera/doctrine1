@@ -5,8 +5,8 @@ namespace Doctrine1\Serializer;
 trait WithSerializers
 {
     /**
-     * List of column serializers that can convert PHP types to DB types
-     * @phpstan-var array<class-string<SerializerInterface>, int>
+     * List of column serializers that can convert PHP types to DB types. Only one serializer of each type is allowed.
+     * @phpstan-var array<class-string<SerializerInterface>, array{SerializerInterface, int}>
      */
     public array $serializers = [];
 
@@ -15,10 +15,9 @@ trait WithSerializers
         $this->serializers = [];
     }
 
-    /** @param class-string<SerializerInterface> $serializerClass */
-    public function registerSerializer(string $serializerClass, int $priority = 50): void
+    public function registerSerializer(SerializerInterface $serializer, int $priority = 50): void
     {
-        $this->serializers[$serializerClass] = $priority;
+        $this->serializers[$serializer::class] = [$serializer, $priority];
     }
 
     /** @param class-string<SerializerInterface> $serializerClass */
@@ -30,7 +29,7 @@ trait WithSerializers
     /** @return SerializerInterface[] */
     public function getSerializers(): array
     {
-        arsort($this->serializers, SORT_NUMERIC);
-        return array_map(fn($s) => new $s(), array_keys($this->serializers));
+        uasort($this->serializers, fn($a, $b) => ($a[1] <=> $b[1]) * -1);
+        return array_map(fn($s) => $s[0], $this->serializers);
     }
 }

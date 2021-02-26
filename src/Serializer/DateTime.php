@@ -8,7 +8,7 @@ class DateTime implements SerializerInterface
 {
     public function serialize(mixed $value, array $column, \Doctrine_Table $table): mixed
     {
-        if (!$value instanceof DateTime) {
+        if (!$value instanceof \DateTimeInterface) {
             throw new Exception\Incompatible();
         }
         return $value->format('Y-m-d H:i:s');

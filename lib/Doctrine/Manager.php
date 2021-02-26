@@ -139,12 +139,13 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
     public function __construct()
     {
         $this->clearSerializers();
-        $this->registerSerializer(\Doctrine1\Serializer\Boolean::class, 10);
-        $this->registerSerializer(\Doctrine1\Serializer\SetFromArray::class, 20);
+        $this->registerSerializer(new \Doctrine1\Serializer\Boolean(), 10);
+        $this->registerSerializer(new \Doctrine1\Serializer\SetFromArray(), 20);
+        $this->registerSerializer(new \Doctrine1\Serializer\DateTime(), 30);
 
         // last resort, these shouldn't exist imho
-        $this->registerSerializer(\Doctrine1\Serializer\Gzip::class, 0);
-        $this->registerSerializer(\Doctrine1\Serializer\ArrayOrObject::class, 0);
+        $this->registerSerializer(new \Doctrine1\Serializer\Gzip(), 0);
+        $this->registerSerializer(new \Doctrine1\Serializer\ArrayOrObject(), 0);
     }
 
     /**
