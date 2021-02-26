@@ -56,8 +56,15 @@ namespace Tests\Core {
 
         public function testDeserializers()
         {
+            $jsonvalue = [
+                'test' => [
+                    'json' => 'abc',
+                ],
+            ];
+
             $ser = new \SerializeTest();
             $ser->datetimetest = new \DateTime();
+            $ser->jsontest = $jsonvalue;
             $ser->save();
 
             static::$conn->clear();
@@ -66,6 +73,7 @@ namespace Tests\Core {
             $today = new \DateTimeImmutable();
 
             $this->assertInstanceOf(\DateTimeImmutable::class, $ser->datetimetest);
+            $this->assertEquals($jsonvalue, $ser->jsontest);
 
             $ser->datetimetest = $today;
             $this->assertFalse($ser->isModified());

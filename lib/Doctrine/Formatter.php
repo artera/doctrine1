@@ -132,7 +132,6 @@ class Doctrine_Formatter extends Doctrine_Connection_Module
     }
 
     /**
-     * quote
      * quotes given input parameter
      *
      * @param  mixed  $input parameter to be quoted

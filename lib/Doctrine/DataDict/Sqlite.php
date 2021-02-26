@@ -38,8 +38,7 @@ class Doctrine_DataDict_Sqlite extends Doctrine_DataDict
         }
         switch ($field['type']) {
             case 'enum':
-                $field['length'] = isset($field['length']) && $field['length'] ? $field['length']:255;
-                // no break
+                $field['length'] = isset($field['length']) && $field['length'] ? $field['length'] : 255;
             case 'text':
             case 'object':
             case 'array':
@@ -119,8 +118,8 @@ class Doctrine_DataDict_Sqlite extends Doctrine_DataDict
             throw new Doctrine_DataDict_Exception('Missing "type" from field definition');
         }
 
-        $length   = (isset($field['length'])) ? $field['length'] : null;
-        $unsigned = (isset($field['unsigned'])) ? $field['unsigned'] : null;
+        $length   = $field['length'] ?? null;
+        $unsigned = $field['unsigned'] ?? null;
         $fixed    = null;
         $type     = [];
 
@@ -229,13 +228,14 @@ class Doctrine_DataDict_Sqlite extends Doctrine_DataDict
                 break;
             default:
                 $type[] = $field['type'];
-                $length = isset($field['length']) ? $field['length']:null;
         }
 
-        return ['type'     => $type,
-                     'length'   => $length,
-                     'unsigned' => $unsigned,
-                     'fixed'    => $fixed];
+        return [
+            'type'     => $type,
+            'length'   => $length,
+            'unsigned' => $unsigned,
+            'fixed'    => $fixed,
+        ];
     }
 
     /**

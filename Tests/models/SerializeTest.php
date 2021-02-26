@@ -17,6 +17,7 @@ class SerializeTest extends Doctrine_Record
         $this->hasColumn('timetest', 'time');
         $this->hasColumn('datetest', 'date', ['type' => 'date']);
         $this->hasColumn('datetimetest', 'date', ['type' => 'datetime']);
+        $this->hasColumn('jsontest', 'json', null, ['type' => 'json']);
         $this->hasColumn('enumtest', 'enum', 4, [
             'values' => [
                 'php',

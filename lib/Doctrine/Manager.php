@@ -144,6 +144,7 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
         $this->registerSerializer(new \Doctrine1\Serializer\Boolean(), 10);
         $this->registerSerializer(new \Doctrine1\Serializer\SetFromArray(), 20);
         $this->registerSerializer(new \Doctrine1\Serializer\DateTime(), 30);
+        $this->registerSerializer(new \Doctrine1\Serializer\JSON(), 40);
 
         // last resort, these shouldn't exist imho
         $this->registerSerializer(new \Doctrine1\Serializer\Gzip(), 0);
@@ -152,6 +153,7 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
         $this->clearDeserializers();
         $this->registerDeserializer(new \Doctrine1\Deserializer\Boolean(), 10);
         $this->registerDeserializer(new \Doctrine1\Deserializer\DateTimeImmutable(), 20);
+        $this->registerDeserializer(new \Doctrine1\Deserializer\JSON(), 40);
     }
 
     /**
