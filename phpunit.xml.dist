@@ -1,13 +1,4 @@
-<phpunit
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.4/phpunit.xsd"
-  bootstrap="Tests/bootstrap.php"
-  colors="true"
-  verbose="true"
-  beStrictAboutTestsThatDoNotTestAnything="false"
-  beStrictAboutChangesToGlobalState="true"
-  cacheResultFile="phpunit.result.cache"
->
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.4/phpunit.xsd" bootstrap="Tests/bootstrap.php" colors="true" verbose="true" beStrictAboutTestsThatDoNotTestAnything="false" beStrictAboutOutputDuringTests="false" beStrictAboutChangesToGlobalState="true" testdox="true">
   <php>
     <const name="PHPUNIT" value="true" />
     <ini name="memory_limit" value="768M" />

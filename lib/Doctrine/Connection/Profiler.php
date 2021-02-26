@@ -1,71 +1,40 @@
 <?php
-/* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- * This software consists of voluntary contributions made by many individuals
- * and is licensed under the LGPL. For more information, see
- * <http://www.doctrine-project.org>.
- */
 
-/**
- * Doctrine_Connection_Profiler
- *
- * @package    Doctrine
- * @subpackage Connection
- * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
- * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link       www.doctrine-project.org
- * @since      1.0
- * @version    $Revision$
- */
 class Doctrine_Connection_Profiler implements Doctrine_Overloadable, IteratorAggregate, Countable
 {
     /**
-     * @var array $listeners      an array containing all availible listeners
+     * all available listeners
+     * @var string[]
      */
-    private $listeners = ['query',
-                                'prepare',
-                                'commit',
-                                'rollback',
-                                'connect',
-                                'begintransaction',
-                                'exec',
-                                'execute'];
+    private array $listeners = [
+        'query',
+        'prepare',
+        'commit',
+        'rollback',
+        'connect',
+        'begintransaction',
+        'exec',
+        'execute',
+    ];
 
     /**
-     * @var array $events         an array containing all listened events
+     * all listened events
      */
-    private $events = [];
+    private array $events = [];
 
     /**
-     * @var array $eventSequences         an array containing sequences of all listened events as keys
+     * sequences of all listened events as keys
      */
-    private $eventSequences = [];
+    private array $eventSequences = [];
 
-    /**
-     * constructor
-     */
     public function __construct()
     {
     }
 
-    /**
-     * setFilterQueryType
-     *
-     * @return void
-     */
-    public function setFilterQueryType()
+    public function setFilterQueryType(): void
     {
     }
+
     /**
      * method overloader
      * this method is used for invoking different listeners, for the full
@@ -78,34 +47,32 @@ class Doctrine_Connection_Profiler implements Doctrine_Overloadable, IteratorAgg
      */
     public function __call($m, $a)
     {
+        $event = $a[0] ?? null;
+
         // first argument should be an instance of Doctrine_Event
-        if (!($a[0] instanceof Doctrine_Event)) {
+        if (!$event instanceof Doctrine_Event) {
             throw new Doctrine_Connection_Profiler_Exception("Couldn't listen event. Event should be an instance of Doctrine_Event.");
         }
 
-
         if (substr($m, 0, 3) === 'pre') {
             // pre-event listener found
-            $a[0]->start();
+            $event->start();
 
-            $eventSequence = $a[0]->getSequence();
+            $eventSequence = $event->getSequence();
             if (!isset($this->eventSequences[$eventSequence])) {
-                $this->events[]                       = $a[0];
+                $this->events[] = $event;
                 $this->eventSequences[$eventSequence] = true;
             }
         } else {
             // after-event listener found
-            $a[0]->end();
+            $event->end();
         }
     }
 
     /**
-     * get
-     *
-     * @param  mixed $key
-     * @return Doctrine_Event|null
+     * @param mixed $key
      */
-    public function get($key)
+    public function get($key): ?Doctrine_Event
     {
         if (isset($this->events[$key])) {
             return $this->events[$key];
@@ -114,43 +81,32 @@ class Doctrine_Connection_Profiler implements Doctrine_Overloadable, IteratorAgg
     }
 
     /**
-     * getAll
      * returns all profiled events as an array
      *
-     * @return array        all events in an array
+     * @return array all events in an array
      */
-    public function getAll()
+    public function getAll(): array
     {
         return $this->events;
     }
 
     /**
-     * getIterator
      * returns an iterator that iterates through the logged events
-     *
-     * @return ArrayIterator
      */
     public function getIterator(): ArrayIterator
     {
         return new ArrayIterator($this->events);
     }
 
-    /**
-     * count
-     *
-     * @return integer
-     */
-    public function count()
+    public function count(): int
     {
         return count($this->events);
     }
 
     /**
      * pop the last event from the event stack
-     *
-     * @return Doctrine_Event
      */
-    public function pop()
+    public function pop(): Doctrine_Event
     {
         $event = array_pop($this->events);
         if ($event !== null) {

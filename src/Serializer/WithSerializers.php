@@ -18,6 +18,7 @@ trait WithSerializers
     public function registerSerializer(SerializerInterface $serializer, int $priority = 50): void
     {
         $this->serializers[$serializer::class] = [$serializer, $priority];
+        uasort($this->serializers, fn($a, $b) => ($a[1] <=> $b[1]) * -1);
     }
 
     /** @param class-string<SerializerInterface> $serializerClass */
@@ -29,7 +30,6 @@ trait WithSerializers
     /** @return SerializerInterface[] */
     public function getSerializers(): array
     {
-        uasort($this->serializers, fn($a, $b) => ($a[1] <=> $b[1]) * -1);
         return array_map(fn($s) => $s[0], $this->serializers);
     }
 }

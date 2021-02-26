@@ -1435,11 +1435,14 @@ abstract class Doctrine_Record implements Countable, IteratorAggregate, Serializ
         if (array_key_exists($fieldName, $this->_values)) {
             $this->_values[$fieldName] = $value;
         } elseif (array_key_exists($fieldName, $this->_data)) {
-            $type = $this->_table->requireTypeOf($fieldName);
+            // $type = $this->_table->requireTypeOf($fieldName);
+            $column = $this->_table->getColumnDefinition($this->_table->getColumnName($fieldName));
+            assert($column !== null);
+
             if ($value instanceof Doctrine_Record) {
                 $id = $value->getIncremented();
 
-                if ($id !== null && $type !== 'object') {
+                if ($id !== null && $column['type'] !== 'object') {
                     $value = $id;
                 }
             }
@@ -1450,7 +1453,7 @@ abstract class Doctrine_Record implements Countable, IteratorAggregate, Serializ
                 $old = $this->_data[$fieldName];
             }
 
-            if ($this->isValueModified($type, $old, $value)) {
+            if ($this->isValueModified($column, $old, $value)) {
                 if ($value === null) {
                     $value = $this->_table->getDefaultValueOf($fieldName);
                 }
@@ -1593,7 +1596,7 @@ abstract class Doctrine_Record implements Countable, IteratorAggregate, Serializ
      * @param  string|bool|int|float|null|Doctrine_Null|Doctrine_Expression $new  New value
      * @return boolean $modified  Whether or not Doctrine considers the value modified
      */
-    protected function isValueModified($type, $old, $new)
+    protected function isValueModified($column, $old, $new)
     {
         if ($new instanceof Doctrine_Expression) {
             return true;
@@ -1602,6 +1605,20 @@ abstract class Doctrine_Record implements Countable, IteratorAggregate, Serializ
         if ($new instanceof Doctrine_Null || $new === null) {
             return !($old instanceof Doctrine_Null) && $old !== null;
         }
+
+        $serializers = $this->getSerializers();
+        foreach ($serializers as $serializer) {
+            try {
+                return !$serializer->areEquivalent($old, $new, $column, $this->_table);
+            } catch (Serializer\Exception\Incompatible) {
+            }
+        }
+
+        if (!is_scalar($old) || !is_scalar($new)) {
+            return $old !== $new;
+        }
+
+        $type = $column['type'];
 
         if ($type == 'boolean' && (is_bool($old) || is_numeric($old)) && (is_bool($new) || is_numeric($new)) && $old == $new) {
             return false;
@@ -1835,6 +1852,15 @@ abstract class Doctrine_Record implements Countable, IteratorAggregate, Serializ
         return $this->getModified($old, true);
     }
 
+    /** @return Serializer\SerializerInterface[] */
+    public function getSerializers(): array
+    {
+        return array_merge(
+            Doctrine_Manager::getInstance()->getSerializers(),
+            $this->_table->getSerializers(),
+        );
+    }
+
     /**
      * Retrieves data prepared for a sql transaction.
      *
@@ -1850,11 +1876,7 @@ abstract class Doctrine_Record implements Countable, IteratorAggregate, Serializ
         $prepared = [];
         $modifiedFields = $this->_modified;
 
-        /** @var Serializer\SerializerInterface[] */
-        $serializers = array_merge(
-            Doctrine_Manager::getInstance()->getSerializers(),
-            $this->_table->getSerializers(),
-        );
+        $serializers = $this->getSerializers();
 
         foreach ($modifiedFields as $field) {
             $dataValue = $this->_data[$field];
@@ -1865,9 +1887,7 @@ abstract class Doctrine_Record implements Countable, IteratorAggregate, Serializ
             }
 
             $column = $this->_table->getColumnDefinition($this->_table->getColumnName($field));
-            if ($column === null) {
-                continue;
-            }
+            assert($column !== null);
 
             // we cannot use serializers in this case but it should be fine
             if ($dataValue instanceof Doctrine_Record && $column['type'] !== 'object') {
