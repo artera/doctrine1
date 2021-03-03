@@ -2,6 +2,7 @@
 
 use Doctrine1\Serializer\WithSerializers;
 use Doctrine1\Deserializer\WithDeserializers;
+use Doctrine1\Deserializer;
 use Laminas\Validator\AbstractValidator;
 
 /**
@@ -1225,11 +1226,24 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
         if (!isset($this->columns[$columnName])) {
             throw new Doctrine_Table_Exception("Couldn't get default value. Column $columnName doesn't exist.");
         }
-        if (isset($this->columns[$columnName]['default'])) {
-            return $this->columns[$columnName]['default'];
-        } else {
+
+        if (!isset($this->columns[$columnName]['default'])) {
             return null;
         }
+
+        $deserializers = array_merge(
+            Doctrine_Manager::getInstance()->getDeserializers(),
+            $this->getDeserializers(),
+        );
+
+        foreach ($deserializers as $deserializer) {
+            try {
+                return $deserializer->deserialize($this->columns[$columnName]['default'], $this->columns[$columnName], $this);
+            } catch (Deserializer\Exception\Incompatible) {
+            }
+        }
+
+        return $this->columns[$columnName]['default'];
     }
 
     /**
