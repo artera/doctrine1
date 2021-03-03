@@ -667,16 +667,28 @@ abstract class Doctrine_Record implements Countable, IteratorAggregate, Serializ
             return false;
         }
 
-        foreach ($this->_data as $column => $value) {
-            $default = $this->_table->getDefaultValueOf($column);
+        $deserializers = $this->getDeserializers();
+
+        foreach ($this->_data as $fieldName => $value) {
+            $default = $this->_table->getDefaultValueOf($fieldName);
 
             if ($default === null) {
                 continue;
             }
 
             if ($value instanceof Doctrine_Null || $overwrite) {
-                $this->_data[$column] = $default;
-                $this->_modified[] = $column;
+                $column = $this->_table->getColumnDefinition($this->_table->getColumnName($fieldName));
+
+                foreach ($deserializers as $deserializer) {
+                    try {
+                        $default = $deserializer->deserialize($default, $column, $this->_table);
+                        break;
+                    } catch (Deserializer\Exception\Incompatible) {
+                    }
+                }
+
+                $this->_data[$fieldName] = $default;
+                $this->_modified[] = $fieldName;
                 $this->_state = State::TDIRTY();
             }
         }
