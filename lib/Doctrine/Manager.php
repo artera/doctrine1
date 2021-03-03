@@ -140,7 +140,7 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
 
     public function __construct()
     {
-        $timezone = new \DateTimeZone('UTC');
+        $timezone = new \DateTimeZone(date_default_timezone_get());
 
         $this->clearSerializers();
         $this->registerSerializer(new \Doctrine1\Serializer\Boolean(), 10);
