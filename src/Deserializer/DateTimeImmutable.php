@@ -5,6 +5,7 @@ namespace Doctrine1\Deserializer;
 class DateTimeImmutable implements DeserializerInterface
 {
     public function __construct(
+        protected \DateTimeZone $timezone,
         protected array $validTypes = ['date', 'datetime', 'timestamp'],
     ) {}
 
@@ -20,7 +21,13 @@ class DateTimeImmutable implements DeserializerInterface
         $this->checkCompatibility($value, $column['type']);
 
         if ($value === null || (is_string($value) && substr($value, 0, 10) === '0000-00-00')) {
-            return null;
+            if (!$column['notnull']) {
+                return null;
+            }
+
+            if (!empty($column['default'])) {
+                $value = $column['default'];
+            }
         }
 
         if (is_int($value) || is_numeric($value)) {
@@ -45,6 +52,6 @@ class DateTimeImmutable implements DeserializerInterface
             }
         }
 
-        return $value;
+        return new \DateTimeImmutable($value);
     }
 }
