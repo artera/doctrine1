@@ -7,7 +7,15 @@ use Doctrine_Connection;
 interface SerializerInterface
 {
     /**
-     * @phpstan-param array{type: string} $column
+     * @phpstan-param array{
+     *   type: string,
+     *   length: int,
+     *   notnull?: bool,
+     *   values?: array,
+     *   default?: mixed,
+     *   autoincrement?: bool,
+     *   values?: mixed[],
+     * } $column
      * @return scalar
      */
     public function serialize(mixed $value, array $column, \Doctrine_Table $table): mixed;

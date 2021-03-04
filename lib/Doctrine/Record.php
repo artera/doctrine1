@@ -1876,14 +1876,18 @@ abstract class Doctrine_Record implements Countable, IteratorAggregate, Serializ
     /** @param Deserializer\DeserializerInterface[]|null $deserializers */
     public function deserializeColumnValue(mixed $value, string $fieldName, ?array $deserializers = null): mixed
     {
+        $column = $this->_table->getColumnDefinition($this->_table->getColumnName($fieldName));
+        if ($column === null) {
+            return $value;
+        }
         if ($deserializers === null) {
             $deserializers = $this->getDeserializers();
         }
-        $column = $this->_table->getColumnDefinition($this->_table->getColumnName($fieldName));
         foreach ($deserializers as $deserializer) {
             try {
                 return $deserializer->deserialize($value, $column, $this->_table);
-            } catch (Deserializer\Exception\Incompatible) {}
+            } catch (Deserializer\Exception\Incompatible) {
+            }
         }
         return $value;
     }
@@ -2283,8 +2287,8 @@ abstract class Doctrine_Record implements Countable, IteratorAggregate, Serializ
     public function assignIdentifier($id = false)
     {
         if ($id === false) {
-            $this->_id    = [];
-            $this->_data  = $this->cleanData($this->_data, unserialize: false);
+            $this->_id = [];
+            $this->_data = $this->cleanData($this->_data, deserialize: false);
             $this->_state = State::TCLEAN();
             $this->resetModified();
         } elseif ($id === true) {

@@ -21,7 +21,7 @@ class DateTimeImmutable implements DeserializerInterface
         $this->checkCompatibility($value, $column['type']);
 
         if ($value === null || (is_string($value) && substr($value, 0, 10) === '0000-00-00')) {
-            if (!$column['notnull']) {
+            if (empty($column['notnull'])) {
                 return null;
             }
 
@@ -31,7 +31,7 @@ class DateTimeImmutable implements DeserializerInterface
         }
 
         if (is_int($value) || is_numeric($value)) {
-            return (new \DateTimeImmutable())->setTimestamp($value);
+            return (new \DateTimeImmutable())->setTimestamp((int) $value);
         }
 
         foreach ([

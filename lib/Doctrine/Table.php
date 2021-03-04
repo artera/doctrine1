@@ -54,6 +54,9 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
      *   length: int,
      *   notnull?: bool,
      *   values?: array,
+     *   default?: mixed,
+     *   autoincrement?: bool,
+     *   values?: mixed[],
      * }>
      */
     protected array $columns = [];
@@ -978,8 +981,17 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
     /**
      * Retrieves a column definition from this table schema.
      *
-     * @param  string $columnName
-     * @return array<string,mixed>|null column definition; @see $columns
+     * @param string $columnName
+     * @return array column definition; @see $columns
+     * @phpstan-return array{
+     *   type: string,
+     *   length: int,
+     *   notnull?: bool,
+     *   values?: array,
+     *   default?: mixed,
+     *   autoincrement?: bool,
+     *   values?: mixed[],
+     * }|null
      */
     public function getColumnDefinition($columnName): ?array
     {
@@ -1239,7 +1251,8 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
         foreach ($deserializers as $deserializer) {
             try {
                 return $deserializer->deserialize($this->columns[$columnName]['default'], $this->columns[$columnName], $this);
-            } catch (Deserializer\Exception\Incompatible) {}
+            } catch (Deserializer\Exception\Incompatible) {
+            }
         }
 
         return $this->columns[$columnName]['default'];

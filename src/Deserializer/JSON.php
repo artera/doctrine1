@@ -8,7 +8,7 @@ use JsonSerializable;
 class JSON implements DeserializerInterface
 {
     public function __construct(
-        protected $assoc = true,
+        protected bool $assoc = true,
     ) {}
 
     protected function checkCompatibility(mixed $value, string $type): void

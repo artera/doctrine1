@@ -13,13 +13,15 @@ class Boolean implements SerializerInterface
 
     public function serialize(mixed $value, array $column, \Doctrine_Table $table): mixed
     {
-        $this->checkCompatibility($value, $column['type'], $table);
-        return $table->getConnection()->convertBooleans($value);
+        $this->checkCompatibility($value, $column['type']);
+        $value = $table->getConnection()->convertBooleans($value);
+        assert(!is_array($value)); // checkCompatibility requires a scalar type and convertBooleans only returns an array if the input is an array
+        return $value;
     }
 
     public function areEquivalent(mixed $a, mixed $b, array $column, \Doctrine_Table $table): bool
     {
-        $this->checkCompatibility($a, $column['type'], $table);
+        $this->checkCompatibility($a, $column['type']);
         if (is_numeric($a)) {
             $a = (int) $a;
         }
