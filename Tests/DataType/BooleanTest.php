@@ -12,85 +12,87 @@ class BooleanTest extends DoctrineUnitTestCase
 
     public function testSetFalse()
     {
-        $test             = new \BooleanTest();
+        $test = new \BooleanTest();
         $test->is_working = false;
 
-        $this->assertSame($test->is_working, false);
-        $this->assertEquals($test->state(), \Doctrine_Record_State::TDIRTY());
+        $this->assertFalse($test->is_working);
+        $this->assertEquals(\Doctrine_Record_State::TDIRTY(), $test->state());
         $test->save();
 
         $test->refresh();
-        $this->assertSame($test->is_working, false);
+        $this->assertFalse($test->is_working);
     }
 
     public function testSetTrue()
     {
-        $test             = new \BooleanTest();
+        $test = new \BooleanTest();
         $test->is_working = true;
-        $this->assertSame($test->is_working, true);
+        $this->assertTrue($test->is_working);
         $test->save();
 
         $test->refresh();
-        $this->assertSame($test->is_working, true);
+        $this->assertTrue($test->is_working);
 
         static::$connection->clear();
 
         $test = $test->getTable()->find($test->id);
-        $this->assertSame($test->is_working, true);
+        $this->assertTrue($test->is_working);
     }
     public function testNormalQuerying()
     {
         $query = new \Doctrine_Query(static::$connection);
         $ret   = $query->query('FROM BooleanTest WHERE BooleanTest.is_working = 0');
-        $this->assertEquals(count($ret), 1);
+        $this->assertCount(1, $ret);
 
         $query = new \Doctrine_Query(static::$connection);
         $ret   = $query->query('FROM BooleanTest WHERE BooleanTest.is_working = 1');
 
-        $this->assertEquals(count($ret), 1);
+        $this->assertCount(1, $ret);
     }
     public function testPreparedQueries()
     {
         $query = new \Doctrine_Query(static::$connection);
         $ret   = $query->query('FROM BooleanTest WHERE BooleanTest.is_working = ?', [false]);
-        $this->assertEquals(count($ret), 1);
+        $this->assertCount(1, $ret);
 
         $query = new \Doctrine_Query(static::$connection);
         $ret   = $query->query('FROM BooleanTest WHERE BooleanTest.is_working = ?', [true]);
-        $this->assertEquals(count($ret), 1);
+        $this->assertCount(1, $ret);
     }
     public function testFetchingWithSmartConversion()
     {
         $query = new \Doctrine_Query(static::$connection);
         $ret   = $query->query('FROM BooleanTest WHERE BooleanTest.is_working = false');
-        $this->assertEquals(count($ret), 1);
+        $this->assertCount(1, $ret);
 
         $query = new \Doctrine_Query(static::$connection);
         $ret   = $query->query('FROM BooleanTest WHERE BooleanTest.is_working = true');
 
-        $this->assertEquals(count($ret), 1);
+        $this->assertCount(1, $ret);
     }
 
     public function testSavingNullValue()
     {
-        $test             = new \BooleanTest();
+        $_SERVER['test'] = true;
+        $test = new \BooleanTest();
         $test->is_working = null;
 
-        $this->assertSame($test->is_working, null);
-        $this->assertEquals($test->state(), \Doctrine_Record_State::TDIRTY());
+        $this->assertNull($test->is_working);
+        $this->assertEquals(\Doctrine_Record_State::TDIRTY(), $test->state());
         $test->save();
 
         $test->refresh();
-        $this->assertSame($test->is_working, null);
+        $this->assertNull($test->is_working);
 
-        $test                     = new \BooleanTest();
+        $test = new \BooleanTest();
         $test->is_working_notnull = null;
 
-        $this->assertSame($test->is_working_notnull, false);
-        $this->assertEquals($test->state(), \Doctrine_Record_State::TDIRTY());
+        $this->assertFalse($test->is_working_notnull);
+        $this->assertEquals(\Doctrine_Record_State::TDIRTY(), $test->state());
         $test->save();
 
         $test->refresh();
-        $this->assertSame($test->is_working_notnull, false);
+        $this->assertFalse($test->is_working_notnull);
+        $_SERVER['test'] = false;
     }
 }

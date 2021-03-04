@@ -5,13 +5,13 @@ use Tests\DoctrineUnitTestCase;
 
 class ConnectionTest extends DoctrineUnitTestCase
 {
-    public function testUnknownModule()
+    public function testUnknownModule(): void
     {
         $this->expectException(\Doctrine_Connection_Exception::class);
         static::$connection->unknown;
     }
 
-    public function testGetModule()
+    public function testGetModule(): void
     {
         $this->assertTrue(static::$connection->unitOfWork instanceof \Doctrine_Connection_UnitOfWork);
         //$this->assertTrue(static::$connection->dataDict instanceof \Doctrine_DataDict);
@@ -20,7 +20,7 @@ class ConnectionTest extends DoctrineUnitTestCase
         $this->assertTrue(static::$connection->export instanceof \Doctrine_Export);
     }
 
-    public function testFetchAll()
+    public function testFetchAll(): void
     {
         static::$conn->exec('DROP TABLE entity');
         static::$conn->exec('CREATE TABLE entity (id INT, name TEXT)');
@@ -46,7 +46,7 @@ class ConnectionTest extends DoctrineUnitTestCase
         );
     }
 
-    public function testFetchOne()
+    public function testFetchOne(): void
     {
         $c = static::$conn->fetchOne('SELECT COUNT(1) FROM entity');
 
@@ -58,7 +58,7 @@ class ConnectionTest extends DoctrineUnitTestCase
     }
 
 
-    public function testFetchColumn()
+    public function testFetchColumn(): void
     {
         $a = static::$conn->fetchColumn('SELECT * FROM entity');
 
@@ -80,7 +80,7 @@ class ConnectionTest extends DoctrineUnitTestCase
         );
     }
 
-    public function testFetchArray()
+    public function testFetchArray(): void
     {
         $a = static::$conn->fetchArray('SELECT * FROM entity');
 
@@ -103,7 +103,7 @@ class ConnectionTest extends DoctrineUnitTestCase
         );
     }
 
-    public function testFetchRow()
+    public function testFetchRow(): void
     {
         $c = static::$conn->fetchRow('SELECT * FROM entity');
 
@@ -126,7 +126,7 @@ class ConnectionTest extends DoctrineUnitTestCase
         );
     }
 
-    public function testFetchPairs()
+    public function testFetchPairs(): void
     {
         static::$conn->exec('DROP TABLE entity');
     }
@@ -142,7 +142,7 @@ class ConnectionTest extends DoctrineUnitTestCase
         static::$connection->unitOfWork->delete($user);
     }
 
-    public function testGetTable()
+    public function testGetTable(): void
     {
         $table = static::$connection->getTable('Group');
         $this->assertTrue($table instanceof \Doctrine_Table);
@@ -154,39 +154,39 @@ class ConnectionTest extends DoctrineUnitTestCase
         $this->assertTrue($table instanceof \UserTable);
     }
 
-    public function testCreate()
+    public function testCreate(): void
     {
         $email = static::$connection->create('Email');
         $this->assertTrue($email instanceof \Email);
     }
 
-    public function testGetDbh()
+    public function testGetDbh(): void
     {
         $this->assertTrue(static::$connection->getDbh() instanceof \PDO);
     }
 
-    public function testCount()
+    public function testCount(): void
     {
         $this->assertTrue(is_integer(count(static::$connection)));
     }
 
-    public function testGetIterator()
+    public function testGetIterator(): void
     {
         $this->assertTrue(static::$connection->getIterator() instanceof \ArrayIterator);
     }
 
-    public function testGetState()
+    public function testGetState(): void
     {
         $this->assertEquals(static::$connection->transaction->getState(), \Doctrine_Transaction_State::SLEEP());
         $this->assertEquals('open', (string) static::$connection->transaction->getState());
     }
 
-    public function testGetTables()
+    public function testGetTables(): void
     {
         $this->assertTrue(is_array(static::$connection->getTables()));
     }
 
-    public function testRollback()
+    public function testRollback(): void
     {
         static::$connection->beginTransaction();
         $this->assertEquals(static::$connection->transaction->getTransactionLevel(), 1);
@@ -196,7 +196,7 @@ class ConnectionTest extends DoctrineUnitTestCase
         $this->assertEquals(static::$connection->transaction->getTransactionLevel(), 0);
     }
 
-    public function testNestedTransactions()
+    public function testNestedTransactions(): void
     {
         $this->assertEquals(static::$connection->transaction->getTransactionLevel(), 0);
         static::$connection->beginTransaction();
@@ -213,7 +213,7 @@ class ConnectionTest extends DoctrineUnitTestCase
         $this->assertEquals(static::$connection->transaction->getTransactionLevel(), 0);
     }
 
-    public function testSqliteDsn()
+    public function testSqliteDsn(): void
     {
         $conn = \Doctrine_Manager::connection('sqlite:foo.sq3');
         $conn->connect();

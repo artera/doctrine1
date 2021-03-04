@@ -159,12 +159,14 @@ abstract class Doctrine_Record implements Countable, IteratorAggregate, Serializ
                 $this->_state = State::TDIRTY();
             } else {
                 $this->_state = State::TCLEAN();
+                $this->resetModified();
             }
 
             // set the default values for this record
             $this->assignDefaultValues();
         } else {
             $this->_state = State::CLEAN();
+            $this->resetModified();
 
             if ($this->isInProxyState()) {
                 $this->_state = State::PROXY();
@@ -702,7 +704,7 @@ abstract class Doctrine_Record implements Countable, IteratorAggregate, Serializ
         foreach ($this->_table->getFieldNames() as $fieldName) {
             if (isset($tmp[$fieldName])) { // value present
                 if (!empty($deserializers)) {
-                    $tmp[$fieldName] = $this->deserializeColumnValue($tmp[$fieldName], $fieldName, $deserializers);
+                    $tmp[$fieldName] = $this->_table->deserializeColumnValue($tmp[$fieldName], $fieldName, $deserializers);
                 }
                 $data[$fieldName] = $tmp[$fieldName];
             } elseif (array_key_exists($fieldName, $tmp)) { // null
@@ -1459,7 +1461,7 @@ abstract class Doctrine_Record implements Countable, IteratorAggregate, Serializ
 
             if ($this->isValueModified($column, $old, $value)) {
                 if ($value === null) {
-                    $value = $column['default'] ?? null;
+                    $value = $this->_table->getDefaultValueOf($fieldName);
                 }
                 $this->_data[$fieldName] = $value;
                 $this->_modified[] = $fieldName;
@@ -1830,13 +1832,23 @@ abstract class Doctrine_Record implements Countable, IteratorAggregate, Serializ
      */
     public function getModified(bool $old = false, bool $last = false): array
     {
+        $serializers = $this->getSerializers();
+
         $a = [];
         $modified = $last ? $this->_lastModified : $this->_modified;
         foreach ($modified as $fieldName) {
+            $column = $this->_table->getColumnDefinition($this->_table->getColumnName($fieldName));
+            assert($column !== null);
+
             if ($old) {
-                $a[$fieldName] = isset($this->_oldValues[$fieldName])
+                $oldValue = isset($this->_oldValues[$fieldName])
                     ? $this->_oldValues[$fieldName]
-                    : $this->getTable()->getDefaultValueOf($fieldName);
+                    : $this->_table->getDefaultValueOf($fieldName);
+                $curValue = $this->get($fieldName, false);
+
+                if ($this->isValueModified($column, $oldValue, $curValue)) {
+                    $a[$fieldName] = $oldValue;
+                }
             } else {
                 $a[$fieldName] = $this->_data[$fieldName];
             }
@@ -1871,25 +1883,6 @@ abstract class Doctrine_Record implements Countable, IteratorAggregate, Serializ
             Doctrine_Manager::getInstance()->getSerializers(),
             $this->_table->getSerializers(),
         );
-    }
-
-    /** @param Deserializer\DeserializerInterface[]|null $deserializers */
-    public function deserializeColumnValue(mixed $value, string $fieldName, ?array $deserializers = null): mixed
-    {
-        $column = $this->_table->getColumnDefinition($this->_table->getColumnName($fieldName));
-        if ($column === null) {
-            return $value;
-        }
-        if ($deserializers === null) {
-            $deserializers = $this->getDeserializers();
-        }
-        foreach ($deserializers as $deserializer) {
-            try {
-                return $deserializer->deserialize($value, $column, $this->_table);
-            } catch (Deserializer\Exception\Incompatible) {
-            }
-        }
-        return $value;
     }
 
     /**
@@ -2691,7 +2684,7 @@ abstract class Doctrine_Record implements Countable, IteratorAggregate, Serializ
     {
         if (!empty($this->_modified)) {
             $this->_lastModified = $this->_modified;
-            $this->_modified     = [];
+            $this->_modified = [];
         }
     }
 

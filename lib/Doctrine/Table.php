@@ -1243,19 +1243,29 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
             return null;
         }
 
-        $deserializers = array_merge(
-            Doctrine_Manager::getInstance()->getDeserializers(),
-            $this->getDeserializers(),
-        );
+        return $this->deserializeColumnValue($this->columns[$columnName]['default'], $fieldName);
+    }
 
+    /** @param Deserializer\DeserializerInterface[]|null $deserializers */
+    public function deserializeColumnValue(mixed $value, string $fieldName, ?array $deserializers = null): mixed
+    {
+        $column = $this->getColumnDefinition($this->getColumnName($fieldName));
+        if ($column === null || ($value === null && empty($column['notnull']))) {
+            return $value;
+        }
+        if ($deserializers === null) {
+            $deserializers = array_merge(
+                Doctrine_Manager::getInstance()->getDeserializers(),
+                $this->getDeserializers(),
+            );
+        }
         foreach ($deserializers as $deserializer) {
             try {
-                return $deserializer->deserialize($this->columns[$columnName]['default'], $this->columns[$columnName], $this);
+                return $deserializer->deserialize($value, $column, $this);
             } catch (Deserializer\Exception\Incompatible) {
             }
         }
-
-        return $this->columns[$columnName]['default'];
+        return $value;
     }
 
     /**
