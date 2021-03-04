@@ -1239,8 +1239,7 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
         foreach ($deserializers as $deserializer) {
             try {
                 return $deserializer->deserialize($this->columns[$columnName]['default'], $this->columns[$columnName], $this);
-            } catch (Deserializer\Exception\Incompatible) {
-            }
+            } catch (Deserializer\Exception\Incompatible) {}
         }
 
         return $this->columns[$columnName]['default'];

@@ -702,15 +702,7 @@ abstract class Doctrine_Record implements Countable, IteratorAggregate, Serializ
         foreach ($this->_table->getFieldNames() as $fieldName) {
             if (isset($tmp[$fieldName])) { // value present
                 if (!empty($deserializers)) {
-                    $column = $this->_table->getColumnDefinition($this->_table->getColumnName($fieldName));
-
-                    foreach ($deserializers as $deserializer) {
-                        try {
-                            $tmp[$fieldName] = $deserializer->deserialize($tmp[$fieldName], $column, $this->_table);
-                            break;
-                        } catch (Deserializer\Exception\Incompatible) {
-                        }
-                    }
+                    $tmp[$fieldName] = $this->deserializeColumnValue($tmp[$fieldName], $fieldName, $deserializers);
                 }
                 $data[$fieldName] = $tmp[$fieldName];
             } elseif (array_key_exists($fieldName, $tmp)) { // null
@@ -1879,6 +1871,21 @@ abstract class Doctrine_Record implements Countable, IteratorAggregate, Serializ
             Doctrine_Manager::getInstance()->getSerializers(),
             $this->_table->getSerializers(),
         );
+    }
+
+    /** @param Deserializer\DeserializerInterface[]|null $deserializers */
+    public function deserializeColumnValue(mixed $value, string $fieldName, ?array $deserializers = null): mixed
+    {
+        if ($deserializers === null) {
+            $deserializers = $this->getDeserializers();
+        }
+        $column = $this->_table->getColumnDefinition($this->_table->getColumnName($fieldName));
+        foreach ($deserializers as $deserializer) {
+            try {
+                return $deserializer->deserialize($value, $column, $this->_table);
+            } catch (Deserializer\Exception\Incompatible) {}
+        }
+        return $value;
     }
 
     /**
