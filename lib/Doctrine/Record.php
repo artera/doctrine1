@@ -1332,20 +1332,20 @@ abstract class Doctrine_Record implements Countable, IteratorAggregate, Serializ
      */
     public function get($fieldName, $load = true, bool $accessors = false)
     {
-        static $inAccessor = false;
+        static $inAccessor = [];
 
-        if (!$inAccessor && $accessors
+        if (empty($inAccessor[$fieldName]) && $accessors
         && ($this->_table->getAttribute(Doctrine_Core::ATTR_AUTO_ACCESSOR_OVERRIDE) || $this->hasAccessor($fieldName))) {
             $componentName = $this->_table->getComponentName();
             $accessor = $this->getAccessor($fieldName) ?? 'get' . Doctrine_Inflector::classify($fieldName);
 
             if ($this->hasAccessor($fieldName) || method_exists($this, $accessor)) {
                 $this->hasAccessor($fieldName, $accessor);
-                $inAccessor = true;
+                $inAccessor[$fieldName] = true;
                 try {
                     return $this->$accessor($load, $fieldName);
                 } finally {
-                    $inAccessor = false;
+                    unset($inAccessor[$fieldName]);
                 }
             }
         }
@@ -1417,21 +1417,21 @@ abstract class Doctrine_Record implements Countable, IteratorAggregate, Serializ
      */
     public function set($fieldName, $value, $load = true, bool $mutators = false)
     {
-        static $inMutator = false;
+        static $inMutator = [];
 
-        if (!$inMutator && $mutators
+        if (empty($inMutator[$fieldName]) && $mutators
         && ($this->_table->getAttribute(Doctrine_Core::ATTR_AUTO_ACCESSOR_OVERRIDE) || $this->hasMutator($fieldName))) {
             $componentName = $this->_table->getComponentName();
             $mutator       = $this->getMutator($fieldName) ?? 'set' . Doctrine_Inflector::classify($fieldName);
 
             if ($this->hasMutator($fieldName) || method_exists($this, $mutator)) {
                 $this->hasMutator($fieldName, $mutator);
-                $inMutator = true;
+                $inMutator[$fieldName] = true;
                 try {
                     $this->$mutator($value, $load, $fieldName);
                     return $this;
                 } finally {
-                    $inMutator = false;
+                    unset($inMutator[$fieldName]);
                 }
             }
         }
