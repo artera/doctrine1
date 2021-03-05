@@ -694,7 +694,10 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
      * */
     public function registerValidator(string $alias, string $validatorClass, array $options = []): void
     {
-        $this->validators[$alias] = $validatorClass;
+        $this->validators[$alias] = [
+            'class' => $validatorClass,
+            'options' => $options,
+        ];
     }
 
     /**
