@@ -4,6 +4,10 @@ services:
       - phpstan.broker.methodsClassReflectionExtension
       - phpstan.broker.dynamicMethodReturnTypeExtension
 
+  - class: Doctrine1\PHPStan\QueryDynamicReturnTypeExtension
+    tags:
+      - phpstan.broker.dynamicMethodReturnTypeExtension
+
   - class: Doctrine1\PHPStan\CoreDynamicReturnTypeExtension
     tags:
       - phpstan.broker.dynamicStaticMethodReturnTypeExtension
