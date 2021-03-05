@@ -10,7 +10,7 @@ namespace Tests\Tickets {
         {
             $manager = \Doctrine_Manager::getInstance();
             $manager->registerValidator(MyValidator::class, 'MyValidator');
-            $this->assertTrue(in_array('MyValidator', $manager->getValidators()));
+            $this->assertArrayHasKey('MyValidator', $manager->getValidators());
         }
     }
 }
