@@ -30,12 +30,12 @@ class QueryDynamicReturnTypeExtension extends AbstractExtension implements Dynam
 {
     public function getClass(): string
     {
-        return \Doctrine_Query::class;
+        return \Doctrine_Query_Abstract::class;
     }
 
     public function isMethodSupported(MethodReflection $methodReflection): bool
     {
-        return in_array($methodReflection->getName(), ['from', 'fetchOne', 'execute']);
+        return in_array($methodReflection->getName(), ['from', 'delete', 'update', 'fetchOne', 'execute']);
     }
 
     public function getTypeFromMethodCall(MethodReflection $methodReflection, MethodCall $methodCall, Scope $scope): Type
@@ -49,13 +49,13 @@ class QueryDynamicReturnTypeExtension extends AbstractExtension implements Dynam
         $parameters = $parametersAcceptor->getParameters();
         $methodName = $methodReflection->getName();
 
-        if ($methodName === 'from') {
+        if (in_array($methodName, ['from', 'delete', 'update'])) {
             $fromArg = $this->findArg('from', $methodCall, $parameters);
             if ($fromArg === null) {
                 return $returnType;
             }
             $fromArg = $scope->getType($fromArg->value);
-            return $this->getFromReturnType($fromArg, $returnType);
+            return $this->getFromReturnType($scope->getType($methodCall->var), $fromArg, $returnType);
         }
 
         if (!$returnType instanceof UnionType) {
@@ -84,15 +84,16 @@ class QueryDynamicReturnTypeExtension extends AbstractExtension implements Dynam
             return $returnType;
         }
 
+        $selfType = $scope->getType($methodCall->var);
         if ($methodName === 'execute') {
-            return $this->getExecuteReturnType($returnType, $hydrationMode);
+            return $this->getExecuteReturnType($selfType, $returnType, $hydrationMode);
         }
-        return $this->getFetchOneReturnType($returnType, $hydrationMode);
+        return $this->getFetchOneReturnType($selfType, $returnType, $hydrationMode);
     }
 
-    protected function getFromReturnType(Type $from, Type $returnType): Type
+    protected function getFromReturnType(Type $selfType, Type $from, Type $returnType): Type
     {
-        if (!$returnType instanceof ThisType || !$from instanceof ConstantStringType) {
+        if (!$selfType instanceof GenericObjectType || !$returnType instanceof ThisType || !$from instanceof ConstantStringType) {
             return $returnType;
         }
 
@@ -106,16 +107,29 @@ class QueryDynamicReturnTypeExtension extends AbstractExtension implements Dynam
             return $returnType;
         }
 
-        $objectType = $returnType->getStaticObjectType();
-        if (!$objectType instanceof GenericObjectType) {
-            return $returnType;
-        }
+        $templateTypes = $selfType->getTypes();
+        $templateTypes[0] = new ObjectType($from);
 
-        return new GenericObjectType($this->getClass(), [new ObjectType($from)]);
+        return new GenericObjectType($selfType->getClassName(), $templateTypes);
     }
 
-    protected function getExecuteReturnType(UnionType $returnType, int $hydrationMode): Type
+    protected function getExecuteReturnType(Type $selfType, UnionType $returnType, int $hydrationMode): Type
     {
+        $select = true;
+        if ($selfType instanceof GenericObjectType) {
+            $types = $selfType->getTypes();
+            if (count($types) > 1 && $types[1] instanceof ObjectType) {
+                $queryTypeTemplate = $types[1]->getClassname();
+                if ($queryTypeTemplate !== \Doctrine_Query_Type_Select::class) {
+                    $select = false;
+                }
+            }
+        }
+
+        if (!$select) {
+            return new IntegerType();
+        }
+
         $objectType = null;
         if ($hydrationMode === \Doctrine_Core::HYDRATE_RECORD) {
             $objectType = new ObjectType(\Doctrine_Collection::class);
@@ -143,7 +157,7 @@ class QueryDynamicReturnTypeExtension extends AbstractExtension implements Dynam
         return TypeCombinator::union(...$types);
     }
 
-    protected function getFetchOneReturnType(UnionType $returnType, int $hydrationMode): Type
+    protected function getFetchOneReturnType(Type $selfType, UnionType $returnType, int $hydrationMode): Type
     {
         if ($hydrationMode === \Doctrine_Core::HYDRATE_ON_DEMAND) {
             return $returnType;

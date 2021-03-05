@@ -2,7 +2,8 @@
 
 /**
  * @template Record of Doctrine_Record
- * @extends Doctrine_Query_Abstract<Record>
+ * @template Type of Doctrine_Query_Type
+ * @extends Doctrine_Query_Abstract<Record, Type>
  */
 class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
 {
@@ -121,7 +122,7 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
      *
      * @phpstan-param  class-string<Doctrine_Query> $class
      * @return         Doctrine_Query
-     * @phpstan-return Doctrine_Query<Doctrine_Record>
+     * @phpstan-return Doctrine_Query<Doctrine_Record, Doctrine_Query_Type_Select>
      */
     public static function create(?Doctrine_Connection $conn = null, string $class = null): Doctrine_Query
     {
@@ -164,7 +165,7 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
 
     /**
      * @return static
-     * @phpstan-return Doctrine_Query<Record>
+     * @phpstan-return Doctrine_Query<Record, Doctrine_Query_Type_Select>
      */
     public function createSubquery(): self
     {

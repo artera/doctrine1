@@ -2,6 +2,7 @@
 
 /**
  * @template Record of Doctrine_Record
+ * @template Type of Doctrine_Query_Type
  */
 abstract class Doctrine_Query_Abstract
 {
@@ -219,8 +220,6 @@ abstract class Doctrine_Query_Abstract
     protected array $parsers = [];
 
     /**
-     * Constructor.
-     *
      * @param Doctrine_Connection             $connection The connection object the query will use.
      * @param Doctrine_Hydrator_Abstract|null $hydrator   The hydrator that will be used for generating result sets.
      */
@@ -713,7 +712,7 @@ abstract class Doctrine_Query_Abstract
      * of the parent query
      *
      * @param Doctrine_Query_Abstract $query the query object from which the aliases are copied from
-     * @phpstan-param Doctrine_Query_Abstract<Record> $query
+     * @phpstan-param Doctrine_Query_Abstract<Record, Doctrine_Query_Type> $query
      */
     public function copySubqueryInfo(Doctrine_Query_Abstract $query): void
     {
@@ -1504,11 +1503,11 @@ abstract class Doctrine_Query_Abstract
     }
 
     /**
-     * select
      * sets the SELECT part of the query
      *
      * @param  string $select Query SELECT part
      * @return $this
+     * @phpstan-return static<Record, Doctrine_Query_Type_Select>
      */
     public function select($select = null)
     {
@@ -1555,6 +1554,7 @@ abstract class Doctrine_Query_Abstract
      *
      * @param  string $from
      * @return $this
+     * @phpstan-return static<Record, Doctrine_Query_Type_Delete>
      */
     public function delete($from = null)
     {
@@ -1571,6 +1571,7 @@ abstract class Doctrine_Query_Abstract
      *
      * @param  string $from
      * @return $this
+     * @phpstan-return static<Record, Doctrine_Query_Type_Update>
      */
     public function update($from = null)
     {

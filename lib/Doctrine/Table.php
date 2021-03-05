@@ -875,7 +875,7 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
      * @return Doctrine_Query
      *
      * @psalm-return Doctrine_Query<Doctrine_Record>
-     * @phpstan-return Doctrine_Query<T>
+     * @phpstan-return Doctrine_Query<T, Doctrine_Query_Type_Select>
      */
     public function createQuery($alias = ''): Doctrine_Query
     {
@@ -885,7 +885,7 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
 
         $class = $this->getAttribute(Doctrine_Core::ATTR_QUERY_CLASS);
 
-        /** @phpstan-var Doctrine_Query<T> */
+        /** @phpstan-var Doctrine_Query<T, Doctrine_Query_Type_Select> */
         return Doctrine_Query::create(null, $class)
             ->from($this->getComponentName() . $alias);
     }
@@ -1381,7 +1381,7 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
      * @see           createNamedQuery()
      * @param         string                $queryKey query key name to use for storage
      * @param         string|Doctrine_Query $query    DQL string or object
-     * @phpstan-param string|Doctrine_Query<T> $query
+     * @phpstan-param string|Doctrine_Query<T, Doctrine_Query_Type> $query
      * @return        void
      */
     public function addNamedQuery($queryKey, $query)
@@ -1398,7 +1398,7 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
      * @see            addNamedQuery()
      * @param          string $queryKey query key name
      * @return         Doctrine_Query
-     * @phpstan-return Doctrine_Query<T>
+     * @phpstan-return Doctrine_Query<T, Doctrine_Query_Type>
      */
     public function createNamedQuery($queryKey)
     {
@@ -1791,7 +1791,7 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
     /**
      * @return Doctrine_Query
      *
-     * @phpstan-return Doctrine_Query<T>
+     * @phpstan-return Doctrine_Query<T, Doctrine_Query_Type_Select>
      *
      * @psalm-return Doctrine_Query<Doctrine_Record>
      */

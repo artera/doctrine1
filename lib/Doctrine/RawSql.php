@@ -1,43 +1,9 @@
 <?php
-/*
- *  $Id: RawSql.php 7490 2010-03-29 19:53:27Z jwage $
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- * This software consists of voluntary contributions made by many individuals
- * and is licensed under the LGPL. For more information, see
- * <http://www.doctrine-project.org>.
- */
 
 /**
- * Doctrine_RawSql
- *
- * Doctrine_RawSql is an implementation of Doctrine_Query_Abstract that skips the entire
- * DQL parsing procedure. The "DQL" that is passed to a RawSql query object for execution
- * is considered to be plain SQL and will be used "as is". The only query part that is special
- * in a RawSql query is the SELECT part, which has a special syntax that provides Doctrine
- * with the necessary information to properly hydrate the query results.
- *
- * @package    Doctrine
- * @subpackage RawSql
- * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link       www.doctrine-project.org
- * @since      1.0
- * @version    $Revision: 7490 $
- * @author     Konsta Vesterinen <kvesteri@cc.hut.fi>
- *
- * @template T of Doctrine_Record
- * @extends Doctrine_Query_Abstract<T>
+ * @template Record of Doctrine_Record
+ * @template Type of Doctrine_Query_Type
+ * @extends Doctrine_Query_Abstract<Record, Type>
  */
 class Doctrine_RawSql extends Doctrine_Query_Abstract
 {
