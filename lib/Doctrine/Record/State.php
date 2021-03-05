@@ -16,22 +16,22 @@ class Doctrine_Record_State extends Enum
 
     public function isDirty(): bool
     {
-        return $this->equals(self::DIRTY()) || $this->equals(self::TDIRTY());
+        return $this->getValue() === self::DIRTY || $this->getValue() === self::TDIRTY;
     }
 
     public function isClean(): bool
     {
-        return $this->equals(self::CLEAN()) || $this->equals(self::TCLEAN());
+        return $this->getValue() === self::CLEAN || $this->getValue() === self::TCLEAN;
     }
 
     public function isLocked(): bool
     {
-        return $this->equals(self::LOCKED()) || $this->equals(self::TLOCKED());
+        return $this->getValue() === self::LOCKED || $this->getValue() === self::TLOCKED;
     }
 
     public function isTransient(): bool
     {
-        return $this->equals(self::TDIRTY()) || $this->equals(self::TCLEAN()) || $this->equals(self::TLOCKED());
+        return $this->getValue() === self::TDIRTY || $this->getValue() === self::TCLEAN || $this->getValue() === self::TLOCKED;
     }
 
     public function lock(): self
