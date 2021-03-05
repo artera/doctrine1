@@ -35,7 +35,7 @@ class QueryDynamicReturnTypeExtension extends AbstractExtension implements Dynam
 
     public function isMethodSupported(MethodReflection $methodReflection): bool
     {
-        return in_array($methodReflection->getName(), ['from', 'delete', 'update', 'fetchOne', 'execute']);
+        return in_array($methodReflection->getName(), ['from', 'select', 'delete', 'update', 'fetchOne', 'execute']);
     }
 
     public function getTypeFromMethodCall(MethodReflection $methodReflection, MethodCall $methodCall, Scope $scope): Type
@@ -49,12 +49,11 @@ class QueryDynamicReturnTypeExtension extends AbstractExtension implements Dynam
         $parameters = $parametersAcceptor->getParameters();
         $methodName = $methodReflection->getName();
 
-        if (in_array($methodName, ['from', 'delete', 'update'])) {
+        if (in_array($methodName, ['from', 'select', 'delete', 'update'])) {
             $fromArg = $this->findArg('from', $methodCall, $parameters);
-            if ($fromArg === null) {
-                return $returnType;
+            if ($fromArg !== null) {
+                $fromArg = $scope->getType($fromArg->value);
             }
-            $fromArg = $scope->getType($fromArg->value);
             return $this->getFromReturnType($scope->getType($methodCall->var), $fromArg, $returnType);
         }
 
@@ -91,24 +90,31 @@ class QueryDynamicReturnTypeExtension extends AbstractExtension implements Dynam
         return $this->getFetchOneReturnType($selfType, $returnType, $hydrationMode);
     }
 
-    protected function getFromReturnType(Type $selfType, Type $from, Type $returnType): Type
+    protected function getFromReturnType(Type $selfType, ?Type $from, Type $returnType): Type
     {
-        if (!$selfType instanceof GenericObjectType || !$returnType instanceof ThisType || !$from instanceof ConstantStringType) {
+        if (!$selfType instanceof GenericObjectType || ($from !== null && !$from instanceof ConstantStringType)) {
             return $returnType;
         }
 
-        $from = $from->getValue();
-        if (!preg_match('/^[a-z0-9_]+/i', $from, $matches)) {
-            return $returnType;
-        }
-        $from = $matches[0];
-
-        if (!class_exists($from)) {
-            return $returnType;
+        if ($returnType instanceof GenericObjectType) {
+            $templateTypes = $returnType->getTypes();
+        } else {
+            $templateTypes = $selfType->getTypes();
         }
 
-        $templateTypes = $selfType->getTypes();
-        $templateTypes[0] = new ObjectType($from);
+        if ($from !== null) {
+            $from = $from->getValue();
+            if (!preg_match('/^[a-z0-9_]+/i', $from, $matches)) {
+                return $returnType;
+            }
+            $from = $matches[0];
+
+            if (!class_exists($from)) {
+                return $returnType;
+            }
+
+            $templateTypes[0] = new ObjectType($from);
+        }
 
         return new GenericObjectType($selfType->getClassName(), $templateTypes);
     }
