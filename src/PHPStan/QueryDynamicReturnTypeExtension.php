@@ -97,6 +97,11 @@ class QueryDynamicReturnTypeExtension extends AbstractExtension implements Dynam
         }
 
         $from = $from->getValue();
+        if (!preg_match('/^[a-z0-9_]+/i', $from, $matches)) {
+            return $returnType;
+        }
+        $from = $matches[0];
+
         if (!class_exists($from)) {
             return $returnType;
         }
