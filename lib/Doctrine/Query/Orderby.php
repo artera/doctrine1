@@ -36,7 +36,7 @@ class Doctrine_Query_Orderby extends Doctrine_Query_Part
                             // Grab query connection
                             $conn = $this->query->getConnection();
 
-                            if ($this->query->getType() === Doctrine_Query::SELECT) {
+                            if ($this->query->getType()->isSelect()) {
                                 $componentAlias = implode('.', $e);
 
                                 if (empty($componentAlias)) {
@@ -116,7 +116,7 @@ class Doctrine_Query_Orderby extends Doctrine_Query_Part
                                     $tableAlias = $this->query->getSqlTableAlias($componentAlias);
                                     $conn       = $this->query->getConnection();
 
-                                    if ($this->query->getType() === Doctrine_Query::SELECT) {
+                                    if ($this->query->getType()->isSelect()) {
                                         // build sql expression
                                         $term[0] = $conn->quoteIdentifier($tableAlias)
                                                  . '.' . $conn->quoteIdentifier($field);

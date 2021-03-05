@@ -1,39 +1,10 @@
 <?php
 
 /**
- * @template T of Doctrine_Record
+ * @template Record of Doctrine_Record
  */
 abstract class Doctrine_Query_Abstract
 {
-    /**
-     * QUERY TYPE CONSTANTS
-     */
-
-    /**
-     * constant for SELECT queries
-     */
-    const SELECT = 0;
-
-    /**
-     * constant for DELETE queries
-     */
-    const DELETE = 1;
-
-    /**
-     * constant for UPDATE queries
-     */
-    const UPDATE = 2;
-
-    /**
-     * constant for INSERT queries
-     */
-    const INSERT = 3;
-
-    /**
-     * constant for CREATE queries
-     */
-    const CREATE = 4;
-
     /**
      * A query object is in CLEAN state when it has NO unparsed/unprocessed DQL parts.
      */
@@ -193,7 +164,7 @@ abstract class Doctrine_Query_Abstract
      */
     protected string $rootAlias = '';
 
-    protected int $type = self::SELECT;
+    protected Doctrine_Query_Type $type;
 
     /**
      * The hydrator object used to hydrate query results.
@@ -257,6 +228,7 @@ abstract class Doctrine_Query_Abstract
         ?Doctrine_Connection $connection = null,
         ?Doctrine_Hydrator_Abstract $hydrator = null
     ) {
+        $this->type = Doctrine_Query_Type::SELECT();
         $this->passedConn = $connection !== null;
 
         if ($hydrator === null) {
@@ -327,13 +299,13 @@ abstract class Doctrine_Query_Abstract
     public function getDql()
     {
         $q = '';
-        if ($this->type == self::SELECT) {
+        if ($this->type->isSelect()) {
             $q .= (!empty($this->dqlParts['select'])) ? 'SELECT ' . implode(', ', $this->dqlParts['select']) : '';
             $q .= (!empty($this->dqlParts['from'])) ? ' FROM ' . implode(' ', $this->dqlParts['from']) : '';
-        } elseif ($this->type == self::DELETE) {
+        } elseif ($this->type->isDelete()) {
             $q .= 'DELETE';
             $q .= (!empty($this->dqlParts['from'])) ? ' FROM ' . implode(' ', $this->dqlParts['from']) : '';
-        } elseif ($this->type == self::UPDATE) {
+        } elseif ($this->type->isUpdate()) {
             $q .= 'UPDATE ';
             $q .= (!empty($this->dqlParts['from'])) ? implode(' ', $this->dqlParts['from']) : '';
             $q .= (!empty($this->dqlParts['set'])) ? ' SET ' . implode(' ', $this->dqlParts['set']) : '';
@@ -614,10 +586,10 @@ abstract class Doctrine_Query_Abstract
 
         $tableAlias = $this->getSqlTableAlias($componentAlias);
 
-        if ($this->type !== Doctrine_Query::SELECT) {
-            $tableAlias = '';
-        } else {
+        if ($this->type->isSelect()) {
             $tableAlias .= '.';
+        } else {
+            $tableAlias = '';
         }
 
         // Fix for 2015: loop through whole inheritanceMap to add all
@@ -741,7 +713,7 @@ abstract class Doctrine_Query_Abstract
      * of the parent query
      *
      * @param Doctrine_Query_Abstract $query the query object from which the aliases are copied from
-     * @phpstan-param Doctrine_Query_Abstract<T> $query
+     * @phpstan-param Doctrine_Query_Abstract<Record> $query
      */
     public function copySubqueryInfo(Doctrine_Query_Abstract $query): void
     {
@@ -958,7 +930,7 @@ abstract class Doctrine_Query_Abstract
             $params = array_merge((array) $params, (array) $params);
         }
 
-        if ($this->type !== self::SELECT) {
+        if (!$this->type->isSelect()) {
             return $this->connection->exec($query, $params);
         }
 
@@ -973,7 +945,7 @@ abstract class Doctrine_Query_Abstract
      * executes the query and populates the data set
      *
      * @phpstan-param int|class-string<Doctrine_Hydrator_Abstract>|null $hydrationMode
-     * @phpstan-return Doctrine_Collection<T>|Doctrine_Collection_OnDemand<T>|array|scalar
+     * @phpstan-return Doctrine_Collection<Record>|Doctrine_Collection_OnDemand<Record>|array|scalar
      */
     public function execute(array $params = [], int|string|null $hydrationMode = null): Doctrine_Collection|Doctrine_Collection_OnDemand|array|int|string|float|bool
     {
@@ -995,7 +967,7 @@ abstract class Doctrine_Query_Abstract
 
             $hydrationMode = $this->hydrator->getHydrationMode();
 
-            if ($this->resultCache && $this->type == self::SELECT) {
+            if ($this->resultCache && $this->type->isSelect()) {
                 $cacheDriver = $this->getResultCacheDriver();
                 $hash        = $this->getResultCacheHash($params);
                 $cached      = ($this->expireResultCache) ? false : $cacheDriver->fetch($hash);
@@ -1023,9 +995,9 @@ abstract class Doctrine_Query_Abstract
 
                 $this->hydrator->setQueryComponents($this->queryComponents);
                 if ($this->hydrator instanceof Doctrine_Hydrator) {
-                    if ($this->type == self::SELECT && $hydrationMode == Doctrine_Core::HYDRATE_ON_DEMAND) {
+                    if ($this->type->isSelect() && $hydrationMode == Doctrine_Core::HYDRATE_ON_DEMAND) {
                         $hydrationDriver = $this->hydrator->getHydratorDriver($hydrationMode, $this->tableAliasMap);
-                        /** @var Doctrine_Collection_OnDemand<T> */
+                        /** @var Doctrine_Collection_OnDemand<Record> */
                         $result = new Doctrine_Collection_OnDemand($stmt, $hydrationDriver, $this->tableAliasMap);
                         return $result;
                     }
@@ -1061,21 +1033,28 @@ abstract class Doctrine_Query_Abstract
             return null;
         }
 
-        return match ($this->type) {
-            self::DELETE => [
+        if ($this->type->isDelete()) {
+            return [
                 'callback' => 'preDqlDelete',
                 'const'    => Doctrine_Event::RECORD_DQL_DELETE
-            ],
-            self::UPDATE => [
+            ];
+        }
+
+        if ($this->type->isUpdate()) {
+            return [
                 'callback' => 'preDqlUpdate',
                 'const'    => Doctrine_Event::RECORD_DQL_UPDATE
-            ],
-            self::SELECT => [
+            ];
+        }
+
+        if ($this->type->isSelect()) {
+            return [
                 'callback' => 'preDqlSelect',
                 'const'    => Doctrine_Event::RECORD_DQL_SELECT
-            ],
-            default => null,
-        };
+            ];
+        }
+
+        return null;
     }
 
     /**
@@ -1533,7 +1512,7 @@ abstract class Doctrine_Query_Abstract
      */
     public function select($select = null)
     {
-        $this->type = self::SELECT;
+        $this->type = Doctrine_Query_Type::SELECT();
         if ($select) {
             return $this->addDqlQueryPart('select', $select);
         } else {
@@ -1579,7 +1558,7 @@ abstract class Doctrine_Query_Abstract
      */
     public function delete($from = null)
     {
-        $this->type = self::DELETE;
+        $this->type = Doctrine_Query_Type::DELETE();
         if ($from != null) {
             return $this->addDqlQueryPart('from', $from);
         }
@@ -1595,7 +1574,7 @@ abstract class Doctrine_Query_Abstract
      */
     public function update($from = null)
     {
-        $this->type = self::UPDATE;
+        $this->type = Doctrine_Query_Type::UPDATE();
         if ($from != null) {
             return $this->addDqlQueryPart('from', $from);
         }
@@ -1830,20 +1809,12 @@ abstract class Doctrine_Query_Abstract
     }
 
     /**
-     * getType
-     *
      * returns the type of this query object
-     * by default the type is Doctrine_Query_Abstract::SELECT but if update() or delete()
-     * are being called the type is Doctrine_Query_Abstract::UPDATE and Doctrine_Query_Abstract::DELETE,
+     * by default the type is Doctrine_Query_Type::SELECT but if update() or delete()
+     * are being called the type is Doctrine_Query_Type::UPDATE and Doctrine_Query_Type::DELETE,
      * respectively
-     *
-     * @see Doctrine_Query_Abstract::SELECT
-     * @see Doctrine_Query_Abstract::UPDATE
-     * @see Doctrine_Query_Abstract::DELETE
-     *
-     * @return integer      return the query type
      */
-    public function getType()
+    public function getType(): Doctrine_Query_Type
     {
         return $this->type;
     }

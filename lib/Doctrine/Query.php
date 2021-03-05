@@ -1,8 +1,8 @@
 <?php
 
 /**
- * @template T of Doctrine_Record
- * @extends Doctrine_Query_Abstract<T>
+ * @template Record of Doctrine_Record
+ * @extends Doctrine_Query_Abstract<Record>
  */
 class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
 {
@@ -164,7 +164,7 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
 
     /**
      * @return static
-     * @phpstan-return Doctrine_Query<T>
+     * @phpstan-return Doctrine_Query<Record>
      */
     public function createSubquery(): self
     {
@@ -215,7 +215,7 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
      * @param  mixed[] $params        Query parameters
      * @param  int     $hydrationMode Hydration mode: see Doctrine_Core::HYDRATE_* constants
      * @return Doctrine_Record|scalar Array or Doctrine_Record, depending on hydration mode. null if no result.
-     * @phpstan-return T|array<string,mixed>|scalar|null
+     * @phpstan-return Record|array<string,mixed>|scalar|null
      */
     public function fetchOne($params = [], $hydrationMode = null)
     {
@@ -655,7 +655,7 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
 
                             $field = array_pop($e);
 
-                            if ($this->getType() === Doctrine_Query::SELECT) {
+                            if ($this->getType()->isSelect()) {
                                 $componentAlias = implode('.', $e);
 
                                 if (empty($componentAlias)) {
@@ -722,7 +722,7 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
 
                                 $tableAlias = $this->getSqlTableAlias($componentAlias);
 
-                                if ($this->getType() === Doctrine_Query::SELECT) {
+                                if ($this->getType()->isSelect()) {
                                     // build sql expression
                                     $term[0] = $this->connection->quoteIdentifier($tableAlias)
                                              . '.'
@@ -951,22 +951,17 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
      */
     protected function buildSqlQueryBase()
     {
-        switch ($this->type) {
-            case self::DELETE:
-                $q = 'DELETE FROM ';
-                break;
-            case self::UPDATE:
-                $q = 'UPDATE ';
-                break;
-            case self::SELECT:
-                $distinct = ($this->sqlParts['distinct']) ? 'DISTINCT ' : '';
-                $q        = 'SELECT ' . $distinct . implode(', ', $this->sqlParts['select']) . ' FROM ';
-                break;
-            default:
-                $q = '';
-                break;
+        if ($this->type->isDelete()) {
+            return 'DELETE FROM ';
         }
-        return $q;
+        if ($this->type->isUpdate()) {
+            return 'UPDATE ';
+        }
+        if ($this->type->isSelect()) {
+            $distinct = ($this->sqlParts['distinct']) ? 'DISTINCT ' : '';
+            return 'SELECT ' . $distinct . implode(', ', $this->sqlParts['select']) . ' FROM ';
+        }
+        return '';
     }
 
     /**
@@ -983,7 +978,7 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
             $e = explode(' ', $part);
 
             if ($k === 0) {
-                if (!$ignorePending && $this->type == self::SELECT) {
+                if (!$ignorePending && $this->type->isSelect()) {
                     // We may still have pending conditions
                     $alias = count($e) > 1
                         ? $this->getComponentAlias($e[1])
@@ -1288,7 +1283,7 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
 
         // Add the default orderBy statements defined in the relationships and table classes
         // Only do this for SELECT queries
-        if ($this->type === self::SELECT) {
+        if ($this->type->isSelect()) {
             foreach ($this->queryComponents as $alias => $map) {
                 $sqlAlias = $this->getSqlTableAlias($alias);
                 if (isset($map['relation'])) {
@@ -1557,20 +1552,20 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
             $partName = strtolower($partName);
             switch ($partName) {
                 case 'create':
-                    $this->type = self::CREATE;
+                    $this->type = Doctrine_Query_Type::CREATE();
                     break;
                 case 'insert':
-                    $this->type = self::INSERT;
+                    $this->type = Doctrine_Query_Type::INSERT();
                     break;
                 case 'delete':
-                    $this->type = self::DELETE;
+                    $this->type = Doctrine_Query_Type::DELETE();
                     break;
                 case 'select':
-                    $this->type = self::SELECT;
+                    $this->type = Doctrine_Query_Type::SELECT();
                     $this->addDqlQueryPart($partName, $subParts);
                     break;
                 case 'update':
-                    $this->type = self::UPDATE;
+                    $this->type = Doctrine_Query_Type::UPDATE();
                     $partName    = 'from';
                     // no break
                 case 'from':
@@ -1915,7 +1910,7 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
         // quote table name
         $queryPart = $this->connection->quoteIdentifier($tableName);
 
-        if ($this->type === self::SELECT) {
+        if ($this->type->isSelect()) {
             $queryPart .= ' ' . $this->connection->quoteIdentifier($tableAlias);
         }
 

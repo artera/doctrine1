@@ -87,12 +87,12 @@ class SelectTest extends DoctrineUnitTestCase
             ->set('u.password', '?', 'newpassword')
             ->where('u.username = ?', 'jwage');
 
-        $this->assertEquals($q->getType(), \Doctrine_Query_Abstract::UPDATE);
+        $this->assertTrue($q->getType()->isUpdate());
         $this->assertEquals($q->getDql(), 'UPDATE User u SET u.password = ? WHERE u.username = ?');
 
         $q->select();
 
-        $this->assertEquals($q->getType(), \Doctrine_Query_Abstract::SELECT);
+        $this->assertTrue($q->getType()->isSelect());
         $this->assertEquals($q->getDql(), ' FROM User u WHERE u.username = ?');
     }
 
