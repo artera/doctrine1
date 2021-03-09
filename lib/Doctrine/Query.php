@@ -1116,18 +1116,18 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
         // this will also populate the $queryComponents.
         foreach ($this->dqlParts as $queryPartName => $queryParts) {
             // If we are parsing FROM clause, we'll need to diff the queryComponents later
-            if ($queryPartName == 'from') {
+            if ($queryPartName === 'from') {
                 // Pick queryComponents before processing
                 $queryComponentsBefore = $this->getQueryComponents();
             }
 
             // FIX #1667: _sqlParts are cleaned inside _processDqlQueryPart.
-            if ($queryPartName != 'forUpdate' && is_array($queryParts)) {
+            if ($queryPartName !== 'forUpdate' && is_array($queryParts)) {
                 $this->processDqlQueryPart($queryPartName, $queryParts);
             }
 
             // We need to define the root alias
-            if ($queryPartName == 'from') {
+            if ($queryPartName === 'from') {
                 // Pick queryComponents aftr processing
                 $queryComponentsAfter = $this->getQueryComponents();
 
@@ -1160,7 +1160,7 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
             // (i.e. DQL: SELECT DISTINCT u.id FROM User u LEFT JOIN u.phonenumbers LIMIT 5).
             if (!$this->sqlParts['distinct']) {
                 $this->isLimitSubqueryUsed = true;
-                $needsSubQuery              = true;
+                $needsSubQuery = true;
             } else {
                 foreach (array_keys($this->pendingFields) as $alias) {
                     //no subquery for root fields
@@ -1176,7 +1176,7 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
                     }
 
                     $this->isLimitSubqueryUsed = true;
-                    $needsSubQuery              = true;
+                    $needsSubQuery = true;
                 }
             }
         }
@@ -1217,7 +1217,7 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
             if (substr($string, 0, 1) === '(' && substr($string, -1) === ')') {
                 $this->sqlParts['where'][] = $string;
             } else {
-                $this->sqlParts['where'][] = '(' . $string . ')';
+                $this->sqlParts['where'][] = "($string)";
             }
         }
 
@@ -1230,25 +1230,11 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
             // what about composite keys?
             $idColumnName = $table->getColumnName($table->getIdentifier());
 
-            switch (strtolower($this->connection->getDriverName())) {
-                case 'mysql':
-                    $this->useQueryCache(false);
-
-                    // mysql doesn't support LIMIT in subqueries
-                    /** @phpstan-var string[] */
-                    $list     = $this->connection->execute($subquery, $this->execParams)->fetchAll(Doctrine_Core::FETCH_COLUMN);
-                    $subquery = implode(', ', array_map([$this->connection, 'quote'], $list));
-
-                    break;
-
-                case 'pgsql':
-                    $subqueryAlias = $this->connection->quoteIdentifier('doctrine_subquery_alias');
-
-                    // pgsql needs special nested LIMIT subquery
-                    $subquery = 'SELECT ' . $subqueryAlias . '.' . $this->connection->quoteIdentifier($idColumnName)
-                        . ' FROM (' . $subquery . ') AS ' . $subqueryAlias;
-
-                    break;
+            // pgsql/mysql need special nested LIMIT subquery
+            $driverName = $this->connection->getAttribute(Doctrine_Core::ATTR_DRIVER_NAME);
+            if ($driverName === 'mysql' || $driverName === 'pgsql') {
+                $subqueryAlias = $this->connection->quoteIdentifier('doctrine_subquery_alias');
+                $subquery = "SELECT $subqueryAlias.{$this->connection->quoteIdentifier($idColumnName)} FROM ($subquery) AS $subqueryAlias";
             }
 
             $field = $this->getSqlTableAlias($rootAlias) . '.' . $idColumnName;
@@ -1256,21 +1242,20 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
             // FIX #1868: If not ID under MySQL is found to be restricted, restrict pk column for null
             //            (which will lead to a return of 0 items)
             $limitSubquerySql = $this->connection->quoteIdentifier($field)
-                              . ((!empty($subquery)) ? ' IN (' . $subquery . ')' : ' IS NULL')
-                              . ((count($this->sqlParts['where']) > 0) ? ' AND ' : '');
+                              . (empty($subquery) ? ' IS NULL' : " IN ($subquery)");
 
             $modifyLimit = false;
         }
 
-        // FIX #DC-26: Include limitSubquerySql as major relevance in conditions
-        $emptyWhere = empty($this->sqlParts['where']);
-
-        if (!($emptyWhere && $limitSubquerySql == '')) {
+        // condition is already in the subquery, skip second where
+        if (!empty($limitSubquerySql)) {
+            $q .= " WHERE $limitSubquerySql";
+        } elseif (!empty($this->sqlParts['where']) && !empty($limitSubquery)) {
             $where = implode(' ', $this->sqlParts['where']);
-            $where = ($where == '' || (substr($where, 0, 1) === '(' && substr($where, -1) === ')'))
-                ? $where : '(' . $where . ')';
-
-            $q .= ' WHERE ' . $limitSubquerySql . $where;
+            if (!empty($where) && !(substr($where, 0, 1) === '(' && substr($where, -1) === ')')) {
+                $where = "($where)";
+            }
+            $q .= " WHERE {$limitSubquerySql}{$where}";
         }
 
         // Fix the orderbys so we only have one orderby per value
@@ -1312,9 +1297,9 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
             }
         }
 
-        $q .= (!empty($this->sqlParts['groupby'])) ? ' GROUP BY ' . implode(', ', $this->sqlParts['groupby'])  : '';
-        $q .= (!empty($this->sqlParts['having'])) ?  ' HAVING ' . implode(' AND ', $this->sqlParts['having']): '';
-        $q .= (!empty($this->sqlParts['orderby'])) ? ' ORDER BY ' . implode(', ', $this->sqlParts['orderby'])  : '';
+        $q .= empty($this->sqlParts['groupby']) ? '' : ' GROUP BY ' . implode(', ', $this->sqlParts['groupby']);
+        $q .= empty($this->sqlParts['having']) ? '' : ' HAVING ' . implode(' AND ', $this->sqlParts['having']);
+        $q .= empty($this->sqlParts['orderby']) ? '' : ' ORDER BY ' . implode(', ', $this->sqlParts['orderby']);
 
         if ($modifyLimit) {
             $q = $this->connection->modifyLimitQuery($q, $this->sqlParts['limit'], $this->sqlParts['offset'], false);
@@ -1367,20 +1352,13 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
         // Technically this isn't required for mysql <= 5.6, but mysql 5.7 with an sql_mode option enabled
         // (only_full_group_by, which is enabled by default in 5.7) will throw SQL errors if this isn't done,
         // so easier to just enable for all of mysql.
-        if ($driverName == 'mysql' || $driverName == 'pgsql') {
+        if ($driverName === 'mysql' || $driverName === 'pgsql') {
             foreach ($this->sqlParts['orderby'] as $part) {
                 // Remove identifier quoting if it exists
                 $e = $this->tokenizer->bracketExplode($part, ' ');
                 foreach ($e as $f) {
                     $partOriginal = str_replace(',', '', trim($f));
-                    $callback     = /**
-                        * @param  string $e
-                        * @return string
-                        */
-                    function ($e) {
-                        return trim($e, '[]`"');
-                    };
-                    $part = trim(implode('.', array_map($callback, explode('.', $partOriginal))));
+                    $part = trim(implode('.', array_map(fn($e) => trim($e, '[]`"'), explode('.', $partOriginal))));
 
                     if (strpos($part, '.') === false) {
                         continue;
@@ -1401,7 +1379,7 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
 
         $orderby = $this->sqlParts['orderby'];
         $having  = $this->sqlParts['having'];
-        if ($driverName == 'mysql' || $driverName == 'pgsql') {
+        if ($driverName === 'mysql' || $driverName === 'pgsql') {
             foreach ($this->expressionMap as $dqlAlias => $expr) {
                 if (isset($expr[1])) {
                     $subquery .= ', ' . $expr[0] . ' AS ' . $this->aggregateAliasMap[$dqlAlias];
@@ -1445,11 +1423,11 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
             $subquery .= ' ' . $part;
         }
 
-        // all conditions must be preserved in subquery
-        $subquery .= (!empty($this->sqlParts['where']))?   ' WHERE ' . implode(' ', $this->sqlParts['where'])  : '';
-        $subquery .= (!empty($this->sqlParts['groupby']))? ' GROUP BY ' . implode(', ', $this->sqlParts['groupby'])   : '';
-        $subquery .= (!empty($having))?  ' HAVING ' . implode(' AND ', $having) : '';
-        $subquery .= (!empty($orderby))? ' ORDER BY ' . implode(', ', $orderby)  : '';
+        // all conditions are preserved in the subquery
+        $subquery .= empty($this->sqlParts['where']) ? '' : ' WHERE ' . implode(' ', $this->sqlParts['where']);
+        $subquery .= empty($this->sqlParts['groupby']) ? '' : ' GROUP BY ' . implode(', ', $this->sqlParts['groupby']);
+        $subquery .= empty($having) ? '' : ' HAVING ' . implode(' AND ', $having);
+        $subquery .= empty($orderby) ? '' : ' ORDER BY ' . implode(', ', $orderby);
 
         // add driver specific limit clause
         $subquery = $this->connection->modifyLimitSubquery($table, $subquery, $this->sqlParts['limit'], $this->sqlParts['offset']);
@@ -1501,7 +1479,7 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
             }
         }
 
-        if ($driverName == 'mysql' || $driverName == 'pgsql') {
+        if ($driverName === 'mysql' || $driverName === 'pgsql') {
             foreach ($parts as $k => $part) {
                 if (strpos($part, "'") !== false) {
                     continue;

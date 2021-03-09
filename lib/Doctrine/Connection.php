@@ -1357,12 +1357,18 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
         $limit  = (int) $limit;
         $offset = (int) $offset;
 
-        if ($limit && $offset) {
-            $query .= ' LIMIT ' . $limit . ' OFFSET ' . $offset;
-        } elseif ($limit && !$offset) {
-            $query .= ' LIMIT ' . $limit;
-        } elseif (!$limit && $offset) {
-            $query .= ' LIMIT 999999999999 OFFSET ' . $offset;
+        if (!$limit && !$offset) {
+            return $query;
+        }
+
+        if (!$limit) {
+            $limit = 999999999999;
+        }
+
+        $query .= " LIMIT $limit";
+
+        if ($offset) {
+            $query .= " OFFSET $offset";
         }
 
         return $query;

@@ -75,7 +75,7 @@ class Doctrine_Connection_Statement
 
             return $result;
         } catch (PDOException $e) {
-            $this->connection->rethrowException($e, $this);
+            $this->connection->rethrowException($e, $this, $this->getQuery());
         }
     }
 

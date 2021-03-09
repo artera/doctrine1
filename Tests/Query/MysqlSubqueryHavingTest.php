@@ -11,7 +11,7 @@ class MysqlSubqueryHavingTest extends DoctrineUnitTestCase
         static::$conn = \Doctrine_Manager::getInstance()->openConnection(static::$dbh);
     }
 
-    public function testGetLimitSubqueryWithHavingOnAggregateValues()
+    public function testGetLimitSubqueryWithHavingOnAggregateValues(): void
     {
         $q = new \Doctrine_Query();
         $q->select('u.name, COUNT(DISTINCT a.id) num_albums');
@@ -23,12 +23,10 @@ class MysqlSubqueryHavingTest extends DoctrineUnitTestCase
 
         $q->execute();
 
-        static::$dbh->pop();
-
-        $this->assertEquals(static::$dbh->pop(), 'SELECT DISTINCT e2.id, COUNT(DISTINCT a2.id) AS a2__0 FROM entity e2 LEFT JOIN album a2 ON e2.id = a2.user_id WHERE (e2.type = 0) GROUP BY e2.id HAVING a2__0 > 0 ORDER BY a2__0 DESC LIMIT 5');
+        $this->assertMatchesSnapshot(static::$dbh->pop());
     }
 
-    public function testGetLimitSubqueryWithHavingOnAggregateValuesIncorrectAlias()
+    public function testGetLimitSubqueryWithHavingOnAggregateValuesIncorrectAlias(): void
     {
         $q = new \Doctrine_Query();
         $q->select('u.name, COUNT(a.id) num_albums');
@@ -40,7 +38,6 @@ class MysqlSubqueryHavingTest extends DoctrineUnitTestCase
 
         $q->execute();
 
-        static::$dbh->pop();
-        $this->assertEquals(static::$dbh->pop(), 'SELECT DISTINCT e2.id, COUNT(a2.id) AS a2__0 FROM entity e2 LEFT JOIN album a2 ON e2.id = a2.user_id WHERE (e2.type = 0) GROUP BY e2.id HAVING a2__0 > 0 ORDER BY a2__0 DESC LIMIT 5');
+        $this->assertMatchesSnapshot(static::$dbh->pop());
     }
 }

@@ -1,0 +1,1 @@
+SELECT e.id AS e__id, e.name AS e__name, (SELECT COUNT(p.id) AS p__0 FROM phonenumber p WHERE (p.entity_id = e.id)) AS e__0 FROM entity e WHERE (e.name = 'zYne' AND (e.type = 0)) LIMIT 1

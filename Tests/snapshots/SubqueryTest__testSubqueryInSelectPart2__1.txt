@@ -1,0 +1,1 @@
+SELECT e.id AS e__id, e.name AS e__name, (SELECT COUNT(e2.id) AS e2__0 FROM entity e2 WHERE (e2.id = e.id AND (e2.type = 0))) AS e__0 FROM entity e WHERE (e.name = 'zYne' AND (e.type = 0)) LIMIT 1

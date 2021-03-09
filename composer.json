@@ -1,7 +1,7 @@
 {
     "name": "artera/doctrine1",
     "type": "library",
-    "version": "2.1.4",
+    "version": "2.1.5",
     "description": "PHP7+ Database ORM",
     "keywords": ["orm", "database"],
     "license": "LGPL-2.1-or-later",
@@ -42,7 +42,8 @@
         "vimeo/psalm": "^4.1",
         "phpunit/phpunit": "^9.4",
         "symfony/yaml": "^3.4 || ^4.1 || ^5.0",
-        "timeweb/phpstan-enum": "^2.2"
+        "timeweb/phpstan-enum": "^2.2",
+        "spatie/phpunit-snapshot-assertions": "^4.2"
     },
     "suggest": {
         "symfony/yaml": "For importing/exporting schema and fixtures from/to yaml files"

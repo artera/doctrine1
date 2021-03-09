@@ -922,13 +922,6 @@ abstract class Doctrine_Query_Abstract
         // Get prepared SQL params for execution
         $params = $this->getInternalParams();
 
-        if ($this->isLimitSubqueryUsed()
-            && $this->connection->getAttribute(Doctrine_Core::ATTR_DRIVER_NAME) !== 'mysql'
-        ) {
-            // double the parameters
-            $params = array_merge((array) $params, (array) $params);
-        }
-
         if (!$this->type->isSelect()) {
             return $this->connection->exec($query, $params);
         }
@@ -1871,9 +1864,6 @@ abstract class Doctrine_Query_Abstract
      */
     public function useQueryCache(Doctrine_Cache_Interface|bool|null $driver = true, ?int $timeToLive = null): self
     {
-        if ($driver === false) {
-            $driver = null;
-        }
         $this->queryCache = $driver;
         if ($timeToLive !== null) {
             $this->setQueryCacheLifeSpan($timeToLive);

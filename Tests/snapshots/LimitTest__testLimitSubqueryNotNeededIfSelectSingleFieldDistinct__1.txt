@@ -1,0 +1,1 @@
+SELECT DISTINCT e.id AS e__id FROM entity e LEFT JOIN phonenumber p ON e.id = p.entity_id WHERE (e.name = ? AND (e.type = 0)) LIMIT 5

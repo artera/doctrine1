@@ -1,0 +1,1 @@
+SELECT e.id AS e__id, e.name AS e__name, e.loginname AS e__loginname, e.password AS e__password, e.type AS e__type, e.created AS e__created, e.updated AS e__updated, e.email_id AS e__email_id FROM entity e WHERE (e.id NOT IN (SELECT g.user_id AS g__user_id FROM group_user g) AND (e.type = 0))

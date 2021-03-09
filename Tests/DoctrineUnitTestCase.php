@@ -11,11 +11,14 @@ use Doctrine_Connection;
 use Doctrine_Connection_Exception;
 use Doctrine_Collection;
 use PDO;
+use Spatie\Snapshots\MatchesSnapshots;
 
 use PHPUnit\Framework\TestCase;
 
 class DoctrineUnitTestCase extends TestCase
 {
+    use MatchesSnapshots;
+
     protected static $connection;
     protected static $dbh = null;
     protected static ?Doctrine_EventListener $listener;
@@ -25,6 +28,11 @@ class DoctrineUnitTestCase extends TestCase
     protected static $adapter;
     protected static array $tables = [];
     protected static Doctrine_Manager $manager;
+
+    protected function getSnapshotDirectory(): string
+    {
+        return __DIR__ . '/snapshots';
+    }
 
     public static function setUpBeforeClass(): void
     {
