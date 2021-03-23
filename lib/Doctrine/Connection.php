@@ -722,8 +722,6 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
      */
     public function fetchAll(string $statement, array $params = []): array
     {
-        // PDO::ATTR_ERRMODE ensures that false is never returned
-        /** @var array */
         return $this->execute($statement, $params)->fetchAll(Doctrine_Core::FETCH_ASSOC);
     }
 
@@ -741,20 +739,17 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
     /**
      * @param  string $statement sql query to be executed
      * @param  array  $params    prepared statement params
-     * @return array
-     * @phpstan-return array<string, mixed>
+     * @phpstan-return ?array<string, mixed>
      */
-    public function fetchRow(string $statement, array $params = []): array
+    public function fetchRow(string $statement, array $params = []): ?array
     {
-        // PDO::ATTR_ERRMODE ensures that false is never returned
-        /** @var array */
-        return $this->execute($statement, $params)->fetch(Doctrine_Core::FETCH_ASSOC);
+        $row = $this->execute($statement, $params)->fetch(Doctrine_Core::FETCH_ASSOC);
+        return $row === false ? null : $row;
     }
 
     /**
      * @param  string $statement sql query to be executed
      * @param  array  $params    prepared statement params
-     * @return array
      * @phpstan-return array<int, mixed>
      */
     public function fetchArray(string $statement, array $params = []): array
@@ -766,13 +761,10 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
      * @param  string $statement sql query to be executed
      * @param  array  $params    prepared statement params
      * @param  int    $colnum    0-indexed column number to retrieve
-     * @return array[]
-     * @phpstan-return mixed[]
+     * @phpstan-return array<int, mixed>
      */
     public function fetchColumn(string $statement, array $params = [], int $colnum = 0): array
     {
-        // PDO::ATTR_ERRMODE ensures that false is never returned
-        /** @var array */
         return $this->execute($statement, $params)->fetchAll(Doctrine_Core::FETCH_COLUMN, $colnum);
     }
 
@@ -795,8 +787,6 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
      */
     public function fetchBoth(string $statement, array $params = []): array
     {
-        // PDO::ATTR_ERRMODE ensures that false is never returned
-        /** @var array */
         return $this->execute($statement, $params)->fetchAll(Doctrine_Core::FETCH_BOTH);
     }
 
