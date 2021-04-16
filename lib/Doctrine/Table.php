@@ -1243,7 +1243,12 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
             return null;
         }
 
-        return $this->deserializeColumnValue($this->columns[$columnName]['default'], $fieldName);
+        $default = $this->columns[$columnName]['default'];
+        if ($default instanceof Closure) {
+            $default = $default();
+        }
+
+        return $this->deserializeColumnValue($default, $fieldName);
     }
 
     /** @param Deserializer\DeserializerInterface[]|null $deserializers */
