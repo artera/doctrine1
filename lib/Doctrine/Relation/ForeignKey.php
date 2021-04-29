@@ -3,11 +3,8 @@
 class Doctrine_Relation_ForeignKey extends Doctrine_Relation
 {
     /**
-     * fetchRelatedFor
-     *
      * fetches a component related to given record
      *
-     * @param  Doctrine_Record $record
      * @return Doctrine_Record|Doctrine_Collection
      */
     public function fetchRelatedFor(Doctrine_Record $record)
@@ -52,14 +49,7 @@ class Doctrine_Relation_ForeignKey extends Doctrine_Relation
         return $related;
     }
 
-    /**
-     * getCondition
-     *
-     * @param string $alias
-     *
-     * @return string
-     */
-    public function getCondition($alias = null)
+    public function getCondition(?string $alias = null): string
     {
         if (!$alias) {
             $alias = $this->getTable()->getComponentName();

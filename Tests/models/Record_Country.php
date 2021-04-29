@@ -1,4 +1,8 @@
 <?php
+/**
+ * @property string $name
+ * @property Doctrine_Collection<Record_City> $City
+ */
 class Record_Country extends Doctrine_Record
 {
     public function setTableDefinition(): void

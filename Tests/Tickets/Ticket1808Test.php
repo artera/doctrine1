@@ -17,6 +17,7 @@ class Ticket1808Test extends DoctrineUnitTestCase
         $user                 = new \User();
         $user->name           = 'bigtest';
         $user->loginname      = 'cooltest';
+        $user->Email = new \Email();
         $user->Email->address = 'jonathan.wage@sensio.com';
         $user->save();
 

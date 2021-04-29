@@ -151,47 +151,34 @@ abstract class Doctrine_Relation implements ArrayAccess
     }
 
     /**
-     * hasConstraint
      * whether or not this relation has an explicit constraint
-     *
-     * @return boolean
      */
-    public function hasConstraint()
+    public function hasConstraint(): bool
     {
         return ($this->definition['constraint'] ||
                 ($this->definition['onUpdate']) ||
                 ($this->definition['onDelete']));
     }
 
-    /**
-     * @return bool|null
-     */
-    public function isDeferred()
+    public function isDeferred(): ?bool
     {
         return $this->definition['deferred'];
     }
 
-    /**
-     * @return bool|null
-     */
-    public function isDeferrable()
+    public function isDeferrable(): ?bool
     {
         return $this->definition['deferrable'];
     }
 
-    /**
-     * @return bool
-     */
-    public function isEqual()
+    public function isEqual(): bool
     {
         return $this->definition['equal'];
     }
 
     /**
      * @param  mixed $offset
-     * @return bool
      */
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return isset($this->definition[$offset]);
     }
@@ -212,9 +199,8 @@ abstract class Doctrine_Relation implements ArrayAccess
     /**
      * @param  mixed $offset
      * @param  mixed $value
-     * @return void
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         if (isset($this->definition[$offset])) {
             $this->definition[$offset] = $value;
@@ -223,42 +209,31 @@ abstract class Doctrine_Relation implements ArrayAccess
 
     /**
      * @param  mixed $offset
-     * @return void
      */
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         $this->definition[$offset] = false;
     }
 
-    /**
-     * toArray
-     *
-     * @return array
-     */
-    public function toArray()
+    public function toArray(): array
     {
         return $this->definition;
     }
 
     /**
-     * getAlias
      * returns the relation alias
-     *
-     * @return string
      */
-    final public function getAlias()
+    final public function getAlias(): string
     {
         return $this->definition['alias'];
     }
 
     /**
-     * getType
      * returns the relation type, either 0 or 1
      *
      * @see    Doctrine_Relation MANY_* and ONE_* constants
-     * @return integer
      */
-    final public function getType()
+    final public function getType(): int
     {
         return $this->definition['type'];
     }
@@ -269,18 +244,15 @@ abstract class Doctrine_Relation implements ArrayAccess
      *
      * @return boolean
      */
-    public function isCascadeDelete()
+    public function isCascadeDelete(): bool
     {
         return in_array('delete', $this->definition['cascade']);
     }
 
     /**
-     * getTable
      * returns the foreign table object
-     *
-     * @return Doctrine_Table
      */
-    final public function getTable()
+    final public function getTable(): Doctrine_Table
     {
         return Doctrine_Manager::getInstance()
             ->getConnectionForComponent($this->definition['class'])
@@ -288,110 +260,78 @@ abstract class Doctrine_Relation implements ArrayAccess
     }
 
     /**
-     * getClass
      * returns the name of the related class
      *
-     * @return string
+     * @phpstan-return class-string<Doctrine_Record>
      */
-    final public function getClass()
+    final public function getClass(): string
     {
         return $this->definition['class'];
     }
 
     /**
-     * getLocal
      * returns the name of the local column
-     *
-     * @return string
      */
-    final public function getLocal()
+    final public function getLocal(): string
     {
         return $this->definition['local'];
     }
 
-    /**
-     * getLocalTableName
-     *
-     * @return string
-     */
     final public function getLocalTableName(): string
     {
         return $this->definition['localTable']->getTableName();
     }
 
     /**
-     * getLocalFieldName
      * returns the field name of the local column
-     *
-     * @return string
      */
-    final public function getLocalFieldName()
+    final public function getLocalFieldName(): string
     {
         return $this->definition['localTable']->getFieldName($this->definition['local']);
     }
 
     /**
-     * getLocalColumnName
      * returns the column name of the local column
-     *
-     * @return string $columnName
      */
-    final public function getLocalColumnName()
+    final public function getLocalColumnName(): string
     {
         return $this->definition['localTable']->getColumnName($this->definition['local']);
     }
 
     /**
-     * getForeign
      * returns the name of the foreignkey column where
      * the localkey column is pointing at
-     *
-     * @return string
      */
-    final public function getForeign()
+    final public function getForeign(): string
     {
         return $this->definition['foreign'];
     }
 
-    /**
-     * getForeignTableName
-     *
-     * @return string
-     */
     final public function getForeignTableName(): string
     {
         return $this->definition['table']->getTableName();
     }
 
     /**
-     * getLocalFieldName
      * returns the field name of the foreign column
-     *
-     * @return string
      */
-    final public function getForeignFieldName()
+    final public function getForeignFieldName(): string
     {
         return $this->definition['table']->getFieldName($this->definition['foreign']);
     }
 
     /**
-     * getForeignColumnName
      * returns the column name of the foreign column
-     *
-     * @return string $columnName
      */
-    final public function getForeignColumnName()
+    final public function getForeignColumnName(): string
     {
         return $this->definition['table']->getColumnName($this->definition['foreign']);
     }
 
     /**
-     * isOneToOne
      * returns whether or not this relation is a one-to-one relation
-     *
-     * @return boolean
      */
-    final public function isOneToOne()
+    final public function isOneToOne(): bool
     {
         return ($this->definition['type'] == Doctrine_Relation::ONE);
     }
@@ -409,21 +349,16 @@ abstract class Doctrine_Relation implements ArrayAccess
     }
 
     /**
-     * fetchRelatedFor
-     *
      * fetches a component related to given record
      *
-     * @param  Doctrine_Record $record
-     * @return Doctrine_Record|Doctrine_Collection
+     * @return Doctrine_Record|Doctrine_Collection|null
      */
     abstract public function fetchRelatedFor(Doctrine_Record $record);
 
     /**
      * Get the name of the foreign key for this relationship
-     *
-     * @return string $foreignKeyName
      */
-    public function getForeignKeyName()
+    public function getForeignKeyName(): string
     {
         if (isset($this->definition['foreignKeyName'])) {
             return $this->definition['foreignKeyName'];
@@ -436,9 +371,8 @@ abstract class Doctrine_Relation implements ArrayAccess
      *
      * @param  string  $alias       The alias to use
      * @param  boolean $columnNames Whether or not to use column names instead of field names
-     * @return string|null $orderBy
      */
-    public function getOrderBy($alias = null, $columnNames = false)
+    public function getOrderBy($alias = null, $columnNames = false): ?string
     {
         if (!$alias) {
             $alias = $this->getTable()->getComponentName();
@@ -456,9 +390,8 @@ abstract class Doctrine_Relation implements ArrayAccess
      *
      * @param  string  $alias       The alias to use
      * @param  boolean $columnNames Whether or not to use column names instead of field names
-     * @return string|null $orderByStatement
      */
-    public function getOrderByStatement($alias = null, $columnNames = false)
+    public function getOrderByStatement($alias = null, $columnNames = false): ?string
     {
         $table = $this->getTable();
 
@@ -473,10 +406,7 @@ abstract class Doctrine_Relation implements ArrayAccess
         }
     }
 
-    /**
-     * @return bool
-     */
-    public function isRefClass()
+    public function isRefClass(): bool
     {
         if ($this->isRefClass === null) {
             $this->isRefClass = false;

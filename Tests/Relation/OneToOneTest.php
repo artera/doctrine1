@@ -10,14 +10,6 @@ class OneToOneTest extends DoctrineUnitTestCase
     }
     protected static array $tables = ['gnatUser','gnatEmail','Email','Entity','Record_City', 'Record_Country', 'SelfRefTest'];
 
-    public function testOneToOneAggregateRelationWithAliasesIsSupported()
-    {
-        $city    = new \Record_City();
-        $country = $city->Country;
-
-        $this->assertTrue($country instanceof \Record_Country);
-    }
-
     public function testSelfReferentialOneToOneRelationsAreSupported()
     {
         $ref = new \SelfRefTest();
@@ -28,6 +20,7 @@ class OneToOneTest extends DoctrineUnitTestCase
         $this->assertEquals($rel->getLocal(), 'created_by');
 
         $ref->name            = 'ref 1';
+        $ref->createdBy = new \SelfRefTest();
         $ref->createdBy->name = 'ref 2';
 
         $ref->save();

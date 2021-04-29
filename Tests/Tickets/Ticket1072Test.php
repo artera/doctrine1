@@ -65,11 +65,12 @@ namespace Tests\Tickets {
             // a new \one if there is none yet. This makes it possible to use syntax like:
             // $record = new \Record();
             // $record->Related->name = 'foo'; // will implicitly create a new \Related
+            $bt->T1072PaymentDetail = new \T1072PaymentDetail();
             $bt->T1072PaymentDetail->name = 'foo';
 
-            $this->assertEquals(gettype($bt->T1072PaymentDetail), 'object');
-            $this->assertEquals(gettype($bt->T1072PaymentDetail->name), 'string');
-            $this->assertEquals(gettype($bt->payment_detail_id), gettype(null));
+            $this->assertIsObject($bt->T1072PaymentDetail);
+            $this->assertIsString($bt->T1072PaymentDetail->name);
+            $this->assertNull($bt->payment_detail_id);
 
             $bt->save();
 

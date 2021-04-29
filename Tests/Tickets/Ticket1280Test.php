@@ -26,9 +26,9 @@ namespace Tests\Tickets {
             $this->assertEquals($user->group_id, $group->id);
 
             $user->Group = null;
-                $user->save();
+            $user->save();
 
-                $this->assertEquals($user->group_id, null);
+            $this->assertEquals($user->group_id, null);
         }
     }
 }

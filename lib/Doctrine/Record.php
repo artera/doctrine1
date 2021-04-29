@@ -998,16 +998,16 @@ abstract class Doctrine_Record implements Countable, IteratorAggregate, Serializ
      * refresh
      * refresh data of related objects from the database
      *
-     * @param string $name name of a related component.
+     * @param string|null $name name of a related component.
      *                     if set, this method only
      *                     refreshes the specified
      *                     related component
      *
      * @return void
      */
-    public function refreshRelated($name = null)
+    public function refreshRelated(?string $name = null): void
     {
-        if (is_null($name)) {
+        if ($name === null) {
             foreach ($this->_table->getRelations() as $rel) {
                 $alias = $rel->getAlias();
                 unset($this->_references[$alias]);
@@ -1041,12 +1041,12 @@ abstract class Doctrine_Record implements Countable, IteratorAggregate, Serializ
     /**
      * Clear a related reference or all references
      *
-     * @param  string $name The relationship reference to clear
+     * @param  string|null $name The relationship reference to clear
      * @return void
      */
-    public function clearRelated($name = null)
+    public function clearRelated(?string $name = null): void
     {
-        if (is_null($name)) {
+        if ($name === null) {
             $this->_references = [];
         } else {
             unset($this->_references[$name]);
@@ -1061,7 +1061,7 @@ abstract class Doctrine_Record implements Countable, IteratorAggregate, Serializ
      * @param  string $name
      * @return boolean Whether or not the related relationship exists
      */
-    public function relatedExists($name)
+    public function relatedExists(string $name): bool
     {
         if ($this->hasReference($name) && !$this->_references[$name] instanceof Doctrine_Null) {
             return true;
@@ -1445,10 +1445,10 @@ abstract class Doctrine_Record implements Countable, IteratorAggregate, Serializ
             $column = $this->_table->getColumnDefinition($this->_table->getColumnName($fieldName));
             assert($column !== null);
 
-            if ($value instanceof Doctrine_Record) {
+            if ($value instanceof Doctrine_Record && $column['type'] !== 'object') {
                 $id = $value->getIncremented();
 
-                if ($id !== null && $column['type'] !== 'object') {
+                if ($id !== null) {
                     $value = $id;
                 }
             }
@@ -2066,6 +2066,10 @@ abstract class Doctrine_Record implements Countable, IteratorAggregate, Serializ
                         $this->unlink($key, [], false);
                         $this->link($key, $value, false);
                     } else {
+                        if ($this->$key === null) {
+                            $rel = $this->getTable()->getRelation($key);
+                            $this->$key = $rel->getTable()->create();
+                        }
                         $this->$key->fromArray($value, $deep);
                     }
                 }
@@ -2122,6 +2126,10 @@ abstract class Doctrine_Record implements Countable, IteratorAggregate, Serializ
                         $this->unlink($key, [], false);
                         $this->link($key, $value, false);
                     } else {
+                        if ($this->$key === null) {
+                            $rel = $this->getTable()->getRelation($key);
+                            $this->$key = $rel->getTable()->create();
+                        }
                         $this->$key->synchronizeWithArray($value);
                         $this->$key = $this->$key;
                     }

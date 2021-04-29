@@ -15,6 +15,7 @@ namespace Tests\Tickets {
         {
             $foo            = new \Ticket_1133_Foo();
             $foo->name      = 'test';
+            $foo->Bar = new \Ticket_1133_Bar();
             $foo->Bar->name = 'test2';
             $foo->save();
 
@@ -30,6 +31,7 @@ namespace Tests\Tickets {
         {
             $foo            = new \Ticket_1133_Foo();
             $foo->name      = 'test';
+            $foo->Bar = new \Ticket_1133_Bar();
             $foo->Bar->name = 'test2';
             $foo->save();
 

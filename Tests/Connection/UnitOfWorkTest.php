@@ -5,7 +5,7 @@ use Tests\DoctrineUnitTestCase;
 
 class UnitOfWorkTest extends DoctrineUnitTestCase
 {
-    public function testFlush()
+    public function testFlush(): void
     {
         $user = static::$connection->getTable('User')->find(4);
         $this->assertTrue(is_numeric($user->Phonenumber[0]->entity_id));
@@ -13,6 +13,7 @@ class UnitOfWorkTest extends DoctrineUnitTestCase
         $user   = static::$connection->create('User');
         $record = static::$connection->create('Phonenumber');
 
+        $user->Email = new \Email;
         $user->Email->address = 'example@drinkmore.info';
         $this->assertInstanceOf(\Email::class, $user->Email);
 
@@ -159,7 +160,7 @@ class UnitOfWorkTest extends DoctrineUnitTestCase
         //$this->assertEquals(count($emails),0);
     }
 
-    public function testTransactions()
+    public function testTransactions(): void
     {
         static::$connection->beginTransaction();
         $this->assertEquals(static::$connection->transaction->getState(), \Doctrine_Transaction_State::ACTIVE());

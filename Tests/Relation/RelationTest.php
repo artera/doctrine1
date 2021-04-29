@@ -23,6 +23,7 @@ class RelationTest extends DoctrineUnitTestCase
         $user->Phonenumber[1]->phonenumber = '234 234';
         $user->Phonenumber[2]->phonenumber = '456 456';
 
+        $user->Email = new \Email();
         $user->Email->address = 'someone@some.where';
 
         $user->save();

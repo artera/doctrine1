@@ -16,6 +16,7 @@ class SynchronizeTest extends DoctrineUnitTestCase
     {
         $user                              = new \User();
         $user->name                        = 'John';
+        $user->Email = new \Email();
         $user->Email->address              = 'john@mail.com';
         $user->Phonenumber[0]->phonenumber = '555 123';
         $user->Phonenumber[1]->phonenumber = '555 448';

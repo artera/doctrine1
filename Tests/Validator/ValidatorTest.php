@@ -175,6 +175,7 @@ class ValidatorTest extends DoctrineUnitTestCase
 
         try {
             $user                 = static::$connection->create('User');
+            $user->Email = new \Email();
             $user->Email->address = 'jackdaniels@drinkmore.info...';
             $user->name           = 'this is an example of too long user name not very good example but an example nevertheless';
             $user->save();

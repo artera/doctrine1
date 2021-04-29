@@ -13,9 +13,12 @@ namespace Tests\Tickets {
         {
             $oResume                                     = new \ticket912_Resume;
             $oResume->title                              = 'titre';
+            $oResume->Person = new \ticket912_Person();
             $oResume->Person->name                       = 'David';
             $oResume->KnownLanguages[0]->comments        = 'foo';
+            $oResume->KnownLanguages[0]->Language = new \ticket912_Language();
             $oResume->KnownLanguages[0]->Language->label = 'Enlish';
+            $oResume->KnownLanguages[0]->Level = new \ticket912_LanguageLevel();
             $oResume->KnownLanguages[0]->Level->label    = 'Fluent';
             $oResume->save();
         }

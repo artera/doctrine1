@@ -352,7 +352,7 @@ class Doctrine_Import_Builder
             $column['field_name'] = trim($parts[1] ?? $name);
         }
 
-        usort($columns, fn($a, $b) => $a['name'] <=> $b['name']);
+        uasort($columns, fn($a, $b) => $a['name'] <=> $b['name']);
         foreach ($columns as &$column) {
             $types = [];
             switch (strtolower($column['type'])) {
@@ -396,12 +396,18 @@ class Doctrine_Import_Builder
         usort($relations, fn($a, $b) => $a['alias'] <=> $b['alias']);
         foreach ($relations as $relation) {
             $fieldName = $relation['alias'];
+            $types = [];
             if (isset($relation['type']) && $relation['type'] == Doctrine_Relation::MANY) {
-                $fieldType = "Doctrine_Collection<{$relation['class']}>";
+                $types[] = "Doctrine_Collection<{$relation['class']}>";
             } else {
-                $fieldType = $this->classPrefix . $relation['class'];
+                $types[] = $this->classPrefix . $relation['class'];
+
+                $column = $columns[$relation['local']];
+                if (empty($column['notnull']) && empty($column['primary'])) {
+                    $types[] = 'null';
+                }
             }
-            $docBlock->setTag(new PropertyTag($fieldName, [$fieldType]));
+            $docBlock->setTag(new PropertyTag($fieldName, $types));
         }
 
         $genericOver = sprintf($this->tableClassFormat, $topLevelClass);
@@ -561,11 +567,12 @@ class Doctrine_Import_Builder
 
     public function buildTableClassDefinition(string $className, array $definition, array $options = []): string
     {
+        /** @var class-string<Doctrine_Table> */
         $extends = $options['extends'] ?? $this->baseTableClassName;
         if ($extends !== $this->baseTableClassName) {
+            /** @var class-string<Doctrine_Table> */
             $extends = $this->classPrefix . $extends;
         }
-
 
         $docBlock = null;
         if (isset($definition['topLevelClassName'])) {

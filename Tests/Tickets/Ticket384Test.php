@@ -9,7 +9,9 @@ namespace Tickets {
             $oResume                                     = new \ticket384_Resume;
             $oResume->title                              = 'titre';
             $oResume->KnownLanguages[0]->comments        = 'foo';
+            $oResume->KnownLanguages[0]->Language = new \ticket384_Language();
             $oResume->KnownLanguages[0]->Language->label = 'Enlish';
+            $oResume->KnownLanguages[0]->Level = new \ticket384_LanguageLevel();
             $oResume->KnownLanguages[0]->Level->label    = 'Fluent';
             $oResume->save();
         }

@@ -844,7 +844,7 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
      * @param  bool   $recursive
      * @return Doctrine_Relation
      */
-    public function getRelation($alias, $recursive = true)
+    public function getRelation(string $alias, bool $recursive = true): Doctrine_Relation
     {
         return $this->parser->getRelation($alias, $recursive);
     }

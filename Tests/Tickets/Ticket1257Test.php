@@ -15,6 +15,7 @@ namespace Tests\Tickets {
         {
             $user                    = new \Ticket_1257_User();
             $user->username          = 'jwage';
+            $user->Role = new \Ticket_1257_Role();
             $user->Role->name        = 'Developer';
             $user->Role->description = 'Programmer/Developer';
             $user->save();

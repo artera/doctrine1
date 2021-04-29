@@ -14,15 +14,15 @@ namespace Tests\Tickets {
         public function testSynchronize()
         {
             $author          = new \Ticket_2377_Author();
-                $article         = new \Ticket_2377_Article();
-                $article->Author = $author;
+            $article         = new \Ticket_2377_Article();
+            $article->Author = $author;
 
-                $array = $article->toArray(true);
+            $array = $article->toArray(true);
 
-                $article2 = new \Ticket_2377_Article();
-                $article2->synchronizeWithArray($array);
+            $article2 = new \Ticket_2377_Article();
+            $article2->synchronizeWithArray($array);
 
-                $this->assertTrue($article2->Author instanceof \Ticket_2377_Author);
+            $this->assertTrue($article2->Author instanceof \Ticket_2377_Author);
         }
     }
 }

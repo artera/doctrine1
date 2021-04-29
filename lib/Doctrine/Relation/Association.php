@@ -148,12 +148,9 @@ class Doctrine_Relation_Association extends Doctrine_Relation
     }
 
     /**
-     * fetchRelatedFor
-     *
      * fetches a component related to given record
      *
-     * @param  Doctrine_Record $record
-     * @return Doctrine_Record|Doctrine_Collection
+     * @return Doctrine_Collection
      */
     public function fetchRelatedFor(Doctrine_Record $record)
     {

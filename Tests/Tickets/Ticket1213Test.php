@@ -17,6 +17,7 @@ namespace Tests\Tickets {
             $person                        = new \Ticket1213_Person();
             $person->Name                  = 'Frank Zappa ' . time();
             $person->guid                  = $guid;
+            $person->Birthday = new \Ticket1213_Birthday();
             $person->Birthday->Bday        = '1940-12-21';
             $person->Birthday->person_guid = $guid;
             $person->save();

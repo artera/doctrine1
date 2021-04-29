@@ -3,23 +3,22 @@
 class Doctrine_Relation_Parser
 {
     /**
-     * @var Doctrine_Table $table          the table object this parser belongs to
+     * the table object this parser belongs to
      */
-    protected $table;
+    protected Doctrine_Table $table;
 
     /**
-     * @var array $relations               an array containing all the Doctrine_Relation objects for this table
+     * @phpstan-var Doctrine_Relation[]
+     * an array containing all the Doctrine_Relation objects for this table
      */
-    protected $relations = [];
+    protected array $relations = [];
 
     /**
-     * @var array $pending                 relations waiting for parsing
+     * relations waiting for parsing
      */
-    protected $pending = [];
+    protected array $pending = [];
 
     /**
-     * constructor
-     *
      * @param Doctrine_Table $table the table object this parser belongs to
      */
     public function __construct(Doctrine_Table $table)
@@ -28,22 +27,18 @@ class Doctrine_Relation_Parser
     }
 
     /**
-     * getTable
-     *
      * @return Doctrine_Table   the table object this parser belongs to
      */
-    public function getTable()
+    public function getTable(): Doctrine_Table
     {
         return $this->table;
     }
 
     /**
-     * getPendingRelation
-     *
      * @param  string $name
      * @return array            an array defining a pending relation
      */
-    public function getPendingRelation($name)
+    public function getPendingRelation(string $name): array
     {
         if (!isset($this->pending[$name])) {
             throw new Doctrine_Relation_Exception('Unknown pending relation ' . $name);
@@ -53,17 +48,14 @@ class Doctrine_Relation_Parser
     }
 
     /**
-     * getPendingRelations
-     *
      * @return array            an array containing all the pending relations
      */
-    public function getPendingRelations()
+    public function getPendingRelations(): array
     {
         return $this->pending;
     }
 
     /**
-     * unsetPendingRelations
      * Removes a relation. Warning: this only affects pending relations
      *
      * @param string $name relation to remove
@@ -119,13 +111,11 @@ class Doctrine_Relation_Parser
     }
 
     /**
-     * getRelation
-     *
      * @param  string $alias     relation alias
      * @param  bool   $recursive
      * @return Doctrine_Relation
      */
-    public function getRelation($alias, $recursive = true)
+    public function getRelation(string $alias, bool $recursive = true): Doctrine_Relation
     {
         if (isset($this->relations[$alias])) {
             return $this->relations[$alias];
@@ -223,12 +213,12 @@ class Doctrine_Relation_Parser
     }
 
     /**
-     * getRelations
      * returns an array containing all relation objects
      *
+     * @phpstan-return Doctrine_Relation[]
      * @return array        an array of Doctrine_Relation objects
      */
-    public function getRelations()
+    public function getRelations(): array
     {
         foreach ($this->pending as $k => $v) {
             $this->getRelation($k);
@@ -305,7 +295,6 @@ class Doctrine_Relation_Parser
     }
 
     /**
-     * getIdentifiers
      * gives a list of identifiers from given table
      *
      * the identifiers are in format:
@@ -333,8 +322,6 @@ class Doctrine_Relation_Parser
     }
 
     /**
-     * guessColumns
-     *
      * @param  array          $classes      an array of class names
      * @param  Doctrine_Table $foreignTable foreign table object
      * @return array|string                            an array of column names

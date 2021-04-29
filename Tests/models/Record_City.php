@@ -4,7 +4,7 @@ class Record_City extends Doctrine_Record
     public function setTableDefinition(): void
     {
         $this->hasColumn('name', 'string', 200);
-        $this->hasColumn('country_id', 'integer');
+        $this->hasColumn('country_id', 'integer', null, ['notnull' => true]);
         $this->hasColumn('district_id', 'integer');
     }
 

@@ -1,4 +1,5 @@
 <?php
+/** @property string $address */
 class Email extends Doctrine_Record
 {
     public function setTableDefinition(): void

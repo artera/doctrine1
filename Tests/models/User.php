@@ -9,7 +9,10 @@ class UserTable extends Doctrine_Table
 {
 }
 
-/** @phpstan-extends Entity<UserTable> */
+/**
+ * @property Email $Email
+ * @phpstan-extends Entity<UserTable>
+ */
 class User extends Entity
 {
     public bool $customValidationEnabled = false;
