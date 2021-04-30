@@ -26,7 +26,7 @@ class Doctrine_Relation_LocalKey extends Doctrine_Relation
 
         if ($related === null) {
             $column = $record->getTable()->getColumnDefinition($this->definition['local']);
-            if (!empty($column['notnull'])) {
+            if (!empty($column['notnull']) || !empty($column['primary'])) {
                 $related = $this->getTable()->create();
             } else {
                 return null;
