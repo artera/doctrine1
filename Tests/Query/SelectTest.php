@@ -5,7 +5,7 @@ use Tests\DoctrineUnitTestCase;
 
 class SelectTest extends DoctrineUnitTestCase
 {
-    public function testParseSelect()
+    public function testParseSelect(): void
     {
         $q = new \Doctrine_Query();
 
@@ -14,7 +14,7 @@ class SelectTest extends DoctrineUnitTestCase
         $q->execute();
     }
 
-    public function testAggregateFunctionParsingSupportsMultipleComponentReferences()
+    public function testAggregateFunctionParsingSupportsMultipleComponentReferences(): void
     {
         $q = new \Doctrine_Query();
         $q->select("CONCAT(u.name, ' ', e.address) value")
@@ -26,7 +26,7 @@ class SelectTest extends DoctrineUnitTestCase
         $this->assertEquals($users[0]->value, 'zYne zYne@example.com');
     }
 
-    public function testSelectDistinctIsSupported()
+    public function testSelectDistinctIsSupported(): void
     {
         $q = new \Doctrine_Query();
 
@@ -35,7 +35,7 @@ class SelectTest extends DoctrineUnitTestCase
         $this->assertEquals($q->getSqlQuery(), 'SELECT DISTINCT e.id AS e__id, e.name AS e__name FROM entity e WHERE (e.type = 0)');
     }
 
-    public function testSelectDistinctIsSupported2()
+    public function testSelectDistinctIsSupported2(): void
     {
         $q = new \Doctrine_Query();
 
@@ -44,7 +44,7 @@ class SelectTest extends DoctrineUnitTestCase
         $this->assertEquals($q->getSqlQuery(), 'SELECT DISTINCT e.id AS e__id, e.name AS e__name FROM entity e WHERE (e.type = 0)');
     }
 
-    public function testAggregateFunctionWithDistinctKeyword()
+    public function testAggregateFunctionWithDistinctKeyword(): void
     {
         $q = new \Doctrine_Query();
 
@@ -53,7 +53,7 @@ class SelectTest extends DoctrineUnitTestCase
         $this->assertEquals($q->getSqlQuery(), 'SELECT COUNT(DISTINCT e.name) AS e__0 FROM entity e WHERE (e.type = 0)');
     }
 
-    public function testAggregateFunction()
+    public function testAggregateFunction(): void
     {
         $q = new \Doctrine_Query();
 
@@ -62,7 +62,7 @@ class SelectTest extends DoctrineUnitTestCase
         $this->assertEquals($q->getSqlQuery(), 'SELECT COUNT(e.id) AS e__0 FROM entity e WHERE (e.type = 0)');
     }
 
-    public function testSelectPartSupportsMultipleAggregateFunctions()
+    public function testSelectPartSupportsMultipleAggregateFunctions(): void
     {
         $q = new \Doctrine_Query();
 
@@ -71,7 +71,7 @@ class SelectTest extends DoctrineUnitTestCase
         $this->assertEquals($q->getSqlQuery(), 'SELECT MAX(e.id) AS e__0, MIN(e.name) AS e__1 FROM entity e WHERE (e.type = 0)');
     }
 
-    public function testMultipleAggregateFunctionsWithMultipleComponents()
+    public function testMultipleAggregateFunctionsWithMultipleComponents(): void
     {
         $q = new \Doctrine_Query();
 
@@ -80,7 +80,7 @@ class SelectTest extends DoctrineUnitTestCase
         $this->assertEquals($q->getSqlQuery(), 'SELECT MAX(e.id) AS e__0, MIN(e.name) AS e__1, COUNT(p.id) AS p__2 FROM entity e LEFT JOIN phonenumber p ON e.id = p.entity_id WHERE (e.type = 0)');
     }
 
-    public function testChangeUpdateToSelect()
+    public function testChangeUpdateToSelect(): void
     {
         $q = \Doctrine_Query::create()
             ->update('User u')
@@ -96,7 +96,7 @@ class SelectTest extends DoctrineUnitTestCase
         $this->assertEquals($q->getDql(), ' FROM User u WHERE u.username = ?');
     }
 
-    public function testAggregateFunctionValueHydration()
+    public function testAggregateFunctionValueHydration(): void
     {
         $q = new \Doctrine_Query();
 
@@ -112,7 +112,7 @@ class SelectTest extends DoctrineUnitTestCase
         $this->assertEquals($users[4]['COUNT'], 3);
     }
 
-    public function testSingleComponentWithAsterisk()
+    public function testSingleComponentWithAsterisk(): void
     {
         $q = new \Doctrine_Query();
 
@@ -120,7 +120,8 @@ class SelectTest extends DoctrineUnitTestCase
 
         $this->assertEquals($q->getSqlQuery(), 'SELECT e.id AS e__id, e.name AS e__name, e.loginname AS e__loginname, e.password AS e__password, e.type AS e__type, e.created AS e__created, e.updated AS e__updated, e.email_id AS e__email_id FROM entity e WHERE (e.type = 0)');
     }
-    public function testSingleComponentWithMultipleColumns()
+
+    public function testSingleComponentWithMultipleColumns(): void
     {
         $q = new \Doctrine_Query();
 
@@ -128,7 +129,8 @@ class SelectTest extends DoctrineUnitTestCase
 
         $this->assertEquals($q->getSqlQuery(), 'SELECT e.id AS e__id, e.name AS e__name, e.type AS e__type FROM entity e WHERE (e.type = 0)');
     }
-    public function testMultipleComponentsWithAsterisk()
+
+    public function testMultipleComponentsWithAsterisk(): void
     {
         $q = new \Doctrine_Query();
 
@@ -136,7 +138,8 @@ class SelectTest extends DoctrineUnitTestCase
 
         $this->assertEquals($q->getSqlQuery(), 'SELECT e.id AS e__id, e.name AS e__name, e.loginname AS e__loginname, e.password AS e__password, e.type AS e__type, e.created AS e__created, e.updated AS e__updated, e.email_id AS e__email_id, p.id AS p__id, p.phonenumber AS p__phonenumber, p.entity_id AS p__entity_id FROM entity e LEFT JOIN phonenumber p ON e.id = p.entity_id WHERE (e.type = 0)');
     }
-    public function testMultipleComponentsWithMultipleColumns()
+
+    public function testMultipleComponentsWithMultipleColumns(): void
     {
         $q = new \Doctrine_Query();
 
@@ -144,7 +147,8 @@ class SelectTest extends DoctrineUnitTestCase
 
         $this->assertEquals($q->getSqlQuery(), 'SELECT e.id AS e__id, e.name AS e__name, p.id AS p__id FROM entity e LEFT JOIN phonenumber p ON e.id = p.entity_id WHERE (e.type = 0)');
     }
-    public function testAggregateFunctionValueHydrationWithAliases()
+
+    public function testAggregateFunctionValueHydrationWithAliases(): void
     {
         $q = new \Doctrine_Query();
 
@@ -158,7 +162,8 @@ class SelectTest extends DoctrineUnitTestCase
         $this->assertEquals($users[3]->count, 1);
         $this->assertEquals($users[4]->count, 3);
     }
-    public function testMultipleAggregateFunctionValueHydrationWithAliases()
+
+    public function testMultipleAggregateFunctionValueHydrationWithAliases(): void
     {
         $q = new \Doctrine_Query();
 
@@ -177,7 +182,8 @@ class SelectTest extends DoctrineUnitTestCase
         $this->assertEquals($users[3]->max, '111 222 333');
         $this->assertEquals($users[4]->max, '444 555');
     }
-    public function testMultipleAggregateFunctionValueHydrationWithAliasesAndCleanRecords()
+
+    public function testMultipleAggregateFunctionValueHydrationWithAliasesAndCleanRecords(): void
     {
         static::$connection->clear();
 
@@ -202,7 +208,7 @@ class SelectTest extends DoctrineUnitTestCase
         $this->assertEquals($users[4]->max, '444 555');
     }
 
-    public function testWhereInSupportInDql()
+    public function testWhereInSupportInDql(): void
     {
         $q = \Doctrine_Query::create()
             ->select('u.id, p.id')
@@ -220,5 +226,25 @@ class SelectTest extends DoctrineUnitTestCase
         $users = $q->execute($params, \Doctrine_Core::HYDRATE_ARRAY);
 
         $this->assertEquals(count($users), 3);
+    }
+
+    public function testEmptyWhereInSupportInDql(): void
+    {
+        $q = \Doctrine_Query::create()
+            ->select('u.id, p.id')
+            ->from('User u')
+            ->leftJoin('u.Phonenumber p')
+            ->where('u.id IN ?');
+
+        $params = [[]];
+
+        $this->assertEquals(
+            $q->getSqlQuery($params),
+            'SELECT e.id AS e__id, p.id AS p__id FROM entity e LEFT JOIN phonenumber p ON e.id = p.entity_id WHERE (e.id IN (?) AND (e.type = 0))'
+        );
+
+        $users = $q->execute($params, \Doctrine_Core::HYDRATE_ARRAY);
+
+        $this->assertEquals(count($users), 0);
     }
 }
