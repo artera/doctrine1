@@ -1362,9 +1362,9 @@ abstract class Doctrine_Query_Abstract
      */
     public function orWhereIn($expr, $params = [], $not = false)
     {
-        // if there's no params, return (else we'll get a WHERE IN (), invalid SQL)
         if (is_array($params) && (count($params) == 0)) {
-            return $this;
+            // if there's no params, change WHERE x IN (), which is invalid SQL, to WHERE x IN (NULL)
+            $params = [null];
         }
 
         if ($this->hasDqlQueryPart('where')) {
