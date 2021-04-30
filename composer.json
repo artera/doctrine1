@@ -1,7 +1,7 @@
 {
     "name": "artera/doctrine1",
     "type": "library",
-    "version": "2.2.0",
+    "version": "2.2.1",
     "description": "PHP7+ Database ORM",
     "keywords": ["orm", "database"],
     "license": "LGPL-2.1-or-later",

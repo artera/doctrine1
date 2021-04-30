@@ -228,17 +228,19 @@ abstract class Doctrine_Hydrator_Graph extends Doctrine_Hydrator_Abstract
                 } else {
                     // 1-1 relation
                     $oneToOne = true;
-                    if (!isset($nonemptyComponents[$dqlAlias]) && !isset($prev[$parent][$relationAlias])) {
-                        $prev[$parent][$relationAlias] = $this->getNullPointer();
-                    } elseif (!isset($prev[$parent][$relationAlias])) {
-                        $element = $this->getElement($data, $componentName);
+                    if (!($prev[$parent] instanceof Doctrine_Record ? $prev[$parent]->contains($relationAlias, load: false) : isset($prev[$parent][$relationAlias]))) {
+                        if (!isset($nonemptyComponents[$dqlAlias])) {
+                            $prev[$parent][$relationAlias] = $this->getNullPointer();
+                        } else {
+                            $element = $this->getElement($data, $componentName);
 
-                        // [FIX] Tickets #1205 and #1237
-                        $event->set('data', $element);
-                        $listeners[$componentName]->postHydrate($event);
-                        $instances[$componentName]->postHydrate($event);
+                            // [FIX] Tickets #1205 and #1237
+                            $event->set('data', $element);
+                            $listeners[$componentName]->postHydrate($event);
+                            $instances[$componentName]->postHydrate($event);
 
-                        $prev[$parent][$relationAlias] = $element;
+                            $prev[$parent][$relationAlias] = $element;
+                        }
                     }
                 }
                 if ($prev[$parent][$relationAlias] !== null) {

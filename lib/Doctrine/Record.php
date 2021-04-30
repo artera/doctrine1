@@ -1717,16 +1717,27 @@ abstract class Doctrine_Record implements Countable, IteratorAggregate, Serializ
 
     /**
      * test whether a field (column, mapped value, related component, accessor) is accessible by @see get()
-     *
-     * @param  string $fieldName
-     * @return boolean
      */
-    public function contains($fieldName)
+    public function contains(string $fieldName, bool $load = true): bool
     {
-        return array_key_exists($fieldName, $this->_data)
+        if (array_key_exists($fieldName, $this->_data)
             || isset($this->_id[$fieldName])
             || isset($this->_values[$fieldName])
-            || (isset($this->_references[$fieldName]) && !$this->_references[$fieldName] instanceof Doctrine_Null);
+            || ($this->hasReference($fieldName) && !$this->_references[$fieldName] instanceof Doctrine_Null)
+        ) {
+            return true;
+        }
+
+        if (!$load) {
+            return false;
+        }
+
+        try {
+            $this->_table->getRelation($fieldName);
+            return $this->relatedExists($fieldName);
+        } catch (Doctrine_Table_Exception) {
+            return false;
+        }
     }
 
     /**

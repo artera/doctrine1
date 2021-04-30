@@ -53,10 +53,10 @@ class MultiJoin2Test extends DoctrineUnitTestCase
             ->orderBy('c.position ASC, subCats.position ASC, b.position ASC')
             ->execute();
         // Test that accessing a loaded (but empty) relation doesnt trigger an extra query
-        $this->assertEquals($queryCount + 1, static::$connection->count());
+        $this->assertCount($queryCount + 1, static::$connection);
 
         $categories[0]->subCategories;
-        $this->assertEquals($queryCount + 1, static::$connection->count());
+        $this->assertCount($queryCount + 1, static::$connection);
     }
 
     public function testMultipleJoinFetchingWithArrayFetching()

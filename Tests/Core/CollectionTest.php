@@ -28,34 +28,34 @@ namespace Tests\Core {
 
             $coll = static::$connection->query('FROM User');
 
-            $this->assertEquals($coll->count(), 8);
-            $this->assertEquals($coll[0]->Group->count(), 2);
-            $this->assertEquals($coll[1]->Group->count(), 1);
-            $this->assertEquals($coll[2]->Group->count(), 3);
-            $this->assertEquals($coll[5]->Group->count(), 3);
+            $this->assertCount(8, $coll);
+            $this->assertCount(2, $coll[0]->Group);
+            $this->assertCount(1, $coll[1]->Group);
+            $this->assertCount(3, $coll[2]->Group);
+            $this->assertCount(3, $coll[5]->Group);
 
             static::$connection->clear();
 
             $coll = static::$connection->query('FROM User');
 
-            $this->assertEquals($coll->count(), 8);
+            $this->assertCount(8, $coll);
 
             $count = static::$connection->count();
 
             $coll->loadRelated('Group');
-            $this->assertEquals(($count + 1), static::$connection->count());
-            $this->assertEquals($coll[0]->Group->count(), 2);
-            $this->assertEquals(($count + 1), static::$connection->count());
-            $this->assertEquals($coll[1]->Group->count(), 1);
+            $this->assertCount($count + 1, static::$connection);
+            $this->assertCount(2, $coll[0]->Group);
+            $this->assertCount($count + 1, static::$connection);
+            $this->assertCount(1, $coll[1]->Group);
 
-            $this->assertEquals(($count + 1), static::$connection->count());
+            $this->assertCount($count + 1, static::$connection);
 
-            $this->assertEquals($coll[2]->Group->count(), 3);
+            $this->assertCount(3, $coll[2]->Group);
 
-            $this->assertEquals(($count + 1), static::$connection->count());
-            $this->assertEquals($coll[5]->Group->count(), 3);
+            $this->assertCount($count + 1, static::$connection);
+            $this->assertCount(3, $coll[5]->Group);
 
-            $this->assertEquals(($count + 1), static::$connection->count());
+            $this->assertCount($count + 1, static::$connection);
 
             static::$connection->clear();
         }
