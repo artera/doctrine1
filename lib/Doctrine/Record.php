@@ -1998,7 +1998,7 @@ abstract class Doctrine_Record implements Countable, IteratorAggregate, Serializ
 
         if ($deep) {
             foreach ($this->_references as $key => $relation) {
-                if (!$relation instanceof Doctrine_Null) {
+                if ($relation !== null && !$relation instanceof Doctrine_Null) {
                     $a[$key] = $relation->toArray($deep, $prefixKey);
                 }
             }
