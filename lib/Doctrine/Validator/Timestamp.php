@@ -6,7 +6,7 @@ class Doctrine_Validator_Timestamp extends AbstractValidator
 {
     public function isValid($value)
     {
-        if (is_null($value)) {
+        if ($value === null) {
             return true;
         }
 

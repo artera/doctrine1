@@ -541,7 +541,7 @@ class Doctrine_Export_Mysql extends Doctrine_Export
                 $fieldType = $field['type'];
             }
 
-            $default = ' DEFAULT ' . (is_null($field['default'])
+            $default = ' DEFAULT ' . ($field['default'] === null
                 ? 'NULL'
                 : $this->conn->quote($field['default'], $fieldType));
         }

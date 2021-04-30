@@ -103,7 +103,7 @@ class Doctrine_Collection_OnDemand implements Iterator
      */
     public function valid()
     {
-        if (!is_null($this->current) && $this->current !== false) {
+        if ($this->current !== null && $this->current !== false) {
             return true;
         }
         return false;

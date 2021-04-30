@@ -194,7 +194,7 @@ abstract class Doctrine_Record implements Countable, IteratorAggregate, Serializ
      */
     public function serializeReferences($bool = null)
     {
-        if (!is_null($bool)) {
+        if ($bool !== null) {
             $this->_serializeReferences = $bool;
         }
         return $this->_serializeReferences;
@@ -249,7 +249,7 @@ abstract class Doctrine_Record implements Countable, IteratorAggregate, Serializ
     {
         $func = $when . ucfirst($type);
 
-        if (is_null($event)) {
+        if ($event === null) {
             $constant = constant('Doctrine_Event::RECORD_' . strtoupper($type));
             $event = new Doctrine_Event($this, $constant);
         }

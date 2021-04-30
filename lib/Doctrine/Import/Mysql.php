@@ -27,7 +27,7 @@ class Doctrine_Import_Mysql extends Doctrine_Import
     public function listSequences($database = null)
     {
         $query = 'SHOW TABLES';
-        if (!is_null($database)) {
+        if ($database !== null) {
             $query .= ' FROM ' . $database;
         }
         $tableNames = $this->conn->fetchColumn($query);
@@ -226,7 +226,7 @@ class Doctrine_Import_Mysql extends Doctrine_Import
      */
     public function listViews($database = null)
     {
-        if (is_null($database)) {
+        if ($database === null) {
             $query = 'SELECT table_name FROM information_schema.VIEWS';
         } else {
             $query = sprintf($this->sql['listViews'], ' FROM ' . $database);
