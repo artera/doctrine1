@@ -30,6 +30,13 @@ class DateTimeImmutable implements DeserializerInterface
             }
         }
 
+        if (is_callable($value)) {
+            $value = $value();
+            if ($value instanceof \DateTimeImmutable) {
+                return $value;
+            }
+        }
+
         if (is_int($value) || is_numeric($value)) {
             return (new \DateTimeImmutable())->setTimestamp((int) $value);
         }
