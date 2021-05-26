@@ -189,28 +189,22 @@ class ConnectionTest extends DoctrineUnitTestCase
     public function testRollback(): void
     {
         static::$connection->beginTransaction();
-        $this->assertEquals(static::$connection->transaction->getTransactionLevel(), 1);
         $this->assertEquals(static::$connection->transaction->getState(), \Doctrine_Transaction_State::ACTIVE());
         static::$connection->rollback();
         $this->assertEquals(static::$connection->transaction->getState(), \Doctrine_Transaction_State::SLEEP());
-        $this->assertEquals(static::$connection->transaction->getTransactionLevel(), 0);
     }
 
     public function testNestedTransactions(): void
     {
-        $this->assertEquals(static::$connection->transaction->getTransactionLevel(), 0);
+        $this->assertEquals(static::$connection->transaction->getState(), \Doctrine_Transaction_State::SLEEP());
         static::$connection->beginTransaction();
-        $this->assertEquals(static::$connection->transaction->getTransactionLevel(), 1);
         $this->assertEquals(static::$connection->transaction->getState(), \Doctrine_Transaction_State::ACTIVE());
         static::$connection->beginTransaction();
         $this->assertEquals(static::$connection->transaction->getState(), \Doctrine_Transaction_State::BUSY());
-        $this->assertEquals(static::$connection->transaction->getTransactionLevel(), 2);
         static::$connection->commit();
         $this->assertEquals(static::$connection->transaction->getState(), \Doctrine_Transaction_State::ACTIVE());
-        $this->assertEquals(static::$connection->transaction->getTransactionLevel(), 1);
         static::$connection->commit();
         $this->assertEquals(static::$connection->transaction->getState(), \Doctrine_Transaction_State::SLEEP());
-        $this->assertEquals(static::$connection->transaction->getTransactionLevel(), 0);
     }
 
     public function testSqliteDsn(): void

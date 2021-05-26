@@ -2,8 +2,6 @@
 
 namespace Doctrine1\Serializer;
 
-use Doctrine_Connection;
-
 class Gzip implements SerializerInterface
 {
     protected function checkCompatibility(mixed $value, string $type): void

@@ -2,13 +2,12 @@
 
 namespace Doctrine1\Serializer;
 
-use Doctrine_Connection;
-
 class DateTime implements SerializerInterface
 {
     public function __construct(
         protected \DateTimeZone $timezone
-    ) {}
+    ) {
+    }
 
     public function serialize(mixed $value, array $column, \Doctrine_Table $table): mixed
     {

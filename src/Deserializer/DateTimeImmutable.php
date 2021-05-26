@@ -7,7 +7,8 @@ class DateTimeImmutable implements DeserializerInterface
     public function __construct(
         protected \DateTimeZone $timezone,
         protected array $validTypes = ['date', 'datetime', 'timestamp'],
-    ) {}
+    ) {
+    }
 
     protected function checkCompatibility(mixed $value, string $type): void
     {

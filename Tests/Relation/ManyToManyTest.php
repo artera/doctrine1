@@ -92,13 +92,13 @@ class ManyToManyTest extends DoctrineUnitTestCase
 
         $component->save();
 
-        $this->assertEquals(static::$connection->count(), ($count + 5));
+        $this->assertCount($count + 15, static::$connection);
 
-        $this->assertEquals($component->RTC1->count(), 2);
+        $this->assertCount(2, $component->RTC1);
 
         $component = $component->getTable()->find($component->id);
 
-        $this->assertEquals($component->RTC1->count(), 2);
+        $this->assertCount(2, $component->RTC1);
 
         // check that it doesn't matter saving the other M2M components as well
 
@@ -109,13 +109,13 @@ class ManyToManyTest extends DoctrineUnitTestCase
 
         $component->save();
 
-        $this->assertEquals(static::$connection->count(), ($count + 4));
+        $this->assertCount($count + 20, static::$connection);
 
-        $this->assertEquals($component->RTC2->count(), 2);
+        $this->assertCount(2, $component->RTC2);
 
         $component = $component->getTable()->find($component->id);
 
-        $this->assertEquals($component->RTC2->count(), 2);
+        $this->assertCount(2, $component->RTC2);
     }
 
     public function testManyToManyRelationSaving2()
@@ -130,13 +130,13 @@ class ManyToManyTest extends DoctrineUnitTestCase
 
         $component->save();
 
-        $this->assertEquals(static::$connection->count(), ($count + 5));
+        $this->assertCount($count + 15, static::$connection);
 
-        $this->assertEquals($component->RTC2->count(), 2);
+        $this->assertCount(2, $component->RTC2);
 
         $component = $component->getTable()->find($component->id);
 
-        $this->assertEquals($component->RTC2->count(), 2);
+        $this->assertCount(2, $component->RTC2);
 
         // check that it doesn't matter saving the other M2M components as well
 
@@ -147,13 +147,13 @@ class ManyToManyTest extends DoctrineUnitTestCase
 
         $component->save();
 
-        $this->assertEquals(static::$connection->count(), ($count + 3));
+        $this->assertCount($count + 23, static::$connection);
 
-        $this->assertEquals($component->RTC1->count(), 2);
+        $this->assertCount(2, $component->RTC1);
 
         $component = $component->getTable()->find($component->id);
 
-        $this->assertEquals($component->RTC1->count(), 2);
+        $this->assertCount(2, $component->RTC1);
     }
 
     public function testManyToManySimpleUpdate()

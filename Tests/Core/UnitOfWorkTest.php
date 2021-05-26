@@ -5,9 +5,10 @@ use Tests\DoctrineUnitTestCase;
 
 class UnitOfWorkTest extends DoctrineUnitTestCase
 {
-    private $correct  = ['Task', 'ResourceType', 'Resource', 'Assignment', 'ResourceReference'];
+    /** @var string[] */
+    private array $correct  = ['Task', 'ResourceType', 'Resource', 'Assignment', 'ResourceReference'];
 
-    public function testbuildFlushTree()
+    public function testbuildFlushTree(): void
     {
         $task = new \Task();
 
@@ -24,7 +25,7 @@ class UnitOfWorkTest extends DoctrineUnitTestCase
         $this->assertEquals(['Resource', 'Task', 'Assignment'], $tree);
     }
 
-    public function testbuildFlushTree2()
+    public function testbuildFlushTree2(): void
     {
         $this->correct = ['Forum_Category','Forum_Board','Forum_Thread'];
 
@@ -35,7 +36,7 @@ class UnitOfWorkTest extends DoctrineUnitTestCase
         $this->assertEquals(['Forum_Category', 'Forum_Board'], $tree);
     }
 
-    public function testBuildFlushTree3()
+    public function testBuildFlushTree3(): void
     {
         $this->correct = ['Forum_Category','Forum_Board','Forum_Thread','Forum_Entry'];
 
@@ -46,7 +47,7 @@ class UnitOfWorkTest extends DoctrineUnitTestCase
         $this->assertEquals(['Forum_Board','Forum_Entry'], $tree);
     }
 
-    public function testBuildFlushTree4()
+    public function testBuildFlushTree4(): void
     {
         $tree = static::$unitOfWork->buildFlushTree(['Forum_Thread','Forum_Board']);
         $this->assertEquals(['Forum_Board', 'Forum_Thread'], $tree);
@@ -54,7 +55,7 @@ class UnitOfWorkTest extends DoctrineUnitTestCase
         $this->assertEquals(['Forum_Board','Forum_Thread'], $tree);
     }
 
-    public function testBuildFlushTree5()
+    public function testBuildFlushTree5(): void
     {
         $tree = static::$unitOfWork->buildFlushTree(['Forum_Board','Forum_Thread','Forum_Entry']);
         $this->assertEquals(['Forum_Board','Forum_Thread','Forum_Entry'], $tree);
@@ -62,7 +63,7 @@ class UnitOfWorkTest extends DoctrineUnitTestCase
         $this->assertEquals(['Forum_Board','Forum_Thread','Forum_Entry'], $tree);
     }
 
-    public function testBuildFlushTree6()
+    public function testBuildFlushTree6(): void
     {
         $tree = static::$unitOfWork->buildFlushTree(['Forum_Entry','Forum_Board','Forum_Thread']);
         $this->assertEquals(['Forum_Board','Forum_Thread','Forum_Entry'], $tree);
@@ -70,7 +71,7 @@ class UnitOfWorkTest extends DoctrineUnitTestCase
         $this->assertEquals(['Forum_Board','Forum_Thread','Forum_Entry'], $tree);
     }
 
-    public function testBuildFlushTree7()
+    public function testBuildFlushTree7(): void
     {
         $tree = static::$unitOfWork->buildFlushTree(['Forum_Thread','Forum_Board','Forum_Entry']);
         $this->assertEquals(['Forum_Board','Forum_Thread','Forum_Entry'], $tree);
@@ -78,7 +79,7 @@ class UnitOfWorkTest extends DoctrineUnitTestCase
         $this->assertEquals(['Forum_Board','Forum_Thread','Forum_Entry'], $tree);
     }
 
-    public function testBuildFlushTree8()
+    public function testBuildFlushTree8(): void
     {
         $tree = static::$unitOfWork->buildFlushTree(['Forum_Board','Forum_Thread','Forum_Category']);
         $this->assertEquals(['Forum_Category','Forum_Board','Forum_Thread'], $tree);

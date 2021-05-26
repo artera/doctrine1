@@ -7,20 +7,20 @@ class CollectionSnapshotTest extends DoctrineUnitTestCase
 {
     protected static array $tables = ['Entity', 'User', 'Group', 'GroupUser', 'Account', 'Album', 'Phonenumber', 'Email', 'Book'];
 
-    public function testDiffForSimpleCollection()
+    public function testDiffForSimpleCollection(): void
     {
         $q = \Doctrine_Query::create()->from('User u')->orderby('u.id');
 
         $coll = $q->execute();
-        $this->assertEquals($coll->count(), 8);
+        $this->assertCount(8, $coll);
 
         unset($coll[0]);
         unset($coll[1]);
 
         $coll[]->name = 'new \user';
 
-        $this->assertEquals($coll->count(), 7);
-        $this->assertEquals(count($coll->getSnapshot()), 8);
+        $this->assertCount(7, $coll);
+        $this->assertCount(8, $coll->getSnapshot());
 
         $count = static::$conn->count();
 
@@ -28,10 +28,10 @@ class CollectionSnapshotTest extends DoctrineUnitTestCase
 
         static::$connection->clear();
         $coll = \Doctrine_Query::create()->from('User u')->execute();
-        $this->assertEquals($coll->count(), 7);
+        $this->assertCount(7, $coll);
     }
 
-    public function testDiffForOneToManyRelatedCollection()
+    public function testDiffForOneToManyRelatedCollection(): void
     {
         $q = new \Doctrine_Query();
         $q->from('User u LEFT JOIN u.Phonenumber p')
@@ -39,18 +39,18 @@ class CollectionSnapshotTest extends DoctrineUnitTestCase
 
         $coll = $q->execute();
 
-        $this->assertEquals($coll->count(), 1);
+        $this->assertCount(1, $coll);
 
-        $this->assertEquals($coll[0]->Phonenumber->count(), 3);
+        $this->assertCount(3, $coll[0]->Phonenumber);
         $this->assertTrue($coll[0]->Phonenumber instanceof \Doctrine_Collection);
 
         unset($coll[0]->Phonenumber[0]);
         $coll[0]->Phonenumber->remove(2);
 
-        $this->assertEquals(count($coll[0]->Phonenumber->getSnapshot()), 3);
+        $this->assertCount(3, $coll[0]->Phonenumber->getSnapshot());
         $coll[0]->save();
 
-        $this->assertEquals($coll[0]->Phonenumber->count(), 1);
+        $this->assertCount(1, $coll[0]->Phonenumber);
 
         static::$connection->clear();
 
@@ -59,10 +59,10 @@ class CollectionSnapshotTest extends DoctrineUnitTestCase
 
         $coll = $q->execute();
 
-        $this->assertEquals($coll[0]->Phonenumber->count(), 1);
+        $this->assertCount(1, $coll[0]->Phonenumber);
     }
 
-    public function testDiffForManyToManyRelatedCollection()
+    public function testDiffForManyToManyRelatedCollection(): void
     {
         $user                 = new \User();
         $user->name           = 'zYne';
@@ -75,28 +75,28 @@ class CollectionSnapshotTest extends DoctrineUnitTestCase
         $users = \Doctrine_Query::create()->from('User u LEFT JOIN u.Group g')
             ->where('u.id = ' . $user->id)->execute();
 
-        $this->assertEquals($users[0]->Group[0]->name, 'PHP');
-        $this->assertEquals($users[0]->Group[1]->name, 'Web');
-        $this->assertEquals(count($user->Group->getSnapshot()), 2);
+        $this->assertEquals('PHP', $users[0]->Group[0]->name);
+        $this->assertEquals('Web', $users[0]->Group[1]->name);
+        $this->assertCount(2, $user->Group->getSnapshot());
         unset($user->Group[0]);
 
         $user->save();
         $this->assertEquals(count($user->Group), 1);
 
-        $this->assertEquals(count($user->Group->getSnapshot()), 1);
+        $this->assertCount(1, $user->Group->getSnapshot());
         unset($user->Group[1]);
-        $this->assertEquals(count($user->Group->getSnapshot()), 1);
+        $this->assertCount(1, $user->Group->getSnapshot());
 
         $count = count(static::$conn);
         $user->save();
 
-        $this->assertEquals(count($user->Group->getSnapshot()), 0);
+        $this->assertCount(0, $user->Group->getSnapshot());
 
         static::$conn->clear();
 
         $users = \Doctrine_Query::create()->from('User u LEFT JOIN u.Group g')
             ->where('u.id = ' . $user->id)->execute();
 
-        $this->assertEquals(count($user->Group), 0);
+        $this->assertCount(0, $user->Group);
     }
 }

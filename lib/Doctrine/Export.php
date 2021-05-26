@@ -1089,7 +1089,7 @@ class Doctrine_Export extends Doctrine_Connection_Module
         foreach ($queries as $connectionName => $sql) {
             $connection = Doctrine_Manager::getInstance()->getConnection($connectionName);
 
-            $connection->beginTransaction();
+            $savepoint = $connection->beginTransaction();
 
             foreach ($sql as $query) {
                 try {
@@ -1097,13 +1097,13 @@ class Doctrine_Export extends Doctrine_Connection_Module
                 } catch (Doctrine_Connection_Exception $e) {
                     // we only want to silence table already exists errors
                     if ($e->getPortableCode() !== Doctrine_Core::ERR_ALREADY_EXISTS) {
-                        $connection->rollback();
+                        $savepoint->rollback();
                         throw new Doctrine_Export_Exception($e->getMessage() . '. Failing Query: ' . $query);
                     }
                 }
             }
 
-            $connection->commit();
+            $savepoint->commit();
         }
     }
 

@@ -29,7 +29,7 @@ class Doctrine_Connection_UnitOfWork extends Doctrine_Connection_Module
         $record->state($state->lock());
 
         try {
-            $conn->beginInternalTransaction();
+            $savepoint = $conn->beginInternalTransaction();
             $record->state($state);
 
             $event = $record->invokeSaveHooks('pre', 'save');
@@ -74,7 +74,7 @@ class Doctrine_Connection_UnitOfWork extends Doctrine_Connection_Module
 
                 $record->invokeSaveHooks('post', 'save', $event);
             } else {
-                $conn->transaction->addInvalid($record);
+                $savepoint->addInvalid($record);
             }
 
             $state = $record->state();
@@ -103,11 +103,13 @@ class Doctrine_Connection_UnitOfWork extends Doctrine_Connection_Module
 
             $record->state($state);
 
-            $conn->commit();
+            $savepoint->commit();
         } catch (Throwable $e) {
             // Make sure we roll back our internal transaction
             //$record->state($state);
-            $conn->rollback();
+            if (isset($savepoint)) {
+                $savepoint->rollback();
+            }
             throw $e;
         }
 
@@ -170,7 +172,7 @@ class Doctrine_Connection_UnitOfWork extends Doctrine_Connection_Module
 
         // execute
         try {
-            $this->conn->beginInternalTransaction();
+            $savepoint = $this->conn->beginInternalTransaction();
 
             for ($i = count($executionOrder) - 1; $i >= 0; $i--) {
                 $className = $executionOrder[$i];
@@ -228,11 +230,13 @@ class Doctrine_Connection_UnitOfWork extends Doctrine_Connection_Module
                 $this->postDelete($skippedRecord);
             }
 
-            $this->conn->commit();
+            $savepoint->commit();
 
             return true;
         } catch (Throwable $e) {
-            $this->conn->rollback();
+            if (isset($savepoint)) {
+                $savepoint->rollback();
+            }
             throw $e;
         }
     }

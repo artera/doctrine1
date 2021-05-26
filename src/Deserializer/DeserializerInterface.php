@@ -2,8 +2,6 @@
 
 namespace Doctrine1\Deserializer;
 
-use Doctrine_Connection;
-
 interface DeserializerInterface
 {
     /**

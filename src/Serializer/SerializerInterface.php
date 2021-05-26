@@ -2,8 +2,6 @@
 
 namespace Doctrine1\Serializer;
 
-use Doctrine_Connection;
-
 interface SerializerInterface
 {
     /**

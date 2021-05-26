@@ -769,9 +769,8 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
         }
 
         try {
-            $conn->beginInternalTransaction();
-
-            $conn->transaction->addCollection($this);
+            $savepoint = $conn->beginInternalTransaction();
+            $savepoint->addCollection($this);
 
             if ($processDiff) {
                 $this->processDiff();
@@ -781,9 +780,11 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
                 $record->save($conn);
             }
 
-            $conn->commit();
+            $savepoint->commit();
         } catch (Throwable $e) {
-            $conn->rollback();
+            if (isset($savepoint)) {
+                $savepoint->rollback();
+            }
             throw $e;
         }
 
@@ -804,9 +805,8 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
         }
 
         try {
-            $conn->beginInternalTransaction();
-
-            $conn->transaction->addCollection($this);
+            $savepoint = $conn->beginInternalTransaction();
+            $savepoint->addCollection($this);
 
             if ($processDiff) {
                 $this->processDiff();
@@ -816,9 +816,11 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
                 $record->replace($conn);
             }
 
-            $conn->commit();
+            $savepoint->commit();
         } catch (Throwable $e) {
-            $conn->rollback();
+            if (isset($savepoint)) {
+                $savepoint->rollback();
+            }
             throw $e;
         }
 
@@ -837,16 +839,18 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
         }
 
         try {
-            $conn->beginInternalTransaction();
-            $conn->transaction->addCollection($this);
+            $savepoint = $conn->beginInternalTransaction();
+            $savepoint->addCollection($this);
 
             foreach ($this as $key => $record) {
                 $record->delete($conn);
             }
 
-            $conn->commit();
+            $savepoint->commit();
         } catch (Throwable $e) {
-            $conn->rollback();
+            if (isset($savepoint)) {
+                $savepoint->rollback();
+            }
             throw $e;
         }
 

@@ -16,14 +16,11 @@ namespace Tests\Tickets {
                 'NewTicket_Role'
                 ];
 
-        public function testAddDuplicateOrganisation()
+        public function testAddDuplicateOrganisation(): void
         {
-            $this->assertEquals(0, static::$conn->transaction->getTransactionLevel());
-            $this->assertEquals(0, static::$conn->transaction->getInternalTransactionLevel());
+            $this->assertEquals(static::$conn->transaction->getState(), \Doctrine_Transaction_State::SLEEP());
             static::$conn->beginTransaction();
-
-            $this->assertEquals(1, static::$conn->transaction->getTransactionLevel());
-            $this->assertEquals(0, static::$conn->transaction->getInternalTransactionLevel());
+            $this->assertEquals(static::$conn->transaction->getState(), \Doctrine_Transaction_State::ACTIVE());
 
             $org       = new \NewTicket_Organization();
             $org->name = 'Inc.';
@@ -31,46 +28,37 @@ namespace Tests\Tickets {
                 $org->save();
                 $this->assertTrue(false, 'Unique violation not reported.');
             } catch (\Exception $e) {
-                $this->assertEquals(1, static::$conn->transaction->getTransactionLevel());
-                $this->assertEquals(0, static::$conn->transaction->getInternalTransactionLevel());
+                $this->assertEquals(static::$conn->transaction->getState(), \Doctrine_Transaction_State::ACTIVE());
                 static::$conn->rollback();
             }
 
-            $this->assertEquals(0, static::$conn->transaction->getTransactionLevel());
-            $this->assertEquals(0, static::$conn->transaction->getInternalTransactionLevel());
+            $this->assertEquals(static::$conn->transaction->getState(), \Doctrine_Transaction_State::SLEEP());
 
             $this->expectException(\Exception::class);
 
-            $this->assertEquals(0, static::$conn->transaction->getTransactionLevel());
-            $this->assertEquals(0, static::$conn->transaction->getInternalTransactionLevel());
+            $this->assertEquals(static::$conn->transaction->getState(), \Doctrine_Transaction_State::SLEEP());
             static::$conn->commit();
 
-            $this->assertEquals(0, static::$conn->transaction->getTransactionLevel());
-            $this->assertEquals(0, static::$conn->transaction->getInternalTransactionLevel());
+            $this->assertEquals(static::$conn->transaction->getState(), \Doctrine_Transaction_State::SLEEP());
         }
 
-        public function testAddRole()
+        public function testAddRole(): void
         {
-            $this->assertEquals(0, static::$conn->transaction->getTransactionLevel());
-            $this->assertEquals(0, static::$conn->transaction->getInternalTransactionLevel());
+            $this->assertEquals(static::$conn->transaction->getState(), \Doctrine_Transaction_State::SLEEP());
 
             static::$conn->beginTransaction();
 
-            $this->assertEquals(1, static::$conn->transaction->getTransactionLevel());
-            $this->assertEquals(0, static::$conn->transaction->getInternalTransactionLevel());
+            $this->assertEquals(static::$conn->transaction->getState(), \Doctrine_Transaction_State::ACTIVE());
 
             $r       = new \NewTicket_Role();
             $r->name = 'foo';
             $r->save();
-                $this->assertEquals(1, static::$conn->transaction->getTransactionLevel());
-                $this->assertEquals(0, static::$conn->transaction->getInternalTransactionLevel());
-                $this->assertTrue(is_numeric($r->id));
+            $this->assertEquals(static::$conn->transaction->getState(), \Doctrine_Transaction_State::ACTIVE());
+            $this->assertTrue(is_numeric($r->id));
 
-            $this->assertEquals(1, static::$conn->transaction->getTransactionLevel());
-                $this->assertEquals(0, static::$conn->transaction->getInternalTransactionLevel());
-                static::$conn->commit();
-                $this->assertEquals(0, static::$conn->transaction->getTransactionLevel());
-                $this->assertEquals(0, static::$conn->transaction->getInternalTransactionLevel());
+            $this->assertEquals(static::$conn->transaction->getState(), \Doctrine_Transaction_State::ACTIVE());
+            static::$conn->commit();
+            $this->assertEquals(static::$conn->transaction->getState(), \Doctrine_Transaction_State::SLEEP());
         }
     }
 }

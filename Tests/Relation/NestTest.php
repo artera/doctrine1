@@ -47,7 +47,7 @@ class NestTest extends DoctrineUnitTestCase
 
         $e->save();
 
-        $this->assertEquals(($count + 13), static::$conn->count());
+        $this->assertCount($count + 43, static::$conn);
     }
 
     public function testNestRelationsFetchingData()

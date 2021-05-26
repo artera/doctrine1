@@ -114,7 +114,7 @@ class Doctrine_Locking_Manager_Pessimistic
 
         try {
             $dbh = $this->conn->getDbh();
-            $this->conn->beginTransaction();
+            $savepoint = $this->conn->beginTransaction();
 
             $stmt = $dbh->prepare(
                 'INSERT INTO ' . $this->lockTable
@@ -155,9 +155,11 @@ class Doctrine_Locking_Manager_Pessimistic
                     $stmt->execute();
                 }
             }
-            $this->conn->commit();
+            $savepoint->commit();
         } catch (Throwable $pdoe) {
-            $this->conn->rollback();
+            if (isset($savepoint)) {
+                $savepoint->rollback();
+            }
             throw new Doctrine_Locking_Exception($pdoe->getMessage());
         }
 

@@ -2,14 +2,12 @@
 
 namespace Doctrine1\Deserializer;
 
-use Doctrine_Connection;
-use JsonSerializable;
-
 class JSON implements DeserializerInterface
 {
     public function __construct(
         protected bool $assoc = true,
-    ) {}
+    ) {
+    }
 
     protected function checkCompatibility(mixed $value, string $type): void
     {

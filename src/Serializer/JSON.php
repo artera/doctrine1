@@ -2,7 +2,6 @@
 
 namespace Doctrine1\Serializer;
 
-use Doctrine_Connection;
 use JsonSerializable;
 
 class JSON implements SerializerInterface

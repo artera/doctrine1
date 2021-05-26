@@ -14,18 +14,6 @@ class TransactionTest extends DoctrineUnitTestCase
         static::$transaction = new \Doctrine_Transaction_Mock();
     }
 
-    public function testCreateSavepointIsOnlyImplementedAtDriverLevel()
-    {
-        $this->expectException(\Doctrine_Transaction_Exception::class);
-        static::$transaction->beginTransaction('savepoint');
-    }
-
-    public function testReleaseSavepointIsOnlyImplementedAtDriverLevel()
-    {
-        $this->expectException(\Doctrine_Transaction_Exception::class);
-        static::$transaction->commit('savepoint');
-    }
-
     public function testGetIsolationIsOnlyImplementedAtDriverLevel()
     {
         $this->expectException(\Doctrine_Transaction_Exception::class);
@@ -34,32 +22,27 @@ class TransactionTest extends DoctrineUnitTestCase
 
     public function testTransactionLevelIsInitiallyZero()
     {
-        $this->assertEquals(static::$transaction->getTransactionLevel(), 0);
+        $this->assertEquals(static::$transaction->getState(), \Doctrine_Transaction_State::SLEEP());
     }
 
     public function testSubsequentTransactionsAfterRollback()
     {
-        $this->assertEquals(0, static::$transaction->getTransactionLevel());
-        $this->assertEquals(0, static::$transaction->getInternalTransactionLevel());
+        $this->assertEquals(static::$transaction->getState(), \Doctrine_Transaction_State::SLEEP());
         static::$transaction->beginTransaction();
-        $this->assertEquals(1, static::$transaction->getTransactionLevel());
-        $this->assertEquals(0, static::$transaction->getInternalTransactionLevel());
+        $this->assertEquals(static::$transaction->getState(), \Doctrine_Transaction_State::ACTIVE());
 
         static::$transaction->rollback();
-        $this->assertEquals(0, static::$transaction->getTransactionLevel());
-        $this->assertEquals(0, static::$transaction->getInternalTransactionLevel());
+        $this->assertEquals(static::$transaction->getState(), \Doctrine_Transaction_State::SLEEP());
         static::$transaction->beginTransaction();
-        $this->assertEquals(1, static::$transaction->getTransactionLevel());
-        $this->assertEquals(0, static::$transaction->getInternalTransactionLevel());
+        $this->assertEquals(static::$transaction->getState(), \Doctrine_Transaction_State::ACTIVE());
         static::$transaction->commit();
-        $this->assertEquals(0, static::$transaction->getTransactionLevel());
-        $this->assertEquals(0, static::$transaction->getInternalTransactionLevel());
+        $this->assertEquals(static::$transaction->getState(), \Doctrine_Transaction_State::SLEEP());
 
         $i = 0;
         while ($i < 5) {
-            $this->assertEquals(0, static::$transaction->getTransactionLevel());
+            $this->assertEquals(static::$transaction->getState(), \Doctrine_Transaction_State::SLEEP());
             static::$transaction->beginTransaction();
-            $this->assertEquals(1, static::$transaction->getTransactionLevel());
+            $this->assertEquals(static::$transaction->getState(), \Doctrine_Transaction_State::ACTIVE());
             try {
                 if ($i == 0) {
                     throw new \Exception();
@@ -67,7 +50,7 @@ class TransactionTest extends DoctrineUnitTestCase
                 static::$transaction->commit();
             } catch (\Exception $e) {
                 static::$transaction->rollback();
-                $this->assertEquals(0, static::$transaction->getTransactionLevel());
+                $this->assertEquals(static::$transaction->getState(), \Doctrine_Transaction_State::SLEEP());
             }
             ++$i;
         }
@@ -128,15 +111,5 @@ class TransactionTest extends DoctrineUnitTestCase
 
         $this->assertTrue($user->id > 0);
         $this->assertTrue($phonenumber->id > 0);
-    }
-
-    public function testAddDuplicateRecordToTransactionShouldSkipSecond()
-    {
-        $transaction = new \Doctrine_Transaction();
-        $user        = new \User();
-        $transaction->addInvalid($user);
-        $this->assertEquals(1, count($transaction->getInvalid()));
-        $transaction->addInvalid($user);
-        $this->assertEquals(1, count($transaction->getInvalid()));
     }
 }

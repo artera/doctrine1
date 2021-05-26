@@ -15,21 +15,21 @@ namespace Tests\Transaction {
             static::$conn->setListener(static::$listener);
         }
 
-        public function testCreateSavePointExecutesSql()
+        public function testCreateSavePointExecutesSql(): void
         {
             static::$transaction->beginTransaction('mypoint');
 
             $this->assertEquals(static::$adapter->pop(), 'SAVEPOINT mypoint');
         }
 
-        public function testReleaseSavePointExecutesSql()
+        public function testReleaseSavePointExecutesSql(): void
         {
             static::$transaction->commit('mypoint');
 
             $this->assertEquals(static::$adapter->pop(), 'RELEASE SAVEPOINT mypoint');
         }
 
-        public function testRollbackSavePointExecutesSql()
+        public function testRollbackSavePointExecutesSql(): void
         {
             static::$transaction->beginTransaction('mypoint');
             static::$transaction->rollback('mypoint');
@@ -37,27 +37,27 @@ namespace Tests\Transaction {
             $this->assertEquals(static::$adapter->pop(), 'ROLLBACK TO SAVEPOINT mypoint');
         }
 
-        public function testGetIsolationExecutesSql()
+        public function testGetIsolationExecutesSql(): void
         {
             static::$transaction->getIsolation();
 
             $this->assertEquals(static::$adapter->pop(), 'SELECT @@tx_isolation');
         }
 
-        public function testSetIsolationThrowsExceptionOnUnknownIsolationMode()
+        public function testSetIsolationThrowsExceptionOnUnknownIsolationMode(): void
         {
             $this->expectException(\Doctrine_Transaction_Exception::class);
             static::$transaction->setIsolation('unknown');
         }
 
-        public function testSetIsolationExecutesSql()
+        public function testSetIsolationExecutesSql(): void
         {
             static::$transaction->setIsolation('READ UNCOMMITTED');
 
             $this->assertEquals(static::$adapter->pop(), 'SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED');
         }
 
-        public function testCreateSavepointListenersGetInvoked()
+        public function testCreateSavepointListenersGetInvoked(): void
         {
             static::$transaction->beginTransaction('point');
 
@@ -65,33 +65,33 @@ namespace Tests\Transaction {
             $this->assertEquals(static::$listener->pop(), 'preSavepointCreate');
         }
 
-        public function testCommitSavepointListenersGetInvoked()
+        public function testCommitSavepointListenersGetInvoked(): void
         {
             static::$transaction->commit('point');
 
             $this->assertEquals(static::$listener->pop(), 'postSavepointCommit');
             $this->assertEquals(static::$listener->pop(), 'preSavepointCommit');
-            $this->assertEquals(static::$transaction->getTransactionLevel(), 0);
+            $this->assertEquals(static::$transaction->getState(), \Doctrine_Transaction_State::SLEEP());
         }
 
-        public function testNestedSavepoints()
+        public function testNestedSavepoints(): void
         {
-            $this->assertEquals(static::$transaction->getTransactionLevel(), 0);
+            $this->assertEquals(static::$transaction->getState(), \Doctrine_Transaction_State::SLEEP());
             static::$transaction->beginTransaction();
-            $this->assertEquals(static::$transaction->getTransactionLevel(), 1);
+            $this->assertEquals(static::$transaction->getState(), \Doctrine_Transaction_State::ACTIVE());
             static::$transaction->beginTransaction('point 1');
-            $this->assertEquals(static::$transaction->getTransactionLevel(), 2);
+            $this->assertEquals(static::$transaction->getState(), \Doctrine_Transaction_State::BUSY());
             static::$transaction->beginTransaction('point 2');
-            $this->assertEquals(static::$transaction->getTransactionLevel(), 3);
+            $this->assertEquals(static::$transaction->getState(), \Doctrine_Transaction_State::BUSY());
             static::$transaction->commit('point 2');
-            $this->assertEquals(static::$transaction->getTransactionLevel(), 2);
+            $this->assertEquals(static::$transaction->getState(), \Doctrine_Transaction_State::BUSY());
             static::$transaction->commit('point 1');
-            $this->assertEquals(static::$transaction->getTransactionLevel(), 1);
+            $this->assertEquals(static::$transaction->getState(), \Doctrine_Transaction_State::ACTIVE());
             static::$transaction->commit();
-            $this->assertEquals(static::$transaction->getTransactionLevel(), 0);
+            $this->assertEquals(static::$transaction->getState(), \Doctrine_Transaction_State::SLEEP());
         }
 
-        public function testRollbackSavepointListenersGetInvoked()
+        public function testRollbackSavepointListenersGetInvoked(): void
         {
             static::$transaction->beginTransaction('point');
             static::$transaction->rollback('point');
@@ -100,7 +100,7 @@ namespace Tests\Transaction {
             $this->assertEquals(static::$listener->pop(), 'preSavepointRollback');
             $this->assertEquals(static::$listener->pop(), 'postSavepointCreate');
             $this->assertEquals(static::$listener->pop(), 'preSavepointCreate');
-            $this->assertEquals(static::$transaction->getTransactionLevel(), 0);
+            $this->assertEquals(static::$transaction->getState(), \Doctrine_Transaction_State::SLEEP());
 
             static::$listener = new \Doctrine_Eventlistener();
             static::$conn->setListener(static::$listener);

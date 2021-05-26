@@ -1,5 +1,7 @@
 <?php
 
+use Doctrine1\Transaction\SavePoint;
+
 /**
  * From $modules array
  * @property   Doctrine_Formatter $formatter
@@ -1084,11 +1086,13 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
     public function flush(): void
     {
         try {
-            $this->beginInternalTransaction();
+            $savepoint = $this->beginInternalTransaction();
             $this->unitOfWork->saveAll();
-            $this->commit();
+            $savepoint->commit();
         } catch (Throwable $e) {
-            $this->rollback();
+            if (isset($savepoint)) {
+                $savepoint->rollback();
+            }
             throw $e;
         }
     }
@@ -1131,14 +1135,6 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
         $this->isConnected = false;
 
         $this->getAttribute(Doctrine_Core::ATTR_LISTENER)->postClose($event);
-    }
-
-    /**
-     * get the current transaction nesting level
-     */
-    public function getTransactionLevel(): int
-    {
-        return $this->transaction->getTransactionLevel();
     }
 
     /**
@@ -1203,16 +1199,15 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
      *
      * @param  string|null $savepoint name of a savepoint to set
      * @throws Doctrine_Transaction_Exception   if the transaction fails at database level
-     * @return int                          current transaction nesting level
      */
-    public function beginTransaction(?string $savepoint = null): int
+    public function beginTransaction(?string $savepoint = null): SavePoint
     {
         return $this->transaction->beginTransaction($savepoint);
     }
 
-    public function beginInternalTransaction(?string $savepoint = null): int
+    public function beginInternalTransaction(?string $savepoint = null): SavePoint
     {
-        return $this->transaction->beginInternalTransaction($savepoint);
+        return $this->transaction->beginTransaction($savepoint, true);
     }
 
     /**
@@ -1222,14 +1217,13 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
      *
      * Listeners: onPreTransactionCommit, onTransactionCommit
      *
-     * @param  string|null $savepoint name of a savepoint to release
+     * @param  string|SavePoint|null $savepoint savepoint to release
      * @throws Doctrine_Transaction_Exception   if the transaction fails at PDO level
      * @throws Doctrine_Validator_Exception     if the transaction fails due to record validations
-     * @return bool                          false if commit couldn't be performed, true otherwise
      */
-    public function commit(?string $savepoint = null): bool
+    public function commit(string|SavePoint|null $savepoint = null): void
     {
-        return $this->transaction->commit($savepoint);
+        $this->transaction->commit($savepoint);
     }
 
     /**
@@ -1241,13 +1235,12 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
      * this method can be listened with onPreTransactionRollback and onTransactionRollback
      * eventlistener methods
      *
-     * @param  string $savepoint name of a savepoint to rollback to
+     * @param  string|SavePoint|null $savepoint savepoint to rollback to
      * @throws Doctrine_Transaction_Exception   if the rollback operation fails at database level
-     * @return bool                          false if rollback couldn't be performed, true otherwise
      */
-    public function rollback(?string $savepoint = null): bool
+    public function rollback(string|SavePoint|null $savepoint = null, bool $all = false): void
     {
-        return $this->transaction->rollback($savepoint);
+        $this->transaction->rollback($savepoint, $all);
     }
 
     /**
