@@ -190,7 +190,7 @@ class Doctrine_Data_Import extends Doctrine_Data
             } else {
                 try {
                     $obj->$key = $value;
-                } catch (Exception $e) {
+                } catch (Throwable $e) {
                     // used for Doctrine plugin methods
                     if (is_callable([$obj, 'set' . Doctrine_Inflector::classify($key)])) {
                         $func = 'set' . Doctrine_Inflector::classify($key);

@@ -49,7 +49,7 @@ class Doctrine_Task_CreateDb extends Doctrine_Task
             try {
                 $connection->createDatabase();
                 $this->notify("Successfully created database for connection named '" . $name . "'");
-            } catch (Exception $e) {
+            } catch (Throwable $e) {
                 $this->notify($e->getMessage());
             }
         }

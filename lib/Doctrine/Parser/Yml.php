@@ -10,7 +10,7 @@ class Doctrine_Parser_Yml extends Doctrine_Parser
             $data = Yaml::dump($array, 6);
 
             return $this->doDump($data, $path);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             // rethrow the exceptions
             $rethrowed_exception = new Doctrine_Parser_Exception($e->getMessage(), $e->getCode());
 
@@ -30,7 +30,7 @@ class Doctrine_Parser_Yml extends Doctrine_Parser
             $array = Yaml::parse($contents);
 
             return $array;
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             // rethrow the exceptions
             $rethrowed_exception = new Doctrine_Parser_Exception($e->getMessage(), $e->getCode());
 

@@ -742,7 +742,7 @@ class Doctrine_Core
      *
      * @param  string $directory   Directory to write your models to
      * @param  array  $connections Array of connection names to generate models for
-     * @throws Exception
+     * @throws Throwable
      */
     public static function generateModelsFromDb(string $directory, array $connections = [], array $options = []): array
     {

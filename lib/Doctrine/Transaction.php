@@ -148,7 +148,7 @@ class Doctrine_Transaction extends Doctrine_Connection_Module
                 $listener->preTransactionBegin($event);
                 try {
                     $this->doBeginTransaction();
-                } catch (Exception $e) {
+                } catch (Throwable $e) {
                     throw new Doctrine_Transaction_Exception($e->getMessage());
                 }
                 $listener->postTransactionBegin($event);
@@ -276,7 +276,7 @@ class Doctrine_Transaction extends Doctrine_Connection_Module
             $this->internalNestingLevel = 0;
             try {
                 $this->doRollback();
-            } catch (Exception $e) {
+            } catch (Throwable $e) {
                 throw new Doctrine_Transaction_Exception($e->getMessage());
             }
             $listener->postTransactionRollback($event);

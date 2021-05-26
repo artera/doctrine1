@@ -103,7 +103,7 @@ class Doctrine_Adapter_Mock extends PDO
 
             $this->exception = [];
 
-            /** @var Exception $exception */
+            /** @var Throwable $exception */
             $exception = new $name($e[1], $e[2]);
 
             throw $exception;
@@ -136,7 +136,7 @@ class Doctrine_Adapter_Mock extends PDO
 
             $this->exception = [];
 
-            /** @var Exception $exception */
+            /** @var Throwable $exception */
             $exception = new $name($e[1], $e[2]);
 
             throw $exception;

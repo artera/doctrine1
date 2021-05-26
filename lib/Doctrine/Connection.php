@@ -238,7 +238,7 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
         if ($this->isConnected) {
             try {
                 return $this->dbh->getAttribute($attribute);
-            } catch (Exception $e) {
+            } catch (Throwable $e) {
                 throw new Doctrine_Connection_Exception('Attribute ' . $attribute . ' not found.');
             }
         } else {
@@ -1087,7 +1087,7 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
             $this->beginInternalTransaction();
             $this->unitOfWork->saveAll();
             $this->commit();
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             $this->rollback();
             throw $e;
         }

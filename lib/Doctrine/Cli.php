@@ -428,10 +428,10 @@ class Doctrine_Cli
     /**
      * Formats, and then returns, the message in the specified exception
      *
-     * @param  Exception $exception
+     * @param  Throwable $exception
      * @return string
      */
-    protected function formatExceptionMessage(Exception $exception)
+    protected function formatExceptionMessage(Throwable $exception)
     {
         $message = $exception->getMessage();
 
@@ -448,10 +448,10 @@ class Doctrine_Cli
      * N.B. This should really only be called by Doctrine_Cli::run().  Exceptions should be thrown when errors occur:
      * it's up to Doctrine_Cli::run() to determine how those exceptions are reported.
      *
-     * @param  Exception $exception
+     * @param  Throwable $exception
      * @return void
      */
-    protected function notifyException(Exception $exception)
+    protected function notifyException(Throwable $exception)
     {
         echo $this->formatExceptionMessage($exception);
     }
@@ -487,11 +487,11 @@ class Doctrine_Cli
             $taskInstance = $this->createTaskInstance($taskClassName, $this);
             $this->setTaskInstance($taskInstance);
             $this->executeTask($taskInstance, $this->prepareArgs(array_slice($args, 2)));
-        } catch (Exception $exception) {
+        } catch (Throwable $exception) {
             // Do not rethrow exceptions by default
             if ($this->getConfigValue('rethrow_exceptions', false)) {
                 $exceptionClass = get_class($exception);
-                /** * @var Exception $exception */
+                /** * @var Throwable $exception */
                 $exception = new $exceptionClass($this->formatExceptionMessage($exception));
                 throw $exception;
             }

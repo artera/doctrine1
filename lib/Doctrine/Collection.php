@@ -782,7 +782,7 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
             }
 
             $conn->commit();
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             $conn->rollback();
             throw $e;
         }
@@ -817,7 +817,7 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
             }
 
             $conn->commit();
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             $conn->rollback();
             throw $e;
         }
@@ -845,7 +845,7 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
             }
 
             $conn->commit();
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             $conn->rollback();
             throw $e;
         }
