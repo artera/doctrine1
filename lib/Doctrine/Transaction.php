@@ -112,6 +112,9 @@ class Doctrine_Transaction extends Doctrine_Connection_Module
     public function commitSavePointStack(SavePoint $savepoint): void
     {
         $savepoints = $this->extractSavePointStack($savepoint);
+        for ($x = count($savepoints) - 1; $x > 0; $x--) {
+            $savepoints[$x]->setInactive();
+        }
         $this->conn->connect();
 
         $invalids = [];

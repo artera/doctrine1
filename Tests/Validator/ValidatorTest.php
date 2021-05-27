@@ -30,7 +30,7 @@ class ValidatorTest extends DoctrineUnitTestCase
         parent::prepareTables();
     }
 
-    public function testIsValidType()
+    public function testIsValidType(): void
     {
         $var = '123';
         $this->assertTrue(\Doctrine_Validator::isValidType($var, 'string'));
@@ -96,7 +96,7 @@ class ValidatorTest extends DoctrineUnitTestCase
         $this->assertTrue(\Doctrine_Validator::isValidType($var, 'object'));
     }
 
-    public function testValidate2()
+    public function testValidate2(): void
     {
         $test           = new \ValidatorTest();
         $test->mymixed  = 'message';
@@ -119,7 +119,7 @@ class ValidatorTest extends DoctrineUnitTestCase
         $test->save();
     }
 
-    public function testValidate()
+    public function testValidate(): void
     {
         static::$manager->setAttribute(\Doctrine_Core::ATTR_VALIDATE, \Doctrine_Core::VALIDATE_ALL);
         $user = static::$connection->getTable('User')->find(4);
@@ -155,7 +155,7 @@ class ValidatorTest extends DoctrineUnitTestCase
     /**
      * Tests saving records with invalid attributes.
      */
-    public function testSave()
+    public function testSave(): void
     {
         static::$manager->setAttribute(\Doctrine_Core::ATTR_VALIDATE, \Doctrine_Core::VALIDATE_ALL);
         $user = static::$connection->getTable('User')->find(4);
@@ -197,7 +197,7 @@ class ValidatorTest extends DoctrineUnitTestCase
      * Tests whether the validate() callback works correctly
      * in descendants of Doctrine_Record.
      */
-    public function testValidationHooks()
+    public function testValidationHooks(): void
     {
         static::$manager->setAttribute(\Doctrine_Core::ATTR_VALIDATE, \Doctrine_Core::VALIDATE_ALL);
 
@@ -249,7 +249,7 @@ class ValidatorTest extends DoctrineUnitTestCase
      * Tests whether the validateOnInsert() callback works correctly
      * in descendants of Doctrine_Record.
      */
-    public function testHookValidateOnInsert()
+    public function testHookValidateOnInsert(): void
     {
         static::$manager->setAttribute(\Doctrine_Core::ATTR_VALIDATE, \Doctrine_Core::VALIDATE_ALL);
 
@@ -268,7 +268,7 @@ class ValidatorTest extends DoctrineUnitTestCase
         static::$manager->setAttribute(\Doctrine_Core::ATTR_VALIDATE, \Doctrine_Core::VALIDATE_NONE);
     }
 
-    public function testValidationOnManyToManyRelations()
+    public function testValidationOnManyToManyRelations(): void
     {
         static::$manager->setAttribute(\Doctrine_Core::ATTR_VALIDATE, \Doctrine_Core::VALIDATE_ALL);
         try {
@@ -295,18 +295,18 @@ class ValidatorTest extends DoctrineUnitTestCase
         static::$manager->setAttribute(\Doctrine_Core::ATTR_VALIDATE, \Doctrine_Core::VALIDATE_NONE);
     }
 
-    public function testSaveInTransactionThrowsValidatorException()
+    public function testSaveInTransactionThrowsValidatorException(): void
     {
         static::$manager->setAttribute(\Doctrine_Core::ATTR_VALIDATE, \Doctrine_Core::VALIDATE_ALL);
+        $savepoint = static::$conn->beginTransaction();
         try {
-            static::$conn->beginTransaction();
             $client                                       = new \ValidatorTest_ClientModel();
             $client->short_name                           = 'test';
             $client->ValidatorTest_AddressModel[0]->state = 'az';
             $client->save();
             $this->assertFalse('Should not be reached');
         } catch (\Doctrine_Validator_Exception $dve) {
-            static::$conn->rollback();
+            $savepoint->rollback();
             $s = $dve->getInvalidRecords();
             $this->assertEquals(1, count($dve->getInvalidRecords()));
             $stack = $client->ValidatorTest_AddressModel[0]->getErrorStack();
@@ -323,7 +323,7 @@ class ValidatorTest extends DoctrineUnitTestCase
         static::$manager->setAttribute(\Doctrine_Core::ATTR_VALIDATE, \Doctrine_Core::VALIDATE_NONE);
     }
 
-    public function testSetBooleanWithNumericZeroOrOne()
+    public function testSetBooleanWithNumericZeroOrOne(): void
     {
         static::$manager->setAttribute(\Doctrine_Core::ATTR_VALIDATE, \Doctrine_Core::VALIDATE_ALL);
 
@@ -338,7 +338,7 @@ class ValidatorTest extends DoctrineUnitTestCase
         static::$manager->setAttribute(\Doctrine_Core::ATTR_VALIDATE, \Doctrine_Core::VALIDATE_NONE);
     }
 
-    public function testNoValidationOnExpressions()
+    public function testNoValidationOnExpressions(): void
     {
         static::$manager->setAttribute(\Doctrine_Core::ATTR_VALIDATE, \Doctrine_Core::VALIDATE_ALL);
 
@@ -349,7 +349,7 @@ class ValidatorTest extends DoctrineUnitTestCase
         static::$manager->setAttribute(\Doctrine_Core::ATTR_VALIDATE, \Doctrine_Core::VALIDATE_NONE);
     }
 
-    public function testValidationIsTriggeredOnFlush()
+    public function testValidationIsTriggeredOnFlush(): void
     {
         static::$manager->setAttribute(\Doctrine_Core::ATTR_VALIDATE, \Doctrine_Core::VALIDATE_ALL);
         static::$conn->clear();

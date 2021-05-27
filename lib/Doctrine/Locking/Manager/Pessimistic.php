@@ -112,10 +112,10 @@ class Doctrine_Locking_Manager_Pessimistic
             $key = implode('|', $key);
         }
 
-        try {
-            $dbh = $this->conn->getDbh();
-            $savepoint = $this->conn->beginTransaction();
+        $dbh = $this->conn->getDbh();
+        $savepoint = $this->conn->beginTransaction();
 
+        try {
             $stmt = $dbh->prepare(
                 'INSERT INTO ' . $this->lockTable
                                   . ' (object_type, object_key, user_ident, timestamp_obtained)'
@@ -155,14 +155,12 @@ class Doctrine_Locking_Manager_Pessimistic
                     $stmt->execute();
                 }
             }
-            $savepoint->commit();
         } catch (Throwable $pdoe) {
-            if (isset($savepoint)) {
-                $savepoint->rollback();
-            }
+            $savepoint->rollback();
             throw new Doctrine_Locking_Exception($pdoe->getMessage());
         }
 
+        $savepoint->commit();
         return $gotLock;
     }
 

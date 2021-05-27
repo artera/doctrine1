@@ -28,8 +28,9 @@ class Doctrine_Connection_UnitOfWork extends Doctrine_Connection_Module
 
         $record->state($state->lock());
 
+        $savepoint = $conn->beginInternalTransaction();
+
         try {
-            $savepoint = $conn->beginInternalTransaction();
             $record->state($state);
 
             $event = $record->invokeSaveHooks('pre', 'save');
@@ -37,7 +38,13 @@ class Doctrine_Connection_UnitOfWork extends Doctrine_Connection_Module
 
             $isValid = true;
 
-            $this->saveRelatedLocalKeys($record);
+            try {
+                $this->saveRelatedLocalKeys($record);
+            } catch (Doctrine_Validator_Exception $e) {
+                foreach ($e->getInvalidRecords() as $invalid) {
+                    $savepoint->addInvalid($invalid);
+                }
+            }
 
             if ($state->isTransient()) {
                 if ($replace) {
@@ -102,17 +109,14 @@ class Doctrine_Connection_UnitOfWork extends Doctrine_Connection_Module
             }
 
             $record->state($state);
-
-            $savepoint->commit();
         } catch (Throwable $e) {
             // Make sure we roll back our internal transaction
             //$record->state($state);
-            if (isset($savepoint)) {
-                $savepoint->rollback();
-            }
+            $savepoint->rollback();
             throw $e;
         }
 
+        $savepoint->commit();
         $record->clearInvokedSaveHooks();
 
         return true;
@@ -171,9 +175,9 @@ class Doctrine_Connection_UnitOfWork extends Doctrine_Connection_Module
         $executionOrder = $this->buildFlushTree($classNames);
 
         // execute
-        try {
-            $savepoint = $this->conn->beginInternalTransaction();
+        $savepoint = $this->conn->beginInternalTransaction();
 
+        try {
             for ($i = count($executionOrder) - 1; $i >= 0; $i--) {
                 $className = $executionOrder[$i];
                 $table     = $this->conn->getTable($className);
@@ -229,16 +233,13 @@ class Doctrine_Connection_UnitOfWork extends Doctrine_Connection_Module
             foreach ($deletions as $skippedRecord) {
                 $this->postDelete($skippedRecord);
             }
-
-            $savepoint->commit();
-
-            return true;
         } catch (Throwable $e) {
-            if (isset($savepoint)) {
-                $savepoint->rollback();
-            }
+            $savepoint->rollback();
             throw $e;
         }
+
+        $savepoint->commit();
+        return true;
     }
 
     /**
@@ -354,35 +355,38 @@ class Doctrine_Connection_UnitOfWork extends Doctrine_Connection_Module
         $state = $record->state();
         $record->state($state->lock());
 
-        foreach ($record->getReferences() as $k => $v) {
-            $rel = $record->getTable()->getRelation($k);
+        try {
+            foreach ($record->getReferences() as $k => $v) {
+                $rel = $record->getTable()->getRelation($k);
 
-            $local   = $rel->getLocal();
-            $foreign = $rel->getForeign();
+                $local   = $rel->getLocal();
+                $foreign = $rel->getForeign();
 
-            if ($rel instanceof Doctrine_Relation_LocalKey) {
-                // ONE-TO-ONE relationship
-                $obj = $record->get($rel->getAlias());
+                if ($rel instanceof Doctrine_Relation_LocalKey) {
+                    // ONE-TO-ONE relationship
+                    $obj = $record->get($rel->getAlias());
 
-                // Protection against infinite function recursion before attempting to save
-                if ($obj instanceof Doctrine_Record && $obj->isModified()) {
-                    $obj->save($this->conn);
+                    // Protection against infinite function recursion before attempting to save
+                    if ($obj instanceof Doctrine_Record && $obj->isModified()) {
+                        $obj->save($this->conn);
 
-                    $id = array_values($obj->identifier());
+                        $id = array_values($obj->identifier());
 
-                    if (!empty($id)) {
-                        foreach ((array) $rel->getLocal() as $k => $columnName) {
-                            $field = $record->getTable()->getFieldName($columnName);
+                        if (!empty($id)) {
+                            foreach ((array) $rel->getLocal() as $k => $columnName) {
+                                $field = $record->getTable()->getFieldName($columnName);
 
-                            if (isset($id[$k]) && $id[$k] && $record->getTable()->hasField($field)) {
-                                $record->set($field, $id[$k]);
+                                if (isset($id[$k]) && $id[$k] && $record->getTable()->hasField($field)) {
+                                    $record->set($field, $id[$k]);
+                                }
                             }
                         }
                     }
                 }
             }
+        } finally {
+            $record->state($state);
         }
-        $record->state($state);
     }
 
     /**

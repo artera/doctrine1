@@ -801,8 +801,9 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
             $conn = $this->table->getConnection();
         }
 
+        $savepoint = $conn->beginInternalTransaction();
+
         try {
-            $savepoint = $conn->beginInternalTransaction();
             $savepoint->addCollection($this);
 
             if ($processDiff) {
@@ -812,15 +813,12 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
             foreach ($this->getData() as $record) {
                 $record->replace($conn);
             }
-
-            $savepoint->commit();
         } catch (Throwable $e) {
-            if (isset($savepoint)) {
-                $savepoint->rollback();
-            }
+            $savepoint->rollback();
             throw $e;
         }
 
+        $savepoint->commit();
         return $this;
     }
 
@@ -835,21 +833,18 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
             $conn = $this->table->getConnection();
         }
 
+        $savepoint = $conn->beginInternalTransaction();
         try {
-            $savepoint = $conn->beginInternalTransaction();
             $savepoint->addCollection($this);
 
             foreach ($this as $key => $record) {
                 $record->delete($conn);
             }
-
-            $savepoint->commit();
         } catch (Throwable $e) {
-            if (isset($savepoint)) {
-                $savepoint->rollback();
-            }
+            $savepoint->rollback();
             throw $e;
         }
+        $savepoint->commit();
 
         if ($clearColl) {
             $this->clear();
