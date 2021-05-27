@@ -165,7 +165,10 @@ class Doctrine_Transaction extends Doctrine_Connection_Module
 
     public function rollbackSavePointStack(SavePoint $savepoint): void
     {
-        $this->extractSavePointStack($savepoint);
+        $savepoints = $this->extractSavePointStack($savepoint);
+        for ($x = count($savepoints) - 1; $x > 0; $x--) {
+            $savepoints[$x]->setInactive();
+        }
     }
 
     /**

@@ -15,6 +15,8 @@ class SavePoint
     /** @var Record[] */
     protected array $invalid = [];
 
+    protected bool $active = true;
+
     public function __construct(
         protected Transaction $tr,
         protected ?string $name,
@@ -78,6 +80,10 @@ class SavePoint
 
     public function commit(): void
     {
+        if (!$this->active) {
+            throw new \Doctrine_Transaction_Exception("This is not an active transaction/savepoint");
+        }
+
         $this->tr->commitSavePointStack($this);
         $conn = $this->tr->getConnection();
         $conn->connect();
@@ -86,13 +92,17 @@ class SavePoint
         if ($this->name === null) {
             $event = new Event($this->tr, Event::TX_COMMIT);
             $listener->preTransactionCommit($event);
+
+            $this->setInactive();
             $conn->getDbh()->commit();
+
             $listener->postTransactionCommit($event);
         } else {
             $event = new Event($this->tr, Event::SAVEPOINT_COMMIT);
             $listener->preSavepointCommit($event);
 
             $query = 'RELEASE SAVEPOINT ' . $conn->quoteIdentifier($this->name);
+            $this->setInactive();
             $conn->execute($query);
 
             $listener->postSavepointCommit($event);
@@ -101,6 +111,10 @@ class SavePoint
 
     public function rollback(): void
     {
+        if (!$this->active) {
+            throw new \Doctrine_Transaction_Exception("This is not an active transaction/savepoint");
+        }
+
         $this->tr->rollbackSavePointStack($this);
         $conn = $this->tr->getConnection();
         $conn->connect();
@@ -110,6 +124,7 @@ class SavePoint
             $event = new Event($this->tr, Event::TX_ROLLBACK);
             $listener->preTransactionRollback($event);
             try {
+                $this->setInactive();
                 $conn->getDbh()->rollBack();
             } catch (\Throwable $e) {
                 throw new \Doctrine_Transaction_Exception($e->getMessage());
@@ -120,6 +135,7 @@ class SavePoint
             $listener->preSavepointRollback($event);
 
             $query = 'ROLLBACK TO SAVEPOINT ' . $conn->quoteIdentifier($this->name);
+            $this->setInactive();
             $conn->execute($query);
 
             $listener->postSavepointRollback($event);
@@ -134,5 +150,10 @@ class SavePoint
     public function isInternal(): bool
     {
         return $this->internal;
+    }
+
+    public function setInactive(): void
+    {
+        $this->active = false;
     }
 }
