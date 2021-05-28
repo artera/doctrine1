@@ -301,42 +301,45 @@ abstract class Doctrine_Record implements Countable, IteratorAggregate, Serializ
         // Clear the stack from any previous errors.
         $this->getErrorStack()->clear();
 
-        // Run validation process
-        $event = new Doctrine_Event($this, Doctrine_Event::RECORD_VALIDATE);
-        $this->preValidate($event);
-        $this->getTable()->getRecordListener()->preValidate($event);
+        $stateBeforeLock = $this->_state;
+        $this->_state = $this->_state->lock();
 
-        $validator = new Doctrine_Validator();
-        $validator->validateRecord($this);
-        $this->validate();
+        try {
+            // Run validation process
+            $event = new Doctrine_Event($this, Doctrine_Event::RECORD_VALIDATE);
+            $this->preValidate($event);
+            $this->getTable()->getRecordListener()->preValidate($event);
 
-        if ($this->_state->isTransient()) {
-            $this->validateOnInsert();
-        } else {
-            $this->validateOnUpdate();
-        }
+            $validator = new Doctrine_Validator();
+            $validator->validateRecord($this);
+            $this->validate();
 
-        $this->getTable()->getRecordListener()->postValidate($event);
-        $this->postValidate($event);
+            if ($this->_state->isTransient()) {
+                $this->validateOnInsert();
+            } else {
+                $this->validateOnUpdate();
+            }
 
-        $valid = $this->getErrorStack()->count() == 0 ? true : false;
-        if ($valid && $deep) {
-            $stateBeforeLock = $this->_state;
-            $this->_state = $this->_state->lock();
+            $this->getTable()->getRecordListener()->postValidate($event);
+            $this->postValidate($event);
 
-            foreach ($this->_references as $reference) {
-                if ($reference instanceof Doctrine_Record) {
-                    if (!$valid = $reference->isValid($deep)) {
-                        break;
-                    }
-                } elseif ($reference instanceof Doctrine_Collection) {
-                    foreach ($reference as $record) {
-                        if (!$valid = $record->isValid($deep)) {
+            $valid = $this->getErrorStack()->count() == 0 ? true : false;
+            if ($valid && $deep) {
+                foreach ($this->_references as $reference) {
+                    if ($reference instanceof Doctrine_Record) {
+                        if (!$valid = $reference->isValid($deep)) {
                             break;
+                        }
+                    } elseif ($reference instanceof Doctrine_Collection) {
+                        foreach ($reference as $record) {
+                            if (!$valid = $record->isValid($deep)) {
+                                break;
+                            }
                         }
                     }
                 }
             }
+        } finally {
             $this->_state = $stateBeforeLock;
         }
 
@@ -1980,48 +1983,50 @@ abstract class Doctrine_Record implements Countable, IteratorAggregate, Serializ
             return null;
         }
 
+        $a = [];
+
         $stateBeforeLock = $this->_state;
         $this->_state = $this->_state->lock();
 
-        $a = [];
+        try {
+            foreach ($this as $column => $value) {
+                if ($value instanceof Doctrine_Null || is_object($value)) {
+                    $value = null;
+                }
 
-        foreach ($this as $column => $value) {
-            if ($value instanceof Doctrine_Null || is_object($value)) {
-                $value = null;
-            }
+                $columnValue = $this->get($column, false, accessors: true);
 
-            $columnValue = $this->get($column, false, accessors: true);
-
-            if ($columnValue instanceof Doctrine_Record) {
-                $a[$column] = $columnValue->getIncremented();
-            } else {
-                $a[$column] = $columnValue;
-            }
-        }
-
-        if ($this->_table->getIdentifierType() == Doctrine_Core::IDENTIFIER_AUTOINC) {
-            $i = $this->_table->getIdentifier();
-            if (is_array($i)) {
-                throw new Doctrine_Exception("Multi column identifiers are not supported for auto increments");
-            }
-            $a[$i] = $this->getIncremented();
-        }
-
-        if ($deep) {
-            foreach ($this->_references as $key => $relation) {
-                if ($relation !== null && !$relation instanceof Doctrine_Null) {
-                    $a[$key] = $relation->toArray($deep, $prefixKey);
+                if ($columnValue instanceof Doctrine_Record) {
+                    $a[$column] = $columnValue->getIncremented();
+                } else {
+                    $a[$column] = $columnValue;
                 }
             }
-        }
 
-        // [FIX] Prevent mapped Doctrine_Records from being displayed fully
-        foreach ($this->_values as $key => $value) {
-            $a[$key] = ($value instanceof Doctrine_Record || $value instanceof Doctrine_Collection)
-                ? $value->toArray($deep, $prefixKey) : $value;
-        }
+            if ($this->_table->getIdentifierType() == Doctrine_Core::IDENTIFIER_AUTOINC) {
+                $i = $this->_table->getIdentifier();
+                if (is_array($i)) {
+                    throw new Doctrine_Exception("Multi column identifiers are not supported for auto increments");
+                }
+                $a[$i] = $this->getIncremented();
+            }
 
-        $this->_state = $stateBeforeLock;
+            if ($deep) {
+                foreach ($this->_references as $key => $relation) {
+                    if ($relation !== null && !$relation instanceof Doctrine_Null) {
+                        $a[$key] = $relation->toArray($deep, $prefixKey);
+                    }
+                }
+            }
+
+            // [FIX] Prevent mapped Doctrine_Records from being displayed fully
+            foreach ($this->_values as $key => $value) {
+                $a[$key] = ($value instanceof Doctrine_Record || $value instanceof Doctrine_Collection)
+                    ? $value->toArray($deep, $prefixKey) : $value;
+            }
+        } finally {
+            $this->_state = $stateBeforeLock;
+        }
 
         return $a;
     }
@@ -2188,23 +2193,26 @@ abstract class Doctrine_Record implements Countable, IteratorAggregate, Serializ
                 return false;
             }
 
-            $stateBeforeLock = $this->_state;
-            $this->_state = $this->_state->lock();
+            try {
+                $stateBeforeLock = $this->_state;
+                $this->_state = $this->_state->lock();
 
-            foreach ($this->_references as $reference) {
-                if ($reference instanceof Doctrine_Record) {
-                    if ($modified = $reference->isModified($deep)) {
-                        break;
-                    }
-                } elseif ($reference instanceof Doctrine_Collection) {
-                    foreach ($reference as $record) {
-                        if ($modified = $record->isModified($deep)) {
-                            break 2;
+                foreach ($this->_references as $reference) {
+                    if ($reference instanceof Doctrine_Record) {
+                        if ($modified = $reference->isModified($deep)) {
+                            break;
+                        }
+                    } elseif ($reference instanceof Doctrine_Collection) {
+                        foreach ($reference as $record) {
+                            if ($modified = $record->isModified($deep)) {
+                                break 2;
+                            }
                         }
                     }
                 }
+            } finally {
+                $this->_state = $stateBeforeLock;
             }
-            $this->_state = $stateBeforeLock;
         }
         return $modified;
     }

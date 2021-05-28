@@ -5,7 +5,7 @@ use Tests\DoctrineUnitTestCase;
 
 class FetchModeTest extends DoctrineUnitTestCase
 {
-    public function testFetchArraySupportsOneToManyRelations()
+    public function testFetchArraySupportsOneToManyRelations(): void
     {
         $q = new \Doctrine_Query();
 
@@ -18,7 +18,7 @@ class FetchModeTest extends DoctrineUnitTestCase
         $this->assertEquals(count($users), 1);
     }
 
-    public function testFetchArraySupportsOneToManyRelations2()
+    public function testFetchArraySupportsOneToManyRelations2(): void
     {
         $q = new \Doctrine_Query();
 
@@ -31,7 +31,7 @@ class FetchModeTest extends DoctrineUnitTestCase
         $this->assertEquals(count($users), 8);
     }
 
-    public function testFetchArraySupportsOneToManyRelations3()
+    public function testFetchArraySupportsOneToManyRelations3(): void
     {
         $q = new \Doctrine_Query();
 
@@ -45,7 +45,7 @@ class FetchModeTest extends DoctrineUnitTestCase
         $this->assertEquals(count($users[0]['Phonenumber']), 3);
     }
 
-    public function testFetchArraySupportsOneToOneRelations()
+    public function testFetchArraySupportsOneToOneRelations(): void
     {
         $q = new \Doctrine_Query();
 
@@ -57,7 +57,7 @@ class FetchModeTest extends DoctrineUnitTestCase
         $this->assertEquals($users[0]['Email']['address'], 'zYne@example.com');
     }
 
-    public function testFetchArraySupportsOneToOneRelations2()
+    public function testFetchArraySupportsOneToOneRelations2(): void
     {
         $q = new \Doctrine_Query();
 
@@ -69,7 +69,7 @@ class FetchModeTest extends DoctrineUnitTestCase
         $this->assertEquals($users[0]['Email']['address'], 'zYne@example.com');
     }
 
-    public function testFetchRecordSupportsOneToOneRelations()
+    public function testFetchRecordSupportsOneToOneRelations(): void
     {
         $q = new \Doctrine_Query();
 
@@ -83,7 +83,7 @@ class FetchModeTest extends DoctrineUnitTestCase
         $this->assertEquals($users[0]['Email']['address'], 'zYne@example.com');
         $this->assertTrue($users[0] instanceof \User);
         $this->assertTrue($users instanceof \Doctrine_Collection);
-        $this->assertEquals($users[0]->state(), \Doctrine_Record_State::CLEAN());
+        $this->assertEquals(\Doctrine_Record_State::CLEAN(), $users[0]->state());
         $this->assertEquals($users[0]->id, 4);
 
         $this->assertTrue($users[0]['Email'] instanceof \Email);
@@ -95,7 +95,7 @@ class FetchModeTest extends DoctrineUnitTestCase
         $this->assertEquals(count(static::$conn), $count);
     }
 
-    public function testFetchRecordSupportsOneToManyRelations()
+    public function testFetchRecordSupportsOneToManyRelations(): void
     {
         $q = new \Doctrine_Query();
 
@@ -105,14 +105,14 @@ class FetchModeTest extends DoctrineUnitTestCase
 
         $this->assertEquals(count($users), 8);
         $this->assertTrue($users[0] instanceof \User);
-        $this->assertEquals($users[0]->state(), \Doctrine_Record_State::CLEAN());
+        $this->assertEquals(\Doctrine_Record_State::CLEAN(), $users[0]->state());
         $this->assertTrue($users instanceof \Doctrine_Collection);
         $this->assertTrue($users[0]->Phonenumber instanceof \Doctrine_Collection);
 
         $this->assertEquals(count(static::$conn), $count);
     }
 
-    public function testFetchRecordSupportsSimpleFetching()
+    public function testFetchRecordSupportsSimpleFetching(): void
     {
         $q = new \Doctrine_Query();
 
@@ -122,12 +122,12 @@ class FetchModeTest extends DoctrineUnitTestCase
 
         $this->assertEquals(count($users), 8);
         $this->assertTrue($users[0] instanceof \User);
-        $this->assertEquals($users[0]->state(), \Doctrine_Record_State::CLEAN());
+        $this->assertEquals(\Doctrine_Record_State::CLEAN(), $users[0]->state());
 
         $this->assertEquals(static::$conn->count(), $count);
     }
 
-    public function testFetchArrayNull()
+    public function testFetchArrayNull(): void
     {
         $u          = new \User();
         $u->name    = 'fetch_array_test';
@@ -140,7 +140,7 @@ class FetchModeTest extends DoctrineUnitTestCase
         $this->assertEquals($users[0]['created'], null);
     }
 
-    public function testHydrateNone()
+    public function testHydrateNone(): void
     {
         $u          = new \User();
         $u->name    = 'fetch_array_test';

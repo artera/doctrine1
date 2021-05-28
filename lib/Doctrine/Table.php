@@ -1682,7 +1682,7 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
 
         if (isset($this->identityMap[$id])) {
             $record = $this->identityMap[$id];
-            if ($record->getTable()->getAttribute(Doctrine_Core::ATTR_HYDRATE_OVERWRITE)) {
+            if ($record->getTable()->getAttribute(Doctrine_Core::ATTR_HYDRATE_OVERWRITE) && !$record->state()->isLocked()) {
                 $record->hydrate($this->data);
                 if ($record->state()->equals(Doctrine_Record_State::PROXY())) {
                     if (!$record->isInProxyState()) {

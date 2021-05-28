@@ -26,16 +26,10 @@ class Doctrine_Connection_UnitOfWork extends Doctrine_Connection_Module
             return false;
         }
 
-        $record->state($state->lock());
-
         $savepoint = $conn->beginInternalTransaction();
 
         try {
-            $record->state($state);
-
             $event = $record->invokeSaveHooks('pre', 'save');
-            $state = $record->state();
-
             $isValid = true;
 
             try {
@@ -84,31 +78,31 @@ class Doctrine_Connection_UnitOfWork extends Doctrine_Connection_Module
                 $savepoint->addInvalid($record);
             }
 
-            $state = $record->state();
-
-            $record->state($state->lock());
-
             if ($isValid) {
-                $saveLater = $this->saveRelatedForeignKeys($record);
-                foreach ($saveLater as $fk) {
-                    $alias = $fk->getAlias();
+                $state = $record->state();
+                $record->state($state->lock());
+                try {
+                    $saveLater = $this->saveRelatedForeignKeys($record);
+                    foreach ($saveLater as $fk) {
+                        $alias = $fk->getAlias();
 
-                    if ($record->hasReference($alias)) {
-                        $obj = $record->$alias;
+                        if ($record->hasReference($alias)) {
+                            $obj = $record->$alias;
 
-                        // check that the related object is not an instance of Doctrine_Null
-                        if ($obj && !($obj instanceof Doctrine_Null)) {
-                            $processDiff = !in_array($alias, $aliasesUnlinkInDb);
-                            $obj->save($conn, $processDiff);
+                            // check that the related object is not an instance of Doctrine_Null
+                            if ($obj && !($obj instanceof Doctrine_Null)) {
+                                $processDiff = !in_array($alias, $aliasesUnlinkInDb);
+                                $obj->save($conn, $processDiff);
+                            }
                         }
                     }
+
+                    // save the MANY-TO-MANY associations
+                    $this->saveAssociations($record);
+                } finally {
+                    $record->state($state);
                 }
-
-                // save the MANY-TO-MANY associations
-                $this->saveAssociations($record);
             }
-
-            $record->state($state);
         } catch (Throwable $e) {
             // Make sure we roll back our internal transaction
             //$record->state($state);

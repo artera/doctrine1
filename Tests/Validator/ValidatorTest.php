@@ -211,13 +211,13 @@ class ValidatorTest extends DoctrineUnitTestCase
             $user->save();
             $this->assertFalse('Should not be reached');
         } catch (\Doctrine_Validator_Exception $e) {
-            $this->assertEquals($e->count(), 1);
+            $this->assertCount(1, $e);
             $invalidRecords = $e->getInvalidRecords();
-            $this->assertEquals(count($invalidRecords), 1);
+            $this->assertCount(1, $invalidRecords);
 
             $stack = $invalidRecords[0]->errorStack();
 
-            $this->assertEquals($stack->count(), 2);
+            $this->assertCount(2, $stack);
             $this->assertContains('notTheSaint', $stack['name']);  // validate() hook constraint
             $this->assertContains('pwNotTopSecret', $stack['password']); // validateOnInsert() hook constraint
         }
@@ -234,11 +234,12 @@ class ValidatorTest extends DoctrineUnitTestCase
             $this->assertFalse('Should not be reached');
         } catch (\Doctrine_Validator_Exception $e) {
             $invalidRecords = $e->getInvalidRecords();
-            $this->assertEquals(count($invalidRecords), 1);
+            $this->assertCount(1, $invalidRecords);
 
             $stack = $invalidRecords[0]->errorStack();
+            var_dump($stack);
 
-            $this->assertEquals($stack->count(), 1);
+            $this->assertCount(1, $stack);
             $this->assertContains('notNobody', $stack['loginname']);  // validateOnUpdate() hook constraint
         }
 
