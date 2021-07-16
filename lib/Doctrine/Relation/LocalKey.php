@@ -14,7 +14,7 @@ class Doctrine_Relation_LocalKey extends Doctrine_Relation
         $related = null;
         $loadReferences = $this->definition['table']->getAttribute(Doctrine_Core::ATTR_LOAD_REFERENCES);
 
-        if ($loadReferences) {
+        if ($loadReferences && $id !== null) {
             $dql = 'FROM ' . $this->getTable()->getComponentName()
                  . ' WHERE ' . $this->getCondition() . $this->getOrderBy(null, false);
 
