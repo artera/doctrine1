@@ -1276,7 +1276,7 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
                     $orderBy = $map['relation']->getOrderByStatement($sqlAlias, true);
                     if ($orderBy == $map['relation']['orderBy']) {
                         if (isset($map['ref']) && isset($map['relation']['refTable'])) {
-                            $orderBy = $map['relation']['refTable']->processOrderBy($sqlAlias, $map['relation']['orderBy'], true);
+                            $orderBy = $map['relation']['refTable']->processOrderBy($sqlAlias, $map['relation']['orderBy'] ?? [], true);
                         } else {
                             $orderBy = null;
                         }
@@ -2001,7 +2001,7 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
      * @param  mixed[] $params an array of prepared statement parameters
      * @return integer             the count of this query
      */
-    public function count($params = [])
+    public function count($params = []): int
     {
         $q      = $this->getCountSqlQuery();
         $params = $this->getCountQueryParams($params);

@@ -26,7 +26,7 @@ class ZeroValuesTest extends DoctrineUnitTestCase
     {
         $users = static::$dbh->query('SELECT * FROM zero_value_test')->fetchAll(\PDO::FETCH_ASSOC);
 
-        $this->assertSame($users[0]['is_super_admin'], '0');
+        $this->assertSame($users[0]['is_super_admin'], 0);
     }
 
     public function testZeroValuesMaintained2()

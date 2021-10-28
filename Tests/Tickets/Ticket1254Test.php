@@ -20,10 +20,11 @@ namespace Tests\Tickets {
 
             for ($i = 0; $i < 10; $i++) {
                 $age         = $now - $i * 1000;
+                $age         = new \DateTimeImmutable("@$age");
                 $x           = new \RelX();
                 $x->name     = "x $i";
                 $x->category = $cats[$i % 2];
-                $x->set('created_at', strftime('%Y-%m-%d %H:%M:%S', $age));
+                $x->set('created_at', $age->format('Y-m-d H:i:s'));
                 $x->save();
 
                 for ($j = 0; $j < 10; $j++) {

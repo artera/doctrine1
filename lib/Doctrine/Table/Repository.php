@@ -105,7 +105,7 @@ class Doctrine_Table_Repository implements Countable, IteratorAggregate
      *
      * @return integer                      the number of records this registry has
      */
-    public function count()
+    public function count(): int
     {
         return count($this->registry);
     }

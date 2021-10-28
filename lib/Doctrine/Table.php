@@ -926,7 +926,7 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
      * @param  bool            $columnNames Whether or not to convert field names to column names
      * @return string $orderBy
      */
-    public function processOrderBy($alias, $orderBy, $columnNames = false)
+    public function processOrderBy($alias, array|string $orderBy, $columnNames = false)
     {
         if (!$alias) {
             $alias = $this->getComponentName();
@@ -1788,7 +1788,7 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
      *
      * @return integer number of records in the table
      */
-    public function count()
+    public function count(): int
     {
         return $this->createQuery()->count();
     }

@@ -35,7 +35,8 @@
         "ext-pdo": "*",
         "myclabs/php-enum": "^1.8",
         "laminas/laminas-code": ">=2.0,<5",
-        "laminas/laminas-validator": ">=2.0,<5"
+        "laminas/laminas-validator": ">=2.0,<5",
+        "symfony/polyfill-php81": "^1.23"
     },
     "require-dev": {
         "phpstan/phpstan": "^0.12.54",

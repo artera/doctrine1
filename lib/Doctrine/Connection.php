@@ -1367,24 +1367,32 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
     /**
      * Serialize. Remove database connection(pdo) since it cannot be serialized
      */
-    public function serialize(): string
+    public function __serialize(): array
     {
         $vars = get_object_vars($this);
         $vars['dbh'] = null;
         $vars['isConnected'] = false;
-        return serialize($vars);
+        return $vars;
     }
 
     /**
      * Unserialize. Recreate connection from serialized content
      */
-    public function unserialize(string $serialized): void
+    public function __unserialize(array $serialized): void
     {
-        $array = unserialize($serialized);
-
-        foreach ($array as $name => $values) {
+        foreach ($serialized as $name => $values) {
             $this->$name = $values;
         }
+    }
+
+    public function serialize(): string
+    {
+        return serialize($this->__serialize());
+    }
+
+    public function unserialize(string $serialized): void
+    {
+        $this->__unserialize(unserialize($serialized));
     }
 
     /**

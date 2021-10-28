@@ -118,7 +118,7 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
     /**
      * This method is automatically called when this Doctrine_Collection is serialized
      */
-    public function serialize(): string
+    public function __serialize(): array
     {
         $vars = get_object_vars($this);
 
@@ -128,27 +128,25 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
 
         $vars['table'] = $vars['table']->getComponentName();
 
-        return serialize($vars);
+        return $vars;
     }
 
     /**
      * This method is automatically called everytime a Doctrine_Collection object is unserialized
      */
-    public function unserialize(string $serialized): void
+    public function __unserialize(array $serialized): void
     {
         $manager    = Doctrine_Manager::getInstance();
         $connection = $manager->getCurrentConnection();
 
-        $array = unserialize($serialized);
-
-        foreach ($array as $name => $values) {
+        foreach ($serialized as $name => $values) {
             if ($name === 'table') {
                 $values = $connection->getTable((string) $values);
             }
             $this->$name = $values;
         }
 
-        $keyColumn = isset($array['keyColumn']) ? $array['keyColumn'] : null;
+        $keyColumn = isset($serialized['keyColumn']) ? $serialized['keyColumn'] : null;
         if ($keyColumn === null) {
             $keyColumn = $this->table->getBoundQueryPart('indexBy');
         }
@@ -156,6 +154,16 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
         if ($keyColumn !== null) {
             $this->keyColumn = $keyColumn;
         }
+    }
+
+    public function serialize(): string
+    {
+        return serialize($this->__serialize());
+    }
+
+    public function unserialize(string $serialized): void
+    {
+        $this->__unserialize(unserialize($serialized));
     }
 
     /**

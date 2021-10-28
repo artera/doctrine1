@@ -31,29 +31,29 @@ namespace Tests\Tickets {
 
             $myModelZero = static::$conn->getTable('T982_MyModel')->find(0);
 
-            $this->assertSame($myModelZero->id, '0');
-            $this->assertSame($myModelZero->parentid, '0');
+            $this->assertSame($myModelZero->id, 0);
+            $this->assertSame($myModelZero->parentid, 0);
             $this->assertTrue($myModelZero->parent->exists());
             $this->assertTrue(ctype_digit($myModelZero->parent->id));
             $this->assertSame($myModelZero, $myModelZero->parent);
-            $this->assertSame($myModelZero->parent->id, '0');
-            $this->assertSame($myModelZero->parent->parentid, '0');
+            $this->assertSame($myModelZero->parent->id, 0);
+            $this->assertSame($myModelZero->parent->parentid, 0);
 
             $myModelOne = static::$conn->getTable('T982_MyModel')->find(1);
 
-            $this->assertSame($myModelOne->id, '1');
-            $this->assertSame($myModelOne->parentid, '0');
+            $this->assertSame($myModelOne->id, 1);
+            $this->assertSame($myModelOne->parentid, 0);
             $this->assertTrue($myModelOne->parent->exists());
             $this->assertTrue(ctype_digit($myModelOne->parent->id));
-            $this->assertSame($myModelOne->parent->id, '0');
-            $this->assertSame($myModelOne->parent->parentid, '0');
+            $this->assertSame($myModelOne->parent->id, 0);
+            $this->assertSame($myModelOne->parent->parentid, 0);
 
             $myModelTwo = static::$conn->getTable('T982_MyModel')->find(2);
 
-            $this->assertSame($myModelTwo->id, '2');
-            $this->assertSame($myModelTwo->parentid, '1');
-            $this->assertSame($myModelTwo->parent->id, '1');
-            $this->assertSame($myModelTwo->parent->parentid, '0');
+            $this->assertSame($myModelTwo->id, 2);
+            $this->assertSame($myModelTwo->parentid, 1);
+            $this->assertSame($myModelTwo->parent->id, 1);
+            $this->assertSame($myModelTwo->parent->parentid, 0);
         }
     }
 }

@@ -72,7 +72,7 @@ abstract class Doctrine_Access implements ArrayAccess
      * @param  scalar|null $offset
      * @return boolean Whether or not this object contains $offset
      */
-    public function offsetExists($offset)
+    public function offsetExists(mixed $offset): bool
     {
         return $this->contains($offset);
     }
@@ -84,7 +84,7 @@ abstract class Doctrine_Access implements ArrayAccess
      * @param  scalar|null $offset
      * @return mixed
      */
-    public function offsetGet($offset)
+    public function offsetGet(mixed $offset): mixed
     {
         // array notation with no index was causing 'undefined variable: $offset' notices in php7,
         // for example:
@@ -103,7 +103,7 @@ abstract class Doctrine_Access implements ArrayAccess
      * @param  mixed       $value
      * @return void
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet(mixed $offset, mixed $value): void
     {
         if (!isset($offset)) {
             $this->add($value);
@@ -119,7 +119,7 @@ abstract class Doctrine_Access implements ArrayAccess
      * @param  scalar|null $offset
      * @return void
      */
-    public function offsetUnset($offset)
+    public function offsetUnset(mixed $offset): void
     {
         $this->remove($offset);
     }

@@ -783,13 +783,7 @@ abstract class Doctrine_Record implements Countable, IteratorAggregate, Serializ
         }
     }
 
-    /**
-     * serialize
-     * this method is automatically called when an instance of Doctrine_Record is serialized
-     *
-     * @return string
-     */
-    public function serialize()
+    public function __serialize(): array
     {
         $event = new Doctrine_Event($this, Doctrine_Event::RECORD_SERIALIZE);
 
@@ -841,22 +835,12 @@ abstract class Doctrine_Record implements Countable, IteratorAggregate, Serializ
             }
         }
 
-        $str = serialize($vars);
-
         $this->postSerialize($event);
         $this->getTable()->getRecordListener()->postSerialize($event);
 
-        return $str;
+        return $vars;
     }
-
-    /**
-     * this method is automatically called everytime an instance is unserialized
-     *
-     * @param  string $serialized Doctrine_Record as serialized string
-     * @throws Doctrine_Record_Exception        if the cleanData operation fails somehow
-     * @return void
-     */
-    public function unserialize($serialized)
+    public function __unserialize(array $serialized): void
     {
         $event = new Doctrine_Event($this, Doctrine_Event::RECORD_UNSERIALIZE);
 
@@ -869,9 +853,7 @@ abstract class Doctrine_Record implements Countable, IteratorAggregate, Serializ
         $this->preUnserialize($event);
         $this->getTable()->getRecordListener()->preUnserialize($event);
 
-        $array = unserialize($serialized);
-
-        foreach ($array as $k => $v) {
+        foreach ($serialized as $k => $v) {
             if ($k === '_state') {
                 $this->_state = State::from((int) $v);
             } else {
@@ -921,6 +903,16 @@ abstract class Doctrine_Record implements Countable, IteratorAggregate, Serializ
 
         $this->postUnserialize($event);
         $this->getTable()->getRecordListener()->postUnserialize($event);
+    }
+
+    public function serialize(): string
+    {
+        return serialize($this->__serialize());
+    }
+
+    public function unserialize(string $serialized): void
+    {
+        $this->__unserialize(unserialize($serialized));
     }
 
     /**
@@ -1955,7 +1947,7 @@ abstract class Doctrine_Record implements Countable, IteratorAggregate, Serializ
      *
      * @return integer          the number of columns in this record
      */
-    public function count()
+    public function count(): int
     {
         return count($this->_data);
     }

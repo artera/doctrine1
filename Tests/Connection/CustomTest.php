@@ -28,21 +28,28 @@ namespace {
         {
         }
 
+        #[\ReturnTypeWillChange]
         public function prepare(string $query, array $options = [])
         {
+            return false;
         }
 
+        #[\ReturnTypeWillChange]
         public function query(string $query, ?int $fetchMode = null, mixed ...$fetchModeArgs)
         {
+            return false;
         }
 
+        #[\ReturnTypeWillChange]
         public function quote(string $string, int $type = PDO::PARAM_STR)
         {
             return '';
         }
 
+        #[\ReturnTypeWillChange]
         public function exec(string $statement)
         {
+            return false;
         }
 
         public function lastInsertId(?string $name = null): string
@@ -65,14 +72,14 @@ namespace {
             return true;
         }
 
-        public function errorCode(): int
+        public function errorCode(): ?string
         {
-            return 0;
+            return null;
         }
 
-        public function errorInfo(): string
+        public function errorInfo(): array
         {
-            return '';
+            return [];
         }
 
         public function getAttribute(int $attribute): mixed
@@ -85,8 +92,9 @@ namespace {
             return true;
         }
 
-        public function sqliteCreateFunction()
+        public function sqliteCreateFunction($function_name, $callback, $num_args = -1): bool
         {
+            return true;
         }
     }
 }

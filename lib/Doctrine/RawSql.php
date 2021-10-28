@@ -326,7 +326,7 @@ class Doctrine_RawSql extends Doctrine_Query_Abstract
      * @param  array $params an array of prepared statement parameters
      * @return integer             the count of this query
      */
-    public function count($params = [])
+    public function count($params = []): int
     {
         $sql     = $this->getCountSqlQuery();
         $params  = $this->getCountQueryParams($params);

@@ -1,5 +1,13 @@
-#!/bin/sh -eu
+#!/bin/bash -eu
 cd "$(readlink -fn "$(dirname "$0")")"
-PHP="php -dapc.enabled=on -dapc.enable_cli=on -dzend.assertions=1 -dpcov.enabled=1 -dpcov.directory=$PWD -dpcov.exclude='@/(Tests|vendor)/@'"
+PHP=(
+    "${PHP:-php}"
+    -dapc.enabled=on
+    -dapc.enable_cli=on
+    -dzend.assertions=1
+    -dpcov.enabled=1
+    -dpcov.directory="$PWD"
+    -dpcov.exclude='@/(Tests|vendor)/@'
+)
 rm -rf Tests/Import/import_builder_test
-$PHP vendor/bin/phpunit "$@"
+${PHP[*]} vendor/bin/phpunit "$@"

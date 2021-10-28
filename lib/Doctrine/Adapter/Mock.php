@@ -79,6 +79,7 @@ class Doctrine_Adapter_Mock extends PDO
     }
 
     /** @return Doctrine_Adapter_Statement_Mock|null */
+    #[\ReturnTypeWillChange]
     public function prepare(string $query, array $options = []): ?Doctrine_Adapter_Statement_Mock
     {
         $mock              = new Doctrine_Adapter_Statement_Mock($this);
@@ -92,6 +93,7 @@ class Doctrine_Adapter_Mock extends PDO
     }
 
     /** @return Doctrine_Adapter_Statement_Mock */
+    #[\ReturnTypeWillChange]
     public function query(string $query, ?int $fetchMode = null, mixed ...$fetchModeArgs)
     {
         $this->queries[] = $query;
@@ -120,6 +122,7 @@ class Doctrine_Adapter_Mock extends PDO
         return $this->queries;
     }
 
+    #[\ReturnTypeWillChange]
     public function quote(string $string, int $type = PDO::PARAM_STR)
     {
         return "'" . addslashes($string) . "'";
@@ -205,9 +208,9 @@ class Doctrine_Adapter_Mock extends PDO
         return null;
     }
 
-    public function errorCode(): int
+    public function errorCode(): ?string
     {
-        return 0;
+        return null;
     }
 
     public function errorInfo(): array
