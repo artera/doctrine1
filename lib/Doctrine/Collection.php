@@ -45,17 +45,10 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
     protected string $keyColumn;
 
     /**
-     * @var Doctrine_Null $null used for extremely fast null value testing
-     */
-    protected static Doctrine_Null $null;
-
-    /**
      * @phpstan-param Doctrine_Table<T>|class-string<T> $table
      */
     public function __construct(Doctrine_Table|string $table, ?string $keyColumn = null)
     {
-        static::$null = Doctrine_Null::instance();
-
         if (!($table instanceof Doctrine_Table)) {
             $table = Doctrine_Core::getTable($table);
         }
@@ -192,7 +185,7 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
      */
     public function getData(): array
     {
-        return array_filter($this->data, fn($r) => !$r instanceof Doctrine_Null);
+        return $this->data;
     }
 
     /**
@@ -410,6 +403,7 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
      * @param Doctrine_Record $record record to be added
      * @phpstan-param T $record
      * @param string|null $key optional key for the record
+     * @throws Doctrine_Collection_Exception
      */
     public function add($record, ?string $key = null): void
     {
@@ -462,13 +456,13 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
      * @param         Doctrine_Collection $coll
      * @phpstan-param Doctrine_Collection<T> $coll
      * @return        $this
+     * @throws Doctrine_Collection_Exception
      */
     public function merge(Doctrine_Collection $coll): self
     {
         $localBase = $this->getTable()->getComponentName();
         $otherBase = $coll->getTable()->getComponentName();
 
-        // @phpstan-ignore-next-line
         if ($otherBase != $localBase && !is_subclass_of($otherBase, $localBase)) {
             throw new Doctrine_Collection_Exception("Can't merge collections with incompatible record types");
         }
@@ -891,8 +885,8 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
     /**
      * Get collection data iterator
      *
-     * @return \ArrayIterator<mixed,Doctrine_Record>
-     * @phpstan-return \ArrayIterator<mixed,T>
+     * @return \ArrayIterator<int|string,Doctrine_Record>
+     * @phpstan-return \ArrayIterator<int|string, T>
      */
     public function getIterator(): ArrayIterator
     {

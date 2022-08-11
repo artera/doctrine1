@@ -81,7 +81,7 @@ class Doctrine_Connection_Statement
 
     public function fetch(int $fetch_style = PDO::FETCH_BOTH, int $cursor_orientation = PDO::FETCH_ORI_NEXT, int $cursor_offset = 0): mixed
     {
-        $event = new Doctrine_Event($this, Doctrine_Event::STMT_FETCH, $this->getQuery());
+        $event = new Doctrine_Event_Fetch($this, Doctrine_Event::STMT_FETCH, $this->getQuery());
 
         $event->fetchMode         = $fetch_style;
         $event->cursorOrientation = $cursor_orientation;
@@ -96,7 +96,7 @@ class Doctrine_Connection_Statement
 
     public function fetchAll(int $fetch_style = PDO::ATTR_DEFAULT_FETCH_MODE, mixed $fetch_argument = null, array $ctor_args = []): array
     {
-        $event              = new Doctrine_Event($this, Doctrine_Event::STMT_FETCHALL, $this->getQuery());
+        $event              = new Doctrine_Event_Fetch($this, Doctrine_Event::STMT_FETCHALL, $this->getQuery());
         $event->fetchMode   = $fetch_style;
         $event->columnIndex = $fetch_argument;
         $data               = [];

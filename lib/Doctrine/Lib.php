@@ -41,7 +41,7 @@ class Doctrine_Lib
                     $rest[$key] = $second[$key];
                 } elseif (!$isKey1) {
                     $rest[$key] = $first[$key];
-                } elseif (!$isKey0) {
+                } else {
                     $rest[$key] = $second[$key];
                 }
             }

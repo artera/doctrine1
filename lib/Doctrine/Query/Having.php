@@ -69,7 +69,9 @@ class Doctrine_Query_Having extends Doctrine_Query_Condition
     final public function load(string $having): string
     {
         $tokens   = $this->tokenizer->bracketExplode($having, ' ', '(', ')');
-        $part     = $this->parseAggregateFunction(array_shift($tokens));
+        $token = array_shift($tokens);
+        assert($token !== null);
+        $part     = $this->parseAggregateFunction($token);
         $operator = array_shift($tokens);
         $value    = implode(' ', $tokens);
 

@@ -42,7 +42,7 @@ class QueryDynamicReturnTypeExtension extends AbstractExtension implements Dynam
     {
         $parametersAcceptor = ParametersAcceptorSelector::selectFromArgs(
             $scope,
-            $methodCall->args,
+            $methodCall->getArgs(),
             $methodReflection->getVariants()
         );
         $returnType = $parametersAcceptor->getReturnType();

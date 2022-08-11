@@ -7,30 +7,14 @@
 class Doctrine_Collection_OnDemand implements Iterator
 {
     protected Doctrine_Connection_Statement $stmt;
+    protected mixed $current;
+    protected array $tableAliasMap;
+    protected Doctrine_Hydrator_Abstract $hydrator;
+    protected int $index;
 
     /**
-     * @var mixed
-     */
-    protected $current;
-
-    /**
-     * @var array
-     */
-    protected $tableAliasMap;
-
-    /**
-     * @var Doctrine_Hydrator_Abstract
-     */
-    protected $hydrator;
-
-    /**
-     * @var int
-     */
-    protected $index;
-
-    /**
-     * @param Doctrine_Hydrator_Abstract                        $hydrator
-     * @param array                                             $tableAliasMap
+     * @param Doctrine_Hydrator_Abstract $hydrator
+     * @param array                      $tableAliasMap
      */
     public function __construct(Doctrine_Connection_Statement $stmt, $hydrator, $tableAliasMap)
     {
@@ -43,10 +27,7 @@ class Doctrine_Collection_OnDemand implements Iterator
         $this->hydrateCurrent();
     }
 
-    /**
-     * @return void
-     */
-    private function hydrateCurrent()
+    private function hydrateCurrent(): void
     {
         $record = $this->hydrator->hydrateResultSet($this->stmt);
         if ($record instanceof Doctrine_Collection) {
@@ -60,10 +41,7 @@ class Doctrine_Collection_OnDemand implements Iterator
         }
     }
 
-    /**
-     * @return void
-     */
-    public function rewind()
+    public function rewind(): void
     {
         $this->index = 0;
         $this->stmt->closeCursor();
@@ -72,36 +50,24 @@ class Doctrine_Collection_OnDemand implements Iterator
         $this->hydrateCurrent();
     }
 
-    /**
-     * @return int
-     */
-    public function key()
+    public function key(): int
     {
         return $this->index;
     }
 
-    /**
-     * @return mixed
-     */
-    public function current()
+    public function current(): mixed
     {
         return $this->current;
     }
 
-    /**
-     * @return void
-     */
-    public function next()
+    public function next(): void
     {
         $this->current = null;
         $this->index++;
         $this->hydrateCurrent();
     }
 
-    /**
-     * @return bool
-     */
-    public function valid()
+    public function valid(): bool
     {
         if ($this->current !== null && $this->current !== false) {
             return true;

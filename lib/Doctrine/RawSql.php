@@ -240,9 +240,7 @@ class Doctrine_RawSql extends Doctrine_Query_Abstract
         unset($select[$componentAlias]);
 
         foreach ($select as $component => $fields) {
-            if (!empty($fields)) {
-                $q .= ', ' . implode(', ', $fields);
-            }
+            $q .= ', ' . implode(', ', $fields);
         }
 
         $string = $this->getInheritanceCondition($this->getRootAlias());

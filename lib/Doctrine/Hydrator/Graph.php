@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @phpstan-template Collection
+ * @phpstan-template Collection of Traversable|array
  * @phpstan-template Item
  */
 abstract class Doctrine_Hydrator_Graph extends Doctrine_Hydrator_Abstract

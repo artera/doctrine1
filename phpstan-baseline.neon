@@ -21,12 +21,12 @@ parameters:
 			path: lib/Doctrine/Connection/Mock.php
 
 		-
-			message: "#^Offset 2 does not exist on array\\(\\)\\.$#"
+			message: "#^Offset 2 does not exist on array\\{\\}\\.$#"
 			count: 1
 			path: lib/Doctrine/Connection/Pgsql.php
 
 		-
-			message: "#^Offset 3 does not exist on array\\(\\)\\.$#"
+			message: "#^Offset 3 does not exist on array\\{\\}\\.$#"
 			count: 1
 			path: lib/Doctrine/Connection/Pgsql.php
 
@@ -117,16 +117,6 @@ parameters:
 
 		-
 			message: "#^Variable \\$rel in isset\\(\\) always exists and is not nullable\\.$#"
-			count: 1
-			path: lib/Doctrine/Relation/Parser.php
-
-		-
-			message: "#^Variable \\$table might not be defined\\.$#"
-			count: 1
-			path: lib/Doctrine/Relation/Parser.php
-
-		-
-			message: "#^Method Doctrine_Relation_Parser\\:\\:completeDefinition\\(\\) should return array\\('alias' \\=\\> string, 'type' \\=\\> int, 'table' \\=\\> Doctrine_Table, 'localTable' \\=\\> Doctrine_Table, 'class' \\=\\> class\\-string\\<Doctrine_Record\\>, 'foreign' \\=\\> string, 'local' \\=\\> string, \\?'localKey' \\=\\> bool, \\.\\.\\.\\) but returns array\\('alias' \\=\\> string, 'type' \\=\\> int, 'class' \\=\\> class\\-string\\<Doctrine_Record\\>, 'local' \\=\\> string, \\?'owningSide' \\=\\> bool, 'table' \\=\\> Doctrine_Table, 'localTable' \\=\\> Doctrine_Table, 'foreign' \\=\\> array\\|string\\|null, \\.\\.\\.\\)\\.$#"
 			count: 1
 			path: lib/Doctrine/Relation/Parser.php
 

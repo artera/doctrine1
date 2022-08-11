@@ -93,7 +93,7 @@ class TableDynamicReturnTypeExtension extends AbstractExtension implements Dynam
     {
         $parametersAcceptor = \PHPStan\Reflection\ParametersAcceptorSelector::selectFromArgs(
             $scope,
-            $methodCall->args,
+            $methodCall->getArgs(),
             $methodReflection->getVariants()
         );
         $returnType = $parametersAcceptor->getReturnType();

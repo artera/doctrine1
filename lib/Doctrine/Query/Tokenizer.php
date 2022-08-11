@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * @phpstan-template Term = array{string, string, int}
+ */
 class Doctrine_Query_Tokenizer
 {
     /**
@@ -12,16 +15,17 @@ class Doctrine_Query_Tokenizer
      *     $query = "SELECT u.* FROM User u WHERE u.name LIKE ?"
      * returns:
      *     array(
-     *         'select' => array('u.*'),
-     *         'from'   => array('User', 'u'),
-     *         'where'  => array('u.name', 'LIKE', '?')
+     *         'select' => 'u.* ',
+     *         'from'   => 'User u ',
+     *         'where'  => 'u.name LIKE ? '
      *     );
      *
      * @param string $query DQL query
      *
      * @throws Doctrine_Query_Exception If some generic parsing error occurs
      *
-     * @return array                    An array containing the query string parts
+     * @return array An array containing the query string parts
+     * @phpstan-return array<string, string>
      */
     public function tokenizeQuery(string $query): array
     {
@@ -108,6 +112,7 @@ class Doctrine_Query_Tokenizer
      * @param string|array $d   Delimeter which explodes the string
      * @param string       $e1  First bracket, usually '('
      * @param string       $e2  Second bracket, usually ')'
+     * @return string[]
      */
     public function bracketExplode(string $str, string|array $d = ' ', string $e1 = '(', string $e2 = ')'): array
     {
@@ -141,6 +146,7 @@ class Doctrine_Query_Tokenizer
      *
      * @param string $str String to be quote exploded
      * @param string|array $d   Delimeter which explodes the string
+     * @return string[]
      */
     public function quoteExplode(string $str, string|array $d = ' '): array
     {
@@ -183,6 +189,7 @@ class Doctrine_Query_Tokenizer
      * @param string|array $d   Delimeter which explodes the string
      * @param string       $e1  First bracket, usually '('
      * @param string       $e2  Second bracket, usually ')'
+     * @return string[]
      */
     public function sqlExplode(string $str, string|array $d = ' ', string $e1 = '(', string $e2 = ')'): array
     {
@@ -223,6 +230,7 @@ class Doctrine_Query_Tokenizer
      * @param array  $d   Delimeter which explodes the string
      * @param string $e1  First bracket, usually '('
      * @param string $e2  Second bracket, usually ')'
+     * @phpstan-return Term[]
      */
     public function clauseExplode(string $str, array $d, string $e1 = '(', string $e2 = ')'): array
     {
@@ -254,6 +262,7 @@ class Doctrine_Query_Tokenizer
 
     /**
      * Same as clauseExplode, but you give a regexp, which splits the string
+     * @phpstan-return Term[]
      */
     private function clauseExplodeRegExp(string $str, string $regexp, string $e1 = '(', string $e2 = ')'): array
     {
@@ -270,6 +279,7 @@ class Doctrine_Query_Tokenizer
 
     /**
      * this function is like clauseExplode, but it doesn't merge bracket terms
+     * @phpstan-return Term[]
      */
     private function clauseExplodeCountBrackets(string $str, string $regexp, string $e1 = '(', string $e2 = ')'): array
     {
@@ -293,18 +303,19 @@ class Doctrine_Query_Tokenizer
                 foreach ($subterms as &$sub) {
                     $c1 = substr_count($sub[0], $e1);
                     $c2 = substr_count($sub[0], $e2);
-
                     $sub[2] = $c1 - $c2;
                 }
 
                 // If the previous term had no delimiter, merge them
                 if ($i > 0 && $terms[$i - 1][1] == '') {
                     $first = array_shift($subterms);
-                    $idx   = $i - 1;
+                    if ($first !== null) {
+                        $idx   = $i - 1;
 
-                    $terms[$idx][0] .= $first[0];
-                    $terms[$idx][1] = $first[1];
-                    $terms[$idx][2] += $first[2];
+                        $terms[$idx][0] .= $first[0];
+                        $terms[$idx][1] = $first[1];
+                        $terms[$idx][2] += $first[2];
+                    }
                 }
 
                 $terms = array_merge($terms, $subterms);
@@ -322,8 +333,6 @@ class Doctrine_Query_Tokenizer
      * the following elemnts:
      * [0] = the term itself
      * [1] = the delimiter splitting this term from the next
-     * [2] = the sum of opening and closing brackets in this term
-     *          (eg. -2 means 2 closing brackets (or 1 opening and 3 closing))
      *
      * example:
      *
@@ -334,27 +343,30 @@ class Doctrine_Query_Tokenizer
      * returns:
      *     array(
      *        array('a', ' ', 0),
-     *        array('(b', ' ', 1),
-     *        array("'(c", '+', 1),
-     *        array("d))'", '', -2)
+     *        array('(b', ' ', 0),
+     *        array("'(c", '+', 0),
+     *        array("d))'", '', 0)
      *     );
+     * @phpstan-return Term[]
      */
     private function clauseExplodeNonQuoted(string $str, string $regexp): array
     {
         $str  = preg_split($regexp, $str, -1, PREG_SPLIT_DELIM_CAPTURE);
-        $term = [];
+        $terms = [];
         $i    = 0;
 
         foreach ($str as $key => $val) {
             // Every odd entry is a delimiter, so add it to the previous term entry
             if (!($key & 1)) {
-                $term[$i] = [$val, ''];
+                /** @phpstan-var Term $term */
+                $term = [$val, '', 0];
+                $terms[$i] = $term;
             } else {
-                $term[$i++][1] = $val;
+                $terms[$i++][1] = $val;
             }
         }
 
-        return $term;
+        return $terms;
     }
 
     /**
@@ -381,6 +393,8 @@ class Doctrine_Query_Tokenizer
      *         array('(2+3)', '-', 0),
      *         array('5'    , '' , 0)
      *     );
+     * @phpstan-return Term[] $terms
+     * @phpstan-return Term[]
      */
     private function mergeBracketTerms(array $terms): array
     {
@@ -389,7 +403,7 @@ class Doctrine_Query_Tokenizer
 
         foreach ($terms as $val) {
             if (!isset($res[$i])) {
-                $res[$i] = [$val[0], $val[1], $val[2]];
+                $res[$i] = $val;
             } else {
                 $res[$i][0] .= $res[$i][1] . $val[0];
                 $res[$i][1] = $val[1];
@@ -420,6 +434,7 @@ class Doctrine_Query_Tokenizer
      * Note the trailing empty string. In the result, all even elements are quoted strings.
      *
      * @param string $str the string to split
+     * @return string[]
      */
     public function quotedStringExplode(string $str): array
     {

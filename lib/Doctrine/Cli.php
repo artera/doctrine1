@@ -208,6 +208,7 @@ class Doctrine_Cli
      * @param       string      $taskName
      * @param       string|null $className
      * @psalm-param class-string|null $className
+     * @phpstan-param class-string<Doctrine_Task>|null $className
      * @return      bool
      */
     public function taskNameIsRegistered($taskName, &$className = null)
@@ -342,6 +343,7 @@ class Doctrine_Cli
      * Registers the specified _included_ task-class
      *
      * @param string $className
+     * @phpstan-param class-string<Doctrine_Task> $className
      *
      * @throws InvalidArgumentException If the class does not exist or the task-name is blank
      * @throws DomainException If the class is not a Doctrine Task
@@ -362,6 +364,7 @@ class Doctrine_Cli
         if (!$this->classIsTask($className)) {
             throw new DomainException("The class \"{$className}\" is not a Doctrine Task");
         }
+        /** @phpstan-var class-string<Doctrine_Task> $className */
 
         $this->registeredTask[$className] = $this->createTaskInstance($className, $this);
     }
@@ -388,6 +391,9 @@ class Doctrine_Cli
      * @psalm-param class-string $className
      * @param       Doctrine_Cli $cli       Doctrine_Cli
      * @return      Doctrine_Task
+     * @phpstan-template T of Doctrine_Task
+     * @phpstan-param class-string<T> $className
+     * @phpstan-return T
      */
     protected function createTaskInstance($className, Doctrine_Cli $cli)
     {
@@ -405,6 +411,7 @@ class Doctrine_Cli
     {
         foreach (get_declared_classes() as $className) {
             if ($this->classIsTask($className)) {
+                /** @phpstan-var class-string<Doctrine_Task> $className */
                 $this->registerTaskClass($className);
             }
         }
@@ -480,7 +487,9 @@ class Doctrine_Cli
                 return;
             }
 
-            if (!$this->taskNameIsRegistered($requestedTaskName, $taskClassName)) {
+            $this->taskNameIsRegistered($requestedTaskName, $taskClassName);
+            /** @phpstan-var class-string<Doctrine_Task>|null $taskClassName */
+            if ($taskClassName === null) {
                 throw new Doctrine_Cli_Exception("The task \"{$requestedTaskName}\" has not been registered");
             }
 

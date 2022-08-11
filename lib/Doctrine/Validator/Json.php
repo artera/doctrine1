@@ -9,7 +9,8 @@ class Doctrine_Validator_Json extends AbstractValidator
         json_decode($value);
         $code = json_last_error();
         if ($code !== JSON_ERROR_NONE) {
-            $this->abstractOptions['messages'][$code] = json_last_error_msg();
+            /** @phpstan-ignore-next-line */
+            $this->abstractOptions['messages'][(string) $code] = json_last_error_msg();
             return false;
         }
         return true;

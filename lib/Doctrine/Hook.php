@@ -62,16 +62,15 @@ class Doctrine_Hook
     /**
      * @var array $typeParsers              type parsers array
      *                                      keys as type names and values as parser names / objects
+     * @phpstan-var array<string, class-string<Doctrine_Hook_Parser>|Doctrine_Hook_Parser>
      */
     protected $typeParsers = [
-                              'char'    => 'Doctrine_Hook_WordLike',
-                              'string'  => 'Doctrine_Hook_WordLike',
-                              'varchar' => 'Doctrine_Hook_WordLike',
-                              'integer' => 'Doctrine_Hook_Integer',
-                              'enum'    => 'Doctrine_Hook_Integer',
-                              'time'    => 'Doctrine_Hook_Time',
-                              'date'    => 'Doctrine_Hook_Date',
-                              ];
+        'char'    => Doctrine_Hook_WordLike::class,
+        'string'  => Doctrine_Hook_WordLike::class,
+        'varchar' => Doctrine_Hook_WordLike::class,
+        'integer' => Doctrine_Hook_Integer::class,
+        'enum'    => Doctrine_Hook_Integer::class,
+    ];
 
     /**
      * @param Doctrine_Query|string $query the base query
@@ -105,10 +104,11 @@ class Doctrine_Hook
      *
      * @param string        $type   type name
      * @param string|object $parser parser name or custom parser object
+     * @phpstan-param class-string<Doctrine_Hook_Parser>|Doctrine_Hook_Parser $parser
      *
      * @return void
      */
-    public function setTypeParser($type, $parser)
+    public function setTypeParser(string $type, $parser)
     {
         $this->typeParsers[$type] = $parser;
     }

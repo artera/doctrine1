@@ -341,6 +341,7 @@ class Doctrine_Connection_UnitOfWork extends Doctrine_Connection_Module
      * saves all related (through LocalKey) records to $record
      *
      * @throws PDOException         if something went wrong at database level
+     * @throws Doctrine_Validator_Exception
      *
      * @param Doctrine_Record $record
      */

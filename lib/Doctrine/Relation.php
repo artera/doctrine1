@@ -1,5 +1,29 @@
 <?php
 
+/**
+ * @phpstan-type RelationDefinition = array{
+ *   alias: string,
+ *   foreign: string,
+ *   local: string,
+ *   class: class-string<Doctrine_Record>,
+ *   type: int,
+ *   table: Doctrine_Table,
+ *   localTable: Doctrine_Table,
+ *   name: ?string,
+ *   refTable: ?Doctrine_Table,
+ *   onDelete: ?string,
+ *   onUpdate: ?string,
+ *   deferred: ?bool,
+ *   deferrable: ?bool,
+ *   constraint: ?bool,
+ *   equal: bool,
+ *   cascade: string[],
+ *   owningSide: bool,
+ *   refClassRelationAlias: ?string,
+ *   foreignKeyName: ?string,
+ *   orderBy: null|string|string[],
+ * }
+ */
 abstract class Doctrine_Relation implements ArrayAccess
 {
     /**
@@ -18,31 +42,7 @@ abstract class Doctrine_Relation implements ArrayAccess
 
     // TRUE => mandatory, everything else is just a default value. this should be refactored
     // since TRUE can bot be used as a default value this way. All values should be default values.
-    /**
-     * @var array $definition   @see __construct()
-     * @phpstan-var array{
-     *   alias: string,
-     *   foreign: string,
-     *   local: string,
-     *   class: class-string<Doctrine_Record>,
-     *   type: int,
-     *   table: Doctrine_Table,
-     *   localTable: Doctrine_Table,
-     *   name: ?string,
-     *   refTable: ?Doctrine_Table,
-     *   onDelete: ?string,
-     *   onUpdate: ?string,
-     *   deferred: ?bool,
-     *   deferrable: ?bool,
-     *   constraint: ?bool,
-     *   equal: bool,
-     *   cascade: string[],
-     *   owningSide: bool,
-     *   refClassRelationAlias: ?string,
-     *   foreignKeyName: ?string,
-     *   orderBy: null|string|string[],
-     * }
-     */
+    /** @phpstan-var RelationDefinition */
     protected array $definition;
 
     protected ?bool $isRefClass = null;
@@ -145,6 +145,7 @@ abstract class Doctrine_Relation implements ArrayAccess
 
         foreach ($definition as $key => $value) {
             if (array_key_exists($key, $this->definition)) {
+                /** @phpstan-ignore-next-line */
                 $this->definition[$key] = $value;
             }
         }
@@ -203,6 +204,7 @@ abstract class Doctrine_Relation implements ArrayAccess
     public function offsetSet($offset, $value): void
     {
         if (isset($this->definition[$offset])) {
+            /** @phpstan-ignore-next-line */
             $this->definition[$offset] = $value;
         }
     }
@@ -212,6 +214,7 @@ abstract class Doctrine_Relation implements ArrayAccess
      */
     public function offsetUnset($offset): void
     {
+        /** @phpstan-ignore-next-line */
         $this->definition[$offset] = false;
     }
 

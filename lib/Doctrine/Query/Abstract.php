@@ -138,7 +138,7 @@ abstract class Doctrine_Query_Abstract
 
 
     /**
-     * @phpstan-var array<string, array{table: Doctrine_Table, map?: ?string, parent?: string, relation?: Doctrine_Relation, ref?: bool, agg?: array<string, string>}>
+     * @phpstan-var array<string, array{table: Doctrine_Table, map?: ?string, parent?: string, relation?: Doctrine_Relation, ref?: bool, agg?: string[]}>
      * @var array<string,mixed> $queryComponents   Two dimensional array containing the components of this query,
      *                                informations about their relations and other related information.
      *                                The components are constructed during query parsing.
@@ -756,13 +756,11 @@ abstract class Doctrine_Query_Abstract
      */
     public function getRoot()
     {
-        $map = $this->queryComponents[$this->rootAlias];
-
-        if (!isset($map['table'])) {
+        if (!isset($this->queryComponents[$this->rootAlias]['table'])) {
             throw new Doctrine_Query_Exception('Root component not initialized.');
         }
 
-        return $map['table'];
+        return $this->queryComponents[$this->rootAlias]['table'];
     }
 
     /**

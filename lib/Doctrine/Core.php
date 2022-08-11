@@ -473,11 +473,6 @@ class Doctrine_Core
     private static array $loadedModelFiles = [];
 
     /**
-     * Array of all the loaded validators
-     */
-    private static array $validators = [];
-
-    /**
      * Path to the models directory
      */
     private static ?string $modelsDirectory = null;
@@ -564,6 +559,7 @@ class Doctrine_Core
      *                              Allowed Doctrine_Core::MODEL_LOADING_AGGRESSIVE(default) or
      *                              Doctrine_Core::MODEL_LOADING_CONSERVATIVE
      * @param string|null  $classPrefix  The class prefix of the models to load. This is useful if the class name and file name are not the same
+     * @throws Doctrine_Exception
      */
     public static function loadModels(string|array|null $directory, ?int $modelLoading = null, ?string $classPrefix = null): array
     {
@@ -668,10 +664,12 @@ class Doctrine_Core
      * Initialize all models so everything is present and loaded in to memory
      * This will also inheritently initialize any model behaviors and add
      * them to the $models array
+     * @phpstan-param string[] $models
      */
     public static function initializeModels(array $models): array
     {
         $models = self::filterInvalidModels($models);
+        /** @phpstan-var class-string<Doctrine_Record>[] $models */
 
         foreach ($models as $model) {
             $declaredBefore = get_declared_classes();
@@ -695,6 +693,8 @@ class Doctrine_Core
     /**
      * Filter through an array of classes and return all the classes that are valid models.
      * This will inflect the class, causing it to be loaded in to memory.
+     * @phpstan-param string[] $classes
+     * @phpstan-return class-string<Doctrine_Record>[]
      */
     public static function filterInvalidModels(array $classes): array
     {
@@ -702,6 +702,7 @@ class Doctrine_Core
 
         foreach ($classes as $name) {
             if (self::isValidModelClass($name) && !in_array($name, $validModels)) {
+                /** @phpstan-var class-string<Doctrine_Record> $name */
                 $validModels[] = $name;
             }
         }
@@ -756,6 +757,7 @@ class Doctrine_Core
      * @param string $yamlPath Path to write oyur yaml schema file to
      * @param array $connections Array of connection names to generate yaml for
      * @param array $options Array of options
+     * @throws Doctrine_Exception
      */
     public static function generateYamlFromDb(string $yamlPath, array $connections = [], array $options = []): int|string|null
     {

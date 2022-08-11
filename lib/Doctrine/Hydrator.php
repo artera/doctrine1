@@ -100,7 +100,7 @@ class Doctrine_Hydrator
      * Get the name of the driver class for the passed hydration mode
      *
      * @phpstan-param int|class-string<Doctrine_Hydrator_Abstract>|null $mode
-     * @phpstan-return Doctrine_Hydrator_Abstract|class-string of Doctrine_Hydrator_Abstract
+     * @phpstan-return Doctrine_Hydrator_Abstract|class-string<Doctrine_Hydrator_Abstract>
      */
     public function getHydratorDriverClassName(int|string|null $mode = null): string|Doctrine_Hydrator_Abstract
     {

@@ -1,7 +1,7 @@
 {
     "name": "artera/doctrine1",
     "type": "library",
-    "version": "2.4.0",
+    "version": "2.5.0",
     "description": "PHP7+ Database ORM",
     "keywords": ["orm", "database"],
     "license": "LGPL-2.1-or-later",
@@ -39,11 +39,11 @@
         "symfony/polyfill-php81": "^1.23"
     },
     "require-dev": {
-        "phpstan/phpstan": "^0.12.54",
+        "phpstan/phpstan": "^1",
         "vimeo/psalm": "^4.1",
         "phpunit/phpunit": "^9.4",
-        "symfony/yaml": "^3.4 || ^4.1 || ^5.0",
-        "timeweb/phpstan-enum": "^2.2",
+        "symfony/yaml": "^3.4 || ^4.1 || ^5.0 || ^6.0",
+        "timeweb/phpstan-enum": "^3.0",
         "spatie/phpunit-snapshot-assertions": "^4.2"
     },
     "suggest": {

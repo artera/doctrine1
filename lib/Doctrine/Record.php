@@ -7,6 +7,7 @@ use Doctrine1\Deserializer;
 /**
  * @phpstan-template T of Doctrine_Table
  * @phpstan-implements ArrayAccess<string, mixed>
+ * @phpstan-import-type ColumnOptionName from Doctrine_Table
  */
 abstract class Doctrine_Record implements Countable, IteratorAggregate, Serializable, ArrayAccess
 {
@@ -1458,6 +1459,7 @@ abstract class Doctrine_Record implements Countable, IteratorAggregate, Serializ
                 if ($value === null) {
                     $value = $this->_table->getDefaultValueOf($fieldName);
                 }
+                /** @phpstan-ignore-next-line */
                 $this->_data[$fieldName] = $value;
                 $this->_modified[] = $fieldName;
                 $this->_oldValues[$fieldName] = $old;
@@ -1774,6 +1776,7 @@ abstract class Doctrine_Record implements Countable, IteratorAggregate, Serializ
      *
      * @param  Doctrine_Connection $conn optional connection parameter
      * @throws Exception                    if record is not valid and validation is active
+     * @throws Doctrine_Validator_Exception if record is not valid and validation is active
      * @return void
      */
     public function save(Doctrine_Connection $conn = null)
@@ -2454,7 +2457,7 @@ abstract class Doctrine_Record implements Countable, IteratorAggregate, Serializ
         // Put $column on front of $args to maintain previous behavior
         array_unshift($args, $column);
 
-        if (isset($args[0])) {
+        if (isset($args[0]) && is_string($args[0])) {
             $fieldName = $args[0];
             $args[0]   = $this->get($fieldName, accessors: true);
 
@@ -2963,11 +2966,10 @@ abstract class Doctrine_Record implements Countable, IteratorAggregate, Serializ
      *         ));
      *     }
      *
-     * @param  string $name
-     * @param  array  $options
-     * @return void
+     * @param  string|string[] $name
+     * @phpstan-param  array<ColumnOptionName, mixed> $options
      */
-    public function setColumnOptions($name, array $options)
+    public function setColumnOptions(string|array $name, array $options): void
     {
         $this->_table->setColumnOptions($name, $options);
     }
@@ -2975,12 +2977,9 @@ abstract class Doctrine_Record implements Countable, IteratorAggregate, Serializ
     /**
      * Set an individual column option
      *
-     * @param  string $columnName
-     * @param  string $option
-     * @param  mixed  $value
-     * @return void
+     * @phpstan-param ColumnOptionName $option
      */
-    public function setColumnOption($columnName, $option, $value)
+    public function setColumnOption(string $columnName, string $option, mixed $value): void
     {
         $this->_table->setColumnOption($columnName, $option, $value);
     }

@@ -7,6 +7,31 @@ use Laminas\Validator\AbstractValidator;
 
 /**
  * @phpstan-template T of Doctrine_Record
+ *
+ * @phpstan-type ColumnOptionName = 'primary' | 'type' | 'length' | 'notnull' | 'values' | 'default' | 'autoincrement' | 'values' | 'owner' | 'unique' | 'protected' | 'sequence' | 'zerofill' | 'scale' | 'fixed' | 'comment' | 'alias' | 'extra' | 'virtual' | 'meta'
+ *
+ * @phpstan-type ColumnDefinition = array{
+ *   type: string,
+ *   length: int,
+ *   notnull?: bool,
+ *   values?: mixed[],
+ *   default?: mixed,
+ *   autoincrement?: bool,
+ *   values?: mixed[],
+ *   owner?: string,
+ *   primary?: bool,
+ *   unique?: bool,
+ *   protected?: bool,
+ *   sequence?: string,
+ *   zerofill?: bool,
+ *   scale?: int,
+ *   fixed?: bool,
+ *   comment?: string,
+ *   alias?: string,
+ *   extra?: mixed,
+ *   virtual?: bool,
+ *   meta?: bool,
+ * }
  */
 class Doctrine_Table extends Doctrine_Configurable implements Countable
 {
@@ -49,15 +74,7 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
      * keys are column names and values are column definitions
      *
      * @var array<string, array<string,mixed>> $columns
-     * @phpstan-var array<string, array{
-     *   type: string,
-     *   length: int,
-     *   notnull?: bool,
-     *   values?: array,
-     *   default?: mixed,
-     *   autoincrement?: bool,
-     *   values?: mixed[],
-     * }>
+     * @phpstan-var array<string, ColumnDefinition>
      */
     protected array $columns = [];
 
@@ -405,9 +422,9 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
      * defines the column.
      *
      * @param  string $columnName the column name
-     * @return string              the name of the owning/defining component
+     * @return string             the name of the owning/defining component
      */
-    public function getColumnOwner($columnName)
+    public function getColumnOwner(string $columnName): string
     {
         if (isset($this->columns[$columnName]['owner'])) {
             return $this->columns[$columnName]['owner'];
@@ -509,9 +526,10 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
      *
      * @param  boolean $parseForeignKeys whether to include foreign keys definition in the options
      * @return array<string, mixed>
+     * @phpstan-import-type ColumnDefinition from Doctrine_Table
      * @phpstan-return array{
      *   tableName: string,
-     *   columns: array<string, array<string, mixed>>,
+     *   columns: array<string, ColumnDefinition>,
      *   options: array{
      *     primary: string[],
      *     foreignKeys: mixed[],
@@ -539,7 +557,7 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
         }
 
         $options = $this->getOptions();
-        $options['foreignKeys'] ??= [];
+        $options['foreignKeys'] = [];
 
         if ($parseForeignKeys && $this->getAttribute(Doctrine_Core::ATTR_EXPORT) & Doctrine_Core::EXPORT_CONSTRAINTS) {
             $constraints = [];
@@ -983,15 +1001,7 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
      *
      * @param string $columnName
      * @return array column definition; @see $columns
-     * @phpstan-return array{
-     *   type: string,
-     *   length: int,
-     *   notnull?: bool,
-     *   values?: array,
-     *   default?: mixed,
-     *   autoincrement?: bool,
-     *   values?: mixed[],
-     * }|null
+     * @phpstan-return ColumnDefinition|null
      */
     public function getColumnDefinition($columnName): ?array
     {
@@ -1033,9 +1043,10 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
      *
      * @param  string|string[] $columnName
      * @param  mixed[] $options
+     * @phpstan-param array<ColumnOptionName, mixed> $options
      * @return void
      */
-    public function setColumnOptions($columnName, array $options)
+    public function setColumnOptions(string|array $columnName, array $options)
     {
         if (is_array($columnName)) {
             foreach ($columnName as $name) {
@@ -1050,13 +1061,9 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
 
     /**
      * Set an individual column option
-     *
-     * @param  string $columnName
-     * @param  string $option
-     * @param  mixed  $value
-     * @return void
+     * @phpstan-param ColumnOptionName $option
      */
-    public function setColumnOption($columnName, $option, $value)
+    public function setColumnOption(string $columnName, string $option, mixed $value): void
     {
         if ($option == 'primary') {
             if ($value && !in_array($columnName, $this->identifier)) {
@@ -1074,10 +1081,9 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
     /**
      * Set multiple column definitions at once
      *
-     * @param  array<string,mixed> $definitions
-     * @return void
+     * @param  array<string, mixed> $definitions
      */
-    public function setColumns(array $definitions)
+    public function setColumns(array $definitions): void
     {
         foreach ($definitions as $name => $options) {
             $this->setColumn($name, $options['type'], $options['length'], $options);
@@ -1913,7 +1919,7 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
                 }
             }
             if ($dataType == 'set') {
-                $values = $this->columns[$fieldName]['values'];
+                $values = $this->columns[$fieldName]['values'] ?? [];
                 // Convert string to array
                 if (is_string($value)) {
                     $value = $value ? explode(',', $value) : [];
@@ -1975,6 +1981,7 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
      *
      * @see    $columns;
      * @return array<string,array<string,mixed>>    keys are column names and values are definition
+     * @phpstan-return array<string, ColumnDefinition>
      */
     public function getColumns()
     {
@@ -2257,7 +2264,7 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
         // this loop is a dirty workaround to get the validators filtered out of
         // the options, since everything is squeezed together currently
         foreach ($this->columns[$columnName] as $name => $args) {
-            if (empty($name) || in_array($name, [
+            if (in_array($name, [
                 'primary',
                 'protected',
                 'autoincrement',

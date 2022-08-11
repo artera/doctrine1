@@ -8,7 +8,7 @@ abstract class Doctrine_Configurable
     protected array $attributes = [];
 
     /**
-     * @var Doctrine_Configurable $parent   the parent of this component
+     * @var ?Doctrine_Configurable $parent   the parent of this component
      */
     protected $parent;
 
@@ -106,6 +106,7 @@ abstract class Doctrine_Configurable
 
     /**
      * @phpstan-return Doctrine_Record_Listener_Interface|Doctrine_Overloadable<Doctrine_Record_Listener_Interface>
+     * @throws Doctrine_EventListener_Exception
      */
     public function getRecordListener(): Doctrine_Record_Listener_Interface|Doctrine_Overloadable
     {
@@ -121,6 +122,7 @@ abstract class Doctrine_Configurable
     /**
      * @phpstan-param Doctrine_Record_Listener_Interface|Doctrine_Overloadable<Doctrine_Record_Listener_Interface> $listener
      * @return $this
+     * @throws Doctrine_Exception
      */
     public function setRecordListener(Doctrine_Record_Listener_Interface|Doctrine_Overloadable $listener): self
     {
@@ -153,6 +155,7 @@ abstract class Doctrine_Configurable
 
     /**
      * @phpstan-return Doctrine_EventListener_Interface|Doctrine_Overloadable<Doctrine_EventListener_Interface>
+     * @throws Doctrine_EventListener_Exception
      */
     public function getListener(): Doctrine_EventListener_Interface|Doctrine_Overloadable
     {
@@ -168,6 +171,7 @@ abstract class Doctrine_Configurable
     /**
      * @phpstan-param Doctrine_EventListener_Interface|Doctrine_Overloadable<Doctrine_EventListener_Interface> $listener
      * @return $this
+     * @throws Doctrine_EventListener_Exception
      */
     public function setListener(Doctrine_EventListener_Interface|Doctrine_Overloadable $listener): self
     {

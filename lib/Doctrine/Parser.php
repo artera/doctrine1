@@ -11,7 +11,7 @@ abstract class Doctrine_Parser
      */
     public static function getParser(string $type): Doctrine_Parser
     {
-        /** * @phpstan-var class-string<Doctrine_Parser> $class */
+        /** @phpstan-var class-string<Doctrine_Parser> $class */
         $class = 'Doctrine_Parser_' . ucfirst($type);
         return new $class;
     }

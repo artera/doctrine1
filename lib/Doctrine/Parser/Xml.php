@@ -75,7 +75,7 @@ class Doctrine_Parser_Xml extends Doctrine_Parser
         $return   = [];
 
         if ($simpleXml instanceof SimpleXMLElement) {
-            $children = $simpleXml->children();
+            $children = $simpleXml->children() ?? [];
         }
 
         foreach ($children as $element => $value) {

@@ -30,6 +30,8 @@ class Doctrine_Query_Where extends Doctrine_Query_Condition
         if (count($terms) > 1) {
             $leftExpr  = array_shift($terms);
             $rightExpr = array_pop($terms);
+            assert($leftExpr !== null);
+            assert($rightExpr !== null);
             $operator  = trim(substr($where, strlen($leftExpr), -strlen($rightExpr)));
 
             if (strpos($leftExpr, "'") === false && strpos($leftExpr, '(') === false) {

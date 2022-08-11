@@ -55,9 +55,10 @@ class Doctrine_Migration
     protected $migrationClassesDirectory = '';
 
     /**
-     * @var array<int, string>
+     * @var string[]
+     * @phpstan-var class-string<Doctrine_Migration_Base>[]
      */
-    protected $migrationClasses = [];
+    protected array $migrationClasses = [];
 
     /**
      * @var ReflectionClass
@@ -75,9 +76,9 @@ class Doctrine_Migration
     protected $process;
 
     /**
-     * @var array
+     * @phpstan-var array<string, class-string<Doctrine_Migration_Base>[]>
      */
-    protected static $migrationClassesForDirectories = [];
+    protected static array $migrationClassesForDirectories = [];
 
     /**
      * Specify the path to the directory with the migration classes.
@@ -164,7 +165,7 @@ class Doctrine_Migration
      * Load migration classes from the passed directory. Any file found with a .php
      * extension will be passed to the loadMigrationClass()
      *
-     * @param  string $directory Directory to load migration classes from
+     * @param  string|string[]|null $directory Directory to load migration classes from
      * @return void
      */
     public function loadMigrationClassesFromDirectory($directory = null)
@@ -193,7 +194,7 @@ class Doctrine_Migration
                     $array     = array_diff(get_declared_classes(), $classes);
                     $className = end($array);
 
-                    if ($className) {
+                    if ($className && is_subclass_of($className, Doctrine_Migration_Base::class)) {
                         $e         = explode('_', $file->getFileName());
                         $timestamp = $e[0];
 
@@ -214,7 +215,7 @@ class Doctrine_Migration
      * to be loaded.
      *
      * @param  string $name
-     * @phpstan-param class-string $name
+     * @phpstan-param class-string<Doctrine_Migration_Base> $name
      * @param  string $path
      * @return bool
      */
@@ -382,6 +383,7 @@ class Doctrine_Migration
         } else {
             if ($dryRun) {
                 $this->connection->rollback();
+                /** @phpstan-ignore-next-line */
                 return $this->hasErrors() ? null : $to;
             } else {
                 $this->connection->commit();

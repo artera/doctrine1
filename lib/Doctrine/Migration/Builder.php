@@ -6,31 +6,23 @@ class Doctrine_Migration_Builder
 {
     /**
      * The path to your migration classes directory
-     *
-     * @var string
      */
-    private $migrationsPath = '';
+    private string $migrationsPath = '';
 
     /**
-     * File suffix to use when writing class definitions
-     *
-     * @var string $suffix
+     * File suffix to use when writing class definition
      */
-    private $suffix = '.php';
+    private string $suffix = '.php';
 
     /**
      * Instance of the migration class for the migration classes directory
-     *
-     * @var Doctrine_Migration $migration
      */
-    private $migration;
+    private Doctrine_Migration $migration;
 
     /**
      * Class template used for writing classes
-     *
-     * @var string $tpl
      */
-    private static $tpl;
+    protected static string $tpl;
 
     /**
      * Instantiate new instance of the Doctrine_Migration_Builder class
@@ -61,7 +53,7 @@ class Doctrine_Migration_Builder
      * @param  string $path the path where migration classes are stored and being generated
      * @return void
      */
-    public function setMigrationsPath($path)
+    public function setMigrationsPath(string $path): void
     {
         Doctrine_Lib::makeDirectories($path);
 
@@ -73,17 +65,15 @@ class Doctrine_Migration_Builder
      *
      * @return string       the path where migration classes are stored and being generated
      */
-    public function getMigrationsPath()
+    public function getMigrationsPath(): string
     {
         return $this->migrationsPath;
     }
 
     /**
      * Loads the class template used for generating classes
-     *
-     * @return void
      */
-    protected function loadTemplate()
+    protected function loadTemplate(): void
     {
         if (isset(self::$tpl)) {
             return;
@@ -129,11 +119,10 @@ END;
     /**
      * Generate a set of migrations from a set of models
      *
-     * @param  string $modelsPath   Path to models
-     * @param  int    $modelLoading What type of model loading to use when loading the models
-     * @return boolean
+     * @param  string|null $modelsPath   Path to models
+     * @param  int|null    $modelLoading What type of model loading to use when loading the models
      */
-    public function generateMigrationsFromModels($modelsPath = null, $modelLoading = null)
+    public function generateMigrationsFromModels(?string $modelsPath = null, ?int $modelLoading = null): bool
     {
         if ($modelsPath !== null) {
             $models = Doctrine_Core::filterInvalidModels(Doctrine_Core::loadModels($modelsPath, $modelLoading));
@@ -187,35 +176,24 @@ END;
 
     /**
      * Build the code for creating foreign keys
-     *
-     * @param  string $tableName
-     * @param  array  $definition
-     * @return string $code
      */
-    public function buildCreateForeignKey($tableName, $definition)
+    public function buildCreateForeignKey(string $tableName, array $definition): string
     {
         return "        \$this->createForeignKey('" . $tableName . "', '" . $definition['name'] . "', " . $this->varExport($definition) . ');';
     }
 
     /**
      * Build the code for dropping foreign keys
-     *
-     * @param  string $tableName
-     * @param  array  $definition
-     * @return string $code
      */
-    public function buildDropForeignKey($tableName, $definition)
+    public function buildDropForeignKey(string $tableName, array $definition): string
     {
         return "        \$this->dropForeignKey('" . $tableName . "', '" . $definition['name'] . "');";
     }
 
     /**
      * Build the code for creating tables
-     *
-     * @param  array $tableData
-     * @return string $code
      */
-    public function buildCreateTable($tableData)
+    public function buildCreateTable(array $tableData): string
     {
         $code = "        \$this->createTable('" . $tableData['tableName'] . "', ";
 
@@ -239,24 +217,16 @@ END;
 
     /**
      * Build the code for dropping tables
-     *
-     * @param  array $tableData
-     * @return string $code
      */
-    public function buildDropTable($tableData)
+    public function buildDropTable(array $tableData): string
     {
         return "        \$this->dropTable('" . $tableData['tableName'] . "');";
     }
 
     /**
      * Build the code for adding columns
-     *
-     * @param  string $tableName
-     * @param  string $columnName
-     * @param  array  $column
-     * @return string $code
      */
-    public function buildAddColumn($tableName, $columnName, $column)
+    public function buildAddColumn(string $tableName, string $columnName, array $column): string
     {
         $length = $column['length'];
         $type   = $column['type'];
@@ -266,26 +236,16 @@ END;
 
     /**
      * Build the code for removing columns
-     *
-     * @param  string $tableName
-     * @param  string $columnName
-     * @param  array  $column
-     * @return string $code
      */
-    public function buildRemoveColumn($tableName, $columnName, $column)
+    public function buildRemoveColumn(string $tableName, string $columnName, array $column): string
     {
         return "        \$this->removeColumn('" . $tableName . "', '" . $columnName . "');";
     }
 
     /**
      * Build the code for changing columns
-     *
-     * @param  string $tableName
-     * @param  string $columnName
-     * @param  array  $column
-     * @return string $code
      */
-    public function buildChangeColumn($tableName, $columnName, $column)
+    public function buildChangeColumn(string $tableName, string $columnName, array $column): string
     {
         $length = $column['length'];
         $type   = $column['type'];
@@ -295,26 +255,16 @@ END;
 
     /**
      * Build the code for adding indexes
-     *
-     * @param  string $tableName
-     * @param  string $indexName
-     * @param  string $index
-     * @return string $code
      */
-    public function buildAddIndex($tableName, $indexName, $index)
+    public function buildAddIndex(string $tableName, string $indexName, string $index): string
     {
         return "        \$this->addIndex('$tableName', '$indexName', " . $this->varExport($index) . ');';
     }
 
     /**
      * Build the code for removing indexes
-     *
-     * @param  string $tableName
-     * @param  string $indexName
-     * @param  string $index
-     * @return string $code
      */
-    public function buildRemoveIndex($tableName, $indexName, $index)
+    public function buildRemoveIndex(string $tableName, string $indexName, string $index): string
     {
         return "        \$this->removeIndex('$tableName', '$indexName', " . $this->varExport($index) . ');';
     }
@@ -329,31 +279,27 @@ END;
      * @param  boolean $return    Whether or not to return the code.
      *                            If true return and false it writes
      *                            the class to disk.
-     * @return mixed
      */
-    public function generateMigrationClass($className, $options = [], $up = null, $down = null, $return = false)
+    public function generateMigrationClass(string $className, array $options = [], ?string $up = null, ?string $down = null, bool $return = false): string|bool
     {
-        if ($return || !$this->getMigrationsPath()) {
+        $migrationsPath = $this->getMigrationsPath();
+        if ($return || !$migrationsPath) {
             return $this->buildMigrationClass($className, null, $options, $up, $down);
         } else {
-            if (!$this->getMigrationsPath()) {
-                throw new Doctrine_Migration_Exception('You must specify the path to your migrations.');
-            }
-
             $next = time() + $this->migration->getNextMigrationClassVersion();
             $fileName = $next . '_' . Doctrine_Inflector::tableize($className) . $this->suffix;
 
             $class = $this->buildMigrationClass($className, $fileName, $options, $up, $down);
 
-            if (class_exists($className)) {
+            if (is_subclass_of($className, Doctrine_Migration_Base::class)) {
                 $this->migration->loadMigrationClass($className);
                 return false;
             }
 
-            $path = $this->getMigrationsPath() . DIRECTORY_SEPARATOR . $fileName;
+            $path = "$migrationsPath/$fileName";
             file_put_contents($path, $class);
             include_once $path;
-            assert(class_exists($className));
+            assert(is_subclass_of($className, Doctrine_Migration_Base::class));
             $this->migration->loadMigrationClass($className);
 
             return true;
@@ -370,7 +316,7 @@ END;
      * @param  string $down      The code for the down function
      * @return string $content     The code for the generated class
      */
-    public function buildMigrationClass($className, $fileName = null, $options = [], $up = null, $down = null)
+    public function buildMigrationClass(string $className, ?string $fileName = null, array $options = [], string $up = null, string $down = null): string
     {
         return "<?php\n" . sprintf(
             self::$tpl,

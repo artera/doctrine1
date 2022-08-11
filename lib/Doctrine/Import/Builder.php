@@ -67,7 +67,7 @@ class Doctrine_Import_Builder
             $this->baseTableClassName = $tableClass;
         }
         if ($classPrefix = $manager->getAttribute(Doctrine_Core::ATTR_MODEL_CLASS_PREFIX)) {
-            $this->classPrefix = $classPrefix ?? '';
+            $this->classPrefix = $classPrefix;
         }
         if ($tableClassFormat = $manager->getAttribute(Doctrine_Core::ATTR_TABLE_CLASS_FORMAT)) {
             $this->tableClassFormat = $tableClassFormat;

@@ -24,8 +24,9 @@ class CoreDynamicReturnTypeExtension extends AbstractExtension implements Dynami
 
     public function getTypeFromStaticMethodCall(MethodReflection $methodReflection, StaticCall $methodCall, Scope $scope): Type
     {
-        if (count($methodCall->args)) {
-            $componentNameArg = $scope->getType($methodCall->args[0]->value);
+        $args = $methodCall->getArgs();
+        if (count($args)) {
+            $componentNameArg = $scope->getType($args[0]->value);
 
             if ($componentNameArg instanceof ConstantStringType) {
                 // TODO: handle different table class-name formats
@@ -36,7 +37,7 @@ class CoreDynamicReturnTypeExtension extends AbstractExtension implements Dynami
 
         return \PHPStan\Reflection\ParametersAcceptorSelector::selectFromArgs(
             $scope,
-            $methodCall->args,
+            $methodCall->getArgs(),
             $methodReflection->getVariants()
         )->getReturnType();
     }

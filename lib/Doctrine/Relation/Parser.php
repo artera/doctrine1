@@ -238,6 +238,8 @@ class Doctrine_Relation_Parser
      *   type: int,
      *   class: class-string<Doctrine_Record>,
      *   refClass: class-string<Doctrine_Record>,
+     *   refClassRelationAlias?: ?string,
+     *   foreign?: string,
      *   local?: string,
      * } $def
      * @phpstan-return array{
@@ -248,6 +250,7 @@ class Doctrine_Relation_Parser
      *   class: class-string<Doctrine_Record>,
      *   refTable: Doctrine_Table,
      *   refClass: class-string<Doctrine_Record>,
+     *   refClassRelationAlias?: ?string,
      *   foreign: string,
      *   local: string,
      * }
@@ -371,6 +374,8 @@ class Doctrine_Relation_Parser
      *   class: class-string<Doctrine_Record>,
      *   local?: string,
      *   owningSide?: bool,
+     *   foreign?: string,
+     *   localKey?: bool,
      * } $def
      * @phpstan-return array{
      *   alias: string,

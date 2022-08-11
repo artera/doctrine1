@@ -127,6 +127,7 @@ abstract class Doctrine_Access implements ArrayAccess
     /**
      * Remove the element with the specified offset
      *
+     * @throws Doctrine_Exception
      * @param  scalar|null $offset The offset to remove
      * @return void
      */
@@ -138,6 +139,7 @@ abstract class Doctrine_Access implements ArrayAccess
     /**
      * Return the element with the specified offset
      *
+     * @throws Doctrine_Exception
      * @param  scalar|null $offset The offset to return
      * @return mixed
      */
@@ -149,6 +151,7 @@ abstract class Doctrine_Access implements ArrayAccess
     /**
      * Set the offset to the value
      *
+     * @throws Doctrine_Exception
      * @param scalar|null $offset The offset to set
      * @param mixed       $value  The value to set the offset to
      *
@@ -162,6 +165,7 @@ abstract class Doctrine_Access implements ArrayAccess
     /**
      * Check if the specified offset exists
      *
+     * @throws Doctrine_Exception
      * @param  scalar|null $offset The offset to check
      * @return boolean True if exists otherwise false
      */
@@ -173,6 +177,7 @@ abstract class Doctrine_Access implements ArrayAccess
     /**
      * Add the value
      *
+     * @throws Doctrine_Exception
      * @param  mixed $value The value to add
      * @return void
      */

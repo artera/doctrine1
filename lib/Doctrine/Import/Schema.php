@@ -242,7 +242,7 @@ class Doctrine_Import_Schema
     {
         $builder = new Doctrine_Import_Builder();
         if ($directory !== null) {
-            $builder->setTargetPath($directory ?? '');
+            $builder->setTargetPath($directory);
         }
         $builder->setOptions($this->getOptions());
 

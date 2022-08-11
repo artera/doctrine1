@@ -27,7 +27,7 @@ class Doctrine_Validator
                 $options = array_merge($validatorClass['options'], $options);
                 $validatorClass = $validatorClass['class'];
             }
-        } elseif (class_exists($name) && in_array(ValidatorInterface::class, class_implements($name) ?: [])) {
+        } elseif (class_exists($name) && is_subclass_of($name, ValidatorInterface::class)) {
             $validatorClass = $name;
         } else {
             throw new Doctrine_Exception("Validator named '$name' not available.");

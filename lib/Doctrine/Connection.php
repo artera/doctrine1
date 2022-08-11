@@ -148,7 +148,7 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
     ];
 
     /**
-     * @var Doctrine_Manager $parent   the parent of this component
+     * @var ?Doctrine_Manager $parent   the parent of this component
      */
     protected $parent;
 
@@ -219,6 +219,7 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
      * @return mixed
      * @phpstan-param T $value
      * @phpstan-return T
+     * @throws Doctrine_Connection_Exception
      */
     public function setOption(string $option, mixed $value): mixed
     {
@@ -379,6 +380,7 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
 
     /**
      * connects into database
+     * @throws Doctrine_Connection_Exception
      */
     public function connect(): bool
     {
@@ -414,7 +416,7 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
         if (!$found) {
             $class = 'Doctrine_Adapter_' . ucwords($e[0]);
 
-            if (class_exists($class)) {
+            if (class_exists($class) && is_subclass_of($class, \PDO::class)) {
                 $this->dbh = new $class($this->options['dsn'], $this->options['username'], $this->options['password'], $this->options);
             } else {
                 throw new Doctrine_Connection_Exception("Couldn't locate driver named " . $e[0]);
@@ -1154,6 +1156,9 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
         return $this->dbh->errorInfo();
     }
 
+    /**
+     * @throws Doctrine_Exception
+     */
     public function getResultCacheDriver(): Doctrine_Cache_Interface
     {
         if (!$this->getAttribute(Doctrine_Core::ATTR_RESULT_CACHE)) {
@@ -1163,6 +1168,9 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
         return $this->getAttribute(Doctrine_Core::ATTR_RESULT_CACHE);
     }
 
+    /**
+     * @throws Doctrine_Exception
+     */
     public function getQueryCacheDriver(): Doctrine_Cache_Interface
     {
         if (!$this->getAttribute(Doctrine_Core::ATTR_QUERY_CACHE)) {
@@ -1182,7 +1190,7 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
      * @param string|null $table name of the table into which a new row was inserted
      * @param string|null $field name of the field into which a new row was inserted
      */
-    public function lastInsertId(?string $table = null, ?string $field = null): string
+    public function lastInsertId(?string $table = null, ?string $field = null): string|false
     {
         return $this->sequence->lastInsertId($table, $field);
     }
@@ -1243,6 +1251,7 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
 
     /**
      * Issue create database command for this instance of Doctrine_Connection
+     * @throws Doctrine_Connection_Exception
      */
     public function createDatabase(): void
     {
@@ -1270,6 +1279,7 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
 
     /**
      * Issue drop database command for this instance of Doctrine_Connection
+     * @throws Doctrine_Connection_Exception
      */
     public function dropDatabase(): void
     {

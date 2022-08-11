@@ -16,5 +16,5 @@ parameters:
     - lib
     - src
   ignoreErrors:
-    - '#with type mixed is not subtype of native type iterable#'
     - '#Unsafe usage of new static#'
+    - '#Method Doctrine_Relation_Parser::completeDefinition\(\) should return array#'

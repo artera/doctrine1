@@ -3,21 +3,6 @@
 class Doctrine_Connection_Profiler implements Doctrine_Overloadable, IteratorAggregate, Countable
 {
     /**
-     * all available listeners
-     * @var string[]
-     */
-    private array $listeners = [
-        'query',
-        'prepare',
-        'commit',
-        'rollback',
-        'connect',
-        'begintransaction',
-        'exec',
-        'execute',
-    ];
-
-    /**
      * all listened events
      */
     private array $events = [];

@@ -395,6 +395,7 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
      * @see    parseDsn()
      * @param  string $dsn
      * @return array $parts
+     * @throws Doctrine_Manager_Exception
      */
     protected function buildDsnPartsArray(string $dsn): array
     {
@@ -426,6 +427,7 @@ class Doctrine_Manager extends Doctrine_Configurable implements Countable, Itera
      *
      * @param  string $dsn
      * @return array Parsed contents of DSN
+     * @throws Doctrine_Manager_Exception
      */
     public function parseDsn(string $dsn): array
     {
