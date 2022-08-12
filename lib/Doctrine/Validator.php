@@ -69,17 +69,7 @@ class Doctrine_Validator
         } elseif ($type == 'array' || $type == 'object') {
             $length = strlen(serialize($value));
         } elseif ($type == 'decimal' || $type == 'float') {
-            $value = abs($value);
-
-            $localeInfo = localeconv();
-            $decimalPoint = $localeInfo['mon_decimal_point'] ? $localeInfo['mon_decimal_point'] : $localeInfo['decimal_point'];
-            $e = explode($decimalPoint, (string) $value);
-
-            $length = strlen($e[0]);
-
-            if (isset($e[1])) {
-                $length = $length + strlen($e[1]);
-            }
+            $length = strlen(preg_replace('/[^0-9]/', '', $value) ?? $value);
         } elseif ($type == 'blob') {
             $length = strlen($value);
         } else {
