@@ -208,24 +208,41 @@ class SelectTest extends DoctrineUnitTestCase
         $this->assertEquals($users[4]->max, '444 555');
     }
 
+    public function testSelectExpressionParams(): void
+    {
+        $q = \Doctrine_Query::create()
+            ->select('u.id, p.id, (u.id > ?) as gt5', 5)
+            ->from('User u')
+            ->leftJoin('u.Phonenumber p');
+
+        $this->assertEquals(
+            'SELECT e.id AS e__id, p.id AS p__id, (e.id > ?) AS e__0 FROM entity e LEFT JOIN phonenumber p ON e.id = p.entity_id WHERE (e.type = 0)',
+            $q->getSqlQuery(),
+        );
+
+        $q->fetchArray();
+    }
+
     public function testWhereInSupportInDql(): void
     {
         $q = \Doctrine_Query::create()
-            ->select('u.id, p.id')
+            ->select('u.id, p.id, (u.id > ?) as gt5')
             ->from('User u')
             ->leftJoin('u.Phonenumber p')
             ->where('u.id IN ?');
 
-        $params = [[4, 5, 6]];
+        $params = [5, [4, 5, 6]];
 
         $this->assertEquals(
+            'SELECT e.id AS e__id, p.id AS p__id, (e.id > ?) AS e__0 FROM entity e LEFT JOIN phonenumber p ON e.id = p.entity_id WHERE (e.id IN (?, ?, ?) AND (e.type = 0))',
             $q->getSqlQuery($params),
-            'SELECT e.id AS e__id, p.id AS p__id FROM entity e LEFT JOIN phonenumber p ON e.id = p.entity_id WHERE (e.id IN (?, ?, ?) AND (e.type = 0))'
         );
 
         $users = $q->execute($params, \Doctrine_Core::HYDRATE_ARRAY);
 
         $this->assertEquals(count($users), 3);
+        $this->assertEquals(0, $users[0]['gt5']);
+        $this->assertEquals(1, $users[2]['gt5']);
     }
 
     public function testEmptyWhereInSupportInDql(): void
@@ -239,8 +256,8 @@ class SelectTest extends DoctrineUnitTestCase
         $params = [[]];
 
         $this->assertEquals(
+            'SELECT e.id AS e__id, p.id AS p__id FROM entity e LEFT JOIN phonenumber p ON e.id = p.entity_id WHERE (e.id IN (?) AND (e.type = 0))',
             $q->getSqlQuery($params),
-            'SELECT e.id AS e__id, p.id AS p__id FROM entity e LEFT JOIN phonenumber p ON e.id = p.entity_id WHERE (e.id IN (?) AND (e.type = 0))'
         );
 
         $users = $q->execute($params, \Doctrine_Core::HYDRATE_ARRAY);

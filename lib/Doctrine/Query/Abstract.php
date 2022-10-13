@@ -1212,10 +1212,16 @@ abstract class Doctrine_Query_Abstract
      * </code>
      *
      * @param  string $select Query SELECT part
+     * @param  array|scalar|null $params
      * @return $this
      */
-    public function addSelect($select)
+    public function addSelect($select, $params = [])
     {
+        if (is_array($params)) {
+            $this->params['select'] = array_merge($this->params['select'], $params);
+        } else {
+            $this->params['select'][] = $params;
+        }
         return $this->addDqlQueryPart('select', $select, true);
     }
 
@@ -1451,10 +1457,16 @@ abstract class Doctrine_Query_Abstract
      * </code>
      *
      * @param  string $groupby Query GROUP BY part
+     * @param  array|scalar $params an array of parameters or a simple scalar
      * @return $this
      */
-    public function addGroupBy($groupby)
+    public function addGroupBy($groupby, $params = [])
     {
+        if (is_array($params)) {
+            $this->params['groupby'] = array_merge($this->params['groupby'], $params);
+        } else {
+            $this->params['groupby'][] = $params;
+        }
         return $this->addDqlQueryPart('groupby', $groupby, true);
     }
 
@@ -1486,10 +1498,16 @@ abstract class Doctrine_Query_Abstract
      * adds fields to the ORDER BY part of the query
      *
      * @param  string $orderby Query ORDER BY part
+     * @param  array|scalar $params an array of parameters or a simple scalar
      * @return $this
      */
-    public function addOrderBy($orderby)
+    public function addOrderBy($orderby, $params = [])
     {
+        if (is_array($params)) {
+            $this->params['orderby'] = array_merge($this->params['orderby'], $params);
+        } else {
+            $this->params['orderby'][] = $params;
+        }
         return $this->addDqlQueryPart('orderby', $orderby, true);
     }
 
@@ -1497,13 +1515,22 @@ abstract class Doctrine_Query_Abstract
      * sets the SELECT part of the query
      *
      * @param  string $select Query SELECT part
+     * @param  array|scalar $params an array of parameters or a simple scalar
      * @return $this
      * @phpstan-return static<Record, Doctrine_Query_Type_Select>
      */
-    public function select($select = null)
+    public function select($select = null, $params = [])
     {
         $this->type = Doctrine_Query_Type::SELECT();
         if ($select) {
+            $this->params['select'] = [];
+
+            if (is_array($params)) {
+                $this->params['select'] = $params;
+            } else {
+                $this->params['select'][] = $params;
+            }
+
             return $this->addDqlQueryPart('select', $select);
         } else {
             return $this;
@@ -1660,10 +1687,19 @@ abstract class Doctrine_Query_Abstract
      * sets the GROUP BY part of the query
      *
      * @param  string $groupby Query GROUP BY part
+     * @param  array|scalar|null $params an array of parameters or a simple scalar
      * @return $this
      */
-    public function groupBy($groupby)
+    public function groupBy($groupby, $params = [])
     {
+        $this->params['groupby'] = [];
+
+        if (is_array($params)) {
+            $this->params['groupby'] = $params;
+        } else {
+            $this->params['groupby'][] = $params;
+        }
+
         return $this->addDqlQueryPart('groupby', $groupby);
     }
 
@@ -1716,10 +1752,19 @@ abstract class Doctrine_Query_Abstract
      * </code>
      *
      * @param  string $orderby Query ORDER BY part
+     * @param  array|scalar $params an array of parameters or a simple scalar
      * @return $this
      */
-    public function orderBy($orderby)
+    public function orderBy($orderby, $params = [])
     {
+        $this->params['orderby'] = [];
+
+        if (is_array($params)) {
+            $this->params['orderby'] = $params;
+        } else {
+            $this->params['orderby'][] = $params;
+        }
+
         return $this->addDqlQueryPart('orderby', $orderby);
     }
 
