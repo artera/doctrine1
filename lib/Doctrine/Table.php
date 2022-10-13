@@ -892,7 +892,6 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
      *
      * @return Doctrine_Query
      *
-     * @psalm-return Doctrine_Query<Doctrine_Record>
      * @phpstan-return Doctrine_Query<T, Doctrine_Query_Type_Select>
      */
     public function createQuery($alias = ''): Doctrine_Query
@@ -1470,7 +1469,6 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
     /**
      * Retrieves all the records stored in this table.
      *
-     * @psalm-return Doctrine_Collection<Doctrine_Record>|array
      * @phpstan-return Doctrine_Collection<T>|array<string,mixed>[]
      */
     public function findAll(bool $hydrate_array = false): Doctrine_Collection|array
@@ -1803,8 +1801,6 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
      * @return Doctrine_Query
      *
      * @phpstan-return Doctrine_Query<T, Doctrine_Query_Type_Select>
-     *
-     * @psalm-return Doctrine_Query<Doctrine_Record>
      */
     public function getQueryObject(): Doctrine_Query
     {
@@ -2198,7 +2194,6 @@ class Doctrine_Table extends Doctrine_Configurable implements Countable
     /**
      * Gets the subclass of Doctrine_Record that belongs to this table.
      *
-     * @psalm-return   class-string
      * @phpstan-return class-string<T>
      */
     public function getComponentName(): string

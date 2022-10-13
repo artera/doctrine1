@@ -207,7 +207,6 @@ class Doctrine_Cli
      *
      * @param       string      $taskName
      * @param       string|null $className
-     * @psalm-param class-string|null $className
      * @phpstan-param class-string<Doctrine_Task>|null $className
      * @return      bool
      */
@@ -388,7 +387,6 @@ class Doctrine_Cli
      * Displays a message, and returns FALSE, if there were problems instantiating the class
      *
      * @param       string       $className
-     * @psalm-param class-string $className
      * @param       Doctrine_Cli $cli       Doctrine_Cli
      * @return      Doctrine_Task
      * @phpstan-template T of Doctrine_Task

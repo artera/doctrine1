@@ -350,9 +350,6 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
                     $this->modules[$name] = new Doctrine_Formatter($this);
                     break;
                 default:
-                    /**
-     * @psalm-var class-string $class
-*/
                     $class                = 'Doctrine_' . ucwords($name) . '_' . $this->getDriverName();
                     $this->modules[$name] = new $class($this);
             }
@@ -691,8 +688,6 @@ abstract class Doctrine_Connection extends Doctrine_Configurable implements Coun
      * @param array|bool|int|float $item
      *
      * @return mixed[]|bool|int|float
-     *
-     * @psalm-return array<array-key, int|mixed>|bool|int
      */
     public function convertBooleans(array|string|bool|int|float $item): array|string|bool|int|float
     {

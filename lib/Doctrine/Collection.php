@@ -70,7 +70,6 @@ class Doctrine_Collection extends Doctrine_Access implements Countable, Iterator
 
     /**
      * @phpstan-param  Doctrine_Table<T>|class-string<T> $table
-     * @psalm-param    class-string|null $class
      * @phpstan-param  class-string<Doctrine_Collection<T>>|null $class
      * @phpstan-return Doctrine_Collection<T>
      */
