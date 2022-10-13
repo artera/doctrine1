@@ -208,19 +208,22 @@ class SelectTest extends DoctrineUnitTestCase
         $this->assertEquals($users[4]->max, '444 555');
     }
 
-    public function testSelectExpressionParams(): void
+    public function testSelectParams(): void
     {
         $q = \Doctrine_Query::create()
-            ->select('u.id, p.id, (u.id > ?) as gt5', 5)
+            ->select('u.id, p.id')
+            ->addSelect('(u.id > ?) AS gt5', 5)
             ->from('User u')
-            ->leftJoin('u.Phonenumber p');
+            ->leftJoin('u.Phonenumber p')
+            ->where('u.id > ?', 3);
 
         $this->assertEquals(
-            'SELECT e.id AS e__id, p.id AS p__id, (e.id > ?) AS e__0 FROM entity e LEFT JOIN phonenumber p ON e.id = p.entity_id WHERE (e.type = 0)',
+            'SELECT e.id AS e__id, p.id AS p__id, (e.id > ?) AS e__0 FROM entity e LEFT JOIN phonenumber p ON e.id = p.entity_id WHERE (e.id > ? AND (e.type = 0))',
             $q->getSqlQuery(),
         );
 
-        $q->fetchArray();
+        $users = $q->fetchArray();
+        $this->assertNotEmpty($users);
     }
 
     public function testWhereInSupportInDql(): void
