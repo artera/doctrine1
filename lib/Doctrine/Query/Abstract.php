@@ -51,6 +51,9 @@ abstract class Doctrine_Query_Abstract
         'where'  => [],
         'set'    => [],
         'having' => [],
+        'select' => [],
+        'groupby' => [],
+        'orderby' => [],
     ];
 
     /**
@@ -456,7 +459,10 @@ abstract class Doctrine_Query_Abstract
             $this->params['join'],
             $this->params['set'],
             $this->params['where'],
-            $this->params['having']
+            $this->params['having'],
+            $this->params['select'],
+            $this->params['groupby'],
+            $this->params['orderby'],
         );
     }
 

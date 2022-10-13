@@ -11,40 +11,44 @@ class Doctrine_Connection_Mysql extends Doctrine_Connection
     {
         $this->setAttribute(Doctrine_Core::ATTR_DEFAULT_TABLE_TYPE, 'INNODB');
         $this->supported = [
-                          'sequences'            => 'emulated',
-                          'indexes'              => true,
-                          'affected_rows'        => true,
-                          'transactions'         => true,
-                          'savepoints'           => false,
-                          'summary_functions'    => true,
-                          'order_by_text'        => true,
-                          'current_id'           => 'emulated',
-                          'limit_queries'        => true,
-                          'LOBs'                 => true,
-                          'replace'              => true,
-                          'sub_selects'          => true,
-                          'auto_increment'       => true,
-                          'primary_key'          => true,
-                          'result_introspection' => true,
-                          'prepared_statements'  => 'emulated',
-                          'identifier_quoting'   => true,
-                          'pattern_escaping'     => true
-                          ];
+            'sequences'            => 'emulated',
+            'indexes'              => true,
+            'affected_rows'        => true,
+            'transactions'         => true,
+            'savepoints'           => false,
+            'summary_functions'    => true,
+            'order_by_text'        => true,
+            'current_id'           => 'emulated',
+            'limit_queries'        => true,
+            'LOBs'                 => true,
+            'replace'              => true,
+            'sub_selects'          => true,
+            'auto_increment'       => true,
+            'primary_key'          => true,
+            'result_introspection' => true,
+            'prepared_statements'  => true,
+            'identifier_quoting'   => true,
+            'pattern_escaping'     => true
+        ];
 
-        $this->properties['string_quoting'] = ['start'          => "'",
-                                                    'end'            => "'",
-                                                    'escape'         => '\\',
-                                                    'escape_pattern' => '\\'];
+        $this->properties['string_quoting'] = [
+            'start'          => "'",
+            'end'            => "'",
+            'escape'         => '\\',
+            'escape_pattern' => '\\'
+        ];
 
-        $this->properties['identifier_quoting'] = ['start'  => '`',
-                                                        'end'    => '`',
-                                                        'escape' => '`'];
+        $this->properties['identifier_quoting'] = [
+            'start'  => '`',
+            'end'    => '`',
+            'escape' => '`'
+        ];
 
         $this->properties['sql_comments'] = [
-                                            ['start' => '-- ', 'end' => "\n", 'escape' => false],
-                                            ['start' => '#', 'end' => "\n", 'escape' => false],
-                                            ['start' => '/*', 'end' => '*/', 'escape' => false],
-                                            ];
+            ['start' => '-- ', 'end' => "\n", 'escape' => false],
+            ['start' => '#', 'end' => "\n", 'escape' => false],
+            ['start' => '/*', 'end' => '*/', 'escape' => false],
+        ];
 
         $this->properties['varchar_max_length'] = 255;
 

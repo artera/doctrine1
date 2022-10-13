@@ -8,34 +8,38 @@ class Doctrine_Connection_Pgsql extends Doctrine_Connection
     {
         // initialize all driver options
         $this->supported = [
-                          'sequences'            => true,
-                          'indexes'              => true,
-                          'affected_rows'        => true,
-                          'summary_functions'    => true,
-                          'order_by_text'        => true,
-                          'transactions'         => true,
-                          'savepoints'           => true,
-                          'current_id'           => true,
-                          'limit_queries'        => true,
-                          'LOBs'                 => true,
-                          'replace'              => 'emulated',
-                          'sub_selects'          => true,
-                          'auto_increment'       => 'emulated',
-                          'primary_key'          => true,
-                          'result_introspection' => true,
-                          'prepared_statements'  => true,
-                          'identifier_quoting'   => true,
-                          'pattern_escaping'     => true,
-                          ];
+            'sequences'            => true,
+            'indexes'              => true,
+            'affected_rows'        => true,
+            'summary_functions'    => true,
+            'order_by_text'        => true,
+            'transactions'         => true,
+            'savepoints'           => true,
+            'current_id'           => true,
+            'limit_queries'        => true,
+            'LOBs'                 => true,
+            'replace'              => 'emulated',
+            'sub_selects'          => true,
+            'auto_increment'       => 'emulated',
+            'primary_key'          => true,
+            'result_introspection' => true,
+            'prepared_statements'  => true,
+            'identifier_quoting'   => true,
+            'pattern_escaping'     => true,
+        ];
 
-        $this->properties['string_quoting'] = ['start'          => "'",
-                                                    'end'            => "'",
-                                                    'escape'         => "'",
-                                                    'escape_pattern' => '\\'];
+        $this->properties['string_quoting'] = [
+            'start'          => "'",
+            'end'            => "'",
+            'escape'         => "'",
+            'escape_pattern' => '\\'
+        ];
 
-        $this->properties['identifier_quoting'] = ['start'  => '"',
-                                                        'end'    => '"',
-                                                        'escape' => '"'];
+        $this->properties['identifier_quoting'] = [
+            'start'  => '"',
+            'end'    => '"',
+            'escape' => '"'
+        ];
         parent::__construct($manager, $adapter);
     }
 
@@ -105,7 +109,8 @@ class Doctrine_Connection_Pgsql extends Doctrine_Connection
         if (!$native) {
             $tmp = explode('.', $serverInfo, 3);
 
-            if (empty($tmp[2]) && isset($tmp[1])
+            if (
+                empty($tmp[2]) && isset($tmp[1])
                 && preg_match('/(\d+)(.*)/', $tmp[1], $tmp2)
             ) {
                 $serverInfo = [
@@ -138,7 +143,8 @@ class Doctrine_Connection_Pgsql extends Doctrine_Connection
         $a = [];
 
         foreach ($fields as $fieldName => $value) {
-            if ($table->isIdentifier($fieldName)
+            if (
+                $table->isIdentifier($fieldName)
                 && $table->isIdentifierAutoincrement()
                 && $value == null
             ) {
@@ -160,15 +166,15 @@ class Doctrine_Connection_Pgsql extends Doctrine_Connection
             // Real fix #1786 and #2327 (default values when table is just 'id' as PK)
             return $this->exec(
                 'INSERT INTO ' . $this->quoteIdentifier($tableName)
-                              . ' '
-                . ' VALUES (DEFAULT)'
+                    . ' '
+                    . ' VALUES (DEFAULT)'
             );
         }
 
         // build the statement
         $query = 'INSERT INTO ' . $this->quoteIdentifier($tableName)
-                . ' (' . implode(', ', $cols) . ')'
-                . ' VALUES (' . implode(', ', $a) . ')';
+            . ' (' . implode(', ', $cols) . ')'
+            . ' VALUES (' . implode(', ', $a) . ')';
 
         return $this->exec($query, array_values($fields));
     }
