@@ -456,12 +456,12 @@ abstract class Doctrine_Query_Abstract
         return array_merge(
             (array) $params,
             (array) $this->params['exec'],
+            $this->params['select'],
             $this->params['join'],
             $this->params['set'],
             $this->params['where'],
-            $this->params['having'],
-            $this->params['select'],
             $this->params['groupby'],
+            $this->params['having'],
             $this->params['orderby'],
         );
     }
@@ -504,7 +504,16 @@ abstract class Doctrine_Query_Abstract
 
         $this->params['exec'] = $params;
 
-        $params = array_merge($this->params['join'], $this->params['where'], $this->params['having'], $this->params['exec']);
+        $params = array_merge(
+            $this->params['select'],
+            $this->params['join'],
+            $this->params['set'],
+            $this->params['where'],
+            $this->params['groupby'],
+            $this->params['having'],
+            $this->params['orderby'],
+            $this->params['exec'],
+        );
 
         $this->fixArrayParameterValues($params);
 
@@ -1806,19 +1815,19 @@ abstract class Doctrine_Query_Abstract
     protected function clear()
     {
         $this->sqlParts = [
-                    'select'    => [],
-                    'distinct'  => false,
-                    'forUpdate' => false,
-                    'from'      => [],
-                    'set'       => [],
-                    'join'      => [],
-                    'where'     => [],
-                    'groupby'   => [],
-                    'having'    => [],
-                    'orderby'   => [],
-                    'limit'     => false,
-                    'offset'    => false,
-                    ];
+            'select'    => [],
+            'distinct'  => false,
+            'forUpdate' => false,
+            'from'      => [],
+            'set'       => [],
+            'join'      => [],
+            'where'     => [],
+            'groupby'   => [],
+            'having'    => [],
+            'orderby'   => [],
+            'limit'     => false,
+            'offset'    => false,
+        ];
     }
 
     /**
