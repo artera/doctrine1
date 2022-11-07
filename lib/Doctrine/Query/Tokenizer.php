@@ -291,10 +291,12 @@ class Doctrine_Query_Tokenizer
             if ($key & 1) { // a quoted string
                 // If the last term had no ending delimiter, we append the string to the element,
                 // otherwise, we create a new element without delimiter
-                if ($terms[$i - 1][1] == '') {
+                if (isset($terms[$i - 1][1]) && $terms[$i - 1][1] == '') {
                     $terms[$i - 1][0] .= $val;
                 } else {
-                    $terms[$i++] = [$val, '', 0];
+                    /** @phpstan-var Term $term */
+                    $term = [$val, '', 0];
+                    $terms[$i++] = $term;
                 }
             } else { // Not a quoted string
                 // Do the clause explode
@@ -307,14 +309,16 @@ class Doctrine_Query_Tokenizer
                 }
 
                 // If the previous term had no delimiter, merge them
-                if ($i > 0 && $terms[$i - 1][1] == '') {
+                if ($i > 0 && isset($terms[$i - 1][1]) && $terms[$i - 1][1] == '') {
                     $first = array_shift($subterms);
                     if ($first !== null) {
                         $idx   = $i - 1;
 
-                        $terms[$idx][0] .= $first[0];
-                        $terms[$idx][1] = $first[1];
-                        $terms[$idx][2] += $first[2];
+                        if (isset($terms[$idx][0])) {
+                            $terms[$idx][0] .= $first[0];
+                            $terms[$idx][1] = $first[1];
+                            $terms[$idx][2] += $first[2];
+                        }
                     }
                 }
 
@@ -362,6 +366,7 @@ class Doctrine_Query_Tokenizer
                 $term = [$val, '', 0];
                 $terms[$i] = $term;
             } else {
+                /** @phpstan-var Term[] $terms */
                 $terms[$i++][1] = $val;
             }
         }

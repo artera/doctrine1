@@ -360,15 +360,15 @@ class Doctrine_Import_Schema
                             $colDesc['scale'] = $e[1];
                         }
                     } else {
-                        $colDesc['type']   = isset($field['type']) ? (string) $field['type']:null;
-                        $colDesc['length'] = isset($field['length']) ? (int) $field['length']:null;
-                        $colDesc['length'] = isset($field['size']) ? (int) $field['size']:$colDesc['length'];
+                        $colDesc['type']   = isset($field['type']) ? (string) $field['type'] : null;
+                        $colDesc['length'] = isset($field['length']) ? (int) $field['length'] : null;
+                        $colDesc['length'] = isset($field['size']) ? (int) $field['size'] : $colDesc['length'];
                     }
 
-                    $colDesc['fixed']         = isset($field['fixed']) ? (int) $field['fixed']:null;
-                    $colDesc['primary']       = isset($field['primary']) ? (isset($field['primary']) && $field['primary']) : null;
-                    $colDesc['default']       = isset($field['default']) ? $field['default']:null;
-                    $colDesc['autoincrement'] = isset($field['autoincrement']) ? (isset($field['autoincrement']) && $field['autoincrement']) : null;
+                    $colDesc['fixed']         = isset($field['fixed']) ? (int) $field['fixed'] : null;
+                    $colDesc['primary']       = $field['primary'] ?? null;
+                    $colDesc['default']       = $field['default'] ?? null;
+                    $colDesc['autoincrement'] = $field['autoincrement'] ?? null;
 
                     if (isset($field['sequence'])) {
                         if (true === $field['sequence']) {

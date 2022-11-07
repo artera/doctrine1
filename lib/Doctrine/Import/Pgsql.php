@@ -151,9 +151,7 @@ class Doctrine_Import_Pgsql extends Doctrine_Import
                 $val['length'] = $length;
             }
 
-            /**
- * @var Doctrine_DataDict_Pgsql $dataDict
-*/
+            /** @var Doctrine_DataDict_Pgsql $dataDict */
             $dataDict = $this->conn->dataDict;
             $decl     = $dataDict->getPortableDeclaration($val);
 
@@ -165,17 +163,17 @@ class Doctrine_Import_Pgsql extends Doctrine_Import
                 'length'   => $decl['length'],
                 'fixed'    => (bool) $decl['fixed'],
                 'unsigned' => (bool) $decl['unsigned'],
-                'notnull'  => ($val['isnotnull'] == 'NO'),
+                'notnull'  => $val['isnotnull'] == 'NO',
                 'default'  => $val['default'],
-                'primary'  => ($val['pri'] == 't'),
+                'primary'  => $val['pri'] == 't',
             ];
 
             // If postgres enum type
             if ($val['type'] == 'e') {
                 $description['default'] = isset($decl['default']) ? $decl['default'] : null;
-                $t_result               = $this->conn->fetchAssoc(sprintf('select enum_range(null::%s) as range ', $decl['enum_name']));
+                $t_result = $this->conn->fetchAssoc(sprintf('select enum_range(null::%s) as range ', $decl['enum_name']));
                 if (isset($t_result[0])) {
-                    $range                 = $t_result[0]['range'];
+                    $range                 = (string) $t_result[0]['range'];
                     $range                 = str_replace('{', '', $range);
                     $range                 = str_replace('}', '', $range);
                     $range                 = explode(',', $range);

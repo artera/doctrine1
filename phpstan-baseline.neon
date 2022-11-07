@@ -36,11 +36,6 @@ parameters:
 			path: lib/Doctrine/Export/Pgsql.php
 
 		-
-			message: "#^Parameter \\#2 \\$string of function explode expects string, array\\|string given\\.$#"
-			count: 1
-			path: lib/Doctrine/Import/Pgsql.php
-
-		-
 			message: "#^Parameter \\#1 \\$string of function strtolower expects string, string\\|null given\\.$#"
 			count: 1
 			path: lib/Doctrine/Import/Sqlite.php

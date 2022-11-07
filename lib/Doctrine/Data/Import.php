@@ -100,7 +100,7 @@ class Doctrine_Data_Import extends Doctrine_Data
             foreach ((array) $row as $key => $value) {
                 if ($table->hasRelation($key) && is_array($value)) {
                     // Skip associative arrays defining keys to relationships
-                    if (!isset($value[0]) || (isset($value[0]) && is_array($value[0]))) {
+                    if (!isset($value[0]) || is_array($value[0])) {
                         $rel          = $table->getRelation($key);
                         $relClassName = $rel->getTable()->name;
                         $relRowKey    = $rowKey . '_' . $relClassName;
