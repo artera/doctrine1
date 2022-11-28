@@ -1149,8 +1149,10 @@ abstract class Doctrine_Record implements Countable, IteratorAggregate, Serializ
             $data  = empty($data) ? $table->find($id, hydrate_array: true) : $data;
 
             if (is_array($data)) {
+                $this->cleanData($data);
+
                 foreach ($data as $field => $value) {
-                    if (is_string($field) && $table->hasField($field) && (!array_key_exists($field, $this->_data) || $this->_data[$field] instanceof Doctrine_Null)) {
+                    if (!array_key_exists($field, $this->_data) || $this->_data[$field] instanceof Doctrine_Null) {
                         $this->_data[$field] = $value;
                     }
                 }
