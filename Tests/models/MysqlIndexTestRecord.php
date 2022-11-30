@@ -1,5 +1,5 @@
 <?php
-class MysqlIndexTestRecord extends Doctrine_Record
+class MysqlIndexTestRecord extends \Doctrine1\Record
 {
     public function setTableDefinition(): void
     {

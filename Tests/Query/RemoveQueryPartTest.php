@@ -7,7 +7,7 @@ class RemoveQueryPartTest extends DoctrineUnitTestCase
 {
     public function testQueryRemoveOrderByPart()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
         $q->from('User u');
         $q->orderBy('u.id DESC');
 
@@ -18,7 +18,7 @@ class RemoveQueryPartTest extends DoctrineUnitTestCase
 
     public function testQueryRemoveLimitPart()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
         $q->from('User u');
         $q->limit(20);
         $q->removeDqlQueryPart('limit');
@@ -28,7 +28,7 @@ class RemoveQueryPartTest extends DoctrineUnitTestCase
 
     public function testQueryRemoveOffsetPart()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
         $q->from('User u');
         $q->offset(10);
         $q->removeDqlQueryPart('offset');
@@ -38,7 +38,7 @@ class RemoveQueryPartTest extends DoctrineUnitTestCase
 
     public function testQuerySetLimitToZero()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
         $q->from('User u');
         $q->limit(20);
         $q->limit(0);
@@ -48,7 +48,7 @@ class RemoveQueryPartTest extends DoctrineUnitTestCase
 
     public function testQuerySetOffsetToZero()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
         $q->from('User u');
         $q->offset(20);
         $q->offset(0);

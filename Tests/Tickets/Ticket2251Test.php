@@ -25,9 +25,9 @@ namespace Tests\Tickets {
             ];
 
             foreach ($drivers as $driver) {
-                $dbh = new \Doctrine_Adapter_Mock($driver);
+                $dbh = new \Doctrine1\Adapter\Mock($driver);
 
-                $conn = \Doctrine_Manager::getInstance()->connection($dbh, $driver);
+                $conn = \Doctrine1\Manager::getInstance()->connection($dbh, $driver);
 
                 list($sql) = $conn->export->exportSortedClassesSql(['Ticket_2251_TestStringLength'], false);
 
@@ -41,7 +41,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class Ticket_2251_TestStringLength extends Doctrine_Record
+    class Ticket_2251_TestStringLength extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

@@ -15,7 +15,7 @@ namespace Tests\Tickets {
 
         public function testTest()
         {
-            $q = \Doctrine_Query::create()
+            $q = \Doctrine1\Query::create()
             ->from('Ticket_DC240_User u')
             ->leftJoin('u.Roles r')
             ->leftJoin('r.Parents p')
@@ -27,7 +27,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class Ticket_DC240_User extends Doctrine_Record
+    class Ticket_DC240_User extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -41,7 +41,7 @@ namespace {
         }
     }
 
-    class Ticket_DC240_Role extends Doctrine_Record
+    class Ticket_DC240_Role extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -56,7 +56,7 @@ namespace {
         }
     }
 
-    class Ticket_DC240_UserRole extends Doctrine_Record
+    class Ticket_DC240_UserRole extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -72,7 +72,7 @@ namespace {
         }
     }
 
-    class Ticket_DC240_RoleReference extends Doctrine_Record
+    class Ticket_DC240_RoleReference extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

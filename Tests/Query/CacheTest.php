@@ -9,7 +9,7 @@ class CacheTest extends DoctrineUnitTestCase
     {
         $cache = $this->getCacheDriver();
 
-        $q = \Doctrine_Query::create()
+        $q = \Doctrine1\Query::create()
             ->select('u.id, u.name, p.id')
             ->from('User u')
             ->leftJoin('u.Phonenumber p')
@@ -31,9 +31,9 @@ class CacheTest extends DoctrineUnitTestCase
     {
         $cache = $this->getCacheDriver();
 
-        \Doctrine_Manager::getInstance()->setAttribute(\Doctrine_Core::ATTR_QUERY_CACHE, $cache);
+        \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_QUERY_CACHE, $cache);
 
-        $q = \Doctrine_Query::create()
+        $q = \Doctrine1\Query::create()
             ->select('u.id, u.name, p.id')
             ->from('User u')
             ->leftJoin('u.Phonenumber p');
@@ -51,7 +51,7 @@ class CacheTest extends DoctrineUnitTestCase
 
     public function testResultSetCacheAddsResultSetsIntoCache()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $cache = $this->getCacheDriver();
         $q->useResultCache($cache)->select('u.name')->from('User u');
@@ -68,7 +68,7 @@ class CacheTest extends DoctrineUnitTestCase
 
     public function testResultSetCacheSupportsQueriesWithJoins()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $cache = $this->getCacheDriver();
         $q->useResultCache($cache);
@@ -86,7 +86,7 @@ class CacheTest extends DoctrineUnitTestCase
 
     public function testResultSetCacheSupportsPreparedStatements()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $cache = $this->getCacheDriver();
         $q->useResultCache($cache);
@@ -95,23 +95,23 @@ class CacheTest extends DoctrineUnitTestCase
 
         $coll = $q->execute([5]);
 
-        $this->assertTrue($coll instanceof \Doctrine_Collection);
+        $this->assertTrue($coll instanceof \Doctrine1\Collection);
         $this->assertEquals(5, $coll[0]->id);
-        $this->assertTrue($coll[0] instanceof \Doctrine_Record);
-        $this->assertTrue($coll[0]->Phonenumber[0] instanceof \Doctrine_Record);
+        $this->assertTrue($coll[0] instanceof \Doctrine1\Record);
+        $this->assertTrue($coll[0]->Phonenumber[0] instanceof \Doctrine1\Record);
         $this->assertTrue($cache->contains($q->calculateResultCacheHash([5])));
         $this->assertEquals(count($coll), 1);
         $coll->free(true);
 
         $coll = $q->execute([5]);
 
-        $this->assertTrue($coll instanceof \Doctrine_Collection);
+        $this->assertTrue($coll instanceof \Doctrine1\Collection);
         $this->assertEquals(5, $coll[0]->id);
-        $this->assertTrue($coll[0] instanceof \Doctrine_Record);
+        $this->assertTrue($coll[0] instanceof \Doctrine1\Record);
         // references to related objects are not serialized/unserialized, so the following
         // would trigger an additional query (lazy-load).
         //echo static::$conn->count() . "<br/>";
-        //$this->assertTrue($coll[0]->Phonenumber[0] instanceof \Doctrine_Record);
+        //$this->assertTrue($coll[0]->Phonenumber[0] instanceof \Doctrine1\Record);
         //echo static::$conn->count() . "<br/>"; // count is increased => lazy load
         $this->assertTrue($cache->contains($q->calculateResultCacheHash([5])));
         $this->assertEquals(count($coll), 1);
@@ -119,10 +119,10 @@ class CacheTest extends DoctrineUnitTestCase
 
     public function testUseCacheSupportsBooleanTrueAsParameter()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $cache = $this->getCacheDriver();
-        static::$conn->setAttribute(\Doctrine_Core::ATTR_CACHE, $cache);
+        static::$conn->setAttribute(\Doctrine1\Core::ATTR_CACHE, $cache);
 
         $q->useResultCache(true);
         $q->select('u.name')->from('User u')->leftJoin('u.Phonenumber p')
@@ -138,35 +138,35 @@ class CacheTest extends DoctrineUnitTestCase
         $this->assertTrue($cache->contains($q->calculateResultCacheHash([5])));
         $this->assertEquals(count($coll), 1);
 
-        static::$conn->setAttribute(\Doctrine_Core::ATTR_CACHE, null);
+        static::$conn->setAttribute(\Doctrine1\Core::ATTR_CACHE, null);
     }
 
     public function testResultCacheLifeSpan()
     {
         // initially NULL = not cached
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
         $this->assertSame(null, $q->getResultCacheLifeSpan());
         $q->free();
 
         // 0 = cache forever
-        static::$manager->setAttribute(\Doctrine_Core::ATTR_RESULT_CACHE_LIFESPAN, 0);
-        $q = new \Doctrine_Query();
+        static::$manager->setAttribute(\Doctrine1\Core::ATTR_RESULT_CACHE_LIFESPAN, 0);
+        $q = new \Doctrine1\Query();
         $this->assertSame(0, $q->getResultCacheLifeSpan());
         $q->free();
 
-        static::$manager->setAttribute(\Doctrine_Core::ATTR_RESULT_CACHE_LIFESPAN, 3600);
-        $q = new \Doctrine_Query();
+        static::$manager->setAttribute(\Doctrine1\Core::ATTR_RESULT_CACHE_LIFESPAN, 3600);
+        $q = new \Doctrine1\Query();
         $this->assertSame(3600, $q->getResultCacheLifeSpan());
         $q->free();
 
         // test that value set on connection level has precedence
-        static::$conn->setAttribute(\Doctrine_Core::ATTR_RESULT_CACHE_LIFESPAN, 42);
-        $q = new \Doctrine_Query();
+        static::$conn->setAttribute(\Doctrine1\Core::ATTR_RESULT_CACHE_LIFESPAN, 42);
+        $q = new \Doctrine1\Query();
         $this->assertSame(42, $q->getResultCacheLifeSpan());
         $q->free();
 
         // test that value set on the query has highest precedence
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
         $q->useResultCache(true, 1234);
         $this->assertSame(1234, $q->getResultCacheLifeSpan());
         $q->setResultCacheLifeSPan(4321);
@@ -177,29 +177,29 @@ class CacheTest extends DoctrineUnitTestCase
     public function testQueryCacheLifeSpan()
     {
         // initially NULL = not cached
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
         $this->assertSame(null, $q->getQueryCacheLifeSpan());
         $q->free();
 
         // 0 = forever
-        static::$manager->setAttribute(\Doctrine_Core::ATTR_QUERY_CACHE_LIFESPAN, 0);
-        $q = new \Doctrine_Query();
+        static::$manager->setAttribute(\Doctrine1\Core::ATTR_QUERY_CACHE_LIFESPAN, 0);
+        $q = new \Doctrine1\Query();
         $this->assertSame(0, $q->getQueryCacheLifeSpan());
         $q->free();
 
-        static::$manager->setAttribute(\Doctrine_Core::ATTR_QUERY_CACHE_LIFESPAN, 3600);
-        $q = new \Doctrine_Query();
+        static::$manager->setAttribute(\Doctrine1\Core::ATTR_QUERY_CACHE_LIFESPAN, 3600);
+        $q = new \Doctrine1\Query();
         $this->assertSame(3600, $q->getQueryCacheLifeSpan());
         $q->free();
 
         // test that value set on connection level has precedence
-        static::$conn->setAttribute(\Doctrine_Core::ATTR_QUERY_CACHE_LIFESPAN, 42);
-        $q = new \Doctrine_Query();
+        static::$conn->setAttribute(\Doctrine1\Core::ATTR_QUERY_CACHE_LIFESPAN, 42);
+        $q = new \Doctrine1\Query();
         $this->assertSame(42, $q->getQueryCacheLifeSpan());
         $q->free();
 
         // test that value set on the query has highest precedence
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
         $q->setQueryCacheLifeSpan(4321);
         $this->assertSame(4321, $q->getQueryCacheLifeSpan());
         $q->free();
@@ -208,7 +208,7 @@ class CacheTest extends DoctrineUnitTestCase
     public function testQueryCacheCanBeDisabledForSingleQuery()
     {
         $cache = $this->getCacheDriver();
-        $q     = new \Doctrine_Query();
+        $q     = new \Doctrine1\Query();
         $q->select('u.name')->from('User u')->leftJoin('u.Phonenumber p')->where('u.name = ?', 'walhala')
             ->useQueryCache(false);
 
@@ -225,6 +225,6 @@ class CacheTest extends DoctrineUnitTestCase
 
     protected function getCacheDriver()
     {
-        return new \Doctrine_Cache_Array();
+        return new \Doctrine1\Cache\PHPArray();
     }
 }

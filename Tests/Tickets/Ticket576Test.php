@@ -22,17 +22,17 @@ class Ticket576Test extends DoctrineUnitTestCase
     public function testBug()
     {
         // load our user and our collection of pages
-        $user = \Doctrine_Query::create()->from('Entity')->fetchOne();
+        $user = \Doctrine1\Query::create()->from('Entity')->fetchOne();
         $this->assertEquals($user->name, 'myname');
         $this->assertEquals($user->loginname, 'test');
 
         $user->name = null;
         $this->assertEquals($user->name, null);
 
-        $data = \Doctrine_Query::create()
+        $data = \Doctrine1\Query::create()
             ->select('name')
             ->from('Entity')
-            ->fetchOne([], \Doctrine_Core::HYDRATE_ARRAY);
+            ->fetchOne([], \Doctrine1\Core::HYDRATE_ARRAY);
 
         $user->hydrate($data);
         $this->assertEquals($user->name, 'myname');

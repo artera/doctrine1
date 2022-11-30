@@ -1,5 +1,5 @@
 <?php
-class GzipTest extends Doctrine_Record
+class GzipTest extends \Doctrine1\Record
 {
     public function setTableDefinition(): void
     {

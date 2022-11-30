@@ -7,7 +7,7 @@ class GroupbyTest extends DoctrineUnitTestCase
 {
     public function testAggregateFunctionsInHavingReturnValidSql(): void
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->parseDqlQuery('SELECT u.name, COUNT(p.id) count FROM User u LEFT JOIN u.Phonenumber p GROUP BY count');
 
@@ -16,7 +16,7 @@ class GroupbyTest extends DoctrineUnitTestCase
 
     public function testGroupByParams(): void
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->from('User u');
         $q->groupBy('u.name');

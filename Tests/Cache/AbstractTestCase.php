@@ -19,10 +19,10 @@ abstract class AbstractTestCase extends DoctrineUnitTestCase
         $this->clearCache();
         $cache = $this->getCacheDriver();
 
-        static::$conn->setAttribute(\Doctrine_Core::ATTR_RESULT_CACHE, $cache);
+        static::$conn->setAttribute(\Doctrine1\Core::ATTR_RESULT_CACHE, $cache);
 
         for ($i = 0; $i < 10; $i++) {
-            $u = \Doctrine_Query::create()
+            $u = \Doctrine1\Query::create()
                 ->from('User u')
                 ->addWhere('u.name = ?', ['Hans'])
                 ->useResultCache($cache, 3600, 'hans_query')

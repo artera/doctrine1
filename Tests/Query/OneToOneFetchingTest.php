@@ -19,7 +19,7 @@ class OneToOneFetchingTest extends DoctrineUnitTestCase
     }
     public function testInitializeData()
     {
-        $query = new \Doctrine_Query(static::$connection);
+        $query = new \Doctrine1\Query(static::$connection);
 
         $cat = new \QueryTest_Category();
 
@@ -64,22 +64,22 @@ class OneToOneFetchingTest extends DoctrineUnitTestCase
      * when the related records EXIST.
      *
      * !!! Currently it produces a notice with:
-     * !!! Array to string conversion in Doctrine\Hydrate.php on line 937
+     * !!! Array to string conversion in Doctrine1\Hydrate.php on line 937
      *
      * !!! And shortly after exits with a fatal error:
      * !!! Fatal error:  Cannot create references to/from string offsets nor overloaded objects
-     * !!! in Doctrine\Hydrate.php on line 939
+     * !!! in Doctrine1\Hydrate.php on line 939
      */
     public function testOneToOneArrayFetchingWithExistingRelations()
     {
-        $query = new \Doctrine_Query(static::$connection);
+        $query = new \Doctrine1\Query(static::$connection);
         $categories = $query->select('c.*, b.*, le.*, a.username, vr.title, vr.color, vr.icon')
                     ->from('QueryTest_Category c')
                     ->leftJoin('c.boards b')
                     ->leftJoin('b.lastEntry le')
                     ->leftJoin('le.author a')
                     ->leftJoin('a.visibleRank vr')
-                    ->execute([], \Doctrine_Core::HYDRATE_ARRAY);
+                    ->execute([], \Doctrine1\Core::HYDRATE_ARRAY);
 
             // --> currently quits here with a fatal error! <--
 
@@ -122,14 +122,14 @@ class OneToOneFetchingTest extends DoctrineUnitTestCase
         $board->lastEntryId = 0;
         $board->save();
 
-        $query = new \Doctrine_Query(static::$connection);
+        $query = new \Doctrine1\Query(static::$connection);
         $categories = $query->select('c.*, b.*, le.*, a.username, vr.title, vr.color, vr.icon')
                     ->from('QueryTest_Category c')
                     ->leftJoin('c.boards b')
                     ->leftJoin('b.lastEntry le')
                     ->leftJoin('le.author a')
                     ->leftJoin('a.visibleRank vr')
-                    ->execute([], \Doctrine_Core::HYDRATE_ARRAY);
+                    ->execute([], \Doctrine1\Core::HYDRATE_ARRAY);
 
 
             // check boards/categories
@@ -150,7 +150,7 @@ class OneToOneFetchingTest extends DoctrineUnitTestCase
     // when the related records EXIST.
     public function testOneToOneRecordFetchingWithExistingRelations()
     {
-        $query = new \Doctrine_Query(static::$connection);
+        $query = new \Doctrine1\Query(static::$connection);
         $categories = $query->select('c.*, b.*, le.date, a.username, vr.title, vr.color, vr.icon')
                     ->from('QueryTest_Category c')
                     ->leftJoin('c.boards b')
@@ -190,7 +190,7 @@ class OneToOneFetchingTest extends DoctrineUnitTestCase
         $board->lastEntry   = null;
         $board->save();
 
-        $query = new \Doctrine_Query(static::$connection);
+        $query = new \Doctrine1\Query(static::$connection);
         $categories = $query->select('c.*, b.*, le.*, a.username, vr.title, vr.color, vr.icon')
                 ->from('QueryTest_Category c')
                 ->leftJoin('c.boards b')

@@ -18,9 +18,9 @@ class IdentifierQuotingTest extends DoctrineUnitTestCase
 
     public function testQuerySupportsIdentifierQuoting()
     {
-        static::$conn->setAttribute(\Doctrine_Core::ATTR_QUOTE_IDENTIFIER, true);
+        static::$conn->setAttribute(\Doctrine1\Core::ATTR_QUOTE_IDENTIFIER, true);
 
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->parseDqlQuery('SELECT u.id, MAX(u.id), MIN(u.name) FROM User u');
 
@@ -31,7 +31,7 @@ class IdentifierQuotingTest extends DoctrineUnitTestCase
 
     public function testQuerySupportsIdentifierQuotingInWherePart()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->parseDqlQuery('SELECT u.name FROM User u WHERE u.id = 3');
 
@@ -42,7 +42,7 @@ class IdentifierQuotingTest extends DoctrineUnitTestCase
 
     public function testQuerySupportsIdentifierQuotingWithJoins()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->parseDqlQuery('SELECT u.name FROM User u LEFT JOIN u.Phonenumber p');
 
@@ -51,7 +51,7 @@ class IdentifierQuotingTest extends DoctrineUnitTestCase
 
     public function testLimitSubqueryAlgorithmSupportsIdentifierQuoting()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->parseDqlQuery('SELECT u.name FROM User u INNER JOIN u.Phonenumber p')->limit(5);
 
@@ -60,7 +60,7 @@ class IdentifierQuotingTest extends DoctrineUnitTestCase
 
     public function testCountQuerySupportsIdentifierQuoting()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->parseDqlQuery('SELECT u.name FROM User u INNER JOIN u.Phonenumber p');
 
@@ -69,7 +69,7 @@ class IdentifierQuotingTest extends DoctrineUnitTestCase
 
     public function testUpdateQuerySupportsIdentifierQuoting()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->parseDqlQuery('UPDATE User u SET u.name = ? WHERE u.id = ?');
 
@@ -78,7 +78,7 @@ class IdentifierQuotingTest extends DoctrineUnitTestCase
 
     public function testUpdateQuerySupportsIdentifierQuoting2()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->update('User')->set('name', '?', 'guilhermeblanco')->where('id = ?');
 
@@ -87,7 +87,7 @@ class IdentifierQuotingTest extends DoctrineUnitTestCase
 
     public function testUpdateQuerySupportsIdentifierQuoting3()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->update('User')->set('name', 'LOWERCASE(name)')->where('id = ?');
 
@@ -96,7 +96,7 @@ class IdentifierQuotingTest extends DoctrineUnitTestCase
 
     public function testUpdateQuerySupportsIdentifierQuoting4()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->update('User u')->set('u.name', 'LOWERCASE(u.name)')->where('u.id = ?');
 
@@ -105,7 +105,7 @@ class IdentifierQuotingTest extends DoctrineUnitTestCase
 
     public function testUpdateQuerySupportsIdentifierQuoting5()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->update('User u')->set('u.name', 'UPPERCASE(LOWERCASE(u.name))')->where('u.id = ?');
 
@@ -114,7 +114,7 @@ class IdentifierQuotingTest extends DoctrineUnitTestCase
 
     public function testUpdateQuerySupportsIdentifierQuoting6()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->update('User u')->set('u.name', 'UPPERCASE(LOWERCASE(u.id))')->where('u.id = ?');
 
@@ -123,7 +123,7 @@ class IdentifierQuotingTest extends DoctrineUnitTestCase
 
     public function testUpdateQuerySupportsIdentifierQuoting7()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->update('User u')->set('u.name', 'CURRENT_TIMESTAMP')->where('u.id = ?');
 
@@ -132,12 +132,12 @@ class IdentifierQuotingTest extends DoctrineUnitTestCase
 
     public function testUpdateQuerySupportsIdentifierQuoting8()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->update('User u')->set('u.id', 'u.id + 1')->where('u.name = ?');
 
         $this->assertEquals('UPDATE "entity" SET "id" = "id" + 1 WHERE ("name" = ? AND ("type" = 0))', $q->getSqlQuery());
 
-        static::$conn->setAttribute(\Doctrine_Core::ATTR_QUOTE_IDENTIFIER, false);
+        static::$conn->setAttribute(\Doctrine1\Core::ATTR_QUOTE_IDENTIFIER, false);
     }
 }

@@ -11,7 +11,7 @@ class PgsqlTest extends DoctrineUnitTestCase
     public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
-        static::$transaction = new \Doctrine_Transaction_Pgsql();
+        static::$transaction = new \Doctrine1\Transaction\Pgsql();
     }
 
     public function testCreateSavePointExecutesSql()
@@ -38,7 +38,7 @@ class PgsqlTest extends DoctrineUnitTestCase
 
     public function testSetIsolationThrowsExceptionOnUnknownIsolationMode()
     {
-        $this->expectException(\Doctrine_Transaction_Exception::class);
+        $this->expectException(\Doctrine1\Transaction\Exception::class);
         static::$transaction->setIsolation('unknown');
     }
 

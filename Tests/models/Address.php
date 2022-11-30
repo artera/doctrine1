@@ -1,5 +1,5 @@
 <?php
-class Address extends Doctrine_Record
+class Address extends \Doctrine1\Record
 {
     public function setUp(): void
     {

@@ -13,7 +13,7 @@ namespace Tests\Tickets {
 
         public function testTest()
         {
-            $q = \Doctrine_Query::create()
+            $q = \Doctrine1\Query::create()
             ->from('Ticket_DC241_Poll p')
             ->leftJoin('p.Answers pa ON pa.votes = ?', 100)
             ->addWhere('p.id = ?', 200)
@@ -32,7 +32,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class Ticket_DC241_Poll extends Doctrine_Record
+    class Ticket_DC241_Poll extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -46,7 +46,7 @@ namespace {
         }
     }
 
-    class Ticket_DC241_PollAnswer extends Doctrine_Record
+    class Ticket_DC241_PollAnswer extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

@@ -12,20 +12,20 @@ namespace Tests\Tickets {
 
         public function testTest()
         {
-            \Doctrine_Manager::getInstance()->setAttribute(\Doctrine_Core::ATTR_VALIDATE, \Doctrine_Core::VALIDATE_ALL);
+            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_ALL);
 
             $account         = new \Ticket_1875_Account();
             $account->name   = 'Test';
             $account->amount = '25.99';
             $this->assertTrue($account->isValid());
 
-            \Doctrine_Manager::getInstance()->setAttribute(\Doctrine_Core::ATTR_VALIDATE, \Doctrine_Core::VALIDATE_NONE);
+            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_NONE);
         }
     }
 }
 
 namespace {
-    class Ticket_1875_Account extends Doctrine_Record
+    class Ticket_1875_Account extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

@@ -6,7 +6,7 @@ namespace Tests\Tickets {
     {
         public function testExport()
         {
-            $conn = \Doctrine_Manager::connection('mysql://root@localhost/test');
+            $conn = \Doctrine1\Manager::connection('mysql://root@localhost/test');
             $sql  = $conn->export->exportClassesSql(['Ticket_1604_User', 'Ticket_1604_EmailAdresses']);
 
             $def = [
@@ -21,7 +21,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class Ticket_1604_User extends Doctrine_Record
+    class Ticket_1604_User extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -38,7 +38,7 @@ namespace {
         }
     }
 
-    class Ticket_1604_EmailAdresses extends Doctrine_Record
+    class Ticket_1604_EmailAdresses extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

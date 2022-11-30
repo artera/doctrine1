@@ -24,7 +24,7 @@ namespace Tests\Tickets {
 
         public function testRemoveEmail()
         {
-            $u       = \Doctrine_Query::create()->from('Ticket_DC198_User')->fetchOne();
+            $u       = \Doctrine1\Query::create()->from('Ticket_DC198_User')->fetchOne();
             $u->name = 'test2';
             $u->email->delete();
             $u->refreshRelated('email');
@@ -35,14 +35,14 @@ namespace Tests\Tickets {
             $this->assertFalse(isset($uArray['email']));
 
             // If I fetch the email I shouldn't find any
-            $e = \Doctrine_Query::create()->from('Ticket_DC198_Email')->fetchOne();
+            $e = \Doctrine1\Query::create()->from('Ticket_DC198_Email')->fetchOne();
             $this->assertNull($e);
         }
     }
 }
 
 namespace {
-    class Ticket_DC198_Email extends Doctrine_Record
+    class Ticket_DC198_Email extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -76,7 +76,7 @@ namespace {
         }
     }
 
-    class Ticket_DC198_User extends Doctrine_Record
+    class Ticket_DC198_User extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

@@ -1,5 +1,5 @@
 <?php
-class DateTest extends Doctrine_Record
+class DateTest extends \Doctrine1\Record
 {
     public function setTableDefinition(): void
     {

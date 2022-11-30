@@ -35,19 +35,19 @@ namespace Tests\Tickets {
 
         public function testTicket()
         {
-            $q      = new \Doctrine_Query;
+            $q      = new \Doctrine1\Query;
             $result = $q->select('a.*, b.*, c.*')
             ->from('T1 a')
             ->leftJoin('a.T2 b')
             ->leftJoin('b.T3 c')
-            ->setHydrationMode(\Doctrine_Core::HYDRATE_ARRAY)
+            ->setHydrationMode(\Doctrine1\Core::HYDRATE_ARRAY)
             ->fetchOne();
 
             // there are 10 rows in T3, and they all have hello_id = 10, so we should have 10 rows here
             $this->assertEquals(10, count($result['T2']['T3']));
 
             // now with object hydration.
-            $q      = new \Doctrine_Query;
+            $q      = new \Doctrine1\Query;
             $result = $q->select('a.*, b.*, c.*')
             ->from('T1 a')
             ->leftJoin('a.T2 b')
@@ -64,7 +64,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class T1 extends Doctrine_Record
+    class T1 extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -80,7 +80,7 @@ namespace {
         }
     }
 
-    class T2 extends Doctrine_Record
+    class T2 extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -96,7 +96,7 @@ namespace {
         }
     }
 
-    class T3 extends Doctrine_Record
+    class T3 extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

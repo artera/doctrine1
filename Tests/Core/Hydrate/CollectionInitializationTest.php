@@ -21,7 +21,7 @@ class CollectionInitializationTest extends DoctrineUnitTestCase
     public function testCollectionsAreReinitializedOnHydration()
     {
         // query for user with first phonenumber.
-        $q = \Doctrine_Query::create();
+        $q = \Doctrine1\Query::create();
         $q->select('u.*, p.*')->from('User u')->innerJoin('u.Phonenumber p')
             ->where("p.phonenumber = '112'");
 
@@ -31,7 +31,7 @@ class CollectionInitializationTest extends DoctrineUnitTestCase
         $this->assertEquals('112', $users[0]->Phonenumber[0]->phonenumber);
 
         // now query again. this time for the other phonenumber. collection should be re-initialized.
-        $q = \Doctrine_Query::create();
+        $q = \Doctrine1\Query::create();
         $q->select('u.*, p.*')->from('User u')->innerJoin('u.Phonenumber p')
             ->where("p.phonenumber = '110'");
         $users = $q->execute();
@@ -40,7 +40,7 @@ class CollectionInitializationTest extends DoctrineUnitTestCase
         $this->assertEquals('110', $users[0]->Phonenumber[0]->phonenumber);
 
         // now query again. this time for both phonenumbers. collection should be re-initialized.
-        $q = \Doctrine_Query::create();
+        $q = \Doctrine1\Query::create();
         $q->select('u.*, p.*')->from('User u')->innerJoin('u.Phonenumber p');
         $users = $q->execute();
         $this->assertEquals(1, count($users));
@@ -49,7 +49,7 @@ class CollectionInitializationTest extends DoctrineUnitTestCase
         $this->assertEquals('110', $users[0]->Phonenumber[1]->phonenumber);
 
         // now query AGAIN for both phonenumbers. collection should be re-initialized (2 elements, not 4).
-        $q = \Doctrine_Query::create();
+        $q = \Doctrine1\Query::create();
         $q->select('u.*, p.*')->from('User u')->innerJoin('u.Phonenumber p');
         $users = $q->execute();
         $this->assertEquals(1, count($users));

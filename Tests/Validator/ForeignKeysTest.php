@@ -56,7 +56,7 @@ namespace Tests\Validator {
 }
 
 namespace {
-    class TestPerson extends Doctrine_Record
+    class TestPerson extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -72,7 +72,7 @@ namespace {
         }
     }
 
-    class TestAddress extends Doctrine_Record
+    class TestAddress extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

@@ -16,9 +16,9 @@ namespace Tests\Tickets {
 
         public function testInit()
         {
-            static::$dbh  = new \Doctrine_Adapter_Mock('pgsql');
-            static::$conn = \Doctrine_Manager::getInstance()->openConnection(static::$dbh);
-            $this->assertEquals(\Doctrine_Core::IDENTIFIER_NATURAL, static::$conn->getTable('UserNoAutoIncrement')->getIdentifierType());
+            static::$dbh  = new \Doctrine1\Adapter\Mock('pgsql');
+            static::$conn = \Doctrine1\Manager::getInstance()->openConnection(static::$dbh);
+            $this->assertEquals(\Doctrine1\Core::IDENTIFIER_NATURAL, static::$conn->getTable('UserNoAutoIncrement')->getIdentifierType());
         }
 
         public function testCreateNewUserNoAutoIncrement()
@@ -27,14 +27,14 @@ namespace Tests\Tickets {
             $newUser->id           = 1;
             $newUser->display_name = 'Mah Name';
             $newUser->save();
-            $this->assertEquals(\Doctrine_Record_State::CLEAN(), $newUser->state());
+            $this->assertEquals(\Doctrine1\Record\State::CLEAN, $newUser->state());
             $this->assertEquals(1, $newUser->id);
         }
     }
 }
 
 namespace {
-    class UserNoAutoIncrement extends Doctrine_Record
+    class UserNoAutoIncrement extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

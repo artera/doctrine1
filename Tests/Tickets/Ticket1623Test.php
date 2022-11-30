@@ -40,13 +40,13 @@ namespace Tests\Tickets {
 
         public function testPerformance()
         {
-            \Doctrine_Manager::getInstance()->setAttribute(\Doctrine_Core::ATTR_VALIDATE, \Doctrine_Core::VALIDATE_ALL);
+            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_ALL);
 
             $newChild       = new \Ticket_1623_User();
             $newChild->name = 'myChild';
             $newChild->save();
 
-            $user             = \Doctrine_Core::getTable('Ticket_1623_User')->findOneByName('floriank');
+            $user             = \Doctrine1\Core::getTable('Ticket_1623_User')->findOneByName('floriank');
             $user->children[] = $newChild;
 
             $start = microtime(true);
@@ -59,30 +59,30 @@ namespace Tests\Tickets {
 
         public function testImplicitSave()
         {
-            \Doctrine_Manager::getInstance()->setAttribute(\Doctrine_Core::ATTR_VALIDATE, \Doctrine_Core::VALIDATE_ALL);
-            \Doctrine_Manager::getInstance()->setAttribute(\Doctrine_Core::ATTR_CASCADE_SAVES, false);
+            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_ALL);
+            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_CASCADE_SAVES, false);
 
             $newChild       = new \Ticket_1623_User();
             $newChild->name = 'myGrandGrandChild';
 
-            $user                                       = \Doctrine_Core::getTable('Ticket_1623_User')->findOneByName('floriank');
+            $user                                       = \Doctrine1\Core::getTable('Ticket_1623_User')->findOneByName('floriank');
             $user->children[0]->children[0]->children[] = $newChild;
 
             $user->save();
 
-            $user = \Doctrine_Core::getTable('Ticket_1623_User')->findByName('myGrandGrandChild');
+            $user = \Doctrine1\Core::getTable('Ticket_1623_User')->findByName('myGrandGrandChild');
             //as of Doctrine's default behaviour $newChild should have
             //been implicitly saved with $user->save()
             $this->assertEquals($user->count(), 0);
 
-            \Doctrine_Manager::getInstance()->setAttribute(\Doctrine_Core::ATTR_VALIDATE, \Doctrine_Core::VALIDATE_NONE);
-            \Doctrine_Manager::getInstance()->setAttribute(\Doctrine_Core::ATTR_CASCADE_SAVES, true);
+            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_NONE);
+            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_CASCADE_SAVES, true);
         }
     }
 }
 
 namespace {
-    class Ticket_1623_User extends Doctrine_Record
+    class Ticket_1623_User extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -134,7 +134,7 @@ namespace {
         }
     }
 
-    class Ticket_1623_UserReference extends Doctrine_Record
+    class Ticket_1623_UserReference extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

@@ -1,5 +1,5 @@
 <?php
-class Tag extends Doctrine_Record
+class Tag extends \Doctrine1\Record
 {
     public function setUp(): void
     {

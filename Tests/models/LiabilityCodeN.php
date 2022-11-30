@@ -1,5 +1,5 @@
 <?php
-class LiabilityCodeN extends Doctrine_Record
+class LiabilityCodeN extends \Doctrine1\Record
 {
     public function setTableDefinition(): void
     {

@@ -52,7 +52,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class Ticket_DC242_User extends Doctrine_Record
+    class Ticket_DC242_User extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -66,7 +66,7 @@ namespace {
         }
     }
 
-    class Ticket_DC242_Role extends Doctrine_Record
+    class Ticket_DC242_Role extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -81,7 +81,7 @@ namespace {
         }
     }
 
-    class Ticket_DC242_UserRole extends Doctrine_Record
+    class Ticket_DC242_UserRole extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -96,7 +96,7 @@ namespace {
         }
     }
 
-    class Ticket_DC242_RoleReference extends Doctrine_Record
+    class Ticket_DC242_RoleReference extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

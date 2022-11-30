@@ -1,5 +1,5 @@
 <?php
-class CoverageCodeN extends Doctrine_Record
+class CoverageCodeN extends \Doctrine1\Record
 {
     public function setTableDefinition(): void
     {

@@ -1,5 +1,5 @@
 <?php
-class Data_File extends Doctrine_Record
+class Data_File extends \Doctrine1\Record
 {
     public function setTableDefinition(): void
     {

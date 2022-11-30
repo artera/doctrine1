@@ -7,7 +7,7 @@ class Ticket2159Test extends DoctrineUnitTestCase
 {
     public function testTest()
     {
-        $q = \Doctrine_Core::getTable('User')
+        $q = \Doctrine1\Core::getTable('User')
           ->createQuery('u');
 
         $sql = 'SELECT COUNT(*) AS num_results FROM entity e WHERE (e.type = 0)';

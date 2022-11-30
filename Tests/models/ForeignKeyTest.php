@@ -1,5 +1,5 @@
 <?php
-class ForeignKeyTest extends Doctrine_Record
+class ForeignKeyTest extends \Doctrine1\Record
 {
     public function setTableDefinition(): void
     {

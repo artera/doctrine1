@@ -7,8 +7,8 @@ class Ticket1125Test extends DoctrineUnitTestCase
 {
     public function setUp(): void
     {
-        static::$dbh  = new \Doctrine_Adapter_Mock('mysql');
-        static::$conn = \Doctrine_Manager::getInstance()->openConnection(static::$dbh);
+        static::$dbh  = new \Doctrine1\Adapter\Mock('mysql');
+        static::$conn = \Doctrine1\Manager::getInstance()->openConnection(static::$dbh);
     }
 
     public function testTest()

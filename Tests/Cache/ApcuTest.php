@@ -13,6 +13,6 @@ class ApcuTest extends AbstractTestCase
 
     protected function getCacheDriver()
     {
-        return new \Doctrine_Cache_Apcu();
+        return new \Doctrine1\Cache\Apcu();
     }
 }

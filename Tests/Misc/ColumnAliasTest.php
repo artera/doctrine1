@@ -31,7 +31,7 @@ class ColumnAliasTest extends DoctrineUnitTestCase
 
     public function testAliasesAreSupportedForJoins()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
         $q->select('c.*, b.name')->from('ColumnAliasTest c')
             ->innerJoin('c.book b')
             ->where('c.anotherField = ?', 'camelCase');
@@ -42,11 +42,11 @@ class ColumnAliasTest extends DoctrineUnitTestCase
 
     public function testAliasesAreSupportedForArrayFetching()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
         $q->select('c.*, b.name')->from('ColumnAliasTest c')
             ->innerJoin('c.book b')
             ->where('c.anotherField = ?', 'camelCase')
-            ->setHydrationMode(\Doctrine_Core::HYDRATE_ARRAY);
+            ->setHydrationMode(\Doctrine1\Core::HYDRATE_ARRAY);
         $result = $q->execute();
         $this->assertEquals($result[0]['alias1'], 'first');
         $this->assertEquals($result[0]['alias2'], 123);
@@ -67,7 +67,7 @@ class ColumnAliasTest extends DoctrineUnitTestCase
 
     public function testAliasesAreSupportedForDqlSelectPart()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
         $q->select('c.alias1, c.alias2, c.anotherField')->from('ColumnAliasTest c');
         $coll = $q->execute();
 
@@ -78,7 +78,7 @@ class ColumnAliasTest extends DoctrineUnitTestCase
 
     public function testAliasesAreSupportedForDqlWherePart()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->select('c.alias1, c.alias2, c.anotherField')
             ->from('ColumnAliasTest c')
@@ -93,7 +93,7 @@ class ColumnAliasTest extends DoctrineUnitTestCase
 
     public function testAliasesAreSupportedForDqlAggregateFunctions()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->select('MAX(c.alias2)')->from('ColumnAliasTest c');
 
@@ -104,7 +104,7 @@ class ColumnAliasTest extends DoctrineUnitTestCase
 
     public function testAliasesAreSupportedForDqlHavingPart()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->select('c.alias2')
             ->from('ColumnAliasTest c')

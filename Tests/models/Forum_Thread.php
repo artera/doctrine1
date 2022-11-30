@@ -1,5 +1,5 @@
 <?php
-class Forum_Thread extends Doctrine_Record
+class Forum_Thread extends \Doctrine1\Record
 {
     public function setTableDefinition(): void
     {

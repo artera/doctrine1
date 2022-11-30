@@ -6,7 +6,7 @@ namespace Tests\Tickets {
     {
         public function testTest()
         {
-            $q = \Doctrine_Query::create()
+            $q = \Doctrine1\Query::create()
             ->from('T1513_Class2 c2')
             ->leftJoin('c2.Classes1 c1 WITH (c1.max - c1.min) > 50');
             $this->assertEquals($q->getSqlQuery(), 'SELECT t.id AS t__id, t.value AS t__value, t2.id AS t2__id, t2.min AS t2__min, t2.max AS t2__max FROM t1513__class2 t LEFT JOIN t1513__relation t3 ON (t.id = t3.c2_id) LEFT JOIN t1513__class1 t2 ON t2.id = t3.c1_id AND ((t2.max - t2.min) > 50)');
@@ -15,7 +15,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class T1513_Class1 extends Doctrine_Record
+    class T1513_Class1 extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -34,7 +34,7 @@ namespace {
         }
     }
 
-    class T1513_Class2 extends Doctrine_Record
+    class T1513_Class2 extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -53,7 +53,7 @@ namespace {
     }
 
 
-    class T1513_Relation extends Doctrine_Record
+    class T1513_Relation extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

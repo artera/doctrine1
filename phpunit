@@ -10,4 +10,4 @@ PHP=(
     -dpcov.exclude='@/(Tests|vendor)/@'
 )
 rm -rf Tests/Import/import_builder_test
-${PHP[*]} vendor/bin/phpunit "$@"
+"${PHP[@]}" vendor/bin/phpunit "$@"

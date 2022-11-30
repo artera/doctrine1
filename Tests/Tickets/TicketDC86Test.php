@@ -30,12 +30,12 @@ namespace Tests\Tickets {
 
         public function testTest()
         {
-            $past = \Doctrine_Query::create()->from('Ticket_DC86_Test')->addWhere('date < now()')->orderBy('date')->execute();
+            $past = \Doctrine1\Query::create()->from('Ticket_DC86_Test')->addWhere('date < now()')->orderBy('date')->execute();
             $this->assertEquals(2, count($past));
             $this->assertEquals(1, $past[0]->id);
             $this->assertEquals(2, $past[1]->id);
 
-            $future = \Doctrine_Query::create()->from('Ticket_DC86_Test')->addWhere('date > now()')->orderBy('date')->execute();
+            $future = \Doctrine1\Query::create()->from('Ticket_DC86_Test')->addWhere('date > now()')->orderBy('date')->execute();
             $this->assertEquals(1, count($future));
             $this->assertEquals(3, $future[0]->id);
         }
@@ -43,7 +43,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class Ticket_DC86_Test extends Doctrine_Record
+    class Ticket_DC86_Test extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

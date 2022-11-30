@@ -9,7 +9,7 @@ class CollectionSnapshotTest extends DoctrineUnitTestCase
 
     public function testDiffForSimpleCollection(): void
     {
-        $q = \Doctrine_Query::create()->from('User u')->orderby('u.id');
+        $q = \Doctrine1\Query::create()->from('User u')->orderby('u.id');
 
         $coll = $q->execute();
         $this->assertCount(8, $coll);
@@ -27,13 +27,13 @@ class CollectionSnapshotTest extends DoctrineUnitTestCase
         $coll->save();
 
         static::$connection->clear();
-        $coll = \Doctrine_Query::create()->from('User u')->execute();
+        $coll = \Doctrine1\Query::create()->from('User u')->execute();
         $this->assertCount(7, $coll);
     }
 
     public function testDiffForOneToManyRelatedCollection(): void
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
         $q->from('User u LEFT JOIN u.Phonenumber p')
             ->where('u.id = 8');
 
@@ -42,7 +42,7 @@ class CollectionSnapshotTest extends DoctrineUnitTestCase
         $this->assertCount(1, $coll);
 
         $this->assertCount(3, $coll[0]->Phonenumber);
-        $this->assertTrue($coll[0]->Phonenumber instanceof \Doctrine_Collection);
+        $this->assertTrue($coll[0]->Phonenumber instanceof \Doctrine1\Collection);
 
         unset($coll[0]->Phonenumber[0]);
         $coll[0]->Phonenumber->remove(2);
@@ -54,8 +54,8 @@ class CollectionSnapshotTest extends DoctrineUnitTestCase
 
         static::$connection->clear();
 
-        $q = new \Doctrine_Query();
-        $q = \Doctrine_Query::create()->from('User u LEFT JOIN u.Phonenumber p')->where('u.id = 8');
+        $q = new \Doctrine1\Query();
+        $q = \Doctrine1\Query::create()->from('User u LEFT JOIN u.Phonenumber p')->where('u.id = 8');
 
         $coll = $q->execute();
 
@@ -72,7 +72,7 @@ class CollectionSnapshotTest extends DoctrineUnitTestCase
 
         static::$connection->clear();
 
-        $users = \Doctrine_Query::create()->from('User u LEFT JOIN u.Group g')
+        $users = \Doctrine1\Query::create()->from('User u LEFT JOIN u.Group g')
             ->where('u.id = ' . $user->id)->execute();
 
         $this->assertEquals('PHP', $users[0]->Group[0]->name);
@@ -94,7 +94,7 @@ class CollectionSnapshotTest extends DoctrineUnitTestCase
 
         static::$conn->clear();
 
-        $users = \Doctrine_Query::create()->from('User u LEFT JOIN u.Group g')
+        $users = \Doctrine1\Query::create()->from('User u LEFT JOIN u.Group g')
             ->where('u.id = ' . $user->id)->execute();
 
         $this->assertCount(0, $user->Group);

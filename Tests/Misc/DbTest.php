@@ -14,56 +14,56 @@ namespace Tests\Misc {
 
         public function testInitialize()
         {
-            static::$conn = \Doctrine_Manager::getInstance()->openConnection(['sqlite::memory:']);
+            static::$conn = \Doctrine1\Manager::getInstance()->openConnection(['sqlite::memory:']);
             static::$conn->exec('CREATE TABLE entity (id INTEGER, name TEXT)');
 
             static::$conn->exec("INSERT INTO entity (id, name) VALUES (1, 'zYne')");
             static::$conn->exec("INSERT INTO entity (id, name) VALUES (2, 'John')");
 
 
-            $this->assertEquals(static::$conn->getAttribute(\Doctrine_Core::ATTR_DRIVER_NAME), 'sqlite');
+            $this->assertEquals(static::$conn->getAttribute(\Doctrine1\Core::ATTR_DRIVER_NAME), 'sqlite');
         }
 
         public function testAddValidEventListener()
         {
-            static::$conn->setListener(new \Doctrine_EventListener());
+            static::$conn->setListener(new \Doctrine1\EventListener());
 
-            $this->assertTrue(static::$conn->getListener() instanceof \Doctrine_EventListener);
-            $ret = static::$conn->addListener(new \Doctrine_Connection_TestLogger());
-            $this->assertTrue($ret instanceof \Doctrine_Connection);
+            $this->assertTrue(static::$conn->getListener() instanceof \Doctrine1\EventListener);
+            $ret = static::$conn->addListener(new \DbTestLogger());
+            $this->assertTrue($ret instanceof \Doctrine1\Connection);
 
-            $this->assertTrue(static::$conn->getListener() instanceof \Doctrine_EventListener_Chain);
-            $this->assertTrue(static::$conn->getListener()->get(0) instanceof \Doctrine_Connection_TestLogger);
+            $this->assertTrue(static::$conn->getListener() instanceof \Doctrine1\EventListener\Chain);
+            $this->assertTrue(static::$conn->getListener()->get(0) instanceof \DbTestLogger);
 
-            $ret = static::$conn->addListener(new \Doctrine_Connection_TestValidListener());
-            $this->assertTrue($ret instanceof \Doctrine_Connection);
+            $ret = static::$conn->addListener(new \DbTestValidListener());
+            $this->assertTrue($ret instanceof \Doctrine1\Connection);
 
-            $this->assertTrue(static::$conn->getListener() instanceof \Doctrine_EventListener_Chain);
-            $this->assertTrue(static::$conn->getListener()->get(0) instanceof \Doctrine_Connection_TestLogger);
-            $this->assertTrue(static::$conn->getListener()->get(1) instanceof \Doctrine_Connection_TestValidListener);
+            $this->assertTrue(static::$conn->getListener() instanceof \Doctrine1\EventListener\Chain);
+            $this->assertTrue(static::$conn->getListener()->get(0) instanceof \DbTestLogger);
+            $this->assertTrue(static::$conn->getListener()->get(1) instanceof \DbTestValidListener);
 
-            $ret = static::$conn->addListener(new \Doctrine_EventListener_Chain(), 'chain');
-            $this->assertTrue($ret instanceof \Doctrine_Connection);
+            $ret = static::$conn->addListener(new \Doctrine1\EventListener\Chain(), 'chain');
+            $this->assertTrue($ret instanceof \Doctrine1\Connection);
 
-            $this->assertTrue(static::$conn->getListener() instanceof \Doctrine_EventListener_Chain);
-            $this->assertTrue(static::$conn->getListener()->get(0) instanceof \Doctrine_Connection_TestLogger);
-            $this->assertTrue(static::$conn->getListener()->get(1) instanceof \Doctrine_Connection_TestValidListener);
-            $this->assertTrue(static::$conn->getListener()->get('chain') instanceof \Doctrine_EventListener_Chain);
+            $this->assertTrue(static::$conn->getListener() instanceof \Doctrine1\EventListener\Chain);
+            $this->assertTrue(static::$conn->getListener()->get(0) instanceof \DbTestLogger);
+            $this->assertTrue(static::$conn->getListener()->get(1) instanceof \DbTestValidListener);
+            $this->assertTrue(static::$conn->getListener()->get('chain') instanceof \Doctrine1\EventListener\Chain);
 
             // replacing
 
-            $ret = static::$conn->addListener(new \Doctrine_EventListener_Chain(), 'chain');
-            $this->assertTrue($ret instanceof \Doctrine_Connection);
+            $ret = static::$conn->addListener(new \Doctrine1\EventListener\Chain(), 'chain');
+            $this->assertTrue($ret instanceof \Doctrine1\Connection);
 
-            $this->assertTrue(static::$conn->getListener() instanceof \Doctrine_EventListener_Chain);
-            $this->assertTrue(static::$conn->getListener()->get(0) instanceof \Doctrine_Connection_TestLogger);
-            $this->assertTrue(static::$conn->getListener()->get(1) instanceof \Doctrine_Connection_TestValidListener);
-            $this->assertTrue(static::$conn->getListener()->get('chain') instanceof \Doctrine_EventListener_Chain);
+            $this->assertTrue(static::$conn->getListener() instanceof \Doctrine1\EventListener\Chain);
+            $this->assertTrue(static::$conn->getListener()->get(0) instanceof \DbTestLogger);
+            $this->assertTrue(static::$conn->getListener()->get(1) instanceof \DbTestValidListener);
+            $this->assertTrue(static::$conn->getListener()->get('chain') instanceof \Doctrine1\EventListener\Chain);
         }
 
         public function testListeningEventsWithSingleListener()
         {
-            static::$conn->setListener(new \Doctrine_Connection_TestLogger());
+            static::$conn->setListener(new \DbTestLogger());
             $listener = static::$conn->getListener();
             $stmt     = static::$conn->prepare('INSERT INTO entity (id) VALUES(?)');
 
@@ -100,8 +100,8 @@ namespace Tests\Misc {
         {
             static::$conn->exec('DROP TABLE entity');
 
-            static::$conn->addListener(new \Doctrine_Connection_TestLogger());
-            static::$conn->addListener(new \Doctrine_Connection_TestLogger());
+            static::$conn->addListener(new \DbTestLogger());
+            static::$conn->addListener(new \DbTestLogger());
 
             static::$conn->exec('CREATE TABLE entity (id INT)');
 
@@ -172,69 +172,69 @@ namespace Tests\Misc {
 
         public function testSetValidEventListener()
         {
-            static::$conn->setListener(new \Doctrine_Connection_TestLogger());
-            $this->assertTrue(static::$conn->getListener() instanceof \Doctrine_Connection_TestLogger);
+            static::$conn->setListener(new \DbTestLogger());
+            $this->assertTrue(static::$conn->getListener() instanceof \DbTestLogger);
 
-            static::$conn->setListener(new \Doctrine_Connection_TestValidListener());
-            $this->assertTrue(static::$conn->getListener() instanceof \Doctrine_Connection_TestValidListener);
+            static::$conn->setListener(new \DbTestValidListener());
+            $this->assertTrue(static::$conn->getListener() instanceof \DbTestValidListener);
 
-            static::$conn->setListener(new \Doctrine_EventListener_Chain());
-            $this->assertTrue(static::$conn->getListener() instanceof \Doctrine_EventListener_Chain);
+            static::$conn->setListener(new \Doctrine1\EventListener\Chain());
+            $this->assertTrue(static::$conn->getListener() instanceof \Doctrine1\EventListener\Chain);
 
-            static::$conn->setListener(new \Doctrine_EventListener());
-            $this->assertTrue(static::$conn->getListener() instanceof \Doctrine_EventListener);
+            static::$conn->setListener(new \Doctrine1\EventListener());
+            $this->assertTrue(static::$conn->getListener() instanceof \Doctrine1\EventListener);
         }
 
         public function testSetInvalidEventListener()
         {
             $this->expectException(\TypeError::class);
-            static::$conn->setListener(new \Doctrine_Connection_TestInvalidListener());
+            static::$conn->setListener(new \DbTestInvalidListener());
         }
 
         public function testInvalidDSN1()
         {
-            $manager = \Doctrine_Manager::getInstance();
-            $this->expectException(\Doctrine_Exception::class);
+            $manager = \Doctrine1\Manager::getInstance();
+            $this->expectException(\Doctrine1\Exception::class);
             static::$conn = $manager->openConnection('');
         }
 
         public function testInvalidDSN2()
         {
-            $manager = \Doctrine_Manager::getInstance();
-            $this->expectException(\Doctrine_Exception::class);
+            $manager = \Doctrine1\Manager::getInstance();
+            $this->expectException(\Doctrine1\Exception::class);
             static::$conn = $manager->openConnection('unknown');
         }
 
         public function testInvalidDSN3()
         {
-            $manager = \Doctrine_Manager::getInstance();
-            $this->expectException(\Doctrine_Exception::class);
+            $manager = \Doctrine1\Manager::getInstance();
+            $this->expectException(\Doctrine1\Exception::class);
             static::$conn = $manager->openConnection(0);
         }
 
         public function testInvalidScheme()
         {
-            $manager = \Doctrine_Manager::getInstance();
-            $this->expectException(\Doctrine_Exception::class);
+            $manager = \Doctrine1\Manager::getInstance();
+            $this->expectException(\Doctrine1\Exception::class);
             static::$conn = $manager->openConnection('unknown://:memory:');
         }
         public function testInvalidHost()
         {
-            $manager = \Doctrine_Manager::getInstance();
-            $this->expectException(\Doctrine_Exception::class);
+            $manager = \Doctrine1\Manager::getInstance();
+            $this->expectException(\Doctrine1\Exception::class);
             static::$conn = $manager->openConnection('mysql://user:password@');
         }
         public function testInvalidDatabase()
         {
-            $manager = \Doctrine_Manager::getInstance();
-            $this->expectException(\Doctrine_Exception::class);
+            $manager = \Doctrine1\Manager::getInstance();
+            $this->expectException(\Doctrine1\Exception::class);
             static::$conn = $manager->openConnection('mysql://user:password@host/');
         }
     }
 }
 
 namespace {
-    class Doctrine_Connection_TestLogger implements Doctrine_Overloadable
+    class DbTestLogger implements \Doctrine1\Overloadable
     {
         private $messages = [];
 
@@ -259,11 +259,11 @@ namespace {
         }
     }
 
-    class Doctrine_Connection_TestValidListener extends Doctrine_EventListener
+    class DbTestValidListener extends \Doctrine1\EventListener
     {
     }
 
-    class Doctrine_Connection_TestInvalidListener
+    class DbTestInvalidListener
     {
     }
 }

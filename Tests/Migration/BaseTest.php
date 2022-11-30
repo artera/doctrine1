@@ -10,13 +10,13 @@ namespace Tests\Migration {
 
         public function testIsAbstract()
         {
-            $reflectionClass = new \ReflectionClass('Doctrine_Migration_Base');
+            $reflectionClass = new \ReflectionClass('\Doctrine1\Migration\Base');
             $this->assertTrue($reflectionClass->isAbstract());
         }
 
         public function testByDefaultHasNoDefaultTableOptions()
         {
-            $this->assertEquals([], \Doctrine_Migration_Base::getDefaultTableOptions());
+            $this->assertEquals([], \Doctrine1\Migration\Base::getDefaultTableOptions());
         }
 
         public function testGetdefaulttableoptionsReturnsTheOptionsSetWithSetdefaulttableoptions()
@@ -28,14 +28,14 @@ namespace Tests\Migration {
             ];
 
             foreach ($fixtures as $fixture) {
-                \Doctrine_Migration_Base::setDefaultTableOptions($fixture);
-                $this->assertEquals($fixture, \Doctrine_Migration_Base::getDefaultTableOptions());
+                \Doctrine1\Migration\Base::setDefaultTableOptions($fixture);
+                $this->assertEquals($fixture, \Doctrine1\Migration\Base::getDefaultTableOptions());
             }
         }
 
         public function tearDown(): void
         {
-            \Doctrine_Migration_Base::setDefaultTableOptions([]);
+            \Doctrine1\Migration\Base::setDefaultTableOptions([]);
         }
 
         public function testCreatetableMergesTheDefaultTableOptionsWithTheSpecifiedOptions()
@@ -54,8 +54,8 @@ namespace Tests\Migration {
             ];
 
             foreach ($fixtures as $fixture) {
-                \Doctrine_Migration_Base_TestCase_TestBase01::setDefaultTableOptions($fixture['default']);
-                $migration = new \Doctrine_Migration_Base_TestCase_TestBase01();
+                \TestCase_TestBase01::setDefaultTableOptions($fixture['default']);
+                $migration = new \TestCase_TestBase01();
                 $migration->createTable('anything', [], $fixture['user']);
                 $this->assertEquals($fixture['expected'], $migration->mergedOptions);
             }
@@ -64,7 +64,7 @@ namespace Tests\Migration {
 }
 
 namespace {
-    class Doctrine_Migration_Base_TestCase_TestBase01 extends Doctrine_Migration_Base
+    class TestCase_TestBase01 extends \Doctrine1\Migration\Base
     {
         public $mergedOptions = [];
 

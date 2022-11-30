@@ -10,7 +10,7 @@ namespace Tests\Transaction {
         public static function setUpBeforeClass(): void
         {
             parent::setUpBeforeClass();
-            static::$transaction = new \Doctrine_Transaction_Mysql();
+            static::$transaction = new \Doctrine1\Transaction\Mysql();
             static::$listener = new \TransactionListener();
             static::$conn->setListener(static::$listener);
         }
@@ -46,7 +46,7 @@ namespace Tests\Transaction {
 
         public function testSetIsolationThrowsExceptionOnUnknownIsolationMode(): void
         {
-            $this->expectException(\Doctrine_Transaction_Exception::class);
+            $this->expectException(\Doctrine1\Transaction\Exception::class);
             static::$transaction->setIsolation('unknown');
         }
 
@@ -71,24 +71,24 @@ namespace Tests\Transaction {
 
             $this->assertEquals(static::$listener->pop(), 'postSavepointCommit');
             $this->assertEquals(static::$listener->pop(), 'preSavepointCommit');
-            $this->assertEquals(static::$transaction->getState(), \Doctrine_Transaction_State::SLEEP());
+            $this->assertEquals(static::$transaction->getState(), \Doctrine1\Transaction\State::SLEEP);
         }
 
         public function testNestedSavepoints(): void
         {
-            $this->assertEquals(static::$transaction->getState(), \Doctrine_Transaction_State::SLEEP());
+            $this->assertEquals(static::$transaction->getState(), \Doctrine1\Transaction\State::SLEEP);
             static::$transaction->beginTransaction();
-            $this->assertEquals(static::$transaction->getState(), \Doctrine_Transaction_State::ACTIVE());
+            $this->assertEquals(static::$transaction->getState(), \Doctrine1\Transaction\State::ACTIVE);
             static::$transaction->beginTransaction('point 1');
-            $this->assertEquals(static::$transaction->getState(), \Doctrine_Transaction_State::BUSY());
+            $this->assertEquals(static::$transaction->getState(), \Doctrine1\Transaction\State::BUSY);
             static::$transaction->beginTransaction('point 2');
-            $this->assertEquals(static::$transaction->getState(), \Doctrine_Transaction_State::BUSY());
+            $this->assertEquals(static::$transaction->getState(), \Doctrine1\Transaction\State::BUSY);
             static::$transaction->commit('point 2');
-            $this->assertEquals(static::$transaction->getState(), \Doctrine_Transaction_State::BUSY());
+            $this->assertEquals(static::$transaction->getState(), \Doctrine1\Transaction\State::BUSY);
             static::$transaction->commit('point 1');
-            $this->assertEquals(static::$transaction->getState(), \Doctrine_Transaction_State::ACTIVE());
+            $this->assertEquals(static::$transaction->getState(), \Doctrine1\Transaction\State::ACTIVE);
             static::$transaction->commit();
-            $this->assertEquals(static::$transaction->getState(), \Doctrine_Transaction_State::SLEEP());
+            $this->assertEquals(static::$transaction->getState(), \Doctrine1\Transaction\State::SLEEP);
         }
 
         public function testRollbackSavepointListenersGetInvoked(): void
@@ -100,71 +100,71 @@ namespace Tests\Transaction {
             $this->assertEquals(static::$listener->pop(), 'preSavepointRollback');
             $this->assertEquals(static::$listener->pop(), 'postSavepointCreate');
             $this->assertEquals(static::$listener->pop(), 'preSavepointCreate');
-            $this->assertEquals(static::$transaction->getState(), \Doctrine_Transaction_State::SLEEP());
+            $this->assertEquals(static::$transaction->getState(), \Doctrine1\Transaction\State::SLEEP);
 
-            static::$listener = new \Doctrine_Eventlistener();
+            static::$listener = new \Doctrine1\Eventlistener();
             static::$conn->setListener(static::$listener);
         }
     }
 }
 
 namespace {
-    class TransactionListener extends Doctrine_EventListener
+    class TransactionListener extends \Doctrine1\EventListener
     {
         protected $messages = [];
 
-        public function preTransactionCommit(Doctrine_Event $event)
+        public function preTransactionCommit(\Doctrine1\Event $event)
         {
             $this->messages[] = __FUNCTION__;
         }
-        public function postTransactionCommit(Doctrine_Event $event)
-        {
-            $this->messages[] = __FUNCTION__;
-        }
-
-        public function preTransactionRollback(Doctrine_Event $event)
-        {
-            $this->messages[] = __FUNCTION__;
-        }
-        public function postTransactionRollback(Doctrine_Event $event)
+        public function postTransactionCommit(\Doctrine1\Event $event)
         {
             $this->messages[] = __FUNCTION__;
         }
 
-        public function preTransactionBegin(Doctrine_Event $event)
+        public function preTransactionRollback(\Doctrine1\Event $event)
         {
             $this->messages[] = __FUNCTION__;
         }
-        public function postTransactionBegin(Doctrine_Event $event)
+        public function postTransactionRollback(\Doctrine1\Event $event)
+        {
+            $this->messages[] = __FUNCTION__;
+        }
+
+        public function preTransactionBegin(\Doctrine1\Event $event)
+        {
+            $this->messages[] = __FUNCTION__;
+        }
+        public function postTransactionBegin(\Doctrine1\Event $event)
         {
             $this->messages[] = __FUNCTION__;
         }
 
 
-        public function preSavepointCommit(Doctrine_Event $event)
+        public function preSavepointCommit(\Doctrine1\Event $event)
         {
             $this->messages[] = __FUNCTION__;
         }
-        public function postSavepointCommit(Doctrine_Event $event)
-        {
-            $this->messages[] = __FUNCTION__;
-        }
-
-        public function preSavepointRollback(Doctrine_Event $event)
-        {
-            $this->messages[] = __FUNCTION__;
-        }
-        public function postSavepointRollback(Doctrine_Event $event)
+        public function postSavepointCommit(\Doctrine1\Event $event)
         {
             $this->messages[] = __FUNCTION__;
         }
 
-        public function preSavepointCreate(Doctrine_Event $event)
+        public function preSavepointRollback(\Doctrine1\Event $event)
+        {
+            $this->messages[] = __FUNCTION__;
+        }
+        public function postSavepointRollback(\Doctrine1\Event $event)
         {
             $this->messages[] = __FUNCTION__;
         }
 
-        public function postSavepointCreate(Doctrine_Event $event)
+        public function preSavepointCreate(\Doctrine1\Event $event)
+        {
+            $this->messages[] = __FUNCTION__;
+        }
+
+        public function postSavepointCreate(\Doctrine1\Event $event)
         {
             $this->messages[] = __FUNCTION__;
         }

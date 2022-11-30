@@ -23,24 +23,24 @@ namespace Tests\Tickets {
         {
             $student1 = $this->newStudent('T626C_Student1', '07090002', 'First Student');
 
-            $students = \Doctrine_Query::create()
+            $students = \Doctrine1\Query::create()
                 ->from('T626C_Student1 s INDEXBY s.id')
-                ->execute([], \Doctrine_Core::HYDRATE_ARRAY);
+                ->execute([], \Doctrine1\Core::HYDRATE_ARRAY);
         }
 
         public function testColNames()
         {
             $student1 = $this->newStudent('T626C_Student2', '07090002', 'First Student');
 
-            $students = \Doctrine_Query::create()
+            $students = \Doctrine1\Query::create()
                 ->from('T626C_Student2 s INDEXBY s.id')
-                ->execute([], \Doctrine_Core::HYDRATE_ARRAY);
+                ->execute([], \Doctrine1\Core::HYDRATE_ARRAY);
         }
     }
 }
 
 namespace {
-    class T626C_Student1 extends Doctrine_Record
+    class T626C_Student1 extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -51,7 +51,7 @@ namespace {
         }
     }
 
-    class T626C_Student2 extends Doctrine_Record
+    class T626C_Student2 extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

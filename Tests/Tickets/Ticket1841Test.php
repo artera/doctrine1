@@ -16,7 +16,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class Ticket_1841_User extends Doctrine_Record
+    class Ticket_1841_User extends \Doctrine1\Record
     {
         public function construct()
         {

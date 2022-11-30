@@ -13,9 +13,9 @@ namespace Tests\Tickets {
                         ];
 
             foreach ($drivers as $driver) {
-                $dbh = new \Doctrine_Adapter_Mock($driver);
+                $dbh = new \Doctrine1\Adapter\Mock($driver);
 
-                $conn = \Doctrine_Manager::getInstance()->connection($dbh, $driver);
+                $conn = \Doctrine1\Manager::getInstance()->connection($dbh, $driver);
 
                 $sql = $conn->export->exportSortedClassesSql(['Ticket_1372_ParentClass', 'Ticket_1372_Child_1', 'Ticket_1372_Child_2'], false);
 
@@ -31,7 +31,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class Ticket_1372_ParentClass extends Doctrine_Record
+    class Ticket_1372_ParentClass extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -45,7 +45,7 @@ namespace {
             $this->index('type_idx', ['fields' => [0 => 'type']]);
             $this->index('values_idx', ['fields' => [0 => 'value_1', 1 => 'value_2']]);
 
-            $this->setAttribute(\Doctrine_Core::ATTR_EXPORT, \Doctrine_Core::EXPORT_ALL);
+            $this->setAttribute(\Doctrine1\Core::ATTR_EXPORT, \Doctrine1\Core::EXPORT_ALL);
 
             $this->setSubClasses(['Child_1' => ['type' => 1], 'Child_2' => ['type' => 2]]);
         }

@@ -11,13 +11,13 @@ class Gzip implements SerializerInterface
         }
     }
 
-    public function serialize(mixed $value, array $column, \Doctrine_Table $table): mixed
+    public function serialize(mixed $value, array $column, \Doctrine1\Table $table): mixed
     {
         $this->checkCompatibility($value, $column['type']);
         return gzcompress($value, 5);
     }
 
-    public function areEquivalent(mixed $a, mixed $b, array $column, \Doctrine_Table $table): bool
+    public function areEquivalent(mixed $a, mixed $b, array $column, \Doctrine1\Table $table): bool
     {
         $this->checkCompatibility($a, $column['type']);
         $this->checkCompatibility($b, $column['type']);

@@ -20,7 +20,7 @@ namespace Tests\Tickets {
         {
             $beginNumber = 1;
             $endNumber   = 3;
-            $query       = \Doctrine_Query::create()
+            $query       = \Doctrine1\Query::create()
                 ->from('T894_Day d')
                 ->where('d.number BETWEEN ? AND ?', [$beginNumber, $endNumber]);
             $this->assertEquals(' FROM T894_Day d WHERE d.number BETWEEN ? AND ?', $query->getDql());
@@ -30,7 +30,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class T894_Day extends Doctrine_Record
+    class T894_Day extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

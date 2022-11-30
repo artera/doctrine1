@@ -34,7 +34,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class Ticket_1280_User extends Doctrine_Record
+    class Ticket_1280_User extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -62,7 +62,7 @@ namespace {
     }
 
 
-    class Ticket_1280_Group extends Doctrine_Record
+    class Ticket_1280_Group extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

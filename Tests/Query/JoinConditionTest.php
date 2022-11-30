@@ -15,7 +15,7 @@ class JoinConditionTest extends DoctrineUnitTestCase
 
     public function testJoinConditionsAreSupportedForOneToManyLeftJoins()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->parseDqlQuery("SELECT u.name, p.id FROM User u LEFT JOIN u.Phonenumber p ON p.phonenumber = '123 123'");
 
@@ -24,7 +24,7 @@ class JoinConditionTest extends DoctrineUnitTestCase
 
     public function testJoinConditionsAreSupportedForOneToManyInnerJoins()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->parseDqlQuery("SELECT u.name, p.id FROM User u INNER JOIN u.Phonenumber p ON p.phonenumber = '123 123'");
 
@@ -33,7 +33,7 @@ class JoinConditionTest extends DoctrineUnitTestCase
 
     public function testJoinConditionsAreSupportedForManyToManyLeftJoins()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->parseDqlQuery('SELECT u.name, g.id FROM User u LEFT JOIN u.Group g ON g.id > 2');
 
@@ -42,7 +42,7 @@ class JoinConditionTest extends DoctrineUnitTestCase
 
     public function testJoinConditionsAreSupportedForManyToManyInnerJoins()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->parseDqlQuery('SELECT u.name, g.id FROM User u INNER JOIN u.Group g ON g.id > 2');
 
@@ -51,7 +51,7 @@ class JoinConditionTest extends DoctrineUnitTestCase
 
     public function testJoinConditionsWithClauseAndAliases()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->parseDqlQuery('SELECT a.name, b.id FROM User a LEFT JOIN a.Phonenumber b ON a.name = b.phonenumber');
 
@@ -61,7 +61,7 @@ class JoinConditionTest extends DoctrineUnitTestCase
     public function testJoinWithConditionAndNotInClause()
     {
         // Related to ticket #1329
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->parseDqlQuery('SELECT a.name, b.id FROM User a LEFT JOIN a.Phonenumber b WITH a.id NOT IN (1, 2, 3)');
 

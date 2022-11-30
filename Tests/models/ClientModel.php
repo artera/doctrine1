@@ -1,5 +1,5 @@
 <?php
-class ClientModel extends Doctrine_Record
+class ClientModel extends \Doctrine1\Record
 {
     public function setTableDefinition(): void
     {
@@ -23,7 +23,7 @@ class ClientModel extends Doctrine_Record
     }
 }
 
-class ClientToAddressModel extends Doctrine_Record
+class ClientToAddressModel extends \Doctrine1\Record
 {
     public function setTableDefinition(): void
     {
@@ -44,7 +44,7 @@ class ClientToAddressModel extends Doctrine_Record
     }
 }
 
-class AddressModel extends Doctrine_Record
+class AddressModel extends \Doctrine1\Record
 {
     public function setTableDefinition(): void
     {

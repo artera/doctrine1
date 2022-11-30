@@ -13,9 +13,9 @@ namespace Tests\Tickets {
 
         public function testDqlCallbacks()
         {
-            \Doctrine_Manager::getInstance()->setAttribute(\Doctrine_Core::ATTR_USE_DQL_CALLBACKS, true);
+            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_USE_DQL_CALLBACKS, true);
 
-            $table = \Doctrine_Core::getTable('RecordTest2');
+            $table = \Doctrine1\Core::getTable('RecordTest2');
             $table->addRecordListener(new \RecordTest2Listener());
 
             $test2       = new \RecordTest2();
@@ -29,7 +29,7 @@ namespace Tests\Tickets {
             $id = $test2->id;
             $test2->free();
 
-            $test2 = \Doctrine_Core::getTable('RecordTest2')
+            $test2 = \Doctrine1\Core::getTable('RecordTest2')
                 ->createQuery('a')
                 ->select('a.id')
                 ->where('a.id = ?', $id)
@@ -37,15 +37,15 @@ namespace Tests\Tickets {
 
             $test2->load();
 
-            $this->assertTrue($test2->RecordTest1 instanceof \Doctrine_Collection);
+            $this->assertTrue($test2->RecordTest1 instanceof \Doctrine1\Collection);
 
-            \Doctrine_Manager::getInstance()->setAttribute(\Doctrine_Core::ATTR_USE_DQL_CALLBACKS, false);
+            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_USE_DQL_CALLBACKS, false);
         }
     }
 }
 
 namespace {
-    class RecordTest1 extends Doctrine_Record
+    class RecordTest1 extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -65,7 +65,7 @@ namespace {
         }
     }
 
-    class RecordTest2 extends Doctrine_Record
+    class RecordTest2 extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -84,9 +84,9 @@ namespace {
         }
     }
 
-    class RecordTest2Listener extends Doctrine_Record_Listener
+    class RecordTest2Listener extends \Doctrine1\Record\Listener
     {
-        public function preDqlSelect(Doctrine_Event $event)
+        public function preDqlSelect(\Doctrine1\Event $event)
         {
             $params = $event->getParams();
             $alias  = $params['alias'];

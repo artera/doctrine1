@@ -1,5 +1,5 @@
 <?php
-class FooForeignlyOwnedWithPk extends Doctrine_Record
+class FooForeignlyOwnedWithPk extends \Doctrine1\Record
 {
     public function setTableDefinition(): void
     {

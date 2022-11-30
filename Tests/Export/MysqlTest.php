@@ -17,7 +17,7 @@ class MysqlTest extends DoctrineUnitTestCase
 
     public function testAlterTableThrowsExceptionWithoutValidTableName()
     {
-        $this->expectException(\Doctrine_Export_Exception::class);
+        $this->expectException(\Doctrine1\Export\Exception::class);
         static::$conn->export->alterTable(0, [], []);
     }
 
@@ -178,7 +178,7 @@ class MysqlTest extends DoctrineUnitTestCase
             "CREATE TABLE mytable (letter VARCHAR(1) DEFAULT 'a' NOT NULL) ENGINE = MYISAM"
         );
 
-        static::$conn->setAttribute(\Doctrine_Core::ATTR_USE_NATIVE_ENUM, true);
+        static::$conn->setAttribute(\Doctrine1\Core::ATTR_USE_NATIVE_ENUM, true);
         static::$conn->export->createTable($name, $fields, $options);
 
         $this->assertEquals(
@@ -210,7 +210,7 @@ class MysqlTest extends DoctrineUnitTestCase
             "CREATE TABLE mytable (letter VARCHAR(5) DEFAULT 'a' NOT NULL) ENGINE = MYISAM"
         );
 
-        static::$conn->setAttribute(\Doctrine_Core::ATTR_USE_NATIVE_SET, true);
+        static::$conn->setAttribute(\Doctrine1\Core::ATTR_USE_NATIVE_SET, true);
         static::$conn->export->createTable($name, $fields, $options);
 
         $this->assertEquals(
@@ -241,7 +241,7 @@ class MysqlTest extends DoctrineUnitTestCase
 
     public function testForeignKeyIdentifierQuoting()
     {
-        static::$conn->setAttribute(\Doctrine_Core::ATTR_QUOTE_IDENTIFIER, true);
+        static::$conn->setAttribute(\Doctrine1\Core::ATTR_QUOTE_IDENTIFIER, true);
 
         $name = 'mytable';
 
@@ -260,12 +260,12 @@ class MysqlTest extends DoctrineUnitTestCase
         $this->assertEquals($sql[0], 'CREATE TABLE `mytable` (`id` TINYINT(1), `foreignKey` INT, INDEX `foreignKey_idx` (`foreignKey`)) ENGINE = INNODB');
         $this->assertEquals($sql[1], 'ALTER TABLE `mytable` ADD FOREIGN KEY (`foreignKey`) REFERENCES `sometable`(`id`)');
 
-        static::$conn->setAttribute(\Doctrine_Core::ATTR_QUOTE_IDENTIFIER, false);
+        static::$conn->setAttribute(\Doctrine1\Core::ATTR_QUOTE_IDENTIFIER, false);
     }
 
     public function testIndexIdentifierQuoting()
     {
-        static::$conn->setAttribute(\Doctrine_Core::ATTR_QUOTE_IDENTIFIER, true);
+        static::$conn->setAttribute(\Doctrine1\Core::ATTR_QUOTE_IDENTIFIER, true);
 
         $fields = ['id'    => ['type' => 'integer', 'unsigned' => 1, 'autoincrement' => true],
                          'name' => ['type' => 'string', 'length' => 4],
@@ -283,7 +283,7 @@ class MysqlTest extends DoctrineUnitTestCase
 
         $this->assertEquals(static::$adapter->pop(), 'CREATE TABLE `sometable` (`id` INT UNSIGNED AUTO_INCREMENT, `name` VARCHAR(4), INDEX `myindex_idx` (`id`, `name`), PRIMARY KEY(`id`)) ENGINE = INNODB');
 
-        static::$conn->setAttribute(\Doctrine_Core::ATTR_QUOTE_IDENTIFIER, false);
+        static::$conn->setAttribute(\Doctrine1\Core::ATTR_QUOTE_IDENTIFIER, false);
     }
 
     public function testCreateTableDoesNotAutoAddIndexesWhenIndexForFkFieldAlreadyExists()
@@ -334,7 +334,7 @@ class MysqlTest extends DoctrineUnitTestCase
         $fields = ['id'   => ['sorting' => 'ASC'],
                         'name' => ['sorting' => 'unknown']];
 
-                        $this->expectException(\Doctrine_Export_Exception::class);
+                        $this->expectException(\Doctrine1\Export\Exception::class);
         static::$conn->export->getIndexFieldDeclarationList($fields);
     }
 

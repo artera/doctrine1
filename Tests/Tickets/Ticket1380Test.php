@@ -7,7 +7,7 @@ class Ticket1380Test extends DoctrineUnitTestCase
 {
     public function testTest()
     {
-        $q = \Doctrine_Query::create()
+        $q = \Doctrine1\Query::create()
             ->select('u.*, COUNT(p.id) as num_phonenumbers')
             ->from('User u')
             ->leftJoin('u.Phonenumber p');

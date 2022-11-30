@@ -1,5 +1,5 @@
 <?php
-class ConcreteInheritanceTestParent extends Doctrine_Record
+class ConcreteInheritanceTestParent extends \Doctrine1\Record
 {
     public function setTableDefinition(): void
     {

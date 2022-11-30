@@ -12,12 +12,12 @@ namespace Tests\Tickets {
 
         public function testTest()
         {
-            \Doctrine_Manager::getInstance()->setAttribute(\Doctrine_Core::ATTR_AUTO_ACCESSOR_OVERRIDE, true);
+            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_AUTO_ACCESSOR_OVERRIDE, true);
             try {
                 $user           = new \Ticket_1658_User();
                 $user->password = 'test';
                 $this->assertTrue(false);
-            } catch (\Doctrine_Exception $e) {
+            } catch (\Doctrine1\Exception $e) {
                 $this->assertEquals($e->getMessage(), 'Set password called');
             }
 
@@ -25,16 +25,16 @@ namespace Tests\Tickets {
                 $user = new \Ticket_1658_User();
                 $user->fromArray(['password' => 'test']);
                 $this->assertTrue(false);
-            } catch (\Doctrine_Exception $e) {
+            } catch (\Doctrine1\Exception $e) {
                 $this->assertEquals($e->getMessage(), 'Set password called');
             }
-            \Doctrine_Manager::getInstance()->setAttribute(\Doctrine_Core::ATTR_AUTO_ACCESSOR_OVERRIDE, false);
+            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_AUTO_ACCESSOR_OVERRIDE, false);
         }
     }
 }
 
 namespace {
-    class Ticket_1658_User extends Doctrine_Record
+    class Ticket_1658_User extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -44,7 +44,7 @@ namespace {
 
         public function setPassword($password)
         {
-            throw new \Doctrine_Exception('Set password called');
+            throw new \Doctrine1\Exception('Set password called');
         }
     }
 }

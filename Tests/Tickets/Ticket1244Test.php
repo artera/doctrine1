@@ -12,20 +12,20 @@ namespace Tests\Tickets {
 
         public function testTicket()
         {
-            $original = \Doctrine_Manager::getInstance()->getAttribute(\Doctrine_Core::ATTR_VALIDATE);
-            \Doctrine_Manager::getInstance()->setAttribute(\Doctrine_Core::ATTR_VALIDATE, \Doctrine_Core::VALIDATE_ALL);
+            $original = \Doctrine1\Manager::getInstance()->getAttribute(\Doctrine1\Core::ATTR_VALIDATE);
+            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_ALL);
 
             $test       = new \Ticket_1244_Test();
             $test->test = null;
             $test->save();
 
-            \Doctrine_Manager::getInstance()->setAttribute(\Doctrine_Core::ATTR_VALIDATE, $original);
+            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, $original);
         }
     }
 }
 
 namespace {
-    class Ticket_1244_Test extends Doctrine_Record
+    class Ticket_1244_Test extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

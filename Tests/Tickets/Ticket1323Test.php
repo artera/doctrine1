@@ -18,9 +18,9 @@ namespace Tests\Tickets {
 
         public function resetData()
         {
-            $q = \Doctrine_Query::create();
+            $q = \Doctrine1\Query::create();
             $q->delete()->from('T1323UserReference')->execute();
-            $q = \Doctrine_Query::create();
+            $q = \Doctrine1\Query::create();
             $q->delete()->from('T1323User')->execute();
 
             $m       = new \T1323User();
@@ -60,7 +60,7 @@ namespace Tests\Tickets {
         {
             $this->resetData();
 
-            $f          = \Doctrine_Core::getTable('T1323User')->findOneByName('Father');
+            $f          = \Doctrine1\Core::getTable('T1323User')->findOneByName('Father');
             $childLinks = $f->childLinks;
             $this->assertEquals(2, count($childLinks));
             $this->assertEquals($f->id, $childLinks[0]->parent_id);
@@ -71,7 +71,7 @@ namespace Tests\Tickets {
             $this->assertEquals($f->id, $parentLinks[0]->child_id);
             $this->assertEquals($f->id, $parentLinks[1]->child_id);
 
-            $m          = \Doctrine_Core::getTable('T1323User')->findOneByName('Mother');
+            $m          = \Doctrine1\Core::getTable('T1323User')->findOneByName('Mother');
             $childLinks = $m->childLinks;
             $this->assertEquals(2, count($childLinks));
             $this->assertEquals($m->id, $childLinks[0]->parent_id);
@@ -80,7 +80,7 @@ namespace Tests\Tickets {
             $parentLinks = $m->parentLinks;
             $this->assertEquals(0, count($parentLinks));
 
-            $s          = \Doctrine_Core::getTable('T1323User')->findOneByName('Son');
+            $s          = \Doctrine1\Core::getTable('T1323User')->findOneByName('Son');
             $childLinks = $s->childLinks;
             $this->assertEquals(0, count($childLinks));
             $parentLinks = $s->parentLinks;
@@ -88,7 +88,7 @@ namespace Tests\Tickets {
             $this->assertEquals($s->id, $parentLinks[0]->child_id);
             $this->assertEquals($s->id, $parentLinks[1]->child_id);
 
-            $d          = \Doctrine_Core::getTable('T1323User')->findOneByName('Daughter');
+            $d          = \Doctrine1\Core::getTable('T1323User')->findOneByName('Daughter');
             $childLinks = $d->childLinks;
             $this->assertEquals(0, count($childLinks));
             $parentLinks = $d->parentLinks;
@@ -96,14 +96,14 @@ namespace Tests\Tickets {
             $this->assertEquals($d->id, $parentLinks[0]->child_id);
             $this->assertEquals($d->id, $parentLinks[1]->child_id);
 
-            $gm         = \Doctrine_Core::getTable('T1323User')->findOneByName('Grandmother');
+            $gm         = \Doctrine1\Core::getTable('T1323User')->findOneByName('Grandmother');
             $childLinks = $gm->childLinks;
             $this->assertEquals(1, count($childLinks));
             $this->assertEquals($gm->id, $childLinks[0]->parent_id);
             $parentLinks = $gm->parentLinks;
             $this->assertEquals(0, count($parentLinks));
 
-            $gf         = \Doctrine_Core::getTable('T1323User')->findOneByName('Grandfather');
+            $gf         = \Doctrine1\Core::getTable('T1323User')->findOneByName('Grandfather');
             $childLinks = $gf->childLinks;
             $this->assertEquals(1, count($childLinks));
             $this->assertEquals($gf->id, $childLinks[0]->parent_id);
@@ -137,17 +137,17 @@ namespace Tests\Tickets {
         {
 
             // change "Father"'s name...
-            $f       = \Doctrine_Core::getTable('T1323User')->findOneByName('Father');
+            $f       = \Doctrine1\Core::getTable('T1323User')->findOneByName('Father');
             $f->name = 'Dad';
             $f->save();
 
             /*  just playing; makes no difference:
             remove "Dad"'s relation to "Son"... */
-            //$s = \Doctrine_Core::getTable("T1323User")->findOneByName("Son");
+            //$s = \Doctrine1\Core::getTable("T1323User")->findOneByName("Son");
             //$f->unlink("Children", array($s->id));
             //$f->save();
 
-            $relations = \Doctrine_Core::getTable('T1323UserReference')->findAll();
+            $relations = \Doctrine1\Core::getTable('T1323UserReference')->findAll();
             foreach ($relations as $relation) {
                 /*  never directly touched any relation; so no user should have
                 himself as parent or child */
@@ -158,7 +158,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class T1323User extends Doctrine_Record
+    class T1323User extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -191,7 +191,7 @@ namespace {
          */
         public static function showAllRelations()
         {
-            $users = \Doctrine_Core::getTable('T1323User')->findAll();
+            $users = \Doctrine1\Core::getTable('T1323User')->findAll();
 
             foreach ($users as $user) {
                 $parents  = $user->Parents;
@@ -200,7 +200,7 @@ namespace {
         }
     }
 
-    class T1323UserReference extends Doctrine_Record
+    class T1323UserReference extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

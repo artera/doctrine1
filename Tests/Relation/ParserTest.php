@@ -7,16 +7,16 @@ class ParserTest extends DoctrineUnitTestCase
 {
     public function testPendingRelations()
     {
-        $r = new \Doctrine_Relation_Parser(static::$conn->getTable('User'));
+        $r = new \Doctrine1\Relation\Parser(static::$conn->getTable('User'));
 
-        $p = ['type'  => \Doctrine_Relation::ONE,
+        $p = ['type'  => \Doctrine1\Relation::ONE,
                    'local' => 'email_id'];
 
         $r->bind('Email', $p);
 
         $this->assertEquals(
             $r->getPendingRelation('Email'),
-            ['type'  => \Doctrine_Relation::ONE,
+            ['type'  => \Doctrine1\Relation::ONE,
                 'local' => 'email_id',
                 'class' => 'Email',
                 'alias' => 'Email'
@@ -25,19 +25,19 @@ class ParserTest extends DoctrineUnitTestCase
     }
     public function testBindThrowsExceptionIfTypeNotSet()
     {
-        $r = new \Doctrine_Relation_Parser(static::$conn->getTable('User'));
+        $r = new \Doctrine1\Relation\Parser(static::$conn->getTable('User'));
 
         $p = ['local' => 'email_id'];
-        $this->expectException(\Doctrine_Relation_Exception::class);
+        $this->expectException(\Doctrine1\Relation\Exception::class);
         $r->bind('Email', $p);
     }
     public function testRelationParserSupportsLocalColumnGuessing()
     {
-        $r = new \Doctrine_Relation_Parser(static::$conn->getTable('User'));
+        $r = new \Doctrine1\Relation\Parser(static::$conn->getTable('User'));
 
         $d = $r->completeDefinition(
             ['class'   => 'Phonenumber',
-            'type'    => \Doctrine_Relation::MANY,
+            'type'    => \Doctrine1\Relation::MANY,
             'foreign' => 'entity_id']
         );
 
@@ -45,11 +45,11 @@ class ParserTest extends DoctrineUnitTestCase
     }
     public function testRelationParserSupportsLocalColumnGuessing2()
     {
-        $r = new \Doctrine_Relation_Parser(static::$conn->getTable('User'));
+        $r = new \Doctrine1\Relation\Parser(static::$conn->getTable('User'));
 
         $d = $r->completeDefinition(
             ['class'   => 'Email',
-            'type'    => \Doctrine_Relation::ONE,
+            'type'    => \Doctrine1\Relation::ONE,
             'foreign' => 'id']
         );
 
@@ -57,11 +57,11 @@ class ParserTest extends DoctrineUnitTestCase
     }
     public function testRelationParserSupportsForeignColumnGuessing()
     {
-        $r = new \Doctrine_Relation_Parser(static::$conn->getTable('User'));
+        $r = new \Doctrine1\Relation\Parser(static::$conn->getTable('User'));
 
         $d = $r->completeDefinition(
             ['class' => 'Phonenumber',
-            'type'  => \Doctrine_Relation::MANY,
+            'type'  => \Doctrine1\Relation::MANY,
             'local' => 'id']
         );
 
@@ -69,11 +69,11 @@ class ParserTest extends DoctrineUnitTestCase
     }
     public function testRelationParserSupportsForeignColumnGuessing2()
     {
-        $r = new \Doctrine_Relation_Parser(static::$conn->getTable('User'));
+        $r = new \Doctrine1\Relation\Parser(static::$conn->getTable('User'));
 
         $d = $r->completeDefinition(
             ['class' => 'Email',
-            'type'  => \Doctrine_Relation::ONE,
+            'type'  => \Doctrine1\Relation::ONE,
             'local' => 'email_id']
         );
 
@@ -81,11 +81,11 @@ class ParserTest extends DoctrineUnitTestCase
     }
     public function testRelationParserSupportsGuessingOfBothColumns()
     {
-        $r = new \Doctrine_Relation_Parser(static::$conn->getTable('User'));
+        $r = new \Doctrine1\Relation\Parser(static::$conn->getTable('User'));
 
         $d = $r->completeDefinition(
             ['class' => 'Email',
-            'type'  => \Doctrine_Relation::ONE]
+            'type'  => \Doctrine1\Relation::ONE]
         );
 
         $this->assertEquals($d['foreign'], 'id');
@@ -94,11 +94,11 @@ class ParserTest extends DoctrineUnitTestCase
 
     public function testRelationParserSupportsGuessingOfBothColumns2()
     {
-        $r = new \Doctrine_Relation_Parser(static::$conn->getTable('User'));
+        $r = new \Doctrine1\Relation\Parser(static::$conn->getTable('User'));
 
         $d = $r->completeDefinition(
             ['class' => 'Phonenumber',
-            'type'  => \Doctrine_Relation::MANY]
+            'type'  => \Doctrine1\Relation::MANY]
         );
 
         $this->assertEquals($d['foreign'], 'entity_id');
@@ -106,11 +106,11 @@ class ParserTest extends DoctrineUnitTestCase
     }
     public function testRelationParserSupportsForeignColumnGuessingForAssociations()
     {
-        $r = new \Doctrine_Relation_Parser(static::$conn->getTable('User'));
+        $r = new \Doctrine1\Relation\Parser(static::$conn->getTable('User'));
 
         $d = $r->completeAssocDefinition(
             ['class'    => 'Group',
-            'type'     => \Doctrine_Relation::MANY,
+            'type'     => \Doctrine1\Relation::MANY,
             'local'    => 'user_id',
             'refClass' => 'GroupUser']
         );
@@ -119,11 +119,11 @@ class ParserTest extends DoctrineUnitTestCase
     }
     public function testRelationParserSupportsLocalColumnGuessingForAssociations()
     {
-        $r = new \Doctrine_Relation_Parser(static::$conn->getTable('User'));
+        $r = new \Doctrine1\Relation\Parser(static::$conn->getTable('User'));
 
         $d = $r->completeAssocDefinition(
             ['class'    => 'Group',
-            'type'     => \Doctrine_Relation::MANY,
+            'type'     => \Doctrine1\Relation::MANY,
             'foreign'  => 'group_id',
             'refClass' => 'GroupUser']
         );
@@ -132,45 +132,45 @@ class ParserTest extends DoctrineUnitTestCase
     }
     public function testGetRelationReturnsForeignKeyObjectForOneToOneRelation()
     {
-        $r = new \Doctrine_Relation_Parser(static::$conn->getTable('User'));
-        $p = ['type'  => \Doctrine_Relation::ONE,
+        $r = new \Doctrine1\Relation\Parser(static::$conn->getTable('User'));
+        $p = ['type'  => \Doctrine1\Relation::ONE,
                    'local' => 'email_id'];
 
         $r->bind('Email', $p);
 
         $rel = $r->getRelation('Email');
 
-        $this->assertTrue($rel instanceof \Doctrine_Relation_LocalKey);
+        $this->assertTrue($rel instanceof \Doctrine1\Relation\LocalKey);
     }
     public function testGetRelationReturnsForeignKeyObjectForOneToManyRelation()
     {
-        $r = new \Doctrine_Relation_Parser(static::$conn->getTable('User'));
-        $p = ['type' => \Doctrine_Relation::MANY];
+        $r = new \Doctrine1\Relation\Parser(static::$conn->getTable('User'));
+        $p = ['type' => \Doctrine1\Relation::MANY];
 
         $r->bind('Phonenumber', $p);
 
         $rel = $r->getRelation('Phonenumber');
 
-        $this->assertTrue($rel instanceof \Doctrine_Relation_ForeignKey);
+        $this->assertTrue($rel instanceof \Doctrine1\Relation\ForeignKey);
     }
     public function testGetRelationReturnsForeignKeyObjectForManytToManyRelation()
     {
-        $r = new \Doctrine_Relation_Parser(static::$conn->getTable('User'));
-        $p = ['type'     => \Doctrine_Relation::MANY,
+        $r = new \Doctrine1\Relation\Parser(static::$conn->getTable('User'));
+        $p = ['type'     => \Doctrine1\Relation::MANY,
                    'refClass' => 'GroupUser'];
 
         $r->bind('Group', $p);
 
         $rel = $r->getRelation('Group');
 
-        $this->assertTrue($rel instanceof \Doctrine_Relation_Association);
+        $this->assertTrue($rel instanceof \Doctrine1\Relation\Association);
         $rel = $r->getRelation('GroupUser');
-        $this->assertTrue($rel instanceof \Doctrine_Relation_ForeignKey);
+        $this->assertTrue($rel instanceof \Doctrine1\Relation\ForeignKey);
     }
     public function testGetRelationReturnsForeignKeyObjectForNestRelation()
     {
-        $r = new \Doctrine_Relation_Parser(static::$conn->getTable('Entity'));
-        $p = ['type'     => \Doctrine_Relation::MANY,
+        $r = new \Doctrine1\Relation\Parser(static::$conn->getTable('Entity'));
+        $p = ['type'     => \Doctrine1\Relation::MANY,
                    'refClass' => 'EntityReference',
                    'local'    => 'entity1',
                    'foreign'  => 'entity2'];
@@ -178,9 +178,9 @@ class ParserTest extends DoctrineUnitTestCase
         $r->bind('Entity', $p);
 
         $rel = $r->getRelation('Entity');
-        $this->assertTrue($rel instanceof \Doctrine_Relation_Nest);
+        $this->assertTrue($rel instanceof \Doctrine1\Relation\Nest);
 
         $rel = $r->getRelation('EntityReference');
-        $this->assertTrue($rel instanceof \Doctrine_Relation_ForeignKey);
+        $this->assertTrue($rel instanceof \Doctrine1\Relation\ForeignKey);
     }
 }

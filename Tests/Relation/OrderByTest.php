@@ -4,7 +4,7 @@ namespace Tests\Relation {
 
     class OrderByTest extends DoctrineUnitTestCase
     {
-        protected static \Doctrine_Connection_Profiler $profiler;
+        protected static \Doctrine1\Connection\Profiler $profiler;
         protected static array $tables = [
             'OrderByTest_Article',
             'OrderByTest_Friend',
@@ -18,13 +18,13 @@ namespace Tests\Relation {
         public static function setUpBeforeClass(): void
         {
             parent::setUpBeforeClass();
-            static::$profiler = new \Doctrine_Connection_Profiler();
+            static::$profiler = new \Doctrine1\Connection\Profiler();
             static::$conn->addListener(static::$profiler);
         }
 
         public function testFullDqlQuery()
         {
-            $userTable = \Doctrine::getTable('OrderByTest_User');
+            $userTable = \Doctrine1\Core::getTable('OrderByTest_User');
             $q         = $userTable
             ->createQuery('u')
             ->select('u.id')
@@ -39,7 +39,7 @@ namespace Tests\Relation {
 
         public function testLazyLoadingQueries()
         {
-            $userTable = \Doctrine::getTable('OrderByTest_User');
+            $userTable = \Doctrine1\Core::getTable('OrderByTest_User');
 
             $this->assertEquals($userTable->getRelation('Articles')->getRelationDql(1), 'FROM OrderByTest_Article WHERE OrderByTest_Article.user_id IN (?) ORDER BY OrderByTest_Article.title ASC');
             $this->assertEquals($userTable->getRelation('Groups')->getRelationDql(1), 'FROM OrderByTest_Group.OrderByTest_UserGroup WHERE OrderByTest_Group.OrderByTest_UserGroup.user_id IN (?) ORDER BY OrderByTest_Group.name ASC');
@@ -75,7 +75,7 @@ namespace Tests\Relation {
 
         public function testMasterOrderBy()
         {
-            $q = \Doctrine::getTable('OrderByTest_Category')
+            $q = \Doctrine1\Core::getTable('OrderByTest_Category')
             ->createQuery('c')
             ->select('c.id, p.id')
             ->leftJoin('c.Posts p');
@@ -93,7 +93,7 @@ namespace Tests\Relation {
 
         public function testOrderByFromQueryComesFirst()
         {
-            $q = \Doctrine::getTable('OrderByTest_Category')
+            $q = \Doctrine1\Core::getTable('OrderByTest_Category')
             ->createQuery('c')
             ->select('c.id, p.id')
             ->leftJoin('c.Posts p')
@@ -104,7 +104,7 @@ namespace Tests\Relation {
 
         public function testWeirdSort()
         {
-            $q = \Doctrine::getTable('OrderByTest_WeirdSort')
+            $q = \Doctrine1\Core::getTable('OrderByTest_WeirdSort')
             ->createQuery('w')
             ->select('w.id');
 
@@ -114,7 +114,7 @@ namespace Tests\Relation {
 }
 
 namespace {
-    class OrderByTest_Article extends Doctrine_Record
+    class OrderByTest_Article extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -134,7 +134,7 @@ namespace {
         }
     }
 
-    class OrderByTest_Friend extends Doctrine_Record
+    class OrderByTest_Friend extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -157,7 +157,7 @@ namespace {
         }
     }
 
-    class OrderByTest_Group extends Doctrine_Record
+    class OrderByTest_Group extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -184,7 +184,7 @@ namespace {
         }
     }
 
-    class OrderByTest_User extends Doctrine_Record
+    class OrderByTest_User extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -240,7 +240,7 @@ namespace {
         }
     }
 
-    class OrderByTest_UserGroup extends Doctrine_Record
+    class OrderByTest_UserGroup extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -264,7 +264,7 @@ namespace {
     }
 
 
-    class OrderByTest_Category extends Doctrine_Record
+    class OrderByTest_Category extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -285,7 +285,7 @@ namespace {
         }
     }
 
-    class OrderByTest_BlogPost extends Doctrine_Record
+    class OrderByTest_BlogPost extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -308,7 +308,7 @@ namespace {
         }
     }
 
-    class OrderByTest_WeirdSort extends Doctrine_Record
+    class OrderByTest_WeirdSort extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

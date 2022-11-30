@@ -13,13 +13,13 @@ class TicketDC521Test extends DoctrineUnitTestCase
 
     public static function setUpBeforeClass(): void
     {
-        \Doctrine_Manager::connection('pgsql://test:test@localhost/doctrine', 'Pgsql');
+        \Doctrine1\Manager::connection('pgsql://test:test@localhost/doctrine', 'Pgsql');
         parent::setUpBeforeClass();
     }
 
     public static function tearDownAfterClass(): void
     {
-        \Doctrine_Manager::resetInstance();
+        \Doctrine1\Manager::resetInstance();
         static::$driverName = null;
         parent::tearDownAfterClass();
     }

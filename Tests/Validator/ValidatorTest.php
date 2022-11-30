@@ -33,67 +33,67 @@ class ValidatorTest extends DoctrineUnitTestCase
     public function testIsValidType(): void
     {
         $var = '123';
-        $this->assertTrue(\Doctrine_Validator::isValidType($var, 'string'));
-        $this->assertTrue(\Doctrine_Validator::isValidType($var, 'integer'));
-        $this->assertTrue(\Doctrine_Validator::isValidType($var, 'float'));
-        $this->assertFalse(\Doctrine_Validator::isValidType($var, 'array'));
-        $this->assertFalse(\Doctrine_Validator::isValidType($var, 'object'));
+        $this->assertTrue(\Doctrine1\Validator::isValidType($var, 'string'));
+        $this->assertTrue(\Doctrine1\Validator::isValidType($var, 'integer'));
+        $this->assertTrue(\Doctrine1\Validator::isValidType($var, 'float'));
+        $this->assertFalse(\Doctrine1\Validator::isValidType($var, 'array'));
+        $this->assertFalse(\Doctrine1\Validator::isValidType($var, 'object'));
 
         $var = 123;
-        $this->assertTrue(\Doctrine_Validator::isValidType($var, 'string'));
-        $this->assertTrue(\Doctrine_Validator::isValidType($var, 'integer'));
-        $this->assertTrue(\Doctrine_Validator::isValidType($var, 'float'));
-        $this->assertFalse(\Doctrine_Validator::isValidType($var, 'array'));
-        $this->assertFalse(\Doctrine_Validator::isValidType($var, 'object'));
+        $this->assertTrue(\Doctrine1\Validator::isValidType($var, 'string'));
+        $this->assertTrue(\Doctrine1\Validator::isValidType($var, 'integer'));
+        $this->assertTrue(\Doctrine1\Validator::isValidType($var, 'float'));
+        $this->assertFalse(\Doctrine1\Validator::isValidType($var, 'array'));
+        $this->assertFalse(\Doctrine1\Validator::isValidType($var, 'object'));
 
         $var = 123.12;
-        $this->assertTrue(\Doctrine_Validator::isValidType($var, 'string'));
-        $this->assertFalse(\Doctrine_Validator::isValidType($var, 'integer'));
-        $this->assertTrue(\Doctrine_Validator::isValidType($var, 'float'));
-        $this->assertFalse(\Doctrine_Validator::isValidType($var, 'array'));
-        $this->assertFalse(\Doctrine_Validator::isValidType($var, 'object'));
+        $this->assertTrue(\Doctrine1\Validator::isValidType($var, 'string'));
+        $this->assertFalse(\Doctrine1\Validator::isValidType($var, 'integer'));
+        $this->assertTrue(\Doctrine1\Validator::isValidType($var, 'float'));
+        $this->assertFalse(\Doctrine1\Validator::isValidType($var, 'array'));
+        $this->assertFalse(\Doctrine1\Validator::isValidType($var, 'object'));
 
         $var = '123.12';
-        $this->assertTrue(\Doctrine_Validator::isValidType($var, 'string'));
-        $this->assertFalse(\Doctrine_Validator::isValidType($var, 'integer'));
-        $this->assertTrue(\Doctrine_Validator::isValidType($var, 'float'));
-        $this->assertFalse(\Doctrine_Validator::isValidType($var, 'array'));
-        $this->assertFalse(\Doctrine_Validator::isValidType($var, 'object'));
+        $this->assertTrue(\Doctrine1\Validator::isValidType($var, 'string'));
+        $this->assertFalse(\Doctrine1\Validator::isValidType($var, 'integer'));
+        $this->assertTrue(\Doctrine1\Validator::isValidType($var, 'float'));
+        $this->assertFalse(\Doctrine1\Validator::isValidType($var, 'array'));
+        $this->assertFalse(\Doctrine1\Validator::isValidType($var, 'object'));
 
         $var = '';
-        $this->assertTrue(\Doctrine_Validator::isValidType($var, 'string'));
-        $this->assertFalse(\Doctrine_Validator::isValidType($var, 'integer'));
-        $this->assertFalse(\Doctrine_Validator::isValidType($var, 'float'));
-        $this->assertFalse(\Doctrine_Validator::isValidType($var, 'array'));
-        $this->assertFalse(\Doctrine_Validator::isValidType($var, 'object'));
+        $this->assertTrue(\Doctrine1\Validator::isValidType($var, 'string'));
+        $this->assertFalse(\Doctrine1\Validator::isValidType($var, 'integer'));
+        $this->assertFalse(\Doctrine1\Validator::isValidType($var, 'float'));
+        $this->assertFalse(\Doctrine1\Validator::isValidType($var, 'array'));
+        $this->assertFalse(\Doctrine1\Validator::isValidType($var, 'object'));
 
         $var = null;
-        $this->assertTrue(\Doctrine_Validator::isValidType($var, 'string'));
-        $this->assertTrue(\Doctrine_Validator::isValidType($var, 'integer'));
-        $this->assertTrue(\Doctrine_Validator::isValidType($var, 'float'));
-        $this->assertTrue(\Doctrine_Validator::isValidType($var, 'array'));
-        $this->assertTrue(\Doctrine_Validator::isValidType($var, 'object'));
+        $this->assertTrue(\Doctrine1\Validator::isValidType($var, 'string'));
+        $this->assertTrue(\Doctrine1\Validator::isValidType($var, 'integer'));
+        $this->assertTrue(\Doctrine1\Validator::isValidType($var, 'float'));
+        $this->assertTrue(\Doctrine1\Validator::isValidType($var, 'array'));
+        $this->assertTrue(\Doctrine1\Validator::isValidType($var, 'object'));
 
         $var = 'str';
-        $this->assertTrue(\Doctrine_Validator::isValidType($var, 'string'));
-        $this->assertFalse(\Doctrine_Validator::isValidType($var, 'integer'));
-        $this->assertFalse(\Doctrine_Validator::isValidType($var, 'float'));
-        $this->assertFalse(\Doctrine_Validator::isValidType($var, 'array'));
-        $this->assertFalse(\Doctrine_Validator::isValidType($var, 'object'));
+        $this->assertTrue(\Doctrine1\Validator::isValidType($var, 'string'));
+        $this->assertFalse(\Doctrine1\Validator::isValidType($var, 'integer'));
+        $this->assertFalse(\Doctrine1\Validator::isValidType($var, 'float'));
+        $this->assertFalse(\Doctrine1\Validator::isValidType($var, 'array'));
+        $this->assertFalse(\Doctrine1\Validator::isValidType($var, 'object'));
 
         $var = [];
-        $this->assertFalse(\Doctrine_Validator::isValidType($var, 'string'));
-        $this->assertFalse(\Doctrine_Validator::isValidType($var, 'integer'));
-        $this->assertFalse(\Doctrine_Validator::isValidType($var, 'float'));
-        $this->assertTrue(\Doctrine_Validator::isValidType($var, 'array'));
-        $this->assertFalse(\Doctrine_Validator::isValidType($var, 'object'));
+        $this->assertFalse(\Doctrine1\Validator::isValidType($var, 'string'));
+        $this->assertFalse(\Doctrine1\Validator::isValidType($var, 'integer'));
+        $this->assertFalse(\Doctrine1\Validator::isValidType($var, 'float'));
+        $this->assertTrue(\Doctrine1\Validator::isValidType($var, 'array'));
+        $this->assertFalse(\Doctrine1\Validator::isValidType($var, 'object'));
 
         $var = new \Exception();
-        $this->assertFalse(\Doctrine_Validator::isValidType($var, 'string'));
-        $this->assertFalse(\Doctrine_Validator::isValidType($var, 'integer'));
-        $this->assertFalse(\Doctrine_Validator::isValidType($var, 'float'));
-        $this->assertFalse(\Doctrine_Validator::isValidType($var, 'array'));
-        $this->assertTrue(\Doctrine_Validator::isValidType($var, 'object'));
+        $this->assertFalse(\Doctrine1\Validator::isValidType($var, 'string'));
+        $this->assertFalse(\Doctrine1\Validator::isValidType($var, 'integer'));
+        $this->assertFalse(\Doctrine1\Validator::isValidType($var, 'float'));
+        $this->assertFalse(\Doctrine1\Validator::isValidType($var, 'array'));
+        $this->assertTrue(\Doctrine1\Validator::isValidType($var, 'object'));
     }
 
     public function testValidate2(): void
@@ -103,12 +103,12 @@ class ValidatorTest extends DoctrineUnitTestCase
         $test->myrange  = 1;
         $test->myregexp = '123a';
 
-        $validator = new \Doctrine_Validator();
+        $validator = new \Doctrine1\Validator();
         $validator->validateRecord($test);
 
         $stack = $test->errorStack();
 
-        $this->assertInstanceOf(\Doctrine_Validator_ErrorStack::class, $stack);
+        $this->assertInstanceOf(\Doctrine1\Validator\ErrorStack::class, $stack);
 
         $this->assertContains('The input must not be null', $stack['mystring']);
         $this->assertContains('Value is required and can\'t be empty', $stack['myemail2']);
@@ -121,7 +121,7 @@ class ValidatorTest extends DoctrineUnitTestCase
 
     public function testValidate(): void
     {
-        static::$manager->setAttribute(\Doctrine_Core::ATTR_VALIDATE, \Doctrine_Core::VALIDATE_ALL);
+        static::$manager->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_ALL);
         $user = static::$connection->getTable('User')->find(4);
 
         $set = ['password'  => 'this is an example of too long password',
@@ -134,13 +134,13 @@ class ValidatorTest extends DoctrineUnitTestCase
 
         $this->assertTrue($user->getModified() == $set);
 
-        $validator = new \Doctrine_Validator();
+        $validator = new \Doctrine1\Validator();
         $validator->validateRecord($user);
 
 
         $stack = $user->errorStack();
 
-        $this->assertInstanceOf(\Doctrine_Validator_ErrorStack::class, $stack);
+        $this->assertInstanceOf(\Doctrine1\Validator\ErrorStack::class, $stack);
         $this->assertContains('length', $stack['loginname']);
         $this->assertContains('length', $stack['password']);
         $this->assertContains('type', $stack['created']);
@@ -149,7 +149,7 @@ class ValidatorTest extends DoctrineUnitTestCase
         $stack = $email->errorStack();
         $this->assertContains("'invalid' is not a valid hostname for the email address", $stack['address']);
 
-        static::$manager->setAttribute(\Doctrine_Core::ATTR_VALIDATE, \Doctrine_Core::VALIDATE_NONE);
+        static::$manager->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_NONE);
     }
 
     /**
@@ -157,13 +157,13 @@ class ValidatorTest extends DoctrineUnitTestCase
      */
     public function testSave(): void
     {
-        static::$manager->setAttribute(\Doctrine_Core::ATTR_VALIDATE, \Doctrine_Core::VALIDATE_ALL);
+        static::$manager->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_ALL);
         $user = static::$connection->getTable('User')->find(4);
         $user->clearRelated('Email');
         try {
             $user->name = 'this is an example of too long name not very good example but an example nevertheless';
             $user->save();
-        } catch (\Doctrine_Validator_Exception $e) {
+        } catch (\Doctrine1\Validator\Exception $e) {
             $this->assertEquals(1, $e->count());
             $invalidRecords = $e->getInvalidRecords();
             $this->assertEquals(1, count($invalidRecords));
@@ -179,7 +179,7 @@ class ValidatorTest extends DoctrineUnitTestCase
             $user->Email->address = 'jackdaniels@drinkmore.info...';
             $user->name           = 'this is an example of too long user name not very good example but an example nevertheless';
             $user->save();
-        } catch (\Doctrine_Validator_Exception $e) {
+        } catch (\Doctrine1\Validator\Exception $e) {
             $a = $e->getInvalidRecords();
             $this->assertTrue(is_array($a));
             $emailStack = $user->Email->errorStack();
@@ -190,16 +190,16 @@ class ValidatorTest extends DoctrineUnitTestCase
         $this->assertInstanceOf(\Exception::class, $e);
         unset($e);
 
-        static::$manager->setAttribute(\Doctrine_Core::ATTR_VALIDATE, \Doctrine_Core::VALIDATE_NONE);
+        static::$manager->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_NONE);
     }
 
     /**
      * Tests whether the validate() callback works correctly
-     * in descendants of Doctrine_Record.
+     * in descendants of \Doctrine1\Record.
      */
     public function testValidationHooks(): void
     {
-        static::$manager->setAttribute(\Doctrine_Core::ATTR_VALIDATE, \Doctrine_Core::VALIDATE_ALL);
+        static::$manager->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_ALL);
 
         // Tests validate() and validateOnInsert()
         $user = new \User();
@@ -210,7 +210,7 @@ class ValidatorTest extends DoctrineUnitTestCase
             $user->password = '1234';
             $user->save();
             $this->assertFalse('Should not be reached');
-        } catch (\Doctrine_Validator_Exception $e) {
+        } catch (\Doctrine1\Validator\Exception $e) {
             $this->assertCount(1, $e);
             $invalidRecords = $e->getInvalidRecords();
             $this->assertCount(1, $invalidRecords);
@@ -232,7 +232,7 @@ class ValidatorTest extends DoctrineUnitTestCase
             $user->loginname = 'Somebody'; // Wrong login name!
             $user->save();
             $this->assertFalse('Should not be reached');
-        } catch (\Doctrine_Validator_Exception $e) {
+        } catch (\Doctrine1\Validator\Exception $e) {
             $invalidRecords = $e->getInvalidRecords();
             $this->assertCount(1, $invalidRecords);
 
@@ -243,16 +243,16 @@ class ValidatorTest extends DoctrineUnitTestCase
             $this->assertContains('notNobody', $stack['loginname']);  // validateOnUpdate() hook constraint
         }
 
-        static::$manager->setAttribute(\Doctrine_Core::ATTR_VALIDATE, \Doctrine_Core::VALIDATE_NONE);
+        static::$manager->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_NONE);
     }
 
     /**
      * Tests whether the validateOnInsert() callback works correctly
-     * in descendants of Doctrine_Record.
+     * in descendants of \Doctrine1\Record.
      */
     public function testHookValidateOnInsert(): void
     {
-        static::$manager->setAttribute(\Doctrine_Core::ATTR_VALIDATE, \Doctrine_Core::VALIDATE_ALL);
+        static::$manager->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_ALL);
 
         $user           = new \User();
         $user->customValidationEnabled = true;
@@ -261,24 +261,24 @@ class ValidatorTest extends DoctrineUnitTestCase
         try {
             $user->save();
             $this->assertFalse('Should not be reached');
-        } catch (\Doctrine_Validator_Exception $ex) {
+        } catch (\Doctrine1\Validator\Exception $ex) {
             $errors = $user->errorStack();
             $this->assertContains('pwNotTopSecret', $errors['password']);
         }
 
-        static::$manager->setAttribute(\Doctrine_Core::ATTR_VALIDATE, \Doctrine_Core::VALIDATE_NONE);
+        static::$manager->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_NONE);
     }
 
     public function testValidationOnManyToManyRelations(): void
     {
-        static::$manager->setAttribute(\Doctrine_Core::ATTR_VALIDATE, \Doctrine_Core::VALIDATE_ALL);
+        static::$manager->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_ALL);
         try {
             $client                                       = new \ValidatorTest_ClientModel();
             $client->short_name                           = 'test';
             $client->ValidatorTest_AddressModel[0]->state = 'az';
             $client->save();
             $this->assertFalse('Should not be reached');
-        } catch (\Doctrine_Validator_Exception $dve) {
+        } catch (\Doctrine1\Validator\Exception $dve) {
             $s = $dve->getInvalidRecords();
             $this->assertEquals(1, count($dve->getInvalidRecords()));
             $invalids = $dve->getInvalidRecords();
@@ -293,12 +293,12 @@ class ValidatorTest extends DoctrineUnitTestCase
             $this->assertContains('Value is required and can\'t be empty', $stack['zip']);
         }
 
-        static::$manager->setAttribute(\Doctrine_Core::ATTR_VALIDATE, \Doctrine_Core::VALIDATE_NONE);
+        static::$manager->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_NONE);
     }
 
     public function testSaveInTransactionThrowsValidatorException(): void
     {
-        static::$manager->setAttribute(\Doctrine_Core::ATTR_VALIDATE, \Doctrine_Core::VALIDATE_ALL);
+        static::$manager->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_ALL);
         $savepoint = static::$conn->beginTransaction();
         try {
             $client                                       = new \ValidatorTest_ClientModel();
@@ -306,7 +306,7 @@ class ValidatorTest extends DoctrineUnitTestCase
             $client->ValidatorTest_AddressModel[0]->state = 'az';
             $client->save();
             $this->assertFalse('Should not be reached');
-        } catch (\Doctrine_Validator_Exception $dve) {
+        } catch (\Doctrine1\Validator\Exception $dve) {
             $savepoint->rollback();
             $s = $dve->getInvalidRecords();
             $this->assertEquals(1, count($dve->getInvalidRecords()));
@@ -321,12 +321,12 @@ class ValidatorTest extends DoctrineUnitTestCase
             $this->assertContains('Value is required and can\'t be empty', $stack['zip']);
         }
 
-        static::$manager->setAttribute(\Doctrine_Core::ATTR_VALIDATE, \Doctrine_Core::VALIDATE_NONE);
+        static::$manager->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_NONE);
     }
 
     public function testSetBooleanWithNumericZeroOrOne(): void
     {
-        static::$manager->setAttribute(\Doctrine_Core::ATTR_VALIDATE, \Doctrine_Core::VALIDATE_ALL);
+        static::$manager->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_ALL);
 
         $test             = new \BooleanTest();
         $test->is_working = '1';
@@ -336,30 +336,30 @@ class ValidatorTest extends DoctrineUnitTestCase
         $test->is_working = '0';
         $test->save();
 
-        static::$manager->setAttribute(\Doctrine_Core::ATTR_VALIDATE, \Doctrine_Core::VALIDATE_NONE);
+        static::$manager->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_NONE);
     }
 
     public function testNoValidationOnExpressions(): void
     {
-        static::$manager->setAttribute(\Doctrine_Core::ATTR_VALIDATE, \Doctrine_Core::VALIDATE_ALL);
+        static::$manager->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_ALL);
 
         $entry        = new \Log_Entry();
-        $entry->stamp = new \Doctrine_Expression('NOW()');
+        $entry->stamp = new \Doctrine1\Expression('NOW()');
         $entry->save();
 
-        static::$manager->setAttribute(\Doctrine_Core::ATTR_VALIDATE, \Doctrine_Core::VALIDATE_NONE);
+        static::$manager->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_NONE);
     }
 
     public function testValidationIsTriggeredOnFlush(): void
     {
-        static::$manager->setAttribute(\Doctrine_Core::ATTR_VALIDATE, \Doctrine_Core::VALIDATE_ALL);
+        static::$manager->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_ALL);
         static::$conn->clear();
 
         $r             = new \ValidatorTest_Person();
         $r->is_football_player = 'abc';
 
-        $this->expectException(\Doctrine_Validator_Exception::class);
+        $this->expectException(\Doctrine1\Validator\Exception::class);
         static::$conn->flush();
-        static::$manager->setAttribute(\Doctrine_Core::ATTR_VALIDATE, \Doctrine_Core::VALIDATE_NONE);
+        static::$manager->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_NONE);
     }
 }

@@ -1,4 +1,4 @@
 <?php
-class ConcreteGroup extends Doctrine_Record
+class ConcreteGroup extends \Doctrine1\Record
 {
 }

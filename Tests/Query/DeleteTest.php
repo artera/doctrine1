@@ -12,13 +12,13 @@ namespace Tests\Query {
 
         public function testDeleteAllWithColumnAggregationInheritance()
         {
-            $q = new \Doctrine_Query();
+            $q = new \Doctrine1\Query();
 
             $q->parseDqlQuery('DELETE FROM User');
 
             $this->assertEquals($q->getSqlQuery(), 'DELETE FROM entity WHERE (type = 0)');
 
-            $q = new \Doctrine_Query();
+            $q = new \Doctrine1\Query();
 
             $q->delete()->from('User');
 
@@ -27,13 +27,13 @@ namespace Tests\Query {
 
         public function testDeleteAll()
         {
-            $q = new \Doctrine_Query();
+            $q = new \Doctrine1\Query();
 
             $q->parseDqlQuery('DELETE FROM Entity');
 
             $this->assertEquals($q->getSqlQuery(), 'DELETE FROM entity');
 
-            $q = new \Doctrine_Query();
+            $q = new \Doctrine1\Query();
 
             $q->delete()->from('Entity');
 
@@ -42,13 +42,13 @@ namespace Tests\Query {
 
         public function testDeleteWithCondition()
         {
-            $q = new \Doctrine_Query();
+            $q = new \Doctrine1\Query();
 
             $q->parseDqlQuery('DELETE FROM Entity WHERE id = 3');
 
             $this->assertEquals($q->getSqlQuery(), 'DELETE FROM entity WHERE (id = 3)');
 
-            $q = new \Doctrine_Query();
+            $q = new \Doctrine1\Query();
 
             $q->delete()->from('Entity')->where('id = 3');
 
@@ -57,13 +57,13 @@ namespace Tests\Query {
 
         public function testDeleteWithLimit()
         {
-            $q = new \Doctrine_Query();
+            $q = new \Doctrine1\Query();
 
             $q->parseDqlQuery('DELETE FROM Entity LIMIT 20');
 
             $this->assertEquals($q->getSqlQuery(), 'DELETE FROM entity LIMIT 20');
 
-            $q = new \Doctrine_Query();
+            $q = new \Doctrine1\Query();
 
             $q->delete()->from('Entity')->limit(20);
 
@@ -72,13 +72,13 @@ namespace Tests\Query {
 
         public function testDeleteWithLimitAndOffset()
         {
-            $q = new \Doctrine_Query();
+            $q = new \Doctrine1\Query();
 
             $q->parseDqlQuery('DELETE FROM Entity LIMIT 10 OFFSET 20');
 
             $this->assertEquals($q->getSqlQuery(), 'DELETE FROM entity LIMIT 10 OFFSET 20');
 
-            $q = new \Doctrine_Query();
+            $q = new \Doctrine1\Query();
 
             $q->delete()->from('Entity')->limit(10)->offset(20);
 
@@ -87,12 +87,12 @@ namespace Tests\Query {
 
         public function testDeleteWithFromInDeleteFunction()
         {
-            $q = \Doctrine_Core::getTable('Entity')->createQuery()->delete();
+            $q = \Doctrine1\Core::getTable('Entity')->createQuery()->delete();
             $this->assertEquals($q->getDql(), 'DELETE FROM Entity');
-            $q = \Doctrine_Query::create()->delete('Entity');
+            $q = \Doctrine1\Query::create()->delete('Entity');
             $this->assertEquals($q->getDql(), 'DELETE FROM Entity');
 
-            $q = \Doctrine_Core::getTable('DeleteTestModel')->createQuery()->delete('DeleteTestModel');
+            $q = \Doctrine1\Core::getTable('DeleteTestModel')->createQuery()->delete('DeleteTestModel');
             $this->assertEquals($q->getDql(), 'DELETE FROM DeleteTestModel');
             $this->assertEquals($q->getSqlQuery(), 'DELETE FROM delete_test_model');
             $q->execute();
@@ -101,7 +101,7 @@ namespace Tests\Query {
 }
 
 namespace {
-    class DeleteTestModel extends Doctrine_Record
+    class DeleteTestModel extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

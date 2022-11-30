@@ -1,5 +1,5 @@
 <?php
-class BooleanTest extends Doctrine_Record
+class BooleanTest extends \Doctrine1\Record
 {
     public function setTableDefinition(): void
     {

@@ -19,19 +19,19 @@ class Ticket1326Test extends DoctrineUnitTestCase
     public function testTest()
     {
         $this->createTestData();
-        \Doctrine_Query::create()->delete()->from('User')->execute();
+        \Doctrine1\Query::create()->delete()->from('User')->execute();
 
         $this->createTestData();
-        $this->assertEquals(\Doctrine_Query::create()->from('User')->count(), 2);
+        $this->assertEquals(\Doctrine1\Query::create()->from('User')->count(), 2);
 
-        $nbDeleted = \Doctrine_Query::create()->delete()->from('User')->execute();
+        $nbDeleted = \Doctrine1\Query::create()->delete()->from('User')->execute();
         $this->assertEquals($nbDeleted, 2);
-        $this->assertEquals(\Doctrine_Query::create()->from('User')->count(), 0);
+        $this->assertEquals(\Doctrine1\Query::create()->from('User')->count(), 0);
 
         $this->createTestData();
-        $this->assertEquals(\Doctrine_Query::create()->from('User')->count(), 2);
+        $this->assertEquals(\Doctrine1\Query::create()->from('User')->count(), 2);
 
-        $nbDeleted = \Doctrine_Query::create()->delete()->from('User')->where('loginname = ?', ['foo2'])->execute();
+        $nbDeleted = \Doctrine1\Query::create()->delete()->from('User')->where('loginname = ?', ['foo2'])->execute();
         $this->assertEquals($nbDeleted, 1);
     }
 }

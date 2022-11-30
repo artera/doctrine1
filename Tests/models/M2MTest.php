@@ -1,5 +1,5 @@
 <?php
-class M2MTest extends Doctrine_Record
+class M2MTest extends \Doctrine1\Record
 {
     public function setTableDefinition(): void
     {

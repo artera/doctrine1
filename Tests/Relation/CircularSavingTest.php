@@ -12,7 +12,7 @@ class CircularSavingTest extends DoctrineUnitTestCase
 
     public function testMultiplePrimaryKeys()
     {
-        $r               = new \Doctrine_Collection('NestReference');
+        $r               = new \Doctrine1\Collection('NestReference');
         $r[0]->parent_id = 1;
         $r[0]->child_id  = 2;
         $r[1]->parent_id = 2;
@@ -21,7 +21,7 @@ class CircularSavingTest extends DoctrineUnitTestCase
 
         $r->delete();
         static::$conn->clear();
-        $q    = new \Doctrine_Query();
+        $q    = new \Doctrine1\Query();
         $coll = $q->from('NestReference')->execute();
         $this->assertEquals(count($coll), 0);
     }
@@ -40,7 +40,7 @@ class CircularSavingTest extends DoctrineUnitTestCase
         $n2->get('Children')->add($n1);
         $n2->save();
 
-        $q    = new \Doctrine_Query();
+        $q    = new \Doctrine1\Query();
         $coll = $q->from('NestReference')->execute();
 
         $this->assertEquals(count($coll), 2);
@@ -48,7 +48,7 @@ class CircularSavingTest extends DoctrineUnitTestCase
         $coll->delete();
         static::$conn->clear();
 
-        $q    = new \Doctrine_Query();
+        $q    = new \Doctrine1\Query();
         $coll = $q->from('NestReference')->execute();
         $this->assertEquals(count($coll), 0);
     }
@@ -67,8 +67,8 @@ class CircularSavingTest extends DoctrineUnitTestCase
         $n2->get('Relatives')->add($n1);
         $n2->save();
 
-        $q    = new \Doctrine_Query();
-        $coll = $q->from('NestReference')->execute([], \Doctrine_Core::HYDRATE_ARRAY);
+        $q    = new \Doctrine1\Query();
+        $coll = $q->from('NestReference')->execute([], \Doctrine1\Core::HYDRATE_ARRAY);
 
         $this->assertEquals(count($coll), 1);
     }

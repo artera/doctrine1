@@ -25,7 +25,7 @@ class InheritanceTest extends DoctrineUnitTestCase
     public function testInstantiatingRecordWithAbstractParents()
     {
         // load our record
-        $record = \Doctrine_Query::create()->query(
+        $record = \Doctrine1\Query::create()->query(
             'SELECT * FROM SymfonyRecord r',
             []
         )->getFirst();
@@ -37,7 +37,7 @@ class InheritanceTest extends DoctrineUnitTestCase
         // does it have the appropriate parentage?
         $this->assertTrue($record instanceof \PluginSymfonyRecord);
         $this->assertTrue($record instanceof \BaseSymfonyRecord);
-        $this->assertTrue($record instanceof \Doctrine_Record);
+        $this->assertTrue($record instanceof \Doctrine1\Record);
 
         // does it have the expected data?
         $this->assertEquals($record['name'], 'Test me');

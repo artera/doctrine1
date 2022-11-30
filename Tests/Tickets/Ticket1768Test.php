@@ -7,11 +7,11 @@ class Ticket1768Test extends DoctrineUnitTestCase
 {
     public function testResultCacheHashShouldProduceDifferentHashesWhenPassingParamsToWhereMethod()
     {
-        $queryOne = \Doctrine_Query::create()
+        $queryOne = \Doctrine1\Query::create()
             ->from('Ticket_1768_Foo f')
             ->where('f.bar = ?', 1);
 
-        $queryTwo = \Doctrine_Query::create()
+        $queryTwo = \Doctrine1\Query::create()
             ->from('Ticket_1768_Foo f')
             ->where('f.bar = ?', 2);
 

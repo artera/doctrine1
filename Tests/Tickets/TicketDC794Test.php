@@ -12,7 +12,7 @@ namespace Tests\Tickets {
 
         public function testTest()
         {
-            $table = \Doctrine::getTable('Ticket_DC794_Model');
+            $table = \Doctrine1\Core::getTable('Ticket_DC794_Model');
 
             $this->assertEquals($table->buildFindByWhere('IdOrigenOportunidadClienteOrId'), '(dctrn_find.idOrigenOportunidadCliente = ? OR dctrn_find.id = ?)');
             $this->assertEquals($table->buildFindByWhere('IdAndIdOrIdOrigenOportunidadCliente'), 'dctrn_find.id = ? AND (dctrn_find.id = ? OR dctrn_find.idOrigenOportunidadCliente = ?)');
@@ -22,7 +22,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class Ticket_DC794_Model extends Doctrine_Record
+    class Ticket_DC794_Model extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

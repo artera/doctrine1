@@ -1,5 +1,5 @@
 <?php
-class Phototag extends Doctrine_Record
+class Phototag extends \Doctrine1\Record
 {
     public function setTableDefinition(): void
     {

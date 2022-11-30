@@ -1,5 +1,5 @@
 <?php
-class ResourceReference extends Doctrine_Record
+class ResourceReference extends \Doctrine1\Record
 {
     public function setTableDefinition(): void
     {

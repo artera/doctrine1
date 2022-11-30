@@ -9,7 +9,7 @@ class TableTest extends DoctrineUnitTestCase
 
     public function testInitializingNewTableWorksWithoutConnection()
     {
-        $table = new \Doctrine_Table('Test', static::$conn);
+        $table = new \Doctrine1\Table('Test', static::$conn);
         $this->assertEquals($table->getComponentName(), 'Test');
     }
 
@@ -64,24 +64,24 @@ class TableTest extends DoctrineUnitTestCase
     public function testGetForeignKey()
     {
         $fk = static::$connection->getTable('User')->getRelation('Group');
-        $this->assertTrue($fk instanceof \Doctrine_Relation_Association);
-        $this->assertTrue($fk->getTable() instanceof \Doctrine_Table);
-        $this->assertTrue($fk->getType() == \Doctrine_Relation::MANY);
+        $this->assertTrue($fk instanceof \Doctrine1\Relation\Association);
+        $this->assertTrue($fk->getTable() instanceof \Doctrine1\Table);
+        $this->assertTrue($fk->getType() == \Doctrine1\Relation::MANY);
         $this->assertTrue($fk->getLocal() == 'user_id');
         $this->assertTrue($fk->getForeign() == 'group_id');
 
         $fk = static::$connection->getTable('User')->getRelation('Email');
-        $this->assertTrue($fk instanceof \Doctrine_Relation_LocalKey);
-        $this->assertTrue($fk->getTable() instanceof \Doctrine_Table);
-        $this->assertTrue($fk->getType() == \Doctrine_Relation::ONE);
+        $this->assertTrue($fk instanceof \Doctrine1\Relation\LocalKey);
+        $this->assertTrue($fk->getTable() instanceof \Doctrine1\Table);
+        $this->assertTrue($fk->getType() == \Doctrine1\Relation::ONE);
         $this->assertTrue($fk->getLocal() == 'email_id');
         $this->assertTrue($fk->getForeign() == $fk->getTable()->getIdentifier());
 
 
         $fk = static::$connection->getTable('User')->getRelation('Phonenumber');
-        $this->assertTrue($fk instanceof \Doctrine_Relation_ForeignKey);
-        $this->assertTrue($fk->getTable() instanceof \Doctrine_Table);
-        $this->assertTrue($fk->getType() == \Doctrine_Relation::MANY);
+        $this->assertTrue($fk instanceof \Doctrine1\Relation\ForeignKey);
+        $this->assertTrue($fk->getTable() instanceof \Doctrine1\Table);
+        $this->assertTrue($fk->getType() == \Doctrine1\Relation::MANY);
         $this->assertTrue($fk->getLocal() == static::$connection->getTable('User')->getIdentifier());
         $this->assertTrue($fk->getForeign() == 'entity_id');
     }
@@ -97,7 +97,7 @@ class TableTest extends DoctrineUnitTestCase
 
     public function testGetConnection()
     {
-        $this->assertTrue(static::$connection->getTable('User')->getConnection() instanceof \Doctrine_Connection);
+        $this->assertTrue(static::$connection->getTable('User')->getConnection() instanceof \Doctrine1\Connection);
     }
 
     public function testGetData()
@@ -115,24 +115,24 @@ class TableTest extends DoctrineUnitTestCase
     public function testCreate()
     {
         $record = static::$connection->getTable('User')->create();
-        $this->assertTrue($record instanceof \Doctrine_Record);
-        $this->assertTrue($record->state() == \Doctrine_Record_State::TCLEAN());
+        $this->assertTrue($record instanceof \Doctrine1\Record);
+        $this->assertTrue($record->state() == \Doctrine1\Record\State::TCLEAN);
     }
 
     public function testFind()
     {
         $record = static::$connection->getTable('User')->find(4);
-        $this->assertTrue($record instanceof \Doctrine_Record);
+        $this->assertTrue($record instanceof \Doctrine1\Record);
 
         $record = static::$connection->getTable('User')->find('4');
-        $this->assertTrue($record instanceof \Doctrine_Record);
+        $this->assertTrue($record instanceof \Doctrine1\Record);
 
         $record = static::$connection->getTable('User')->find('4', hydrate_array: true);
         $this->assertTrue(is_array($record));
         $this->assertTrue(!is_object($record));
         $this->assertTrue(array_key_exists('id', $record));
         $this->assertTrue(array_key_exists('name', $record));
-        $this->assertTrue(!$record instanceof \Doctrine_Record);
+        $this->assertTrue(!$record instanceof \Doctrine1\Record);
 
         $record = static::$connection->getTable('User')->find(123);
         $this->assertNull($record);
@@ -142,10 +142,10 @@ class TableTest extends DoctrineUnitTestCase
     {
         $users = static::$connection->getTable('User')->findAll();
         $this->assertEquals($users->count(), 8);
-        $this->assertTrue($users instanceof \Doctrine_Collection);
+        $this->assertTrue($users instanceof \Doctrine1\Collection);
 
         $users = static::$connection->getTable('User')->findAll(true);
-        $this->assertTrue(!$users instanceof \Doctrine_Collection);
+        $this->assertTrue(!$users instanceof \Doctrine1\Collection);
         $this->assertTrue(is_array($users));
         $this->assertTrue(!is_object($users));
         $this->assertEquals(count($users), 8);
@@ -155,14 +155,14 @@ class TableTest extends DoctrineUnitTestCase
     {
         $users = static::$connection->getTable('User')->findByDql("name LIKE '%Arnold%'");
         $this->assertEquals($users->count(), 1);
-        $this->assertTrue($users instanceof \Doctrine_Collection);
+        $this->assertTrue($users instanceof \Doctrine1\Collection);
     }
 
     public function testFindByXXX()
     {
         $users = static::$connection->getTable('User')->findByName('zYne');
         $this->assertEquals($users->count(), 1);
-        $this->assertTrue($users instanceof \Doctrine_Collection);
+        $this->assertTrue($users instanceof \Doctrine1\Collection);
     }
 
     public function testFindByXXXHydration()
@@ -175,7 +175,7 @@ class TableTest extends DoctrineUnitTestCase
     public function testGetProxy()
     {
         $user = static::$connection->getTable('User')->getProxy(4);
-        $this->assertTrue($user instanceof \Doctrine_Record);
+        $this->assertTrue($user instanceof \Doctrine1\Record);
         $record = static::$connection->getTable('User')->find(123);
     }
 

@@ -1,5 +1,5 @@
 <?php
-class CustomPK extends Doctrine_Record
+class CustomPK extends \Doctrine1\Record
 {
     public function setTableDefinition(): void
     {

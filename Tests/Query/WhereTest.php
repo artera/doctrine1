@@ -19,7 +19,7 @@ class WhereTest extends DoctrineUnitTestCase
         $user->name = 'someone';
         $user->save();
 
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->from('User')->addWhere('User.id = ?', 1);
 
@@ -31,7 +31,7 @@ class WhereTest extends DoctrineUnitTestCase
 
     public function testFunctionalExpressionAreSupportedInWherePart()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->select('u.name')->from('User u')->addWhere('TRIM(u.name) = ?', 'someone');
 
@@ -50,7 +50,7 @@ class WhereTest extends DoctrineUnitTestCase
         $account->amount = 1000;
         $account->save();
 
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->from('Account a')->addWhere('((a.amount + 5000) * a.amount + 3) < 10000000');
 
@@ -67,7 +67,7 @@ class WhereTest extends DoctrineUnitTestCase
         $user->name = 'someone.2';
         $user->save();
 
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->from('User')->addWhere('User.id IN (?, ?)', [1, 2]);
 
@@ -80,13 +80,13 @@ class WhereTest extends DoctrineUnitTestCase
 
     public function testExceptionIsThrownWhenParameterIsNull()
     {
-        $this->expectException(\Doctrine_Query_Exception::class);
-        \Doctrine_Query::create()->delete('User')->whereIn('User.id', null)->execute();
+        $this->expectException(\Doctrine1\Query\Exception::class);
+        \Doctrine1\Query::create()->delete('User')->whereIn('User.id', null)->execute();
     }
 
     public function testDirectMultipleParameterSetting2()
     {
-        $q = \Doctrine_Query::create()
+        $q = \Doctrine1\Query::create()
             ->from('User')
             ->where('User.id IN (?, ?)', [1, 2]);
 
@@ -110,7 +110,7 @@ class WhereTest extends DoctrineUnitTestCase
 
     public function testNotInExpression()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->from('User u')->addWhere('u.id NOT IN (?)', [1]);
         $users = $q->execute();
@@ -121,7 +121,7 @@ class WhereTest extends DoctrineUnitTestCase
 
     public function testExistsExpression()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $user                 = new \User();
         $user->name           = 'someone with a group';
@@ -139,7 +139,7 @@ class WhereTest extends DoctrineUnitTestCase
 
     public function testNotExistsExpression()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         // find all users which don't have groups
         $q->from('User u')->where('NOT EXISTS (SELECT GroupUser.id FROM GroupUser WHERE GroupUser.user_id = u.id)');
@@ -152,7 +152,7 @@ class WhereTest extends DoctrineUnitTestCase
 
     public function testComponentAliases()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->from('User u')->addWhere('u.id IN (?, ?)', [1,2]);
 
@@ -165,7 +165,7 @@ class WhereTest extends DoctrineUnitTestCase
 
     public function testComponentAliases2()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->from('User u')->addWhere('u.name = ?', ['someone']);
 
@@ -177,7 +177,7 @@ class WhereTest extends DoctrineUnitTestCase
 
     public function testOperatorWithNoTrailingSpaces()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->select('User.id')->from('User')->where("User.name='someone'");
 
@@ -189,7 +189,7 @@ class WhereTest extends DoctrineUnitTestCase
 
     public function testOperatorWithNoTrailingSpaces2()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->select('User.id')->from('User')->where("User.name='foo.bar'");
 
@@ -201,7 +201,7 @@ class WhereTest extends DoctrineUnitTestCase
 
     public function testOperatorWithSingleTrailingSpace()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->select('User.id')->from('User')->where("User.name= 'foo.bar'");
 
@@ -213,7 +213,7 @@ class WhereTest extends DoctrineUnitTestCase
 
     public function testOperatorWithSingleTrailingSpace2()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->select('User.id')->from('User')->where("User.name ='foo.bar'");
 
@@ -225,7 +225,7 @@ class WhereTest extends DoctrineUnitTestCase
 
     public function testDeepComponentReferencingIsSupported()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->select('u.id')->from('User u')->where("u.Group.name ='some group'");
 
@@ -234,7 +234,7 @@ class WhereTest extends DoctrineUnitTestCase
 
     public function testDeepComponentReferencingIsSupported2()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->select('u.id')->from('User u')->addWhere("u.Group.name ='some group'");
 
@@ -243,7 +243,7 @@ class WhereTest extends DoctrineUnitTestCase
 
     public function testLiteralValueAsInOperatorOperandIsSupported()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->select('u.id')->from('User u')->where('1 IN (1, 2)');
 
@@ -252,7 +252,7 @@ class WhereTest extends DoctrineUnitTestCase
 
     public function testCorrelatedSubqueryWithInOperatorIsSupported()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->select('u.id')->from('User u')->where('u.name IN (SELECT u2.name FROM User u2 WHERE u2.id = u.id)');
 

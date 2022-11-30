@@ -1,5 +1,5 @@
 <?php
-class MyOneThing extends Doctrine_Record
+class MyOneThing extends \Doctrine1\Record
 {
     public function setTableDefinition(): void
     {

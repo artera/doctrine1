@@ -1,5 +1,5 @@
 <?php
-class GnatEmail extends Doctrine_Record
+class GnatEmail extends \Doctrine1\Record
 {
     public function setTableDefinition(): void
     {

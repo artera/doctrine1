@@ -14,18 +14,18 @@ namespace Tests\Tickets {
 
             $person->firstname = 'Alice';
 
-            $person = \Doctrine_Core::getTable('Ticket_990_Person')->find($person->id);
+            $person = \Doctrine1\Core::getTable('Ticket_990_Person')->find($person->id);
 
             $this->assertEquals('John', $person->firstname);
         }
 
         public function testDontOverwriteIdentityMap()
         {
-            \Doctrine_Manager::getInstance()->setAttribute(\Doctrine_Core::ATTR_HYDRATE_OVERWRITE, false);
+            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_HYDRATE_OVERWRITE, false);
 
-            $user       = \Doctrine_Core::getTable('User')->createQuery()->fetchOne();
+            $user       = \Doctrine1\Core::getTable('User')->createQuery()->fetchOne();
             $user->name = 'test';
-            $user       = \Doctrine_Core::getTable('User')->find($user->id);
+            $user       = \Doctrine1\Core::getTable('User')->find($user->id);
             $this->assertEquals($user->name, 'test');
 
 
@@ -35,23 +35,23 @@ namespace Tests\Tickets {
 
             $person->firstname = 'Alice';
 
-            $this->assertEquals(\Doctrine_Record_State::DIRTY(), $person->state());
+            $this->assertEquals(\Doctrine1\Record\State::DIRTY, $person->state());
             $this->assertTrue($person->isModified());
             $this->assertEquals(['firstname' => 'Alice'], $person->getModified());
 
-            $person = \Doctrine_Core::getTable('Ticket_990_Person')->find($person->id);
+            $person = \Doctrine1\Core::getTable('Ticket_990_Person')->find($person->id);
 
             $this->assertEquals('Alice', $person->firstname);
-            $this->assertEquals(\Doctrine_Record_State::DIRTY(), $person->state());
+            $this->assertEquals(\Doctrine1\Record\State::DIRTY, $person->state());
             $this->assertTrue($person->isModified());
             $this->assertEquals(['firstname' => 'Alice'], $person->getModified());
 
-            \Doctrine_Manager::getInstance()->setAttribute(\Doctrine_Core::ATTR_HYDRATE_OVERWRITE, true);
+            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_HYDRATE_OVERWRITE, true);
         }
 
         public function testRefreshAlwaysOverwrites()
         {
-            \Doctrine_Manager::getInstance()->setAttribute(\Doctrine_Core::ATTR_HYDRATE_OVERWRITE, false);
+            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_HYDRATE_OVERWRITE, false);
 
             $person            = new \Ticket_990_Person();
             $person->firstname = 'John';
@@ -63,13 +63,13 @@ namespace Tests\Tickets {
 
             $this->assertEquals('John', $person->firstname);
 
-            \Doctrine_Manager::getInstance()->setAttribute(\Doctrine_Core::ATTR_HYDRATE_OVERWRITE, true);
+            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_HYDRATE_OVERWRITE, true);
         }
     }
 }
 
 namespace {
-    class Ticket_990_Person extends Doctrine_Record
+    class Ticket_990_Person extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

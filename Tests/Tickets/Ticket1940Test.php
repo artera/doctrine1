@@ -12,7 +12,7 @@ namespace Tests\Tickets {
 
         public function testTest()
         {
-            \Doctrine_Manager::getInstance()->setAttribute(\Doctrine_Core::ATTR_AUTO_ACCESSOR_OVERRIDE, true);
+            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_AUTO_ACCESSOR_OVERRIDE, true);
 
             $user = new \Ticket_1940_User();
             $user->fromArray(['username' => 'jwage', 'password' => 'changeme', 'email_address' => 'jonwage@gmail.com']);
@@ -22,13 +22,13 @@ namespace Tests\Tickets {
             $this->assertEquals(md5('changeme'), $userArray['password']);
             $this->assertEquals('jonwage@gmail.com-modified-modified', $userArray['email_address']);
 
-            \Doctrine_Manager::getInstance()->setAttribute(\Doctrine_Core::ATTR_AUTO_ACCESSOR_OVERRIDE, false);
+            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_AUTO_ACCESSOR_OVERRIDE, false);
         }
     }
 }
 
 namespace {
-    class Ticket_1940_User extends Doctrine_Record
+    class Ticket_1940_User extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

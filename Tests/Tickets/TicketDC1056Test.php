@@ -20,7 +20,7 @@ namespace Tests\Tickets {
 
         public function testTest()
         {
-            $r = \Doctrine_Query::create()->from('Ticket_DC1056_Test')->where('id = 1')->execute()->getFirst();
+            $r = \Doctrine1\Query::create()->from('Ticket_DC1056_Test')->where('id = 1')->execute()->getFirst();
             preg_match('/"arraycol";a:1:{i:0;i:1;}}/', $r->serialize(), $matches);
             $this->assertEquals(1, count($matches));
 
@@ -33,7 +33,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class Ticket_DC1056_Test extends Doctrine_Record
+    class Ticket_DC1056_Test extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

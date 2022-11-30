@@ -27,20 +27,20 @@ namespace Tests\Tickets {
         {
             static::$conn->getTable('T1277_User')->clear(); // clear identity map
 
-            $q = new \Doctrine_Query();
+            $q = new \Doctrine1\Query();
             $u = $q->select('u.id')->from('T1277_User u')->where('u.id=1')->fetchOne();
 
             $this->assertEquals(1, $u->id);
-            $this->assertEquals(\Doctrine_Record_State::PROXY(), $u->state());
+            $this->assertEquals(\Doctrine1\Record\State::PROXY, $u->state());
 
             // In some other part of code I will query this table again and start making modifications to found records:
-            $q     = new \Doctrine_Query();
+            $q     = new \Doctrine1\Query();
             $users = $q->select('u.*')->from('T1277_User u')->execute();
 
             $this->assertEquals(2, count($users));
 
             foreach ($users as $u) {
-                $this->assertEquals(\Doctrine_Record_State::CLEAN(), $u->state());
+                $this->assertEquals(\Doctrine1\Record\State::CLEAN, $u->state());
 
                 $u->username = 'new \username' . $u->id;
                 $u->email    = 'some' . $u->id . '@email';
@@ -61,20 +61,20 @@ namespace Tests\Tickets {
         {
             static::$conn->getTable('T1277_User')->clear(); // clear identity map
 
-            $q = new \Doctrine_Query();
+            $q = new \Doctrine1\Query();
             $u = $q->select('u.id')->from('T1277_User u')->where('u.id=1')->fetchOne();
 
             $this->assertEquals(1, $u->id);
-            $this->assertEquals(\Doctrine_Record_State::PROXY(), $u->state());
+            $this->assertEquals(\Doctrine1\Record\State::PROXY, $u->state());
 
             // In some other part of code I will query this table again and start making modifications to found records:
-            $q     = new \Doctrine_Query();
+            $q     = new \Doctrine1\Query();
             $users = $q->select('u.id, u.username')->from('T1277_User u')->execute();
 
             $this->assertEquals(2, count($users));
 
             foreach ($users as $u) {
-                $this->assertEquals(\Doctrine_Record_State::PROXY(), $u->state());
+                $this->assertEquals(\Doctrine1\Record\State::PROXY, $u->state());
 
                 $u->username = 'new \username' . $u->id; // modify
                 $u->email    = 'some' . $u->id . '@email'; // triggers load() to fill uninitialized props
@@ -82,7 +82,7 @@ namespace Tests\Tickets {
                 $this->assertEquals('new \username' . $u->id, $u->username);
                 $this->assertEquals('some' . $u->id . '@email', $u->email);
 
-                $this->assertEquals(\Doctrine_Record_State::DIRTY(), $u->state());
+                $this->assertEquals(\Doctrine1\Record\State::DIRTY, $u->state());
             }
         }
 
@@ -96,20 +96,20 @@ namespace Tests\Tickets {
         {
             static::$conn->getTable('T1277_User')->clear(); // clear identity map
 
-            $q = new \Doctrine_Query();
+            $q = new \Doctrine1\Query();
             $u = $q->select('u.id')->from('T1277_User u')->where('u.id=1')->fetchOne();
 
             $this->assertEquals(1, $u->id);
-            $this->assertEquals(\Doctrine_Record_State::PROXY(), $u->state());
+            $this->assertEquals(\Doctrine1\Record\State::PROXY, $u->state());
 
             // In some other part of code I will query this table again and start making modifications to found records:
-            $q     = new \Doctrine_Query();
+            $q     = new \Doctrine1\Query();
             $users = $q->select('u.id, u.username')->from('T1277_User u')->execute();
 
             $this->assertEquals(2, count($users));
 
             foreach ($users as $u) {
-                $this->assertEquals(\Doctrine_Record_State::PROXY(), $u->state());
+                $this->assertEquals(\Doctrine1\Record\State::PROXY, $u->state());
 
                 if ($u->id == 1) {
                     $this->assertEquals('User1', $u->username);
@@ -119,14 +119,14 @@ namespace Tests\Tickets {
                     $this->assertEquals('some@email', $u->email);
                 }
 
-                $this->assertEquals(\Doctrine_Record_State::CLEAN(), $u->state());
+                $this->assertEquals(\Doctrine1\Record\State::CLEAN, $u->state());
             }
         }
     }
 }
 
 namespace {
-    class T1277_User extends Doctrine_Record
+    class T1277_User extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

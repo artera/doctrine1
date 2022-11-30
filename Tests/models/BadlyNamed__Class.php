@@ -1,5 +1,5 @@
 <?php
-class BadLyNamed__Class extends Doctrine_Record
+class BadLyNamed__Class extends \Doctrine1\Record
 {
     public function setTableDefinition(): void
     {

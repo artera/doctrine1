@@ -1,5 +1,5 @@
 <?php
-class QueryTest_Subscription extends Doctrine_Record
+class QueryTest_Subscription extends \Doctrine1\Record
 {
     public function setTableDefinition(): void
     {

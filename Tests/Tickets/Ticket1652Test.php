@@ -21,38 +21,38 @@ namespace Tests\Tickets {
 
         public function testValidate()
         {
-            $doctrine = new \ReflectionClass('Doctrine');
+            $doctrine = new \ReflectionClass(\Doctrine1\Core::class);
             if ($doctrine->hasConstant('VALIDATE_USER')) {
-                \Doctrine_Manager::getInstance()->setAttribute(\Doctrine_Core::ATTR_VALIDATE, \Doctrine_Core::VALIDATE_USER);
+                \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_USER);
             } else {
                 //I only want my overridden Record->validate()-methods for validation
-                \Doctrine_Manager::getInstance()->setAttribute(
-                    \Doctrine_Core::ATTR_VALIDATE,
-                    \Doctrine_Core::VALIDATE_ALL & ~Doctrine_Core::VALIDATE_LENGTHS & ~Doctrine_Core::VALIDATE_CONSTRAINTS & ~Doctrine_Core::VALIDATE_TYPES
+                \Doctrine1\Manager::getInstance()->setAttribute(
+                    \Doctrine1\Core::ATTR_VALIDATE,
+                    \Doctrine1\Core::VALIDATE_ALL & ~\Doctrine1\Core::VALIDATE_LENGTHS & ~\Doctrine1\Core::VALIDATE_CONSTRAINTS & ~\Doctrine1\Core::VALIDATE_TYPES
                 );
             }
 
-            $user       = \Doctrine_Core::getTable('Ticket_1652_User')->findOneById(1);
+            $user       = \Doctrine1\Core::getTable('Ticket_1652_User')->findOneById(1);
             $user->name = 'test';
             if ($user->isValid()) {
                 try {
                     $user->save();
-                } catch (Doctrine_Validator_Exception $dve) {
+                } catch (\Doctrine1\Validator\Exception $dve) {
                     // ignore
                 }
             }
 
-            $user = \Doctrine_Core::getTable('Ticket_1652_User')->findOneById(1);
+            $user = \Doctrine1\Core::getTable('Ticket_1652_User')->findOneById(1);
 
             $this->assertNotEquals($user->name, 'test');
             //reset validation to default for further testcases
-            \Doctrine_Manager::getInstance()->setAttribute(\Doctrine_Core::ATTR_VALIDATE, \Doctrine_Core::VALIDATE_NONE);
+            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_NONE);
         }
     }
 }
 
 namespace {
-    class Ticket_1652_User extends Doctrine_Record
+    class Ticket_1652_User extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

@@ -13,7 +13,7 @@ namespace Tests\Tickets {
 
         public function testTest()
         {
-            $q = \Doctrine_Query::create()
+            $q = \Doctrine1\Query::create()
             ->from('Ticket_DC276_Post p, p.Comments c')
             ->select('p.*, c.*, COUNT(c.id) AS comment_count')
             ->groupBy('p.id')
@@ -25,7 +25,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class Ticket_DC276_Post extends Doctrine_Record
+    class Ticket_DC276_Post extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -59,7 +59,7 @@ namespace {
         }
     }
 
-    class Ticket_DC276_Comment extends Doctrine_Record
+    class Ticket_DC276_Comment extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

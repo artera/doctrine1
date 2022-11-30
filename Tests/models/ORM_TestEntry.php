@@ -1,5 +1,5 @@
 <?php
-class ORM_TestEntry extends Doctrine_Record
+class ORM_TestEntry extends \Doctrine1\Record
 {
     public function setTableDefinition(): void
     {

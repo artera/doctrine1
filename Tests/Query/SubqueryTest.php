@@ -7,7 +7,7 @@ class SubqueryTest extends DoctrineUnitTestCase
 {
     public function testSubqueryWithWherePartAndInExpression(): void
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
         $q->from('User u')->where("u.id NOT IN (SELECT u2.id FROM User u2 WHERE u2.name = 'zYne')");
 
         $this->assertMatchesSnapshot($q->getSqlQuery());
@@ -20,7 +20,7 @@ class SubqueryTest extends DoctrineUnitTestCase
 
     public function testSubqueryAllowsSelectingOfAnyField(): void
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
         $q->from('User u')->where('u.id NOT IN (SELECT g.user_id FROM GroupUser g)');
 
         $this->assertMatchesSnapshot($q->getSqlQuery());
@@ -29,7 +29,7 @@ class SubqueryTest extends DoctrineUnitTestCase
     public function testSubqueryInSelectPart(): void
     {
         // ticket #307
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->parseDqlQuery("SELECT u.name, (SELECT COUNT(p.id) FROM Phonenumber p WHERE p.entity_id = u.id) pcount FROM User u WHERE u.name = 'zYne' LIMIT 1");
 
@@ -48,7 +48,7 @@ class SubqueryTest extends DoctrineUnitTestCase
     public function testSubqueryInSelectPartWithRawSql(): void
     {
         // ticket DC-706
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->parseDqlQuery("SELECT u.name, (SQL:SELECT COUNT(p.id) AS p__0 FROM phonenumber p WHERE (p.entity_id = e.id)) as pcount FROM User u WHERE u.name = 'zYne' LIMIT 1");
 
@@ -67,7 +67,7 @@ class SubqueryTest extends DoctrineUnitTestCase
     public function testSubqueryInSelectPart2(): void
     {
         // ticket #307
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->parseDqlQuery("SELECT u.name, (SELECT COUNT(w.id) FROM User w WHERE w.id = u.id) pcount FROM User u WHERE u.name = 'zYne' LIMIT 1");
         $this->assertMatchesSnapshot($q->getSqlQuery());
@@ -75,7 +75,7 @@ class SubqueryTest extends DoctrineUnitTestCase
 
     public function testGetLimitSubqueryOrderBy2(): void
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
         $q->select('u.name, COUNT(DISTINCT a.id) num_albums')
             ->from('User u, u.Album a')
             ->orderby('num_albums')
@@ -92,7 +92,7 @@ class SubqueryTest extends DoctrineUnitTestCase
 
     public function testAggregateFunctionsInOrderByAndHavingWithCount(): void
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->select('u.*, COUNT(a.id) num_albums')
             ->from('User u')

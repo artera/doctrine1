@@ -7,9 +7,9 @@ class TicketDC112Test extends DoctrineUnitTestCase
 {
     public function testResultCacheSetHash()
     {
-        $cacheDriver = new \Doctrine_Cache_Array();
+        $cacheDriver = new \Doctrine1\Cache\PHPArray();
 
-        $q1 = \Doctrine_Query::create()
+        $q1 = \Doctrine1\Query::create()
             ->from('User u')
             ->useResultCache($cacheDriver, 3600, 'test1');
 
@@ -23,7 +23,7 @@ class TicketDC112Test extends DoctrineUnitTestCase
         $this->assertTrue($cacheDriver->contains('test1'));
         $this->assertEquals(count($coll), 8);
 
-        $q2 = \Doctrine_Query::create()
+        $q2 = \Doctrine1\Query::create()
             ->from('User u')
             ->useResultCache($cacheDriver, 3600, 'test2');
 
@@ -39,7 +39,7 @@ class TicketDC112Test extends DoctrineUnitTestCase
         $cacheDriver->delete('test1');
         $this->assertFalse($cacheDriver->contains('test1'));
 
-        $q = \Doctrine_Query::create()
+        $q = \Doctrine1\Query::create()
             ->from('User u')
             ->useResultCache($cacheDriver)
             ->setResultCacheHash('testing');
@@ -54,18 +54,18 @@ class TicketDC112Test extends DoctrineUnitTestCase
 
     public function testDeleteByRegex()
     {
-        $cacheDriver = new \Doctrine_Cache_Array(
+        $cacheDriver = new \Doctrine1\Cache\PHPArray(
             [
             'prefix' => 'test_'
             ]
         );
 
-        \Doctrine_Query::create()
+        \Doctrine1\Query::create()
             ->from('User u')
             ->useResultCache($cacheDriver, 3600, 'doctrine_query_one')
             ->execute();
 
-        \Doctrine_Query::create()
+        \Doctrine1\Query::create()
             ->from('User u')
             ->useResultCache($cacheDriver, 3600, 'doctrine_query_two')
             ->execute();
@@ -78,18 +78,18 @@ class TicketDC112Test extends DoctrineUnitTestCase
 
     public function testDeleteByPrefix()
     {
-        $cacheDriver = new \Doctrine_Cache_Array(
+        $cacheDriver = new \Doctrine1\Cache\PHPArray(
             [
             'prefix' => 'test_'
             ]
         );
 
-        \Doctrine_Query::create()
+        \Doctrine1\Query::create()
             ->from('User u')
             ->useResultCache($cacheDriver, 3600, 'doctrine_query_one')
             ->execute();
 
-        \Doctrine_Query::create()
+        \Doctrine1\Query::create()
             ->from('User u')
             ->useResultCache($cacheDriver, 3600, 'doctrine_query_two')
             ->execute();
@@ -102,14 +102,14 @@ class TicketDC112Test extends DoctrineUnitTestCase
 
     public function testDeleteBySuffix()
     {
-        $cacheDriver = new \Doctrine_Cache_Array();
+        $cacheDriver = new \Doctrine1\Cache\PHPArray();
 
-        \Doctrine_Query::create()
+        \Doctrine1\Query::create()
             ->from('User u')
             ->useResultCache($cacheDriver, 3600, 'one_query')
             ->execute();
 
-        \Doctrine_Query::create()
+        \Doctrine1\Query::create()
             ->from('User u')
             ->useResultCache($cacheDriver, 3600, 'two_query')
             ->execute();
@@ -122,14 +122,14 @@ class TicketDC112Test extends DoctrineUnitTestCase
 
     public function testDeleteWithWildcard()
     {
-        $cacheDriver = new \Doctrine_Cache_Array();
+        $cacheDriver = new \Doctrine1\Cache\PHPArray();
 
-        \Doctrine_Query::create()
+        \Doctrine1\Query::create()
             ->from('User u')
             ->useResultCache($cacheDriver, 3600, 'user_query_one')
             ->execute();
 
-        \Doctrine_Query::create()
+        \Doctrine1\Query::create()
             ->from('User u')
             ->useResultCache($cacheDriver, 3600, 'user_query_two')
             ->execute();

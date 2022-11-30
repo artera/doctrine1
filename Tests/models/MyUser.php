@@ -1,5 +1,5 @@
 <?php
-class MyUser extends Doctrine_Record
+class MyUser extends \Doctrine1\Record
 {
     public function setTableDefinition(): void
     {

@@ -1,5 +1,5 @@
 <?php
-class TestError extends Doctrine_Record
+class TestError extends \Doctrine1\Record
 {
     public function setUp(): void
     {

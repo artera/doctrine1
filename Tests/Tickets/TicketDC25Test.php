@@ -14,7 +14,7 @@ namespace Tests\Tickets {
 
         public function testTest()
         {
-            $q = \Doctrine_Core::getTable('Ticket_DC25_Article')
+            $q = \Doctrine1\Core::getTable('Ticket_DC25_Article')
             ->createQuery('a')
             ->leftJoin('a.Tags t1')
             ->leftJoin('a.Tags t2');
@@ -25,7 +25,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class Ticket_DC25_Article extends Doctrine_Record
+    class Ticket_DC25_Article extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -45,7 +45,7 @@ namespace {
         }
     }
 
-    class Ticket_DC25_Tag extends Doctrine_Record
+    class Ticket_DC25_Tag extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -65,7 +65,7 @@ namespace {
         }
     }
 
-    class Ticket_DC25_ArticleTag extends Doctrine_Record
+    class Ticket_DC25_ArticleTag extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

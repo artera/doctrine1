@@ -16,7 +16,7 @@ interface SerializerInterface
      * } $column
      * @return scalar
      */
-    public function serialize(mixed $value, array $column, \Doctrine_Table $table): mixed;
+    public function serialize(mixed $value, array $column, \Doctrine1\Table $table): mixed;
 
-    public function areEquivalent(mixed $a, mixed $b, array $column, \Doctrine_Table $table): bool;
+    public function areEquivalent(mixed $a, mixed $b, array $column, \Doctrine1\Table $table): bool;
 }

@@ -63,7 +63,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class T638_Student extends Doctrine_Record
+    class T638_Student extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -79,7 +79,7 @@ namespace {
         }
     }
 
-    class T638_Course extends Doctrine_Record
+    class T638_Course extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -99,7 +99,7 @@ namespace {
         }
     }
 
-    class T638_StudentCourse extends Doctrine_Record
+    class T638_StudentCourse extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

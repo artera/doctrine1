@@ -17,7 +17,7 @@ class Ticket587Test extends DoctrineUnitTestCase
         $user['name'] = 'Anonymous';
         $user->save();
 
-        $pages            = new \Doctrine_Collection('Page');
+        $pages            = new \Doctrine1\Collection('Page');
         $pages[0]['name'] = 'Yahoo';
         $pages[0]['url']  = 'http://www.yahoo.com';
         $pages->save();
@@ -27,7 +27,7 @@ class Ticket587Test extends DoctrineUnitTestCase
 
     /**
      * This test case demonstrates an issue with the identity case in the
-     * Doctrine_Table class.  The brief summary is that if you create a
+     * \Doctrine1\Table class.  The brief summary is that if you create a
      * record, then delete it, then create another record with the same
      * primary keys, the record can get into a state where it is in the
      * database but may appear to be marked as TCLEAN under certain
@@ -38,11 +38,11 @@ class Ticket587Test extends DoctrineUnitTestCase
     public function testIdentityMapAndRecordStatus()
     {
         // load our user and our collection of pages
-        $user = \Doctrine_Query::create()->query(
+        $user = \Doctrine1\Query::create()->query(
             'SELECT * FROM BookmarkUser u WHERE u.name=?',
             ['Anonymous']
         )->getFirst();
-        $pages = \Doctrine_Query::create()->query('SELECT * FROM Page');
+        $pages = \Doctrine1\Query::create()->query('SELECT * FROM Page');
 
         // bookmark the pages (manually)
         foreach ($pages as $page) {
@@ -53,7 +53,7 @@ class Ticket587Test extends DoctrineUnitTestCase
         }
 
         // select all bookmarks
-        $bookmarks = \Doctrine_Manager::connection()->query(
+        $bookmarks = \Doctrine1\Manager::connection()->query(
             'SELECT * FROM Bookmark b'
         );
         $this->assertEquals(count($bookmarks), 1);
@@ -67,7 +67,7 @@ class Ticket587Test extends DoctrineUnitTestCase
         $user['Bookmarks']->delete();
 
         // verify count when accessed directly from database
-        $bookmarks = \Doctrine_Query::create()->query(
+        $bookmarks = \Doctrine1\Query::create()->query(
             'SELECT * FROM Bookmark'
         );
         $this->assertEquals(count($bookmarks), 0);
@@ -81,7 +81,7 @@ class Ticket587Test extends DoctrineUnitTestCase
         }
 
         // select all bookmarks for the user
-        $bookmarks = \Doctrine_Manager::connection()->query(
+        $bookmarks = \Doctrine1\Manager::connection()->query(
             'SELECT * FROM Bookmark b'
         );
         $this->assertEquals(count($bookmarks), 1);

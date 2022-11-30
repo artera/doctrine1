@@ -38,19 +38,19 @@ namespace Tests\Tickets {
             $role3->save();
 
             // update positions
-            $query = \Doctrine_Query::create()
+            $query = \Doctrine1\Query::create()
             ->update('Ticket_DC302_RoleReference')
             ->set('position', '?', 0)
             ->where('id_role_child = ?', 3)
             ->andWhere('id_role_parent = ?', 1)
             ->execute();
-            $query = \Doctrine_Query::create()
+            $query = \Doctrine1\Query::create()
             ->update('Ticket_DC302_RoleReference')
             ->set('position', '?', 1)
             ->where('id_role_child = ?', 3)
             ->andWhere('id_role_parent = ?', 4)
             ->execute();
-            $query = \Doctrine_Query::create()
+            $query = \Doctrine1\Query::create()
             ->update('Ticket_DC302_RoleReference')
             ->set('position', '?', 2)
             ->where('id_role_child = ?', 3)
@@ -64,13 +64,13 @@ namespace Tests\Tickets {
             $user->fromArray(['Roles' => [4, 2]]);
             $user->save();
             // update positions
-            $query = \Doctrine_Query::create()
+            $query = \Doctrine1\Query::create()
             ->update('Ticket_DC302_UserRole')
             ->set('position', '?', 0)
             ->where('id_user = ?', 1)
             ->andWhere('id_role = ?', 4)
             ->execute();
-            $query = \Doctrine_Query::create()
+            $query = \Doctrine1\Query::create()
             ->update('Ticket_DC302_UserRole')
             ->set('position', '?', 1)
             ->where('id_user = ?', 1)
@@ -80,10 +80,10 @@ namespace Tests\Tickets {
 
         public function testTest()
         {
-            $profiler = new \Doctrine_Connection_Profiler();
+            $profiler = new \Doctrine1\Connection\Profiler();
             static::$conn->addListener($profiler);
 
-            $role    = \Doctrine::getTable('Ticket_DC302_Role')->find(3);
+            $role    = \Doctrine1\Core::getTable('Ticket_DC302_Role')->find(3);
             $parents = $role->Parents->toArray();
 
             $this->assertEquals($parents[1]['Ticket_DC302_RoleReference'][0]['position'], 1);
@@ -96,7 +96,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class Ticket_DC302_Role extends Doctrine_Record
+    class Ticket_DC302_Role extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -111,7 +111,7 @@ namespace {
         }
     }
 
-    class Ticket_DC302_RoleReference extends Doctrine_Record
+    class Ticket_DC302_RoleReference extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -127,7 +127,7 @@ namespace {
         }
     }
 
-    class Ticket_DC302_User extends Doctrine_Record
+    class Ticket_DC302_User extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -141,7 +141,7 @@ namespace {
         }
     }
 
-    class Ticket_DC302_UserRole extends Doctrine_Record
+    class Ticket_DC302_UserRole extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

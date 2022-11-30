@@ -1,5 +1,5 @@
 <?php
-class Bookmark extends Doctrine_Record
+class Bookmark extends \Doctrine1\Record
 {
     public function setTableDefinition(): void
     {

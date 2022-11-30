@@ -1,5 +1,5 @@
 <?php
-class InheritanceDeal extends Doctrine_Record
+class InheritanceDeal extends \Doctrine1\Record
 {
     public function setTableDefinition(): void
     {

@@ -50,7 +50,7 @@ class FromArrayTest extends DoctrineUnitTestCase
     public function testFromArrayAfterSaveRecord()
     {
         // This is fetching the user made in the previous test apparently
-        $user   = \Doctrine_Query::create()->from('User u, u.Email, u.Phonenumber, u.Group')->fetchOne();
+        $user   = \Doctrine1\Query::create()->from('User u, u.Email, u.Phonenumber, u.Group')->fetchOne();
         $groups = [];
 
         $this->assertEquals($user->Phonenumber->count(), 1);

@@ -11,7 +11,7 @@ namespace Tests\Tickets {
 
         public function setUp(): void
         {
-            \Doctrine_Manager::connection('mysql://root:password@localhost/doctrine', 'Mysql');
+            \Doctrine1\Manager::connection('mysql://root:password@localhost/doctrine', 'Mysql');
         }
 
         public function tearDown(): void
@@ -27,21 +27,21 @@ namespace Tests\Tickets {
 
         public function testDuplicatedParamsInSubQuery()
         {
-            static::$connection->setAttribute(\Doctrine_Core::ATTR_QUOTE_IDENTIFIER, true);
+            static::$connection->setAttribute(\Doctrine1\Core::ATTR_QUOTE_IDENTIFIER, true);
 
-            $q = \Doctrine_Query::create()->select('COUNT(a.id) as num_records')
+            $q = \Doctrine1\Query::create()->select('COUNT(a.id) as num_records')
                 ->from('Ticket_1935_Article a')
                 ->having('num_records > 1');
                 //$results = $q->execute();
                 $this->assertEquals($q->getSqlQuery(), 'SELECT COUNT(`t`.`id`) AS `t__0` FROM `ticket_1935_article` `t` HAVING `t__0` > 1');
 
-            static::$connection->setAttribute(\Doctrine_Core::ATTR_QUOTE_IDENTIFIER, false);
+            static::$connection->setAttribute(\Doctrine1\Core::ATTR_QUOTE_IDENTIFIER, false);
         }
     }
 }
 
 namespace {
-    class Ticket_1935_Article extends Doctrine_Record
+    class Ticket_1935_Article extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

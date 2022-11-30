@@ -7,13 +7,13 @@ class MysqlSubqueryTest extends DoctrineUnitTestCase
 {
     public function setUp(): void
     {
-        static::$dbh  = new \Doctrine_Adapter_Mock('mysql');
-        static::$conn = \Doctrine_Manager::getInstance()->openConnection(static::$dbh);
+        static::$dbh  = new \Doctrine1\Adapter\Mock('mysql');
+        static::$conn = \Doctrine1\Manager::getInstance()->openConnection(static::$dbh);
     }
 
     public function testGetLimitSubquerSupportsOrderByWithAggregateValues(): void
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
         $q->select('u.name, COUNT(DISTINCT a.id) num_albums');
         $q->from('User u, u.Album a');
         $q->orderby('num_albums');
@@ -27,7 +27,7 @@ class MysqlSubqueryTest extends DoctrineUnitTestCase
 
     public function testGetLimitSubquerySupportsOrderByWithAggregateValuesAndDescKeyword(): void
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
         $q->select('u.name, COUNT(DISTINCT a.id) num_albums');
         $q->from('User u, u.Album a');
         $q->orderby('num_albums DESC, u.name');
@@ -41,7 +41,7 @@ class MysqlSubqueryTest extends DoctrineUnitTestCase
 
     public function testGetLimitSubquerySupportsOrderByWithAggregateValuesAndColumns(): void
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
         $q->select('u.name, COUNT(DISTINCT a.id) num_albums');
         $q->from('User u, u.Album a');
         $q->orderby('num_albums, u.name');
@@ -55,7 +55,7 @@ class MysqlSubqueryTest extends DoctrineUnitTestCase
 
     public function testGetLimitSubquerySupportsOrderByAndHavingWithAggregateValues(): void
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
         $q->select('u.name, COUNT(DISTINCT a.id) num_albums');
         $q->from('User u, u.Album a');
         $q->orderby('num_albums DESC');
@@ -70,7 +70,7 @@ class MysqlSubqueryTest extends DoctrineUnitTestCase
 
     public function testGetLimitSubquerySupportsHavingWithAggregateValues(): void
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
         $q->select('u.name, COUNT(DISTINCT a.id) num_albums');
         $q->from('User u, u.Album a');
         $q->having('num_albums > 0');

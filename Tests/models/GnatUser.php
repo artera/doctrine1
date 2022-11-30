@@ -3,7 +3,7 @@ class GnatUserTable
 {
 }
 
-class GnatUser extends Doctrine_Record
+class GnatUser extends \Doctrine1\Record
 {
     public function setTableDefinition(): void
     {

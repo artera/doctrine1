@@ -46,7 +46,7 @@ namespace Tests\Tickets {
 
             $b->save();
 
-            $q = \Doctrine_Query::create()
+            $q = \Doctrine1\Query::create()
                 ->from('gUser u')
                 ->leftJoin('u.Images i')
                 ->leftJoin('u.Files f')
@@ -63,7 +63,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class gImage extends Doctrine_Record
+    class gImage extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -71,7 +71,7 @@ namespace {
             $this->hasColumn('owner_id', 'integer', 4);
             $this->hasColumn('filename', 'string', 64);
             $this->hasColumn('otype', 'integer', 4);
-            $this->setAttribute(\Doctrine_Core::ATTR_EXPORT, \Doctrine_Core::EXPORT_ALL ^ \Doctrine_Core::EXPORT_CONSTRAINTS);
+            $this->setAttribute(\Doctrine1\Core::ATTR_EXPORT, \Doctrine1\Core::EXPORT_ALL ^ \Doctrine1\Core::EXPORT_CONSTRAINTS);
 
             $this->setSubClasses(['gUserImage' => ['otype' => 1],'gBlogImage' => ['otype' => 2]]);
         }
@@ -95,7 +95,7 @@ namespace {
         }
     }
 
-    class gFile extends Doctrine_Record
+    class gFile extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -103,7 +103,7 @@ namespace {
             $this->hasColumn('owner_id', 'integer', 4);
             $this->hasColumn('filename', 'string', 64);
             $this->hasColumn('otype', 'integer', 4);
-            $this->setAttribute(\Doctrine_Core::ATTR_EXPORT, \Doctrine_Core::EXPORT_ALL ^ \Doctrine_Core::EXPORT_CONSTRAINTS);
+            $this->setAttribute(\Doctrine1\Core::ATTR_EXPORT, \Doctrine1\Core::EXPORT_ALL ^ \Doctrine1\Core::EXPORT_CONSTRAINTS);
 
             $this->setSubClasses(['gUserFile' => ['otype' => 1],'gBlogFile' => ['otype' => 2]]);
         }
@@ -127,7 +127,7 @@ namespace {
         }
     }
 
-    class gBlog extends Doctrine_Record
+    class gBlog extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -143,7 +143,7 @@ namespace {
         }
     }
 
-    class gUser extends Doctrine_Record
+    class gUser extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

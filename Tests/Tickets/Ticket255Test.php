@@ -8,7 +8,7 @@ namespace Tests\Tickets {
 
         public function testTest()
         {
-            \Doctrine_Manager::getInstance()->setAttribute(\Doctrine_Core::ATTR_VALIDATE, true);
+            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, true);
             $user                = new \Ticket_255_User();
             $user->username      = 'jwage';
             $user->email_address = 'jonwage@gmail.com';
@@ -23,13 +23,13 @@ namespace Tests\Tickets {
             $user->password      = 'changeme';
             $user->save();
 
-            \Doctrine_Manager::getInstance()->setAttribute(\Doctrine_Core::ATTR_VALIDATE, false);
+            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, false);
         }
 
         public function testTest2()
         {
-            $dbh  = new \Doctrine_Adapter_Mock('mysql');
-            $conn = \Doctrine_Manager::connection($dbh);
+            $dbh  = new \Doctrine1\Adapter\Mock('mysql');
+            $conn = \Doctrine1\Manager::connection($dbh);
             $sql  = $conn->export->exportClassesSql([\Ticket_255_User::class]);
 
             $this->assertEquals($sql[0], 'CREATE TABLE ticket_255__user (id BIGINT AUTO_INCREMENT, username VARCHAR(255), email_address VARCHAR(255), password VARCHAR(255), UNIQUE INDEX username_email_address_unqidx_idx (username, email_address), PRIMARY KEY(id)) ENGINE = INNODB');
@@ -38,7 +38,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class Ticket_255_User extends \Doctrine_Record
+    class Ticket_255_User extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

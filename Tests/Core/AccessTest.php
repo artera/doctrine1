@@ -25,7 +25,7 @@ class AccessTest extends DoctrineUnitTestCase
         $this->assertTrue(isset($user['name']));
         $this->assertFalse(isset($user['unknown']));
 
-        $coll = new \Doctrine_Collection('User');
+        $coll = new \Doctrine1\Collection('User');
 
         $this->assertFalse(isset($coll[0]));
         // test repeated call

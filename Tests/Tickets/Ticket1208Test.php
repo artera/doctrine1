@@ -20,9 +20,9 @@ namespace Tests\Tickets {
 
         public function testTest()
         {
-            $q = \Doctrine_Query::create()
+            $q = \Doctrine1\Query::create()
             ->from('Ticket_1208_User u');
-            $user = $q->fetchOne([], \Doctrine_Core::HYDRATE_ARRAY);
+            $user = $q->fetchOne([], \Doctrine1\Core::HYDRATE_ARRAY);
 
             $this->assertTrue(isset($user['pre_hydrate']));
             $this->assertTrue(isset($user['post_hydrate']));
@@ -31,7 +31,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class Ticket_1208_User extends Doctrine_Record
+    class Ticket_1208_User extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

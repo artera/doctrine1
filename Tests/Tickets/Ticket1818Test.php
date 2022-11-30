@@ -15,19 +15,19 @@ namespace Tests\Tickets {
 
         public function testTest()
         {
-            \Doctrine_Manager::getInstance()->setAttribute(\Doctrine_Core::ATTR_VALIDATE, \Doctrine_Core::VALIDATE_ALL);
+            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_ALL);
             $foo            = new \Ticket_1818_Foo();
                 $foo->Bar       = new \Ticket_1818_BarA();
                 $foo->Bar->type = 'A';
                 $foo->save();
 
-            \Doctrine_Manager::getInstance()->setAttribute(\Doctrine_Core::ATTR_VALIDATE, \Doctrine_Core::VALIDATE_NONE);
+            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_NONE);
         }
     }
 }
 
 namespace {
-    class Ticket_1818_Foo extends Doctrine_Record
+    class Ticket_1818_Foo extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -52,7 +52,7 @@ namespace {
     {
     }
 
-    class Ticket_1818_Bar extends Doctrine_Record
+    class Ticket_1818_Bar extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

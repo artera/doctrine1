@@ -1,6 +1,6 @@
 <?php
 
-class TestMigration extends Doctrine_Migration_Base
+class TestMigration extends \Doctrine1\Migration\Base
 {
     public function migrate($direction)
     {

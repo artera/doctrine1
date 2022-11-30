@@ -19,9 +19,9 @@ class TicketDC95Test extends DoctrineUnitTestCase
 
     public function testClassExistsAfterImport()
     {
-        \Doctrine_Core::setModelsDirectory(__DIR__ . '/DC95/models');
+        \Doctrine1\Core::setModelsDirectory(__DIR__ . '/DC95/models');
 
-        $import = new \Doctrine_Import_Schema();
+        $import = new \Doctrine1\Import\Schema();
         $import->setOptions(
             [
             'baseClassesDirectory' => '',
@@ -32,7 +32,7 @@ class TicketDC95Test extends DoctrineUnitTestCase
         $modelsPath = __DIR__ . '/DC95/models';
         $import->importSchema([__DIR__ . '/DC95/schema.yml'], 'yml', $modelsPath);
 
-        \Doctrine_Core::setModelsDirectory(null);
-        \Doctrine_Lib::removeDirectories(__DIR__ . '/DC95/models');
+        \Doctrine1\Core::setModelsDirectory(null);
+        \Doctrine1\Lib::removeDirectories(__DIR__ . '/DC95/models');
     }
 }

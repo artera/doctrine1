@@ -22,9 +22,9 @@ namespace Tests\Tickets {
             $rel = $component->getTable()->getRelation('Children');
 
 
-            $this->assertEquals(get_class($rel), 'Doctrine_Relation_Nest');
+            $this->assertEquals('Doctrine1\Relation\Nest', $rel::class);
 
-            $this->assertTrue($component->Children instanceof \Doctrine_Collection);
+            $this->assertTrue($component->Children instanceof \Doctrine1\Collection);
             $this->assertTrue($component->Children[0] instanceof \Ticket_889);
         }
 
@@ -35,9 +35,9 @@ namespace Tests\Tickets {
             $rel = $component->getTable()->getRelation('Parents');
 
 
-            $this->assertEquals(get_class($rel), 'Doctrine_Relation_Nest');
+            $this->assertEquals('Doctrine1\Relation\Nest', $rel::class);
 
-            $this->assertTrue($component->Parents instanceof \Doctrine_Collection);
+            $this->assertTrue($component->Parents instanceof \Doctrine1\Collection);
             $this->assertTrue($component->Parents[0] instanceof \Ticket_889);
         }
 
@@ -61,7 +61,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class Ticket_889 extends Doctrine_Record
+    class Ticket_889 extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -119,7 +119,7 @@ namespace {
         }
     }
 
-    class Ticket_889_Relationship extends Doctrine_Record
+    class Ticket_889_Relationship extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

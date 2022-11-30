@@ -1,5 +1,5 @@
 <?php
-class EventListenerTest extends Doctrine_Record
+class EventListenerTest extends \Doctrine1\Record
 {
     public function setTableDefinition(): void
     {
@@ -8,7 +8,7 @@ class EventListenerTest extends Doctrine_Record
     }
     public function setUp(): void
     {
-        //$this->attribute(\Doctrine_Core::ATTR_LISTENER, new \Doctrine_EventListener_AccessorInvoker());
+        //$this->attribute(\Doctrine1\Core::ATTR_LISTENER, new \Doctrine1\EventListener\AccessorInvoker());
     }
     public function getName($name)
     {

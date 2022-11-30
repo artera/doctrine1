@@ -11,13 +11,13 @@ class UpdateTest extends DoctrineUnitTestCase
     protected static array $tables = ['Entity', 'User', 'EnumTest'];
     public function testUpdateAllWithColumnAggregationInheritance()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->parseDqlQuery("UPDATE User u SET u.name = 'someone'");
 
         $this->assertEquals($q->getSqlQuery(), "UPDATE entity SET name = 'someone' WHERE (type = 0)");
 
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->update('User u')->set('u.name', "'someone'");
 
@@ -26,13 +26,13 @@ class UpdateTest extends DoctrineUnitTestCase
 
     public function testUpdateWorksWithMultipleColumns()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->parseDqlQuery("UPDATE User u SET u.name = 'someone', u.email_id = 5");
 
         $this->assertEquals($q->getSqlQuery(), "UPDATE entity SET name = 'someone', email_id = 5 WHERE (type = 0)");
 
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->update('User u')->set('u.name', "'someone'")->set('u.email_id', 5);
 
@@ -41,7 +41,7 @@ class UpdateTest extends DoctrineUnitTestCase
 
     public function testUpdateSupportsConditions()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->parseDqlQuery("UPDATE User u SET u.name = 'someone' WHERE u.id = 5");
 
@@ -49,7 +49,7 @@ class UpdateTest extends DoctrineUnitTestCase
     }
     public function testUpdateSupportsColumnReferencing()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->update('User u')->set('u.id', 'u.id + 1');
 
@@ -57,7 +57,7 @@ class UpdateTest extends DoctrineUnitTestCase
     }
     public function testUpdateSupportsComplexExpressions()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
         $q->update('User u')->set('u.name', "CONCAT(?, CONCAT(':', SUBSTRING(u.name, LOCATE(':', u.name)+1, LENGTH(u.name) - LOCATE(':', u.name)+1)))", ['gblanco'])
             ->where('u.id IN (SELECT u2.id FROM User u2 WHERE u2.name = ?) AND u.email_id = ?', ['guilhermeblanco', 5]);
         $this->assertEquals($q->getSqlQuery(), "UPDATE entity SET name = CONCAT(?, CONCAT(':', SUBSTRING(name, LOCATE(':', name)+1, LENGTH(name) - LOCATE(':', name)+1))) WHERE (id IN (SELECT e2.id AS e2__id FROM entity e2 WHERE (e2.name = ? AND (e2.type = 0))) AND email_id = ?) AND (type = 0)");
@@ -73,7 +73,7 @@ class UpdateTest extends DoctrineUnitTestCase
         $id = $user->id;
         $user->free();
 
-        $q = \Doctrine_Query::create()
+        $q = \Doctrine1\Query::create()
             ->update('User u')
             ->set('u.name', 'NULL')
             ->where('u.id = ?', $id);
@@ -82,7 +82,7 @@ class UpdateTest extends DoctrineUnitTestCase
 
         $q->execute();
 
-        $user = \Doctrine_Query::create()
+        $user = \Doctrine1\Query::create()
             ->from('User u')
             ->where('u.id = ?', $id)
             ->fetchOne();
@@ -99,7 +99,7 @@ class UpdateTest extends DoctrineUnitTestCase
         $id = $enumTest->id;
         $enumTest->free();
 
-        $q = \Doctrine_Query::create()
+        $q = \Doctrine1\Query::create()
             ->update('EnumTest t')
             ->set('status', '?', 'closed')
             ->set('text', '?', 'test2')
@@ -108,7 +108,7 @@ class UpdateTest extends DoctrineUnitTestCase
 
         $this->assertEquals($q->getSqlQuery(), 'UPDATE enum_test SET status = ?, text = ? WHERE (id = ?)');
 
-        $enumTest = \Doctrine_Query::create()
+        $enumTest = \Doctrine1\Query::create()
             ->from('EnumTest t')
             ->where('t.id = ?', $id)
             ->fetchOne();

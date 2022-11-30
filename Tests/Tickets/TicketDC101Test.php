@@ -6,9 +6,9 @@ namespace Tests\Tickets {
     {
         public function testTest()
         {
-            $dbh = new \Doctrine_Adapter_Mock('mysql');
+            $dbh = new \Doctrine1\Adapter\Mock('mysql');
 
-            $conn = \Doctrine_Manager::getInstance()->connection($dbh, 'mysql', false);
+            $conn = \Doctrine1\Manager::getInstance()->connection($dbh, 'mysql', false);
 
             $sql = $conn->export->exportSortedClassesSql(['Ticket_DC101_User', 'Ticket_DC101_Profile'], false);
             $this->assertEquals($sql[2], 'ALTER TABLE ticket__d_c101__profile ADD CONSTRAINT user_id_fk FOREIGN KEY (user_id) REFERENCES ticket__d_c101__user(id)');
@@ -17,7 +17,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class Ticket_DC101_User extends Doctrine_Record
+    class Ticket_DC101_User extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -36,7 +36,7 @@ namespace {
         }
     }
 
-    class Ticket_DC101_Profile extends Doctrine_Record
+    class Ticket_DC101_Profile extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

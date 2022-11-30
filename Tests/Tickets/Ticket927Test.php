@@ -22,7 +22,7 @@ class Ticket927Test extends DoctrineUnitTestCase
 
     public function testTicket()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         // simple query with deep relations
             $q->update('Email')

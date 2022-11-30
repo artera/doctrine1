@@ -1,5 +1,5 @@
 <?php
-class TestMovieUserVote extends Doctrine_Record
+class TestMovieUserVote extends \Doctrine1\Record
 {
     public function setTableDefinition(): void
     {

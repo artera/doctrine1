@@ -12,7 +12,7 @@ namespace Tests\Tickets {
 
         public function testTicket()
         {
-            $q = \Doctrine_Query::create()
+            $q = \Doctrine1\Query::create()
             ->update('T673_Student s')
             ->set('s.foo', 's.foo + 1')
             ->where('s.id = 2');
@@ -22,7 +22,7 @@ namespace Tests\Tickets {
 
             $q->execute();
 
-            $q = \Doctrine_Query::create()
+            $q = \Doctrine1\Query::create()
             ->delete()
             ->from('T673_Student s')
             ->where('s.name = ? AND s.foo < ?', 'foo', 3);
@@ -36,7 +36,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class T673_Student extends Doctrine_Record
+    class T673_Student extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

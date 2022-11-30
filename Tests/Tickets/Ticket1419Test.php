@@ -7,7 +7,7 @@ class Ticket1419Test extends DoctrineUnitTestCase
 {
     public function testTest()
     {
-        $user = \Doctrine_Query::create()
+        $user = \Doctrine1\Query::create()
             ->from('User u')
             ->leftJoin('u.Phonenumber p')
             ->where('u.id = ?', 4)
@@ -16,7 +16,7 @@ class Ticket1419Test extends DoctrineUnitTestCase
         $user->save();
         $user->free();
 
-        $user = \Doctrine_Query::create()
+        $user = \Doctrine1\Query::create()
             ->from('User u')
             ->leftJoin('u.Phonenumber p')
             ->where('u.id = ?', 4)

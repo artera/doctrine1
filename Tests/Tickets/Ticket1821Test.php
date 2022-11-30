@@ -18,14 +18,14 @@ namespace Tests\Tickets {
         public function execTest($klass)
         {
             //stores old validation setting
-            $validation = \Doctrine_Manager::getInstance()->getAttribute(\Doctrine_Core::ATTR_VALIDATE);
-            \Doctrine_Manager::getInstance()->setAttribute(\Doctrine_Core::ATTR_VALIDATE, \Doctrine_Core::VALIDATE_ALL);
+            $validation = \Doctrine1\Manager::getInstance()->getAttribute(\Doctrine1\Core::ATTR_VALIDATE);
+            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_ALL);
 
             $record       = new $klass();
             $record->name = 'test';
             $record->save();
 
-            \Doctrine_Manager::getInstance()->setAttribute(\Doctrine_Core::ATTR_VALIDATE, $validation);
+            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, $validation);
         }
 
         public function testShouldAllowNotUsingAliases()
@@ -51,7 +51,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class Ticket1821_Record_Full_Aliased extends Doctrine_Record
+    class Ticket1821_Record_Full_Aliased extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -77,7 +77,7 @@ namespace {
         }
     }
 
-    class Ticket1821_Record_ID_Aliased extends Doctrine_Record
+    class Ticket1821_Record_ID_Aliased extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -103,7 +103,7 @@ namespace {
         }
     }
 
-    class Ticket1821_Record_Column_Aliased extends Doctrine_Record
+    class Ticket1821_Record_Column_Aliased extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -129,7 +129,7 @@ namespace {
         }
     }
 
-    class Ticket1821_Record extends Doctrine_Record
+    class Ticket1821_Record extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

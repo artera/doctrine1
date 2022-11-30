@@ -1,5 +1,5 @@
 <?php
-class ValidatorTest_FootballPlayer extends Doctrine_Record
+class ValidatorTest_FootballPlayer extends \Doctrine1\Record
 {
     public function setTableDefinition(): void
     {

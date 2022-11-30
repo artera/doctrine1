@@ -17,10 +17,10 @@ namespace Tests\Tickets {
 
         public function testColumnAggregation()
         {
-            $animal = \Doctrine_Core::getTable('mkNode')->findOneById(1);
+            $animal = \Doctrine1\Core::getTable('mkNode')->findOneById(1);
             $this->assertTrue($animal instanceof \mkAnimal);
 
-            $plant = \Doctrine_Core::getTable('mkOrganism')->findOneById(2);
+            $plant = \Doctrine1\Core::getTable('mkOrganism')->findOneById(2);
             $this->assertTrue($plant instanceof \mkPlant);
         }
 
@@ -33,7 +33,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class mkNode extends Doctrine_Record
+    class mkNode extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

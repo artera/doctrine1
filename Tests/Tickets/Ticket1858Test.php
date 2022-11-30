@@ -15,7 +15,7 @@ namespace Tests\Tickets {
             $foo_id     = 1234;
             $adjustment = -3;
 
-            $query = \Doctrine_Query::create()
+            $query = \Doctrine1\Query::create()
             ->update('T1858_Foo')
             ->set(
                 'quantity',
@@ -30,7 +30,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class T1858_Foo extends Doctrine_Record
+    class T1858_Foo extends \Doctrine1\Record
     {
         public $hooks = [];
 

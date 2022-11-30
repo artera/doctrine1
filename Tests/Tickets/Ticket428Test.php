@@ -11,7 +11,7 @@ class Ticket428Test extends DoctrineUnitTestCase
 
     public function testInitData()
     {
-        $albums = new \Doctrine_Collection('Album');
+        $albums = new \Doctrine1\Collection('Album');
 
         $albums[0]->name           = 'Revolution';
         $albums[0]->Song[0]->title = 'Revolution';
@@ -32,7 +32,7 @@ class Ticket428Test extends DoctrineUnitTestCase
             $album->clearRelated();
         }
 
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->select('a.name, COUNT(s.id) count')->from('Album a')->leftJoin('a.Song s')->groupby('a.id');
         $albums = $q->execute();

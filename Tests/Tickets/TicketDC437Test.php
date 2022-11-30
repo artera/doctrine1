@@ -22,11 +22,11 @@ namespace Tests\Tickets {
             static::prepareConnections();
 
             static::$tables   = [];
-            static::$tables[] = 'Doctrine_Ticket_DC437_Record';
+            static::$tables[] = 'DC437_Record';
 
             /* Export classes for each of the existing connections.
              *
-             * To trick \Doctrine_Export::exportClasses() implementation to use
+             * To trick \Doctrine1\Export::exportClasses() implementation to use
              * a proper connection, we need to manually re-bind all the components.
              */
             foreach (['conn1', 'conn2'] as $dbConnName) {
@@ -44,12 +44,12 @@ namespace Tests\Tickets {
             $conn2 = static::$manager->getConnection('conn2');
 
             // Create 1 record using conn1, and 2 records using conn2
-            $r1 = new \Doctrine_Ticket_DC437_Record();
+            $r1 = new \DC437_Record();
             $r1->save($conn1);
 
-            $r2 = new \Doctrine_Ticket_DC437_Record();
+            $r2 = new \DC437_Record();
             $r2->save($conn2);
-            $r3 = new \Doctrine_Ticket_DC437_Record();
+            $r3 = new \DC437_Record();
             $r3->save($conn2);
         }
 
@@ -67,7 +67,7 @@ namespace Tests\Tickets {
             $conn1 = static::$manager->getConnection('conn1');
             $conn2 = static::$manager->getConnection('conn2');
 
-            $dql = 'FROM Doctrine_Ticket_DC437_Record';
+            $dql = 'FROM DC437_Record';
 
             $rs1 = $conn1->query($dql);
             $rs2 = $conn2->query($dql);
@@ -78,7 +78,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class Doctrine_Ticket_DC437_Record extends Doctrine_Record
+    class DC437_Record extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

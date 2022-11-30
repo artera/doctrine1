@@ -20,25 +20,25 @@ class ColumnAggregationInheritanceTest extends DoctrineUnitTestCase
 
     public function testQueriedClassReturnedIfNoSubclassMatch()
     {
-        $q           = new \Doctrine_Query();
+        $q           = new \Doctrine1\Query();
         $entityOther = $q->from('Entity')->where('id = ?')->execute([static::$otherEntity->id])->getFirst();
         $this->assertTrue($entityOther instanceof \Entity);
     }
 
     public function testSubclassReturnedIfInheritanceMatches()
     {
-        $q     = new \Doctrine_Query();
+        $q     = new \Doctrine1\Query();
         $group = $q->from('Entity')->where('id=?')->execute([1])->getFirst();
         $this->assertTrue($group instanceof \Group);
 
-        $q    = new \Doctrine_Query();
+        $q    = new \Doctrine1\Query();
         $user = $q->from('Entity')->where('id=?')->execute([5])->getFirst();
         $this->assertTrue($user instanceof \User);
     }
 
     public function testStringColumnInheritance()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
         $q->select('g.name')->from('Group g');
         $this->assertEquals($q->getSqlQuery(), 'SELECT e.id AS e__id, e.name AS e__name FROM entity e WHERE (e.type = 1)');
     }

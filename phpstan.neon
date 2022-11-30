@@ -6,15 +6,18 @@ includes:
 parameters:
   level: 8
   tipsOfTheDay: false
-  phpVersion: 80000
+  phpVersion: 80100
   checkMissingIterableValueType: false
   checkGenericClassInNonGenericObjectType: false
   inferPrivatePropertyTypeFromConstructor: true
   parallel:
     processTimeout: 300.0
   paths:
-    - lib
     - src
   ignoreErrors:
     - '#Unsafe usage of new static#'
-    - '#Method Doctrine_Relation_Parser::completeDefinition\(\) should return array#'
+    - '#Method Doctrine1\\Relation\\Parser::completeDefinition\(\) should return array#'
+    - message: '#(has|with) no (return )?type specified#'
+      paths: [Tests/*, Tests/*/*]
+    - message: '#has an unused parameter#'
+      paths: [Tests/*, Tests/*/*]

@@ -34,7 +34,7 @@ class TableDynamicReturnTypeExtension extends AbstractExtension implements Dynam
 
     public function getClass(): string
     {
-        return \Doctrine_Table::class;
+        return \Doctrine1\Table::class;
     }
 
     private function isMethodNameSupported(string $name): bool
@@ -60,7 +60,7 @@ class TableDynamicReturnTypeExtension extends AbstractExtension implements Dynam
 
     public function getMethod(ClassReflection $classReflection, string $methodName): MethodReflection
     {
-        $tableAncestor = $classReflection->getAncestorWithClassName(\Doctrine_Table::class);
+        $tableAncestor = $classReflection->getAncestorWithClassName(\Doctrine1\Table::class);
         if ($tableAncestor === null) {
             throw new \PHPStan\ShouldNotHappenException();
         }
@@ -74,7 +74,7 @@ class TableDynamicReturnTypeExtension extends AbstractExtension implements Dynam
         $recordAsArray = new ArrayType(new StringType(), new MixedType());
 
         if (str_starts_with($methodName, 'findBy')) {
-            $collectionClassType = new GenericObjectType(\Doctrine_Collection::class, [$recordClassType]);
+            $collectionClassType = new GenericObjectType(\Doctrine1\Collection::class, [$recordClassType]);
             $by = substr($methodName, 6);
             $returnType = TypeCombinator::union($collectionClassType, new ArrayType(new IntegerType(), $recordAsArray));
         } elseif (str_starts_with($methodName, 'findOneBy')) {
@@ -124,7 +124,7 @@ class TableDynamicReturnTypeExtension extends AbstractExtension implements Dynam
         $allowedObjectType = null;
 
         if (!$hydrate_array && $methodReflection->getName() === 'find') {
-            $allowedObjectType = new ObjectType(\Doctrine_Record::class);
+            $allowedObjectType = new ObjectType(\Doctrine1\Record::class);
 
             $nameArg = $this->findArg('name', $methodCall, $parameters);
             if ($nameArg !== null) {

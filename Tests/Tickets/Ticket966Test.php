@@ -34,12 +34,12 @@ namespace Tests\Tickets {
 
         public function testArrayHydration()
         {
-            $query = \Doctrine_Query::create()
+            $query = \Doctrine1\Query::create()
             ->from('Semester s')
             ->leftJoin('s.Courses c')
             ->leftJoin('c.Weekdays cw');
 
-            $semesters = $query->execute([], \Doctrine_Core::HYDRATE_ARRAY);
+            $semesters = $query->execute([], \Doctrine1\Core::HYDRATE_ARRAY);
             $semester  = $semesters[0];
 
             $this->assertAllWeekdaysArePopulated($semester);
@@ -47,7 +47,7 @@ namespace Tests\Tickets {
 
         public function testObjectHydration()
         {
-            $query = \Doctrine_Query::create()
+            $query = \Doctrine1\Query::create()
             ->from('Semester s')
             ->leftJoin('s.Courses c')
             ->leftJoin('c.Weekdays cw');
@@ -78,7 +78,7 @@ namespace Tests\Tickets {
             static::$conn->getTable('Course')->clear();
             static::$conn->getTable('Weekday')->clear();
             static::$conn->getTable('Semester')->clear();
-            $query = \Doctrine_Query::create()->from('Semester s');
+            $query = \Doctrine1\Query::create()->from('Semester s');
 
             $semester         = $query->execute()->getFirst();
             $queryCountBefore = static::$conn->count();
@@ -101,7 +101,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class Semester extends Doctrine_Record
+    class Semester extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -117,7 +117,7 @@ namespace {
         }
     }
 
-    class Weekday extends Doctrine_Record
+    class Weekday extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -138,7 +138,7 @@ namespace {
         }
     }
 
-    class Course extends Doctrine_Record
+    class Course extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -164,7 +164,7 @@ namespace {
         }
     }
 
-    class CourseWeekday extends Doctrine_Record
+    class CourseWeekday extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

@@ -11,38 +11,38 @@ class TransactionTest extends DoctrineUnitTestCase
     public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
-        static::$transaction = new \Doctrine_Transaction_Mock();
+        static::$transaction = new \Doctrine1\Transaction\Mock();
     }
 
     public function testGetIsolationIsOnlyImplementedAtDriverLevel()
     {
-        $this->expectException(\Doctrine_Transaction_Exception::class);
+        $this->expectException(\Doctrine1\Transaction\Exception::class);
         static::$transaction->GetIsolation('READ UNCOMMITTED');
     }
 
     public function testTransactionLevelIsInitiallyZero()
     {
-        $this->assertEquals(static::$transaction->getState(), \Doctrine_Transaction_State::SLEEP());
+        $this->assertEquals(static::$transaction->getState(), \Doctrine1\Transaction\State::SLEEP);
     }
 
     public function testSubsequentTransactionsAfterRollback()
     {
-        $this->assertEquals(static::$transaction->getState(), \Doctrine_Transaction_State::SLEEP());
+        $this->assertEquals(static::$transaction->getState(), \Doctrine1\Transaction\State::SLEEP);
         static::$transaction->beginTransaction();
-        $this->assertEquals(static::$transaction->getState(), \Doctrine_Transaction_State::ACTIVE());
+        $this->assertEquals(static::$transaction->getState(), \Doctrine1\Transaction\State::ACTIVE);
 
         static::$transaction->rollback();
-        $this->assertEquals(static::$transaction->getState(), \Doctrine_Transaction_State::SLEEP());
+        $this->assertEquals(static::$transaction->getState(), \Doctrine1\Transaction\State::SLEEP);
         static::$transaction->beginTransaction();
-        $this->assertEquals(static::$transaction->getState(), \Doctrine_Transaction_State::ACTIVE());
+        $this->assertEquals(static::$transaction->getState(), \Doctrine1\Transaction\State::ACTIVE);
         static::$transaction->commit();
-        $this->assertEquals(static::$transaction->getState(), \Doctrine_Transaction_State::SLEEP());
+        $this->assertEquals(static::$transaction->getState(), \Doctrine1\Transaction\State::SLEEP);
 
         $i = 0;
         while ($i < 5) {
-            $this->assertEquals(static::$transaction->getState(), \Doctrine_Transaction_State::SLEEP());
+            $this->assertEquals(static::$transaction->getState(), \Doctrine1\Transaction\State::SLEEP);
             static::$transaction->beginTransaction();
-            $this->assertEquals(static::$transaction->getState(), \Doctrine_Transaction_State::ACTIVE());
+            $this->assertEquals(static::$transaction->getState(), \Doctrine1\Transaction\State::ACTIVE);
             try {
                 if ($i == 0) {
                     throw new \Exception();
@@ -50,7 +50,7 @@ class TransactionTest extends DoctrineUnitTestCase
                 static::$transaction->commit();
             } catch (\Exception $e) {
                 static::$transaction->rollback();
-                $this->assertEquals(static::$transaction->getState(), \Doctrine_Transaction_State::SLEEP());
+                $this->assertEquals(static::$transaction->getState(), \Doctrine1\Transaction\State::SLEEP);
             }
             ++$i;
         }
@@ -58,18 +58,18 @@ class TransactionTest extends DoctrineUnitTestCase
 
     public function testGetStateReturnsStateConstant()
     {
-        $this->assertEquals(static::$transaction->getState(), \Doctrine_Transaction_State::SLEEP());
+        $this->assertEquals(static::$transaction->getState(), \Doctrine1\Transaction\State::SLEEP);
     }
 
     public function testCommittingWithNoActiveTransactionThrowsException()
     {
-        $this->expectException(\Doctrine_Transaction_Exception::class);
+        $this->expectException(\Doctrine1\Transaction\Exception::class);
         static::$transaction->commit();
     }
 
     public function testExceptionIsThrownWhenUsingRollbackOnNotActiveTransaction()
     {
-        $this->expectException(\Doctrine_Transaction_Exception::class);
+        $this->expectException(\Doctrine1\Transaction\Exception::class);
         static::$transaction->rollback();
     }
 
@@ -88,7 +88,7 @@ class TransactionTest extends DoctrineUnitTestCase
     }
     public function testNestedTransaction()
     {
-        $conn = \Doctrine_Manager::connection();
+        $conn = \Doctrine1\Manager::connection();
 
         try {
             $conn->beginTransaction();

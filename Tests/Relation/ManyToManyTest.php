@@ -16,9 +16,9 @@ class ManyToManyTest extends DoctrineUnitTestCase
 
         $rel = $component->getTable()->getRelation('RTC5');
 
-        $this->assertTrue($rel instanceof \Doctrine_Relation_Association);
+        $this->assertTrue($rel instanceof \Doctrine1\Relation\Association);
 
-        $this->assertTrue($component->RTC5 instanceof \Doctrine_Collection);
+        $this->assertTrue($component->RTC5 instanceof \Doctrine1\Collection);
 
         $rel = $component->getTable()->getRelation('JC3');
 
@@ -34,7 +34,7 @@ class ManyToManyTest extends DoctrineUnitTestCase
 
     public function testManyToManyRelationFetchingWithAliasesAndCustomPKs2()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->from('M2MTest2 m INNER JOIN m.JC3');
 
@@ -51,9 +51,9 @@ class ManyToManyTest extends DoctrineUnitTestCase
 
         $rel = $component->getTable()->getRelation('RTC3');
 
-        $this->assertTrue($rel instanceof \Doctrine_Relation_Association);
+        $this->assertTrue($rel instanceof \Doctrine1\Relation\Association);
 
-        $this->assertTrue($component->RTC3 instanceof \Doctrine_Collection);
+        $this->assertTrue($component->RTC3 instanceof \Doctrine1\Collection);
     }
 
 
@@ -63,9 +63,9 @@ class ManyToManyTest extends DoctrineUnitTestCase
 
         $rel = $component->getTable()->getRelation('RTC1');
 
-        $this->assertTrue($rel instanceof \Doctrine_Relation_Association);
+        $this->assertTrue($rel instanceof \Doctrine1\Relation\Association);
 
-        $this->assertTrue($component->RTC1 instanceof \Doctrine_Collection);
+        $this->assertTrue($component->RTC1 instanceof \Doctrine1\Collection);
     }
 
     public function testManyToManyHasRelationWithAliases2()
@@ -74,9 +74,9 @@ class ManyToManyTest extends DoctrineUnitTestCase
 
         $rel = $component->getTable()->getRelation('RTC2');
 
-        $this->assertTrue($rel instanceof \Doctrine_Relation_Association);
+        $this->assertTrue($rel instanceof \Doctrine1\Relation\Association);
 
-        $this->assertTrue($component->RTC1 instanceof \Doctrine_Collection);
+        $this->assertTrue($component->RTC1 instanceof \Doctrine1\Collection);
     }
 
 

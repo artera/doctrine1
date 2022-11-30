@@ -1,5 +1,5 @@
 <?php
-class CPK_Test extends Doctrine_Record
+class CPK_Test extends \Doctrine1\Record
 {
     public function setTableDefinition(): void
     {

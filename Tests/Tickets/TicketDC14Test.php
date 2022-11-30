@@ -12,7 +12,7 @@ namespace Tests\Tickets {
 
         public function testTest()
         {
-            $q = \Doctrine_Core::getTable('Ticket_DC14_Search')
+            $q = \Doctrine1\Core::getTable('Ticket_DC14_Search')
             ->createQuery('s')
             ->where('? NOT BETWEEN s.date_from AND s.date_to', '1985-09-01 00:00:00');
 
@@ -22,7 +22,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class Ticket_DC14_Search extends Doctrine_Record
+    class Ticket_DC14_Search extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

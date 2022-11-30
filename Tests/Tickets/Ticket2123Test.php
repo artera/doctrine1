@@ -9,9 +9,9 @@ class Ticket2123Test extends DoctrineUnitTestCase
 
     public function testCheckingRelatedExistsOnCollectionThrowsException()
     {
-        $this->expectException(\Doctrine_Record_Exception::class);
+        $this->expectException(\Doctrine1\Record\Exception::class);
 
-        \Doctrine_Core::getTable('User')
+        \Doctrine1\Core::getTable('User')
             ->createQuery('u')
             ->fetchOne()
             ->relatedExists('Phonenumber');

@@ -19,7 +19,7 @@ namespace Tests\Tickets {
             $foo->Bar->name = 'test2';
             $foo->save();
 
-            $q = \Doctrine_Query::create()
+            $q = \Doctrine1\Query::create()
             ->from('Ticket_1133_Foo f')
             ->innerJoin('f.Bar b ON b.id = ?', $foo->Bar->id)
             ->addWhere('f.name = ?', 'test');
@@ -35,7 +35,7 @@ namespace Tests\Tickets {
             $foo->Bar->name = 'test2';
             $foo->save();
 
-            $q = \Doctrine_Query::create()
+            $q = \Doctrine1\Query::create()
             ->from('Ticket_1133_Foo f')
             ->innerJoin('f.Bar b')
             ->addWhere('b.name = ?', 'test2')
@@ -49,7 +49,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class Ticket_1133_Foo extends Doctrine_Record
+    class Ticket_1133_Foo extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -63,7 +63,7 @@ namespace {
         }
     }
 
-    class Ticket_1133_Bar extends Doctrine_Record
+    class Ticket_1133_Bar extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

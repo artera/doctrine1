@@ -15,11 +15,11 @@ class OneToManyTest extends DoctrineUnitTestCase
 
         $rel = $table->getRelation('Phonenumber');
 
-        $this->assertTrue($rel instanceof \Doctrine_Relation_ForeignKey);
+        $this->assertTrue($rel instanceof \Doctrine1\Relation\ForeignKey);
 
         $rel = $table->getRelation('Email');
 
-        $this->assertTrue($rel instanceof \Doctrine_Relation_LocalKey);
+        $this->assertTrue($rel instanceof \Doctrine1\Relation\LocalKey);
     }
 
     public function testRelationParsing2()
@@ -28,7 +28,7 @@ class OneToManyTest extends DoctrineUnitTestCase
 
         $rel = $table->getRelation('Entity');
 
-        $this->assertTrue($rel instanceof \Doctrine_Relation_LocalKey);
+        $this->assertTrue($rel instanceof \Doctrine1\Relation\LocalKey);
     }
 
     public function testRelationParsing3()
@@ -37,7 +37,7 @@ class OneToManyTest extends DoctrineUnitTestCase
 
         $rel = $table->getRelation('PolicyAssets');
 
-        $this->assertTrue($rel instanceof \Doctrine_Relation_ForeignKey);
+        $this->assertTrue($rel instanceof \Doctrine1\Relation\ForeignKey);
     }
     public function testRelationSaving()
     {

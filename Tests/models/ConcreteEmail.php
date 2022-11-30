@@ -1,5 +1,5 @@
 <?php
-class ConcreteEmail extends Doctrine_Record
+class ConcreteEmail extends \Doctrine1\Record
 {
     public function setUp(): void
     {

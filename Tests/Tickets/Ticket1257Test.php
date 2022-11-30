@@ -20,7 +20,7 @@ namespace Tests\Tickets {
             $user->Role->description = 'Programmer/Developer';
             $user->save();
 
-            $q = \Doctrine_Query::create()
+            $q = \Doctrine1\Query::create()
             ->select('u.id, u.username')
             ->from('Ticket_1257_User u')
             ->leftJoin('u.Role r')
@@ -33,7 +33,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class Ticket_1257_User extends Doctrine_Record
+    class Ticket_1257_User extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -48,7 +48,7 @@ namespace {
         }
     }
 
-    class Ticket_1257_Role extends Doctrine_Record
+    class Ticket_1257_Role extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

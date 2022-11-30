@@ -39,7 +39,7 @@ namespace Tests\Tickets {
 
         public function testTicket()
         {
-            $q      = new \Doctrine_Query();
+            $q      = new \Doctrine1\Query();
                 $result = $q->select('d.*')
                 ->from('T923_Diagnostic d')
                 ->where('d.diag_timestamp >= ? AND d.diag_timestamp <= ?', ['2008-03-27 00:00:00', '2008-03-27 23:00:00'])
@@ -55,7 +55,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class T923_Diagnostic extends Doctrine_Record
+    class T923_Diagnostic extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

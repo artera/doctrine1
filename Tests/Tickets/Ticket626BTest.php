@@ -65,7 +65,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class T626B_Student extends Doctrine_Record
+    class T626B_Student extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -83,7 +83,7 @@ namespace {
         }
     }
 
-    class T626_Group extends Doctrine_Record
+    class T626_Group extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -103,7 +103,7 @@ namespace {
     }
 
 
-    class T626_Course extends Doctrine_Record
+    class T626_Course extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -119,7 +119,7 @@ namespace {
         }
     }
 
-    class T626B_StudentCourse extends Doctrine_Record
+    class T626B_StudentCourse extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

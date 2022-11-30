@@ -43,7 +43,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class Ticket_1865_Profile extends Doctrine_Record
+    class Ticket_1865_Profile extends \Doctrine1\Record
     {
         public function setUp(): void
         {
@@ -57,7 +57,7 @@ namespace {
         }
     }
 
-    class Ticket_1865_User extends Doctrine_Record
+    class Ticket_1865_User extends \Doctrine1\Record
     {
         public function setUp(): void
         {

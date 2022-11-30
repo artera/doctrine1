@@ -6,7 +6,7 @@ namespace Tests\Tickets {
     {
         public function testTest()
         {
-            static::$dbh  = new \Doctrine_Adapter_Mock('pgsql');
+            static::$dbh  = new \Doctrine1\Adapter\Mock('pgsql');
             static::$conn = static::$manager->openConnection(static::$dbh);
 
             $sql = static::$conn->export->exportClassesSql(['Ticket_DC82_Article']);
@@ -22,7 +22,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class Ticket_DC82_Article extends Doctrine_Record
+    class Ticket_DC82_Article extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

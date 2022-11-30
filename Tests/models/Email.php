@@ -1,6 +1,6 @@
 <?php
 /** @property string $address */
-class Email extends Doctrine_Record
+class Email extends \Doctrine1\Record
 {
     public function setTableDefinition(): void
     {

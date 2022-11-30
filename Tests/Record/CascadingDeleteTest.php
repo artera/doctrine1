@@ -40,8 +40,8 @@ namespace Tests\Record {
             // should delete the first child
             $r[0]->delete();
 
-            $this->assertEquals(\Doctrine_Record_State::TCLEAN(), $r[0]->state());
-            $this->assertEquals(\Doctrine_Record_State::TCLEAN(), $r[0]->Children[0]->state());
+            $this->assertEquals(\Doctrine1\Record\State::TCLEAN, $r[0]->state());
+            $this->assertEquals(\Doctrine1\Record\State::TCLEAN, $r[0]->Children[0]->state());
 
             static::$connection->clear();
 
@@ -94,15 +94,15 @@ namespace Tests\Record {
             $house->owner     = $owner;
             $owner->save();
 
-            $this->assertEquals(\Doctrine_Record_State::CLEAN(), $owner->state());
-            $this->assertEquals(\Doctrine_Record_State::CLEAN(), $house->state());
+            $this->assertEquals(\Doctrine1\Record\State::CLEAN, $owner->state());
+            $this->assertEquals(\Doctrine1\Record\State::CLEAN, $house->state());
             $this->assertTrue($owner->exists());
             $this->assertTrue($house->exists());
 
             $house->delete();
 
-            $this->assertEquals(\Doctrine_Record_State::TCLEAN(), $owner->state());
-            $this->assertEquals(\Doctrine_Record_State::TCLEAN(), $house->state());
+            $this->assertEquals(\Doctrine1\Record\State::TCLEAN, $owner->state());
+            $this->assertEquals(\Doctrine1\Record\State::TCLEAN, $house->state());
             $this->assertFalse($owner->exists());
             $this->assertFalse($house->exists());
         }
@@ -123,7 +123,7 @@ namespace Tests\Record {
             $compItem->save();
             $compItem->delete();
 
-            $this->assertEquals(\Doctrine_Record_State::TCLEAN(), $compItem->state());
+            $this->assertEquals(\Doctrine1\Record\State::TCLEAN, $compItem->state());
             $this->assertFalse($compItem->exists());
         }
 
@@ -140,9 +140,9 @@ namespace Tests\Record {
 
             $a1->delete();
 
-            $this->assertEquals(\Doctrine_Record_State::TCLEAN(), $a1->state());
+            $this->assertEquals(\Doctrine1\Record\State::TCLEAN, $a1->state());
             $this->assertFalse($a1->exists());
-            $this->assertEquals(\Doctrine_Record_State::TCLEAN(), $b1->state());
+            $this->assertEquals(\Doctrine1\Record\State::TCLEAN, $b1->state());
             $this->assertFalse($b1->exists());
 
             $a1->refreshRelated('assocsA');
@@ -156,7 +156,7 @@ namespace Tests\Record {
 namespace {
     /* This listener is used to verify the correct invocations of listeners during the
        delete procedure, as well as to verify the object states at the defined points. */
-    class CascadeDeleteListener extends Doctrine_Record_Listener
+    class CascadeDeleteListener extends \Doctrine1\Record\Listener
     {
         private $test;
         public $preDeleteInvoked          = false;
@@ -169,16 +169,16 @@ namespace {
             $this->test = $test;
         }
 
-        public function preDelete(Doctrine_Event $event)
+        public function preDelete(\Doctrine1\Event $event)
         {
-            $this->test->assertEquals(\Doctrine_Record_State::CLEAN(), $event->getInvoker()->state());
+            $this->test->assertEquals(\Doctrine1\Record\State::CLEAN, $event->getInvoker()->state());
             $this->preDeleteInvoked = true;
             $this->preDeleteInvocationCount++;
         }
 
-        public function postDelete(Doctrine_Event $event)
+        public function postDelete(\Doctrine1\Event $event)
         {
-            $this->test->assertEquals(\Doctrine_Record_State::TCLEAN(), $event->getInvoker()->state());
+            $this->test->assertEquals(\Doctrine1\Record\State::TCLEAN, $event->getInvoker()->state());
             $this->postDeleteInvoked = true;
             $this->postDeleteInvocationCount++;
         }
@@ -195,7 +195,7 @@ namespace {
 /* The following is a typical one-to-one cascade => delete scenario. The association
     is bidirectional, as is the cascade. */
 
-    class CascadeDelete_HouseOwner extends Doctrine_Record
+    class CascadeDelete_HouseOwner extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -210,7 +210,7 @@ namespace {
         }
     }
 
-    class CascadeDelete_House extends Doctrine_Record
+    class CascadeDelete_House extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -231,7 +231,7 @@ namespace {
    deletion routines with composite keys. Composite foreign keys are currently not
    supported, so we can't test this class in a cascade => delete scenario. */
 
-    class CascadeDelete_CompositeKeyItem extends Doctrine_Record
+    class CascadeDelete_CompositeKeyItem extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -245,7 +245,7 @@ namespace {
    Note that such a scenario is very unlikely in the real world and also pretty
    slow. */
 
-    class CascadeDelete_ManyManySideA extends Doctrine_Record
+    class CascadeDelete_ManyManySideA extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -267,7 +267,7 @@ namespace {
         }
     }
 
-    class CascadeDelete_ManyManySideB extends Doctrine_Record
+    class CascadeDelete_ManyManySideB extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -289,7 +289,7 @@ namespace {
         }
     }
 
-    class CascadeDelete_ManyManyAToB extends Doctrine_Record
+    class CascadeDelete_ManyManyAToB extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

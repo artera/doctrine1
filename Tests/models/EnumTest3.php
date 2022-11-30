@@ -1,5 +1,5 @@
 <?php
-class EnumTest3 extends Doctrine_Record
+class EnumTest3 extends \Doctrine1\Record
 {
     public function setTableDefinition(): void
     {

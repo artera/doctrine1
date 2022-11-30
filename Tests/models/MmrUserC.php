@@ -1,5 +1,5 @@
 <?php
-class MmrUserC extends Doctrine_Record
+class MmrUserC extends \Doctrine1\Record
 {
     public function setUp(): void
     {

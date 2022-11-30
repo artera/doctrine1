@@ -59,7 +59,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class T982_MyModel extends Doctrine_Record
+    class T982_MyModel extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

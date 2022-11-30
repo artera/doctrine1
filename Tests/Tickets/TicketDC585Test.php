@@ -6,9 +6,9 @@ namespace Tests\Tickets {
     {
         public static function setUpBeforeClass(): void
         {
-            static::$dbh  = new \Doctrine_Adapter_Mock('mysql');
-            static::$conn = \Doctrine_Manager::getInstance()->openConnection(static::$dbh);
-            static::$conn->setAttribute(\Doctrine::ATTR_QUOTE_IDENTIFIER, true);
+            static::$dbh  = new \Doctrine1\Adapter\Mock('mysql');
+            static::$conn = \Doctrine1\Manager::getInstance()->openConnection(static::$dbh);
+            static::$conn->setAttribute(\Doctrine1\Core::ATTR_QUOTE_IDENTIFIER, true);
         }
 
         protected static array $tables = ['DC585Site', 'DC585PlaceholderValues', 'DC585Placeholder', 'DC585Page', 'DC585PagesPlaceholders'];
@@ -28,7 +28,7 @@ namespace Tests\Tickets {
 
         public function testExtraQuotesArentAddedToIdentifiers()
         {
-            $query = \Doctrine_Query::create()
+            $query = \Doctrine1\Query::create()
                 ->select('pv.value as value, p.placeholder as placeholder, pp.page_id as page_id')
                 ->from('DC585PlaceholderValues pv')
                 ->leftJoin('pv.DC585Placeholder p')
@@ -48,7 +48,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class DC585Site extends Doctrine_Record
+    class DC585Site extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -94,7 +94,7 @@ namespace {
         }
     }
 
-    class DC585PlaceholderValues extends Doctrine_Record
+    class DC585PlaceholderValues extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -175,7 +175,7 @@ namespace {
         }
     }
 
-    class DC585Page extends Doctrine_Record
+    class DC585Page extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -222,7 +222,7 @@ namespace {
         }
     }
 
-    class DC585Placeholder extends Doctrine_Record
+    class DC585Placeholder extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -276,7 +276,7 @@ namespace {
         }
     }
 
-    class DC585PagesPlaceholders extends Doctrine_Record
+    class DC585PagesPlaceholders extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

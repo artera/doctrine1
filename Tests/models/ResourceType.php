@@ -1,5 +1,5 @@
 <?php
-class ResourceType extends Doctrine_Record
+class ResourceType extends \Doctrine1\Record
 {
     public function setUp(): void
     {

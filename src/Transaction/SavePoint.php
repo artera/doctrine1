@@ -2,10 +2,10 @@
 
 namespace Doctrine1\Transaction;
 
-use Doctrine_Collection as Collection;
-use Doctrine_Event as Event;
-use Doctrine_Record as Record;
-use Doctrine_Transaction as Transaction;
+use Doctrine1\Collection;
+use Doctrine1\Event;
+use Doctrine1\Record;
+use Doctrine1\Transaction;
 
 class SavePoint
 {
@@ -23,7 +23,7 @@ class SavePoint
         protected bool $internal,
     ) {
         $conn = $this->tr->getConnection();
-        $listener = $conn->getAttribute(\Doctrine_Core::ATTR_LISTENER);
+        $listener = $conn->getAttribute(\Doctrine1\Core::ATTR_LISTENER);
 
         if ($this->name === null) {
             $event = new Event($this->tr, Event::TX_BEGIN);
@@ -31,7 +31,7 @@ class SavePoint
             try {
                 $conn->getDbh()->beginTransaction();
             } catch (\Throwable $e) {
-                throw new \Doctrine_Transaction_Exception($e->getMessage());
+                throw new Exception($e->getMessage());
             }
             $listener->postTransactionBegin($event);
         } else {
@@ -81,13 +81,13 @@ class SavePoint
     public function commit(): void
     {
         if (!$this->active) {
-            throw new \Doctrine_Transaction_Exception("This is not an active transaction/savepoint");
+            throw new Exception("This is not an active transaction/savepoint");
         }
 
         $this->tr->commitSavePointStack($this);
         $conn = $this->tr->getConnection();
         $conn->connect();
-        $listener = $conn->getAttribute(\Doctrine_Core::ATTR_LISTENER);
+        $listener = $conn->getAttribute(\Doctrine1\Core::ATTR_LISTENER);
 
         if ($this->name === null) {
             $event = new Event($this->tr, Event::TX_COMMIT);
@@ -112,13 +112,13 @@ class SavePoint
     public function rollback(): void
     {
         if (!$this->active) {
-            throw new \Doctrine_Transaction_Exception("This is not an active transaction/savepoint");
+            throw new Exception("This is not an active transaction/savepoint");
         }
 
         $this->tr->rollbackSavePointStack($this);
         $conn = $this->tr->getConnection();
         $conn->connect();
-        $listener = $conn->getAttribute(\Doctrine_Core::ATTR_LISTENER);
+        $listener = $conn->getAttribute(\Doctrine1\Core::ATTR_LISTENER);
 
         if ($this->name === null) {
             $event = new Event($this->tr, Event::TX_ROLLBACK);
@@ -127,7 +127,7 @@ class SavePoint
                 $this->setInactive();
                 $conn->getDbh()->rollBack();
             } catch (\Throwable $e) {
-                throw new \Doctrine_Transaction_Exception($e->getMessage());
+                throw new Exception($e->getMessage());
             }
             $listener->postTransactionRollback($event);
         } else {

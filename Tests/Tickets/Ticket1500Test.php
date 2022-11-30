@@ -30,11 +30,11 @@ namespace Tests\Tickets {
 
         public function testTicket()
         {
-            $q = \Doctrine_Query::create()
+            $q = \Doctrine1\Query::create()
             ->from('T1500_User u')->innerJoin('u.Group g')->where('u.id = 1');
             $this->assertEquals($q->getSqlQuery(), 'SELECT t.user_id AS t__user_id, t.group_id AS t__group_id, t.name AS t__name, t2.group_id AS t2__group_id, t2.name AS t2__name FROM t1500__user t INNER JOIN t1500__group t2 ON t.group_id = t2.group_id WHERE (t.user_id = 1)');
 
-            $q = \Doctrine_Query::create()
+            $q = \Doctrine1\Query::create()
             ->from('T1500_Group g')->innerJoin('g.Users u')->where('g.id = 1');
             $this->assertEquals($q->getSqlQuery(), 'SELECT t.group_id AS t__group_id, t.name AS t__name, t2.user_id AS t2__user_id, t2.group_id AS t2__group_id, t2.name AS t2__name FROM t1500__group t INNER JOIN t1500__user t2 ON t.group_id = t2.group_id WHERE (t.group_id = 1)');
         }
@@ -42,7 +42,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class T1500_User extends Doctrine_Record
+    class T1500_User extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -57,7 +57,7 @@ namespace {
         }
     }
 
-    class T1500_Group extends Doctrine_Record
+    class T1500_Group extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

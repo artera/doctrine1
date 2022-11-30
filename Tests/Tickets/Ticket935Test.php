@@ -19,14 +19,14 @@ namespace Tests\Tickets {
 
         public function testTicket()
         {
-            $q = new \Doctrine_Query();
+            $q = new \Doctrine1\Query();
                 $q->update('EnumUpdateBug')
                 ->set('bla_id', '?', 5)
                 ->set('separator', '?', 'pipe')
                 ->where('id = 1')
                 ->execute();
 
-            $q   = new \Doctrine_Query();
+            $q   = new \Doctrine1\Query();
             $row = $q->select('a.*')
             ->from('EnumUpdateBug a')
             ->where('a.id = 1')
@@ -38,7 +38,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class EnumUpdateBug extends Doctrine_Record
+    class EnumUpdateBug extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

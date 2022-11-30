@@ -26,7 +26,7 @@ namespace Tests\Tickets {
             $test->type_name = 'one';
             $test->save();
 
-            $q = \Doctrine_Query::create()
+            $q = \Doctrine1\Query::create()
             ->from('Ticket_1253_User u')
             ->leftJoin('u.Type');
 
@@ -39,7 +39,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class Ticket_1253_User extends Doctrine_Record
+    class Ticket_1253_User extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -53,7 +53,7 @@ namespace {
         }
     }
 
-    class Ticket_1253_UserType extends Doctrine_Record
+    class Ticket_1253_UserType extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

@@ -14,8 +14,8 @@ namespace Tests\Tickets {
 
         public function testTest()
         {
-            $orig = \Doctrine_Manager::getInstance()->getAttribute(\Doctrine_Core::ATTR_VALIDATE);
-            \Doctrine_Manager::getInstance()->setAttribute(\Doctrine_Core::ATTR_VALIDATE, \Doctrine_Core::VALIDATE_ALL);
+            $orig = \Doctrine1\Manager::getInstance()->getAttribute(\Doctrine1\Core::ATTR_VALIDATE);
+            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_ALL);
             $brand                                         = new \Ticket_1383_Brand;
             $brand->name                                   = 'The Great Brand';
             $brand->Ticket_1383_Brand_Image[0]->name       = 'imagename';
@@ -23,13 +23,13 @@ namespace Tests\Tickets {
             $brand->Ticket_1383_Brand_Image[0]->owner_type = 0;
             $brand->save();
 
-            \Doctrine_Manager::getInstance()->setAttribute(\Doctrine_Core::ATTR_VALIDATE, $orig);
+            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, $orig);
         }
     }
 }
 
 namespace {
-    class Ticket_1383_Image extends Doctrine_Record
+    class Ticket_1383_Image extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -50,7 +50,7 @@ namespace {
     {
     }
 
-    class Ticket_1383_Brand extends Doctrine_Record
+    class Ticket_1383_Brand extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

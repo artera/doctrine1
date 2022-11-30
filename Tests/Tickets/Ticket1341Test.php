@@ -32,7 +32,7 @@ namespace Tests\Tickets {
                     ],
                     ]
                 );
-                $q = \Doctrine_Query::create()
+                $q = \Doctrine1\Query::create()
                     ->from('Ticket_1341_User u')
                     ->leftJoin('u.Profile p');
                 $this->assertEquals($q->getSqlQuery(), 'SELECT t.id AS t__id, t.username AS t__username, t.password AS t__password, t2.id AS t2__id, t2.name AS t2__name, t2.userid AS t2__userid FROM ticket_1341__user t LEFT JOIN ticket_1341__profile t2 ON t.id = t2.userid');
@@ -41,7 +41,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class Ticket_1341_User extends Doctrine_Record
+    class Ticket_1341_User extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -55,7 +55,7 @@ namespace {
         }
     }
 
-    class Ticket_1341_Profile extends Doctrine_Record
+    class Ticket_1341_Profile extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

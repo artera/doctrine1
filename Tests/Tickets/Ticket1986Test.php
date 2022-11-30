@@ -27,7 +27,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class Testing_Ticket_1986_1 extends Doctrine_Record
+    class Testing_Ticket_1986_1 extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -40,7 +40,7 @@ namespace {
         }
     }
 
-    class Testing_Ticket_1986_2 extends Doctrine_Record
+    class Testing_Ticket_1986_2 extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -54,7 +54,7 @@ namespace {
         }
     }
 
-    class Testing_Ticket_1986Link extends Doctrine_Record
+    class Testing_Ticket_1986Link extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

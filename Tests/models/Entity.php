@@ -1,9 +1,9 @@
 <?php
 /**
- * @phpstan-template T of Doctrine_Table
- * @phpstan-extends Doctrine_Record<T>
+ * @phpstan-template T of \Doctrine1\Table
+ * @phpstan-extends \Doctrine1\Record<T>
  */
-class Entity extends Doctrine_Record
+class Entity extends \Doctrine1\Record
 {
     public function setUp(): void
     {

@@ -13,8 +13,8 @@ namespace Tests\Tickets {
 
         public function testAutomaticAccessorsAndMutators()
         {
-            $orig = \Doctrine_Manager::getInstance()->getAttribute(\Doctrine_Core::ATTR_AUTO_ACCESSOR_OVERRIDE);
-            \Doctrine_Manager::getInstance()->setAttribute(\Doctrine_Core::ATTR_AUTO_ACCESSOR_OVERRIDE, true);
+            $orig = \Doctrine1\Manager::getInstance()->getAttribute(\Doctrine1\Core::ATTR_AUTO_ACCESSOR_OVERRIDE);
+            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_AUTO_ACCESSOR_OVERRIDE, true);
             $user           = new \Ticket_1077_User();
             $user->username = 'jwage';
             $user->password = 'changeme';
@@ -23,12 +23,12 @@ namespace Tests\Tickets {
             $this->assertEquals('Username: jwage', $user->getUsername());
             $this->assertEquals($user->getUsername(), $user->username);
 
-            $numbers            = new \Doctrine_Collection('Phonenumber');
+            $numbers            = new \Doctrine1\Collection('Phonenumber');
             $user->Phonenumbers = $numbers;
 
             $this->assertSame($user->phonenumbersTest, $numbers);
 
-            \Doctrine_Manager::getInstance()->setAttribute(\Doctrine_Core::ATTR_AUTO_ACCESSOR_OVERRIDE, $orig);
+            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_AUTO_ACCESSOR_OVERRIDE, $orig);
         }
 
         public function testDefiningCustomAccessorsAndMutators()
@@ -47,7 +47,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class Ticket_1077_User extends Doctrine_Record
+    class Ticket_1077_User extends \Doctrine1\Record
     {
         public $phonenumbersTest = null;
 
@@ -103,7 +103,7 @@ namespace {
         }
     }
 
-    class Ticket_1077_Phonenumber extends Doctrine_Record
+    class Ticket_1077_Phonenumber extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

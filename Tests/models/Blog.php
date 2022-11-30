@@ -1,4 +1,4 @@
 <?php
-class Blog extends Doctrine_Record
+class Blog extends \Doctrine1\Record
 {
 }

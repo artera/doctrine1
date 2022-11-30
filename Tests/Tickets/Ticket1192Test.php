@@ -30,7 +30,7 @@ namespace Tests\Tickets {
 
         public function testTest()
         {
-            $q = \Doctrine_Query::create()
+            $q = \Doctrine1\Query::create()
             ->from('Ticket_1192_CPK t')
             ->groupBy('t.user_id');
 
@@ -43,7 +43,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class Ticket_1192_CPK extends Doctrine_Record
+    class Ticket_1192_CPK extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

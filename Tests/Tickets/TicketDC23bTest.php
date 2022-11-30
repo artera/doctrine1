@@ -24,11 +24,11 @@ Ticket_Product:
       name: test
 END;
             file_put_contents('test.yml', $yml);
-                \Doctrine_Core::loadData('test.yml', true);
+                \Doctrine1\Core::loadData('test.yml', true);
 
                 static::$conn->clear();
 
-                $query = new \Doctrine_Query();
+                $query = new \Doctrine1\Query();
                 $query->from('Ticket_Product p, p.Site s')
                 ->where('p.name = ?', 'book');
 
@@ -61,11 +61,11 @@ Ticket_MultipleValue:
     Product: Product_1
 END;
             file_put_contents('test.yml', $yml);
-                \Doctrine_Core::loadData('test.yml', true);
+                \Doctrine1\Core::loadData('test.yml', true);
 
                 static::$conn->clear();
 
-                $query = new \Doctrine_Query();
+                $query = new \Doctrine1\Query();
                 $query->from('Ticket_Product p, p.MultipleValues v, v.Multiple m')
                 ->where('p.name = ?', 'book2');
 
@@ -98,11 +98,11 @@ Ticket_Product:
         Multiple: ISBN2
 END;
             file_put_contents('test.yml', $yml);
-                \Doctrine_Core::loadData('test.yml', true);
+                \Doctrine1\Core::loadData('test.yml', true);
 
                 static::$conn->clear();
 
-                $query = new \Doctrine_Query();
+                $query = new \Doctrine1\Query();
                 $query->from('Ticket_Product p, p.MultipleValues v, v.Multiple m')
                 ->where('p.name = ?', 'book3');
 
@@ -121,7 +121,7 @@ END;
 }
 
 namespace {
-    class Ticket_Product extends Doctrine_Record
+    class Ticket_Product extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -143,7 +143,7 @@ namespace {
             );
         }
     }
-    class Ticket_Site extends Doctrine_Record
+    class Ticket_Site extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -159,7 +159,7 @@ namespace {
             );
         }
     }
-    class Ticket_Multiple extends Doctrine_Record
+    class Ticket_Multiple extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -175,7 +175,7 @@ namespace {
             );
         }
     }
-    class Ticket_MultipleValue extends Doctrine_Record
+    class Ticket_MultipleValue extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

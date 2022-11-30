@@ -7,7 +7,7 @@ namespace Tests\Tickets {
         public function testTicket()
         {
             // SELECT picture_id FROM ItemPicture INNER JOIN Puzzle ON ItemPicture.item_id=ItemPuzzle_item_id
-            $q = \Doctrine_Query::create()
+            $q = \Doctrine1\Query::create()
             ->select('pic.id')
             ->from('T1467_Picture pic')
             ->innerJoin('pic.Items ite')
@@ -20,7 +20,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class T1467_Item extends Doctrine_Record
+    class T1467_Item extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -50,7 +50,7 @@ namespace {
     }
 
 
-    class T1467_Picture extends Doctrine_Record
+    class T1467_Picture extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -71,7 +71,7 @@ namespace {
     }
 
 
-    class T1467_Puzzle extends Doctrine_Record
+    class T1467_Puzzle extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -92,7 +92,7 @@ namespace {
     }
 
 
-    class T1467_ItemPicture extends Doctrine_Record
+    class T1467_ItemPicture extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -102,7 +102,7 @@ namespace {
     }
 
 
-    class T1467_ItemPuzzle extends Doctrine_Record
+    class T1467_ItemPuzzle extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

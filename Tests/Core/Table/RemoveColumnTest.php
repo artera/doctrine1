@@ -47,7 +47,7 @@ namespace Tests\Core\Table {
 }
 
 namespace {
-    class RemoveColumnTest extends Doctrine_Record
+    class RemoveColumnTest extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

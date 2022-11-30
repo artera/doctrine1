@@ -20,7 +20,7 @@ class SaveBlankRecordTest extends DoctrineUnitTestCase
     public function testSaveBlankRecord()
     {
         $user = new \MyUser();
-        $user->state(\Doctrine_Record_State::TDIRTY());
+        $user->state(\Doctrine1\Record\State::TDIRTY);
         $user->save();
 
         $this->assertTrue(isset($user['id']) && $user['id']);
@@ -29,7 +29,7 @@ class SaveBlankRecordTest extends DoctrineUnitTestCase
     public function testSaveBlankRecord2()
     {
         $group = new \MyUserGroup();
-        $group->state(\Doctrine_Record_State::TDIRTY());
+        $group->state(\Doctrine1\Record\State::TDIRTY);
         $group->save();
 
         $this->assertTrue(isset($group['id']) && $group['id']);

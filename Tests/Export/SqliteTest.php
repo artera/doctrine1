@@ -74,7 +74,7 @@ class SqliteTest extends DoctrineUnitTestCase
     }
     public function testIdentifierQuoting()
     {
-        static::$conn->setAttribute(\Doctrine_Core::ATTR_QUOTE_IDENTIFIER, true);
+        static::$conn->setAttribute(\Doctrine1\Core::ATTR_QUOTE_IDENTIFIER, true);
 
         $fields = ['id'    => ['type' => 'integer', 'unsigned' => 1, 'autoincrement' => true, 'unique' => true],
                          'name' => ['type' => 'string', 'length' => 4],
@@ -94,11 +94,11 @@ class SqliteTest extends DoctrineUnitTestCase
 
         $this->assertEquals(static::$adapter->pop(), 'CREATE TABLE "sometable" ("id" INTEGER PRIMARY KEY AUTOINCREMENT, "name" VARCHAR(4))');
 
-        static::$conn->setAttribute(\Doctrine_Core::ATTR_QUOTE_IDENTIFIER, false);
+        static::$conn->setAttribute(\Doctrine1\Core::ATTR_QUOTE_IDENTIFIER, false);
     }
     public function testQuoteMultiplePks()
     {
-        static::$conn->setAttribute(\Doctrine_Core::ATTR_QUOTE_IDENTIFIER, true);
+        static::$conn->setAttribute(\Doctrine1\Core::ATTR_QUOTE_IDENTIFIER, true);
 
         $name   = 'mytable';
         $fields = ['name'  => ['type' => 'char', 'length' => 10],
@@ -109,14 +109,14 @@ class SqliteTest extends DoctrineUnitTestCase
 
         $this->assertEquals(static::$adapter->pop(), 'CREATE TABLE "mytable" ("name" CHAR(10), "type" INTEGER, PRIMARY KEY("name", "type"))');
 
-        static::$conn->setAttribute(\Doctrine_Core::ATTR_QUOTE_IDENTIFIER, false);
+        static::$conn->setAttribute(\Doctrine1\Core::ATTR_QUOTE_IDENTIFIER, false);
     }
     public function testUnknownIndexSortingAttributeThrowsException()
     {
         $fields = ['id'   => ['sorting' => 'ASC'],
                         'name' => ['sorting' => 'unknown']];
 
-        $this->expectException(\Doctrine_Export_Exception::class);
+        $this->expectException(\Doctrine1\Export\Exception::class);
         static::$conn->export->getIndexFieldDeclarationList($fields);
     }
     public function testCreateTableSupportsIndexesWithCustomSorting()

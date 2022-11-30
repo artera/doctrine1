@@ -28,7 +28,7 @@ Ticket_1118_Profile:
 END;
         file_put_contents('test.yml', $yml);
 
-        $import = new \Doctrine_Import_Schema();
+        $import = new \Doctrine1\Import\Schema();
         $array  = $import->buildSchema(['test.yml'], 'yml');
         // Test that ticket__1118__profile_id is changed to to be integer(4) since the primary key of
         // the relationship is set to that

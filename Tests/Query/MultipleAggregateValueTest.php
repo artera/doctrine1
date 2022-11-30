@@ -27,7 +27,7 @@ class MultipleAggregateValueTest extends DoctrineUnitTestCase
 
     public function testMultipleAggregateValues()
     {
-        $query = new \Doctrine_Query();
+        $query = new \Doctrine1\Query();
         $query->select('u.*, COUNT(DISTINCT b.id) num_books, COUNT(DISTINCT a.id) num_albums');
         $query->from('User u');
         $query->leftJoin('u.Album a, u.Book b');
@@ -45,14 +45,14 @@ class MultipleAggregateValueTest extends DoctrineUnitTestCase
     }
     public function testMultipleAggregateValuesWithArrayFetching()
     {
-        $query = new \Doctrine_Query();
+        $query = new \Doctrine1\Query();
         $query->select('u.*, COUNT(DISTINCT b.id) num_books, COUNT(DISTINCT a.id) num_albums');
         $query->from('User u');
         $query->leftJoin('u.Album a, u.Book b');
         $query->where("u.name = 'jon'");
         $query->limit(1);
 
-        $users = $query->execute([], \Doctrine_Core::HYDRATE_ARRAY);
+        $users = $query->execute([], \Doctrine1\Core::HYDRATE_ARRAY);
 
         $name       = $users[0]['name'];
         $num_albums = $users[0]['num_albums'];

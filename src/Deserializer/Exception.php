@@ -2,6 +2,6 @@
 
 namespace Doctrine1\Deserializer;
 
-class Exception extends \Doctrine_Exception
+class Exception extends \Doctrine1\Exception
 {
 }

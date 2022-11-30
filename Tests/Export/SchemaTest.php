@@ -28,7 +28,7 @@ class SchemaTest extends DoctrineUnitTestCase
 
     public function testYmlExport()
     {
-        $export = new \Doctrine_Export_Schema();
+        $export = new \Doctrine1\Export\Schema();
         $export->exportSchema('schema-export.yml', 'yml', dirname(__FILE__, 2) . DIRECTORY_SEPARATOR . 'models', static::$tables);
         unlink('schema-export.yml');
     }

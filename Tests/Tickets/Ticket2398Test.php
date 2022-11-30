@@ -14,9 +14,9 @@ class Ticket2398Test extends DoctrineUnitTestCase
         $binaryValue = fread(fopen(__FILE__, 'r'), filesize(__FILE__));
 
         //Should pass with size the same size as maximum size
-        $this->assertTrue(\Doctrine_Validator::validateLength($binaryValue, 'blob', filesize(__FILE__)));
+        $this->assertTrue(\Doctrine1\Validator::validateLength($binaryValue, 'blob', filesize(__FILE__)));
 
         //Should fail with maximum size 1 less than actual file size
-        $this->assertFalse(\Doctrine_Validator::validateLength($binaryValue, 'blob', filesize(__FILE__) - 1));
+        $this->assertFalse(\Doctrine1\Validator::validateLength($binaryValue, 'blob', filesize(__FILE__) - 1));
     }
 }

@@ -1,5 +1,5 @@
 <?php
-class PolicyCodeN extends Doctrine_Record
+class PolicyCodeN extends \Doctrine1\Record
 {
     public function setTableDefinition(): void
     {

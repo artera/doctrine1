@@ -13,7 +13,7 @@ namespace Tests\Tickets {
 
         public function testTest()
         {
-            \Doctrine_Manager::getInstance()->setAttribute(\Doctrine_Core::ATTR_VALIDATE, \Doctrine_Core::VALIDATE_ALL);
+            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_ALL);
 
             $user                = new \Ticket_1385_User1();
             $user->username      = 'jwage';
@@ -27,13 +27,13 @@ namespace Tests\Tickets {
             $user->email_address = 'jonwage@ertoihertionerti.com';
             $this->assertFalse($user->isValid());
 
-            \Doctrine_Manager::getInstance()->setAttribute(\Doctrine_Core::ATTR_VALIDATE, \Doctrine_Core::VALIDATE_NONE);
+            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_NONE);
         }
     }
 }
 
 namespace {
-    class Ticket_1385_User1 extends Doctrine_Record
+    class Ticket_1385_User1 extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -43,7 +43,7 @@ namespace {
         }
     }
 
-    class Ticket_1385_User2 extends Doctrine_Record
+    class Ticket_1385_User2 extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

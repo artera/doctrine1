@@ -19,19 +19,19 @@ namespace Tests\Tickets {
             $person->save();
 
             // creating the query
-            $q = \Doctrine_Query::create();
+            $q = \Doctrine1\Query::create();
             $q->from('Ticket_987_Person p');
 
             // creating the view
-            $view = new \Doctrine_View($q, 'view_person2person_type');
+            $view = new \Doctrine1\View($q, 'view_person2person_type');
             $view->create();
 
             // creating the query
-            $q = \Doctrine_Query::create();
+            $q = \Doctrine1\Query::create();
             $q->from('Ticket_987_Person p');
 
             // creating view object for querying
-            $view = new \Doctrine_View($q, 'view_person2person_type');
+            $view = new \Doctrine1\View($q, 'view_person2person_type');
 
             // executes view
             $coll = $view->execute();
@@ -42,7 +42,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class Ticket_987_Person extends Doctrine_Record
+    class Ticket_987_Person extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

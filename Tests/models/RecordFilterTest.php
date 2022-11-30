@@ -1,5 +1,5 @@
 <?php
-class RecordFilterTest extends Doctrine_Record
+class RecordFilterTest extends \Doctrine1\Record
 {
     public function setTableDefinition(): void
     {

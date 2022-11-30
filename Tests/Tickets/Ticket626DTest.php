@@ -23,13 +23,13 @@ namespace Tests\Tickets {
         {
             $student1 = $this->newStudent('T626D_Student1', '07090002', 'First Student');
 
-            $student = \Doctrine_Core::getTable('T626D_Student1')->find('07090002');
+            $student = \Doctrine1\Core::getTable('T626D_Student1')->find('07090002');
         }
     }
 }
 
 namespace {
-    class T626D_Student1 extends Doctrine_Record
+    class T626D_Student1 extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

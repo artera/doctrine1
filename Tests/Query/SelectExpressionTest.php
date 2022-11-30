@@ -13,7 +13,7 @@ class SelectExpressionTest extends DoctrineUnitTestCase
 
     public function testAdditionExpression()
     {
-        $query = new \Doctrine_Query();
+        $query = new \Doctrine1\Query();
         $query->select('u.*, (u.id + u.id) addition');
         $query->from('User u');
 
@@ -22,7 +22,7 @@ class SelectExpressionTest extends DoctrineUnitTestCase
 
     public function testSubtractionExpression()
     {
-        $query = new \Doctrine_Query();
+        $query = new \Doctrine1\Query();
         $query->select('u.*, (u.id - u.id) subtraction');
         $query->from('User u');
 
@@ -31,7 +31,7 @@ class SelectExpressionTest extends DoctrineUnitTestCase
 
     public function testDivisionExpression()
     {
-        $query = new \Doctrine_Query();
+        $query = new \Doctrine1\Query();
         $query->select('u.*, (u.id/u.id) division');
         $query->from('User u');
 
@@ -40,7 +40,7 @@ class SelectExpressionTest extends DoctrineUnitTestCase
 
     public function testMultiplicationExpression()
     {
-        $query = new \Doctrine_Query();
+        $query = new \Doctrine1\Query();
         $query->select('u.*, (u.id * u.id) multiplication');
         $query->from('User u');
 
@@ -49,7 +49,7 @@ class SelectExpressionTest extends DoctrineUnitTestCase
 
     public function testOrderByExpression()
     {
-        $query = new \Doctrine_Query();
+        $query = new \Doctrine1\Query();
         $query->select('u.*, (u.id * u.id) multiplication');
         $query->from('User u');
         $query->orderby('multiplication asc');

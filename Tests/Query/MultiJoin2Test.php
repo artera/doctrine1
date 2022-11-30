@@ -13,7 +13,7 @@ class MultiJoin2Test extends DoctrineUnitTestCase
 
     public function testInitializeData()
     {
-        $query = new \Doctrine_Query(static::$connection);
+        $query = new \Doctrine1\Query(static::$connection);
 
         $cat = new \QueryTest_Category();
 
@@ -41,7 +41,7 @@ class MultiJoin2Test extends DoctrineUnitTestCase
 
     public function testMultipleJoinFetchingWithDeepJoins()
     {
-        $query      = new \Doctrine_Query(static::$connection);
+        $query      = new \Doctrine1\Query(static::$connection);
         $queryCount = static::$connection->count();
         $categories = $query->select('c.*, subCats.*, b.*, le.*, a.*')
             ->from('QueryTest_Category c')
@@ -61,7 +61,7 @@ class MultiJoin2Test extends DoctrineUnitTestCase
 
     public function testMultipleJoinFetchingWithArrayFetching()
     {
-        $query      = new \Doctrine_Query(static::$connection);
+        $query      = new \Doctrine1\Query(static::$connection);
         $queryCount = static::$connection->count();
         $categories = $query->select('c.*, subCats.*, b.*, le.*, a.*')
             ->from('QueryTest_Category c')
@@ -71,6 +71,6 @@ class MultiJoin2Test extends DoctrineUnitTestCase
             ->leftJoin('le.author a')
             ->where('c.parentCategoryId = 0')
             ->orderBy('c.position ASC, subCats.position ASC, b.position ASC')
-            ->execute([], \Doctrine_Core::HYDRATE_ARRAY);
+            ->execute([], \Doctrine1\Core::HYDRATE_ARRAY);
     }
 }

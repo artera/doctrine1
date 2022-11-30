@@ -1,5 +1,5 @@
 <?php
-class SequenceRecord extends Doctrine_Record
+class SequenceRecord extends \Doctrine1\Record
 {
     public function setTableDefinition(): void
     {

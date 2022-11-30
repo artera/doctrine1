@@ -38,7 +38,7 @@ class Ticket574Test extends DoctrineUnitTestCase
 
     public function testTicket()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         // simple query with 1 column selected
         $cAuthors = $q->select('book_id')->from('Author')->groupBy('book_id')->where('book_id = 2')->execute();

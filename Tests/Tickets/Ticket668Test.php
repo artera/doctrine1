@@ -19,7 +19,7 @@ namespace Tests\Tickets {
 
         public function testTicket()
         {
-            $query = \Doctrine_Query::create()
+            $query = \Doctrine1\Query::create()
             ->select('u.id')
             ->from('T668_User u')
             ->where("u.name LIKE '%foo OR bar%'");
@@ -30,7 +30,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class T668_User extends Doctrine_Record
+    class T668_User extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

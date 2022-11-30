@@ -21,7 +21,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class Ticket_DC217_Industry extends Doctrine_Record
+    class Ticket_DC217_Industry extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

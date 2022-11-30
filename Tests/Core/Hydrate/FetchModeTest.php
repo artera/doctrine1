@@ -7,11 +7,11 @@ class FetchModeTest extends DoctrineUnitTestCase
 {
     public function testFetchArraySupportsOneToManyRelations(): void
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->select('u.*, p.*')->from('User u')->innerJoin('u.Phonenumber p')->where("u.name = 'zYne'");
 
-        $users = $q->execute([], \Doctrine_Core::HYDRATE_ARRAY);
+        $users = $q->execute([], \Doctrine1\Core::HYDRATE_ARRAY);
 
         $this->assertTrue(is_array($users));
 
@@ -20,11 +20,11 @@ class FetchModeTest extends DoctrineUnitTestCase
 
     public function testFetchArraySupportsOneToManyRelations2(): void
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->select('u.*, p.*')->from('User u')->innerJoin('u.Phonenumber p');
 
-        $users = $q->execute([], \Doctrine_Core::HYDRATE_ARRAY);
+        $users = $q->execute([], \Doctrine1\Core::HYDRATE_ARRAY);
 
         $this->assertTrue(is_array($users));
 
@@ -33,11 +33,11 @@ class FetchModeTest extends DoctrineUnitTestCase
 
     public function testFetchArraySupportsOneToManyRelations3(): void
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->select('u.*, p.*')->from('User u')->innerJoin('u.Phonenumber p')->where("u.name = 'Jean Reno'");
 
-        $users = $q->execute([], \Doctrine_Core::HYDRATE_ARRAY);
+        $users = $q->execute([], \Doctrine1\Core::HYDRATE_ARRAY);
 
         $this->assertTrue(is_array($users));
 
@@ -47,11 +47,11 @@ class FetchModeTest extends DoctrineUnitTestCase
 
     public function testFetchArraySupportsOneToOneRelations(): void
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->select('u.*, e.*')->from('User u')->innerJoin('u.Email e');
 
-        $users = $q->execute([], \Doctrine_Core::HYDRATE_ARRAY);
+        $users = $q->execute([], \Doctrine1\Core::HYDRATE_ARRAY);
 
         $this->assertEquals(count($users), 8);
         $this->assertEquals($users[0]['Email']['address'], 'zYne@example.com');
@@ -59,11 +59,11 @@ class FetchModeTest extends DoctrineUnitTestCase
 
     public function testFetchArraySupportsOneToOneRelations2(): void
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->select('u.*, e.*')->from('User u')->innerJoin('u.Email e')->where("u.name = 'zYne'");
 
-        $users = $q->execute([], \Doctrine_Core::HYDRATE_ARRAY);
+        $users = $q->execute([], \Doctrine1\Core::HYDRATE_ARRAY);
 
         $this->assertEquals(count($users), 1);
         $this->assertEquals($users[0]['Email']['address'], 'zYne@example.com');
@@ -71,19 +71,19 @@ class FetchModeTest extends DoctrineUnitTestCase
 
     public function testFetchRecordSupportsOneToOneRelations(): void
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->select('u.*, e.*')->from('User u')->innerJoin('u.Email e');
 
-        $users = $q->execute([], \Doctrine_Core::HYDRATE_RECORD);
+        $users = $q->execute([], \Doctrine1\Core::HYDRATE_RECORD);
         $count = count(static::$conn);
 
         $this->assertEquals(count($users), 8);
 
         $this->assertEquals($users[0]['Email']['address'], 'zYne@example.com');
         $this->assertTrue($users[0] instanceof \User);
-        $this->assertTrue($users instanceof \Doctrine_Collection);
-        $this->assertEquals(\Doctrine_Record_State::CLEAN(), $users[0]->state());
+        $this->assertTrue($users instanceof \Doctrine1\Collection);
+        $this->assertEquals(\Doctrine1\Record\State::CLEAN, $users[0]->state());
         $this->assertEquals($users[0]->id, 4);
 
         $this->assertTrue($users[0]['Email'] instanceof \Email);
@@ -97,32 +97,32 @@ class FetchModeTest extends DoctrineUnitTestCase
 
     public function testFetchRecordSupportsOneToManyRelations(): void
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->select('u.*, p.*')->from('User u')->innerJoin('u.Phonenumber p');
-        $users = $q->execute([], \Doctrine_Core::HYDRATE_RECORD);
+        $users = $q->execute([], \Doctrine1\Core::HYDRATE_RECORD);
         $count = count(static::$conn);
 
         $this->assertEquals(count($users), 8);
         $this->assertTrue($users[0] instanceof \User);
-        $this->assertEquals(\Doctrine_Record_State::CLEAN(), $users[0]->state());
-        $this->assertTrue($users instanceof \Doctrine_Collection);
-        $this->assertTrue($users[0]->Phonenumber instanceof \Doctrine_Collection);
+        $this->assertEquals(\Doctrine1\Record\State::CLEAN, $users[0]->state());
+        $this->assertTrue($users instanceof \Doctrine1\Collection);
+        $this->assertTrue($users[0]->Phonenumber instanceof \Doctrine1\Collection);
 
         $this->assertEquals(count(static::$conn), $count);
     }
 
     public function testFetchRecordSupportsSimpleFetching(): void
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->select('u.*')->from('User u');
-        $users = $q->execute([], \Doctrine_Core::HYDRATE_RECORD);
+        $users = $q->execute([], \Doctrine1\Core::HYDRATE_RECORD);
         $count = static::$conn->count();
 
         $this->assertEquals(count($users), 8);
         $this->assertTrue($users[0] instanceof \User);
-        $this->assertEquals(\Doctrine_Record_State::CLEAN(), $users[0]->state());
+        $this->assertEquals(\Doctrine1\Record\State::CLEAN, $users[0]->state());
 
         $this->assertEquals(static::$conn->count(), $count);
     }
@@ -134,9 +134,9 @@ class FetchModeTest extends DoctrineUnitTestCase
         $u->created = null;
         $u->save();
 
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
         $q->select('u.*')->from('User u')->where('u.id = ?');
-        $users = $q->execute([$u->id], \Doctrine_Core::HYDRATE_ARRAY);
+        $users = $q->execute([$u->id], \Doctrine1\Core::HYDRATE_ARRAY);
         $this->assertEquals($users[0]['created'], null);
     }
 
@@ -147,9 +147,9 @@ class FetchModeTest extends DoctrineUnitTestCase
         $u->created = null;
         $u->save();
 
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
         $q->select('COUNT(u.id) num')->from('User u')->where('u.id = ?');
-        $res = $q->execute([$u->id], \Doctrine_Core::HYDRATE_NONE);
+        $res = $q->execute([$u->id], \Doctrine1\Core::HYDRATE_NONE);
         $this->assertEquals(1, $res[0][0]);
     }
 }

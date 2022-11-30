@@ -48,7 +48,7 @@ namespace Tests\Core {
 
             static::$conn->clear();
 
-            $user = \Doctrine_Query::create()->from('User u')->fetchOne();
+            $user = \Doctrine1\Query::create()->from('User u')->fetchOne();
 
             $this->assertEquals('ZYNE', $user->name);
             $this->assertEquals('DEFAULT PASS', $user->password);
@@ -69,7 +69,7 @@ namespace Tests\Core {
 
             static::$conn->clear();
 
-            $ser = \Doctrine_Query::create()->from('SerializeTest t')->fetchOne();
+            $ser = \Doctrine1\Query::create()->from('SerializeTest t')->fetchOne();
             $today = new \DateTimeImmutable();
 
             $this->assertInstanceOf(\DateTimeImmutable::class, $ser->datetimetest);
@@ -82,9 +82,9 @@ namespace Tests\Core {
 }
 
 namespace {
-    class HydrationListener extends Doctrine_Record_Listener
+    class HydrationListener extends \Doctrine1\Record\Listener
     {
-        public function preHydrate(Doctrine_Event $event)
+        public function preHydrate(\Doctrine1\Event $event)
         {
             $data = $event->data;
             $data['password'] = 'default pass';
@@ -92,7 +92,7 @@ namespace {
             $event->data = $data;
         }
 
-        public function postHydrate(Doctrine_Event $event)
+        public function postHydrate(\Doctrine1\Event $event)
         {
             foreach ($event->data as $key => $value) {
                 $event->data[$key] = is_string($value) ? strtoupper($value) : $value;
@@ -100,7 +100,7 @@ namespace {
         }
     }
 
-    class Doctrine_Hydrate_Mock extends Doctrine_Hydrator_Abstract
+    class HydrateMock extends \Doctrine1\Hydrator\AbstractHydrator
     {
         protected $data;
 
@@ -109,7 +109,7 @@ namespace {
             $this->data = $data;
         }
 
-        public function hydrateResultSet(Doctrine_Connection_Statement $stmt): bool
+        public function hydrateResultSet(\Doctrine1\Connection\Statement $stmt): bool
         {
             return true;
         }

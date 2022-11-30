@@ -1,5 +1,5 @@
 <?php
-class ORM_AccessGroup extends Doctrine_Record
+class ORM_AccessGroup extends \Doctrine1\Record
 {
     public function setTableDefinition(): void
     {

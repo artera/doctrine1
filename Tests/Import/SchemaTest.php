@@ -12,20 +12,20 @@ class SchemaTest extends DoctrineUnitTestCase
     {
         $path = __DIR__ . '/import_builder_test';
 
-        $import = new \Doctrine_Import_Schema();
+        $import = new \Doctrine1\Import\Schema();
         $import->importSchema([dirname(__DIR__) . '/schema.yml'], 'yml', $path);
 
         $this->assertTrue(file_exists($path . '/SchemaTestUser.php'));
         $this->assertTrue(file_exists($path . '/SchemaTestProfile.php'));
 
-        $this->assertEquals(\Doctrine_Core::getTable('AliasTest')->getFieldName('test_col'), 'test_col_alias');
+        $this->assertEquals(\Doctrine1\Core::getTable('AliasTest')->getFieldName('test_col'), 'test_col_alias');
 
-        \Doctrine_Lib::removeDirectories($path);
+        \Doctrine1\Lib::removeDirectories($path);
     }
 
     public function testBuildSchema()
     {
-        $schema = new \Doctrine_Import_Schema();
+        $schema = new \Doctrine1\Import\Schema();
         $array  = $schema->buildSchema([dirname(__DIR__) . '/schema.yml'], 'yml');
 
         $model = $array['SchemaTestUser'];
@@ -46,7 +46,7 @@ class SchemaTest extends DoctrineUnitTestCase
 
     public function testSchemaRelationshipCompletion()
     {
-        $this->buildSchema = new \Doctrine_Import_Schema();
+        $this->buildSchema = new \Doctrine1\Import\Schema();
         $this->schema      = $this->buildSchema->buildSchema([dirname(__DIR__) . '/schema.yml'], 'yml');
 
         foreach ($this->schema as $name => $properties) {

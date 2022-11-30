@@ -12,18 +12,18 @@ namespace Tests\Tickets {
 
         public function testTest()
         {
-            \Doctrine_Manager::getInstance()->setAttribute(\Doctrine_Core::ATTR_VALIDATE, \Doctrine_Core::VALIDATE_ALL);
+            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_ALL);
             $model               = new \Ticket_2204_Model();
             $model->test_decimal = '-123.456789';
             $model->save();
 
-            \Doctrine_Manager::getInstance()->setAttribute(\Doctrine_Core::ATTR_VALIDATE, \Doctrine_Core::VALIDATE_NONE);
+            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_NONE);
         }
     }
 }
 
 namespace {
-    class Ticket_2204_Model extends Doctrine_Record
+    class Ticket_2204_Model extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

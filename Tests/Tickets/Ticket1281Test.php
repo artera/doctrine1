@@ -7,7 +7,7 @@ class Ticket1281Test extends DoctrineUnitTestCase
 {
     public function testTest()
     {
-        $users      = \Doctrine_Core::getTable('User')->findAll();
+        $users      = \Doctrine1\Core::getTable('User')->findAll();
         $user       = $users->getFirst();
         $user->name = 'zYne-';
 

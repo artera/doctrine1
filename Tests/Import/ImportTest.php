@@ -20,12 +20,12 @@ class ImportTest extends DoctrineUnitTestCase
 
         static::$dbh->exec('CREATE TABLE import_test_user (id INTEGER PRIMARY KEY, name TEXT)');
 
-        static::$conn = \Doctrine_Manager::connection(static::$dbh, 'tmp123');
+        static::$conn = \Doctrine1\Manager::connection(static::$dbh, 'tmp123');
 
         static::$conn->import->importSchema('Import/_files', ['tmp123']);
 
         $this->assertTrue(file_exists('Import/_files/ImportTestUser.php'));
         $this->assertTrue(file_exists('Import/_files/generated/BaseImportTestUser.php'));
-        \Doctrine_Lib::removeDirectories('Import/_files');
+        \Doctrine1\Lib::removeDirectories('Import/_files');
     }
 }

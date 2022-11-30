@@ -19,7 +19,7 @@ namespace Tests\Tickets {
 
         public function testTicket()
         {
-            $query = \Doctrine_Query::create()
+            $query = \Doctrine1\Query::create()
             ->from('T973_Day d')
             ->where('d.id IN(46)');
             $this->assertEquals(' FROM T973_Day d WHERE d.id IN(46)', $query->getDql());
@@ -29,7 +29,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class T973_Day extends Doctrine_Record
+    class T973_Day extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

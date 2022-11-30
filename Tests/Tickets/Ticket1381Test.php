@@ -30,22 +30,22 @@ namespace Tests\Tickets {
             $c->save();
 
             // Cleaning up IdentityMap
-            \Doctrine_Core::getTable('T1381_Article')->clear();
-            \Doctrine_Core::getTable('T1381_Comment')->clear();
+            \Doctrine1\Core::getTable('T1381_Article')->clear();
+            \Doctrine1\Core::getTable('T1381_Comment')->clear();
         }
 
         public function testTicket()
         {
             // Now we fetch with data we want (it seems it overrides calculates columns of already fetched objects)
                 $dql   = 'SELECT c.*, a.* FROM T1381_Comment c INNER JOIN c.T1381_Article a';
-                $items = \Doctrine_Query::create()->query($dql, [], \Doctrine_Core::HYDRATE_ARRAY);
+                $items = \Doctrine1\Query::create()->query($dql, [], \Doctrine1\Core::HYDRATE_ARRAY);
 
                 // This should result in false, since we didn't fetch for this column
                 $this->assertFalse(array_key_exists('ArticleTitle', $items[0]['T1381_Article']));
 
                 // We fetch for data including new \columns
                 $dql     = 'SELECT c.*, a.title as ArticleTitle FROM T1381_Comment c INNER JOIN c.T1381_Article a WHERE c.id = ?';
-                $items   = \Doctrine_Query::create()->query($dql, [1], \Doctrine_Core::HYDRATE_ARRAY);
+                $items   = \Doctrine1\Query::create()->query($dql, [1], \Doctrine1\Core::HYDRATE_ARRAY);
                 $comment = $items[0];
 
                 $this->assertTrue(array_key_exists('ArticleTitle', $comment));
@@ -56,14 +56,14 @@ namespace Tests\Tickets {
         {
             // We fetch for data including new \columns
                 $dql     = 'SELECT c.*, a.title as ArticleTitle FROM T1381_Comment c INNER JOIN c.T1381_Article a WHERE c.id = ?';
-                $items   = \Doctrine_Query::create()->query($dql, [1], \Doctrine_Core::HYDRATE_ARRAY);
+                $items   = \Doctrine1\Query::create()->query($dql, [1], \Doctrine1\Core::HYDRATE_ARRAY);
                 $comment = $items[0];
 
                 $this->assertTrue(array_key_exists('ArticleTitle', $comment));
 
                 // Now we fetch with data we want (it seems it overrides calculates columns of already fetched objects)
                 $dql   = 'SELECT c.*, a.* FROM T1381_Comment c INNER JOIN c.T1381_Article a';
-                $items = \Doctrine_Query::create()->query($dql, [], \Doctrine_Core::HYDRATE_ARRAY);
+                $items = \Doctrine1\Query::create()->query($dql, [], \Doctrine1\Core::HYDRATE_ARRAY);
 
                 // This should result in false, since we didn't fetch for this column
                 $this->assertFalse(array_key_exists('ArticleTitle', $items[0]['T1381_Article']));
@@ -73,7 +73,7 @@ namespace Tests\Tickets {
 
                 // Fetch including new \columns again
                 $dql   = 'SELECT c.id, a.*, a.id as ArticleTitle FROM T1381_Comment c INNER JOIN c.T1381_Article a';
-                $items = \Doctrine_Query::create()->query($dql, [], \Doctrine_Core::HYDRATE_ARRAY);
+                $items = \Doctrine1\Query::create()->query($dql, [], \Doctrine1\Core::HYDRATE_ARRAY);
 
                 // Assert that new \calculated column with different content do not override the already fetched one
                 $this->assertTrue(array_key_exists('ArticleTitle', $items[0]));
@@ -85,7 +85,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class T1381_Article extends Doctrine_Record
+    class T1381_Article extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -106,7 +106,7 @@ namespace {
     }
 
 
-    class T1381_Comment extends Doctrine_Record
+    class T1381_Comment extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

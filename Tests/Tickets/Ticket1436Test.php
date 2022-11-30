@@ -34,7 +34,7 @@ class Ticket1436Test extends DoctrineUnitTestCase
 
     public function testSynchronizeAddMNLinks()
     {
-        $user      = \Doctrine_Query::create()->from('User u')->fetchOne();
+        $user      = \Doctrine1\Query::create()->from('User u')->fetchOne();
         $userArray = [
             'Group' => [
                 static::$group_one,
@@ -48,14 +48,14 @@ class Ticket1436Test extends DoctrineUnitTestCase
     }
     public function testSynchronizeAddMNLinksAfterSave()
     {
-        $user = \Doctrine_Query::create()->from('User u, u.Group g')->fetchOne();
+        $user = \Doctrine1\Query::create()->from('User u, u.Group g')->fetchOne();
         $this->assertEquals($user->Group[0]->name, 'Group One');
         $this->assertEquals($user->Group[1]->name, 'Group Two');
         $this->assertTrue(!isset($user->Group[2]));
     }
     public function testSynchronizeChangeMNLinks()
     {
-        $user      = \Doctrine_Query::create()->from('User u, u.Group g')->fetchOne();
+        $user      = \Doctrine1\Query::create()->from('User u, u.Group g')->fetchOne();
         $userArray = [
             'Group' => [
                 static::$group_two,
@@ -88,7 +88,7 @@ class Ticket1436Test extends DoctrineUnitTestCase
 
     public function testSynchronizeMNRecordsDontDeleteAfterUnlink()
     {
-        $group = \Doctrine_Core::getTable('Group')->find(static::$group_one);
+        $group = \Doctrine1\Core::getTable('Group')->find(static::$group_one);
 
         $this->assertTrue(!empty($group));
         $this->assertEquals($group->name, 'Group One');

@@ -1,9 +1,9 @@
 <?php
-class Cms_CategoryLanguages extends Doctrine_Record
+class Cms_CategoryLanguages extends \Doctrine1\Record
 {
     public function setUp(): void
     {
-        $this->setAttribute(\Doctrine_Core::ATTR_COLL_KEY, 'language_id');
+        $this->setAttribute(\Doctrine1\Core::ATTR_COLL_KEY, 'language_id');
         $this->hasOne('Cms_Category as category', ['local' => 'category_id', 'foreign' => 'id', 'onDelete' => 'CASCADE']);
     }
 

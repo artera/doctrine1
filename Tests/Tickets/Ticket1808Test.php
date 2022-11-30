@@ -7,7 +7,7 @@ class Ticket1808Test extends DoctrineUnitTestCase
 {
     public function testTest()
     {
-        $userTable = \Doctrine_Core::getTable('User');
+        $userTable = \Doctrine1\Core::getTable('User');
 
         $this->assertEquals($userTable->buildFindByWhere('NameAndPassword'), 'dctrn_find.name = ? AND dctrn_find.password = ?');
         $this->assertEquals($userTable->buildFindByWhere('NameOrLoginname'), '(dctrn_find.name = ? OR dctrn_find.loginname = ?)');

@@ -43,11 +43,11 @@ DC147_Product:
         Multiple: ISBN3
 END;
             file_put_contents('test.yml', $yml);
-                \Doctrine_Core::loadData('test.yml', true);
+                \Doctrine1\Core::loadData('test.yml', true);
 
                 static::$conn->clear();
 
-                $query = new \Doctrine_Query();
+                $query = new \Doctrine1\Query();
                 $query->from('DC147_Product p, p.MultipleValues v, v.Multiple m')
                 ->where('p.name = ?', 'book3');
 
@@ -59,7 +59,7 @@ END;
                 $this->assertEquals(is_object($product->MultipleValues[0]->Multiple), true);
                 $this->assertEquals($product->MultipleValues[0]->Multiple->name, 'isbn2');
 
-                $query = new \Doctrine_Query();
+                $query = new \Doctrine1\Query();
                 $query->from('DC147_Product p, p.MultipleValues v, v.Multiple m')
                 ->where('p.name = ?', 'book4');
 
@@ -81,7 +81,7 @@ END;
 }
 
 namespace {
-    class DC147_Product extends Doctrine_Record
+    class DC147_Product extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -103,7 +103,7 @@ namespace {
             );
         }
     }
-    class DC147_Site extends Doctrine_Record
+    class DC147_Site extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -119,7 +119,7 @@ namespace {
             );
         }
     }
-    class DC147_Multiple extends Doctrine_Record
+    class DC147_Multiple extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -135,7 +135,7 @@ namespace {
             );
         }
     }
-    class DC147_MultipleValue extends Doctrine_Record
+    class DC147_MultipleValue extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

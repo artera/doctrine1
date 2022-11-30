@@ -18,11 +18,11 @@ User:
         phonenumber: 6155139185
 END;
         file_put_contents('test.yml', $yml);
-        \Doctrine_Core::loadData('test.yml', true);
+        \Doctrine1\Core::loadData('test.yml', true);
 
         static::$conn->clear();
 
-        $query = new \Doctrine_Query();
+        $query = new \Doctrine1\Query();
         $query->from('User u, u.Phonenumber')
             ->where('u.name = ?', 'jwage');
 
@@ -46,11 +46,11 @@ Album:
       password: changeme
 END;
         file_put_contents('test.yml', $yml);
-        \Doctrine_Core::loadData('test.yml', true);
+        \Doctrine1\Core::loadData('test.yml', true);
 
         static::$conn->clear();
 
-        $query = new \Doctrine_Query();
+        $query = new \Doctrine1\Query();
         $query->from('User u, u.Album a, a.User u2')
             ->where('u.name = ?', 'zYne-');
 
@@ -78,11 +78,11 @@ Phonenumber:
     phonenumber: 6153137679
 END;
         file_put_contents('test.yml', $yml);
-        \Doctrine_Core::loadData('test.yml', true);
+        \Doctrine1\Core::loadData('test.yml', true);
 
         static::$conn->clear();
 
-        $query = \Doctrine_Query::create();
+        $query = \Doctrine1\Query::create();
         $query->from('User u, u.Phonenumber')
             ->where('u.name = ?', 'jwage2');
 
@@ -115,11 +115,11 @@ Group:
     name: test
 END;
         file_put_contents('test.yml', $yml);
-        \Doctrine_Core::loadData('test.yml', true);
+        \Doctrine1\Core::loadData('test.yml', true);
 
         static::$conn->clear();
 
-        $testRef = \Doctrine_Query::create()->from('GroupUser')->execute()->getFirst();
+        $testRef = \Doctrine1\Query::create()->from('GroupUser')->execute()->getFirst();
 
         $this->assertTrue($testRef->group_id > 0);
         $this->assertTrue($testRef->user_id > 0);
@@ -145,9 +145,9 @@ Group:
   Group_1:
     name: test
 END;
-        $this->expectException(\Doctrine_Record_UnknownPropertyException::class);
+        $this->expectException(\Doctrine1\Record\UnknownPropertyException::class);
         file_put_contents('test.yml', $yml);
-        \Doctrine_Core::loadData('test.yml', true);
+        \Doctrine1\Core::loadData('test.yml', true);
         unlink('test.yml');
     }
 
@@ -173,7 +173,7 @@ END;
         mkdir('test_data_fixtures');
         file_put_contents('test_data_fixtures/test1.yml', $yml1);
         file_put_contents('test_data_fixtures/test2.yml', $yml2);
-        $import = new \Doctrine_Data_Import(getcwd() . '/test_data_fixtures');
+        $import = new \Doctrine1\Data\Import(getcwd() . '/test_data_fixtures');
         $import->setFormat('yml');
 
         $array = $import->doParsing();
@@ -188,7 +188,7 @@ END;
 
     public function testRecursiveFixturesLoading()
     {
-        \Doctrine_Manager::getInstance()->setAttribute(\Doctrine_Core::ATTR_RECURSIVE_MERGE_FIXTURES, true);
+        \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_RECURSIVE_MERGE_FIXTURES, true);
         self::prepareTables();
         $yml1 = <<<END
 ---
@@ -209,7 +209,7 @@ END;
         mkdir('test_data_fixtures');
         file_put_contents('test_data_fixtures/test1.yml', $yml1);
         file_put_contents('test_data_fixtures/test2.yml', $yml2);
-        $import = new \Doctrine_Data_Import(getcwd() . '/test_data_fixtures');
+        $import = new \Doctrine1\Data\Import(getcwd() . '/test_data_fixtures');
         $import->setFormat('yml');
 
         $array = $import->doParsing();
@@ -220,7 +220,7 @@ END;
         unlink('test_data_fixtures/test1.yml');
         unlink('test_data_fixtures/test2.yml');
         rmdir('test_data_fixtures');
-        \Doctrine_Manager::getInstance()->setAttribute(\Doctrine_Core::ATTR_RECURSIVE_MERGE_FIXTURES, false);
+        \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_RECURSIVE_MERGE_FIXTURES, false);
     }
 
     public function testIncorrectYamlRelationThrowsException()
@@ -242,13 +242,13 @@ Group:
   Group_1:
     name: test
 END;
-        $this->expectException(\Doctrine_Data_Exception::class);
+        $this->expectException(\Doctrine1\Data\Exception::class);
         file_put_contents('test.yml', $yml);
-        \Doctrine_Core::loadData('test.yml', true);
+        \Doctrine1\Core::loadData('test.yml', true);
 
         static::$conn->clear();
 
-        $testRef = \Doctrine_Query::create()->from('GroupUser')->execute()->getFirst();
+        $testRef = \Doctrine1\Query::create()->from('GroupUser')->execute()->getFirst();
 
         $this->assertTrue($testRef->group_id > 0);
         $this->assertTrue($testRef->user_id > 0);

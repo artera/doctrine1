@@ -46,7 +46,7 @@ namespace Tests\Tickets {
 
         public function testTicket()
         {
-            $q = new \Doctrine_Query();
+            $q = new \Doctrine1\Query();
 
             // simple query with deep relations
             $q->addSelect('Resume.id, Person.id, Person.name, KnownLanguages.id, Level.label, Language.label')
@@ -69,7 +69,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class ticket912_Resume extends Doctrine_Record
+    class ticket912_Resume extends \Doctrine1\Record
     {
         /**
        * setTableDefinition
@@ -108,7 +108,7 @@ namespace {
 /**
  *  First level one to one relation class Language
  */
-    class ticket912_Person extends Doctrine_Record
+    class ticket912_Person extends \Doctrine1\Record
     {
         /**
          * setTableDefinition
@@ -132,7 +132,7 @@ namespace {
  *  Second level one to many relation class ResumeHasLanguageLanguage
  */
 
-    class ticket912_ResumeHasLanguage extends Doctrine_Record
+    class ticket912_ResumeHasLanguage extends \Doctrine1\Record
     {
         /**
          * setTableDefinition
@@ -191,7 +191,7 @@ namespace {
 /**
  *  Third level one to one relation class Language
  */
-    class ticket912_Language extends Doctrine_Record
+    class ticket912_Language extends \Doctrine1\Record
     {
         /**
          * setTableDefinition
@@ -224,7 +224,7 @@ namespace {
  * Third level one to one relation class Language
  */
 
-    class ticket912_LanguageLevel extends Doctrine_Record
+    class ticket912_LanguageLevel extends \Doctrine1\Record
     {
         /**
          * setTableDefinition

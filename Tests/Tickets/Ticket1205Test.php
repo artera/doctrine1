@@ -31,24 +31,24 @@ namespace Tests\Tickets {
             $this->expectException(\Exception::class);
 
             // Each Address has 1 User
-            $q = \Doctrine_Query::create()
+            $q = \Doctrine1\Query::create()
                 ->from('Ticket1205TestAddress a')
                 ->innerjoin('a.User u')
-                ->execute([], \Doctrine_Core::HYDRATE_ARRAY);
+                ->execute([], \Doctrine1\Core::HYDRATE_ARRAY);
         }
     }
 }
 
 namespace {
-    class Ticket1205HydrationListener extends Doctrine_Record_Listener
+    class Ticket1205HydrationListener extends \Doctrine1\Record\Listener
     {
-        public function postHydrate(Doctrine_Event $event)
+        public function postHydrate(\Doctrine1\Event $event)
         {
             throw new \Exception('This is called so we are successfull!');
         }
     }
 
-    class Ticket1205TestUser extends Doctrine_Record
+    class Ticket1205TestUser extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -68,7 +68,7 @@ namespace {
         }
     }
 
-    class Ticket1205TestAddress extends Doctrine_Record
+    class Ticket1205TestAddress extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

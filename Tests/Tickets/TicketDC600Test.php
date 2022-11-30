@@ -1,5 +1,5 @@
 <?php
-class DC600Cache extends Doctrine_Record
+class DC600Cache extends \Doctrine1\Record
 {
     public function setTableDefinition(): void
     {

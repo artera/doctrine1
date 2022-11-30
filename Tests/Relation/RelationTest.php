@@ -31,7 +31,7 @@ class RelationTest extends DoctrineUnitTestCase
 
     public function testUnlinkSupportsManyToManyRelations()
     {
-        $users = \Doctrine_Query::create()->from('User u')->where('u.name = ?', ['zYne'])->execute();
+        $users = \Doctrine1\Query::create()->from('User u')->where('u.name = ?', ['zYne'])->execute();
 
         $user = $users[0];
 
@@ -43,11 +43,11 @@ class RelationTest extends DoctrineUnitTestCase
 
         static::$conn->clear();
 
-        $groups = \Doctrine_Query::create()->from('Group g')->execute();
+        $groups = \Doctrine1\Query::create()->from('Group g')->execute();
 
         $this->assertEquals($groups->count(), 3);
 
-        $links = \Doctrine_Query::create()->from('GroupUser gu')->execute();
+        $links = \Doctrine1\Query::create()->from('GroupUser gu')->execute();
 
         $this->assertEquals($links->count(), 0);
     }
@@ -56,7 +56,7 @@ class RelationTest extends DoctrineUnitTestCase
     {
         static::$conn->clear();
 
-        $users = \Doctrine_Query::create()->from('User u')->where('u.name = ?', ['zYne'])->execute();
+        $users = \Doctrine1\Query::create()->from('User u')->where('u.name = ?', ['zYne'])->execute();
 
         $user = $users[0];
 
@@ -68,7 +68,7 @@ class RelationTest extends DoctrineUnitTestCase
 
         static::$conn->clear();
 
-        $phonenumber = \Doctrine_Query::create()->from('Phonenumber p')->execute();
+        $phonenumber = \Doctrine1\Query::create()->from('Phonenumber p')->execute();
 
         $this->assertEquals($phonenumber->count(), 3);
         $this->assertEquals($phonenumber[0]->entity_id, null);
@@ -82,9 +82,9 @@ class RelationTest extends DoctrineUnitTestCase
 
         $rel = $component->getTable()->getRelation('Children');
 
-        $this->assertTrue($rel instanceof \Doctrine_Relation_ForeignKey);
+        $this->assertTrue($rel instanceof \Doctrine1\Relation\ForeignKey);
 
-        $this->assertTrue($component->Children instanceof \Doctrine_Collection);
+        $this->assertTrue($component->Children instanceof \Doctrine1\Collection);
         $this->assertTrue($component->Children[0] instanceof \RelationTestChild);
     }
 
@@ -94,7 +94,7 @@ class RelationTest extends DoctrineUnitTestCase
 
         $rel = $component->getTable()->getRelation('Parent');
 
-        $this->assertTrue($rel instanceof \Doctrine_Relation_LocalKey);
+        $this->assertTrue($rel instanceof \Doctrine1\Relation\LocalKey);
     }
     public function testManyToManyRelation()
     {
@@ -103,24 +103,24 @@ class RelationTest extends DoctrineUnitTestCase
         // test that join table relations can be initialized even before the association have been initialized
         $user->GroupUser;
 
-        $this->assertTrue($user->getTable()->getRelation('Group') instanceof \Doctrine_Relation_Association);
+        $this->assertTrue($user->getTable()->getRelation('Group') instanceof \Doctrine1\Relation\Association);
     }
     public function testOneToOneLocalKeyRelation()
     {
         $user = new \User();
 
-        $this->assertTrue($user->getTable()->getRelation('Email') instanceof \Doctrine_Relation_LocalKey);
+        $this->assertTrue($user->getTable()->getRelation('Email') instanceof \Doctrine1\Relation\LocalKey);
     }
     public function testOneToOneForeignKeyRelation()
     {
         $user = new \User();
 
-        $this->assertTrue($user->getTable()->getRelation('Account') instanceof \Doctrine_Relation_ForeignKey);
+        $this->assertTrue($user->getTable()->getRelation('Account') instanceof \Doctrine1\Relation\ForeignKey);
     }
     public function testOneToManyForeignKeyRelation()
     {
         $user = new \User();
 
-        $this->assertTrue($user->getTable()->getRelation('Phonenumber') instanceof \Doctrine_Relation_ForeignKey);
+        $this->assertTrue($user->getTable()->getRelation('Phonenumber') instanceof \Doctrine1\Relation\ForeignKey);
     }
 }

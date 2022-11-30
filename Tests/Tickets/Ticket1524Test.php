@@ -8,7 +8,7 @@ namespace Tests\Tickets {
     {
         public function testTest()
         {
-            $manager = \Doctrine_Manager::getInstance();
+            $manager = \Doctrine1\Manager::getInstance();
             $manager->registerValidator(MyValidator::class, 'MyValidator');
             $this->assertArrayHasKey('MyValidator', $manager->getValidators());
         }
@@ -16,7 +16,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class MyValidator extends Doctrine_Validator
+    class MyValidator extends \Doctrine1\Validator
     {
         public function validate($value)
         {

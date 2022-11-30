@@ -1,5 +1,5 @@
 <?php
-class ORM_AccessControl extends Doctrine_Record
+class ORM_AccessControl extends \Doctrine1\Record
 {
     public function setTableDefinition(): void
     {

@@ -30,7 +30,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class T1395_MyModel extends Doctrine_Record
+    class T1395_MyModel extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -44,9 +44,9 @@ namespace {
         }
     }
 
-    class T1395_Listener extends Doctrine_Record_Listener
+    class T1395_Listener extends \Doctrine1\Record\Listener
     {
-        public function preHydrate(Doctrine_Event $event)
+        public function preHydrate(\Doctrine1\Event $event)
         {
             $data = $event->data;
 

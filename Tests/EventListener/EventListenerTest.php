@@ -15,7 +15,7 @@ namespace Tests\EventListener {
 
         public function testSetListener()
         {
-            $this->logger = new \Doctrine_EventListener_TestLogger();
+            $this->logger = new \TestLogger();
 
             $e = new \EventListenerTest;
 
@@ -30,7 +30,7 @@ namespace Tests\EventListener {
 }
 
 namespace {
-    class Doctrine_EventListener_TestLogger implements Doctrine_Overloadable, Countable
+    class TestLogger implements \Doctrine1\Overloadable, Countable
     {
         private $messages = [];
 

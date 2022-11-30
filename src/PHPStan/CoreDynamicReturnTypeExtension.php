@@ -14,7 +14,7 @@ class CoreDynamicReturnTypeExtension extends AbstractExtension implements Dynami
 {
     public function getClass(): string
     {
-        return \Doctrine_Core::class;
+        return \Doctrine1\Core::class;
     }
 
     public function isStaticMethodSupported(MethodReflection $methodReflection): bool

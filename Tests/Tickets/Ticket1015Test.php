@@ -24,12 +24,12 @@ namespace Tests\Tickets {
 
         public function testDoctrineQueryJoinSelect()
         {
-            $q = new \Doctrine_Query();
+            $q = new \Doctrine1\Query();
             $q->select('person.id, points.total')
             ->from('T1015_Person person')
             ->innerJoin('person.T1015_Points points WITH person.id = 1');
 
-            $results = $q->execute([], \Doctrine_Core::HYDRATE_ARRAY);
+            $results = $q->execute([], \Doctrine1\Core::HYDRATE_ARRAY);
             //var_dump($results);
             $person = $results[0];
 
@@ -39,13 +39,13 @@ namespace Tests\Tickets {
 
         public function testDoctrineRawSQLJoinSelect()
         {
-            $q = new \Doctrine_RawSql();
+            $q = new \Doctrine1\RawSql();
             $q->select('{person.id}, {points.total}')
             ->from('person person INNER JOIN points points ON person.id = points.person_id AND person.id=1')
             ->addComponent('person', 'T1015_Person person')
             ->addComponent('points', 'person.T1015_Points points');
 
-            $results = $q->execute([], \Doctrine_Core::HYDRATE_ARRAY);
+            $results = $q->execute([], \Doctrine1\Core::HYDRATE_ARRAY);
             //var_dump($results);
             $person = $results[0];
 
@@ -56,7 +56,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class T1015_Person extends Doctrine_Record
+    class T1015_Person extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -72,7 +72,7 @@ namespace {
         }
     }
 
-    class T1015_Points extends Doctrine_Record
+    class T1015_Points extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

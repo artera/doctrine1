@@ -1,5 +1,5 @@
 <?php
-class CheckConstraintTest extends Doctrine_Record
+class CheckConstraintTest extends \Doctrine1\Record
 {
     public function setTableDefinition(): void
     {

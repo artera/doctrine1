@@ -54,7 +54,7 @@ class TicketNjeroTest extends DoctrineUnitTestCase
         $policy->policy_number = '123456789';
         $policy->save();
 
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         // If I use
         // $p = $q->from('PolicyN p')

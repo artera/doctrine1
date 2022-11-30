@@ -7,7 +7,7 @@ class Ticket1335Test extends DoctrineUnitTestCase
 {
     public function testTest()
     {
-        $this->expectException(\Doctrine_Query_Exception::class);
-        \Doctrine_Query::create()->execute();
+        $this->expectException(\Doctrine1\Query\Exception::class);
+        \Doctrine1\Query::create()->execute();
     }
 }

@@ -1,5 +1,5 @@
 <?php
-class EntityAddress extends Doctrine_Record
+class EntityAddress extends \Doctrine1\Record
 {
     public function setTableDefinition(): void
     {

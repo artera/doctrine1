@@ -18,7 +18,7 @@ namespace Tests\Tickets {
             $user->save();
             $id = $user->id;
 
-            $table = \Doctrine::getTable('Ticket_DC136_User');
+            $table = \Doctrine1\Core::getTable('Ticket_DC136_User');
 
             $user1           = $table->find($id);
             $user1->username = 'jonwage';
@@ -30,7 +30,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class Ticket_DC136_User extends Doctrine_Record
+    class Ticket_DC136_User extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

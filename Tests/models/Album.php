@@ -1,5 +1,5 @@
 <?php
-class Album extends Doctrine_Record
+class Album extends \Doctrine1\Record
 {
     public function setUp(): void
     {

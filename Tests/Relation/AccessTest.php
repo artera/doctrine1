@@ -86,7 +86,7 @@ class AccessTest extends DoctrineUnitTestCase
     {
         $coll = static::$connection->query("FROM File_Owner.Data_File WHERE File_Owner.name = 'owner1'");
         $this->assertTrue(count($coll) == 1);
-        $this->assertTrue($coll[0] instanceof \Doctrine_Record);
+        $this->assertTrue($coll[0] instanceof \Doctrine1\Record);
 
         $this->assertEquals($coll[0]->id, 1);
     }

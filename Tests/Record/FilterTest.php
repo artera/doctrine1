@@ -12,7 +12,7 @@ namespace Tests\Record {
         {
             $u = new \User();
 
-            $this->expectException(\Doctrine_Record_UnknownPropertyException::class);
+            $this->expectException(\Doctrine1\Record\UnknownPropertyException::class);
             $u->unknown;
         }
 
@@ -20,7 +20,7 @@ namespace Tests\Record {
         {
             $u = new \User();
 
-            $this->expectException(\Doctrine_Record_UnknownPropertyException::class);
+            $this->expectException(\Doctrine1\Record\UnknownPropertyException::class);
             $u->unknown = 'something';
         }
 
@@ -41,7 +41,7 @@ namespace Tests\Record {
 }
 
 namespace {
-    class CompositeRecord extends Doctrine_Record
+    class CompositeRecord extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -51,10 +51,10 @@ namespace {
         {
             $this->hasOne('RelatedCompositeRecord as Related', ['foreign' => 'foreign_id']);
 
-            $this->unshiftFilter(new \Doctrine_Record_Filter_Compound(['Related']));
+            $this->unshiftFilter(new \Doctrine1\Record\Filter\Compound(['Related']));
         }
     }
-    class RelatedCompositeRecord extends Doctrine_Record
+    class RelatedCompositeRecord extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

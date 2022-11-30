@@ -1,5 +1,5 @@
 <?php
-class EventListenerChainTest extends Doctrine_Record
+class EventListenerChainTest extends \Doctrine1\Record
 {
     public function setTableDefinition(): void
     {
@@ -7,15 +7,15 @@ class EventListenerChainTest extends Doctrine_Record
     }
     public function setUp(): void
     {
-        $chain = new \Doctrine_EventListener_Chain();
-        $chain->add(new \Doctrine_EventListener_TestA());
-        $chain->add(new \Doctrine_EventListener_TestB());
+        $chain = new \Doctrine1\EventListener\Chain();
+        $chain->add(new EventListener_TestA());
+        $chain->add(new EventListener_TestB());
     }
 }
 
-class Doctrine_EventListener_TestA extends Doctrine_EventListener
+class EventListener_TestA extends \Doctrine1\EventListener
 {
 }
-class Doctrine_EventListener_TestB extends Doctrine_EventListener
+class EventListener_TestB extends \Doctrine1\EventListener
 {
 }

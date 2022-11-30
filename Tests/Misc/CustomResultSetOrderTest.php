@@ -76,13 +76,13 @@ class CustomResultSetOrderTest extends DoctrineUnitTestCase
      */
     public function testQueryWithOrdering2()
     {
-        $q = new \Doctrine_Query(static::$connection);
+        $q = new \Doctrine1\Query(static::$connection);
 
         $categories = $q->select('c.*, b.*')
                 ->from('CategoryWithPosition c')
                 ->leftJoin('c.Boards b')
                 ->orderBy('c.position ASC, b.position ASC')
-                ->execute([], \Doctrine_Core::HYDRATE_ARRAY);
+                ->execute([], \Doctrine1\Core::HYDRATE_ARRAY);
 
         $this->assertEquals(3, count($categories), 'Some categories were doubled!');
 
@@ -122,7 +122,7 @@ class CustomResultSetOrderTest extends DoctrineUnitTestCase
      */
     public function testQueryWithOrdering()
     {
-        $q          = new \Doctrine_Query(static::$connection);
+        $q          = new \Doctrine1\Query(static::$connection);
         $categories = $q->select('c.*, b.*')
                 ->from('CategoryWithPosition c')
                 ->leftJoin('c.Boards b')

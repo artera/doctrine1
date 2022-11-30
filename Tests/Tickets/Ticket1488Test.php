@@ -6,7 +6,7 @@ namespace Tests\Tickets {
     {
         public function testTest()
         {
-            $q = \Doctrine_Query::create()
+            $q = \Doctrine1\Query::create()
             ->from('T1488_Class1 c1')
             ->leftJoin('c1.Classes2 c2 WITH c2.value BETWEEN c1.min AND c1.max');
             $this->assertEquals($q->getSqlQuery(), 'SELECT t.id AS t__id, t.min AS t__min, t.max AS t__max, t2.id AS t2__id, t2.value AS t2__value FROM t1488__class1 t LEFT JOIN t1488__relation t3 ON (t.id = t3.c1_id) LEFT JOIN t1488__class2 t2 ON t2.id = t3.c2_id AND (t2.value BETWEEN t.min AND t.max)');
@@ -15,7 +15,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class T1488_Class1 extends Doctrine_Record
+    class T1488_Class1 extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -34,7 +34,7 @@ namespace {
         }
     }
 
-    class T1488_Class2 extends Doctrine_Record
+    class T1488_Class2 extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -53,7 +53,7 @@ namespace {
     }
 
 
-    class T1488_Relation extends Doctrine_Record
+    class T1488_Relation extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

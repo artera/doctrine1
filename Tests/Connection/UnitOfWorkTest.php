@@ -54,10 +54,10 @@ class UnitOfWorkTest extends DoctrineUnitTestCase
 
         $pf = static::$connection->getTable('Phonenumber');
 
-        $this->assertTrue($user->Phonenumber instanceof \Doctrine_Collection);
+        $this->assertTrue($user->Phonenumber instanceof \Doctrine1\Collection);
         $this->assertTrue($user->Phonenumber->count() == 3);
 
-        $coll = new \Doctrine_Collection($pf);
+        $coll = new \Doctrine1\Collection($pf);
 
         $user->Phonenumber = $coll;
         $this->assertTrue($user->Phonenumber->count() == 0);
@@ -116,7 +116,7 @@ class UnitOfWorkTest extends DoctrineUnitTestCase
         // REPLACING ONE-TO-MANY REFERENCE
 
         unset($coll);
-        $coll                      = new \Doctrine_Collection($pf);
+        $coll                      = new \Doctrine1\Collection($pf);
         $coll[0]->phonenumber      = '123 123';
         $coll['home']->phonenumber = '444 444';
         $coll['work']->phonenumber = '444 444';
@@ -163,9 +163,9 @@ class UnitOfWorkTest extends DoctrineUnitTestCase
     public function testTransactions(): void
     {
         static::$connection->beginTransaction();
-        $this->assertEquals(\Doctrine_Transaction_State::ACTIVE(), static::$connection->transaction->getState());
+        $this->assertEquals(\Doctrine1\Transaction\State::ACTIVE, static::$connection->transaction->getState());
         static::$connection->commit();
-        $this->assertEquals(\Doctrine_Transaction_State::SLEEP(), static::$connection->transaction->getState());
+        $this->assertEquals(\Doctrine1\Transaction\State::SLEEP, static::$connection->transaction->getState());
 
         static::$connection->beginTransaction();
 

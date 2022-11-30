@@ -5,12 +5,12 @@ use Tests\DoctrineUnitTestCase;
 
 class DriverTest extends DoctrineUnitTestCase
 {
-    protected ?\Doctrine_Expression_Mock $expr = null;
+    protected ?\Doctrine1\Expression\Mock $expr = null;
 
     public function setUp(): void
     {
         parent::setUp();
-        $this->expr = new \Doctrine_Expression_Mock();
+        $this->expr = new \Doctrine1\Expression\Mock();
     }
 
     public function testAvgReturnsValidSql()
@@ -40,13 +40,13 @@ class DriverTest extends DoctrineUnitTestCase
 
     public function testRegexpImplementedOnlyAtDriverLevel()
     {
-        $this->expectException(\Doctrine_Expression_Exception::class);
+        $this->expectException(\Doctrine1\Expression\Exception::class);
         $this->expr->regexp('[abc]');
     }
 
     public function testSoundexImplementedOnlyAtDriverLevel()
     {
-        $this->expectException(\Doctrine_Expression_Exception::class);
+        $this->expectException(\Doctrine1\Expression\Exception::class);
         $this->expr->soundex('arnold');
     }
 

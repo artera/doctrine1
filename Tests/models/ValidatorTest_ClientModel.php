@@ -1,5 +1,5 @@
 <?php
-class ValidatorTest_ClientModel extends Doctrine_Record
+class ValidatorTest_ClientModel extends \Doctrine1\Record
 {
     public function setTableDefinition(): void
     {

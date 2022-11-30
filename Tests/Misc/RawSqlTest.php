@@ -8,7 +8,7 @@ class RawSqlTest extends DoctrineUnitTestCase
     public function testQueryParser()
     {
         $sql   = 'SELECT {p.*} FROM photos p';
-        $query = new \Doctrine_RawSql(static::$connection);
+        $query = new \Doctrine1\RawSql(static::$connection);
         $query->parseDqlQuery($sql);
 
         $this->assertEquals($query->getSqlQueryPart('from'), ['photos p']);
@@ -26,7 +26,7 @@ class RawSqlTest extends DoctrineUnitTestCase
     {
         // Selecting with *
 
-        $query = new \Doctrine_RawSql(static::$connection);
+        $query = new \Doctrine1\RawSql(static::$connection);
         $query->parseDqlQuery('SELECT {entity.*} FROM entity');
         $fields = $query->getFields();
 
@@ -41,7 +41,7 @@ class RawSqlTest extends DoctrineUnitTestCase
 
     public function testLazyPropertyLoading()
     {
-        $query = new \Doctrine_RawSql(static::$connection);
+        $query = new \Doctrine1\RawSql(static::$connection);
         static::$connection->clear();
 
         // selecting proxy objects (lazy property loading)
@@ -56,12 +56,12 @@ class RawSqlTest extends DoctrineUnitTestCase
 
         $this->assertEquals($coll->count(), 11);
 
-        $this->assertEquals($coll[0]->state(), \Doctrine_Record_State::PROXY());
-        $this->assertEquals($coll[3]->state(), \Doctrine_Record_State::PROXY());
+        $this->assertEquals($coll[0]->state(), \Doctrine1\Record\State::PROXY);
+        $this->assertEquals($coll[3]->state(), \Doctrine1\Record\State::PROXY);
     }
     public function testSmartMapping()
     {
-        $query = new \Doctrine_RawSql(static::$connection);
+        $query = new \Doctrine1\RawSql(static::$connection);
         // smart component mapping (no need for additional addComponent call
 
         $query->parseDqlQuery('SELECT {entity.name}, {entity.id} FROM entity');
@@ -73,13 +73,13 @@ class RawSqlTest extends DoctrineUnitTestCase
 
         $this->assertEquals($coll->count(), 11);
 
-        $this->assertEquals($coll[0]->state(), \Doctrine_Record_State::PROXY());
-        $this->assertEquals($coll[3]->state(), \Doctrine_Record_State::PROXY());
+        $this->assertEquals($coll[0]->state(), \Doctrine1\Record\State::PROXY);
+        $this->assertEquals($coll[3]->state(), \Doctrine1\Record\State::PROXY);
     }
 
     public function testMultipleComponents()
     {
-        $query = new \Doctrine_RawSql(static::$connection);
+        $query = new \Doctrine1\RawSql(static::$connection);
         // multi component fetching
 
         $query->parseDqlQuery('SELECT {entity.name}, {entity.id}, {phonenumber.*} FROM entity LEFT JOIN phonenumber ON phonenumber.entity_id = entity.id');
@@ -102,7 +102,7 @@ class RawSqlTest extends DoctrineUnitTestCase
 
     public function testAliasesAreSupportedInAddComponent()
     {
-        $query = new \Doctrine_RawSql();
+        $query = new \Doctrine1\RawSql();
         $query->parseDqlQuery('SELECT {entity.name}, {entity.id}, {phonenumber.*} FROM entity LEFT JOIN phonenumber ON phonenumber.entity_id = entity.id');
 
         $query->addComponent('entity', 'Entity e');
@@ -125,7 +125,7 @@ class RawSqlTest extends DoctrineUnitTestCase
     {
         // forcing the select of primary key fields
 
-        $query = new \Doctrine_RawSql(static::$connection);
+        $query = new \Doctrine1\RawSql(static::$connection);
 
         $query->parseDqlQuery('SELECT {entity.name} FROM entity');
 
@@ -139,7 +139,7 @@ class RawSqlTest extends DoctrineUnitTestCase
 
     public function testConvenienceMethods()
     {
-        $query = new \Doctrine_RawSql(static::$connection);
+        $query = new \Doctrine1\RawSql(static::$connection);
         $query->select('{entity.name}')->from('entity');
         $query->addComponent('entity', 'User');
 
@@ -155,7 +155,7 @@ class RawSqlTest extends DoctrineUnitTestCase
     {
         // forcing the select of primary key fields
 
-        $query = new \Doctrine_RawSql(static::$connection);
+        $query = new \Doctrine1\RawSql(static::$connection);
 
         $query->parseDqlQuery('SELECT {entity.name} FROM entity');
         $query->addComponent('entity', 'User');
@@ -171,7 +171,7 @@ class RawSqlTest extends DoctrineUnitTestCase
     {
         // forcing the select of primary key fields
 
-        $query = new \Doctrine_RawSql(static::$connection);
+        $query = new \Doctrine1\RawSql(static::$connection);
 
         $query->parseDqlQuery('SELECT {entity.name} FROM entity ORDER BY entity.name');
         $query->addComponent('entity', 'User');
@@ -189,7 +189,7 @@ class RawSqlTest extends DoctrineUnitTestCase
 
     public function testQueryParser2()
     {
-        $query = new \Doctrine_RawSql();
+        $query = new \Doctrine1\RawSql();
 
         $query->parseDqlQuery("SELECT {entity.name} FROM (SELECT entity.name FROM entity WHERE entity.name = 'something') WHERE entity.id = 2 ORDER BY entity.name");
 
@@ -201,33 +201,33 @@ class RawSqlTest extends DoctrineUnitTestCase
 
     public function testSelectingWithoutIdentifiersOnRootComponent()
     {
-        $query = new \Doctrine_RawSql();
+        $query = new \Doctrine1\RawSql();
 
         $query->parseDqlQuery('SELECT {entity.name}, {phonenumber.*} FROM entity LEFT JOIN phonenumber ON phonenumber.entity_id = entity.id LIMIT 3');
         $query->addComponent('entity', 'Entity');
         $query->addComponent('phonenumber', 'Entity.Phonenumber');
         $this->assertEquals($query->getSqlQuery(), 'SELECT entity.name AS entity__name, entity.id AS entity__id, phonenumber.id AS phonenumber__id, phonenumber.phonenumber AS phonenumber__phonenumber, phonenumber.entity_id AS phonenumber__entity_id FROM entity LEFT JOIN phonenumber ON phonenumber.entity_id = entity.id LIMIT 3');
-        $coll = $query->execute([], \Doctrine_Core::HYDRATE_ARRAY);
+        $coll = $query->execute([], \Doctrine1\Core::HYDRATE_ARRAY);
 
         $this->assertEquals(count($coll), 3);
     }
 
     public function testSwitchingTheFieldOrder()
     {
-        $query = new \Doctrine_RawSql();
+        $query = new \Doctrine1\RawSql();
 
         $query->parseDqlQuery('SELECT {phonenumber.*}, {entity.name} FROM entity LEFT JOIN phonenumber ON phonenumber.entity_id = entity.id LIMIT 3');
         $query->addComponent('entity', 'Entity');
         $query->addComponent('phonenumber', 'Entity.Phonenumber');
         $this->assertEquals($query->getSqlQuery(), 'SELECT entity.name AS entity__name, entity.id AS entity__id, phonenumber.id AS phonenumber__id, phonenumber.phonenumber AS phonenumber__phonenumber, phonenumber.entity_id AS phonenumber__entity_id FROM entity LEFT JOIN phonenumber ON phonenumber.entity_id = entity.id LIMIT 3');
-        $coll = $query->execute([], \Doctrine_Core::HYDRATE_ARRAY);
+        $coll = $query->execute([], \Doctrine1\Core::HYDRATE_ARRAY);
 
         $this->assertEquals(count($coll), 3);
     }
 
     public function testParseQueryPartShouldAddPartIfNotSelectAndAppend()
     {
-        $query = new \Doctrine_Rawsql();
+        $query = new \Doctrine1\Rawsql();
         $query->parseDqlQueryPart('test', 'test', true);
         $parts = $query->getSqlParts();
         $this->assertTrue(isset($parts['test']));
@@ -238,7 +238,7 @@ class RawSqlTest extends DoctrineUnitTestCase
 
     public function testParseQueryShouldExtractGroupBy()
     {
-        $query = new \Doctrine_RawSql();
+        $query = new \Doctrine1\RawSql();
         $query->parseDqlQuery('having group');
         $parts = $query->getSqlParts();
         $this->assertEquals($parts['having'][0], 'group');
@@ -246,17 +246,17 @@ class RawSqlTest extends DoctrineUnitTestCase
 
     public function testThrowExceptionIfFieldNameIsOnWrongForm()
     {
-        $query = new \Doctrine_RawSql();
+        $query = new \Doctrine1\RawSql();
         $query->parseDqlQueryPart('select', '{test}');
-        $this->expectException(\Doctrine_RawSql_Exception::class);
+        $this->expectException(\Doctrine1\RawSql\Exception::class);
         $query->getSqlQuery();
     }
 
     public function testThrowExceptionIfAliasDoesNotExist()
     {
-        $query = new \Doctrine_RawSql();
+        $query = new \Doctrine1\RawSql();
         $query->parseDqlQueryPart('select', '{test.test}');
-        $this->expectException(\Doctrine_RawSql_Exception::class);
+        $this->expectException(\Doctrine1\RawSql\Exception::class);
         $query->getSqlQuery();
     }
 }

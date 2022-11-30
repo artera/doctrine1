@@ -1,5 +1,5 @@
 <?php
-class BoardWithPosition extends Doctrine_Record
+class BoardWithPosition extends \Doctrine1\Record
 {
     public function setTableDefinition(): void
     {

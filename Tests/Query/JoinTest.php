@@ -36,7 +36,7 @@ class JoinTest extends DoctrineUnitTestCase
 
     public function testQuerySupportsCustomJoins(): void
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->select('c.*, c2.*, d.*')
             ->from('Record_Country c')->innerJoin('c.City c2 ON c2.id = 2')
@@ -48,7 +48,7 @@ class JoinTest extends DoctrineUnitTestCase
 
     public function testQueryAggFunctionInJoins(): void
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->select('c.*, c2.*, d.*')
             ->from('Record_Country c')
@@ -60,7 +60,7 @@ class JoinTest extends DoctrineUnitTestCase
 
     public function testSubQueryInJoins(): void
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
         $q->from('Record_Country c')
             ->innerJoin('c.City c2 WITH (c2.name = ? OR c2.id IN (SELECT c3.id FROM Record_City c3 WHERE c3.id = ? OR c3.id = ?))');
         $sql = $q->getSqlQuery();
@@ -69,7 +69,7 @@ class JoinTest extends DoctrineUnitTestCase
 
     public function testQueryMultipleAggFunctionInJoins(): void
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->select('c.*, c2.*, d.*')
             ->from('Record_Country c')
@@ -82,7 +82,7 @@ class JoinTest extends DoctrineUnitTestCase
 
     public function testQueryMultipleAggFunctionInJoins2(): void
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->select('c.*, c2.*, d.*')
             ->from('Record_Country c')
@@ -95,7 +95,7 @@ class JoinTest extends DoctrineUnitTestCase
 
     public function testQueryMultipleAggFunctionInJoins3(): void
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->select('c.*, c2.*, d.*')
             ->from('Record_Country c')
@@ -108,7 +108,7 @@ class JoinTest extends DoctrineUnitTestCase
 
     public function testQueryWithInInsideJoins(): void
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->select('c.*, c2.*, d.*')
             ->from('Record_Country c')
@@ -121,7 +121,7 @@ class JoinTest extends DoctrineUnitTestCase
 
     public function testQuerySupportsCustomJoinsAndWithKeyword(): void
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->select('c.*, c2.*, d.*')
             ->from('Record_Country c')->innerJoin('c.City c2 WITH c2.id = 2')
@@ -135,13 +135,13 @@ class JoinTest extends DoctrineUnitTestCase
      */
     public function testRecordHydrationWorksWithDeeplyNestedStructuresAndArrayFetching(): void
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->select('c.*, c2.*, d.*')
             ->from('Record_Country c')->leftJoin('c.City c2')->leftJoin('c2.District d')
             ->where('c.id = ?', [1]);
 
-        $countries = $q->execute([], \Doctrine_Core::HYDRATE_ARRAY);
+        $countries = $q->execute([], \Doctrine1\Core::HYDRATE_ARRAY);
 
         $c = $countries[0];
         $this->assertEquals($c['City'][0]['name'], 'City 1');
@@ -157,7 +157,7 @@ class JoinTest extends DoctrineUnitTestCase
      */
     public function testRecordHydrationWorksWithDeeplyNestedStructures(): void
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->select('c.*, c2.*, d.*')
             ->from('Record_Country c')->leftJoin('c.City c2')->leftJoin('c2.District d')
@@ -178,7 +178,7 @@ class JoinTest extends DoctrineUnitTestCase
 
     public function testManyToManyJoinUsesProperTableAliases(): void
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->select('u.name')->from('User u INNER JOIN u.Group g');
 
@@ -187,7 +187,7 @@ class JoinTest extends DoctrineUnitTestCase
 
     public function testSelfReferentialAssociationJoinsAreSupported(): void
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->select('e.name')->from('Entity e INNER JOIN e.Entity e2');
 
@@ -196,7 +196,7 @@ class JoinTest extends DoctrineUnitTestCase
 
     public function testMultipleJoins(): void
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
         $q->select('u.id, g.id, e.id')->from('User u')
             ->leftJoin('u.Group g')->leftJoin('g.Email e');
 
@@ -206,7 +206,7 @@ class JoinTest extends DoctrineUnitTestCase
 
     public function testMultipleJoins2(): void
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
         $q->select('u.id, g.id, e.id')->from('Group g')
             ->leftJoin('g.User u')->leftJoin('u.Account a');
 
@@ -219,7 +219,7 @@ class JoinTest extends DoctrineUnitTestCase
      */
     public function testMapKeywordForQueryWithOneComponent(): void
     {
-        $q    = new \Doctrine_Query();
+        $q    = new \Doctrine1\Query();
         $coll = $q->from('Record_City c INDEXBY c.name')->fetchArray();
 
         $this->assertTrue(isset($coll['City 1']));
@@ -232,7 +232,7 @@ class JoinTest extends DoctrineUnitTestCase
      */
     public function testMapKeywordSupportsJoins(): void
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
         $country = $q->from('Record_Country c LEFT JOIN c.City c2 INDEXBY c2.name')->fetchOne();
 
         $this->assertNotNull($country);
@@ -246,9 +246,9 @@ class JoinTest extends DoctrineUnitTestCase
 
     public function testMapKeywordThrowsExceptionOnNonExistentColumn(): void
     {
-        $this->expectException(\Doctrine_Query_Exception::class);
+        $this->expectException(\Doctrine1\Query\Exception::class);
 
-        $q       = new \Doctrine_Query();
+        $q       = new \Doctrine1\Query();
         $country = $q->from('Record_Country c LEFT JOIN c.City c2 INDEXBY c2.unknown')->fetchOne();
     }
 }

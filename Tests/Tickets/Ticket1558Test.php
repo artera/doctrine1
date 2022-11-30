@@ -7,7 +7,7 @@ class Ticket1558Test extends DoctrineUnitTestCase
 {
     public function testTest()
     {
-        $q = \Doctrine_Query::create()
+        $q = \Doctrine1\Query::create()
             ->from('User u')
             ->whereIn('u.id', [1])
             ->orWhereIn('u.id', [1])

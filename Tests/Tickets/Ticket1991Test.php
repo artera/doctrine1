@@ -26,15 +26,15 @@ namespace Tests\Tickets {
 
         public function testHydratation()
         {
-            $q = new \Doctrine_Query();
+            $q = new \Doctrine1\Query();
             $q->select('t.name')->from('NewTag t INDEXBY t.name');
-            $results = $q->execute([], \Doctrine_Core::HYDRATE_ARRAY);
+            $results = $q->execute([], \Doctrine1\Core::HYDRATE_ARRAY);
         }
     }
 }
 
 namespace {
-    class NewTag extends Doctrine_Record
+    class NewTag extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

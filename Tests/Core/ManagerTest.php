@@ -7,12 +7,12 @@ class ManagerTest extends DoctrineUnitTestCase
 {
     public function testGetInstance()
     {
-        $this->assertTrue(\Doctrine_Manager::getInstance() instanceof \Doctrine_Manager);
+        $this->assertTrue(\Doctrine1\Manager::getInstance() instanceof \Doctrine1\Manager);
     }
 
     public function testOpenConnection()
     {
-        $this->assertTrue(static::$connection instanceof \Doctrine_Connection);
+        $this->assertTrue(static::$connection instanceof \Doctrine1\Connection);
     }
 
     public function testGetIterator()
@@ -38,8 +38,8 @@ class ManagerTest extends DoctrineUnitTestCase
     public function testClassifyTableize()
     {
         $name = 'Forum_Category';
-        $this->assertEquals(\Doctrine_Inflector::tableize($name), 'forum__category');
-        $this->assertEquals(\Doctrine_Inflector::classify(\Doctrine_Inflector::tableize($name)), $name);
+        $this->assertEquals(\Doctrine1\Inflector::tableize($name), 'forum__category');
+        $this->assertEquals(\Doctrine1\Inflector::classify(\Doctrine1\Inflector::tableize($name)), $name);
     }
 
     public function testDsnParser()
@@ -50,7 +50,7 @@ class ManagerTest extends DoctrineUnitTestCase
         $sqlitewin        = 'sqlite:///c:/full/windows/path/to/file.db';
         $sqlitewin2       = 'sqlite:///D:\full\windows\path\to\file.db';
 
-        $manager = \Doctrine_Manager::getInstance();
+        $manager = \Doctrine1\Manager::getInstance();
 
         $res              = $manager->parseDsn($mysql);
         $expectedMysqlDsn = [
@@ -131,8 +131,8 @@ class ManagerTest extends DoctrineUnitTestCase
 
         $tmp_dir = ($OS == 'WIN') ? str_replace('\\', '/', sys_get_temp_dir()) : '/tmp';
 
-        $conn1 = \Doctrine_Manager::connection("sqlite:///$tmp_dir/doctrin1.db", 'doctrine1');
-        $conn2 = \Doctrine_Manager::connection("sqlite:///$tmp_dir/doctrin2.db", 'doctrine2');
+        $conn1 = \Doctrine1\Manager::connection("sqlite:///$tmp_dir/doctrin1.db", 'doctrine1');
+        $conn2 = \Doctrine1\Manager::connection("sqlite:///$tmp_dir/doctrin2.db", 'doctrine2');
 
         $result1 = $conn1->createDatabase();
         $result2 = $conn2->createDatabase();
@@ -154,7 +154,7 @@ class ManagerTest extends DoctrineUnitTestCase
     {
         $dsn = 'mysql://' . urlencode('test/t') . ':' . urlencode('p@ssword') . '@localhost/' . urlencode('db/name');
 
-        $conn    = \Doctrine_Manager::connection($dsn);
+        $conn    = \Doctrine1\Manager::connection($dsn);
         $options = $conn->getOptions();
 
         $this->assertEquals($options['username'], 'test/t');

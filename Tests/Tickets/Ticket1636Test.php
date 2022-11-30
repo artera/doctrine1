@@ -35,12 +35,12 @@ namespace Tests\Tickets {
         public function testResultCacheShouldStoreRelatedComponentsData()
         {
             // Profiler
-            $profiler = new \Doctrine_Connection_Profiler();
+            $profiler = new \Doctrine1\Connection\Profiler();
             static::$conn->setListener($profiler);
 
-            $cacheDriver = new \Doctrine_Cache_Array();
+            $cacheDriver = new \Doctrine1\Cache\PHPArray();
 
-            $query = \Doctrine_Query::create()
+            $query = \Doctrine1\Query::create()
             ->useResultCache($cacheDriver, $this->resultCacheLifeSpan)
             ->from('Ticket_1636_File f')
             ->innerJoin('f.type t')
@@ -78,7 +78,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class Ticket_1636_FileType extends Doctrine_Record
+    class Ticket_1636_FileType extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -114,7 +114,7 @@ namespace {
         }
     }
 
-    class Ticket_1636_File extends Doctrine_Record
+    class Ticket_1636_File extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

@@ -57,10 +57,10 @@ namespace Tests\Tickets {
                 $user4->save();
 
 //here is the testcode
-            $user      = \Doctrine_Core::getTable('Ticket_1621_User')->findOneByName('floriank');
-                $newChild  = \Doctrine_Core::getTable('Ticket_1621_User')->findOneByName('test');
-                $newFriend = \Doctrine_Core::getTable('Ticket_1621_User')->findOneByName('test2');
-                $newGroup  = \Doctrine_Core::getTable('Ticket_1621_Group')->findOneByName('group2');
+            $user      = \Doctrine1\Core::getTable('Ticket_1621_User')->findOneByName('floriank');
+                $newChild  = \Doctrine1\Core::getTable('Ticket_1621_User')->findOneByName('test');
+                $newFriend = \Doctrine1\Core::getTable('Ticket_1621_User')->findOneByName('test2');
+                $newGroup  = \Doctrine1\Core::getTable('Ticket_1621_Group')->findOneByName('group2');
 
                 $user->children[] = $newChild;
                 $user->groups[]   = $newGroup;
@@ -74,7 +74,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class Ticket_1621_User extends Doctrine_Record
+    class Ticket_1621_User extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -123,7 +123,7 @@ namespace {
         }
     }
 
-    class Ticket_1621_UserReference extends Doctrine_Record
+    class Ticket_1621_UserReference extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -132,7 +132,7 @@ namespace {
         }
     }
 
-    class Ticket_1621_UserReferenceFriends extends Doctrine_Record
+    class Ticket_1621_UserReferenceFriends extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -141,7 +141,7 @@ namespace {
         }
     }
 
-    class Ticket_1621_EmailAdresses extends Doctrine_Record
+    class Ticket_1621_EmailAdresses extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -159,7 +159,7 @@ namespace {
         }
     }
 
-    class Ticket_1621_Group extends Doctrine_Record
+    class Ticket_1621_Group extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -179,7 +179,7 @@ namespace {
         }
     }
 
-    class Ticket_1621_GroupUser extends Doctrine_Record
+    class Ticket_1621_GroupUser extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

@@ -12,7 +12,7 @@ class TicketDC848Test extends DoctrineUnitTestCase
     public function testIso8601Timestamp()
     {
         $timestamp          = '2010-03-02T22:08:56+00:00';
-        $timestampValidator = \Doctrine_Validator::getValidator('timestamp');
+        $timestampValidator = \Doctrine1\Validator::getValidator('timestamp');
 
         $this->assertTrue($timestampValidator->isValid($timestamp));
     }
@@ -21,7 +21,7 @@ class TicketDC848Test extends DoctrineUnitTestCase
     public function testMysqlTimestamp()
     {
         $timestamp          = '2010-03-02 22:08:56';
-        $timestampValidator = \Doctrine_Validator::getValidator('timestamp');
+        $timestampValidator = \Doctrine1\Validator::getValidator('timestamp');
 
         $this->assertTrue($timestampValidator->isValid($timestamp));
     }

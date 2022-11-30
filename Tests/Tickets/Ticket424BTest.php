@@ -44,17 +44,17 @@ class Ticket424BTest extends DoctrineUnitTestCase
         $peter = $this->newUser(2, 'Peter', [$groupA, $groupC]);
         $alan  = $this->newUser(3, 'Alan', [$groupB, $groupC]);
 
-        $q  = \Doctrine_Query::create();
+        $q  = \Doctrine1\Query::create();
         $gu = $q->from('MmrGroupUserB')->execute();
         $this->assertEquals(count($gu), 6);
 
         // Direct query
-        $q  = \Doctrine_Query::create();
+        $q  = \Doctrine1\Query::create();
         $gu = $q->from('MmrGroupUserB')->where('group_id = ?', $groupA->id)->execute();
         $this->assertEquals(count($gu), 2);
 
         // Query by join
-        $q = \Doctrine_Query::create()
+        $q = \Doctrine1\Query::create()
             ->from('MmrUserB u, u.Group g')
             ->where('g.name = ?', [$groupA->name]);
 

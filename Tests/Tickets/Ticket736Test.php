@@ -27,7 +27,7 @@ namespace Tests\Tickets {
 
         public function testForHydrationOverwrintingLocalInstancesWhenItShouldnt()
         {
-            $module = \Doctrine_Core::getTable('T736_Module')->find(1);
+            $module = \Doctrine1\Core::getTable('T736_Module')->find(1);
             $module->moduledata->content = 'foo';
             $module->moduledata->save();
             $this->assertEquals('foo', $module->moduledata->content); // should be "foo" is "Lorem Ipsum and so on..."
@@ -36,7 +36,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class T736_Module extends Doctrine_Record
+    class T736_Module extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -50,7 +50,7 @@ namespace {
         }
     }
 
-    class T736_ModuleDelegate extends Doctrine_Record
+    class T736_ModuleDelegate extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -72,13 +72,13 @@ namespace {
     }
 
 
-    class T736_ModuleLoaderListener extends Doctrine_Record_Listener
+    class T736_ModuleLoaderListener extends \Doctrine1\Record\Listener
     {
-        public function postHydrate(Doctrine_Event $event)
+        public function postHydrate(\Doctrine1\Event $event)
         {
             $contents = $event->data;
-            $delegate = \Doctrine_Core::getTable('T736_ModuleDelegate')->find($contents['moduledelegateid'], hydrate_array: !$contents instanceof \Doctrine_Record);
-            if ($contents instanceof \Doctrine_Record) {
+            $delegate = \Doctrine1\Core::getTable('T736_ModuleDelegate')->find($contents['moduledelegateid'], hydrate_array: !$contents instanceof \Doctrine1\Record);
+            if ($contents instanceof \Doctrine1\Record) {
                 $contents->mapValue('moduledata', $delegate);
                 $delegate->parent = $contents;
             } else {

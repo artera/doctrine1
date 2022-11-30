@@ -31,9 +31,9 @@ class ZeroValuesTest extends DoctrineUnitTestCase
 
     public function testZeroValuesMaintained2()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
         $q->from('ZeroValueTest');
-        $users = $q->execute([], \Doctrine_Core::HYDRATE_ARRAY);
+        $users = $q->execute([], \Doctrine1\Core::HYDRATE_ARRAY);
 
         $this->assertSame($users[0]['is_super_admin'], false);
         // check for aggregate bug
@@ -42,7 +42,7 @@ class ZeroValuesTest extends DoctrineUnitTestCase
 
     public function testZeroValuesMaintained3()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
         $q->from('ZeroValueTest');
         $users = $q->execute();
 

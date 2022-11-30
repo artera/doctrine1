@@ -14,7 +14,7 @@ class TokenizerTest extends DoctrineUnitTestCase
 
     public function testSqlExplode()
     {
-        $tokenizer = new \Doctrine_Query_Tokenizer();
+        $tokenizer = new \Doctrine1\Query\Tokenizer();
 
         $str = 'word1 word2 word3';
         $a   = $tokenizer->sqlExplode($str);
@@ -80,7 +80,7 @@ class TokenizerTest extends DoctrineUnitTestCase
 
     public function testSqlExplode2()
     {
-        $tokenizer = new \Doctrine_Query_Tokenizer();
+        $tokenizer = new \Doctrine1\Query\Tokenizer();
         $str       = 'rdbms (dbal OR database)';
         $a         = $tokenizer->sqlExplode($str, ' OR ');
 
@@ -89,7 +89,7 @@ class TokenizerTest extends DoctrineUnitTestCase
 
     public function testBracketExplode()
     {
-        $tokenizer = new \Doctrine_Query_Tokenizer();
+        $tokenizer = new \Doctrine1\Query\Tokenizer();
 
         $str = 'foo.field AND bar.field';
         $a   = $tokenizer->bracketExplode($str, [' \&\& ', ' AND '], '(', ')');
@@ -100,7 +100,7 @@ class TokenizerTest extends DoctrineUnitTestCase
         $a   = $tokenizer->bracketExplode($str, [' \&\& ', ' AND '], '(', ')');
         $this->assertEquals($a, ['foo.field', 'bar.field']);
 
-        // test the JOIN splitter as used in \Doctrine_Query_From::parse()
+        // test the JOIN splitter as used in \Doctrine1\Query\From::parse()
         $str = 'foo.field join bar.field';
         $a   = $tokenizer->bracketExplode($str, 'JOIN');
         $this->assertEquals($a, ['foo.field', 'bar.field']);
@@ -113,7 +113,7 @@ class TokenizerTest extends DoctrineUnitTestCase
 
     public function testQuoteExplodedShouldQuoteArray()
     {
-        $tokenizer = new \Doctrine_Query_Tokenizer();
+        $tokenizer = new \Doctrine1\Query\Tokenizer();
         $term      = $tokenizer->quoteExplode('test', ["'test'", 'test2']);
         $this->assertEquals($term[0], 'test');
     }

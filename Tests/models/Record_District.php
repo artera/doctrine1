@@ -1,6 +1,6 @@
 <?php
 /** @property string $name */
-class Record_District extends Doctrine_Record
+class Record_District extends \Doctrine1\Record
 {
     public function setTableDefinition(): void
     {

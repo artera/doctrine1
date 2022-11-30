@@ -1,131 +1,131 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Return type \\(Doctrine_Adapter_Statement_Mock\\|null\\) of method Doctrine_Adapter_Mock\\:\\:prepare\\(\\) should be compatible with return type \\(PDOStatement\\|false\\) of method PDO\\:\\:prepare\\(\\)$#"
+			message: "#^Return type \\(Doctrine1\\\\Adapter\\\\Statement\\\\Mock\\|null\\) of method Doctrine1\\\\Adapter\\\\Mock\\:\\:prepare\\(\\) should be compatible with return type \\(PDOStatement\\|false\\) of method PDO\\:\\:prepare\\(\\)$#"
 			count: 1
-			path: lib/Doctrine/Adapter/Mock.php
+			path: src/Adapter/Mock.php
 
 		-
 			message: "#^Call to sprintf contains 1 placeholder, 2 values given\\.$#"
 			count: 1
-			path: lib/Doctrine/Cli/Formatter.php
+			path: src/Cli/Formatter.php
 
 		-
-			message: "#^Constructor of class Doctrine_Connection_Mock has an unused parameter \\$adapter\\.$#"
+			message: "#^Constructor of class Doctrine1\\\\Connection\\\\Mock has an unused parameter \\$adapter\\.$#"
 			count: 1
-			path: lib/Doctrine/Connection/Mock.php
+			path: src/Connection/Mock.php
 
 		-
-			message: "#^Constructor of class Doctrine_Connection_Mock has an unused parameter \\$manager\\.$#"
+			message: "#^Constructor of class Doctrine1\\\\Connection\\\\Mock has an unused parameter \\$manager\\.$#"
 			count: 1
-			path: lib/Doctrine/Connection/Mock.php
+			path: src/Connection/Mock.php
 
 		-
 			message: "#^Offset 2 does not exist on array\\{\\}\\.$#"
 			count: 1
-			path: lib/Doctrine/Connection/Pgsql.php
+			path: src/Connection/Pgsql.php
 
 		-
 			message: "#^Offset 3 does not exist on array\\{\\}\\.$#"
 			count: 1
-			path: lib/Doctrine/Connection/Pgsql.php
+			path: src/Connection/Pgsql.php
 
 		-
 			message: "#^Argument of an invalid type array\\|true supplied for foreach, only iterables are supported\\.$#"
 			count: 1
-			path: lib/Doctrine/Export/Pgsql.php
+			path: src/Export/Pgsql.php
 
 		-
 			message: "#^Parameter \\#1 \\$string of function strtolower expects string, string\\|null given\\.$#"
 			count: 1
-			path: lib/Doctrine/Import/Sqlite.php
+			path: src/Import/Sqlite.php
 
 		-
 			message: "#^Variable \\$autoincrementColumn might not be defined\\.$#"
 			count: 1
-			path: lib/Doctrine/Migration/Base.php
+			path: src/Migration/Base.php
 
 		-
 			message: "#^Variable \\$autoincrementLength might not be defined\\.$#"
 			count: 1
-			path: lib/Doctrine/Migration/Base.php
+			path: src/Migration/Base.php
 
 		-
 			message: "#^Variable \\$autoincrementOptions might not be defined\\.$#"
 			count: 1
-			path: lib/Doctrine/Migration/Base.php
+			path: src/Migration/Base.php
 
 		-
 			message: "#^Variable \\$autoincrementType might not be defined\\.$#"
 			count: 1
-			path: lib/Doctrine/Migration/Base.php
+			path: src/Migration/Base.php
 
 		-
 			message: "#^Parameter \\#1 \\$qualifiedName of method SimpleXMLElement\\:\\:addChild\\(\\) expects string, string\\|null given\\.$#"
 			count: 2
-			path: lib/Doctrine/Parser/Xml.php
+			path: src/Parser/Xml.php
 
 		-
 			message: "#^Call to function is_int\\(\\) with string\\|null will always evaluate to false\\.$#"
 			count: 1
-			path: lib/Doctrine/Parser/Xml.php
+			path: src/Parser/Xml.php
 
 		-
-			message: "#^Parameter \\#1 \\$simpleXml of method Doctrine_Parser_Xml\\:\\:prepareData\\(\\) expects SimpleXMLElement\\|string, SimpleXMLElement\\|false given\\.$#"
+			message: "#^Parameter \\#1 \\$simpleXml of method Doctrine1\\\\Parser\\\\Xml\\:\\:prepareData\\(\\) expects SimpleXMLElement\\|string, SimpleXMLElement\\|false given\\.$#"
 			count: 1
-			path: lib/Doctrine/Parser/Xml.php
+			path: src/Parser/Xml.php
 
 		-
 			message: "#^Variable \\$func might not be defined\\.$#"
 			count: 1
-			path: lib/Doctrine/Query/Check.php
+			path: src/Query/Check.php
 
 		-
-			message: "#^Call to an undefined method Doctrine_Query_Condition\\:\\:load\\(\\)\\.$#"
+			message: "#^Call to an undefined method Doctrine1\\\\Query\\\\Condition\\:\\:load\\(\\)\\.$#"
 			count: 1
-			path: lib/Doctrine/Query/Condition.php
-
-		-
-			message: "#^Result of && is always true\\.$#"
-			count: 1
-			path: lib/Doctrine/Query/Groupby.php
+			path: src/Query/Condition.php
 
 		-
 			message: "#^Result of && is always true\\.$#"
 			count: 1
-			path: lib/Doctrine/Query/Orderby.php
+			path: src/Query/Groupby.php
 
 		-
-			message: "#^Call to an undefined method Doctrine_Query_Set\\:\\:parseLiteralValue\\(\\)\\.$#"
+			message: "#^Result of && is always true\\.$#"
 			count: 1
-			path: lib/Doctrine/Query/Set.php
+			path: src/Query/Orderby.php
+
+		-
+			message: "#^Call to an undefined method Doctrine1\\\\Query\\\\Set\\:\\:parseLiteralValue\\(\\)\\.$#"
+			count: 1
+			path: src/Query/Set.php
 
 		-
 			message: "#^Argument of an invalid type array\\<int, string\\>\\|false supplied for foreach, only iterables are supported\\.$#"
 			count: 2
-			path: lib/Doctrine/Query/Tokenizer.php
+			path: src/Query/Tokenizer.php
 
 		-
-			message: "#^Return type \\(void\\) of method Doctrine_Record_Filter_Standard\\:\\:filterSet\\(\\) should be compatible with return type \\(Doctrine_Record\\) of method Doctrine_Record_Filter\\:\\:filterSet\\(\\)$#"
+			message: "#^Return type \\(void\\) of method Doctrine1\\\\Record\\\\Filter\\\\Standard\\:\\:filterSet\\(\\) should be compatible with return type \\(Doctrine1\\\\Record\\) of method Doctrine1\\\\Record\\\\Filter\\:\\:filterSet\\(\\)$#"
 			count: 1
-			path: lib/Doctrine/Record/Filter/Standard.php
+			path: src/Record/Filter/Standard.php
 
 		-
 			message: "#^Variable \\$rel in isset\\(\\) always exists and is not nullable\\.$#"
 			count: 1
-			path: lib/Doctrine/Relation/Parser.php
+			path: src/Relation/Parser.php
 
 		-
-			message: "#^Cannot call method getConfig\\(\\) on Doctrine_Cli\\|null\\.$#"
+			message: "#^Cannot call method getConfig\\(\\) on Doctrine1\\\\Cli\\|null\\.$#"
 			count: 1
-			path: lib/Doctrine/Task/GenerateModelsDb.php
+			path: src/Task/GenerateModelsDb.php
 
 		-
 			message: "#^Call to function is_array\\(\\) with mixed will always evaluate to false\\.$#"
 			count: 2
-			path: lib/Doctrine/Validator.php
+			path: src/Validator.php
 
 		-
 			message: "#^Parameter \\#1 \\$key of function array_key_exists expects int\\|string, bool\\|float\\|int\\|string\\|null given\\.$#"
 			count: 1
-			path: lib/Doctrine/Validator/ErrorStack.php
+			path: src/Validator/ErrorStack.php

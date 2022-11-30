@@ -26,7 +26,7 @@ class ManyToMany2Test extends DoctrineUnitTestCase
 
         static::$conn->clear();
 
-        $q       = new \Doctrine_Query();
+        $q       = new \Doctrine1\Query();
         $newdata = $q->select('m.*')
             ->from('TestMovie m')
             ->execute()
@@ -36,7 +36,7 @@ class ManyToMany2Test extends DoctrineUnitTestCase
     }
     public function testManyToManyJoinsandSave()
     {
-        $q       = new \Doctrine_Query();
+        $q       = new \Doctrine1\Query();
         $newdata = $q->select('d.*, i.*, u.*, c.*')
             ->from('TestMovie d, d.MovieBookmarks i, i.UserVotes u, u.User c')
             ->execute()
@@ -72,7 +72,7 @@ class ManyToMany2Test extends DoctrineUnitTestCase
 
         $this->assertEquals($movies->count(), 2);
 
-        $profiler = new \Doctrine_Connection_Profiler();
+        $profiler = new \Doctrine1\Connection\Profiler();
 
         static::$conn->addListener($profiler);
 

@@ -28,7 +28,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class Ticket_2377_Author extends Doctrine_Record
+    class Ticket_2377_Author extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -53,7 +53,7 @@ namespace {
         }
     }
 
-    class Ticket_2377_Article extends Doctrine_Record
+    class Ticket_2377_Article extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

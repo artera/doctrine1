@@ -1,6 +1,6 @@
 <?php
 
-class Ticket_2375_Model5 extends Doctrine_Record
+class Ticket_2375_Model5 extends \Doctrine1\Record
 {
     public function setTableDefinition(): void
     {
@@ -8,7 +8,7 @@ class Ticket_2375_Model5 extends Doctrine_Record
     }
 }
 
-class Ticket_2375_Model6 extends Doctrine_Record
+class Ticket_2375_Model6 extends \Doctrine1\Record
 {
     public function setTableDefinition(): void
     {

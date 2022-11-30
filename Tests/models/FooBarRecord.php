@@ -1,5 +1,5 @@
 <?php
-class FooBarRecord extends Doctrine_Record
+class FooBarRecord extends \Doctrine1\Record
 {
     public function setTableDefinition(): void
     {

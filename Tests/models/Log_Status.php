@@ -1,5 +1,5 @@
 <?php
-class Log_Status extends Doctrine_Record
+class Log_Status extends \Doctrine1\Record
 {
     public function setTableDefinition(): void
     {

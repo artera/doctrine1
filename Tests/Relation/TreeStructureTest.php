@@ -83,7 +83,7 @@ class TreeStructureTest extends DoctrineUnitTestCase
     }
     public function testTreeStructureFetchingWorksWithDql()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
         $q->select('l.*, c.*')
           ->from('TreeLeaf l, l.Children c')
           ->where('l.parent_id IS NULL')

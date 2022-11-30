@@ -12,7 +12,7 @@ class RegistryTest extends DoctrineUnitTestCase
 
     public function testAddingQueries()
     {
-        $registry = new \Doctrine_Query_Registry();
+        $registry = new \Doctrine1\Query\Registry();
 
         $registry->add('all-users', 'SELECT u.* FROM User u');
 
@@ -21,7 +21,7 @@ class RegistryTest extends DoctrineUnitTestCase
 
     public function testAddingQueriesWithNamespaces()
     {
-        $registry = new \Doctrine_Query_Registry();
+        $registry = new \Doctrine1\Query\Registry();
 
         $registry->add('User/all', 'SELECT u.* FROM User u');
 

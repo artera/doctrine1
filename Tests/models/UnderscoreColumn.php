@@ -1,5 +1,5 @@
 <?php
-class UnderscoreColumn extends Doctrine_Record
+class UnderscoreColumn extends \Doctrine1\Record
 {
     public function setTableDefinition(): void
     {

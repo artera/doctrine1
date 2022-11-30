@@ -12,7 +12,7 @@ namespace Tests\Tickets {
 
         public function testTest()
         {
-            \Doctrine_Manager::getInstance()->setAttribute(\Doctrine_Core::ATTR_VALIDATE, \Doctrine_Core::VALIDATE_ALL);
+            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_ALL);
 
             $user           = new \Ticket_1764_User();
             $user->username = 'jwage';
@@ -20,16 +20,16 @@ namespace Tests\Tickets {
             $user->rate     = 1;
             $this->assertEquals($user->isValid(), true);
 
-            $sql = \Doctrine_Core::generateSqlFromArray(['Ticket_1764_User']);
+            $sql = \Doctrine1\Core::generateSqlFromArray(['Ticket_1764_User']);
             $this->assertEquals($sql[0], 'CREATE TABLE ticket_1764__user (id INTEGER PRIMARY KEY AUTOINCREMENT, username VARCHAR(255), password VARCHAR(255), rate DECIMAL(18,2) NOT NULL)');
 
-            \Doctrine_Manager::getInstance()->setAttribute(\Doctrine_Core::ATTR_VALIDATE, \Doctrine_Core::VALIDATE_NONE);
+            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_NONE);
         }
     }
 }
 
 namespace {
-    class Ticket_1764_User extends Doctrine_Record
+    class Ticket_1764_User extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

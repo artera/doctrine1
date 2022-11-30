@@ -1,5 +1,5 @@
 <?php
-class TreeLeaf extends Doctrine_Record
+class TreeLeaf extends \Doctrine1\Record
 {
     public function setTableDefinition(): void
     {

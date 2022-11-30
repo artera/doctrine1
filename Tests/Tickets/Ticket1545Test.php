@@ -22,7 +22,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class Ticket_1545_Foo extends Doctrine_Record
+    class Ticket_1545_Foo extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -35,13 +35,13 @@ namespace {
         }
     }
 
-    class Ticket_1545_FooFilter extends Doctrine_Record_Filter
+    class Ticket_1545_FooFilter extends \Doctrine1\Record\Filter
     {
         public function init(): void
         {
         }
 
-        public function filterGet(Doctrine_Record $record, $name)
+        public function filterGet(\Doctrine1\Record $record, $name)
         {
             if ($name == 'b') {
                 return $record->a;
@@ -50,7 +50,7 @@ namespace {
             }
         }
 
-        public function filterSet(Doctrine_Record $record, $name, $value)
+        public function filterSet(\Doctrine1\Record $record, $name, $value)
         {
             if ($name == 'custom') {
                 return $record->a = $value . '2';

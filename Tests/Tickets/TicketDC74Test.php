@@ -24,19 +24,19 @@ namespace Tests\Tickets {
         public function testTest()
         {
             // we are selecting "id" and "test1" fields and ommiting "test2"
-            $r1 = \Doctrine_Query::create()
+            $r1 = \Doctrine1\Query::create()
                 ->select('id, test1')
                 ->from('Ticket_DC74_Test')
                 ->fetchOne();
 
             // so we have object in PROXY state
-            $this->assertEquals(\Doctrine_Record_State::PROXY(), $r1->state());
+            $this->assertEquals(\Doctrine1\Record\State::PROXY, $r1->state());
 
             // now we are modifing one of loaded properties "test1"
             $r1->test1 = 'testx';
 
             // so record is in DIRTY state
-            $this->assertEquals(\Doctrine_Record_State::DIRTY(), $r1->state());
+            $this->assertEquals(\Doctrine1\Record\State::DIRTY, $r1->state());
 
             // when accessing to not loaded field "test2" no additional loading
             // currently such loading is performed is executed only in PROXY state
@@ -46,7 +46,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class Ticket_DC74_Test extends Doctrine_Record
+    class Ticket_DC74_Test extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

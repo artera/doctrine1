@@ -1,5 +1,5 @@
 <?php
-class TestMovie extends Doctrine_Record
+class TestMovie extends \Doctrine1\Record
 {
     public function setUp(): void
     {

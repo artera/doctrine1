@@ -52,7 +52,7 @@ namespace Tests\Tickets {
 
             $guardUser->free();
 
-            $query = new \Doctrine_Query();
+            $query = new \Doctrine1\Query();
 
             $query->select('s.*, p.*, ps.*');
             $query->from('sfGuardUser s');
@@ -71,7 +71,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class Person extends Doctrine_Record
+    class Person extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -98,7 +98,7 @@ namespace {
         }
     }
 
-    class Profile extends Doctrine_Record
+    class Profile extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -119,7 +119,7 @@ namespace {
         }
     }
 
-    class sfGuardUser extends Doctrine_Record
+    class sfGuardUser extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

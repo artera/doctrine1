@@ -18,9 +18,9 @@ namespace Tests\Tickets {
 
         public function testAddDuplicateOrganisation(): void
         {
-            $this->assertEquals(static::$conn->transaction->getState(), \Doctrine_Transaction_State::SLEEP());
+            $this->assertEquals(static::$conn->transaction->getState(), \Doctrine1\Transaction\State::SLEEP);
             static::$conn->beginTransaction();
-            $this->assertEquals(static::$conn->transaction->getState(), \Doctrine_Transaction_State::ACTIVE());
+            $this->assertEquals(static::$conn->transaction->getState(), \Doctrine1\Transaction\State::ACTIVE);
 
             $org       = new \NewTicket_Organization();
             $org->name = 'Inc.';
@@ -28,43 +28,43 @@ namespace Tests\Tickets {
                 $org->save();
                 $this->assertTrue(false, 'Unique violation not reported.');
             } catch (\Exception $e) {
-                $this->assertEquals(static::$conn->transaction->getState(), \Doctrine_Transaction_State::ACTIVE());
+                $this->assertEquals(static::$conn->transaction->getState(), \Doctrine1\Transaction\State::ACTIVE);
                 static::$conn->rollback();
             }
 
-            $this->assertEquals(static::$conn->transaction->getState(), \Doctrine_Transaction_State::SLEEP());
+            $this->assertEquals(static::$conn->transaction->getState(), \Doctrine1\Transaction\State::SLEEP);
 
             $this->expectException(\Exception::class);
 
-            $this->assertEquals(static::$conn->transaction->getState(), \Doctrine_Transaction_State::SLEEP());
+            $this->assertEquals(static::$conn->transaction->getState(), \Doctrine1\Transaction\State::SLEEP);
             static::$conn->commit();
 
-            $this->assertEquals(static::$conn->transaction->getState(), \Doctrine_Transaction_State::SLEEP());
+            $this->assertEquals(static::$conn->transaction->getState(), \Doctrine1\Transaction\State::SLEEP);
         }
 
         public function testAddRole(): void
         {
-            $this->assertEquals(static::$conn->transaction->getState(), \Doctrine_Transaction_State::SLEEP());
+            $this->assertEquals(static::$conn->transaction->getState(), \Doctrine1\Transaction\State::SLEEP);
 
             static::$conn->beginTransaction();
 
-            $this->assertEquals(static::$conn->transaction->getState(), \Doctrine_Transaction_State::ACTIVE());
+            $this->assertEquals(static::$conn->transaction->getState(), \Doctrine1\Transaction\State::ACTIVE);
 
             $r       = new \NewTicket_Role();
             $r->name = 'foo';
             $r->save();
-            $this->assertEquals(static::$conn->transaction->getState(), \Doctrine_Transaction_State::ACTIVE());
+            $this->assertEquals(static::$conn->transaction->getState(), \Doctrine1\Transaction\State::ACTIVE);
             $this->assertTrue(is_numeric($r->id));
 
-            $this->assertEquals(static::$conn->transaction->getState(), \Doctrine_Transaction_State::ACTIVE());
+            $this->assertEquals(static::$conn->transaction->getState(), \Doctrine1\Transaction\State::ACTIVE);
             static::$conn->commit();
-            $this->assertEquals(static::$conn->transaction->getState(), \Doctrine_Transaction_State::SLEEP());
+            $this->assertEquals(static::$conn->transaction->getState(), \Doctrine1\Transaction\State::SLEEP);
         }
     }
 }
 
 namespace {
-    class NewTicket_Organization extends Doctrine_Record
+    class NewTicket_Organization extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -90,7 +90,7 @@ namespace {
         }
     }
 
-    class NewTicket_Role extends Doctrine_Record
+    class NewTicket_Role extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

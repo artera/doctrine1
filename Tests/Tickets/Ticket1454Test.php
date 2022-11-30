@@ -7,7 +7,7 @@ class Ticket1454Test extends DoctrineUnitTestCase
 {
     public function testTest()
     {
-        $q = \Doctrine_Query::create()
+        $q = \Doctrine1\Query::create()
             ->from('User u')
             ->leftJoin('u.Phonenumber p')
             ->where('p.id = (SELECT MAX(p2.id) FROM Phonenumber p2 LIMIT 1)')

@@ -11,7 +11,7 @@ class Boolean implements SerializerInterface
         }
     }
 
-    public function serialize(mixed $value, array $column, \Doctrine_Table $table): mixed
+    public function serialize(mixed $value, array $column, \Doctrine1\Table $table): mixed
     {
         $this->checkCompatibility($value, $column['type']);
         $value = $table->getConnection()->convertBooleans($value);
@@ -19,7 +19,7 @@ class Boolean implements SerializerInterface
         return $value;
     }
 
-    public function areEquivalent(mixed $a, mixed $b, array $column, \Doctrine_Table $table): bool
+    public function areEquivalent(mixed $a, mixed $b, array $column, \Doctrine1\Table $table): bool
     {
         $this->checkCompatibility($a, $column['type']);
         if (is_numeric($a)) {

@@ -5,7 +5,7 @@ class HookTest extends DoctrineUnitTestCase
 {
     public function testWordLikeParserSupportsHyphens()
     {
-        $parser = new \Doctrine_Hook_WordLike();
+        $parser = new \Doctrine1\Hook\WordLike();
 
         $parser->parse('u', 'name', "'some guy' OR zYne");
 
@@ -15,7 +15,7 @@ class HookTest extends DoctrineUnitTestCase
 
     public function testHookOrderbyAcceptsArray()
     {
-        $hook = new \Doctrine_Hook('SELECT u.name FROM User u LEFT JOIN u.Phonenumber p');
+        $hook = new \Doctrine1\Hook('SELECT u.name FROM User u LEFT JOIN u.Phonenumber p');
 
         $a['orderby'] = ['u.name ASC'];
 
@@ -25,7 +25,7 @@ class HookTest extends DoctrineUnitTestCase
 
     public function testHookOrderbyAcceptsDescendingOrder()
     {
-        $hook = new \Doctrine_Hook('SELECT u.name FROM User u LEFT JOIN u.Phonenumber p');
+        $hook = new \Doctrine1\Hook('SELECT u.name FROM User u LEFT JOIN u.Phonenumber p');
 
         $a['orderby'] = ['u.name DESC'];
 
@@ -35,7 +35,7 @@ class HookTest extends DoctrineUnitTestCase
 
     public function testHookOrderbyDoesntAcceptUnknownColumn()
     {
-        $hook = new \Doctrine_Hook('SELECT u.name FROM User u LEFT JOIN u.Phonenumber p');
+        $hook = new \Doctrine1\Hook('SELECT u.name FROM User u LEFT JOIN u.Phonenumber p');
 
         $a['orderby'] = ['u.unknown DESC'];
 
@@ -45,7 +45,7 @@ class HookTest extends DoctrineUnitTestCase
 
     public function testHookOrderbyAcceptsMultipleParameters()
     {
-        $hook = new \Doctrine_Hook('SELECT u.name FROM User u LEFT JOIN u.Phonenumber p');
+        $hook = new \Doctrine1\Hook('SELECT u.name FROM User u LEFT JOIN u.Phonenumber p');
 
         $a['orderby'] = ['u.name ASC', 'u.id DESC'];
 
@@ -57,7 +57,7 @@ class HookTest extends DoctrineUnitTestCase
 
     public function testHookWhereAcceptsArrays()
     {
-        $hook = new \Doctrine_Hook('SELECT u.name FROM User u LEFT JOIN u.Phonenumber p');
+        $hook = new \Doctrine1\Hook('SELECT u.name FROM User u LEFT JOIN u.Phonenumber p');
 
         $a['where'] = ['u.name'      => 'Jack Daniels',
                             'u.loginname' => 'TheMan'];
@@ -69,7 +69,7 @@ class HookTest extends DoctrineUnitTestCase
 
     public function testHookWhereSupportsIntegerTypes()
     {
-        $hook = new \Doctrine_Hook('SELECT u.name FROM User u LEFT JOIN u.Phonenumber p');
+        $hook = new \Doctrine1\Hook('SELECT u.name FROM User u LEFT JOIN u.Phonenumber p');
 
         $a['where'] = ['u.id' => 10000];
 
@@ -80,7 +80,7 @@ class HookTest extends DoctrineUnitTestCase
 
     public function testHookWhereDoesntAcceptUnknownColumn()
     {
-        $hook = new \Doctrine_Hook('SELECT u.name FROM User u LEFT JOIN u.Phonenumber p');
+        $hook = new \Doctrine1\Hook('SELECT u.name FROM User u LEFT JOIN u.Phonenumber p');
 
         $a['where'] = ['u.unknown' => 'Jack Daniels'];
 
@@ -91,7 +91,7 @@ class HookTest extends DoctrineUnitTestCase
 
     public function testEqualParserUsesEqualOperator()
     {
-        $parser = new \Doctrine_Hook_Equal();
+        $parser = new \Doctrine1\Hook\Equal();
 
         $parser->parse('u', 'name', 'zYne');
 
@@ -101,7 +101,7 @@ class HookTest extends DoctrineUnitTestCase
 
     public function testWordLikeParserUsesLikeOperator()
     {
-        $parser = new \Doctrine_Hook_WordLike();
+        $parser = new \Doctrine1\Hook\WordLike();
 
         $parser->parse('u', 'name', 'zYne');
 
@@ -111,7 +111,7 @@ class HookTest extends DoctrineUnitTestCase
 
     public function testIntegerParserSupportsIntervals()
     {
-        $parser = new \Doctrine_Hook_Integer();
+        $parser = new \Doctrine1\Hook\Integer();
 
         $parser->parse('m', 'year', '1998-2000');
 
@@ -121,7 +121,7 @@ class HookTest extends DoctrineUnitTestCase
 
     public function testIntegerParserSupportsEqualOperator()
     {
-        $parser = new \Doctrine_Hook_Integer();
+        $parser = new \Doctrine1\Hook\Integer();
 
         $parser->parse('m', 'year', '1998');
 
@@ -131,7 +131,7 @@ class HookTest extends DoctrineUnitTestCase
 
     public function testIntegerParserSupportsNestingConditions()
     {
-        $parser = new \Doctrine_Hook_Integer();
+        $parser = new \Doctrine1\Hook\Integer();
 
         $parser->parse('m', 'year', '1998-2000 OR 2001');
 

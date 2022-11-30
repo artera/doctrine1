@@ -1,5 +1,5 @@
 <?php
-class NestReference extends Doctrine_Record
+class NestReference extends \Doctrine1\Record
 {
     public function setTableDefinition(): void
     {

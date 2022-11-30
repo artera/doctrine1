@@ -1,5 +1,5 @@
 <?php
-class Location extends Doctrine_Record
+class Location extends \Doctrine1\Record
 {
     public function setTableDefinition(): void
     {

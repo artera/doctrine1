@@ -7,7 +7,7 @@ class Ticket1338Test extends DoctrineUnitTestCase
 {
     public function testTest()
     {
-        $q = \Doctrine_Query::create()
+        $q = \Doctrine1\Query::create()
             ->from('User u');
         $users = $q->execute();
 

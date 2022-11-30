@@ -1,5 +1,5 @@
 <?php
-class Auth extends Doctrine_Record
+class Auth extends \Doctrine1\Record
 {
     public function setTableDefinition(): void
     {

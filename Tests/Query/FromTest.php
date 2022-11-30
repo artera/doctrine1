@@ -11,13 +11,13 @@ class FromTest extends DoctrineUnitTestCase
 
     public function testCount()
     {
-        $count = \Doctrine_Query::create()->from('User')->count();
+        $count = \Doctrine1\Query::create()->from('User')->count();
 
         $this->assertEquals($count, 0);
     }
     public function testLeftJoin()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->from('User u LEFT JOIN u.Group');
 
@@ -26,7 +26,7 @@ class FromTest extends DoctrineUnitTestCase
 
     public function testDefaultJoinIsLeftJoin()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->from('User u JOIN u.Group');
 
@@ -35,7 +35,7 @@ class FromTest extends DoctrineUnitTestCase
 
     public function testInnerJoin()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->from('User u INNER JOIN u.Group');
 
@@ -44,7 +44,7 @@ class FromTest extends DoctrineUnitTestCase
 
     public function testMultipleLeftJoin()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->from('User u LEFT JOIN u.Group LEFT JOIN u.Phonenumber');
 
@@ -52,7 +52,7 @@ class FromTest extends DoctrineUnitTestCase
     }
     public function testMultipleLeftJoin2()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->from('User u LEFT JOIN u.Group LEFT JOIN u.Phonenumber');
 
@@ -60,7 +60,7 @@ class FromTest extends DoctrineUnitTestCase
     }
     public function testMultipleInnerJoin()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->select('u.name')->from('User u INNER JOIN u.Group INNER JOIN u.Phonenumber');
 
@@ -68,7 +68,7 @@ class FromTest extends DoctrineUnitTestCase
     }
     public function testMultipleInnerJoin2()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->select('u.name')->from('User u INNER JOIN u.Group, u.Phonenumber');
 
@@ -76,7 +76,7 @@ class FromTest extends DoctrineUnitTestCase
     }
     public function testMixingOfJoins()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->select('u.name, g.name, p.phonenumber')->from('User u INNER JOIN u.Group g LEFT JOIN u.Phonenumber p');
 
@@ -84,7 +84,7 @@ class FromTest extends DoctrineUnitTestCase
     }
     public function testMixingOfJoins2()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->select('u.name, g.name, p.phonenumber')->from('User u INNER JOIN u.Group g LEFT JOIN g.Phonenumber p');
 

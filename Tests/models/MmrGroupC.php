@@ -1,5 +1,5 @@
 <?php
-class MmrGroupC extends Doctrine_Record
+class MmrGroupC extends \Doctrine1\Record
 {
     public function setUp(): void
     {

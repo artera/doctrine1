@@ -1,5 +1,5 @@
 <?php
-class BookmarkUser extends Doctrine_Record
+class BookmarkUser extends \Doctrine1\Record
 {
     public function setUp(): void
     {

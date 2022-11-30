@@ -1,5 +1,5 @@
 <?php
-class File_Owner extends Doctrine_Record
+class File_Owner extends \Doctrine1\Record
 {
     public function setTableDefinition(): void
     {

@@ -6,7 +6,7 @@ namespace Tests\Query {
     {
         public function testWhereInSupportInDql()
         {
-            $q = \Doctrine_Query::create()
+            $q = \Doctrine1\Query::create()
                 ->from('User u')
                 ->where('u.id IN ?', [[1, 2, 3]])
                 ->whereNotIn('u.name', ['', 'a'])
@@ -21,7 +21,7 @@ namespace Tests\Query {
 
         public function testWhereInSupportInDql2()
         {
-            $q = \Doctrine_Query::create()
+            $q = \Doctrine1\Query::create()
                 ->from('User u')
                 ->where('u.id IN ?', [1]);
 
@@ -46,7 +46,7 @@ namespace Tests\Query {
 
         public function testParseClauseSupportsArithmeticOperators()
         {
-            $q = new \Doctrine_Query();
+            $q = new \Doctrine1\Query();
 
             $str = $q->parseClause('2 + 3');
 
@@ -58,7 +58,7 @@ namespace Tests\Query {
         }
         public function testParseClauseSupportsArithmeticOperatorsWithFunctions()
         {
-            $q = new \Doctrine_Query();
+            $q = new \Doctrine1\Query();
 
             $str = $q->parseClause('ACOS(2) + 3');
 
@@ -67,7 +67,7 @@ namespace Tests\Query {
 
         public function testParseClauseSupportsArithmeticOperatorsWithParenthesis()
         {
-            $q = new \Doctrine_Query();
+            $q = new \Doctrine1\Query();
 
             $str = $q->parseClause('(3 + 3)*3');
 
@@ -80,7 +80,7 @@ namespace Tests\Query {
 
         public function testParseClauseSupportsArithmeticOperatorsWithParenthesisAndFunctions()
         {
-            $q = new \Doctrine_Query();
+            $q = new \Doctrine1\Query();
 
             $str = $q->parseClause('(3 + 3)*ACOS(3)');
 
@@ -93,7 +93,7 @@ namespace Tests\Query {
 
         public function testParseClauseSupportsComponentReferences()
         {
-            $q = new \Doctrine_Query();
+            $q = new \Doctrine1\Query();
             $q->from('User u')->leftJoin('u.Phonenumber p');
             $q->getSqlQuery();
             $this->assertEquals($q->parseClause("CONCAT('u.name', u.name)"), "CONCAT('u.name', e.name)");
@@ -101,7 +101,7 @@ namespace Tests\Query {
 
         public function testCountMaintainsParams()
         {
-            $q = new \Doctrine_Query();
+            $q = new \Doctrine1\Query();
             $q->from('User u');
             $q->leftJoin('u.Phonenumber p');
             $q->where('u.name = ?', 'zYne');
@@ -111,7 +111,7 @@ namespace Tests\Query {
 
         public function testCountWithGroupBy()
         {
-            $q = new \Doctrine_Query();
+            $q = new \Doctrine1\Query();
             $q->from('User u');
             $q->leftJoin('u.Phonenumber p');
             $q->groupBy('p.entity_id');
@@ -122,7 +122,7 @@ namespace Tests\Query {
         // ticket #821
         public function testQueryCopyClone()
         {
-            $query = new \Doctrine_Query();
+            $query = new \Doctrine1\Query();
             $query->select('u.*')->from('User u');
             $sql = $query->getSqlQuery();
 
@@ -143,26 +143,26 @@ namespace Tests\Query {
             $user                              = new \User();
             $user->name                        = 'jon';
             $user->loginname                   = 'jwage';
-            $user->Phonenumber[0]->phonenumber = new \Doctrine_Expression('NULL');
+            $user->Phonenumber[0]->phonenumber = new \Doctrine1\Expression('NULL');
             $user->save();
             $id = $user->id;
             $user->free();
 
-            $query = \Doctrine_Query::create()
+            $query = \Doctrine1\Query::create()
                 ->select('u.*, p.*, SUM(p.phonenumber) summ')
                 ->from('User u')
                 ->leftJoin('u.Phonenumber p')
                 ->where('u.id = ?', $id);
 
-            $users = $query->execute([], \Doctrine_Core::HYDRATE_ARRAY);
+            $users = $query->execute([], \Doctrine1\Core::HYDRATE_ARRAY);
 
             $this->assertTrue(array_key_exists('summ', $users[0]));
         }
 
         public function testQueryWithNoSelectFromRootTableThrowsException()
         {
-            $this->expectException(\Doctrine_Query_Exception::class);
-            $users = \Doctrine_Query::create()
+            $this->expectException(\Doctrine1\Query\Exception::class);
+            $users = \Doctrine1\Query::create()
                 ->select('p.*')
                 ->from('User u')
                 ->leftJoin('u.Phonenumber p')
@@ -172,14 +172,14 @@ namespace Tests\Query {
 
         public function testOrQuerySupport()
         {
-            $q1 = \Doctrine_Query::create()
+            $q1 = \Doctrine1\Query::create()
                 ->select('u.id')
                 ->from('User u')
                 ->leftJoin('u.Phonenumber p')
                 ->where('u.name = ?')
                 ->orWhere('u.loginname = ?');
 
-            $q2 = \Doctrine_Query::create()
+            $q2 = \Doctrine1\Query::create()
                 ->select('u.id')
                 ->from('User u')
                 ->leftJoin('u.Phonenumber p')
@@ -191,8 +191,8 @@ namespace Tests\Query {
                 'WHERE (e.name = ? OR e.loginname = ? AND (e.type = 0))'
             );
 
-            $items1 = $q1->execute(['zYne', 'jwage'], \Doctrine_Core::HYDRATE_ARRAY);
-            $items2 = $q2->execute(['zYne', 'jwage'], \Doctrine_Core::HYDRATE_ARRAY);
+            $items1 = $q1->execute(['zYne', 'jwage'], \Doctrine1\Core::HYDRATE_ARRAY);
+            $items2 = $q2->execute(['zYne', 'jwage'], \Doctrine1\Core::HYDRATE_ARRAY);
 
             $this->assertEquals(count($items1), count($items2));
 
@@ -203,7 +203,7 @@ namespace Tests\Query {
 
         public function testOrQuerySupport2()
         {
-            $q1 = \Doctrine_Query::create()
+            $q1 = \Doctrine1\Query::create()
                 ->select('u.id')
                 ->from('User u')
                 ->leftJoin('u.Phonenumber p')
@@ -211,7 +211,7 @@ namespace Tests\Query {
                 ->andWhere('u.loginname = ?')
                 ->orWhere('u.id = ?');
 
-            $q2 = \Doctrine_Query::create()
+            $q2 = \Doctrine1\Query::create()
                 ->select('u.id')
                 ->from('User u')
                 ->leftJoin('u.Phonenumber p')
@@ -223,8 +223,8 @@ namespace Tests\Query {
                 'WHERE (e.name = ? AND e.loginname = ? OR e.id = ? AND (e.type = 0))'
             );
 
-            $items1 = $q1->execute(['jon', 'jwage', 4], \Doctrine_Core::HYDRATE_ARRAY);
-            $items2 = $q2->execute(['jon', 'jwage', 4], \Doctrine_Core::HYDRATE_ARRAY);
+            $items1 = $q1->execute(['jon', 'jwage', 4], \Doctrine1\Core::HYDRATE_ARRAY);
+            $items2 = $q2->execute(['jon', 'jwage', 4], \Doctrine1\Core::HYDRATE_ARRAY);
 
             $this->assertEquals(count($items1), count($items2));
 
@@ -235,7 +235,7 @@ namespace Tests\Query {
 
         public function testOrQuerySupport3()
         {
-            $q1 = \Doctrine_Query::create()
+            $q1 = \Doctrine1\Query::create()
                 ->select('u.id')
                 ->from('User u')
                 ->leftJoin('u.Phonenumber p')
@@ -245,7 +245,7 @@ namespace Tests\Query {
                 ->orWhere('u.id = 5')
                 ->andWhere("u.name LIKE 'Arnold%'");
 
-            $q2 = \Doctrine_Query::create()
+            $q2 = \Doctrine1\Query::create()
                 ->select('u.id')
                 ->from('User u')
                 ->leftJoin('u.Phonenumber p')
@@ -257,8 +257,8 @@ namespace Tests\Query {
                 "WHERE (e.name = 'jon' AND e.loginname = 'jwage' OR e.id = 4 OR e.id = 5 AND e.name LIKE 'Arnold%' AND (e.type = 0))"
             );
 
-            $items1 = $q1->execute([], \Doctrine_Core::HYDRATE_ARRAY);
-            $items2 = $q2->execute([], \Doctrine_Core::HYDRATE_ARRAY);
+            $items1 = $q1->execute([], \Doctrine1\Core::HYDRATE_ARRAY);
+            $items2 = $q2->execute([], \Doctrine1\Core::HYDRATE_ARRAY);
 
             $this->assertEquals(count($items1), count($items2));
 
@@ -268,7 +268,7 @@ namespace Tests\Query {
 
         public function testParseTableAliasesWithBetweenInWhereClause()
         {
-            $q1 = \Doctrine_Query::create()
+            $q1 = \Doctrine1\Query::create()
                 ->select('u.id')
                 ->from('QueryTest_User u')
                 ->where('CURRENT_DATE() BETWEEN u.QueryTest_Subscription.begin AND u.QueryTest_Subscription.begin')
@@ -282,7 +282,7 @@ namespace Tests\Query {
 
         public function testQuoteAndBracketUsageAsValueInQuery()
         {
-            $q = \Doctrine_Query::create()
+            $q = \Doctrine1\Query::create()
                 ->select('u.id')
                 ->from('User u')
                 ->where("u.name = 'John O\'Connor (West)'");
@@ -292,7 +292,7 @@ namespace Tests\Query {
 
         public function testAsAndBracketUsageAsValueInQuery()
         {
-            $q = \Doctrine_Query::create()
+            $q = \Doctrine1\Query::create()
                 ->select('u.id')
                 ->from('User u')
                 ->where("u.name = 'Total Kjeldahl Nitrogen (TKN) as N'");
@@ -302,39 +302,39 @@ namespace Tests\Query {
 
         public function testSetQueryClassManagerAttribute()
         {
-            \Doctrine_Manager::getInstance()->setAttribute(\Doctrine_Core::ATTR_QUERY_CLASS, 'MyQuery');
+            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_QUERY_CLASS, 'MyQuery');
 
-            $q = \Doctrine_Query::create();
+            $q = \Doctrine1\Query::create();
             $this->assertTrue($q instanceof \MyQuery);
 
-            \Doctrine_Manager::getInstance()->setAttribute(\Doctrine_Core::ATTR_QUERY_CLASS, 'Doctrine_Query');
+            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_QUERY_CLASS, '\Doctrine1\Query');
         }
 
         public function testSetQueryClassConnectionAttribute()
         {
-            $userTable = \Doctrine_Core::getTable('User');
-            $userTable->getConnection()->setAttribute(\Doctrine_Core::ATTR_QUERY_CLASS, 'MyQuery');
+            $userTable = \Doctrine1\Core::getTable('User');
+            $userTable->getConnection()->setAttribute(\Doctrine1\Core::ATTR_QUERY_CLASS, 'MyQuery');
 
             $q = $userTable->createQuery();
             $this->assertTrue($q instanceof \MyQuery);
 
-            $userTable->getConnection()->setAttribute(\Doctrine_Core::ATTR_QUERY_CLASS, 'Doctrine_Query');
+            $userTable->getConnection()->setAttribute(\Doctrine1\Core::ATTR_QUERY_CLASS, '\Doctrine1\Query');
         }
 
         public function testSetQueryClassTableAttribute()
         {
-            $userTable = \Doctrine_Core::getTable('User');
-            $userTable->setAttribute(\Doctrine_Core::ATTR_QUERY_CLASS, 'MyQuery');
+            $userTable = \Doctrine1\Core::getTable('User');
+            $userTable->setAttribute(\Doctrine1\Core::ATTR_QUERY_CLASS, 'MyQuery');
 
             $q = $userTable->createQuery();
             $this->assertTrue($q instanceof \MyQuery);
 
-            $userTable->setAttribute(\Doctrine_Core::ATTR_QUERY_CLASS, 'Doctrine_Query');
+            $userTable->setAttribute(\Doctrine1\Core::ATTR_QUERY_CLASS, '\Doctrine1\Query');
         }
 
         public function testNoLimitSubqueryIfXToOneSelected()
         {
-            $q = \Doctrine_Query::create()
+            $q = \Doctrine1\Query::create()
                 ->select('u.name, e.address')
                 ->from('User u')
                 ->leftJoin('u.Email e')
@@ -348,7 +348,7 @@ namespace Tests\Query {
 }
 
 namespace {
-    class MyQuery extends Doctrine_Query
+    class MyQuery extends \Doctrine1\Query
     {
         public function preQuery()
         {

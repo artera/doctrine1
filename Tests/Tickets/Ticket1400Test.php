@@ -7,7 +7,7 @@ class Ticket1400Test extends DoctrineUnitTestCase
 {
     public function testTest()
     {
-        $q = \Doctrine_Query::create()
+        $q = \Doctrine1\Query::create()
             ->from('User u')
             ->where('u.id IN (SELECT u2.id FROM User u2 GROUP BY u2.id HAVING MAX(u2.version))')
             ->orderBy('u.loginname asc');

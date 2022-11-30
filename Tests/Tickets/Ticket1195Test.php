@@ -48,7 +48,7 @@ namespace Tests\Tickets {
         {
             //this checks for an error in parseDqlQueryPart
 
-            $query = new \Doctrine_RawSql();
+            $query = new \Doctrine1\RawSql();
             $q     = $query->select('{i.*}')
             ->addComponent('i', 'T1195_Item i')
             ->from('items i')
@@ -62,24 +62,24 @@ namespace Tests\Tickets {
 
         public function testRawSQLDistinct()
         {
-            $q = new \Doctrine_RawSql();
+            $q = new \Doctrine1\RawSql();
             $q = $q->select('{i.*}')
             ->addComponent('i', 'T1195_Item i')
             ->from('ref r')
             ->leftJoin('items i ON r.item_id=i.id');
 
 
-            $res = $q->execute([], \Doctrine_Core::HYDRATE_ARRAY);
+            $res = $q->execute([], \Doctrine1\Core::HYDRATE_ARRAY);
             $this->assertEquals(sizeof($res), 2);
 
             $q->distinct();
-            $res = $q->execute([], \Doctrine_Core::HYDRATE_ARRAY);
+            $res = $q->execute([], \Doctrine1\Core::HYDRATE_ARRAY);
             $this->assertEquals(sizeof($res), 1);
         }
 
         public function testRawSQLCount()
         {
-            $q = new \Doctrine_RawSql();
+            $q = new \Doctrine1\RawSql();
             $q = $q->select('{i.*}')
             ->addComponent('i', 'T1195_Item i')
             ->from('items i');
@@ -93,7 +93,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class T1195_Item extends Doctrine_Record
+    class T1195_Item extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -104,7 +104,7 @@ namespace {
         }
     }
 
-    class T1195_Ref extends Doctrine_Record
+    class T1195_Ref extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

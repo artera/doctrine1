@@ -23,7 +23,7 @@ class ReferenceModelTest extends DoctrineUnitTestCase
     public function testInitializeData()
     {
         static::$connection->clear();
-        $query = new \Doctrine_Query(static::$connection);
+        $query = new \Doctrine1\Query(static::$connection);
 
         $category = new \Forum_Category();
 
@@ -53,7 +53,7 @@ class ReferenceModelTest extends DoctrineUnitTestCase
 
     public function testSelfReferencingWithNestedOrderBy()
     {
-        $query = new \Doctrine_Query();
+        $query = new \Doctrine1\Query();
 
         $query->from('Forum_Category.Subcategory.Subcategory');
         $query->orderby('Forum_Category.id ASC, Forum_Category.Subcategory.name DESC');

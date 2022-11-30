@@ -14,7 +14,7 @@ namespace Tests\Migration {
 
         public function testMigration()
         {
-            $migration = new \Doctrine_Migration(__DIR__ . '/migration_classes');
+            $migration = new \Doctrine1\Migration(__DIR__ . '/migration_classes');
             $this->assertFalse($migration->hasMigrated());
             $migration->setCurrentVersion(3);
             $migration->migrate(0);
@@ -64,18 +64,18 @@ namespace Tests\Migration {
 
         public function testMigrateClearsErrors()
         {
-            $migration = new \Doctrine_Migration(__DIR__ . '/migration_classes');
+            $migration = new \Doctrine1\Migration(__DIR__ . '/migration_classes');
             $migration->setCurrentVersion(3);
             try {
                 $migration->migrate(3);
-            } catch (\Doctrine_Migration_Exception $e) {
+            } catch (\Doctrine1\Migration\Exception $e) {
                 $this->assertTrue($migration->hasErrors());
                 $this->assertEquals(1, $migration->getNumErrors());
             }
 
             try {
                 $migration->migrate(3);
-            } catch (\Doctrine_Migration_Exception $e) {
+            } catch (\Doctrine1\Migration\Exception $e) {
                 $this->assertTrue($migration->hasErrors());
                 $this->assertEquals(1, $migration->getNumErrors());
             }
@@ -88,7 +88,7 @@ namespace Tests\Migration {
 }
 
 namespace {
-    class MigrationPhonenumber extends Doctrine_Record
+    class MigrationPhonenumber extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -97,7 +97,7 @@ namespace {
         }
     }
 
-    class MigrationUser extends Doctrine_Record
+    class MigrationUser extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -106,7 +106,7 @@ namespace {
         }
     }
 
-    class MigrationProfile extends Doctrine_Record
+    class MigrationProfile extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

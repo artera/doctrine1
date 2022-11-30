@@ -7,7 +7,7 @@ class OrderbyTest extends DoctrineUnitTestCase
 {
     public function testOrderByRandomIsSupported()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->select('u.name, RANDOM() rand')
             ->from('User u')
@@ -18,7 +18,7 @@ class OrderbyTest extends DoctrineUnitTestCase
 
     public function testOrderByAggregateValueIsSupported()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->select('u.name, COUNT(p.phonenumber) count')
             ->from('User u')
@@ -31,7 +31,7 @@ class OrderbyTest extends DoctrineUnitTestCase
     // ticket #681
     public function testOrderByWithCoalesce()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->select('u.name')
             ->from('User u')
@@ -42,7 +42,7 @@ class OrderbyTest extends DoctrineUnitTestCase
 
     public function testOrderByWithMultipleCoalesce()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->select('u.name')
             ->from('User u')
@@ -53,7 +53,7 @@ class OrderbyTest extends DoctrineUnitTestCase
 
     public function testOrderByWithDifferentOrdering()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->select('u.name')
             ->from('User u')

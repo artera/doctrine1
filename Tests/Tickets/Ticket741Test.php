@@ -25,7 +25,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class Parent741 extends Doctrine_Record
+    class Parent741 extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -49,7 +49,7 @@ namespace {
         }
     }
 
-    class Child741 extends Doctrine_Record
+    class Child741 extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -74,7 +74,7 @@ namespace {
 
         public function postInsert($e)
         {
-            $this->Moo->state(\Doctrine_Record_State::DIRTY());
+            $this->Moo->state(\Doctrine1\Record\State::DIRTY);
             //echo "State: ". $this->Moo->state() . " \t Amount: " . $this->Moo->amount . "\n";
             $this->Moo->amount = 0;
             //echo "State: ". $this->Moo->state() . " \t Amount: " . $this->Moo->amount . "\n";

@@ -7,11 +7,11 @@ class Ticket1276Test extends DoctrineUnitTestCase
 {
     public function testTest()
     {
-        \Doctrine_Manager::getInstance()->setAttribute(\Doctrine_Core::ATTR_AUTO_FREE_QUERY_OBJECTS, true);
-        $q = \Doctrine_Query::create()
+        \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_AUTO_FREE_QUERY_OBJECTS, true);
+        $q = \Doctrine1\Query::create()
             ->from('User u');
         $users = $q->fetchArray();
         $this->assertTrue(is_array($users));
-        \Doctrine_Manager::getInstance()->setAttribute(\Doctrine_Core::ATTR_AUTO_FREE_QUERY_OBJECTS, false);
+        \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_AUTO_FREE_QUERY_OBJECTS, false);
     }
 }

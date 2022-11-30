@@ -40,68 +40,68 @@ namespace Tests\Tickets {
 
         public function testFindByUnaliasedColumnWorks()
         {
-            $r = \Doctrine_Core::getTable('Ticket_1124_Record')->findOneByNoAlias(self::NO_ALIAS);
+            $r = \Doctrine1\Core::getTable('Ticket_1124_Record')->findOneByNoAlias(self::NO_ALIAS);
             $this->assertIsSampleRecord($r);
         }
 
         public function testFindByDisjointlyAliasedColumnWorks()
         {
-            $r = \Doctrine_Core::getTable('Ticket_1124_Record')->findOneBysomethingElse(self::SOMETHING_ELSE);    // test currently fails
+            $r = \Doctrine1\Core::getTable('Ticket_1124_Record')->findOneBysomethingElse(self::SOMETHING_ELSE);    // test currently fails
             $this->assertIsSampleRecord($r);
         }
 
         public function testFindByDisjointlyAliasedColumnWorks2()
         {
-            $r = \Doctrine_Core::getTable('Ticket_1124_Record')->findOneBydisjoint_alias(self::SOMETHING_ELSE);    // test currently fails
+            $r = \Doctrine1\Core::getTable('Ticket_1124_Record')->findOneBydisjoint_alias(self::SOMETHING_ELSE);    // test currently fails
             $this->assertIsSampleRecord($r);
         }
 
         public function testFindByDisjointlyAliasedColumnWorks3()
         {
-            $r = \Doctrine_Core::getTable('Ticket_1124_Record')->findOneByDisjointAlias(self::SOMETHING_ELSE);    // test currently fails
+            $r = \Doctrine1\Core::getTable('Ticket_1124_Record')->findOneByDisjointAlias(self::SOMETHING_ELSE);    // test currently fails
             $this->assertIsSampleRecord($r);
         }
 
         public function testFindByTableizedAliasedColumnWorks()
         {
-            $r = \Doctrine_Core::getTable('Ticket_1124_Record')->findOneBytableizedAlias(self::TABLEIZED_ALIAS);    // test currently fails
+            $r = \Doctrine1\Core::getTable('Ticket_1124_Record')->findOneBytableizedAlias(self::TABLEIZED_ALIAS);    // test currently fails
             $this->assertIsSampleRecord($r);
         }
 
         public function testFindByTableizedAliasedColumnWorks2()
         {
-            $r = \Doctrine_Core::getTable('Ticket_1124_Record')->findOneBytableized_alias(self::TABLEIZED_ALIAS);    // test currently fails
+            $r = \Doctrine1\Core::getTable('Ticket_1124_Record')->findOneBytableized_alias(self::TABLEIZED_ALIAS);    // test currently fails
             $this->assertIsSampleRecord($r);
         }
 
         public function testFindByClassifiedAliasedColumnWorks()
         {
-            $r = \Doctrine_Core::getTable('Ticket_1124_Record')->findOneByClassifiedAlias(self::CLASSIFIED_ALIAS);    // test currently fails
+            $r = \Doctrine1\Core::getTable('Ticket_1124_Record')->findOneByClassifiedAlias(self::CLASSIFIED_ALIAS);    // test currently fails
             $this->assertIsSampleRecord($r);
         }
 
         public function testFindByAnotherAliasedColumnWorks()
         {
-            $r = \Doctrine_Core::getTable('Ticket_1124_Record')->findOneByTest(self::ANOTHER_ALIAS);    // test currently fails
+            $r = \Doctrine1\Core::getTable('Ticket_1124_Record')->findOneByTest(self::ANOTHER_ALIAS);    // test currently fails
             $this->assertIsSampleRecord($r);
         }
 
         public function testFindByAnotherAliasedColumnWorks2()
         {
-            $r = \Doctrine_Core::getTable('Ticket_1124_Record')->findOneBytest(self::ANOTHER_ALIAS);    // test currently fails
+            $r = \Doctrine1\Core::getTable('Ticket_1124_Record')->findOneBytest(self::ANOTHER_ALIAS);    // test currently fails
             $this->assertIsSampleRecord($r);
         }
 
         public function testFindByAnotherAliasedColumnWorks3()
         {
-            $r = \Doctrine_Core::getTable('Ticket_1124_Record')->findOneByanother_Alias(self::ANOTHER_ALIAS);    // test currently fails
+            $r = \Doctrine1\Core::getTable('Ticket_1124_Record')->findOneByanother_Alias(self::ANOTHER_ALIAS);    // test currently fails
             $this->assertIsSampleRecord($r);
         }
     }
 }
 
 namespace {
-    class Ticket_1124_Record extends Doctrine_Record
+    class Ticket_1124_Record extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

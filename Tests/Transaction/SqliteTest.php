@@ -11,12 +11,12 @@ class SqliteTest extends DoctrineUnitTestCase
     public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
-        static::$transaction = new \Doctrine_Transaction_Sqlite();
+        static::$transaction = new \Doctrine1\Transaction\Sqlite();
     }
 
     public function testSetIsolationThrowsExceptionOnUnknownIsolationMode()
     {
-        $this->expectException(\Doctrine_Transaction_Exception::class);
+        $this->expectException(\Doctrine1\Transaction\Exception::class);
         static::$transaction->setIsolation('unknown');
     }
 

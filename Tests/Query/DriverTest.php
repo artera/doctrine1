@@ -14,11 +14,11 @@ class DriverTest extends DoctrineUnitTestCase
 
     public function testLimitQueriesForPgsql()
     {
-        static::$dbh = new \Doctrine_Adapter_Mock('pgsql');
+        static::$dbh = new \Doctrine1\Adapter\Mock('pgsql');
 
         $conn = static::$manager->openConnection(static::$dbh);
 
-        $q = new \Doctrine_Query($conn);
+        $q = new \Doctrine1\Query($conn);
 
         $q->from('User u')->limit(5);
 
@@ -27,11 +27,11 @@ class DriverTest extends DoctrineUnitTestCase
 
     public function testLimitQueriesForSqlite()
     {
-        static::$dbh = new \Doctrine_Adapter_Mock('sqlite');
+        static::$dbh = new \Doctrine1\Adapter\Mock('sqlite');
 
         $conn = static::$manager->openConnection(static::$dbh);
 
-        $q = new \Doctrine_Query($conn);
+        $q = new \Doctrine1\Query($conn);
 
         $q->from('User u')->limit(5);
 
@@ -40,11 +40,11 @@ class DriverTest extends DoctrineUnitTestCase
 
     public function testLimitQueriesForMysql()
     {
-        static::$dbh = new \Doctrine_Adapter_Mock('mysql');
+        static::$dbh = new \Doctrine1\Adapter\Mock('mysql');
 
         $conn = static::$manager->openConnection(static::$dbh);
 
-        $q = new \Doctrine_Query($conn);
+        $q = new \Doctrine1\Query($conn);
 
         $q->from('User u')->limit(5);
 

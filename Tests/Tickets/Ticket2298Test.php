@@ -7,17 +7,17 @@ class Ticket2298Test extends DoctrineUnitTestCase
 {
     public function testTokenizerIgnoresQuotes()
     {
-        $q = \Doctrine_Query::create()
+        $q = \Doctrine1\Query::create()
             ->from('Address a')
             ->where("a.address = '(a) and c'");
         $this->assertEquals($q->getSqlQuery(), "SELECT a.id AS a__id, a.address AS a__address FROM address a WHERE (a.address = '(a) and c')");
 
-        $q = \Doctrine_Query::create()
+        $q = \Doctrine1\Query::create()
             ->from('Address a')
             ->where("a.address = ' or what'");
         $this->assertEquals($q->getSqlQuery(), "SELECT a.id AS a__id, a.address AS a__address FROM address a WHERE (a.address = ' or what')");
 
-        $q = \Doctrine_Query::create()
+        $q = \Doctrine1\Query::create()
             ->from('Address a')
             ->where("a.address = ' or      6spaces'");
         $this->assertEquals($q->getSqlQuery(), "SELECT a.id AS a__id, a.address AS a__address FROM address a WHERE (a.address = ' or      6spaces')");
@@ -26,7 +26,7 @@ class Ticket2298Test extends DoctrineUnitTestCase
 
     public function testEscapedQuotes()
     {
-        $tokenizer  = new \Doctrine_Query_Tokenizer();
+        $tokenizer  = new \Doctrine1\Query\Tokenizer();
         $delimiters = [' ', '+', '-', '*', '/', '<', '>', '=', '>=', '<=', '&', '|'];
 
         $res = $tokenizer->bracketExplode("'a string with AND in the middle'", ' AND ');
@@ -47,7 +47,7 @@ class Ticket2298Test extends DoctrineUnitTestCase
     {
         // These tests all pass with the old tokenizer, they were developed wile
         // working on the patch
-        $tokenizer  = new \Doctrine_Query_Tokenizer();
+        $tokenizer  = new \Doctrine1\Query\Tokenizer();
         $delimiters = [' ', '+', '-', '*', '/', '<', '>', '=', '>=', '<=', '&', '|'];
 
         $res = $tokenizer->bracketExplode("(age < 20 AND age > 18) AND email LIKE 'John@example.com'", ' AND ', '(', ')');

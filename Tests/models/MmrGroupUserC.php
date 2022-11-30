@@ -1,6 +1,6 @@
 <?php
 
-class MmrGroupUserC extends Doctrine_Record
+class MmrGroupUserC extends \Doctrine1\Record
 {
     public function setTableDefinition(): void
     {

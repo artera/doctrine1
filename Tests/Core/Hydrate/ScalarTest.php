@@ -18,12 +18,12 @@ class ScalarTest extends DoctrineUnitTestCase
 
     public function testHydrateScalarWithJoin()
     {
-        $q = \Doctrine_Query::create();
+        $q = \Doctrine1\Query::create();
         $q->select('u.*, p.*')
             ->from('User u')
             ->innerJoin('u.Phonenumber p');
 
-        $res = $q->execute([], \Doctrine_Core::HYDRATE_SCALAR);
+        $res = $q->execute([], \Doctrine1\Core::HYDRATE_SCALAR);
 
         $this->assertTrue(is_array($res));
         $this->assertEquals(2, count($res));
@@ -57,10 +57,10 @@ class ScalarTest extends DoctrineUnitTestCase
 
     public function testHydrateScalar()
     {
-        $q = \Doctrine_Query::create();
+        $q = \Doctrine1\Query::create();
         $q->select('u.*')->from('User u');
 
-        $res = $q->execute([], \Doctrine_Core::HYDRATE_SCALAR);
+        $res = $q->execute([], \Doctrine1\Core::HYDRATE_SCALAR);
 
         $this->assertTrue(is_array($res));
         $this->assertEquals(1, count($res));
@@ -79,30 +79,30 @@ class ScalarTest extends DoctrineUnitTestCase
 
     public function testHydrateSingleScalarDoesNotAddPKToSelect()
     {
-        $q = \Doctrine_Query::create();
+        $q = \Doctrine1\Query::create();
         $q->select('u.name')->from('User u');
-        $res = $q->execute([], \Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+        $res = $q->execute([], \Doctrine1\Core::HYDRATE_SINGLE_SCALAR);
         $this->assertEquals('romanb', $res);
         $q->free();
     }
 
     public function testHydrateSingleScalarWithAggregate()
     {
-        $q = \Doctrine_Query::create();
+        $q = \Doctrine1\Query::create();
         $q->select('COUNT(u.id) num_ids')->from('User u');
-        $res = $q->execute([], \Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+        $res = $q->execute([], \Doctrine1\Core::HYDRATE_SINGLE_SCALAR);
         $this->assertEquals(1, $res);
         $q->free();
     }
 
     public function testHydrateScalarWithJoinAndAggregate()
     {
-        $q = \Doctrine_Query::create();
+        $q = \Doctrine1\Query::create();
         $q->select('u.id, UPPER(u.name) nameUpper, p.*')
             ->from('User u')
             ->innerJoin('u.Phonenumber p');
 
-        $res = $q->execute([], \Doctrine_Core::HYDRATE_SCALAR);
+        $res = $q->execute([], \Doctrine1\Core::HYDRATE_SCALAR);
 
         $this->assertTrue(is_array($res));
         $this->assertEquals(2, count($res));
@@ -125,12 +125,12 @@ class ScalarTest extends DoctrineUnitTestCase
 
     public function testHydrateArrayShallowWithJoin()
     {
-        $q = \Doctrine_Query::create();
+        $q = \Doctrine1\Query::create();
         $q->select('u.*, p.id as phonenumber_id, p.phonenumber, p.entity_id')
             ->from('User u')
             ->innerJoin('u.Phonenumber p');
 
-        $res = $q->execute([], \Doctrine_Core::HYDRATE_ARRAY_SHALLOW);
+        $res = $q->execute([], \Doctrine1\Core::HYDRATE_ARRAY_SHALLOW);
 
         $this->assertTrue(is_array($res));
         $this->assertEquals(2, count($res));
@@ -164,10 +164,10 @@ class ScalarTest extends DoctrineUnitTestCase
 
     public function testHydrateArrayShallow()
     {
-        $q = \Doctrine_Query::create();
+        $q = \Doctrine1\Query::create();
         $q->select('u.*')->from('User u');
 
-        $res = $q->execute([], \Doctrine_Core::HYDRATE_ARRAY_SHALLOW);
+        $res = $q->execute([], \Doctrine1\Core::HYDRATE_ARRAY_SHALLOW);
 
         $this->assertTrue(is_array($res));
         $this->assertEquals(1, count($res));
@@ -186,12 +186,12 @@ class ScalarTest extends DoctrineUnitTestCase
 
     public function testHydrateArrayShallowWithJoinAndAggregate()
     {
-        $q = \Doctrine_Query::create();
+        $q = \Doctrine1\Query::create();
         $q->select('u.id, UPPER(u.name) nameUpper, p.id as phonenumber_id, p.phonenumber, p.entity_id')
             ->from('User u')
             ->innerJoin('u.Phonenumber p');
 
-        $res = $q->execute([], \Doctrine_Core::HYDRATE_ARRAY_SHALLOW);
+        $res = $q->execute([], \Doctrine1\Core::HYDRATE_ARRAY_SHALLOW);
 
         $this->assertTrue(is_array($res));
         $this->assertEquals(2, count($res));

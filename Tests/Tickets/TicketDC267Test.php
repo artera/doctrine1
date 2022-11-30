@@ -7,7 +7,7 @@ class TicketDC267Test extends DoctrineUnitTestCase
 {
     public function testTest()
     {
-        $q = \Doctrine_Query::create()
+        $q = \Doctrine1\Query::create()
             ->select('u.*, COUNT(e.id) as num_emails')
             ->from('User u')
             ->leftJoin('u.Email e')
@@ -16,7 +16,7 @@ class TicketDC267Test extends DoctrineUnitTestCase
         $res = $q->fetchArray();
         $this->assertEquals($res[0]['num_emails'], '1');
 
-        $q = \Doctrine_Query::create()
+        $q = \Doctrine1\Query::create()
             ->select('u.*, e.*, e.address as my_address')
             ->from('User u')
             ->leftJoin('u.Email e');

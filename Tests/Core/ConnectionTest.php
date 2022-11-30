@@ -7,17 +7,17 @@ class ConnectionTest extends DoctrineUnitTestCase
 {
     public function testUnknownModule(): void
     {
-        $this->expectException(\Doctrine_Connection_Exception::class);
+        $this->expectException(\Doctrine1\Connection\Exception::class);
         static::$connection->unknown;
     }
 
     public function testGetModule(): void
     {
-        $this->assertTrue(static::$connection->unitOfWork instanceof \Doctrine_Connection_UnitOfWork);
-        //$this->assertTrue(static::$connection->dataDict instanceof \Doctrine_DataDict);
-        $this->assertTrue(static::$connection->expression instanceof \Doctrine_Expression_Driver);
-        $this->assertTrue(static::$connection->transaction instanceof \Doctrine_Transaction);
-        $this->assertTrue(static::$connection->export instanceof \Doctrine_Export);
+        $this->assertTrue(static::$connection->unitOfWork instanceof \Doctrine1\Connection\UnitOfWork);
+        //$this->assertTrue(static::$connection->dataDict instanceof \Doctrine1\DataDict);
+        $this->assertTrue(static::$connection->expression instanceof \Doctrine1\Expression\Driver);
+        $this->assertTrue(static::$connection->transaction instanceof \Doctrine1\Transaction);
+        $this->assertTrue(static::$connection->export instanceof \Doctrine1\Export);
     }
 
     public function testFetchAll(): void
@@ -145,9 +145,9 @@ class ConnectionTest extends DoctrineUnitTestCase
     public function testGetTable(): void
     {
         $table = static::$connection->getTable('Group');
-        $this->assertTrue($table instanceof \Doctrine_Table);
+        $this->assertTrue($table instanceof \Doctrine1\Table);
 
-        $this->expectException(\Doctrine_Exception::class);
+        $this->expectException(\Doctrine1\Exception::class);
         $table = static::$connection->getTable('Unknown');
 
         $table = static::$connection->getTable('User');
@@ -177,8 +177,8 @@ class ConnectionTest extends DoctrineUnitTestCase
 
     public function testGetState(): void
     {
-        $this->assertEquals(static::$connection->transaction->getState(), \Doctrine_Transaction_State::SLEEP());
-        $this->assertEquals('open', (string) static::$connection->transaction->getState());
+        $this->assertEquals(static::$connection->transaction->getState(), \Doctrine1\Transaction\State::SLEEP);
+        $this->assertEquals('open', static::$connection->transaction->getState()->value);
     }
 
     public function testGetTables(): void
@@ -189,27 +189,27 @@ class ConnectionTest extends DoctrineUnitTestCase
     public function testRollback(): void
     {
         static::$connection->beginTransaction();
-        $this->assertEquals(static::$connection->transaction->getState(), \Doctrine_Transaction_State::ACTIVE());
+        $this->assertEquals(static::$connection->transaction->getState(), \Doctrine1\Transaction\State::ACTIVE);
         static::$connection->rollback();
-        $this->assertEquals(static::$connection->transaction->getState(), \Doctrine_Transaction_State::SLEEP());
+        $this->assertEquals(static::$connection->transaction->getState(), \Doctrine1\Transaction\State::SLEEP);
     }
 
     public function testNestedTransactions(): void
     {
-        $this->assertEquals(static::$connection->transaction->getState(), \Doctrine_Transaction_State::SLEEP());
+        $this->assertEquals(static::$connection->transaction->getState(), \Doctrine1\Transaction\State::SLEEP);
         static::$connection->beginTransaction();
-        $this->assertEquals(static::$connection->transaction->getState(), \Doctrine_Transaction_State::ACTIVE());
+        $this->assertEquals(static::$connection->transaction->getState(), \Doctrine1\Transaction\State::ACTIVE);
         static::$connection->beginTransaction();
-        $this->assertEquals(static::$connection->transaction->getState(), \Doctrine_Transaction_State::BUSY());
+        $this->assertEquals(static::$connection->transaction->getState(), \Doctrine1\Transaction\State::BUSY);
         static::$connection->commit();
-        $this->assertEquals(static::$connection->transaction->getState(), \Doctrine_Transaction_State::ACTIVE());
+        $this->assertEquals(static::$connection->transaction->getState(), \Doctrine1\Transaction\State::ACTIVE);
         static::$connection->commit();
-        $this->assertEquals(static::$connection->transaction->getState(), \Doctrine_Transaction_State::SLEEP());
+        $this->assertEquals(static::$connection->transaction->getState(), \Doctrine1\Transaction\State::SLEEP);
     }
 
     public function testSqliteDsn(): void
     {
-        $conn = \Doctrine_Manager::connection('sqlite:foo.sq3');
+        $conn = \Doctrine1\Manager::connection('sqlite:foo.sq3');
         $conn->connect();
         $conn->close();
         unlink('foo.sq3');

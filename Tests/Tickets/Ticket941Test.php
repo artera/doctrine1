@@ -55,7 +55,7 @@ namespace Tests\Tickets {
 
         public function testTicket()
         {
-            $query = new \Doctrine_Query();
+            $query = new \Doctrine1\Query();
             $query = $query->from('Site s LEFT JOIN s.Variables v LEFT JOIN v.Values vv WITH vv.site_id = s.site_id');
 
             $sites = $query->execute();
@@ -117,7 +117,7 @@ namespace Tests\Tickets {
 
 namespace {
 
-    abstract class BaseSite extends Doctrine_Record
+    abstract class BaseSite extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -137,7 +137,7 @@ namespace {
             );
         }
     }
-    abstract class BaseVariable extends Doctrine_Record
+    abstract class BaseVariable extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -163,7 +163,7 @@ namespace {
             );
         }
     }
-    abstract class BaseSiteVarvalue extends Doctrine_Record
+    abstract class BaseSiteVarvalue extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

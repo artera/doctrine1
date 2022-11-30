@@ -12,14 +12,14 @@ namespace Tests\Tickets {
 
         public function testTest()
         {
-            $sql = \Doctrine_Core::generateSqlFromArray(['Ticket_DC63_User']);
+            $sql = \Doctrine1\Core::generateSqlFromArray(['Ticket_DC63_User']);
             $this->assertEquals($sql[0], 'CREATE TABLE ticket__d_c63__user (id INTEGER, email_address VARCHAR(255) UNIQUE, username VARCHAR(255) NOT NULL UNIQUE, password VARCHAR(255), PRIMARY KEY(id, username))');
         }
     }
 }
 
 namespace {
-    class Ticket_DC63_User extends Doctrine_Record
+    class Ticket_DC63_User extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

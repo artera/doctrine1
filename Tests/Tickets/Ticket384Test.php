@@ -29,7 +29,7 @@ namespace Tickets {
 
         public function testTicket()
         {
-            $q = new \Doctrine_Query();
+            $q = new \Doctrine1\Query();
 
             // simple query with deep relations
             $q->addSelect('Resume.id, Level.id, Level.label')
@@ -38,7 +38,7 @@ namespace Tickets {
                 ->leftJoin('KnownLanguages.Level Level')
                 ->leftJoin('KnownLanguages.Language Language');
 
-            $this->expectException(\Doctrine_Query_Exception::class);
+            $this->expectException(\Doctrine1\Query\Exception::class);
 
             // get the wrong resultset
             $aResult = $q->fetchArray();
@@ -48,7 +48,7 @@ namespace Tickets {
             // now correct
             // we have to select at least KnownLanguages.id in order to get the Levels,
             // which are only reachable through the KnownLanguages, hydrated properly.
-            $q = new \Doctrine_Query();
+            $q = new \Doctrine1\Query();
             $q->addSelect('Resume.id, Level.id, Level.label, KnownLanguages.id')
                 ->from('ticket384_Resume Resume')
                 ->leftJoin('Resume.KnownLanguages KnownLanguages')
@@ -64,7 +64,7 @@ namespace Tickets {
 }
 
 namespace {
-    class ticket384_Resume extends Doctrine_Record
+    class ticket384_Resume extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -89,7 +89,7 @@ namespace {
         }
     }
 
-    class ticket384_ResumeHasLanguage extends Doctrine_Record
+    class ticket384_ResumeHasLanguage extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -164,7 +164,7 @@ namespace {
         }
     }
 
-    class ticket384_Language extends Doctrine_Record
+    class ticket384_Language extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -190,7 +190,7 @@ namespace {
         }
     }
 
-    class ticket384_LanguageLevel extends Doctrine_Record
+    class ticket384_LanguageLevel extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

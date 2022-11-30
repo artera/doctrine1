@@ -11,9 +11,9 @@ class TicketDC709Test extends DoctrineUnitTestCase
 
     public function testTest()
     {
-        $dbh = new \Doctrine_Adapter_Mock('mysql');
+        $dbh = new \Doctrine1\Adapter\Mock('mysql');
 
-        $conn = \Doctrine_Manager::getInstance()->connection($dbh, 'mysql', false);
+        $conn = \Doctrine1\Manager::getInstance()->connection($dbh, 'mysql', false);
 
         $sql = $conn->export->createTableSql(
             'mytable',

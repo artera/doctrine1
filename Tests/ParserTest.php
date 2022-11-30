@@ -5,14 +5,14 @@ class ParserTest extends DoctrineUnitTestCase
 {
     public function testGetParserInstance()
     {
-        $instance = \Doctrine_Parser::getParser('Yml');
-        $this->assertInstanceOf(\Doctrine_Parser_Yml::class, $instance);
+        $instance = \Doctrine1\Parser::getParser('Yml');
+        $this->assertInstanceOf(\Doctrine1\Parser\Yml::class, $instance);
     }
 
     public function testFacadeLoadAndDump()
     {
-        \Doctrine_Parser::dump(['test' => 'good job', 'test2' => true, ['testing' => false]], 'yml', 'test.yml');
-        $array = \Doctrine_Parser::load('test.yml', 'yml');
+        \Doctrine1\Parser::dump(['test' => 'good job', 'test2' => true, ['testing' => false]], 'yml', 'test.yml');
+        $array = \Doctrine1\Parser::load('test.yml', 'yml');
 
         $this->assertEquals($array, ['test' => 'good job', 'test2' => true, ['testing' => false]]);
         unlink('test.yml');
@@ -20,7 +20,7 @@ class ParserTest extends DoctrineUnitTestCase
 
     public function testParserSupportsEmbeddingPhpSyntax()
     {
-        $parser = \Doctrine_Parser::getParser('Yml');
+        $parser = \Doctrine1\Parser::getParser('Yml');
         $yml    = "---
 test: good job
 test2: true
@@ -36,7 +36,7 @@ w00t: not now
 
     public function testParserWritingToDisk()
     {
-        $parser = \Doctrine_Parser::getParser('Yml');
+        $parser = \Doctrine1\Parser::getParser('Yml');
         $parser->doDump('test', 'test.yml');
 
         $this->assertEquals('test', file_get_contents('test.yml'));
@@ -45,7 +45,7 @@ w00t: not now
 
     public function testParserReturningLoadedData()
     {
-        $parser = \Doctrine_Parser::getParser('Yml');
+        $parser = \Doctrine1\Parser::getParser('Yml');
         $result = $parser->doDump('test');
 
         $this->assertEquals('test', $result);
@@ -60,7 +60,7 @@ testing: <?php echo 'false'.\"\n\"; ?>
 w00t: not now
 ";
 
-        $array = \Doctrine_Parser::load($yml, 'yml');
+        $array = \Doctrine1\Parser::load($yml, 'yml');
 
         $this->assertEquals($array, ['test' => 'good job', 'test2' => true, 'testing' => false, 'w00t' => 'not now']);
     }

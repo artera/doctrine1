@@ -17,7 +17,7 @@ class EnumTest extends DoctrineUnitTestCase
         $this->assertEquals($test->status, 'open');
         $test->save();
 
-        $query = new \Doctrine_Query(static::$connection);
+        $query = new \Doctrine1\Query(static::$connection);
         $ret   = $query->query("FROM EnumTest WHERE EnumTest.status = 'open'");
         $this->assertEquals(count($ret), 1);
     }
@@ -29,7 +29,7 @@ class EnumTest extends DoctrineUnitTestCase
         $this->assertEquals($test->status, 'open');
         $test->save();
 
-        $test_update         = \Doctrine_Core::getTable('EnumTest2')->find(1);
+        $test_update         = \Doctrine1\Core::getTable('EnumTest2')->find(1);
         $test_update->status = 'verified';
         $this->assertEquals($test_update->status, 'verified');
         $test_update->save();
@@ -37,7 +37,7 @@ class EnumTest extends DoctrineUnitTestCase
 
     public function testDqlUpdate()
     {
-        $query = new \Doctrine_Query(static::$connection);
+        $query = new \Doctrine1\Query(static::$connection);
         $query->update('EnumTest2 u')
             ->set('u.status', '?', 'verified');
 
@@ -45,19 +45,19 @@ class EnumTest extends DoctrineUnitTestCase
 
         $query->execute();
 
-        $query = new \Doctrine_Query(static::$connection);
+        $query = new \Doctrine1\Query(static::$connection);
         $ret   = $query->query("FROM EnumTest2 WHERE EnumTest2.status = 'verified'");
         $this->assertEquals(count($ret), 1);
     }
 
     public function testParameterConversionInCount()
     {
-        $query = new \Doctrine_Query(static::$connection);
+        $query = new \Doctrine1\Query(static::$connection);
         $ret   = $query->parseDqlQuery("FROM EnumTest WHERE EnumTest.status = 'open'")
             ->count();
         $this->assertEquals($ret, 1);
 
-        $query = new \Doctrine_Query(static::$connection);
+        $query = new \Doctrine1\Query(static::$connection);
         $ret   = $query->parseDqlQuery('FROM EnumTest WHERE EnumTest.status = ?')
             ->count(['open']);
         $this->assertEquals($ret, 1);
@@ -65,25 +65,25 @@ class EnumTest extends DoctrineUnitTestCase
 
     public function testInAndNotIn()
     {
-        $query = new \Doctrine_Query(static::$connection);
+        $query = new \Doctrine1\Query(static::$connection);
         $ret   = $query->query("FROM EnumTest WHERE EnumTest.status IN ('open')");
         $this->assertEquals(count($ret), 1);
 
-        $query = new \Doctrine_Query(static::$connection);
+        $query = new \Doctrine1\Query(static::$connection);
         $ret   = $query->query("FROM EnumTest WHERE EnumTest.status NOT IN ('verified', 'closed')");
         $this->assertEquals(count($ret), 1);
     }
 
     public function testExpressionComposition()
     {
-        $query = new \Doctrine_Query(static::$connection);
+        $query = new \Doctrine1\Query(static::$connection);
         $ret   = $query->query("FROM EnumTest e WHERE e.id > 0 AND (e.status != 'closed' OR e.status = 'verified')");
         $this->assertEquals(count($ret), 1);
     }
 
     public function testNotEqual()
     {
-        $query = new \Doctrine_Query(static::$connection);
+        $query = new \Doctrine1\Query(static::$connection);
         $ret   = $query->query("FROM EnumTest WHERE EnumTest.status != 'closed'");
         $this->assertEquals(count($ret), 1);
     }
@@ -143,24 +143,24 @@ class EnumTest extends DoctrineUnitTestCase
 
         static::$conn->exec('DELETE FROM enum_test WHERE id = 1');
 
-        $this->expectException(\Doctrine_Record_Exception::class);
+        $this->expectException(\Doctrine1\Record\Exception::class);
         $enum->refresh();
     }
 
     public function testEnumFetchArray()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
         $q->select('e.*')
             ->from('EnumTest e')
             ->limit(1);
-        $ret = $q->execute([], \Doctrine_Core::HYDRATE_ARRAY);
+        $ret = $q->execute([], \Doctrine1\Core::HYDRATE_ARRAY);
 
         $this->assertFalse(is_numeric($ret[0]['status']));
     }
 
     public function testLiteralEnumValueConversionSupportsJoins()
     {
-        $q = new \Doctrine_Query(static::$connection);
+        $q = new \Doctrine1\Query(static::$connection);
         $q->addSelect('e.*')
             ->addSelect('e3.*')
             ->from('EnumTest e')
@@ -173,14 +173,14 @@ class EnumTest extends DoctrineUnitTestCase
 
     public function testInvalidValueErrors()
     {
-        $orig = \Doctrine_Manager::getInstance()->getAttribute(\Doctrine_Core::ATTR_VALIDATE);
-        \Doctrine_Manager::getInstance()->setAttribute(\Doctrine_Core::ATTR_VALIDATE, \Doctrine_Core::VALIDATE_ALL);
+        $orig = \Doctrine1\Manager::getInstance()->getAttribute(\Doctrine1\Core::ATTR_VALIDATE);
+        \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_ALL);
 
-        $this->expectException(\Doctrine_Validator_Exception::class);
+        $this->expectException(\Doctrine1\Validator\Exception::class);
         $test         = new \EnumTest();
         $test->status = 'opeerertn';
         $test->save();
 
-        \Doctrine_Manager::getInstance()->setAttribute(\Doctrine_Core::ATTR_VALIDATE, $orig);
+        \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, $orig);
     }
 }

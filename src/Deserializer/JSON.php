@@ -16,7 +16,7 @@ class JSON implements DeserializerInterface
         }
     }
 
-    public function deserialize(mixed $value, array $column, \Doctrine_Table $table): mixed
+    public function deserialize(mixed $value, array $column, \Doctrine1\Table $table): mixed
     {
         $this->checkCompatibility($value, $column['type']);
         return json_decode($value, $this->assoc, flags: JSON_THROW_ON_ERROR);

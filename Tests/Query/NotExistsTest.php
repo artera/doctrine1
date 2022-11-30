@@ -17,7 +17,7 @@ class NotExistsTest extends DoctrineUnitTestCase
 
     public function testQueryDoesNotSeparateNotAndExists()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->select('u.id')
             ->from('User u')

@@ -1,5 +1,5 @@
 <?php
-class SerializeTest extends Doctrine_Record
+class SerializeTest extends \Doctrine1\Record
 {
     public function setTableDefinition(): void
     {

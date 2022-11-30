@@ -6,11 +6,11 @@ namespace Tests\Tickets {
     {
         public function testInit()
         {
-            static::$dbh  = new \Doctrine_Adapter_Mock('mysql');
-            static::$conn = \Doctrine_Manager::getInstance()->openConnection(static::$dbh);
+            static::$dbh  = new \Doctrine1\Adapter\Mock('mysql');
+            static::$conn = \Doctrine1\Manager::getInstance()->openConnection(static::$dbh);
 
             static::$conn->setCharset('utf8');
-            static::$conn->setAttribute(\Doctrine_Core::ATTR_USE_NATIVE_ENUM, true);
+            static::$conn->setAttribute(\Doctrine1\Core::ATTR_USE_NATIVE_ENUM, true);
         }
 
         public static function prepareData(): void
@@ -29,7 +29,7 @@ namespace Tests\Tickets {
 
         public function testTicket()
         {
-            $q = \Doctrine_Query::create()
+            $q = \Doctrine1\Query::create()
             ->select('s.*, phs.*')
             ->from('T1365_Skill s')
             ->leftJoin('s.T1365_PersonHasSkill phs')
@@ -47,7 +47,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class T1365_Person extends Doctrine_Record
+    class T1365_Person extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -63,7 +63,7 @@ namespace {
     }
 
 
-    class T1365_Skill extends Doctrine_Record
+    class T1365_Skill extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -79,7 +79,7 @@ namespace {
     }
 
 
-    class T1365_PersonHasSkill extends Doctrine_Record
+    class T1365_PersonHasSkill extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

@@ -10,6 +10,6 @@ class ArrayTest extends AbstractTestCase
 
     protected function getCacheDriver()
     {
-        return new \Doctrine_Cache_Array();
+        return new \Doctrine1\Cache\PHPArray();
     }
 }

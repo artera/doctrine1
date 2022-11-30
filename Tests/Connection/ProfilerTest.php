@@ -5,7 +5,7 @@ use Tests\DoctrineUnitTestCase;
 
 class ProfilerTest extends DoctrineUnitTestCase
 {
-    protected \Doctrine_Connection_Profiler $profiler;
+    protected \Doctrine1\Connection\Profiler $profiler;
 
     public static function prepareTables(): void
     {
@@ -16,7 +16,7 @@ class ProfilerTest extends DoctrineUnitTestCase
 
     public function setUp(): void
     {
-        $this->profiler = new \Doctrine_Connection_Profiler();
+        $this->profiler = new \Doctrine1\Connection\Profiler();
         static::$conn->setListener($this->profiler);
     }
 
@@ -26,7 +26,7 @@ class ProfilerTest extends DoctrineUnitTestCase
 
         $this->assertEquals($this->profiler->lastEvent()->getQuery(), 'CREATE TABLE test (id INT)');
         $this->assertTrue($this->profiler->lastEvent()->hasEnded());
-        $this->assertEquals($this->profiler->lastEvent()->getCode(), \Doctrine_Event::CONN_EXEC);
+        $this->assertEquals($this->profiler->lastEvent()->getCode(), \Doctrine1\Event::CONN_EXEC);
         $this->assertTrue(is_numeric($this->profiler->lastEvent()->getElapsedSecs()));
 
         $this->assertEquals(static::$conn->count(), 1);
@@ -39,14 +39,14 @@ class ProfilerTest extends DoctrineUnitTestCase
 
         $this->assertEquals($event->getQuery(), 'INSERT INTO test (id) VALUES (?)');
         $this->assertTrue($this->profiler->lastEvent()->hasEnded());
-        $this->assertEquals($this->profiler->lastEvent()->getCode(), \Doctrine_Event::CONN_PREPARE);
+        $this->assertEquals($this->profiler->lastEvent()->getCode(), \Doctrine1\Event::CONN_PREPARE);
         $this->assertTrue(is_numeric($this->profiler->lastEvent()->getElapsedSecs()));
 
         $stmt->execute([1]);
 
         $this->assertEquals($this->profiler->lastEvent()->getQuery(), 'INSERT INTO test (id) VALUES (?)');
         $this->assertTrue($this->profiler->lastEvent()->hasEnded());
-        $this->assertEquals($this->profiler->lastEvent()->getCode(), \Doctrine_Event::STMT_EXECUTE);
+        $this->assertEquals($this->profiler->lastEvent()->getCode(), \Doctrine1\Event::STMT_EXECUTE);
         $this->assertTrue(is_numeric($this->profiler->lastEvent()->getElapsedSecs()));
 
         $this->assertEquals(static::$conn->count(), 2);
@@ -57,13 +57,13 @@ class ProfilerTest extends DoctrineUnitTestCase
         $stmt = static::$conn->prepare('INSERT INTO test (id) VALUES (?)');
         $this->assertEquals($this->profiler->lastEvent()->getQuery(), 'INSERT INTO test (id) VALUES (?)');
         $this->assertTrue($this->profiler->lastEvent()->hasEnded());
-        $this->assertEquals($this->profiler->lastEvent()->getCode(), \Doctrine_Event::CONN_PREPARE);
+        $this->assertEquals($this->profiler->lastEvent()->getCode(), \Doctrine1\Event::CONN_PREPARE);
         $this->assertTrue(is_numeric($this->profiler->lastEvent()->getElapsedSecs()));
 
         $stmt2 = static::$conn->prepare('INSERT INTO test (id) VALUES (?)');
         $this->assertEquals($this->profiler->lastEvent()->getQuery(), 'INSERT INTO test (id) VALUES (?)');
         $this->assertTrue($this->profiler->lastEvent()->hasEnded());
-        $this->assertEquals($this->profiler->lastEvent()->getCode(), \Doctrine_Event::CONN_PREPARE);
+        $this->assertEquals($this->profiler->lastEvent()->getCode(), \Doctrine1\Event::CONN_PREPARE);
         $this->assertTrue(is_numeric($this->profiler->lastEvent()->getElapsedSecs()));
     }
 
@@ -75,12 +75,12 @@ class ProfilerTest extends DoctrineUnitTestCase
 
         $this->assertEquals($this->profiler->lastEvent()->getQuery(), 'INSERT INTO test (id) VALUES (?)');
         $this->assertTrue($this->profiler->lastEvent()->hasEnded());
-        $this->assertEquals($this->profiler->lastEvent()->getCode(), \Doctrine_Event::STMT_EXECUTE);
+        $this->assertEquals($this->profiler->lastEvent()->getCode(), \Doctrine1\Event::STMT_EXECUTE);
         $this->assertTrue(is_numeric($this->profiler->lastEvent()->getElapsedSecs()));
 
         $this->assertEquals($this->profiler->lastEvent()->getQuery(), 'INSERT INTO test (id) VALUES (?)');
         $this->assertTrue($this->profiler->lastEvent()->hasEnded());
-        $this->assertEquals($this->profiler->lastEvent()->getCode(), \Doctrine_Event::STMT_EXECUTE);
+        $this->assertEquals($this->profiler->lastEvent()->getCode(), \Doctrine1\Event::STMT_EXECUTE);
         $this->assertTrue(is_numeric($this->profiler->lastEvent()->getElapsedSecs()));
     }
 
@@ -90,14 +90,14 @@ class ProfilerTest extends DoctrineUnitTestCase
 
         $this->assertEquals($this->profiler->lastEvent()->getQuery(), null);
         $this->assertTrue($this->profiler->lastEvent()->hasEnded());
-        $this->assertEquals($this->profiler->lastEvent()->getCode(), \Doctrine_Event::TX_BEGIN);
+        $this->assertEquals($this->profiler->lastEvent()->getCode(), \Doctrine1\Event::TX_BEGIN);
         $this->assertTrue(is_numeric($this->profiler->lastEvent()->getElapsedSecs()));
 
         static::$conn->rollback();
 
         $this->assertEquals($this->profiler->lastEvent()->getQuery(), null);
         $this->assertTrue($this->profiler->lastEvent()->hasEnded());
-        $this->assertEquals($this->profiler->lastEvent()->getCode(), \Doctrine_Event::TX_ROLLBACK);
+        $this->assertEquals($this->profiler->lastEvent()->getCode(), \Doctrine1\Event::TX_ROLLBACK);
         $this->assertTrue(is_numeric($this->profiler->lastEvent()->getElapsedSecs()));
     }
 
@@ -107,14 +107,14 @@ class ProfilerTest extends DoctrineUnitTestCase
 
         $this->assertEquals($this->profiler->lastEvent()->getQuery(), null);
         $this->assertTrue($this->profiler->lastEvent()->hasEnded());
-        $this->assertEquals($this->profiler->lastEvent()->getCode(), \Doctrine_Event::TX_BEGIN);
+        $this->assertEquals($this->profiler->lastEvent()->getCode(), \Doctrine1\Event::TX_BEGIN);
         $this->assertTrue(is_numeric($this->profiler->lastEvent()->getElapsedSecs()));
 
         static::$conn->commit();
 
         $this->assertEquals($this->profiler->lastEvent()->getQuery(), null);
         $this->assertTrue($this->profiler->lastEvent()->hasEnded());
-        $this->assertEquals($this->profiler->lastEvent()->getCode(), \Doctrine_Event::TX_COMMIT);
+        $this->assertEquals($this->profiler->lastEvent()->getCode(), \Doctrine1\Event::TX_COMMIT);
         $this->assertTrue(is_numeric($this->profiler->lastEvent()->getElapsedSecs()));
     }
 }

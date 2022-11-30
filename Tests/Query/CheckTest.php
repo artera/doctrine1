@@ -15,7 +15,7 @@ class CheckTest extends DoctrineUnitTestCase
 
     public function testCheckParserSupportsStandardFunctions()
     {
-        $q = new \Doctrine_Query_Check('User');
+        $q = new \Doctrine1\Query\Check('User');
 
         $q->parse('LENGTH(name) > 6');
 
@@ -24,17 +24,17 @@ class CheckTest extends DoctrineUnitTestCase
 
     public function testCheckParserThrowsExceptionForUnknownOperator()
     {
-        $q = new \Doctrine_Query_Check('User');
+        $q = new \Doctrine1\Query\Check('User');
 
-        $this->expectException(\Doctrine_Query_Exception::class);
+        $this->expectException(\Doctrine1\Query\Exception::class);
         $q->parse('LENGTH(name) ? 6');
     }
 
     public function testCheckParserThrowsExceptionForUnknownFunction()
     {
-        $q = new \Doctrine_Query_Check('User');
+        $q = new \Doctrine1\Query\Check('User');
 
-        $this->expectException(\Doctrine_Query_Exception::class);
+        $this->expectException(\Doctrine1\Query\Exception::class);
         $q->parse('SomeUnknownFunction(name) = 6');
     }
 }

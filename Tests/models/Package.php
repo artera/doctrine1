@@ -1,5 +1,5 @@
 <?php
-class Package extends Doctrine_Record
+class Package extends \Doctrine1\Record
 {
     public function setTableDefinition(): void
     {

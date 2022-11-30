@@ -15,7 +15,7 @@ namespace Tests\Tickets {
 
         public function testInheritanceSubclasses()
         {
-            $records = \Doctrine_Query::create()->query('FROM Parent1713 m');
+            $records = \Doctrine1\Query::create()->query('FROM Parent1713 m');
 
             foreach ($records as $rec) {
                 $this->assertEquals(get_class($rec), $rec['title']);
@@ -25,7 +25,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class Parent1713 extends Doctrine_Record
+    class Parent1713 extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

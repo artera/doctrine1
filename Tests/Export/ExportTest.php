@@ -9,12 +9,12 @@ class ExportTest extends DoctrineUnitTestCase
 
     public function testCreateTableThrowsExceptionWithoutValidTableName()
     {
-        $this->expectException(\Doctrine_Export_Exception::class);
+        $this->expectException(\Doctrine1\Export\Exception::class);
         static::$conn->export->createTable(0, [], []);
     }
     public function testCreateTableThrowsExceptionWithEmptyFieldsArray()
     {
-        $this->expectException(\Doctrine_Export_Exception::class);
+        $this->expectException(\Doctrine1\Export\Exception::class);
         static::$conn->export->createTable('sometable', [], []);
     }
     public function testDropConstraintExecutesSql()

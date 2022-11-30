@@ -1,5 +1,5 @@
 <?php
-class Task extends Doctrine_Record
+class Task extends \Doctrine1\Record
 {
     public function setUp(): void
     {

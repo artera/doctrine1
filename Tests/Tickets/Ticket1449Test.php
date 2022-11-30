@@ -23,22 +23,22 @@ namespace Tests\Tickets {
 
         public function testTest()
         {
-            $document = \Doctrine_Query::create()
+            $document = \Doctrine1\Query::create()
             ->select('d.id, d.name, a.id, a.document_id')
             ->from('Ticket_1449_Document d')
             ->leftJoin('d.Attachments a')
             ->limit(1)
             ->fetchOne();
-            $this->assertEquals($document->state()->getValue(), 4);
+            $this->assertEquals($document->state()->value, 4);
             foreach ($document->Attachments as $attachment) {
-                $this->assertEquals($attachment->state()->getValue(), 4);
+                $this->assertEquals($attachment->state()->value, 4);
             }
         }
     }
 }
 
 namespace {
-    class Ticket_1449_Document extends Doctrine_Record
+    class Ticket_1449_Document extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -56,7 +56,7 @@ namespace {
         }
     }
 
-    class Ticket_1449_Attachment extends Doctrine_Record
+    class Ticket_1449_Attachment extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

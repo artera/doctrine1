@@ -6,8 +6,8 @@ namespace Tests\Tickets {
     {
         public function testInit()
         {
-            static::$dbh  = new \Doctrine_Adapter_Mock('mysql');
-            static::$conn = \Doctrine_Manager::getInstance()->openConnection(static::$dbh);
+            static::$dbh  = new \Doctrine1\Adapter\Mock('mysql');
+            static::$conn = \Doctrine1\Manager::getInstance()->openConnection(static::$dbh);
         }
 
 
@@ -23,7 +23,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class stDummyObj extends Doctrine_Record
+    class stDummyObj extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

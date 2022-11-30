@@ -2,10 +2,10 @@
 
 require_once 'Entity.php';
 
-// UserTable doesn't extend Doctrine_Table -> Doctrine_Connection
-// won't initialize grouptable when Doctrine_Connection->getTable('User') is called
-/** @phpstan-extends Doctrine_Table<User> */
-class UserTable extends Doctrine_Table
+// UserTable doesn't extend \Doctrine1\Table -> \Doctrine1\Connection
+// won't initialize grouptable when \Doctrine1\Connection->getTable('User') is called
+/** @phpstan-extends \Doctrine1\Table<User> */
+class UserTable extends \Doctrine1\Table
 {
 }
 

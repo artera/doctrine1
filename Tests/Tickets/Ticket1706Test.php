@@ -6,36 +6,36 @@ namespace Tests\Tickets {
     {
         public function testCachedResultsAreSpecificToDsn()
         {
-            $cacheDriver = new \Doctrine_Cache_Array();
+            $cacheDriver = new \Doctrine1\Cache\PHPArray();
 
-            $conn1 = \Doctrine_Manager::connection('sqlite::memory:', 'conn_1');
-            $conn1->setAttribute(\Doctrine_Core::ATTR_RESULT_CACHE, $cacheDriver);
+            $conn1 = \Doctrine1\Manager::connection('sqlite::memory:', 'conn_1');
+            $conn1->setAttribute(\Doctrine1\Core::ATTR_RESULT_CACHE, $cacheDriver);
 
-            $conn2 = \Doctrine_Manager::connection('sqlite::memory:', 'conn_2');
-            $conn2->setAttribute(\Doctrine_Core::ATTR_RESULT_CACHE, $cacheDriver);
+            $conn2 = \Doctrine1\Manager::connection('sqlite::memory:', 'conn_2');
+            $conn2->setAttribute(\Doctrine1\Core::ATTR_RESULT_CACHE, $cacheDriver);
             $this->assertNotEquals($conn1, $conn2);
 
-            $manager = \Doctrine_Manager::getInstance();
+            $manager = \Doctrine1\Manager::getInstance();
             $manager->setCurrentConnection('conn_1');
-            $this->assertEquals($conn1, \Doctrine_Manager::connection());
+            $this->assertEquals($conn1, \Doctrine1\Manager::connection());
 
-            \Doctrine_Core::createTablesFromArray(['Ticket_1706_User']);
+            \Doctrine1\Core::createTablesFromArray(['Ticket_1706_User']);
 
             $user       = new \Ticket_1706_User();
             $user->name = 'Allen';
             $user->save();
 
             $manager->setCurrentConnection('conn_2');
-            $this->assertEquals($conn2, \Doctrine_Manager::connection());
+            $this->assertEquals($conn2, \Doctrine1\Manager::connection());
 
-            \Doctrine_Core::createTablesFromArray(['Ticket_1706_User']);
+            \Doctrine1\Core::createTablesFromArray(['Ticket_1706_User']);
 
             $user       = new \Ticket_1706_User();
             $user->name = 'Bob';
             $user->save();
 
             $manager->setCurrentConnection('conn_1');
-            $u1 = \Doctrine_Query::create()
+            $u1 = \Doctrine1\Query::create()
             ->from('Ticket_1706_User u')
             ->useResultCache()
             ->execute();
@@ -44,7 +44,7 @@ namespace Tests\Tickets {
             $this->assertEquals('Allen', $u1[0]->name);
 
             $manager->setCurrentConnection('conn_2');
-            $u2 = \Doctrine_Query::create()
+            $u2 = \Doctrine1\Query::create()
             ->from('Ticket_1706_User u')
             ->useResultCache()
             ->execute();
@@ -56,7 +56,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class Ticket_1706_User extends Doctrine_Record
+    class Ticket_1706_User extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

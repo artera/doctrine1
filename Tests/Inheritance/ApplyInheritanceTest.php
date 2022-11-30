@@ -13,7 +13,7 @@ class ApplyInheritanceTest extends DoctrineUnitTestCase
 
     public function testApplyInheritance()
     {
-        $query = new \Doctrine_Query();
+        $query = new \Doctrine1\Query();
         $query->from('InheritanceDeal d, d.Users u');
         $query->where('u.id = 1');
 

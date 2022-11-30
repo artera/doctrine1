@@ -30,7 +30,7 @@ class QueryDynamicReturnTypeExtension extends AbstractExtension implements Dynam
 {
     public function getClass(): string
     {
-        return \Doctrine_Query_Abstract::class;
+        return \Doctrine1\AbstractQuery::class;
     }
 
     public function isMethodSupported(MethodReflection $methodReflection): bool
@@ -66,20 +66,20 @@ class QueryDynamicReturnTypeExtension extends AbstractExtension implements Dynam
 
         if ($hydrateArg === null) {
             // argument not used, imply default of false
-            $hydrationMode = \Doctrine_Core::HYDRATE_RECORD;
+            $hydrationMode = \Doctrine1\Core::HYDRATE_RECORD;
         } else {
             // argument used, read value if static
             $argType = $scope->getType($hydrateArg->value);
             if ($argType instanceof ConstantIntegerType) {
                 $hydrationMode = $argType->getValue();
             } elseif ($argType instanceof NullType) {
-                $hydrationMode = \Doctrine_Core::HYDRATE_RECORD;
+                $hydrationMode = \Doctrine1\Core::HYDRATE_RECORD;
             } else {
                 return $returnType;
             }
         }
 
-        if (!in_array($hydrationMode, [\Doctrine_Core::HYDRATE_RECORD, \Doctrine_Core::HYDRATE_ARRAY, \Doctrine_Core::HYDRATE_SCALAR, \Doctrine_Core::HYDRATE_ON_DEMAND])) {
+        if (!in_array($hydrationMode, [\Doctrine1\Core::HYDRATE_RECORD, \Doctrine1\Core::HYDRATE_ARRAY, \Doctrine1\Core::HYDRATE_SCALAR, \Doctrine1\Core::HYDRATE_ON_DEMAND])) {
             return $returnType;
         }
 
@@ -126,7 +126,7 @@ class QueryDynamicReturnTypeExtension extends AbstractExtension implements Dynam
             $types = $selfType->getTypes();
             if (count($types) > 1 && $types[1] instanceof ObjectType) {
                 $queryTypeTemplate = $types[1]->getClassname();
-                if ($queryTypeTemplate !== \Doctrine_Query_Type_Select::class) {
+                if ($queryTypeTemplate !== \Doctrine1\Query\Type\Select::class) {
                     $select = false;
                 }
             }
@@ -137,10 +137,10 @@ class QueryDynamicReturnTypeExtension extends AbstractExtension implements Dynam
         }
 
         $objectType = null;
-        if ($hydrationMode === \Doctrine_Core::HYDRATE_RECORD) {
-            $objectType = new ObjectType(\Doctrine_Collection::class);
-        } elseif ($hydrationMode === \Doctrine_Core::HYDRATE_ON_DEMAND) {
-            $objectType = new ObjectType(\Doctrine_Collection_OnDemand::class);
+        if ($hydrationMode === \Doctrine1\Core::HYDRATE_RECORD) {
+            $objectType = new ObjectType(\Doctrine1\Collection::class);
+        } elseif ($hydrationMode === \Doctrine1\Core::HYDRATE_ON_DEMAND) {
+            $objectType = new ObjectType(\Doctrine1\Collection\OnDemand::class);
         }
 
         $types = [];
@@ -154,7 +154,7 @@ class QueryDynamicReturnTypeExtension extends AbstractExtension implements Dynam
                 if ($type instanceof ObjectType && $objectType->isSuperTypeOf($type)->yes()) {
                     $types[] = $type;
                 }
-            } elseif ($hydrationMode === \Doctrine_Core::HYDRATE_ARRAY || $hydrationMode === \Doctrine_Core::HYDRATE_SCALAR) {
+            } elseif ($hydrationMode === \Doctrine1\Core::HYDRATE_ARRAY || $hydrationMode === \Doctrine1\Core::HYDRATE_SCALAR) {
                 if ($type instanceof ArrayType) {
                     $types[] = $type;
                 }
@@ -165,7 +165,7 @@ class QueryDynamicReturnTypeExtension extends AbstractExtension implements Dynam
 
     protected function getFetchOneReturnType(Type $selfType, UnionType $returnType, int $hydrationMode): Type
     {
-        if ($hydrationMode === \Doctrine_Core::HYDRATE_ON_DEMAND) {
+        if ($hydrationMode === \Doctrine1\Core::HYDRATE_ON_DEMAND) {
             return $returnType;
         }
 
@@ -176,15 +176,15 @@ class QueryDynamicReturnTypeExtension extends AbstractExtension implements Dynam
                 continue;
             }
 
-            if ($hydrationMode === \Doctrine_Core::HYDRATE_RECORD) {
+            if ($hydrationMode === \Doctrine1\Core::HYDRATE_RECORD) {
                 if ($type instanceof ObjectType) {
                     $types[] = $type;
                 }
-            } elseif ($hydrationMode === \Doctrine_Core::HYDRATE_ARRAY) {
+            } elseif ($hydrationMode === \Doctrine1\Core::HYDRATE_ARRAY) {
                 if ($type instanceof ArrayType) {
                     $types[] = $type;
                 }
-            } elseif ($hydrationMode === \Doctrine_Core::HYDRATE_SCALAR) {
+            } elseif ($hydrationMode === \Doctrine1\Core::HYDRATE_SCALAR) {
                 if (!$type instanceof ArrayType && !$type instanceof ObjectType) {
                     $types[] = $type;
                 }

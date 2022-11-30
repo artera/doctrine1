@@ -1,5 +1,5 @@
 <?php
-class FieldNameTest extends Doctrine_Record
+class FieldNameTest extends \Doctrine1\Record
 {
     public function setTableDefinition(): void
     {

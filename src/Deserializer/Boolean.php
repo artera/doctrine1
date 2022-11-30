@@ -11,7 +11,7 @@ class Boolean implements DeserializerInterface
         }
     }
 
-    public function deserialize(mixed $value, array $column, \Doctrine_Table $table): mixed
+    public function deserialize(mixed $value, array $column, \Doctrine1\Table $table): mixed
     {
         $this->checkCompatibility($value, $column['type']);
         return (bool) $value;

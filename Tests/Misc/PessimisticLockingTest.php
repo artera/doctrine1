@@ -5,7 +5,7 @@ use Tests\DoctrineUnitTestCase;
 
 class PessimisticLockingTest extends DoctrineUnitTestCase
 {
-    private static \Doctrine_Locking_Manager_Pessimistic $lockingManager;
+    private static \Doctrine1\Locking\Manager\Pessimistic $lockingManager;
 
     /**
      * Sets up everything for the lock testing
@@ -16,7 +16,7 @@ class PessimisticLockingTest extends DoctrineUnitTestCase
     {
         parent::setUpBeforeClass();
 
-        static::$lockingManager = new \Doctrine_Locking_Manager_Pessimistic(static::$connection);
+        static::$lockingManager = new \Doctrine1\Locking\Manager\Pessimistic(static::$connection);
 
         // Create sample data to test on
         $entry1         = new \Forum_Entry();
@@ -82,7 +82,7 @@ class PessimisticLockingTest extends DoctrineUnitTestCase
      * Tests the retrieving of a lock's owner.
      * This test implicitly tests getLock().
      *
-     * @param Doctrine_Record $lockedRecord
+     * @param \Doctrine1\Record $lockedRecord
      */
     public function testGetLockOwner()
     {

@@ -6,32 +6,32 @@ namespace Tests\Tickets {
     {
         public function testTest()
         {
-            \Doctrine_Manager::getInstance()->setAttribute(\Doctrine_Core::ATTR_USE_DQL_CALLBACKS, true);
-            $userTable = \Doctrine_Core::getTable('User');
+            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_USE_DQL_CALLBACKS, true);
+            $userTable = \Doctrine1\Core::getTable('User');
             $userTable->addRecordListener(new \Ticket_1315_Listener());
 
-            $this->expectException(\Doctrine_Exception::class);
-            $q = \Doctrine_Query::create()
+            $this->expectException(\Doctrine1\Exception::class);
+            $q = \Doctrine1\Query::create()
                 ->from('User u')
                 ->execute();
 
-            $userTable->setAttribute(\Doctrine_Core::ATTR_RECORD_LISTENER, null);
+            $userTable->setAttribute(\Doctrine1\Core::ATTR_RECORD_LISTENER, null);
 
-            $q = \Doctrine_Query::create()
+            $q = \Doctrine1\Query::create()
                 ->from('User u')
                 ->execute();
 
-            \Doctrine_Manager::getInstance()->setAttribute(\Doctrine_Core::ATTR_USE_DQL_CALLBACKS, false);
+            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_USE_DQL_CALLBACKS, false);
         }
     }
 }
 
 namespace {
-    class Ticket_1315_Listener extends Doctrine_Record_Listener
+    class Ticket_1315_Listener extends \Doctrine1\Record\Listener
     {
-        public function preDqlSelect(Doctrine_Event $event)
+        public function preDqlSelect(\Doctrine1\Event $event)
         {
-            throw new \Doctrine_Exception('Test');
+            throw new \Doctrine1\Exception('Test');
         }
     }
 }

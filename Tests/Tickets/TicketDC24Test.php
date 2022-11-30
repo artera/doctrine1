@@ -22,7 +22,7 @@ namespace Tests\Tickets {
 
         public function testTest()
         {
-            $master = \Doctrine_Query::create()
+            $master = \Doctrine1\Query::create()
                 ->select('m.*, s.bar AS joe')
                 ->from('Ticket_DC24_Master m')
                 ->innerJoin('m.Ticket_DC24_Servant s')
@@ -32,18 +32,18 @@ namespace Tests\Tickets {
                 $master->foo = 5;
                 $master->save();
 
-                $master2 = \Doctrine_Query::create()
+                $master2 = \Doctrine1\Query::create()
                 ->select('m.*')
                 ->from('Ticket_DC24_Master m')
                 ->where('m.id = 1')
-                ->fetchOne([], \Doctrine_Core::HYDRATE_ARRAY);
+                ->fetchOne([], \Doctrine1\Core::HYDRATE_ARRAY);
                 $this->assertEquals($master2['servant_id'], 1);
         }
     }
 }
 
 namespace {
-    class Ticket_DC24_Master extends Doctrine_Record
+    class Ticket_DC24_Master extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -90,7 +90,7 @@ namespace {
         }
     }
 
-    class Ticket_DC24_Servant extends Doctrine_Record
+    class Ticket_DC24_Servant extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

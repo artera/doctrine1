@@ -7,7 +7,7 @@ class NewCoreTest extends DoctrineUnitTestCase
 {
     public function testFromParser()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->load('User u', true);
 

@@ -12,7 +12,7 @@ namespace Tests\Tickets {
 
         public function testShouldNotConvertToAmpersandsInSelect()
         {
-            $q = \Doctrine_Query::create()
+            $q = \Doctrine1\Query::create()
             ->select('if(1 AND 2, 1, 2)')
             ->from('Ticket_1540_TableName t');
             $this->assertEquals($q->getSqlQuery(), 'SELECT if(1 AND 2, 1, 2) AS t__0 FROM ticket_1540__table_name t');
@@ -20,7 +20,7 @@ namespace Tests\Tickets {
 
         public function testShouldNotConvertToAmpersandsInWhere()
         {
-            $q = \Doctrine_Query::create()
+            $q = \Doctrine1\Query::create()
             ->from('Ticket_1540_TableName t')
             ->where('if(1 AND 2, 1, 2)', 1);
             $this->assertEquals($q->getSqlQuery(), 'SELECT t.id AS t__id FROM ticket_1540__table_name t WHERE (if(1 AND 2, 1, 2))');
@@ -29,7 +29,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class Ticket_1540_TableName extends Doctrine_Record
+    class Ticket_1540_TableName extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

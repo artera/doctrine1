@@ -31,13 +31,13 @@ Account:
 END;
 
         file_put_contents('test.yml', $yml);
-        $import = new \Doctrine_Data_Import('test.yml');
+        $import = new \Doctrine1\Data\Import('test.yml');
         $import->setFormat('yml');
 
         // try to import garbled records (with incorrect field names,
         // e.g. "Amount" instead of "amount") and expect that doctrine
         // will raise an exception.
-        $this->expectException(\Doctrine_Record_UnknownPropertyException::class);
+        $this->expectException(\Doctrine1\Record\UnknownPropertyException::class);
         $import->doImport();
     }
 }

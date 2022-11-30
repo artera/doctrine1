@@ -392,17 +392,17 @@ class MysqlTest extends DoctrineUnitTestCase
         $a = ['type' => 'enum', 'fixed' => false, 'values' => ['a', 'b', 'c']];
 
         // Native ENUM type disabled, should be VARCHAR
-        static::$conn->setAttribute(\Doctrine_Core::ATTR_USE_NATIVE_ENUM, false);
+        static::$conn->setAttribute(\Doctrine1\Core::ATTR_USE_NATIVE_ENUM, false);
         $this->assertEquals(static::$connection->dataDict->getNativeDeclaration($a), 'VARCHAR(1)');
 
         // Native ENUM type still disabled, should still be VARCHAR
         // this test is here because there was an issue where SET type was used if the ATTR_USE_NATIVE_SET setting
         // was enabled but the ENUM one was not (due to an intentional case fall-through)
-        static::$conn->setAttribute(\Doctrine_Core::ATTR_USE_NATIVE_SET, true);
+        static::$conn->setAttribute(\Doctrine1\Core::ATTR_USE_NATIVE_SET, true);
         $this->assertEquals(static::$connection->dataDict->getNativeDeclaration($a), 'VARCHAR(1)');
 
         // Native type enabled
-        static::$conn->setAttribute(\Doctrine_Core::ATTR_USE_NATIVE_ENUM, true);
+        static::$conn->setAttribute(\Doctrine1\Core::ATTR_USE_NATIVE_ENUM, true);
         $this->assertEquals(static::$connection->dataDict->getNativeDeclaration($a), "ENUM('a', 'b', 'c')");
     }
 
@@ -411,15 +411,15 @@ class MysqlTest extends DoctrineUnitTestCase
         $a = ['type' => 'set', 'fixed' => false, 'values' => ['a', 'b', 'c']];
 
         // Native SET type disabled, should be VARCHAR
-        static::$conn->setAttribute(\Doctrine_Core::ATTR_USE_NATIVE_SET, false);
+        static::$conn->setAttribute(\Doctrine1\Core::ATTR_USE_NATIVE_SET, false);
         $this->assertEquals(static::$connection->dataDict->getNativeDeclaration($a), 'VARCHAR(5)');
 
         // Enabling ENUM native type should have no effect on SET
-        static::$conn->setAttribute(\Doctrine_Core::ATTR_USE_NATIVE_ENUM, true);
+        static::$conn->setAttribute(\Doctrine1\Core::ATTR_USE_NATIVE_ENUM, true);
         $this->assertEquals(static::$connection->dataDict->getNativeDeclaration($a), 'VARCHAR(5)');
 
         // Native type enabled
-        static::$conn->setAttribute(\Doctrine_Core::ATTR_USE_NATIVE_SET, true);
+        static::$conn->setAttribute(\Doctrine1\Core::ATTR_USE_NATIVE_SET, true);
         $this->assertEquals(static::$connection->dataDict->getNativeDeclaration($a), "SET('a', 'b', 'c')");
     }
 

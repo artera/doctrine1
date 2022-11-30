@@ -1,5 +1,5 @@
 <?php
-class InheritanceEntityUser extends Doctrine_Record
+class InheritanceEntityUser extends \Doctrine1\Record
 {
     public function setTableDefinition(): void
     {

@@ -22,12 +22,12 @@ namespace Tests\Tickets {
 
         public function testOnDemandHydration()
         {
-            $q = \Doctrine_Core::getTable('Ticket_DC7_User')
+            $q = \Doctrine1\Core::getTable('Ticket_DC7_User')
             ->createQuery('u')
-            ->setHydrationMode(\Doctrine_Core::HYDRATE_ON_DEMAND);
+            ->setHydrationMode(\Doctrine1\Core::HYDRATE_ON_DEMAND);
 
             $results = $q->execute();
-            $this->assertEquals(get_class($results), 'Doctrine_Collection_OnDemand');
+            $this->assertEquals('Doctrine1\Collection\OnDemand', $results::class);
 
             $count = 0;
             foreach ($results as $result) {
@@ -39,7 +39,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class Ticket_DC7_User extends Doctrine_Record
+    class Ticket_DC7_User extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

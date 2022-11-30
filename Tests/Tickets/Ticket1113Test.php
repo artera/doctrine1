@@ -48,7 +48,7 @@ namespace Tests\Tickets {
                 // $registrar->Subjects; // if this is uncommented the test will pass
                 $registrar->save();
 
-            $reopend = \Doctrine_Core::getTable('VIH_Model_Course_Registration')->findOneById($registrar->id);
+            $reopend = \Doctrine1\Core::getTable('VIH_Model_Course_Registration')->findOneById($registrar->id);
 
             $reopend->Subjects[] = $subject1;
 
@@ -62,7 +62,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class VIH_Model_Subject extends Doctrine_Record
+    class VIH_Model_Subject extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -93,7 +93,7 @@ namespace {
         }
     }
 
-    class VIH_Model_Course extends Doctrine_Record
+    class VIH_Model_Course extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -116,7 +116,7 @@ namespace {
         }
     }
 
-    class VIH_Model_Course_Period extends Doctrine_Record
+    class VIH_Model_Course_Period extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -132,7 +132,7 @@ namespace {
         }
     }
 
-    class VIH_Model_Course_Registration extends Doctrine_Record
+    class VIH_Model_Course_Registration extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -160,7 +160,7 @@ namespace {
         }
     }
 
-    class VIH_Model_Course_SubjectGroup extends Doctrine_Record
+    class VIH_Model_Course_SubjectGroup extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -192,7 +192,7 @@ namespace {
         }
     }
 
-    class VIH_Model_Course_SubjectGroup_Subject extends Doctrine_Record
+    class VIH_Model_Course_SubjectGroup_Subject extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -201,7 +201,7 @@ namespace {
         }
     }
 
-    class VIH_Model_Course_Registration_Subject extends Doctrine_Record
+    class VIH_Model_Course_Registration_Subject extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

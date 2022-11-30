@@ -1,8 +1,8 @@
 {
     "name": "artera/doctrine1",
     "type": "library",
-    "version": "2.5.5",
-    "description": "PHP8+ Database ORM",
+    "version": "3.0.0",
+    "description": "PHP 8.1+ Database ORM",
     "keywords": ["orm", "database"],
     "license": "LGPL-2.1-or-later",
     "authors": [
@@ -11,15 +11,9 @@
         {"name": "Jonathan Wage", "email": "jonwage@gmail.com"}
     ],
     "autoload": {
-        "psr-0": {
-            "Doctrine_": "lib/"
-        },
         "psr-4": {
             "Doctrine1\\": "src"
-        },
-        "classmap": [
-            "lib/Doctrine.php"
-        ]
+        }
     },
     "autoload-dev": {
         "psr-4": {
@@ -31,7 +25,7 @@
         "doctrine/doctrine1": "*"
     },
     "require": {
-        "php": "^8.0",
+        "php": "^8.1",
         "ext-pdo": "*",
         "myclabs/php-enum": "^1.8",
         "laminas/laminas-code": ">=2.0,<5",

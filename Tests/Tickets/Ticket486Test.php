@@ -45,10 +45,10 @@ namespace Tests\Tickets {
         public function testLimitSubqueryQuoteIdentifier(): void
         {
             // Change the quote identifier
-            $curQuoteIdentifier = $this->getConnection()->getAttribute(\Doctrine_Core::ATTR_QUOTE_IDENTIFIER);
-            $this->getConnection()->setAttribute(\Doctrine_Core::ATTR_QUOTE_IDENTIFIER, true);
+            $curQuoteIdentifier = $this->getConnection()->getAttribute(\Doctrine1\Core::ATTR_QUOTE_IDENTIFIER);
+            $this->getConnection()->setAttribute(\Doctrine1\Core::ATTR_QUOTE_IDENTIFIER, true);
 
-            $q = \Doctrine_Query::create()
+            $q = \Doctrine1\Query::create()
             ->select('c.id')
             ->from('Country c, c.State.Resort r')
             ->where('r.id = 3')
@@ -57,7 +57,7 @@ namespace Tests\Tickets {
             $this->assertMatchesSnapshot($q->getSqlQuery());
 
             // Restoring quote identifier
-            $this->getConnection()->setAttribute(\Doctrine_Core::ATTR_QUOTE_IDENTIFIER, $curQuoteIdentifier);
+            $this->getConnection()->setAttribute(\Doctrine1\Core::ATTR_QUOTE_IDENTIFIER, $curQuoteIdentifier);
         }
 
 
@@ -95,7 +95,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class Country extends Doctrine_Record
+    class Country extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -110,7 +110,7 @@ namespace {
     }
 
 
-    class State extends Doctrine_Record
+    class State extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -127,7 +127,7 @@ namespace {
     }
 
 
-    class Resort extends Doctrine_Record
+    class Resort extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

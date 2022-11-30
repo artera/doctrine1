@@ -6,8 +6,8 @@ namespace Tests\Tickets {
     {
         public function testInit()
         {
-            static::$dbh  = new \Doctrine_Adapter_Mock('mysql');
-            static::$conn = \Doctrine_Manager::getInstance()->openConnection(static::$dbh);
+            static::$dbh  = new \Doctrine1\Adapter\Mock('mysql');
+            static::$conn = \Doctrine1\Manager::getInstance()->openConnection(static::$dbh);
         }
 
         public function testExportSql()
@@ -23,7 +23,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class Ticket_1123_User extends Doctrine_Record
+    class Ticket_1123_User extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -42,7 +42,7 @@ namespace {
         }
     }
 
-    class Ticket_1123_UserReference extends Doctrine_Record
+    class Ticket_1123_UserReference extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

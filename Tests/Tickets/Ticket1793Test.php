@@ -30,14 +30,14 @@ namespace Tests\Tickets {
         public function testTicket()
         {
             // Doesn't work:
-            $order1 = \Doctrine_Core::getTable('Ticket_1793_Order')->find(1);
+            $order1 = \Doctrine1\Core::getTable('Ticket_1793_Order')->find(1);
             //echo $order1->status; // 'new'
             $order1->status = 'completed';
             $order1->save();
             $this->assertEquals($order1->status, 'completed');
 
             // Works because previous status was not one of the column aggregation's keyValue's
-            $order2 = \Doctrine_Core::getTable('Ticket_1793_Order')->find(2);
+            $order2 = \Doctrine1\Core::getTable('Ticket_1793_Order')->find(2);
             //echo $order2->status; // 'shipping'
             $order2->status = 'new';
             $order2->save();
@@ -50,40 +50,40 @@ namespace Tests\Tickets {
             $this->assertEquals($order2->status, 'completed');
 
             // Works because previous status was not one of the column aggregation's keyValue's
-            $order3 = \Doctrine_Core::getTable('Ticket_1793_Order')->find(3);
+            $order3 = \Doctrine1\Core::getTable('Ticket_1793_Order')->find(3);
             //echo $order2->status; // 'shipping'
             $order3->status = 'new';
             $order3->save();
             $this->assertEquals($order3->status, 'new');
 
             // Now this doesn't work because it's re-finding order #3 instead of re-using $order3.
-            $order3 = \Doctrine_Core::getTable('Ticket_1793_Order')->find(3);
+            $order3 = \Doctrine1\Core::getTable('Ticket_1793_Order')->find(3);
             //echo $order3->status; // 'new'
             $order3->status = 'completed';
             $order3->save();
             $this->assertEquals($order3->status, 'completed');
 
             /* Changing the table name to Ticket_1793_OrdersNew still fails. */
-            $order4 = \Doctrine_Core::getTable('Ticket_1793_OrdersNew')->find(4);
+            $order4 = \Doctrine1\Core::getTable('Ticket_1793_OrdersNew')->find(4);
             //echo $order4->status; // 'new'
             $order4->status = 'completed';
             $order4->save();
             $this->assertEquals($order4->status, 'completed');
 
             // This works.
-            $o1 = \Doctrine_Query::create()
+            $o1 = \Doctrine1\Query::create()
             ->update('Ticket_1793_Order o')
             ->set('o.status', '?', 'completed')
             ->where('o.id = ?', 1)
             ->execute();
-            $order1 = \Doctrine_Core::getTable('Ticket_1793_Order')->find(1);
+            $order1 = \Doctrine1\Core::getTable('Ticket_1793_Order')->find(1);
             $this->assertEquals($order1->status, 'completed');
         }
     }
 }
 
 namespace {
-    class Ticket_1793_Order extends Doctrine_Record
+    class Ticket_1793_Order extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

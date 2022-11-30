@@ -48,11 +48,11 @@ Episode:
     Writers: [alfred_gough, miles_millar]
 END;
             file_put_contents('test.yml', $yml);
-                \Doctrine_Core::loadData('test.yml', true);
+                \Doctrine1\Core::loadData('test.yml', true);
 
                 static::$conn->clear();
 
-                $query = new \Doctrine_Query();
+                $query = new \Doctrine1\Query();
                 $query->from('Episode e, e.Directors, e.Writers');
 
                 $e = $query->execute();
@@ -68,7 +68,7 @@ END;
                 $this->assertEquals($e[0]->Writers[0]->name, 'Alfred Gough');
                 $this->assertEquals($e[0]->Writers[1]->name, 'Miles Millar');
 
-                $query = new \Doctrine_Query();
+                $query = new \Doctrine1\Query();
                 $query->from('News n');
 
                 $n = $query->execute();
@@ -84,7 +84,7 @@ END;
 }
 
 namespace {
-    class News extends Doctrine_Record
+    class News extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -102,7 +102,7 @@ namespace {
         }
     }
 
-    class Episode extends Doctrine_Record
+    class Episode extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -196,7 +196,7 @@ namespace {
         }
     }
 
-    class Writer extends Doctrine_Record
+    class Writer extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -233,7 +233,7 @@ namespace {
         }
     }
 
-    class WriterEpisode extends Doctrine_Record
+    class WriterEpisode extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -277,7 +277,7 @@ namespace {
         }
     }
 
-    class Director extends Doctrine_Record
+    class Director extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -314,7 +314,7 @@ namespace {
         }
     }
 
-    class DirectorEpisode extends Doctrine_Record
+    class DirectorEpisode extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

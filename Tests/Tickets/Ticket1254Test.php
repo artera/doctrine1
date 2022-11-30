@@ -13,7 +13,7 @@ namespace Tests\Tickets {
 
         public static function prepareData(): void
         {
-            \Doctrine_Manager::getInstance()->getCurrentConnection()->beginTransaction();
+            \Doctrine1\Manager::getInstance()->getCurrentConnection()->beginTransaction();
 
             $cats = ['cat1', 'cat2'];
             $now  = time();
@@ -35,12 +35,12 @@ namespace Tests\Tickets {
                 }
             }
 
-            \Doctrine_Manager::getInstance()->getCurrentConnection()->commit();
+            \Doctrine1\Manager::getInstance()->getCurrentConnection()->commit();
         }
 
         public function testSubqueryExtractionUsesWrongAliases()
         {
-            $q = new \Doctrine_Query();
+            $q = new \Doctrine1\Query();
             $q->from('RelX x');
             $q->leftJoin('x.y xy');
             $q->where('x.created_at IN (SELECT MAX(x2.created_at) latestInCategory FROM RelX x2 WHERE x.category = x2.category)');
@@ -59,7 +59,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class RelX extends Doctrine_Record
+    class RelX extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -75,7 +75,7 @@ namespace {
         }
     }
 
-    class RelY extends Doctrine_Record
+    class RelY extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

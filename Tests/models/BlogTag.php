@@ -1,5 +1,5 @@
 <?php
-class BlogTag extends Doctrine_Record
+class BlogTag extends \Doctrine1\Record
 {
     public function setTableDefinition(): void
     {

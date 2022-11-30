@@ -1,5 +1,5 @@
 <?php
-class CategoryWithPosition extends Doctrine_Record
+class CategoryWithPosition extends \Doctrine1\Record
 {
     public function setTableDefinition(): void
     {

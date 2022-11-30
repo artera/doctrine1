@@ -25,7 +25,7 @@ namespace Tests\Tickets {
 
         public function testTest()
         {
-            $user = \Doctrine_Query::create()
+            $user = \Doctrine1\Query::create()
             ->from('Ticket_632_User u, u.Groups g')
             ->where('u.username = ?', 'jwage')
             ->limit(1)
@@ -36,14 +36,14 @@ namespace Tests\Tickets {
             $user->save(); // This deletes the UserGroup association and the Group record
 
             // We should still have 3 groups
-            $groups = \Doctrine_Core::getTable('Ticket_632_Group')->findAll();
+            $groups = \Doctrine1\Core::getTable('Ticket_632_Group')->findAll();
             $this->assertEquals($groups->count(), 3);
         }
     }
 }
 
 namespace {
-    class Ticket_632_User extends Doctrine_Record
+    class Ticket_632_User extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -62,7 +62,7 @@ namespace {
         }
     }
 
-    class Ticket_632_Group extends Doctrine_Record
+    class Ticket_632_Group extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -80,7 +80,7 @@ namespace {
         }
     }
 
-    class Ticket_632_UserGroup extends Doctrine_Record
+    class Ticket_632_UserGroup extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

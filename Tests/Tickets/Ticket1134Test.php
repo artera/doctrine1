@@ -21,13 +21,13 @@ namespace Tests\Tickets {
 
         public function testAfterOriginalSave()
         {
-            $user = \Doctrine_Query::create()->from('Ticket_1134_User u')->fetchOne();
+            $user = \Doctrine1\Query::create()->from('Ticket_1134_User u')->fetchOne();
             $this->assertEquals($user->is_pimp, true);
         }
 
         public function testAfterModification()
         {
-            $user          = \Doctrine_Query::create()->from('Ticket_1134_User u')->fetchOne();
+            $user          = \Doctrine1\Query::create()->from('Ticket_1134_User u')->fetchOne();
             $user->is_pimp = '1';
             $this->assertEmpty($user->getModified());
         }
@@ -35,7 +35,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class Ticket_1134_User extends Doctrine_Record
+    class Ticket_1134_User extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

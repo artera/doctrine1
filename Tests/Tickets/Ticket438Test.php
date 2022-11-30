@@ -48,7 +48,7 @@ namespace Tests\Tickets {
 
 
             // 1. Fetch relationship on demand (multiple queries)
-            $q = new \Doctrine_Query();
+            $q = new \Doctrine1\Query();
             $q->from('T438_StudentCourse sc')
             ->where('sc.student_id = ? AND sc.course_id = ?', ['07090002', 'MATH001']);
 
@@ -60,7 +60,7 @@ namespace Tests\Tickets {
             $this->assertEquals($record->get('Course')->id, 'MATH001');
 
             // 2. Fetch relationship in single query
-            $q    = new \Doctrine_Query();
+            $q    = new \Doctrine1\Query();
             $coll = $q->select('sc.*, s.*, c.*')
             ->from('T438_StudentCourse sc, sc.Student s, sc.Course c')
             ->where('sc.student_id = ? AND sc.course_id = ?', ['07090002', 'MATH001'])
@@ -77,7 +77,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class T438_Student extends Doctrine_Record
+    class T438_Student extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -94,7 +94,7 @@ namespace {
     }
 
 
-    class T438_Course extends Doctrine_Record
+    class T438_Course extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -110,7 +110,7 @@ namespace {
         }
     }
 
-    class T438_StudentCourse extends Doctrine_Record
+    class T438_StudentCourse extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

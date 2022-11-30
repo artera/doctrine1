@@ -35,7 +35,7 @@ namespace Tests\Tickets {
         public function testOneToManyRelationsWithSynchronizeWithArray()
         {
             // link group (id 2) with users (id 1,2)
-            $group = \Doctrine::getTable('Ticket_DC39_Group')->find(2);
+            $group = \Doctrine1\Core::getTable('Ticket_DC39_Group')->find(2);
             $group->synchronizeWithArray(
                 [
                 'Users' => [1, 2]
@@ -44,8 +44,8 @@ namespace Tests\Tickets {
             $group->save();
 
             // update the user-objects with real data from database
-            $user1 = \Doctrine::getTable('Ticket_DC39_User')->find(1);
-            $user2 = \Doctrine::getTable('Ticket_DC39_User')->find(2);
+            $user1 = \Doctrine1\Core::getTable('Ticket_DC39_User')->find(1);
+            $user2 = \Doctrine1\Core::getTable('Ticket_DC39_User')->find(2);
 
             // compare the group_id (should be 2) with the group_id set through $group->synchronizeWithArray
             $this->assertEquals($group->Users[0]->group_id, 2);
@@ -55,7 +55,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class Ticket_DC39_Group extends Doctrine_Record
+    class Ticket_DC39_Group extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -74,7 +74,7 @@ namespace {
         }
     }
 
-    class Ticket_DC39_User extends Doctrine_Record
+    class Ticket_DC39_User extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

@@ -1,15 +1,14 @@
 <?php
 namespace Tests;
 
-use Doctrine_Core;
-use Doctrine_Manager;
-use Doctrine_Manager_Exception;
-use Doctrine_Query;
-use Doctrine_Adapter_Mock;
-use Doctrine_EventListener;
-use Doctrine_Connection;
-use Doctrine_Connection_Exception;
-use Doctrine_Collection;
+use Doctrine1\Core;
+use Doctrine1\Manager;
+use Doctrine1\Manager\Exception;
+use Doctrine1\Query;
+use Doctrine1\Adapter\Mock;
+use Doctrine1\EventListener;
+use Doctrine1\Connection;
+use Doctrine1\Collection;
 use PDO;
 use Spatie\Snapshots\MatchesSnapshots;
 
@@ -21,13 +20,13 @@ class DoctrineUnitTestCase extends TestCase
 
     protected static $connection;
     protected static $dbh = null;
-    protected static ?Doctrine_EventListener $listener;
+    protected static ?\Doctrine1\EventListener $listener;
     protected static $unitOfWork;
     protected static ?string $driverName = null;
-    protected static ?Doctrine_Connection $conn = null;
+    protected static ?\Doctrine1\Connection $conn = null;
     protected static $adapter;
     protected static array $tables = [];
-    protected static Doctrine_Manager $manager;
+    protected static \Doctrine1\Manager $manager;
 
     protected function getSnapshotDirectory(): string
     {
@@ -36,8 +35,8 @@ class DoctrineUnitTestCase extends TestCase
 
     public static function setUpBeforeClass(): void
     {
-        static::$manager = \Doctrine_Manager::getInstance();
-        static::$manager->setAttribute(\Doctrine_Core::ATTR_EXPORT, \Doctrine_Core::EXPORT_ALL);
+        static::$manager = \Doctrine1\Manager::getInstance();
+        static::$manager->setAttribute(\Doctrine1\Core::ATTR_EXPORT, \Doctrine1\Core::EXPORT_ALL);
 
         static::$tables = array_merge(
             static::$tables,
@@ -73,32 +72,32 @@ class DoctrineUnitTestCase extends TestCase
 
             static::$connection->evictTables();
             static::$dbh      = static::$adapter      = static::$connection->getDbh();
-            static::$listener = static::$manager->getAttribute(\Doctrine_Core::ATTR_LISTENER);
+            static::$listener = static::$manager->getAttribute(\Doctrine1\Core::ATTR_LISTENER);
 
-            static::$manager->setAttribute(\Doctrine_Core::ATTR_LISTENER, static::$listener);
-        } catch (Doctrine_Manager_Exception $e) {
+            static::$manager->setAttribute(\Doctrine1\Core::ATTR_LISTENER, static::$listener);
+        } catch (\Doctrine1\Manager\Exception $e) {
             if (static::$driverName == 'main') {
                 static::$dbh = new \PDO('sqlite::memory:');
                 static::$dbh->sqliteCreateFunction('trim', 'trim', 1);
             } else {
-                static::$dbh = static::$adapter = new \Doctrine_Adapter_Mock(static::$driverName);
+                static::$dbh = static::$adapter = new \Doctrine1\Adapter\Mock(static::$driverName);
             }
 
             static::$conn = static::$connection = static::$manager->openConnection(static::$dbh, static::$driverName);
 
-            static::$listener = new \Doctrine_EventListener();
-            static::$manager->setAttribute(\Doctrine_Core::ATTR_LISTENER, static::$listener);
+            static::$listener = new \Doctrine1\EventListener();
+            static::$manager->setAttribute(\Doctrine1\Core::ATTR_LISTENER, static::$listener);
         }
         static::$unitOfWork = static::$connection->unitOfWork;
-        static::$connection->setListener(new \Doctrine_EventListener());
+        static::$connection->setListener(new \Doctrine1\EventListener());
 
         if (static::$driverName === 'main') {
             static::prepareTables();
             static::prepareData();
         }
 
-        static::$conn->setAttribute(\Doctrine_Core::ATTR_USE_NATIVE_SET, false);
-        static::$conn->setAttribute(\Doctrine_Core::ATTR_USE_NATIVE_ENUM, false);
+        static::$conn->setAttribute(\Doctrine1\Core::ATTR_USE_NATIVE_SET, false);
+        static::$conn->setAttribute(\Doctrine1\Core::ATTR_USE_NATIVE_ENUM, false);
     }
 
     public static function tearDownAfterClass(): void
@@ -121,7 +120,7 @@ class DoctrineUnitTestCase extends TestCase
             $query = 'DROP TABLE ' . $table->getTableName();
             try {
                 static::$conn->exec($query);
-            } catch (Doctrine_Connection_Exception $e) {
+            } catch (Connection\Exception $e) {
             }
         }
         static::$conn->export->exportClasses(static::$tables);
@@ -129,7 +128,7 @@ class DoctrineUnitTestCase extends TestCase
 
     public static function prepareData(): void
     {
-        $groups = new \Doctrine_Collection(static::$connection->getTable('Group'));
+        $groups = new \Doctrine1\Collection(static::$connection->getTable('Group'));
 
         $groups[0]->name = 'Drama Actors';
 
@@ -140,7 +139,7 @@ class DoctrineUnitTestCase extends TestCase
         $groups[2]['Phonenumber'][0]->phonenumber = '123 123';
         $groups->save();
 
-        $users = new \Doctrine_Collection('User');
+        $users = new \Doctrine1\Collection('User');
 
 
         $users[0]->name                          = 'zYne';

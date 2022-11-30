@@ -6,7 +6,7 @@ namespace Tests\Tickets {
     {
         public function testTest()
         {
-            static::$dbh  = new \Doctrine_Adapter_Mock('mysql');
+            static::$dbh  = new \Doctrine1\Adapter\Mock('mysql');
             static::$conn = static::$manager->openConnection(static::$dbh);
 
             $sql = static::$conn->export->exportClassesSql(['Ticket_1160_Test']);
@@ -16,7 +16,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class Ticket_1160_Test extends Doctrine_Record
+    class Ticket_1160_Test extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

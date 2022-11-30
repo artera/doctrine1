@@ -8,11 +8,11 @@ namespace Tests\Tickets {
         {
             $charset = 'test_charset';
             $collate = 'test_collate';
-            $conn    = \Doctrine_Manager::connection('sqlite::memory:');
+            $conn    = \Doctrine1\Manager::connection('sqlite::memory:');
             $conn->setCharset($charset);
             $conn->setCollate($collate);
 
-            $userTable = \Doctrine_Core::getTable('Ticket_1307_User');
+            $userTable = \Doctrine1\Core::getTable('Ticket_1307_User');
             $this->assertEquals($charset, $userTable->charset);
             $this->assertEquals($collate, $userTable->collate);
         }
@@ -20,7 +20,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class Ticket_1307_User extends Doctrine_Record
+    class Ticket_1307_User extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

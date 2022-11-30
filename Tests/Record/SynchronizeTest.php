@@ -31,7 +31,7 @@ class SynchronizeTest extends DoctrineUnitTestCase
 
     public function testSynchronizeRecord()
     {
-        $user      = \Doctrine_Query::create()->from('User u, u.Email, u.Phonenumber')->fetchOne();
+        $user      = \Doctrine1\Query::create()->from('User u, u.Email, u.Phonenumber')->fetchOne();
         $userArray = $user->toArray(true);
         $this->assertEquals($user->Phonenumber->count(), 2);
         $this->assertEquals($user->Phonenumber[0]->phonenumber, '555 123');
@@ -64,7 +64,7 @@ class SynchronizeTest extends DoctrineUnitTestCase
 
     public function testSynchronizeAfterSaveRecord()
     {
-        $user = \Doctrine_Query::create()->from('User u, u.Group g, u.Email e, u.Phonenumber p')->fetchOne();
+        $user = \Doctrine1\Query::create()->from('User u, u.Group g, u.Email e, u.Phonenumber p')->fetchOne();
         $this->assertEquals($user->Phonenumber->count(), 1);
         $this->assertEquals($user->Phonenumber[0]->phonenumber, '555 321');
         $this->assertEquals($user->Email->address, 'johndow@mail.com');
@@ -79,7 +79,7 @@ class SynchronizeTest extends DoctrineUnitTestCase
 
     public function testSynchronizeAddRecord()
     {
-        $user                       = \Doctrine_Query::create()->from('User u, u.Email, u.Phonenumber')->fetchOne();
+        $user                       = \Doctrine1\Query::create()->from('User u, u.Email, u.Phonenumber')->fetchOne();
         $userArray                  = $user->toArray(true);
         $userArray['Phonenumber'][] = ['phonenumber' => '333 238'];
 
@@ -92,7 +92,7 @@ class SynchronizeTest extends DoctrineUnitTestCase
 
     public function testSynchronizeAfterAddRecord()
     {
-        $user   = \Doctrine_Query::create()->from('User u, u.Email, u.Phonenumber')->fetchOne();
+        $user   = \Doctrine1\Query::create()->from('User u, u.Email, u.Phonenumber')->fetchOne();
         $phones = [];
 
         $this->assertEquals($user->Phonenumber->count(), 2);
@@ -105,7 +105,7 @@ class SynchronizeTest extends DoctrineUnitTestCase
 
     public function testSynchronizeRemoveRecord()
     {
-        $user      = \Doctrine_Query::create()->from('User u, u.Email, u.Phonenumber')->fetchOne();
+        $user      = \Doctrine1\Query::create()->from('User u, u.Email, u.Phonenumber')->fetchOne();
         $userArray = $user->toArray(true);
         unset($userArray['Phonenumber']);
         unset($userArray['Email']);
@@ -119,7 +119,7 @@ class SynchronizeTest extends DoctrineUnitTestCase
 
     public function testSynchronizeAfterRemoveRecord()
     {
-        $user = \Doctrine_Query::create()->from('User u, u.Email, u.Phonenumber')->fetchOne();
+        $user = \Doctrine1\Query::create()->from('User u, u.Email, u.Phonenumber')->fetchOne();
         $this->assertEquals($user->Phonenumber->count(), 0);
         $this->assertTrue(!isset($user->Email));
     }

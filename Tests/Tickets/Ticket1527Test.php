@@ -19,7 +19,7 @@ Ticket_1527_User:
       type: string(255)
 END;
 
-        $import = new \Doctrine_Import_Schema();
+        $import = new \Doctrine1\Import\Schema();
         $schema = $import->buildSchema([$yml], 'yml');
         $this->assertEquals($schema['Ticket_1527_User']['columns']['username']['extra']['test'], '123');
 
@@ -28,7 +28,7 @@ END;
 
         include_once $path . '/generated/BaseTicket_1527_User.php';
         include_once $path . '/Ticket_1527_User.php';
-        $username = \Doctrine_Core::getTable('Ticket_1527_User')->getDefinitionOf('username');
+        $username = \Doctrine1\Core::getTable('Ticket_1527_User')->getDefinitionOf('username');
         $this->assertEquals($username['extra']['test'], '123');
     }
 }

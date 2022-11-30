@@ -1,5 +1,5 @@
 <?php
-class Author extends Doctrine_Record
+class Author extends \Doctrine1\Record
 {
     public function setUp(): void
     {

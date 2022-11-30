@@ -10,7 +10,7 @@ class Ticket1390Test extends DoctrineUnitTestCase
         $user = new \User();
 
         $record1 = $user->getTable()->find(4);
-        $record2 = \Doctrine_Core::getTable('User')->find(4);
+        $record2 = \Doctrine1\Core::getTable('User')->find(4);
 
         $this->assertSame($record1, $record2);
     }

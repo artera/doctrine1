@@ -26,8 +26,8 @@ namespace Tests\Tickets {
 
         public function testUnlink()
         {
-            $user  = \Doctrine_Core::getTable('Ticket_1622_User')->findOneByName('floriank');
-            $child = \Doctrine_Core::getTable('Ticket_1622_User')->findOneByName('test');
+            $user  = \Doctrine1\Core::getTable('Ticket_1622_User')->findOneByName('floriank');
+            $child = \Doctrine1\Core::getTable('Ticket_1622_User')->findOneByName('test');
 
             $user->unlink('children', $child->id);
 
@@ -38,14 +38,14 @@ namespace Tests\Tickets {
             $user->save();
 
             $user->refresh();
-            $user = \Doctrine_Core::getTable('Ticket_1622_User')->findOneByName('floriank');
+            $user = \Doctrine1\Core::getTable('Ticket_1622_User')->findOneByName('floriank');
             $this->assertEquals(count($user->children), 0);
         }
     }
 }
 
 namespace {
-    class Ticket_1622_User extends Doctrine_Record
+    class Ticket_1622_User extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -75,7 +75,7 @@ namespace {
         }
     }
 
-    class Ticket_1622_UserReference extends Doctrine_Record
+    class Ticket_1622_UserReference extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

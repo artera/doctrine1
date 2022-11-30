@@ -1,5 +1,5 @@
 <?php
-class Cms_Category extends Doctrine_Record
+class Cms_Category extends \Doctrine1\Record
 {
     public function setUp(): void
     {

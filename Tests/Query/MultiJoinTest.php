@@ -13,7 +13,7 @@ class MultiJoinTest extends DoctrineUnitTestCase
 
     public function testInitializeData()
     {
-        $query = new \Doctrine_Query(static::$connection);
+        $query = new \Doctrine1\Query(static::$connection);
 
         $user = static::$connection->getTable('User')->find(4);
 
@@ -65,7 +65,7 @@ class MultiJoinTest extends DoctrineUnitTestCase
     {
         static::$connection->clear();
 
-        $query = new \Doctrine_Query();
+        $query = new \Doctrine1\Query();
 
         $users = $query->query('FROM User.Album.Song, User.Phonenumber WHERE User.id IN (4,5) ORDER BY User.id, User.Album.name, User.Album.Song.title');
 
@@ -129,7 +129,7 @@ class MultiJoinTest extends DoctrineUnitTestCase
      */
     public function testMultipleOneToManyFetching2()
     {
-        $query = new \Doctrine_Query();
+        $query = new \Doctrine1\Query();
 
         $users = $query->query('FROM User.Album.Song, User.Book.Author WHERE User.id IN (4,5) ORDER BY User.id, User.Album.name, User.Album.Song.title, User.Book.name, User.Book.Author.name');
 
@@ -169,7 +169,7 @@ class MultiJoinTest extends DoctrineUnitTestCase
 
     public function testMultipleOneToManyFetchingWithOrderBy()
     {
-        $query = new \Doctrine_Query();
+        $query = new \Doctrine1\Query();
 
         $users = $query->query('FROM User.Album.Song WHERE User.id IN (4,5) ORDER BY User.Album.Song.title DESC');
     }

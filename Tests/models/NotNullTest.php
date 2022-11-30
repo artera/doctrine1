@@ -1,5 +1,5 @@
 <?php
-class NotNullTest extends Doctrine_Record
+class NotNullTest extends \Doctrine1\Record
 {
     public function setTableDefinition(): void
     {

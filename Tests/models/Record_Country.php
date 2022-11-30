@@ -1,9 +1,9 @@
 <?php
 /**
  * @property string $name
- * @property Doctrine_Collection<Record_City> $City
+ * @property \Doctrine1\Collection<Record_City> $City
  */
-class Record_Country extends Doctrine_Record
+class Record_Country extends \Doctrine1\Record
 {
     public function setTableDefinition(): void
     {

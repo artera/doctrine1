@@ -47,39 +47,39 @@ namespace Tests\Tickets {
 
         public function testTicket()
         {
-            $user = \Doctrine_Query::create()
+            $user = \Doctrine1\Query::create()
             ->from('Ticket_1131_User u')
             ->where('u.id = ?')->fetchOne([1]);
 
             $this->assertEquals($user->Group->id, 1);
-            $this->assertFalse($user->get('group_id') instanceof \Doctrine_Record);
+            $this->assertFalse($user->get('group_id') instanceof \Doctrine1\Record);
         }
 
         public function testTicketWithOverloadingAndTwoQueries()
         {
-            $orig = \Doctrine_Manager::getInstance()->getAttribute(\Doctrine_Core::ATTR_AUTO_ACCESSOR_OVERRIDE);
-            \Doctrine_Manager::getInstance()->setAttribute(\Doctrine_Core::ATTR_AUTO_ACCESSOR_OVERRIDE, true);
+            $orig = \Doctrine1\Manager::getInstance()->getAttribute(\Doctrine1\Core::ATTR_AUTO_ACCESSOR_OVERRIDE);
+            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_AUTO_ACCESSOR_OVERRIDE, true);
 
-            $user = \Doctrine_Query::create()
+            $user = \Doctrine1\Query::create()
             ->from('Ticket_1131_User u')
             ->where('u.id = ?')->fetchOne([1]);
 
-            $user = \Doctrine_Query::create()
+            $user = \Doctrine1\Query::create()
             ->from('Ticket_1131_UserWithOverloading u')
             ->leftJoin('u.Group g')
             ->leftJoin('u.Role r')
             ->addWhere('u.id = ?')->fetchOne([1]);
 
             $this->assertEquals($user->Role->id, 1);
-            $this->assertFalse($user->role_id instanceof \Doctrine_Record);
+            $this->assertFalse($user->role_id instanceof \Doctrine1\Record);
 
-            \Doctrine_Manager::getInstance()->setAttribute(\Doctrine_Core::ATTR_AUTO_ACCESSOR_OVERRIDE, $orig);
+            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_AUTO_ACCESSOR_OVERRIDE, $orig);
         }
     }
 }
 
 namespace {
-    class Ticket_1131_User extends Doctrine_Record
+    class Ticket_1131_User extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -134,7 +134,7 @@ namespace {
         }
     }
 
-    class Ticket_1131_Group extends Doctrine_Record
+    class Ticket_1131_Group extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -168,7 +168,7 @@ namespace {
         }
     }
 
-    class Ticket_1131_Role extends Doctrine_Record
+    class Ticket_1131_Role extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

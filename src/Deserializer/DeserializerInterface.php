@@ -15,5 +15,5 @@ interface DeserializerInterface
      *   values?: mixed[],
      * } $column
      */
-    public function deserialize(mixed $value, array $column, \Doctrine_Table $table): mixed;
+    public function deserialize(mixed $value, array $column, \Doctrine1\Table $table): mixed;
 }

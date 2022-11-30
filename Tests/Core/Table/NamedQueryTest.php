@@ -27,7 +27,7 @@ namespace Tests\Core\Table {
 
         public function testNamedQuerySupport()
         {
-            $table = \Doctrine_Core::getTable('MyFoo');
+            $table = \Doctrine1\Core::getTable('MyFoo');
 
             $this->assertEquals(
                 $table->createNamedQuery('get.by.id')->getSqlQuery(),
@@ -49,7 +49,7 @@ namespace Tests\Core\Table {
 }
 
 namespace {
-    class MyFoo extends Doctrine_Record
+    class MyFoo extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -59,14 +59,14 @@ namespace {
     }
 
 
-    class MyFooTable extends Doctrine_Table
+    class MyFooTable extends \Doctrine1\Table
     {
         public function construct()
         {
             $this->addNamedQuery('get.by.id', 'SELECT f.* FROM MyFoo f WHERE f.id = ?');
             $this->addNamedQuery(
                 'get.by.similar.names',
-                \Doctrine_Query::create()
+                \Doctrine1\Query::create()
                     ->select('f.id, f.value0')
                     ->from('MyFoo f')
                     ->where('LOWER(f.name) LIKE LOWER(?)')

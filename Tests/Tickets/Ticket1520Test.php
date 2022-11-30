@@ -12,8 +12,8 @@ namespace Tests\Tickets {
 
         public function testTest()
         {
-            $profiler = new \Doctrine_Connection_Profiler();
-            \Doctrine_Manager::connection()->addListener($profiler);
+            $profiler = new \Doctrine1\Connection\Profiler();
+            \Doctrine1\Manager::connection()->addListener($profiler);
             $price       = 200;
             $user        = new \Ticket_1520_Product();
             $user->title = 'test';
@@ -22,7 +22,7 @@ namespace Tests\Tickets {
             $id = $user->id;
             $user->free();
 
-            $user        = \Doctrine_Core::getTable('Ticket_1520_Product')->find($id);
+            $user        = \Doctrine1\Core::getTable('Ticket_1520_Product')->find($id);
             $user->price = $price;
             $this->assertEquals($user->getModified(), []);
         }
@@ -30,7 +30,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class Ticket_1520_Product extends Doctrine_Record
+    class Ticket_1520_Product extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

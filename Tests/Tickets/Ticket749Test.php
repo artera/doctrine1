@@ -21,14 +21,14 @@ namespace Tests\Tickets {
 
         public function testSelectDataFromSubclassAsCollection()
         {
-            $records = \Doctrine_Query::create()->query('FROM Record749 r ORDER BY r.title', []);
+            $records = \Doctrine1\Query::create()->query('FROM Record749 r ORDER BY r.title', []);
 
             $this->verifyRecords($records);
         }
 
         public function testSelectDataFromParentClassAsCollection()
         {
-            $records = \Doctrine_Query::create()->query('FROM Parent749 p ORDER BY p.title', []);
+            $records = \Doctrine1\Query::create()->query('FROM Parent749 p ORDER BY p.title', []);
             $this->verifyRecords($records);
         }
 
@@ -54,7 +54,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class Parent749 extends Doctrine_Record
+    class Parent749 extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -100,7 +100,7 @@ namespace {
         }
     }
 
-    class RelatedRecord749 extends Doctrine_Record
+    class RelatedRecord749 extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

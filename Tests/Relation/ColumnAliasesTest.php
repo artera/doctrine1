@@ -37,7 +37,7 @@ namespace Tests\Relation {
 }
 
 namespace {
-    class ColumnAliasTest2 extends Doctrine_Record
+    class ColumnAliasTest2 extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -53,7 +53,7 @@ namespace {
         }
     }
 
-    class ColumnAliasTest3 extends Doctrine_Record
+    class ColumnAliasTest3 extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

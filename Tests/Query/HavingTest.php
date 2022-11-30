@@ -7,7 +7,7 @@ class HavingTest extends DoctrineUnitTestCase
 {
     public function testAggregateFunctionsInHavingReturnValidSql()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->parseDqlQuery('SELECT u.name FROM User u LEFT JOIN u.Phonenumber p HAVING COUNT(p.id) > 2');
 
@@ -15,7 +15,7 @@ class HavingTest extends DoctrineUnitTestCase
     }
     public function testAggregateFunctionsInHavingReturnValidSql2()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->parseDqlQuery("SELECT u.name FROM User u LEFT JOIN u.Phonenumber p HAVING MAX(u.name) = 'zYne'");
 
@@ -24,14 +24,14 @@ class HavingTest extends DoctrineUnitTestCase
 
     public function testAggregateFunctionsInHavingSupportMultipleParameters()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->parseDqlQuery("SELECT CONCAT(u.name, u.loginname) name FROM User u LEFT JOIN u.Phonenumber p HAVING name = 'xx'");
     }
 
     public function testReturnFuncIfNumeric()
     {
-        $having = new \Doctrine_Query_Having(new \Doctrine_Query());
+        $having = new \Doctrine1\Query\Having(new \Doctrine1\Query());
         $part   = $having->load('1');
         $this->assertEquals('1', trim($part));
     }

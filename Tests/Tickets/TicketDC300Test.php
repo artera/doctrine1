@@ -35,7 +35,7 @@ namespace Tests\Tickets {
 
         public function testRefTableEntriesOnManyToManyRelationsWithSynchronizeWithArray()
         {
-            $u1 = \Doctrine::getTable('Ticket_DC300_User')->find(1);
+            $u1 = \Doctrine1\Core::getTable('Ticket_DC300_User')->find(1);
 
             // update the groups user (id 1) is linked to
             $u1->synchronizeWithArray(
@@ -58,7 +58,7 @@ namespace Tests\Tickets {
 }
 
 namespace {
-    class Ticket_DC300_Group extends Doctrine_Record
+    class Ticket_DC300_Group extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -78,7 +78,7 @@ namespace {
         }
     }
 
-    class Ticket_DC300_User extends Doctrine_Record
+    class Ticket_DC300_User extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {
@@ -98,7 +98,7 @@ namespace {
         }
     }
 
-    class Ticket_DC300_UserGroup extends Doctrine_Record
+    class Ticket_DC300_UserGroup extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
         {

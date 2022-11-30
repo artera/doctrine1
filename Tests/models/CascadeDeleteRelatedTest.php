@@ -1,5 +1,5 @@
 <?php
-class CascadeDeleteRelatedTest extends Doctrine_Record
+class CascadeDeleteRelatedTest extends \Doctrine1\Record
 {
     public function setTableDefinition(): void
     {

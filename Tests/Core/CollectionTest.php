@@ -62,7 +62,7 @@ namespace Tests\Core {
 
         public function testOffsetGetWithNullArgumentReturnsNewRecord()
         {
-            $coll = new \Doctrine_Collection('User');
+            $coll = new \Doctrine1\Collection('User');
             $this->assertEquals($coll->count(), 0);
 
             $coll[]->name = 'zYne';
@@ -73,7 +73,7 @@ namespace Tests\Core {
 
         public function testLoadRelatedForNormalAssociation()
         {
-            $resource                   = new \Doctrine_Collection('Resource');
+            $resource                   = new \Doctrine1\Collection('Resource');
             $resource[0]->name          = 'resource 1';
             $resource[0]->Type[0]->type = 'type 1';
             $resource[0]->Type[1]->type = 'type 2';
@@ -104,7 +104,7 @@ namespace Tests\Core {
 
         public function testAdd()
         {
-            $coll = new \Doctrine_Collection(static::$connection->getTable('User'));
+            $coll = new \Doctrine1\Collection(static::$connection->getTable('User'));
             $coll->add(new \User());
             $this->assertEquals($coll->count(), 1);
             $coll->add(new \User());
@@ -124,7 +124,7 @@ namespace Tests\Core {
 
             $q = $coll->loadRelated();
 
-            $this->assertTrue($q instanceof \Doctrine_Query);
+            $this->assertTrue($q instanceof \Doctrine1\Query);
 
             $q->addFrom('User.Group g');
 
@@ -200,7 +200,7 @@ namespace Tests\Core {
 
         public function testCount()
         {
-            $coll = new \Doctrine_Collection(static::$connection->getTable('User'));
+            $coll = new \Doctrine1\Collection(static::$connection->getTable('User'));
             $this->assertEquals($coll->count(), 0);
             $coll[0];
             $this->assertEquals($coll->count(), 1);
@@ -209,7 +209,7 @@ namespace Tests\Core {
         public function testFetchCollectionWithIdAsIndex()
         {
             $user = new \User();
-            $user->attribute(\Doctrine_Core::ATTR_COLL_KEY, 'id');
+            $user->attribute(\Doctrine1\Core::ATTR_COLL_KEY, 'id');
 
             $users = $user->getTable()->findAll();
             $this->assertFalse($users->contains(0));
@@ -219,7 +219,7 @@ namespace Tests\Core {
         public function testFetchCollectionWithNameAsIndex()
         {
             $user = new \User();
-            $user->attribute(\Doctrine_Core::ATTR_COLL_KEY, 'name');
+            $user->attribute(\Doctrine1\Core::ATTR_COLL_KEY, 'name');
 
             $users = $user->getTable()->findAll();
             $this->assertFalse($users->contains(0));
@@ -231,12 +231,12 @@ namespace Tests\Core {
             static::$connection->clear();
 
             $user = new \User();
-            $user->attribute(\Doctrine_Core::ATTR_COLL_KEY, 'id');
+            $user->attribute(\Doctrine1\Core::ATTR_COLL_KEY, 'id');
             $phonenumber = new \Phonenumber();
-            $phonenumber->attribute(\Doctrine_Core::ATTR_COLL_KEY, 'id');
+            $phonenumber->attribute(\Doctrine1\Core::ATTR_COLL_KEY, 'id');
 
 
-            $q     = new \Doctrine_Query();
+            $q     = new \Doctrine1\Query();
             $users = $q->from('User u, u.Phonenumber p')->execute();
             $this->assertFalse($users->contains(0));
             $this->assertEquals($users->count(), 8);
@@ -249,41 +249,41 @@ namespace Tests\Core {
 
         public function testCustomManagerCollectionClass()
         {
-            $manager = \Doctrine_Manager::getInstance();
-            $manager->setAttribute(\Doctrine_Core::ATTR_COLLECTION_CLASS, 'MyCollection');
+            $manager = \Doctrine1\Manager::getInstance();
+            $manager->setAttribute(\Doctrine1\Core::ATTR_COLLECTION_CLASS, 'MyCollection');
 
             $user = new \User();
             $this->assertTrue($user->Phonenumber instanceof \MyCollection);
 
-            $manager->setAttribute(\Doctrine_Core::ATTR_COLLECTION_CLASS, 'Doctrine_Collection');
+            $manager->setAttribute(\Doctrine1\Core::ATTR_COLLECTION_CLASS, '\Doctrine1\Collection');
         }
 
         public function testCustomConnectionCollectionClass()
         {
-            $conn = \Doctrine_Core::getTable('Phonenumber')->getConnection();
-            $conn->setAttribute(\Doctrine_Core::ATTR_COLLECTION_CLASS, 'MyConnectionCollection');
+            $conn = \Doctrine1\Core::getTable('Phonenumber')->getConnection();
+            $conn->setAttribute(\Doctrine1\Core::ATTR_COLLECTION_CLASS, 'MyConnectionCollection');
 
             $user = new \User();
             $this->assertTrue($user->Phonenumber instanceof \MyConnectionCollection);
 
-            $conn->unsetAttribute(\Doctrine_Core::ATTR_COLLECTION_CLASS);
+            $conn->unsetAttribute(\Doctrine1\Core::ATTR_COLLECTION_CLASS);
         }
 
         public function testCustomTableCollectionClass()
         {
-            $userTable = \Doctrine_Core::getTable('Phonenumber');
-            $userTable->setAttribute(\Doctrine_Core::ATTR_COLLECTION_CLASS, 'MyPhonenumberCollection');
+            $userTable = \Doctrine1\Core::getTable('Phonenumber');
+            $userTable->setAttribute(\Doctrine1\Core::ATTR_COLLECTION_CLASS, 'MyPhonenumberCollection');
 
             $user = new \User();
             $this->assertTrue($user->Phonenumber instanceof \MyPhonenumberCollection);
 
-            $userTable->unsetAttribute(\Doctrine_Core::ATTR_COLLECTION_CLASS);
+            $userTable->unsetAttribute(\Doctrine1\Core::ATTR_COLLECTION_CLASS);
         }
     }
 }
 
 namespace {
-    class MyCollection extends Doctrine_Collection
+    class MyCollection extends \Doctrine1\Collection
     {
     }
 

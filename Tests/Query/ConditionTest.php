@@ -15,7 +15,7 @@ class ConditionTest extends DoctrineUnitTestCase
     /** @todo belongs in TokenizerTestCase? */
     public function testBracktExplode()
     {
-        $tokenizer = new \Doctrine_Query_Tokenizer();
+        $tokenizer = new \Doctrine1\Query\Tokenizer();
         $str       = 'item OR item OR item';
         $parts     = $tokenizer->bracketExplode($str, [' OR '], '(', ')');
 
@@ -23,7 +23,7 @@ class ConditionTest extends DoctrineUnitTestCase
     }
     public function testConditionParser()
     {
-        $query = new \Doctrine_Query(static::$connection);
+        $query = new \Doctrine1\Query(static::$connection);
 
         $query->select('User.id')->from('User')->where("User.name LIKE 'z%' OR User.name LIKE 's%'");
 
@@ -58,7 +58,7 @@ class ConditionTest extends DoctrineUnitTestCase
 
     public function testConditionParser2()
     {
-        $query = new \Doctrine_Query(static::$connection);
+        $query = new \Doctrine1\Query(static::$connection);
 
         $query->select('User.id')->from('User')->where("User.name LIKE 'z%' OR User.name LIKE 's%'");
 

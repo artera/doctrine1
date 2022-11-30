@@ -6,10 +6,10 @@ namespace Tests\Core\Hydrate {
     {
         public function testCustomHydrator()
         {
-            \Doctrine_Manager::getInstance()
+            \Doctrine1\Manager::getInstance()
                 ->registerHydrator('MyHydrator', 'MyHydrator');
 
-            $result = \Doctrine_Core::getTable('User')
+            $result = \Doctrine1\Core::getTable('User')
                 ->createQuery('u')
                 ->execute([], 'MyHydrator');
 
@@ -19,10 +19,10 @@ namespace Tests\Core\Hydrate {
         public function testCustomHydratorUsingClassInstance()
         {
             $hydrator = new \MyHydrator();
-            \Doctrine_Manager::getInstance()
+            \Doctrine1\Manager::getInstance()
                 ->registerHydrator('MyHydrator', $hydrator);
 
-            $result = \Doctrine_Core::getTable('User')
+            $result = \Doctrine1\Core::getTable('User')
                 ->createQuery('u')
                 ->execute([], 'MyHydrator');
 
@@ -34,20 +34,20 @@ namespace Tests\Core\Hydrate {
             $this->expectException(\TypeError::class);
 
             $hydrator = new \StdClass();
-            \Doctrine_Manager::getInstance()
+            \Doctrine1\Manager::getInstance()
                 ->registerHydrator('MyHydrator', $hydrator);
         }
     }
 }
 
 namespace {
-    class MyHydrator extends Doctrine_Hydrator_Abstract
+    class MyHydrator extends \Doctrine1\Hydrator\AbstractHydrator
     {
         protected array $queryComponents;
         protected array $tableAliases;
         protected int|string $hydrationMode;
 
-        public function hydrateResultSet(Doctrine_Connection_Statement $stmt): string
+        public function hydrateResultSet(\Doctrine1\Connection\Statement $stmt): string
         {
             return 'MY_HYDRATOR';
         }

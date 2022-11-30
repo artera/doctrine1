@@ -11,7 +11,7 @@ class AggregateValueTest extends DoctrineUnitTestCase
 
     public function testInitData()
     {
-        $users = new \Doctrine_Collection('User');
+        $users = new \Doctrine1\Collection('User');
 
         $users[0]->name                        = 'John';
         $users[0]->Phonenumber[0]->phonenumber = '123 123';
@@ -32,7 +32,7 @@ class AggregateValueTest extends DoctrineUnitTestCase
     {
         $record = new \User();
 
-        $this->expectException(\Doctrine_Record_UnknownPropertyException::class);
+        $this->expectException(\Doctrine1\Record\UnknownPropertyException::class);
         $record->get('count');
 
         $record->mapValue('count', 3);
@@ -46,7 +46,7 @@ class AggregateValueTest extends DoctrineUnitTestCase
     {
         static::$connection->clear();
 
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->select('COUNT(u.id) count')->from('User u');
         $this->assertEquals($q->getSqlQuery(), 'SELECT COUNT(e.id) AS e__0 FROM entity e WHERE (e.type = 0)');
@@ -55,12 +55,12 @@ class AggregateValueTest extends DoctrineUnitTestCase
 
         $this->assertEquals(count($users), 1);
 
-        $this->assertEquals($users[0]->state(), \Doctrine_Record_State::TCLEAN());
+        $this->assertEquals($users[0]->state(), \Doctrine1\Record\State::TCLEAN);
     }
 
     public function testAggregateValueIsMappedToRecord()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->select('u.name, COUNT(u.id) count')->from('User u')->groupby('u.name');
 
@@ -68,8 +68,8 @@ class AggregateValueTest extends DoctrineUnitTestCase
 
         $this->assertEquals($users->count(), 2);
 
-        $this->assertEquals($users[0]->state(), \Doctrine_Record_State::PROXY());
-        $this->assertEquals($users[1]->state(), \Doctrine_Record_State::PROXY());
+        $this->assertEquals($users[0]->state(), \Doctrine1\Record\State::PROXY);
+        $this->assertEquals($users[1]->state(), \Doctrine1\Record\State::PROXY);
 
         $this->assertEquals($users[0]->count, 2);
         $this->assertEquals($users[1]->count, 2);
@@ -77,7 +77,7 @@ class AggregateValueTest extends DoctrineUnitTestCase
 
     public function testAggregateOrder()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->select('u.name, COUNT(u.id) count')->from('User u')->groupby('u.name')->orderby('count');
 
@@ -85,8 +85,8 @@ class AggregateValueTest extends DoctrineUnitTestCase
 
         $this->assertEquals($users->count(), 2);
 
-        $this->assertEquals($users[0]->state(), \Doctrine_Record_State::PROXY());
-        $this->assertEquals($users[1]->state(), \Doctrine_Record_State::PROXY());
+        $this->assertEquals($users[0]->state(), \Doctrine1\Record\State::PROXY);
+        $this->assertEquals($users[1]->state(), \Doctrine1\Record\State::PROXY);
 
         $this->assertEquals($users[0]->count, 2);
         $this->assertEquals($users[1]->count, 2);
@@ -94,7 +94,7 @@ class AggregateValueTest extends DoctrineUnitTestCase
 
     public function testAggregateValueMappingSupportsLeftJoins()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->select('u.name, COUNT(p.id) count')->from('User u')->leftJoin('u.Phonenumber p')->groupby('u.id');
 
@@ -110,7 +110,7 @@ class AggregateValueTest extends DoctrineUnitTestCase
 
     public function testAggregateValueMappingSupportsLeftJoins2()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->select('MAX(u.name), u.*, p.*')->from('User u')->leftJoin('u.Phonenumber p')->groupby('u.id');
 
@@ -122,7 +122,7 @@ class AggregateValueTest extends DoctrineUnitTestCase
 
     public function testAggregateValueMappingSupportsMultipleValues()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->select('u.name, COUNT(p.id) count, MAX(p.id) max')->from('User u')->innerJoin('u.Phonenumber p')->groupby('u.id');
 
@@ -133,7 +133,7 @@ class AggregateValueTest extends DoctrineUnitTestCase
 
     public function testAggregateValueMappingSupportsMultipleValues2()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->select('COUNT(u.id) count, MAX(p.id) max')->from('User u')->innerJoin('u.Phonenumber p')->groupby('u.id');
 
@@ -145,7 +145,7 @@ class AggregateValueTest extends DoctrineUnitTestCase
 
     public function testAggregateValueMappingSupportsInnerJoins()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
 
         $q->select('u.name, COUNT(p.id) count')->from('User u')->innerJoin('u.Phonenumber p')->groupby('u.id');
 
@@ -159,35 +159,35 @@ class AggregateValueTest extends DoctrineUnitTestCase
     }
     public function testAggregateFunctionParser()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
         $q->select('SUM(i.price)')->from('QueryTest_Item i');
 
         $this->assertEquals($q->getSqlQuery(), 'SELECT SUM(q.price) AS q__0 FROM query_test__item q');
     }
     public function testAggregateFunctionParser2()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
         $q->select('SUM(i.price * i.quantity)')->from('QueryTest_Item i');
 
         $this->assertEquals($q->getSqlQuery(), 'SELECT SUM(q.price * q.quantity) AS q__0 FROM query_test__item q');
     }
     public function testAggregateFunctionParser3()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
         $q->select('MOD(i.price, i.quantity)')->from('QueryTest_Item i');
 
         $this->assertEquals($q->getSqlQuery(), 'SELECT MOD(q.price, q.quantity) AS q__0 FROM query_test__item q');
     }
     public function testAggregateFunctionParser4()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
         $q->select('CONCAT(i.price, i.quantity)')->from('QueryTest_Item i');
 
         $this->assertEquals($q->getSqlQuery(), 'SELECT CONCAT(q.price, q.quantity) AS q__0 FROM query_test__item q');
     }
     public function testAggregateFunctionParsingSupportsMultipleComponentReferences()
     {
-        $q = new \Doctrine_Query();
+        $q = new \Doctrine1\Query();
         $q->select('SUM(i.price * i.quantity)')
             ->from('QueryTest_Item i');
 
