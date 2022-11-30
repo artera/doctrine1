@@ -588,9 +588,7 @@ class Doctrine_Import_Builder
         $gen->setExtendedClass($extends);
 
         $getInstanceBody = <<<PHP
-        \$table = Doctrine_Core::getTable({$definition['className']}::class);
-        assert(\$table instanceof $className);
-        return \$table;
+        return Doctrine_Core::getTable({$definition['className']}::class);
         PHP;
 
         $method = new MethodGenerator('getInstance', body: $getInstanceBody);
