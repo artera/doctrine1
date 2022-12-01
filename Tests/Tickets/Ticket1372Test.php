@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Tickets {
     use Tests\DoctrineUnitTestCase;
 
@@ -27,7 +28,6 @@ namespace Tests\Tickets {
             }
         }
     }
-
 }
 
 namespace {
@@ -45,7 +45,7 @@ namespace {
             $this->index('type_idx', ['fields' => [0 => 'type']]);
             $this->index('values_idx', ['fields' => [0 => 'value_1', 1 => 'value_2']]);
 
-            $this->setAttribute(\Doctrine1\Core::ATTR_EXPORT, \Doctrine1\Core::EXPORT_ALL);
+            $this->_table->setExportFlags(\Doctrine1\Core::EXPORT_ALL);
 
             $this->setSubClasses(['Child_1' => ['type' => 1], 'Child_2' => ['type' => 2]]);
         }

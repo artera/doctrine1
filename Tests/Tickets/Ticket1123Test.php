@@ -14,8 +14,8 @@ namespace Tests\Tickets {
         {
             $sql = static::$conn->export->exportClassesSql(['Ticket_1123_User', 'Ticket_1123_UserReference']);
             $this->assertEquals(count($sql), 4);
-            $this->assertEquals($sql[0], 'CREATE TABLE ticket_1123__user_reference (user1 BIGINT, user2 BIGINT, PRIMARY KEY(user1, user2)) ENGINE = INNODB');
-            $this->assertEquals($sql[1], 'CREATE TABLE ticket_1123__user (id BIGINT AUTO_INCREMENT, name VARCHAR(30), PRIMARY KEY(id)) ENGINE = INNODB');
+            $this->assertEquals($sql[0], 'CREATE TABLE ticket_1123__user_reference (user1 BIGINT, user2 BIGINT, PRIMARY KEY(user1, user2)) ENGINE = InnoDB');
+            $this->assertEquals($sql[1], 'CREATE TABLE ticket_1123__user (id BIGINT AUTO_INCREMENT, name VARCHAR(30), PRIMARY KEY(id)) ENGINE = InnoDB');
             $this->assertEquals($sql[2], 'ALTER TABLE ticket_1123__user_reference ADD CONSTRAINT ticket_1123__user_reference_user2_ticket_1123__user_id FOREIGN KEY (user2) REFERENCES ticket_1123__user(id) ON DELETE CASCADE');
             $this->assertEquals($sql[3], 'ALTER TABLE ticket_1123__user_reference ADD CONSTRAINT ticket_1123__user_reference_user1_ticket_1123__user_id FOREIGN KEY (user1) REFERENCES ticket_1123__user(id) ON DELETE CASCADE');
         }

@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Query;
 
 use Tests\DoctrineUnitTestCase;
@@ -18,7 +19,7 @@ class IdentifierQuotingTest extends DoctrineUnitTestCase
 
     public function testQuerySupportsIdentifierQuoting()
     {
-        static::$conn->setAttribute(\Doctrine1\Core::ATTR_QUOTE_IDENTIFIER, true);
+        static::$conn->setQuoteIdentifier(true);
 
         $q = new \Doctrine1\Query();
 
@@ -138,6 +139,6 @@ class IdentifierQuotingTest extends DoctrineUnitTestCase
 
         $this->assertEquals('UPDATE "entity" SET "id" = "id" + 1 WHERE ("name" = ? AND ("type" = 0))', $q->getSqlQuery());
 
-        static::$conn->setAttribute(\Doctrine1\Core::ATTR_QUOTE_IDENTIFIER, false);
+        static::$conn->setQuoteIdentifier(false);
     }
 }

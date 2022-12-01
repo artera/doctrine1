@@ -14,7 +14,7 @@ class LocalKey extends \Doctrine1\Relation
         $localFieldName = $record->getTable()->getFieldName($this->definition['local']);
         $id = $record->get($localFieldName);
         $related = null;
-        $loadReferences = $this->definition['table']->getAttribute(\Doctrine1\Core::ATTR_LOAD_REFERENCES);
+        $loadReferences = $this->definition['table']->getLoadReferences();
 
         if ($loadReferences && $id !== null) {
             $dql = 'FROM ' . $this->getTable()->getComponentName()

@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Tickets;
 
 use Tests\DoctrineUnitTestCase;
@@ -32,7 +33,7 @@ class Ticket576Test extends DoctrineUnitTestCase
         $data = \Doctrine1\Query::create()
             ->select('name')
             ->from('Entity')
-            ->fetchOne([], \Doctrine1\Core::HYDRATE_ARRAY);
+            ->fetchOne([], \Doctrine1\HydrationMode::Array);
 
         $user->hydrate($data);
         $this->assertEquals($user->name, 'myname');

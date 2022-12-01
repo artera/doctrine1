@@ -23,7 +23,7 @@ class SavePoint
         protected bool $internal,
     ) {
         $conn = $this->tr->getConnection();
-        $listener = $conn->getAttribute(\Doctrine1\Core::ATTR_LISTENER);
+        $listener = $conn->getListener();
 
         if ($this->name === null) {
             $event = new Event($this->tr, Event::TX_BEGIN);
@@ -87,7 +87,7 @@ class SavePoint
         $this->tr->commitSavePointStack($this);
         $conn = $this->tr->getConnection();
         $conn->connect();
-        $listener = $conn->getAttribute(\Doctrine1\Core::ATTR_LISTENER);
+        $listener = $conn->getListener();
 
         if ($this->name === null) {
             $event = new Event($this->tr, Event::TX_COMMIT);
@@ -118,7 +118,7 @@ class SavePoint
         $this->tr->rollbackSavePointStack($this);
         $conn = $this->tr->getConnection();
         $conn->connect();
-        $listener = $conn->getAttribute(\Doctrine1\Core::ATTR_LISTENER);
+        $listener = $conn->getListener();
 
         if ($this->name === null) {
             $event = new Event($this->tr, Event::TX_ROLLBACK);

@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Query;
 
 use Tests\DoctrineUnitTestCase;
@@ -52,7 +53,7 @@ class MultipleAggregateValueTest extends DoctrineUnitTestCase
         $query->where("u.name = 'jon'");
         $query->limit(1);
 
-        $users = $query->execute([], \Doctrine1\Core::HYDRATE_ARRAY);
+        $users = $query->execute([], \Doctrine1\HydrationMode::Array);
 
         $name       = $users[0]['name'];
         $num_albums = $users[0]['num_albums'];

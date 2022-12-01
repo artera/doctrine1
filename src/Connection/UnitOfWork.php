@@ -2,6 +2,7 @@
 
 namespace Doctrine1\Connection;
 
+use Doctrine1\IdentifierType;
 use PDOException;
 
 /**
@@ -409,7 +410,7 @@ class UnitOfWork extends \Doctrine1\Connection\Module
             $rel = $record->getTable()->getRelation($k);
 
             if ($rel instanceof \Doctrine1\Relation\Association) {
-                if ($this->conn->getAttribute(\Doctrine1\Core::ATTR_CASCADE_SAVES) || $v->isModified()) {
+                if ($this->conn->getCascadeSaves() || $v->isModified()) {
                     $v->save($this->conn, false);
                 }
 
@@ -769,7 +770,7 @@ class UnitOfWork extends \Doctrine1\Connection\Module
         $seq        = $table->sequenceName;
 
         if (empty($seq) && !is_array($identifier)
-            && $table->getIdentifierType() != \Doctrine1\Core::IDENTIFIER_NATURAL
+            && $table->getIdentifierType() != IdentifierType::Natural
         ) {
             $id = false;
             if ($record->$identifier == null) {

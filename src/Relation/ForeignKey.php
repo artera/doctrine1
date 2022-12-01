@@ -20,9 +20,7 @@ class ForeignKey extends \Doctrine1\Relation
             }
         }
         if ($this->isOneToOne()) {
-            if (!$record->exists() || empty($id)
-                || !$this->definition['table']->getAttribute(\Doctrine1\Core::ATTR_LOAD_REFERENCES)
-            ) {
+            if (!$record->exists() || empty($id) || !$this->definition['table']->getLoadReferences()) {
                 $related = $this->getTable()->create();
             } else {
                 $dql = 'FROM ' . $this->getTable()->getComponentName()
@@ -38,9 +36,7 @@ class ForeignKey extends \Doctrine1\Relation
                 false
             );
         } else {
-            if (!$record->exists() || empty($id)
-                || !$this->definition['table']->getAttribute(\Doctrine1\Core::ATTR_LOAD_REFERENCES)
-            ) {
+            if (!$record->exists() || empty($id) || !$this->definition['table']->getLoadReferences()) {
                 $related = \Doctrine1\Collection::create($this->getTable());
             } else {
                 $query   = $this->getRelationDql(1);

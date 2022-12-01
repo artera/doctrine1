@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Export;
 
 use Tests\DoctrineUnitTestCase;
@@ -74,7 +75,7 @@ class SqliteTest extends DoctrineUnitTestCase
     }
     public function testIdentifierQuoting()
     {
-        static::$conn->setAttribute(\Doctrine1\Core::ATTR_QUOTE_IDENTIFIER, true);
+        static::$conn->setQuoteIdentifier(true);
 
         $fields = ['id'    => ['type' => 'integer', 'unsigned' => 1, 'autoincrement' => true, 'unique' => true],
                          'name' => ['type' => 'string', 'length' => 4],
@@ -94,11 +95,11 @@ class SqliteTest extends DoctrineUnitTestCase
 
         $this->assertEquals(static::$adapter->pop(), 'CREATE TABLE "sometable" ("id" INTEGER PRIMARY KEY AUTOINCREMENT, "name" VARCHAR(4))');
 
-        static::$conn->setAttribute(\Doctrine1\Core::ATTR_QUOTE_IDENTIFIER, false);
+        static::$conn->setQuoteIdentifier(false);
     }
     public function testQuoteMultiplePks()
     {
-        static::$conn->setAttribute(\Doctrine1\Core::ATTR_QUOTE_IDENTIFIER, true);
+        static::$conn->setQuoteIdentifier(true);
 
         $name   = 'mytable';
         $fields = ['name'  => ['type' => 'char', 'length' => 10],
@@ -109,7 +110,7 @@ class SqliteTest extends DoctrineUnitTestCase
 
         $this->assertEquals(static::$adapter->pop(), 'CREATE TABLE "mytable" ("name" CHAR(10), "type" INTEGER, PRIMARY KEY("name", "type"))');
 
-        static::$conn->setAttribute(\Doctrine1\Core::ATTR_QUOTE_IDENTIFIER, false);
+        static::$conn->setQuoteIdentifier(false);
     }
     public function testUnknownIndexSortingAttributeThrowsException()
     {

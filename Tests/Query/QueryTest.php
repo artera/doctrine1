@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Query {
     use Tests\DoctrineUnitTestCase;
 
@@ -154,7 +155,7 @@ namespace Tests\Query {
                 ->leftJoin('u.Phonenumber p')
                 ->where('u.id = ?', $id);
 
-            $users = $query->execute([], \Doctrine1\Core::HYDRATE_ARRAY);
+            $users = $query->execute([], \Doctrine1\HydrationMode::Array);
 
             $this->assertTrue(array_key_exists('summ', $users[0]));
         }
@@ -191,8 +192,8 @@ namespace Tests\Query {
                 'WHERE (e.name = ? OR e.loginname = ? AND (e.type = 0))'
             );
 
-            $items1 = $q1->execute(['zYne', 'jwage'], \Doctrine1\Core::HYDRATE_ARRAY);
-            $items2 = $q2->execute(['zYne', 'jwage'], \Doctrine1\Core::HYDRATE_ARRAY);
+            $items1 = $q1->execute(['zYne', 'jwage'], \Doctrine1\HydrationMode::Array);
+            $items2 = $q2->execute(['zYne', 'jwage'], \Doctrine1\HydrationMode::Array);
 
             $this->assertEquals(count($items1), count($items2));
 
@@ -223,8 +224,8 @@ namespace Tests\Query {
                 'WHERE (e.name = ? AND e.loginname = ? OR e.id = ? AND (e.type = 0))'
             );
 
-            $items1 = $q1->execute(['jon', 'jwage', 4], \Doctrine1\Core::HYDRATE_ARRAY);
-            $items2 = $q2->execute(['jon', 'jwage', 4], \Doctrine1\Core::HYDRATE_ARRAY);
+            $items1 = $q1->execute(['jon', 'jwage', 4], \Doctrine1\HydrationMode::Array);
+            $items2 = $q2->execute(['jon', 'jwage', 4], \Doctrine1\HydrationMode::Array);
 
             $this->assertEquals(count($items1), count($items2));
 
@@ -257,8 +258,8 @@ namespace Tests\Query {
                 "WHERE (e.name = 'jon' AND e.loginname = 'jwage' OR e.id = 4 OR e.id = 5 AND e.name LIKE 'Arnold%' AND (e.type = 0))"
             );
 
-            $items1 = $q1->execute([], \Doctrine1\Core::HYDRATE_ARRAY);
-            $items2 = $q2->execute([], \Doctrine1\Core::HYDRATE_ARRAY);
+            $items1 = $q1->execute([], \Doctrine1\HydrationMode::Array);
+            $items2 = $q2->execute([], \Doctrine1\HydrationMode::Array);
 
             $this->assertEquals(count($items1), count($items2));
 
@@ -302,34 +303,34 @@ namespace Tests\Query {
 
         public function testSetQueryClassManagerAttribute()
         {
-            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_QUERY_CLASS, 'MyQuery');
+            \Doctrine1\Manager::getInstance()->setQueryClass(\MyQuery::class);
 
             $q = \Doctrine1\Query::create();
             $this->assertTrue($q instanceof \MyQuery);
 
-            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_QUERY_CLASS, '\Doctrine1\Query');
+            \Doctrine1\Manager::getInstance()->setQueryClass(\Doctrine1\Query::class);
         }
 
         public function testSetQueryClassConnectionAttribute()
         {
             $userTable = \Doctrine1\Core::getTable('User');
-            $userTable->getConnection()->setAttribute(\Doctrine1\Core::ATTR_QUERY_CLASS, 'MyQuery');
+            $userTable->getConnection()->setQueryClass(\MyQuery::class);
 
             $q = $userTable->createQuery();
             $this->assertTrue($q instanceof \MyQuery);
 
-            $userTable->getConnection()->setAttribute(\Doctrine1\Core::ATTR_QUERY_CLASS, '\Doctrine1\Query');
+            $userTable->getConnection()->setQueryClass(\Doctrine1\Query::class);
         }
 
         public function testSetQueryClassTableAttribute()
         {
             $userTable = \Doctrine1\Core::getTable('User');
-            $userTable->setAttribute(\Doctrine1\Core::ATTR_QUERY_CLASS, 'MyQuery');
+            $userTable->setQueryClass(\MyQuery::class);
 
             $q = $userTable->createQuery();
             $this->assertTrue($q instanceof \MyQuery);
 
-            $userTable->setAttribute(\Doctrine1\Core::ATTR_QUERY_CLASS, '\Doctrine1\Query');
+            $userTable->setQueryClass(\Doctrine1\Query::class);
         }
 
         public function testNoLimitSubqueryIfXToOneSelected()

@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Cache;
 
 use Tests\DoctrineUnitTestCase;
@@ -19,7 +20,7 @@ abstract class AbstractTestCase extends DoctrineUnitTestCase
         $this->clearCache();
         $cache = $this->getCacheDriver();
 
-        static::$conn->setAttribute(\Doctrine1\Core::ATTR_RESULT_CACHE, $cache);
+        static::$conn->setResultCache($cache);
 
         for ($i = 0; $i < 10; $i++) {
             $u = \Doctrine1\Query::create()

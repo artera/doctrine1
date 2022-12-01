@@ -32,7 +32,7 @@ class Pessimistic
     {
         $this->conn = $conn;
 
-        if ($this->conn->getAttribute(\Doctrine1\Core::ATTR_EXPORT) & \Doctrine1\Core::EXPORT_TABLES) {
+        if ($this->conn->getExportFlags() & \Doctrine1\Core::EXPORT_TABLES) {
             $columns                = [];
             $columns['object_type'] = ['type'           => 'string',
                                                    'length'  => 50,

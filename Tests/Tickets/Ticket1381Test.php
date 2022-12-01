@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Tickets {
     use Tests\DoctrineUnitTestCase;
 
@@ -37,49 +38,49 @@ namespace Tests\Tickets {
         public function testTicket()
         {
             // Now we fetch with data we want (it seems it overrides calculates columns of already fetched objects)
-                $dql   = 'SELECT c.*, a.* FROM T1381_Comment c INNER JOIN c.T1381_Article a';
-                $items = \Doctrine1\Query::create()->query($dql, [], \Doctrine1\Core::HYDRATE_ARRAY);
+            $dql   = 'SELECT c.*, a.* FROM T1381_Comment c INNER JOIN c.T1381_Article a';
+            $items = \Doctrine1\Query::create()->query($dql, [], \Doctrine1\HydrationMode::Array);
 
-                // This should result in false, since we didn't fetch for this column
-                $this->assertFalse(array_key_exists('ArticleTitle', $items[0]['T1381_Article']));
+            // This should result in false, since we didn't fetch for this column
+            $this->assertFalse(array_key_exists('ArticleTitle', $items[0]['T1381_Article']));
 
-                // We fetch for data including new \columns
-                $dql     = 'SELECT c.*, a.title as ArticleTitle FROM T1381_Comment c INNER JOIN c.T1381_Article a WHERE c.id = ?';
-                $items   = \Doctrine1\Query::create()->query($dql, [1], \Doctrine1\Core::HYDRATE_ARRAY);
-                $comment = $items[0];
+            // We fetch for data including new \columns
+            $dql     = 'SELECT c.*, a.title as ArticleTitle FROM T1381_Comment c INNER JOIN c.T1381_Article a WHERE c.id = ?';
+            $items   = \Doctrine1\Query::create()->query($dql, [1], \Doctrine1\HydrationMode::Array);
+            $comment = $items[0];
 
-                $this->assertTrue(array_key_exists('ArticleTitle', $comment));
+            $this->assertTrue(array_key_exists('ArticleTitle', $comment));
         }
 
 
         public function testTicketInverse()
         {
             // We fetch for data including new \columns
-                $dql     = 'SELECT c.*, a.title as ArticleTitle FROM T1381_Comment c INNER JOIN c.T1381_Article a WHERE c.id = ?';
-                $items   = \Doctrine1\Query::create()->query($dql, [1], \Doctrine1\Core::HYDRATE_ARRAY);
-                $comment = $items[0];
+            $dql     = 'SELECT c.*, a.title as ArticleTitle FROM T1381_Comment c INNER JOIN c.T1381_Article a WHERE c.id = ?';
+            $items   = \Doctrine1\Query::create()->query($dql, [1], \Doctrine1\HydrationMode::Array);
+            $comment = $items[0];
 
-                $this->assertTrue(array_key_exists('ArticleTitle', $comment));
+            $this->assertTrue(array_key_exists('ArticleTitle', $comment));
 
-                // Now we fetch with data we want (it seems it overrides calculates columns of already fetched objects)
-                $dql   = 'SELECT c.*, a.* FROM T1381_Comment c INNER JOIN c.T1381_Article a';
-                $items = \Doctrine1\Query::create()->query($dql, [], \Doctrine1\Core::HYDRATE_ARRAY);
+            // Now we fetch with data we want (it seems it overrides calculates columns of already fetched objects)
+            $dql   = 'SELECT c.*, a.* FROM T1381_Comment c INNER JOIN c.T1381_Article a';
+            $items = \Doctrine1\Query::create()->query($dql, [], \Doctrine1\HydrationMode::Array);
 
-                // This should result in false, since we didn't fetch for this column
-                $this->assertFalse(array_key_exists('ArticleTitle', $items[0]['T1381_Article']));
+            // This should result in false, since we didn't fetch for this column
+            $this->assertFalse(array_key_exists('ArticleTitle', $items[0]['T1381_Article']));
 
-                // Assert that our existent component still has the column, even after new \hydration on same object
-                $this->assertTrue(array_key_exists('ArticleTitle', $comment));
+            // Assert that our existent component still has the column, even after new \hydration on same object
+            $this->assertTrue(array_key_exists('ArticleTitle', $comment));
 
-                // Fetch including new \columns again
-                $dql   = 'SELECT c.id, a.*, a.id as ArticleTitle FROM T1381_Comment c INNER JOIN c.T1381_Article a';
-                $items = \Doctrine1\Query::create()->query($dql, [], \Doctrine1\Core::HYDRATE_ARRAY);
+            // Fetch including new \columns again
+            $dql   = 'SELECT c.id, a.*, a.id as ArticleTitle FROM T1381_Comment c INNER JOIN c.T1381_Article a';
+            $items = \Doctrine1\Query::create()->query($dql, [], \Doctrine1\HydrationMode::Array);
 
-                // Assert that new \calculated column with different content do not override the already fetched one
-                $this->assertTrue(array_key_exists('ArticleTitle', $items[0]));
+            // Assert that new \calculated column with different content do not override the already fetched one
+            $this->assertTrue(array_key_exists('ArticleTitle', $items[0]));
 
-                // Assert that our existent component still has the column, even after new \hydration on same object
-                $this->assertTrue(array_key_exists('ArticleTitle', $comment));
+            // Assert that our existent component still has the column, even after new \hydration on same object
+            $this->assertTrue(array_key_exists('ArticleTitle', $comment));
         }
     }
 }

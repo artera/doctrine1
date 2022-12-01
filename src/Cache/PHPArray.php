@@ -2,7 +2,7 @@
 
 namespace Doctrine1\Cache;
 
-class PHPArray extends \Doctrine1\Cache\Driver
+class PHPArray extends Driver
 {
     /**
      * @var array $data         an array of cached data

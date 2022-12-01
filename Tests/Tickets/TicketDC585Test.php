@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Tickets {
     use Tests\DoctrineUnitTestCase;
 
@@ -8,7 +9,7 @@ namespace Tests\Tickets {
         {
             static::$dbh  = new \Doctrine1\Adapter\Mock('mysql');
             static::$conn = \Doctrine1\Manager::getInstance()->openConnection(static::$dbh);
-            static::$conn->setAttribute(\Doctrine1\Core::ATTR_QUOTE_IDENTIFIER, true);
+            static::$conn->setQuoteIdentifier(true);
         }
 
         protected static array $tables = ['DC585Site', 'DC585PlaceholderValues', 'DC585Placeholder', 'DC585Page', 'DC585PagesPlaceholders'];

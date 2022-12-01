@@ -42,14 +42,14 @@ namespace Tests\Migration {
         {
             $fixtures = [
             [
-                'default'  => ['type' => 'INNODB', 'charset' => 'utf8', 'collate' => 'utf8_unicode_ci'],
+                'default'  => ['type' => 'InnoDB', 'charset' => 'utf8', 'collate' => 'utf8_unicode_ci'],
                 'user'     => [],
-                'expected' => ['type' => 'INNODB', 'charset' => 'utf8', 'collate' => 'utf8_unicode_ci'],
+                'expected' => ['type' => 'InnoDB', 'charset' => 'utf8', 'collate' => 'utf8_unicode_ci'],
             ],
             [
-                'default'  => ['type' => 'INNODB', 'charset' => 'utf8', 'collate' => 'utf8_unicode_ci'],
+                'default'  => ['type' => 'InnoDB', 'charset' => 'utf8', 'collate' => 'utf8_unicode_ci'],
                 'user'     => ['charset' => 'latin1', 'collate' => 'latin1_general_ci'],
-                'expected' => ['type' => 'INNODB', 'charset' => 'latin1', 'collate' => 'latin1_general_ci'],
+                'expected' => ['type' => 'InnoDB', 'charset' => 'latin1', 'collate' => 'latin1_general_ci'],
             ],
             ];
 

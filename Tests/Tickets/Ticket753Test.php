@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Tickets {
     use Tests\DoctrineUnitTestCase;
 
@@ -6,11 +7,11 @@ namespace Tests\Tickets {
     {
         public function testTest()
         {
-            $origOptions = static::$conn->getAttribute(\Doctrine1\Core::ATTR_DEFAULT_COLUMN_OPTIONS);
-            static::$conn->setAttribute(\Doctrine1\Core::ATTR_DEFAULT_COLUMN_OPTIONS, ['type' => 'string', 'length' => 255, 'notnull' => true]);
+            $origOptions = static::$conn->getDefaultColumnOptions();
+            static::$conn->setDefaultColumnOptions(['type' => 'string', 'length' => 255, 'notnull' => true]);
 
-            $origIdOptions = static::$conn->getAttribute(\Doctrine1\Core::ATTR_DEFAULT_IDENTIFIER_OPTIONS);
-            static::$conn->setAttribute(\Doctrine1\Core::ATTR_DEFAULT_IDENTIFIER_OPTIONS, ['name' => '%s_id', 'length' => 25, 'type' => 'string', 'autoincrement' => false]);
+            $origIdOptions = static::$conn->getDefaultIdentifierOptions();
+            static::$conn->setDefaultIdentifierOptions(['name' => '%s_id', 'length' => 25, 'type' => 'string', 'autoincrement' => false]);
 
             $userTable = \Doctrine1\Core::getTable('Ticket_753_User');
 
@@ -20,8 +21,8 @@ namespace Tests\Tickets {
             $definition = $userTable->getDefinitionOf('ticket_753__user_id');
             $this->assertEquals($definition, ['type' => 'string', 'length' => 25, 'autoincrement' => false, 'primary' => true, 'notnull' => true]);
 
-            static::$conn->setAttribute(\Doctrine1\Core::ATTR_DEFAULT_COLUMN_OPTIONS, $origOptions);
-            static::$conn->setAttribute(\Doctrine1\Core::ATTR_DEFAULT_IDENTIFIER_OPTIONS, $origIdOptions);
+            static::$conn->setDefaultColumnOptions($origOptions);
+            static::$conn->setDefaultIdentifierOptions($origIdOptions);
         }
     }
 }

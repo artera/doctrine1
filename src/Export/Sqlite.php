@@ -235,7 +235,7 @@ class Sqlite extends \Doctrine1\Export
     public function createSequence($seqName, $start = 1, array $options = []): bool
     {
         $sequenceName = $this->conn->quoteIdentifier($this->conn->formatter->getSequenceName($seqName), true);
-        $seqcolName   = $this->conn->quoteIdentifier($this->conn->getAttribute(\Doctrine1\Core::ATTR_SEQCOL_NAME), true);
+        $seqcolName   = $this->conn->quoteIdentifier($this->conn->getSequenceColumnName(), true);
         $query        = 'CREATE TABLE ' . $sequenceName . ' (' . $seqcolName . ' INTEGER PRIMARY KEY DEFAULT 0 NOT NULL)';
 
         $this->conn->exec($query);

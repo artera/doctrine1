@@ -2,7 +2,7 @@
 
 namespace Doctrine1\Cache;
 
-class Db extends \Doctrine1\Cache\Driver
+class Db extends Driver
 {
     /**
      * Configure Database cache driver. Specify instance of \Doctrine1\Connection
@@ -15,13 +15,13 @@ class Db extends \Doctrine1\Cache\Driver
         if (!isset($options['connection'])
             || !($options['connection'] instanceof \Doctrine1\Connection)
         ) {
-            throw new \Doctrine1\Cache\Exception('Connection option not set.');
+            throw new Exception('Connection option not set.');
         }
 
         if (!isset($options['tableName'])
             || !is_string($options['tableName'])
         ) {
-            throw new \Doctrine1\Cache\Exception('Table name option not set.');
+            throw new Exception('Table name option not set.');
         }
 
         parent::__construct($options);
@@ -53,7 +53,7 @@ class Db extends \Doctrine1\Cache\Driver
         }
 
         /** @phpstan-var array<int, mixed>[] */
-        $result = $this->getConnection()->execute($sql, [$id])->fetchAll(\Doctrine1\Core::FETCH_NUM);
+        $result = $this->getConnection()->execute($sql, [$id])->fetchAll(\PDO::FETCH_NUM);
 
         if (!isset($result[0])) {
             return false;
@@ -167,7 +167,7 @@ class Db extends \Doctrine1\Cache\Driver
         $sql     = "SELECT id FROM {$this->options['tableName']}";
         $keys    = [];
         /** @phpstan-var array<int, mixed>[] */
-        $results = $this->getConnection()->execute($sql)->fetchAll(\Doctrine1\Core::FETCH_NUM);
+        $results = $this->getConnection()->execute($sql)->fetchAll(\PDO::FETCH_NUM);
         for ($i = 0, $count = count($results); $i < $count; $i++) {
             $keys[] = $results[$i][0];
         }

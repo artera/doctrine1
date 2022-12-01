@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Tickets {
     use Tests\DoctrineUnitTestCase;
 
@@ -12,7 +13,7 @@ namespace Tests\Tickets {
 
         protected function newStudent($cls, $id, $name)
         {
-            $u       = new $cls;
+            $u       = new $cls();
             $u->id   = $id;
             $u->name = $name;
             $u->save();
@@ -25,7 +26,7 @@ namespace Tests\Tickets {
 
             $students = \Doctrine1\Query::create()
                 ->from('T626C_Student1 s INDEXBY s.id')
-                ->execute([], \Doctrine1\Core::HYDRATE_ARRAY);
+                ->execute([], \Doctrine1\HydrationMode::Array);
         }
 
         public function testColNames()
@@ -34,7 +35,7 @@ namespace Tests\Tickets {
 
             $students = \Doctrine1\Query::create()
                 ->from('T626C_Student2 s INDEXBY s.id')
-                ->execute([], \Doctrine1\Core::HYDRATE_ARRAY);
+                ->execute([], \Doctrine1\HydrationMode::Array);
         }
     }
 }

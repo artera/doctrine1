@@ -15,13 +15,13 @@ namespace Tests\Tickets {
 
         public function testTest()
         {
-            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_ALL);
+            \Doctrine1\Manager::getInstance()->setValidate(\Doctrine1\Core::VALIDATE_ALL);
             $foo            = new \Ticket_1818_Foo();
                 $foo->Bar       = new \Ticket_1818_BarA();
                 $foo->Bar->type = 'A';
                 $foo->save();
 
-            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_NONE);
+            \Doctrine1\Manager::getInstance()->setValidate(\Doctrine1\Core::VALIDATE_NONE);
         }
     }
 }

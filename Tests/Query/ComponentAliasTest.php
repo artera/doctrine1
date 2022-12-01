@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Query;
 
 use Tests\DoctrineUnitTestCase;
@@ -51,7 +52,7 @@ class ComponentAliasTest extends DoctrineUnitTestCase
 
         $q->from('User u, u.Group g, g.Phonenumber');
 
-        $users = $q->execute([], \Doctrine1\Core::HYDRATE_ARRAY);
+        $users = $q->execute([], \Doctrine1\HydrationMode::Array);
 
         $count = count(static::$conn);
 
@@ -90,7 +91,7 @@ class ComponentAliasTest extends DoctrineUnitTestCase
         $q = new \Doctrine1\Query();
         $q->from('User u, u.Phonenumber, u.Group g, g.Phonenumber')->where('u.id IN (5,6)');
 
-        $users = $q->execute([], \Doctrine1\Core::HYDRATE_ARRAY);
+        $users = $q->execute([], \Doctrine1\HydrationMode::Array);
 
         $this->assertCount(2, $users);
         $this->assertCount(1, $users[0]['Group']);

@@ -36,6 +36,8 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
 {
     protected PDO $dbh;
 
+    public ?Casing $fieldCase = null;
+
     /**
      * @var array $tables                       an array containing all the initialized Table objects
      *                                          keys representing Table component names and values as Table objects
@@ -65,6 +67,7 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
     protected array $supported = [];
 
     /**
+     * @phpstan-var array<int, mixed> $pendingAttributes
      * @var array $pendingAttributes            An array of pending attributes. When setting attributes
      *                                          no connection is needed. When connected all the pending
      *                                          attributes are passed to the underlying adapter (usually PDO) instance.
@@ -172,26 +175,22 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
     {
         if ($adapter instanceof PDO) {
             $this->dbh = $adapter;
+            $this->dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $this->isConnected = true;
         } elseif (is_array($adapter)) {
-            $this->pendingAttributes[Core::ATTR_DRIVER_NAME] = $adapter['scheme'];
-
             $this->options['dsn']      = $adapter['dsn'];
             $this->options['username'] = $adapter['user'];
             $this->options['password'] = $adapter['pass'];
 
             $this->options['other'] = [];
             if (isset($adapter['other'])) {
-                $this->options['other'] = [Core::ATTR_PERSISTENT => $adapter['persistent']];
+                $this->options['other'] = [PDO::ATTR_PERSISTENT => $adapter['persistent']];
             }
         }
 
         $this->setParent($manager);
 
-        $this->setAttribute(Core::ATTR_CASE, Core::CASE_NATURAL);
-        $this->setAttribute(Core::ATTR_ERRMODE, Core::ERRMODE_EXCEPTION);
-
-        $this->getAttribute(Core::ATTR_LISTENER)->onOpen($this);
+        $this->getListener()->onOpen($this);
     }
 
     /**
@@ -239,13 +238,6 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
      */
     public function getAttribute(int $attribute): mixed
     {
-        if ($attribute >= 100 && $attribute < 1000) {
-            if (!isset($this->attributes[$attribute])) {
-                return parent::getAttribute($attribute);
-            }
-            return $this->attributes[$attribute];
-        }
-
         if ($this->isConnected) {
             try {
                 return $this->dbh->getAttribute($attribute);
@@ -255,7 +247,7 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
         } else {
             if (!isset($this->pendingAttributes[$attribute])) {
                 $this->connect();
-                $this->getAttribute($attribute);
+                $this->dbh->getAttribute($attribute);
             }
 
             return $this->pendingAttributes[$attribute];
@@ -286,21 +278,13 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
      *
      * @return $this
      */
-    public function setAttribute(int|string $attribute, mixed $value): self
+    public function setAttribute(int $attribute, mixed $value): self
     {
-        if (is_string($attribute)) {
-            $attribute = (int) constant("Core::$attribute");
-        }
-        if ($attribute >= 100 && $attribute < 1000) {
-            parent::setAttribute($attribute, $value);
+        if ($this->isConnected) {
+            $this->dbh->setAttribute($attribute, $value);
         } else {
-            if ($this->isConnected) {
-                $this->dbh->setAttribute($attribute, $value);
-            } else {
-                $this->pendingAttributes[$attribute] = $value;
-            }
+            $this->pendingAttributes[$attribute] = $value;
         }
-
         return $this;
     }
 
@@ -406,10 +390,9 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
                     $this->dbh = new PDO(
                         $this->options['dsn'],
                         $this->options['username'],
-                        (!$this->options['password'] ? '':$this->options['password']),
+                        (!$this->options['password'] ? '' : $this->options['password']),
                         $this->options['other']
                     );
-
                     $this->dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                 } catch (PDOException $e) {
                     throw new Connection\Exception('PDO Connection Error: ' . $e->getMessage());
@@ -420,8 +403,7 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
 
         // attach the pending attributes to adapter
         foreach ($this->pendingAttributes as $attr => $value) {
-            // some drivers don't support setting this so we just skip it
-            if ($attr == Core::ATTR_DRIVER_NAME) {
+            if ($attr == PDO::ATTR_DRIVER_NAME) {
                 continue;
             }
             $this->dbh->setAttribute($attr, $value);
@@ -719,7 +701,7 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
      */
     public function fetchAll(string $statement, array $params = []): array
     {
-        return $this->execute($statement, $params)->fetchAll(Core::FETCH_ASSOC);
+        return $this->execute($statement, $params)->fetchAll(PDO::FETCH_ASSOC);
     }
 
     /**
@@ -740,7 +722,7 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
      */
     public function fetchRow(string $statement, array $params = []): ?array
     {
-        $row = $this->execute($statement, $params)->fetch(Core::FETCH_ASSOC);
+        $row = $this->execute($statement, $params)->fetch(PDO::FETCH_ASSOC);
         return $row === false ? null : $row;
     }
 
@@ -751,7 +733,7 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
      */
     public function fetchArray(string $statement, array $params = []): array
     {
-        return $this->execute($statement, $params)->fetch(Core::FETCH_NUM);
+        return $this->execute($statement, $params)->fetch(PDO::FETCH_NUM);
     }
 
     /**
@@ -762,7 +744,7 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
      */
     public function fetchColumn(string $statement, array $params = [], int $colnum = 0): array
     {
-        return $this->execute($statement, $params)->fetchAll(Core::FETCH_COLUMN, $colnum);
+        return $this->execute($statement, $params)->fetchAll(PDO::FETCH_COLUMN, $colnum);
     }
 
     /**
@@ -784,7 +766,7 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
      */
     public function fetchBoth(string $statement, array $params = []): array
     {
-        return $this->execute($statement, $params)->fetchAll(Core::FETCH_BOTH);
+        return $this->execute($statement, $params)->fetchAll(PDO::FETCH_BOTH);
     }
 
     /**
@@ -799,11 +781,11 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
      *
      * @param  string $query         DQL query
      * @param  array  $params        query parameters
-     * @param  int    $hydrationMode Core::HYDRATE_ARRAY or Core::HYDRATE_RECORD
+     * @param  HydrationMode    $hydrationMode HydrationMode::Array or HydrationMode::Record
      * @see    Query
      * @return Collection      Collection of Record objects
      */
-    public function query(string $query, array $params = [], ?int $hydrationMode = null): Collection
+    public function query(string $query, array $params = [], ?HydrationMode $hydrationMode = null): Collection
     {
         $parser = Query::create($this);
         $res    = $parser->query($query, $params, $hydrationMode);
@@ -821,10 +803,10 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
 
         try {
             $event = new Event($this, Event::CONN_PREPARE, $statement);
-            $this->getAttribute(Core::ATTR_LISTENER)->prePrepare($event);
+            $this->getListener()->prePrepare($event);
             /** @var Connection\Statement|PDOStatement */
             $stmt = $this->dbh->prepare($statement);
-            $this->getAttribute(Core::ATTR_LISTENER)->postPrepare($event);
+            $this->getListener()->postPrepare($event);
             if ($stmt instanceof PDOStatement) {
                 $stmt = new Connection\Statement($this, $stmt, $aliases);
             } else {
@@ -901,11 +883,11 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
                 return $stmt;
             } else {
                 $event = new Event($this, Event::CONN_QUERY, $query, $params);
-                $this->getAttribute(Core::ATTR_LISTENER)->preQuery($event);
+                $this->getListener()->preQuery($event);
                 /** @var Connection\Statement|PDOStatement */
                 $stmt = $this->dbh->query($query);
                 $this->incrementQueryCount();
-                $this->getAttribute(Core::ATTR_LISTENER)->postQuery($event);
+                $this->getListener()->postQuery($event);
                 if ($stmt instanceof PDOStatement) {
                     $stmt = new Connection\Statement($this, $stmt);
                 }
@@ -932,11 +914,11 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
                 return $stmt->rowCount();
             } else {
                 $event = new Event($this, Event::CONN_EXEC, $query, $params);
-                $this->getAttribute(Core::ATTR_LISTENER)->preExec($event);
+                $this->getListener()->preExec($event);
                 /** @var int */
                 $count = $this->dbh->exec($query);
                 $this->incrementQueryCount();
-                $this->getAttribute(Core::ATTR_LISTENER)->postExec($event);
+                $this->getListener()->postExec($event);
                 return $count;
             }
         } catch (PDOException $e) {
@@ -989,13 +971,10 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
         }
 
         /** @var class-string<Table> */
-        $class = sprintf($this->getAttribute(Core::ATTR_TABLE_CLASS_FORMAT), $name);
+        $class = sprintf($this->getTableClassFormat(), $name);
 
-        if (!class_exists($class, $this->getAttribute(Core::ATTR_AUTOLOAD_TABLE_CLASSES))
-            || !in_array(Table::class, class_parents($class) ?: [])
-        ) {
-            /** @var class-string<Table> */
-            $class = $this->getAttribute(Core::ATTR_TABLE_CLASS);
+        if (!class_exists($class, false) || !in_array(Table::class, class_parents($class) ?: [])) {
+            $class = $this->getTableClass();
         }
 
         return new $class($name, $this, true);
@@ -1120,14 +1099,14 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
     {
         $event = new Event($this, Event::CONN_CLOSE);
 
-        $this->getAttribute(Core::ATTR_LISTENER)->preClose($event);
+        $this->getListener()->preClose($event);
 
         $this->clear();
 
         unset($this->dbh);
         $this->isConnected = false;
 
-        $this->getAttribute(Core::ATTR_LISTENER)->postClose($event);
+        $this->getListener()->postClose($event);
     }
 
     /**
@@ -1154,11 +1133,11 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
      */
     public function getResultCacheDriver(): CacheInterface
     {
-        if (!$this->getAttribute(Core::ATTR_RESULT_CACHE)) {
+        $resultCache = $this->getResultCache();
+        if (!$resultCache) {
             throw new Exception('Result Cache driver not initialized.');
         }
-
-        return $this->getAttribute(Core::ATTR_RESULT_CACHE);
+        return $resultCache;
     }
 
     /**
@@ -1166,11 +1145,11 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
      */
     public function getQueryCacheDriver(): CacheInterface
     {
-        if (!$this->getAttribute(Core::ATTR_QUERY_CACHE)) {
+        $queryCache = $this->getQueryCache();
+        if (!$queryCache) {
             throw new Exception('Query Cache driver not initialized.');
         }
-
-        return $this->getAttribute(Core::ATTR_QUERY_CACHE);
+        return $queryCache;
     }
 
     /**
@@ -1412,9 +1391,9 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
             $relation->getForeignColumnName(),
         ];
         $key    = implode('_', array_merge($parts, [$relation['onDelete']], [$relation['onUpdate']]));
-        $format = $this->getAttribute(Core::ATTR_FKNAME_FORMAT);
+        $format = $this->getForeignKeyNameFormat();
 
-        return $this->generateUniqueName('foreign_keys', $parts, $key, $format, $this->getAttribute(Core::ATTR_MAX_IDENTIFIER_LENGTH));
+        return $this->generateUniqueName('foreign_keys', $parts, $key, $format, $this->getMaxIdentifierLength());
     }
 
     /**
@@ -1430,9 +1409,9 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
         $parts  = [$tableName];
         $parts  = array_merge($parts, $fields);
         $key    = implode('_', $parts);
-        $format = $this->getAttribute(Core::ATTR_IDXNAME_FORMAT);
+        $format = $this->getIndexNameFormat();
 
-        return $this->generateUniqueName('indexes', $parts, $key, $format, $this->getAttribute(Core::ATTR_MAX_IDENTIFIER_LENGTH));
+        return $this->generateUniqueName('indexes', $parts, $key, $format, $this->getMaxIdentifierLength());
     }
 
     /**

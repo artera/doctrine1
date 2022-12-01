@@ -2,7 +2,7 @@
 
 namespace Doctrine1\Cache;
 
-class Memcache extends \Doctrine1\Cache\Driver
+class Memcache extends Driver
 {
     /**
      * @var \Memcache $memcache     memcache object
@@ -17,7 +17,7 @@ class Memcache extends \Doctrine1\Cache\Driver
     public function __construct($options = [])
     {
         if (!extension_loaded('memcache')) {
-            throw new \Doctrine1\Cache\Exception('In order to use Memcache driver, the memcache extension must be loaded.');
+            throw new Exception('In order to use Memcache driver, the memcache extension must be loaded.');
         }
         parent::__construct($options);
 
@@ -30,7 +30,7 @@ class Memcache extends \Doctrine1\Cache\Driver
             $this->setOption('servers', $value);
         }
 
-        $this->memcache = new \Memcache;
+        $this->memcache = new \Memcache();
 
         foreach ($this->options['servers'] as $server) {
             if (!array_key_exists('persistent', $server)) {

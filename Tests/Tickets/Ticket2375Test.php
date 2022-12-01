@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Tickets;
 
 use Tests\DoctrineUnitTestCase;
@@ -37,7 +38,6 @@ class Ticket2375Test extends DoctrineUnitTestCase
         $this->assertTrue(key_exists('Ticket_2375_Model3', $models2));
         $this->assertTrue(key_exists('Ticket_2375_Model4', $models2));
         $this->assertTrue(key_exists('Ticket_2375_Model5', $models2));
-        $this->assertTrue(key_exists('Ticket_2375_Model6', $models2));
 
         // get a list of all models that have been loaded
         $loadedModels = \Doctrine1\Core::getLoadedModelFiles();
@@ -48,7 +48,6 @@ class Ticket2375Test extends DoctrineUnitTestCase
         $this->assertEquals($loadedModels['Ticket_2375_Model3'], $models2Dir . DIRECTORY_SEPARATOR . 'Ticket_2375_Model3.php');
         $this->assertEquals($loadedModels['Ticket_2375_Model4'], $models2Dir . DIRECTORY_SEPARATOR . 'Ticket_2375_Model4.php');
         $this->assertEquals($loadedModels['Ticket_2375_Model5'], $models2Dir . DIRECTORY_SEPARATOR . 'Ticket_2375_Model5.php');
-        $this->assertEquals($loadedModels['Ticket_2375_Model6'], $models2Dir . DIRECTORY_SEPARATOR . 'Ticket_2375_Model5.php');
 
         // try loading the first models again
 
@@ -67,6 +66,5 @@ class Ticket2375Test extends DoctrineUnitTestCase
         $this->assertEquals($loadedModels['Ticket_2375_Model3'], $models2Dir . DIRECTORY_SEPARATOR . 'Ticket_2375_Model3.php');
         $this->assertEquals($loadedModels['Ticket_2375_Model4'], $models2Dir . DIRECTORY_SEPARATOR . 'Ticket_2375_Model4.php');
         $this->assertEquals($loadedModels['Ticket_2375_Model5'], $models2Dir . DIRECTORY_SEPARATOR . 'Ticket_2375_Model5.php');
-        $this->assertEquals($loadedModels['Ticket_2375_Model6'], $models2Dir . DIRECTORY_SEPARATOR . 'Ticket_2375_Model5.php');
     }
 }

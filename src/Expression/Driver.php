@@ -628,7 +628,7 @@ class Driver extends \Doctrine1\Connection\Module
      */
     public function __call($m, $a)
     {
-        if ($this->conn->getAttribute(\Doctrine1\Core::ATTR_PORTABILITY) & \Doctrine1\Core::PORTABILITY_EXPR) {
+        if ($this->conn->getPortability() & \Doctrine1\Core::PORTABILITY_EXPR) {
             throw new \Doctrine1\Expression\Exception('Unknown expression: ' . $m);
         }
 

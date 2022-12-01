@@ -111,7 +111,7 @@ END;
 
         \Doctrine1\Core::generateModelsFromDb($directory);
 
-        $result = $this->generateMigrationsFromModels($directory, \Doctrine1\Core::MODEL_LOADING_CONSERVATIVE);
+        $result = $this->generateMigrationsFromModels($directory);
 
         \Doctrine1\Lib::removeDirectories($directory);
 
@@ -122,12 +122,11 @@ END;
      * Generate a set of migrations from a set of models
      *
      * @param  string|null $modelsPath   Path to models
-     * @param  int|null    $modelLoading What type of model loading to use when loading the models
      */
-    public function generateMigrationsFromModels(?string $modelsPath = null, ?int $modelLoading = null): bool
+    public function generateMigrationsFromModels(?string $modelsPath = null): bool
     {
         if ($modelsPath !== null) {
-            $models = \Doctrine1\Core::filterInvalidModels(\Doctrine1\Core::loadModels($modelsPath, $modelLoading));
+            $models = \Doctrine1\Core::filterInvalidModels(\Doctrine1\Core::loadModels($modelsPath));
         } else {
             $models = \Doctrine1\Core::getLoadedModels();
         }

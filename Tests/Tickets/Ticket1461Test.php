@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Tickets;
 
 use Tests\DoctrineUnitTestCase;
@@ -14,7 +15,7 @@ class Ticket1461Test extends DoctrineUnitTestCase
             ->innerJoin('u.Phonenumber p')
             ->where("u.name = 'zYne'");
 
-        $users = $q->execute([], \Doctrine1\Core::HYDRATE_ARRAY);
+        $users = $q->execute([], \Doctrine1\HydrationMode::Array);
 
         $this->assertEquals($users[0]['concat1'], 'zYne_1');
 
@@ -30,7 +31,7 @@ class Ticket1461Test extends DoctrineUnitTestCase
             ->innerJoin('u.Phonenumber p')
             ->where("u.name = 'zYne'");
 
-        $users = $q->execute([], \Doctrine1\Core::HYDRATE_ARRAY);
+        $users = $q->execute([], \Doctrine1\HydrationMode::Array);
 
         $this->assertEquals($users[0]['concat2'], '123 123_2');
 
@@ -46,7 +47,7 @@ class Ticket1461Test extends DoctrineUnitTestCase
             ->innerJoin('u.Phonenumber p')
             ->where("u.name = 'zYne'");
 
-        $users = $q->execute([], \Doctrine1\Core::HYDRATE_ARRAY);
+        $users = $q->execute([], \Doctrine1\HydrationMode::Array);
 
         $this->assertEquals($users[0]['concat1'], 'zYne_1');
 

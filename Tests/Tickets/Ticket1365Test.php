@@ -10,7 +10,7 @@ namespace Tests\Tickets {
             static::$conn = \Doctrine1\Manager::getInstance()->openConnection(static::$dbh);
 
             static::$conn->setCharset('utf8');
-            static::$conn->setAttribute(\Doctrine1\Core::ATTR_USE_NATIVE_ENUM, true);
+            static::$conn->setUseNativeEnum(true);
         }
 
         public static function prepareData(): void

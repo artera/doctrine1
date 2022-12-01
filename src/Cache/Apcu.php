@@ -2,17 +2,17 @@
 
 namespace Doctrine1\Cache;
 
-class Apcu extends \Doctrine1\Cache\Driver
+class Apcu extends Driver
 {
     /**
      * @param array $options associative array of cache driver options
      *
-     * @throws \Doctrine1\Cache\Exception
+     * @throws Exception
      */
     public function __construct($options = [])
     {
         if (!function_exists('apcu_fetch')) {
-            throw new \Doctrine1\Cache\Exception('The apcu extension must be loaded for using this backend !');
+            throw new Exception('The apcu extension must be loaded for using this backend !');
         }
         parent::__construct($options);
     }

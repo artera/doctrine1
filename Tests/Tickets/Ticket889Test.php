@@ -69,7 +69,7 @@ namespace {
             $this->setTableName('Ticket_889');
 
             // set table type
-            $this->getTable()->type = 'INNODB';
+            $this->getTable()->type = 'InnoDB';
 
             // set character set
             $this->getTable()->charset = 'utf8';
@@ -127,7 +127,7 @@ namespace {
             $this->setTableName('Ticket_889_Relationship');
 
             // set table type
-            $this->getTable()->type = 'INNODB';
+            $this->getTable()->type = 'InnoDB';
 
             // set character set
             $this->getTable()->charset = 'utf8';

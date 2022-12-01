@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Tickets {
     use Tests\DoctrineUnitTestCase;
 
@@ -40,7 +41,7 @@ namespace Tests\Tickets {
 
         public function testPerformance()
         {
-            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_ALL);
+            \Doctrine1\Manager::getInstance()->setValidate(\Doctrine1\Core::VALIDATE_ALL);
 
             $newChild       = new \Ticket_1623_User();
             $newChild->name = 'myChild';
@@ -59,8 +60,8 @@ namespace Tests\Tickets {
 
         public function testImplicitSave()
         {
-            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_ALL);
-            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_CASCADE_SAVES, false);
+            \Doctrine1\Manager::getInstance()->setValidate(\Doctrine1\Core::VALIDATE_ALL);
+            \Doctrine1\Manager::getInstance()->setCascadeSaves(false);
 
             $newChild       = new \Ticket_1623_User();
             $newChild->name = 'myGrandGrandChild';
@@ -75,8 +76,8 @@ namespace Tests\Tickets {
             //been implicitly saved with $user->save()
             $this->assertEquals($user->count(), 0);
 
-            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_NONE);
-            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_CASCADE_SAVES, true);
+            \Doctrine1\Manager::getInstance()->setValidate(\Doctrine1\Core::VALIDATE_NONE);
+            \Doctrine1\Manager::getInstance()->setCascadeSaves(true);
         }
     }
 }

@@ -12,12 +12,12 @@ namespace Tests\Tickets {
 
         public function testTest()
         {
-            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_ALL);
+            \Doctrine1\Manager::getInstance()->setValidate(\Doctrine1\Core::VALIDATE_ALL);
             $model               = new \Ticket_2204_Model();
             $model->test_decimal = '-123.456789';
             $model->save();
 
-            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_NONE);
+            \Doctrine1\Manager::getInstance()->setValidate(\Doctrine1\Core::VALIDATE_NONE);
         }
     }
 }

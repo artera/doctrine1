@@ -11,7 +11,7 @@ class Nest extends \Doctrine1\Relation\Association
     {
         $id = $record->getIncremented();
 
-        if (empty($id) || !$this->definition['table']->getAttribute(\Doctrine1\Core::ATTR_LOAD_REFERENCES)) {
+        if (empty($id) || !$this->definition['table']->getLoadReferences()) {
             return \Doctrine1\Collection::create($this->getTable());
         } else {
             $q         = new \Doctrine1\RawSql($this->getTable()->getConnection());

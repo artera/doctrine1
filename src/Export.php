@@ -648,7 +648,7 @@ class Export extends Connection\Module
                     ? null : $this->valid_default_values[$field['type']];
 
                 if ($field['default'] === ''
-                    && ($this->conn->getAttribute(Core::ATTR_PORTABILITY) & Core::PORTABILITY_EMPTY_TO_NULL)
+                    && ($this->conn->getPortability() & Core::PORTABILITY_EMPTY_TO_NULL)
                 ) {
                     $field['default'] = null;
                 }
@@ -1131,7 +1131,7 @@ class Export extends Connection\Module
             $table   = $record->getTable();
 
             // Don't export the tables with attribute EXPORT_NONE'
-            if ($table->getAttribute(Core::ATTR_EXPORT) === Core::EXPORT_NONE) {
+            if ($table->getExportFlags() === Core::EXPORT_NONE) {
                 continue;
             }
 

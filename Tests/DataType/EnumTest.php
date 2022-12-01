@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\DataType;
 
 use Tests\DoctrineUnitTestCase;
@@ -133,8 +134,6 @@ class EnumTest extends DoctrineUnitTestCase
 
         $enum->refresh();
         $this->assertEquals($enum->status, 'closed');
-
-        static::$conn->setAttribute(\PDO::ATTR_CASE, \PDO::CASE_NATURAL);
     }
 
     public function testFailingRefresh()
@@ -153,7 +152,7 @@ class EnumTest extends DoctrineUnitTestCase
         $q->select('e.*')
             ->from('EnumTest e')
             ->limit(1);
-        $ret = $q->execute([], \Doctrine1\Core::HYDRATE_ARRAY);
+        $ret = $q->execute([], \Doctrine1\HydrationMode::Array);
 
         $this->assertFalse(is_numeric($ret[0]['status']));
     }
@@ -173,14 +172,14 @@ class EnumTest extends DoctrineUnitTestCase
 
     public function testInvalidValueErrors()
     {
-        $orig = \Doctrine1\Manager::getInstance()->getAttribute(\Doctrine1\Core::ATTR_VALIDATE);
-        \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_ALL);
+        $orig = \Doctrine1\Manager::getInstance()->getValidate();
+        \Doctrine1\Manager::getInstance()->setValidate(\Doctrine1\Core::VALIDATE_ALL);
 
         $this->expectException(\Doctrine1\Validator\Exception::class);
         $test         = new \EnumTest();
         $test->status = 'opeerertn';
         $test->save();
 
-        \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, $orig);
+        \Doctrine1\Manager::getInstance()->setValidate($orig);
     }
 }

@@ -8,7 +8,6 @@ class EventListenerTest extends \Doctrine1\Record
     }
     public function setUp(): void
     {
-        //$this->attribute(\Doctrine1\Core::ATTR_LISTENER, new \Doctrine1\EventListener\AccessorInvoker());
     }
     public function getName($name)
     {

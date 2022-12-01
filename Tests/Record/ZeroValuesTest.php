@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Record;
 
 use Tests\DoctrineUnitTestCase;
@@ -33,7 +34,7 @@ class ZeroValuesTest extends DoctrineUnitTestCase
     {
         $q = new \Doctrine1\Query();
         $q->from('ZeroValueTest');
-        $users = $q->execute([], \Doctrine1\Core::HYDRATE_ARRAY);
+        $users = $q->execute([], \Doctrine1\HydrationMode::Array);
 
         $this->assertSame($users[0]['is_super_admin'], false);
         // check for aggregate bug

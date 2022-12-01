@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Core;
 
 use Tests\DoctrineUnitTestCase;
@@ -57,8 +58,6 @@ class TableTest extends DoctrineUnitTestCase
         $this->assertEquals(1, $t->someInt);
         $this->assertEquals([], $t->someArray);
         $this->assertEquals($obj, $t->someObject);
-
-        static::$dbh->setAttribute(\PDO::ATTR_CASE, \PDO::CASE_NATURAL);
     }
 
     public function testGetForeignKey()
@@ -127,7 +126,7 @@ class TableTest extends DoctrineUnitTestCase
         $record = static::$connection->getTable('User')->find('4');
         $this->assertTrue($record instanceof \Doctrine1\Record);
 
-        $record = static::$connection->getTable('User')->find('4', hydrate_array: true);
+        $record = static::$connection->getTable('User')->find('4', hydrateArray: true);
         $this->assertTrue(is_array($record));
         $this->assertTrue(!is_object($record));
         $this->assertTrue(array_key_exists('id', $record));
@@ -167,7 +166,7 @@ class TableTest extends DoctrineUnitTestCase
 
     public function testFindByXXXHydration()
     {
-        $users = static::$connection->getTable('User')->findByName('zYne', hydrate_array: true);
+        $users = static::$connection->getTable('User')->findByName('zYne', hydrateArray: true);
         $this->assertIsArray($users);
         $this->assertCount(1, $users);
     }

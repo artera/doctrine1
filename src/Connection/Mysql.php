@@ -2,6 +2,7 @@
 
 namespace Doctrine1\Connection;
 
+use Doctrine1\MySQLEngine;
 use PDO;
 
 /**
@@ -13,7 +14,7 @@ class Mysql extends \Doctrine1\Connection
 
     public function __construct(\Doctrine1\Manager $manager, PDO|array $adapter)
     {
-        $this->setAttribute(\Doctrine1\Core::ATTR_DEFAULT_TABLE_TYPE, 'INNODB');
+        $this->setDefaultMySQLEngine(MySQLEngine::InnoDB);
         $this->supported = [
             'sequences'            => 'emulated',
             'indexes'              => true,
@@ -72,10 +73,12 @@ class Mysql extends \Doctrine1\Connection
         return $this->fetchOne('SELECT DATABASE()');
     }
 
-    public function setCharset(string $charset): void
+    public function setCharset(?string $charset): void
     {
-        $query = 'SET NAMES ' . $this->quote($charset);
-        $this->exec($query);
+        if ($charset !== null) {
+            $query = 'SET NAMES ' . $this->quote($charset);
+            $this->exec($query);
+        }
         parent::setCharset($charset);
     }
 

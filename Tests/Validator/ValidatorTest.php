@@ -121,7 +121,7 @@ class ValidatorTest extends DoctrineUnitTestCase
 
     public function testValidate(): void
     {
-        static::$manager->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_ALL);
+        static::$manager->setValidate(\Doctrine1\Core::VALIDATE_ALL);
         $user = static::$connection->getTable('User')->find(4);
 
         $set = ['password'  => 'this is an example of too long password',
@@ -149,7 +149,7 @@ class ValidatorTest extends DoctrineUnitTestCase
         $stack = $email->errorStack();
         $this->assertContains("'invalid' is not a valid hostname for the email address", $stack['address']);
 
-        static::$manager->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_NONE);
+        static::$manager->setValidate(\Doctrine1\Core::VALIDATE_NONE);
     }
 
     /**
@@ -157,7 +157,7 @@ class ValidatorTest extends DoctrineUnitTestCase
      */
     public function testSave(): void
     {
-        static::$manager->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_ALL);
+        static::$manager->setValidate(\Doctrine1\Core::VALIDATE_ALL);
         $user = static::$connection->getTable('User')->find(4);
         $user->clearRelated('Email');
         try {
@@ -190,7 +190,7 @@ class ValidatorTest extends DoctrineUnitTestCase
         $this->assertInstanceOf(\Exception::class, $e);
         unset($e);
 
-        static::$manager->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_NONE);
+        static::$manager->setValidate(\Doctrine1\Core::VALIDATE_NONE);
     }
 
     /**
@@ -199,7 +199,7 @@ class ValidatorTest extends DoctrineUnitTestCase
      */
     public function testValidationHooks(): void
     {
-        static::$manager->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_ALL);
+        static::$manager->setValidate(\Doctrine1\Core::VALIDATE_ALL);
 
         // Tests validate() and validateOnInsert()
         $user = new \User();
@@ -243,7 +243,7 @@ class ValidatorTest extends DoctrineUnitTestCase
             $this->assertContains('notNobody', $stack['loginname']);  // validateOnUpdate() hook constraint
         }
 
-        static::$manager->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_NONE);
+        static::$manager->setValidate(\Doctrine1\Core::VALIDATE_NONE);
     }
 
     /**
@@ -252,7 +252,7 @@ class ValidatorTest extends DoctrineUnitTestCase
      */
     public function testHookValidateOnInsert(): void
     {
-        static::$manager->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_ALL);
+        static::$manager->setValidate(\Doctrine1\Core::VALIDATE_ALL);
 
         $user           = new \User();
         $user->customValidationEnabled = true;
@@ -266,12 +266,12 @@ class ValidatorTest extends DoctrineUnitTestCase
             $this->assertContains('pwNotTopSecret', $errors['password']);
         }
 
-        static::$manager->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_NONE);
+        static::$manager->setValidate(\Doctrine1\Core::VALIDATE_NONE);
     }
 
     public function testValidationOnManyToManyRelations(): void
     {
-        static::$manager->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_ALL);
+        static::$manager->setValidate(\Doctrine1\Core::VALIDATE_ALL);
         try {
             $client                                       = new \ValidatorTest_ClientModel();
             $client->short_name                           = 'test';
@@ -293,12 +293,12 @@ class ValidatorTest extends DoctrineUnitTestCase
             $this->assertContains('Value is required and can\'t be empty', $stack['zip']);
         }
 
-        static::$manager->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_NONE);
+        static::$manager->setValidate(\Doctrine1\Core::VALIDATE_NONE);
     }
 
     public function testSaveInTransactionThrowsValidatorException(): void
     {
-        static::$manager->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_ALL);
+        static::$manager->setValidate(\Doctrine1\Core::VALIDATE_ALL);
         $savepoint = static::$conn->beginTransaction();
         try {
             $client                                       = new \ValidatorTest_ClientModel();
@@ -321,12 +321,12 @@ class ValidatorTest extends DoctrineUnitTestCase
             $this->assertContains('Value is required and can\'t be empty', $stack['zip']);
         }
 
-        static::$manager->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_NONE);
+        static::$manager->setValidate(\Doctrine1\Core::VALIDATE_NONE);
     }
 
     public function testSetBooleanWithNumericZeroOrOne(): void
     {
-        static::$manager->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_ALL);
+        static::$manager->setValidate(\Doctrine1\Core::VALIDATE_ALL);
 
         $test             = new \BooleanTest();
         $test->is_working = '1';
@@ -336,23 +336,23 @@ class ValidatorTest extends DoctrineUnitTestCase
         $test->is_working = '0';
         $test->save();
 
-        static::$manager->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_NONE);
+        static::$manager->setValidate(\Doctrine1\Core::VALIDATE_NONE);
     }
 
     public function testNoValidationOnExpressions(): void
     {
-        static::$manager->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_ALL);
+        static::$manager->setValidate(\Doctrine1\Core::VALIDATE_ALL);
 
         $entry        = new \Log_Entry();
         $entry->stamp = new \Doctrine1\Expression('NOW()');
         $entry->save();
 
-        static::$manager->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_NONE);
+        static::$manager->setValidate(\Doctrine1\Core::VALIDATE_NONE);
     }
 
     public function testValidationIsTriggeredOnFlush(): void
     {
-        static::$manager->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_ALL);
+        static::$manager->setValidate(\Doctrine1\Core::VALIDATE_ALL);
         static::$conn->clear();
 
         $r             = new \ValidatorTest_Person();
@@ -360,6 +360,6 @@ class ValidatorTest extends DoctrineUnitTestCase
 
         $this->expectException(\Doctrine1\Validator\Exception::class);
         static::$conn->flush();
-        static::$manager->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_NONE);
+        static::$manager->setValidate(\Doctrine1\Core::VALIDATE_NONE);
     }
 }

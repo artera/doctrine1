@@ -61,13 +61,14 @@ class Manager extends Configurable implements \Countable, \IteratorAggregate
 
     /** @phpstan-var (class-string<Hydrator\AbstractHydrator>|Hydrator\AbstractHydrator)[] */
     protected array $hydrators = [
-        Core::HYDRATE_ARRAY         => Hydrator\ArrayDriver::class,
-        Core::HYDRATE_RECORD        => Hydrator\RecordDriver::class,
-        Core::HYDRATE_NONE          => Hydrator\NoneDriver::class,
-        Core::HYDRATE_SCALAR        => Hydrator\ScalarDriver::class,
-        Core::HYDRATE_SINGLE_SCALAR => Hydrator\SingleScalarDriver::class,
-        Core::HYDRATE_ON_DEMAND     => Hydrator\RecordDriver::class,
-        Core::HYDRATE_ARRAY_SHALLOW => Hydrator\ArrayShallowDriver::class,
+        // Keep same order as defined in Doctrine1\HydrationMode
+        Hydrator\NoneDriver::class,
+        Hydrator\RecordDriver::class,
+        Hydrator\ArrayDriver::class,
+        Hydrator\ArrayShallowDriver::class,
+        Hydrator\ScalarDriver::class,
+        Hydrator\SingleScalarDriver::class,
+        Hydrator\RecordDriver::class,
     ];
 
     /** Whether or not the validators from disk have been loaded */
@@ -83,53 +84,16 @@ class Manager extends Configurable implements \Countable, \IteratorAggregate
      * This method sets default values for all null attributes of this
      * instance. It is idempotent and can only be called one time. Subsequent
      * calls does not alter the attribute values.
-     *
-     * @return boolean      true if inizialization was executed
      */
-    public function setDefaultAttributes()
+    private function setDefaultConfigurables(): void
     {
-        if (!$this->initialized) {
-            $this->initialized = true;
-            $attributes         = [
-                Core::ATTR_CACHE                      => null,
-                Core::ATTR_QUERY_CACHE                => null,
-                Core::ATTR_LOAD_REFERENCES            => true,
-                Core::ATTR_LISTENER                   => new EventListener(),
-                Core::ATTR_RECORD_LISTENER            => new Record\Listener(),
-                Core::ATTR_VALIDATE                   => Core::VALIDATE_NONE,
-                Core::ATTR_QUERY_LIMIT                => Core::LIMIT_RECORDS,
-                Core::ATTR_IDXNAME_FORMAT             => '%s_idx',
-                Core::ATTR_SEQNAME_FORMAT             => '%s_seq',
-                Core::ATTR_TBLNAME_FORMAT             => '%s',
-                Core::ATTR_FKNAME_FORMAT              => '%s',
-                Core::ATTR_QUOTE_IDENTIFIER           => false,
-                Core::ATTR_SEQCOL_NAME                => 'id',
-                Core::ATTR_PORTABILITY                => Core::PORTABILITY_NONE,
-                Core::ATTR_EXPORT                     => Core::EXPORT_ALL,
-                Core::ATTR_DECIMAL_PLACES             => 2,
-                Core::ATTR_DEFAULT_PARAM_NAMESPACE    => 'doctrine',
-                Core::ATTR_AUTOLOAD_TABLE_CLASSES     => false,
-                Core::ATTR_USE_DQL_CALLBACKS          => false,
-                Core::ATTR_AUTO_ACCESSOR_OVERRIDE     => false,
-                Core::ATTR_AUTO_FREE_QUERY_OBJECTS    => false,
-                Core::ATTR_DEFAULT_IDENTIFIER_OPTIONS => [],
-                Core::ATTR_DEFAULT_COLUMN_OPTIONS     => [],
-                Core::ATTR_HYDRATE_OVERWRITE          => true,
-                Core::ATTR_QUERY_CLASS                => Query::class,
-                Core::ATTR_COLLECTION_CLASS           => Collection::class,
-                Core::ATTR_TABLE_CLASS                => Table::class,
-                Core::ATTR_CASCADE_SAVES              => true,
-                Core::ATTR_TABLE_CLASS_FORMAT         => '%sTable'
-            ];
-            foreach ($attributes as $attribute => $value) {
-                $old = $this->getAttribute($attribute);
-                if ($old === null) {
-                    $this->setAttribute($attribute, $value);
-                }
-            }
-            return true;
+        if ($this->initialized) {
+            return;
         }
-        return false;
+        $this->initialized = true;
+
+        $this->setListener(new EventListener());
+        $this->setRecordListener(new Record\Listener());
     }
 
     public function __construct()
@@ -258,7 +222,7 @@ class Manager extends Configurable implements \Countable, \IteratorAggregate
     public function openConnection(PDO|array|string $adapter, $name = null, $setCurrent = true)
     {
         if ($adapter instanceof PDO) {
-            $driverName = $adapter->getAttribute(Core::ATTR_DRIVER_NAME);
+            $driverName = $adapter->getAttribute(PDO::ATTR_DRIVER_NAME);
         } elseif (is_array($adapter)) {
             if (!isset($adapter[0])) {
                 throw new Manager\Exception('Empty data source name given.');
@@ -284,12 +248,12 @@ class Manager extends Configurable implements \Countable, \IteratorAggregate
         // Decode adapter information
         if (is_array($adapter)) {
             foreach ($adapter as $key => $value) {
-                $adapter[$key] = $value ? urldecode($value):null;
+                $adapter[$key] = $value ? urldecode($value) : null;
             }
         }
 
         // initialize the default attributes
-        $this->setDefaultAttributes();
+        $this->setDefaultConfigurables();
 
         if ($name !== null) {
             $name = (string) $name;
@@ -461,7 +425,7 @@ class Manager extends Configurable implements \Countable, \IteratorAggregate
                 }
 
                 $parts['dsn'] = $parts['scheme'] . ':host='
-                          . $parts['host'] . (isset($parts['port']) ? ';port=' . $parts['port']:null) . ';dbname='
+                          . $parts['host'] . (isset($parts['port']) ? ';port=' . $parts['port'] : null) . ';dbname='
                           . $parts['database'];
 
                 if (!empty($parts['query'])) {

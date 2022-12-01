@@ -319,7 +319,7 @@ class Pgsql extends \Doctrine1\DataDict
 
         switch ($field['type']) {
             case 'enum':
-                $field['length'] = isset($field['length']) && $field['length'] ? $field['length']:255;
+                $field['length'] = isset($field['length']) && $field['length'] ? $field['length'] : 255;
                 // no break
             case 'char':
             case 'string':
@@ -379,10 +379,10 @@ class Pgsql extends \Doctrine1\DataDict
                 return 'FLOAT';
             case 'decimal':
                 $length = !empty($field['length']) ? $field['length'] : 18;
-                $scale  = !empty($field['scale']) ? $field['scale'] : $this->conn->getAttribute(\Doctrine1\Core::ATTR_DECIMAL_PLACES);
+                $scale  = !empty($field['scale']) ? $field['scale'] : $this->conn->getDecimalPlaces();
                 return 'NUMERIC(' . $length . ',' . $scale . ')';
         }
-        return $field['type'] . (isset($field['length']) ? '(' . $field['length'] . ')':null);
+        return $field['type'] . (isset($field['length']) ? '(' . $field['length'] . ')' : null);
     }
 
     /**
@@ -484,7 +484,7 @@ class Pgsql extends \Doctrine1\DataDict
                 break;
             case 'enum':
                 $type[] = 'enum';
-                $length = $length ? $length :255;
+                $length = $length ? $length : 255;
                 if ($default) {
                     $default = preg_replace('/\'(\w+)\'.*/', '${1}', $default);
                 }
@@ -545,7 +545,7 @@ class Pgsql extends \Doctrine1\DataDict
                 break;
             default:
                 $type[] = $field['type'];
-                $length = isset($field['length']) ? $field['length']:null;
+                $length = isset($field['length']) ? $field['length'] : null;
         }
 
         $ret = ['type'     => $type,

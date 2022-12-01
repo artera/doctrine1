@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Cache;
 
 class DbTest extends AbstractTestCase
@@ -32,7 +33,7 @@ class DbTest extends AbstractTestCase
         $this->clearCache();
         $cache = $this->getCacheDriver();
 
-        static::$conn->setAttribute(\Doctrine1\Core::ATTR_RESULT_CACHE, $cache);
+        static::$conn->setResultCache($cache);
 
         $queryCountBefore = static::$conn->count();
 

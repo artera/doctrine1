@@ -33,8 +33,6 @@ class Import extends \Doctrine1\Data
      */
     public function doParsing(): array
     {
-        $recursiveMerge = \Doctrine1\Manager::getInstance()->getAttribute(\Doctrine1\Core::ATTR_RECURSIVE_MERGE_FIXTURES);
-        $mergeFunction  = $recursiveMerge === true ? 'array_merge_recursive':'array_merge';
         $directory      = $this->getDirectory();
 
         $array = [];
@@ -46,8 +44,8 @@ class Import extends \Doctrine1\Data
                 // If they specified a specific yml file
                 if (end($e) == 'yml') {
                     /** @var array<class-string<\Doctrine1\Record>, mixed> */
-                    $array = $mergeFunction($array, \Doctrine1\Parser::load($dir, $this->getFormat()));
-                    // If they specified a directory
+                    $array = array_merge_recursive($array, \Doctrine1\Parser::load($dir, $this->getFormat()));
+                // If they specified a directory
                 } elseif (is_dir($dir)) {
                     $it = new \RecursiveIteratorIterator(
                         new \RecursiveDirectoryIterator($dir),
@@ -63,7 +61,7 @@ class Import extends \Doctrine1\Data
                         $e = explode('.', $file->getFileName());
                         if (in_array(end($e), $this->getFormats())) {
                             /** @var array<class-string<\Doctrine1\Record>, mixed> */
-                            $array = $mergeFunction($array, \Doctrine1\Parser::load($file->getPathName(), $this->getFormat()));
+                            $array = array_merge_recursive($array, \Doctrine1\Parser::load($file->getPathName(), $this->getFormat()));
                         }
                     }
                 }

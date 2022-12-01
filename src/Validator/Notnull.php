@@ -6,7 +6,7 @@ use Laminas\Validator\AbstractValidator;
 
 class Notnull extends AbstractValidator
 {
-    const IS_NULL = 'isNull';
+    public const IS_NULL = 'isNull';
 
     /** @phpstan-var array<string, string> */
     protected $messageTemplates = [

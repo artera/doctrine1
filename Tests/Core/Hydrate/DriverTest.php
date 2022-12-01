@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Core\Hydrate {
     use Tests\DoctrineUnitTestCase;
 
@@ -41,11 +42,13 @@ namespace Tests\Core\Hydrate {
 }
 
 namespace {
+    use Doctrine1\HydrationMode;
+
     class MyHydrator extends \Doctrine1\Hydrator\AbstractHydrator
     {
         protected array $queryComponents;
         protected array $tableAliases;
-        protected int|string $hydrationMode;
+        protected HydrationMode|string $hydrationMode;
 
         public function hydrateResultSet(\Doctrine1\Connection\Statement $stmt): string
         {

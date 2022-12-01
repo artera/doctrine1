@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Tickets {
     use Tests\DoctrineUnitTestCase;
 
@@ -28,7 +29,7 @@ namespace Tests\Tickets {
         {
             $q = new \Doctrine1\Query();
             $q->select('t.name')->from('NewTag t INDEXBY t.name');
-            $results = $q->execute([], \Doctrine1\Core::HYDRATE_ARRAY);
+            $results = $q->execute([], \Doctrine1\HydrationMode::Array);
         }
     }
 }

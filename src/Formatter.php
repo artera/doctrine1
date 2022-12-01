@@ -98,7 +98,7 @@ class Formatter extends Connection\Module
      */
     public function quoteIdentifier($str, $checkOption = true)
     {
-        if ($checkOption && !$this->conn->getAttribute(Core::ATTR_QUOTE_IDENTIFIER)) {
+        if ($checkOption && !$this->conn->getQuoteIdentifier()) {
             return $str;
         }
         $tmp = $this->conn->identifier_quoting;
@@ -182,7 +182,7 @@ class Formatter extends Connection\Module
      */
     public function fixSequenceName($sqn)
     {
-        $seqPattern = '/^' . preg_replace('/%s/', '([a-z0-9_]+)', $this->conn->getAttribute(Core::ATTR_SEQNAME_FORMAT)) . '$/i';
+        $seqPattern = '/^' . preg_replace('/%s/', '([a-z0-9_]+)', $this->conn->getSequenceNameFormat()) . '$/i';
         $seqName    = preg_replace($seqPattern, '\\1', $sqn);
 
         if ($seqName && !strcasecmp($sqn, $this->getSequenceName($seqName))) {
@@ -199,7 +199,7 @@ class Formatter extends Connection\Module
      */
     public function fixIndexName($idx)
     {
-        $indexPattern = '/^' . preg_replace('/%s/', '([a-z0-9_]+)', $this->conn->getAttribute(Core::ATTR_IDXNAME_FORMAT)) . '$/i';
+        $indexPattern = '/^' . preg_replace('/%s/', '([a-z0-9_]+)', $this->conn->getIndexNameFormat()) . '$/i';
         $indexName    = preg_replace($indexPattern, '\\1', $idx);
         if ($indexName && !strcasecmp($idx, $this->getIndexName($indexName))) {
             return $indexName;
@@ -216,7 +216,7 @@ class Formatter extends Connection\Module
     public function getSequenceName($sqn)
     {
         return sprintf(
-            $this->conn->getAttribute(Core::ATTR_SEQNAME_FORMAT),
+            $this->conn->getSequenceNameFormat(),
             preg_replace('/[^a-z0-9_\$.]/i', '_', $sqn)
         );
     }
@@ -230,7 +230,7 @@ class Formatter extends Connection\Module
     public function getIndexName($idx)
     {
         return sprintf(
-            $this->conn->getAttribute(Core::ATTR_IDXNAME_FORMAT),
+            $this->conn->getIndexNameFormat(),
             preg_replace('/[^a-z0-9_\$]/i', '_', $idx)
         );
     }
@@ -244,7 +244,7 @@ class Formatter extends Connection\Module
     public function getForeignKeyName($fkey)
     {
         return sprintf(
-            $this->conn->getAttribute(Core::ATTR_FKNAME_FORMAT),
+            $this->conn->getForeignKeyNameFormat(),
             preg_replace('/[^a-z0-9_\$]/i', '_', $fkey)
         );
     }
@@ -257,7 +257,7 @@ class Formatter extends Connection\Module
      */
     public function getTableName($table)
     {
-        $format = $this->conn->getAttribute(Core::ATTR_TBLNAME_FORMAT);
+        $format = $this->conn->getTableNameFormat();
         return sprintf($format, str_replace(sprintf($format, null), '', $table));
     }
 }

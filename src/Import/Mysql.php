@@ -2,6 +2,8 @@
 
 namespace Doctrine1\Import;
 
+use Doctrine1\Casing;
+
 /**
  * @template Connection of \Doctrine1\Connection\Mysql
  * @extends \Doctrine1\Import<Connection>
@@ -47,8 +49,8 @@ class Mysql extends \Doctrine1\Import
     {
         $keyName   = 'Key_name';
         $nonUnique = 'Non_unique';
-        if ($this->conn->getAttribute(\Doctrine1\Core::ATTR_FIELD_CASE) && ($this->conn->getAttribute(\Doctrine1\Core::ATTR_PORTABILITY) & \Doctrine1\Core::PORTABILITY_FIX_CASE)) {
-            if ($this->conn->getAttribute(\Doctrine1\Core::ATTR_FIELD_CASE) == CASE_LOWER) {
+        if ($this->conn->fieldCase && ($this->conn->getPortability() & \Doctrine1\Core::PORTABILITY_FIX_CASE)) {
+            if ($this->conn->fieldCase === Casing::Lower) {
                 $keyName   = strtolower($keyName);
                 $nonUnique = strtolower($nonUnique);
             } else {
@@ -185,8 +187,8 @@ class Mysql extends \Doctrine1\Import
     {
         $keyName   = 'Key_name';
         $nonUnique = 'Non_unique';
-        if ($this->conn->getAttribute(\Doctrine1\Core::ATTR_FIELD_CASE) && ($this->conn->getAttribute(\Doctrine1\Core::ATTR_PORTABILITY) & \Doctrine1\Core::PORTABILITY_FIX_CASE)) {
-            if ($this->conn->getAttribute(\Doctrine1\Core::ATTR_FIELD_CASE) == CASE_LOWER) {
+        if ($this->conn->fieldCase && ($this->conn->getPortability() & \Doctrine1\Core::PORTABILITY_FIX_CASE)) {
+            if ($this->conn->fieldCase === Casing::Lower) {
                 $keyName   = strtolower($keyName);
                 $nonUnique = strtolower($nonUnique);
             } else {

@@ -13,7 +13,7 @@ namespace Tests\Tickets {
 
         public function testTest()
         {
-            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_ALL);
+            \Doctrine1\Manager::getInstance()->setValidate(\Doctrine1\Core::VALIDATE_ALL);
 
             $user                = new \Ticket_1385_User1();
             $user->username      = 'jwage';
@@ -27,7 +27,7 @@ namespace Tests\Tickets {
             $user->email_address = 'jonwage@ertoihertionerti.com';
             $this->assertFalse($user->isValid());
 
-            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_NONE);
+            \Doctrine1\Manager::getInstance()->setValidate(\Doctrine1\Core::VALIDATE_NONE);
         }
     }
 }

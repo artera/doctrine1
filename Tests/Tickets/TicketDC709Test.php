@@ -22,6 +22,6 @@ class TicketDC709Test extends DoctrineUnitTestCase
             ]
         );
 
-        $this->assertEquals($sql[0], "CREATE TABLE mytable (name VARCHAR(255) COMMENT 'This comment isn''t breaking') ENGINE = INNODB");
+        $this->assertEquals($sql[0], "CREATE TABLE mytable (name VARCHAR(255) COMMENT 'This comment isn''t breaking') ENGINE = InnoDB");
     }
 }

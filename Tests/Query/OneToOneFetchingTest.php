@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Query;
 
 use Tests\DoctrineUnitTestCase;
@@ -79,35 +80,35 @@ class OneToOneFetchingTest extends DoctrineUnitTestCase
                     ->leftJoin('b.lastEntry le')
                     ->leftJoin('le.author a')
                     ->leftJoin('a.visibleRank vr')
-                    ->execute([], \Doctrine1\Core::HYDRATE_ARRAY);
+                    ->execute([], \Doctrine1\HydrationMode::Array);
 
-            // --> currently quits here with a fatal error! <--
+        // --> currently quits here with a fatal error! <--
 
-            // check boards/categories
-            $this->assertEquals(1, count($categories));
-            $this->assertTrue(isset($categories[0]['boards']));
-            $this->assertEquals(1, count($categories[0]['boards']));
+        // check boards/categories
+        $this->assertEquals(1, count($categories));
+        $this->assertTrue(isset($categories[0]['boards']));
+        $this->assertEquals(1, count($categories[0]['boards']));
 
-            // get the baord for inspection
-            $board = $categories[0]['boards'][0];
+        // get the baord for inspection
+        $board = $categories[0]['boards'][0];
 
-            $this->assertTrue(isset($board['lastEntry']));
+        $this->assertTrue(isset($board['lastEntry']));
 
-            // lastentry should've 2 fields. one regular field, one relation.
-            //$this->assertEquals(2, count($board['lastEntry']));
-            $this->assertEquals(1234, (int)$board['lastEntry']['date']);
-            $this->assertTrue(isset($board['lastEntry']['author']));
+        // lastentry should've 2 fields. one regular field, one relation.
+        //$this->assertEquals(2, count($board['lastEntry']));
+        $this->assertEquals(1234, (int)$board['lastEntry']['date']);
+        $this->assertTrue(isset($board['lastEntry']['author']));
 
-            // author should've 2 fields. one regular field, one relation.
-            //$this->assertEquals(2, count($board['lastEntry']['author']));
-            $this->assertEquals('romanbb', $board['lastEntry']['author']['username']);
-            $this->assertTrue(isset($board['lastEntry']['author']['visibleRank']));
+        // author should've 2 fields. one regular field, one relation.
+        //$this->assertEquals(2, count($board['lastEntry']['author']));
+        $this->assertEquals('romanbb', $board['lastEntry']['author']['username']);
+        $this->assertTrue(isset($board['lastEntry']['author']['visibleRank']));
 
-            // visibleRank should've 3 regular fields
-            //$this->assertEquals(3, count($board['lastEntry']['author']['visibleRank']));
-            $this->assertEquals('Freak', $board['lastEntry']['author']['visibleRank']['title']);
-            $this->assertEquals('red', $board['lastEntry']['author']['visibleRank']['color']);
-            $this->assertEquals('freak.png', $board['lastEntry']['author']['visibleRank']['icon']);
+        // visibleRank should've 3 regular fields
+        //$this->assertEquals(3, count($board['lastEntry']['author']['visibleRank']));
+        $this->assertEquals('Freak', $board['lastEntry']['author']['visibleRank']['title']);
+        $this->assertEquals('red', $board['lastEntry']['author']['visibleRank']['color']);
+        $this->assertEquals('freak.png', $board['lastEntry']['author']['visibleRank']['icon']);
     }
 
     /**
@@ -129,18 +130,18 @@ class OneToOneFetchingTest extends DoctrineUnitTestCase
                     ->leftJoin('b.lastEntry le')
                     ->leftJoin('le.author a')
                     ->leftJoin('a.visibleRank vr')
-                    ->execute([], \Doctrine1\Core::HYDRATE_ARRAY);
+                    ->execute([], \Doctrine1\HydrationMode::Array);
 
 
-            // check boards/categories
-            $this->assertEquals(1, count($categories));
-            $this->assertTrue(isset($categories[0]['boards']));
-            $this->assertEquals(1, count($categories[0]['boards']));
+        // check boards/categories
+        $this->assertEquals(1, count($categories));
+        $this->assertTrue(isset($categories[0]['boards']));
+        $this->assertEquals(1, count($categories[0]['boards']));
 
-            // get the board for inspection
-            $tmpBoard = $categories[0]['boards'][0];
+        // get the board for inspection
+        $tmpBoard = $categories[0]['boards'][0];
 
-            $this->assertTrue(!isset($tmpBoard['lastEntry']));
+        $this->assertTrue(!isset($tmpBoard['lastEntry']));
 
         $board->lastEntryId = $lastEntryId;
         $board->save();
@@ -159,22 +160,22 @@ class OneToOneFetchingTest extends DoctrineUnitTestCase
                     ->leftJoin('a.visibleRank vr')
                     ->execute();
 
-            // check boards/categories
-            $this->assertEquals(1, count($categories));
-            $this->assertEquals(1, count($categories[0]['boards']));
+        // check boards/categories
+        $this->assertEquals(1, count($categories));
+        $this->assertEquals(1, count($categories[0]['boards']));
 
-            // get the baord for inspection
-            $board = $categories[0]['boards'][0];
+        // get the baord for inspection
+        $board = $categories[0]['boards'][0];
 
-            $this->assertEquals(1234, (int)$board['lastEntry']['date']);
-            $this->assertTrue(isset($board['lastEntry']['author']));
+        $this->assertEquals(1234, (int)$board['lastEntry']['date']);
+        $this->assertTrue(isset($board['lastEntry']['author']));
 
-            $this->assertEquals('romanbb', $board['lastEntry']['author']['username']);
-            $this->assertTrue(isset($board['lastEntry']['author']['visibleRank']));
+        $this->assertEquals('romanbb', $board['lastEntry']['author']['username']);
+        $this->assertTrue(isset($board['lastEntry']['author']['visibleRank']));
 
-            $this->assertEquals('Freak', $board['lastEntry']['author']['visibleRank']['title']);
-            $this->assertEquals('red', $board['lastEntry']['author']['visibleRank']['color']);
-            $this->assertEquals('freak.png', $board['lastEntry']['author']['visibleRank']['icon']);
+        $this->assertEquals('Freak', $board['lastEntry']['author']['visibleRank']['title']);
+        $this->assertEquals('red', $board['lastEntry']['author']['visibleRank']['color']);
+        $this->assertEquals('freak.png', $board['lastEntry']['author']['visibleRank']['icon']);
     }
 
 

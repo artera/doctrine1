@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Query;
 
 use Tests\DoctrineUnitTestCase;
@@ -102,7 +103,7 @@ class SelectTest extends DoctrineUnitTestCase
 
         $q->parseDqlQuery('SELECT u.id, u.name, COUNT(p.id) FROM User u LEFT JOIN u.Phonenumber p GROUP BY u.id');
 
-        $users = $q->execute([], \Doctrine1\Core::HYDRATE_ARRAY);
+        $users = $q->execute([], \Doctrine1\HydrationMode::Array);
 
         $this->assertEquals($users[0]['COUNT'], 1);
 
@@ -241,7 +242,7 @@ class SelectTest extends DoctrineUnitTestCase
             $q->getSqlQuery($params),
         );
 
-        $users = $q->execute($params, \Doctrine1\Core::HYDRATE_ARRAY);
+        $users = $q->execute($params, \Doctrine1\HydrationMode::Array);
 
         $this->assertEquals(count($users), 3);
         $this->assertEquals(0, $users[0]['gt5']);
@@ -263,7 +264,7 @@ class SelectTest extends DoctrineUnitTestCase
             $q->getSqlQuery($params),
         );
 
-        $users = $q->execute($params, \Doctrine1\Core::HYDRATE_ARRAY);
+        $users = $q->execute($params, \Doctrine1\HydrationMode::Array);
 
         $this->assertEquals(count($users), 0);
     }

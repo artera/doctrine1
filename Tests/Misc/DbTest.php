@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Misc {
     use Tests\DoctrineUnitTestCase;
 
@@ -21,7 +22,7 @@ namespace Tests\Misc {
             static::$conn->exec("INSERT INTO entity (id, name) VALUES (2, 'John')");
 
 
-            $this->assertEquals(static::$conn->getAttribute(\Doctrine1\Core::ATTR_DRIVER_NAME), 'sqlite');
+            $this->assertEquals(static::$conn->getAttribute(\PDO::ATTR_DRIVER_NAME), 'sqlite');
         }
 
         public function testAddValidEventListener()

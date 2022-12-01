@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Tickets {
     use Tests\DoctrineUnitTestCase;
 
@@ -27,15 +28,15 @@ namespace Tests\Tickets {
 
         public function testDuplicatedParamsInSubQuery()
         {
-            static::$connection->setAttribute(\Doctrine1\Core::ATTR_QUOTE_IDENTIFIER, true);
+            static::$connection->setQuoteIdentifier(true);
 
             $q = \Doctrine1\Query::create()->select('COUNT(a.id) as num_records')
                 ->from('Ticket_1935_Article a')
                 ->having('num_records > 1');
-                //$results = $q->execute();
-                $this->assertEquals($q->getSqlQuery(), 'SELECT COUNT(`t`.`id`) AS `t__0` FROM `ticket_1935_article` `t` HAVING `t__0` > 1');
+            //$results = $q->execute();
+            $this->assertEquals($q->getSqlQuery(), 'SELECT COUNT(`t`.`id`) AS `t__0` FROM `ticket_1935_article` `t` HAVING `t__0` > 1');
 
-            static::$connection->setAttribute(\Doctrine1\Core::ATTR_QUOTE_IDENTIFIER, false);
+            static::$connection->setQuoteIdentifier(false);
         }
     }
 }

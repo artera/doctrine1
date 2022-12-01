@@ -12,14 +12,14 @@ namespace Tests\Tickets {
 
         public function testTest()
         {
-            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_ALL);
+            \Doctrine1\Manager::getInstance()->setValidate(\Doctrine1\Core::VALIDATE_ALL);
 
             $account         = new \Ticket_1875_Account();
             $account->name   = 'Test';
             $account->amount = '25.99';
             $this->assertTrue($account->isValid());
 
-            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_NONE);
+            \Doctrine1\Manager::getInstance()->setValidate(\Doctrine1\Core::VALIDATE_NONE);
         }
     }
 }

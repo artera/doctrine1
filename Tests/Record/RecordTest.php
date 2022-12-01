@@ -229,7 +229,7 @@ class RecordTest extends DoctrineUnitTestCase
     {
         $record = new \EntityReference();
         $this->assertEquals($record->getTable()->getIdentifier(), ['entity1','entity2']);
-        $this->assertEquals($record->getTable()->getIdentifierType(), \Doctrine1\Core::IDENTIFIER_COMPOSITE);
+        $this->assertEquals($record->getTable()->getIdentifierType(), \Doctrine1\IdentifierType::Composite);
         $this->assertEquals($record->identifier(), ['entity1' => null, 'entity2' => null]);
         $this->assertEquals($record->state(), \Doctrine1\Record\State::TCLEAN);
 

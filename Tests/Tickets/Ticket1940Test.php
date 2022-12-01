@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Tickets {
     use Tests\DoctrineUnitTestCase;
 
@@ -12,7 +13,7 @@ namespace Tests\Tickets {
 
         public function testTest()
         {
-            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_AUTO_ACCESSOR_OVERRIDE, true);
+            \Doctrine1\Manager::getInstance()->setAutoAccessorOverride(true);
 
             $user = new \Ticket_1940_User();
             $user->fromArray(['username' => 'jwage', 'password' => 'changeme', 'email_address' => 'jonwage@gmail.com']);
@@ -22,7 +23,7 @@ namespace Tests\Tickets {
             $this->assertEquals(md5('changeme'), $userArray['password']);
             $this->assertEquals('jonwage@gmail.com-modified-modified', $userArray['email_address']);
 
-            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_AUTO_ACCESSOR_OVERRIDE, false);
+            \Doctrine1\Manager::getInstance()->setAutoAccessorOverride(false);
         }
     }
 }

@@ -1,4 +1,7 @@
-<?php declare(strict_types = 1);
+<?php
+
+declare(strict_types=1);
+
 namespace Doctrine1\PHPStan;
 
 use PhpParser\Node\Arg;
@@ -33,7 +36,7 @@ abstract class AbstractExtension
     /** @param ParameterReflection[] $parameters */
     protected function findArg(string $name, MethodCall $methodCall, array $parameters): ?Arg
     {
-        // find the hydrate_array argument by name or position
+        // find the hydrateArray argument by name or position
         foreach ($methodCall->getArgs() as $arg) {
             if ($arg->name?->name === $name) {
                 return $arg;

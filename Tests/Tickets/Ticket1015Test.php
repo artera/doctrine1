@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Tickets {
     use Tests\DoctrineUnitTestCase;
 
@@ -29,7 +30,7 @@ namespace Tests\Tickets {
             ->from('T1015_Person person')
             ->innerJoin('person.T1015_Points points WITH person.id = 1');
 
-            $results = $q->execute([], \Doctrine1\Core::HYDRATE_ARRAY);
+            $results = $q->execute([], \Doctrine1\HydrationMode::Array);
             //var_dump($results);
             $person = $results[0];
 
@@ -45,7 +46,7 @@ namespace Tests\Tickets {
             ->addComponent('person', 'T1015_Person person')
             ->addComponent('points', 'person.T1015_Points points');
 
-            $results = $q->execute([], \Doctrine1\Core::HYDRATE_ARRAY);
+            $results = $q->execute([], \Doctrine1\HydrationMode::Array);
             //var_dump($results);
             $person = $results[0];
 
@@ -67,7 +68,7 @@ namespace {
 
         public function setUp(): void
         {
-            parent :: setUp();
+            parent::setUp();
             $this->hasOne('T1015_Points', ['local' => 'id', 'foreign' => 'person_id']);
         }
     }
@@ -83,7 +84,7 @@ namespace {
 
         public function setUp(): void
         {
-            parent :: setUp();
+            parent::setUp();
             $this->hasOne('T1015_Person', ['local' => 'person_id', 'foreign' => 'id']);
         }
     }

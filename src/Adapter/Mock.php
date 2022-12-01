@@ -205,7 +205,7 @@ class Mock extends PDO
 
     public function getAttribute(int $attribute): mixed
     {
-        if ($attribute == \Doctrine1\Core::ATTR_DRIVER_NAME) {
+        if ($attribute == PDO::ATTR_DRIVER_NAME) {
             return strtolower($this->name);
         }
 

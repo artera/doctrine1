@@ -2,33 +2,14 @@
 
 namespace Doctrine1;
 
+use Doctrine1\Query\State;
+
 /**
  * @template Record of Record
  * @template Type of Query\Type
  */
 abstract class AbstractQuery
 {
-    /**
-     * A query object is in CLEAN state when it has NO unparsed/unprocessed DQL parts.
-     */
-    const STATE_CLEAN = 1;
-
-    /**
-     * A query object is in state DIRTY when it has DQL parts that have not yet been
-     * parsed/processed.
-     */
-    const STATE_DIRTY = 2;
-
-    /**
-     * A query is in DIRECT state when ... ?
-     */
-    const STATE_DIRECT = 3;
-
-    /**
-     * A query object is on LOCKED state when ... ?
-     */
-    const STATE_LOCKED = 4;
-
     /**
      * @var array<string, string> Table alias map. Keys are SQL aliases and values DQL aliases.
      */
@@ -42,7 +23,7 @@ abstract class AbstractQuery
     /**
      * The current state of this query.
      */
-    protected int $state = Query::STATE_CLEAN;
+    protected State $state = State::Clean;
 
     /**
      * @var array<string, mixed[]> $params The parameters of this query.
@@ -195,7 +176,7 @@ abstract class AbstractQuery
     protected array $tableAliasSeeds = [];
 
     protected array $options = [
-        'hydrationMode' => Core::HYDRATE_RECORD
+        'hydrationMode' => HydrationMode::Record,
     ];
 
     protected bool $isLimitSubqueryUsed = false;
@@ -241,8 +222,8 @@ abstract class AbstractQuery
         $this->connection = $connection ?? Manager::getInstance()->getCurrentConnection();
         $this->hydrator       = $hydrator;
         $this->tokenizer      = new Query\Tokenizer();
-        $this->resultCacheTTL = $this->connection->getAttribute(Core::ATTR_RESULT_CACHE_LIFESPAN);
-        $this->queryCacheTTL  = $this->connection->getAttribute(Core::ATTR_QUERY_CACHE_LIFESPAN);
+        $this->resultCacheTTL = $this->connection->getResultCacheLifespan();
+        $this->queryCacheTTL  = $this->connection->getQueryCacheLifespan();
     }
 
     /**
@@ -861,7 +842,9 @@ abstract class AbstractQuery
         $dql    = $this->getDql();
         $conn   = $this->getConnection();
         $params = $this->getFlattenedParams($params);
-        $hash   = md5($this->hydrator->getHydrationMode() . $conn->getName() . $conn->getOption('dsn') . $dql . var_export($this->pendingJoinConditions, true) . var_export($params, true));
+        $scalarMode = $this->hydrator->getHydrationMode();
+        $scalarMode = $scalarMode instanceof HydrationMode ? $scalarMode->value : $scalarMode;
+        $hash   = md5($scalarMode . $conn->getName() . $conn->getOption('dsn') . $dql . var_export($this->pendingJoinConditions, true) . var_export($params, true));
         return $hash;
     }
 
@@ -894,7 +877,7 @@ abstract class AbstractQuery
 
         // Check if we're not using a View
         if (!$this->view) {
-            if ($this->queryCache !== false && ($this->queryCache || $this->connection->getAttribute(Core::ATTR_QUERY_CACHE))) {
+            if ($this->queryCache !== false && ($this->queryCache || $this->connection->getQueryCache())) {
                 $queryCacheDriver = $this->getQueryCacheDriver();
                 $hash             = $this->calculateQueryCacheHash($params);
                 $cached           = $queryCacheDriver->fetch($hash);
@@ -919,7 +902,7 @@ abstract class AbstractQuery
 
                     // Check again because getSqlQuery() above could have flipped the _queryCache flag
                     // if this query contains the limit sub query algorithm we don't need to cache it
-                    if ($this->queryCache || $this->connection->getAttribute(Core::ATTR_QUERY_CACHE)) {
+                    if ($this->queryCache || $this->connection->getQueryCache()) {
                         // Convert query into a serialized form
                         $serializedQuery = $this->getCachedForm($query);
 
@@ -951,10 +934,10 @@ abstract class AbstractQuery
     /**
      * executes the query and populates the data set
      *
-     * @phpstan-param int|class-string<Hydrator\AbstractHydrator>|null $hydrationMode
+     * @phpstan-param HydrationMode|class-string<Hydrator\AbstractHydrator>|null $hydrationMode
      * @phpstan-return Collection<Record>|Collection\OnDemand<Record>|array|scalar
      */
-    public function execute(array $params = [], int|string|null $hydrationMode = null): Collection|Collection\OnDemand|array|int|string|float|bool
+    public function execute(array $params = [], HydrationMode|string|null $hydrationMode = null): Collection|Collection\OnDemand|array|int|string|float|bool
     {
         try {
             // Clean any possible processed params
@@ -1002,7 +985,7 @@ abstract class AbstractQuery
 
                 $this->hydrator->setQueryComponents($this->queryComponents);
                 if ($this->hydrator instanceof Hydrator) {
-                    if ($this->type->isSelect() && $hydrationMode == Core::HYDRATE_ON_DEMAND) {
+                    if ($this->type->isSelect() && $hydrationMode == HydrationMode::OnDemand) {
                         $hydrationDriver = $this->hydrator->getHydratorDriver($hydrationMode, $this->tableAliasMap);
                         /** @var Collection\OnDemand<Record> */
                         $result = new Collection\OnDemand($stmt, $hydrationDriver, $this->tableAliasMap);
@@ -1014,7 +997,7 @@ abstract class AbstractQuery
                 return $this->hydrator->hydrateResultSet($stmt);
             }
         } finally {
-            if ($this->getConnection()->getAttribute(Core::ATTR_AUTO_FREE_QUERY_OBJECTS)) {
+            if ($this->getConnection()->getAutoFreeQueryObjects()) {
                 $this->free();
             }
         }
@@ -1073,7 +1056,7 @@ abstract class AbstractQuery
      */
     protected function invokePreQuery($params = [])
     {
-        if (!$this->preQueried && $this->getConnection()->getAttribute(Core::ATTR_USE_DQL_CALLBACKS)) {
+        if (!$this->preQueried && $this->getConnection()->getUseDqlCallbacks()) {
             $this->preQueried = true;
 
             $callback = $this->getDqlCallback();
@@ -1833,10 +1816,9 @@ abstract class AbstractQuery
     }
 
     /**
-     * @param  int $hydrationMode
      * @return $this
      */
-    public function setHydrationMode($hydrationMode)
+    public function setHydrationMode(HydrationMode $hydrationMode)
     {
         $this->hydrator->setHydrationMode($hydrationMode);
         return $this;
@@ -2069,7 +2051,7 @@ abstract class AbstractQuery
             $this->dqlParts[$queryPartName] = [$queryPart];
         }
 
-        $this->state = Query::STATE_DIRTY;
+        $this->state = State::Dirty;
         return $this;
     }
 

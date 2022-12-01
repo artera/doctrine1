@@ -1,14 +1,15 @@
 <?php
+
 namespace Tests\Tickets {
     use Tests\DoctrineUnitTestCase;
 
     class Ticket1124Test extends DoctrineUnitTestCase
     {
-        const NO_ALIAS         = 5;
-        const SOMETHING_ELSE   = 8;
-        const TABLEIZED_ALIAS  = 27;
-        const CLASSIFIED_ALIAS = 29;
-        const ANOTHER_ALIAS    = 30;
+        public const NO_ALIAS         = 5;
+        public const SOMETHING_ELSE   = 8;
+        public const TABLEIZED_ALIAS  = 27;
+        public const CLASSIFIED_ALIAS = 29;
+        public const ANOTHER_ALIAS    = 30;
 
         public static function prepareTables(): void
         {

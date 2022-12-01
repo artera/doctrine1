@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Tickets {
     use Tests\DoctrineUnitTestCase;
 
@@ -9,10 +10,10 @@ namespace Tests\Tickets {
             $cacheDriver = new \Doctrine1\Cache\PHPArray();
 
             $conn1 = \Doctrine1\Manager::connection('sqlite::memory:', 'conn_1');
-            $conn1->setAttribute(\Doctrine1\Core::ATTR_RESULT_CACHE, $cacheDriver);
+            $conn1->setResultCache($cacheDriver);
 
             $conn2 = \Doctrine1\Manager::connection('sqlite::memory:', 'conn_2');
-            $conn2->setAttribute(\Doctrine1\Core::ATTR_RESULT_CACHE, $cacheDriver);
+            $conn2->setResultCache($cacheDriver);
             $this->assertNotEquals($conn1, $conn2);
 
             $manager = \Doctrine1\Manager::getInstance();

@@ -6,6 +6,6 @@ class MysqlTestRecord extends \Doctrine1\Record
         $this->hasColumn('name', 'string', null, 'primary');
         $this->hasColumn('code', 'integer', null, 'primary');
 
-        $this->getTable()->type = 'INNODB';
+        $this->getTable()->type = 'InnoDB';
     }
 }

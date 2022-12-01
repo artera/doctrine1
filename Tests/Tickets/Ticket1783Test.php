@@ -12,14 +12,14 @@ namespace Tests\Tickets {
 
         public function testValidateLargeIntegers()
         {
-            static::$manager->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_ALL);
+            static::$manager->setValidate(\Doctrine1\Core::VALIDATE_ALL);
 
             $test         = new \Ticket_1783();
             $test->bigint = PHP_INT_MAX + 1;
 
             $this->assertTrue($test->isValid());
 
-            static::$manager->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_NONE);
+            static::$manager->setValidate(\Doctrine1\Core::VALIDATE_NONE);
         }
     }
 }

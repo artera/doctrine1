@@ -12,7 +12,7 @@ namespace Tests\Tickets {
 
         public function testTest()
         {
-            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_ALL);
+            \Doctrine1\Manager::getInstance()->setValidate(\Doctrine1\Core::VALIDATE_ALL);
 
             $user           = new \Ticket_1764_User();
             $user->username = 'jwage';
@@ -23,7 +23,7 @@ namespace Tests\Tickets {
             $sql = \Doctrine1\Core::generateSqlFromArray(['Ticket_1764_User']);
             $this->assertEquals($sql[0], 'CREATE TABLE ticket_1764__user (id INTEGER PRIMARY KEY AUTOINCREMENT, username VARCHAR(255), password VARCHAR(255), rate DECIMAL(18,2) NOT NULL)');
 
-            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_NONE);
+            \Doctrine1\Manager::getInstance()->setValidate(\Doctrine1\Core::VALIDATE_NONE);
         }
     }
 }

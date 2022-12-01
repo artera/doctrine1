@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Tickets {
     use Tests\DoctrineUnitTestCase;
 
@@ -34,7 +35,7 @@ namespace Tests\Tickets {
             $q = \Doctrine1\Query::create()
                 ->from('Ticket1205TestAddress a')
                 ->innerjoin('a.User u')
-                ->execute([], \Doctrine1\Core::HYDRATE_ARRAY);
+                ->execute([], \Doctrine1\HydrationMode::Array);
         }
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Core {
     use Tests\DoctrineUnitTestCase;
 
@@ -209,7 +210,7 @@ namespace Tests\Core {
         public function testFetchCollectionWithIdAsIndex()
         {
             $user = new \User();
-            $user->attribute(\Doctrine1\Core::ATTR_COLL_KEY, 'id');
+            $user->setCollectionKey('id');
 
             $users = $user->getTable()->findAll();
             $this->assertFalse($users->contains(0));
@@ -219,7 +220,7 @@ namespace Tests\Core {
         public function testFetchCollectionWithNameAsIndex()
         {
             $user = new \User();
-            $user->attribute(\Doctrine1\Core::ATTR_COLL_KEY, 'name');
+            $user->setCollectionKey('name');
 
             $users = $user->getTable()->findAll();
             $this->assertFalse($users->contains(0));
@@ -231,9 +232,9 @@ namespace Tests\Core {
             static::$connection->clear();
 
             $user = new \User();
-            $user->attribute(\Doctrine1\Core::ATTR_COLL_KEY, 'id');
+            $user->setCollectionKey('id');
             $phonenumber = new \Phonenumber();
-            $phonenumber->attribute(\Doctrine1\Core::ATTR_COLL_KEY, 'id');
+            $phonenumber->setCollectionKey('id');
 
 
             $q     = new \Doctrine1\Query();
@@ -250,34 +251,34 @@ namespace Tests\Core {
         public function testCustomManagerCollectionClass()
         {
             $manager = \Doctrine1\Manager::getInstance();
-            $manager->setAttribute(\Doctrine1\Core::ATTR_COLLECTION_CLASS, 'MyCollection');
+            $manager->setCollectionClass(\MyCollection::class);
 
             $user = new \User();
             $this->assertTrue($user->Phonenumber instanceof \MyCollection);
 
-            $manager->setAttribute(\Doctrine1\Core::ATTR_COLLECTION_CLASS, '\Doctrine1\Collection');
+            $manager->setCollectionClass(\Doctrine1\Collection::class);
         }
 
         public function testCustomConnectionCollectionClass()
         {
             $conn = \Doctrine1\Core::getTable('Phonenumber')->getConnection();
-            $conn->setAttribute(\Doctrine1\Core::ATTR_COLLECTION_CLASS, 'MyConnectionCollection');
+            $conn->setCollectionClass(\MyConnectionCollection::class);
 
             $user = new \User();
             $this->assertTrue($user->Phonenumber instanceof \MyConnectionCollection);
 
-            $conn->unsetAttribute(\Doctrine1\Core::ATTR_COLLECTION_CLASS);
+            $conn->setCollectionClass(null);
         }
 
         public function testCustomTableCollectionClass()
         {
             $userTable = \Doctrine1\Core::getTable('Phonenumber');
-            $userTable->setAttribute(\Doctrine1\Core::ATTR_COLLECTION_CLASS, 'MyPhonenumberCollection');
+            $userTable->setCollectionClass(\MyPhonenumberCollection::class);
 
             $user = new \User();
             $this->assertTrue($user->Phonenumber instanceof \MyPhonenumberCollection);
 
-            $userTable->unsetAttribute(\Doctrine1\Core::ATTR_COLLECTION_CLASS);
+            $userTable->setCollectionClass(null);
         }
     }
 }

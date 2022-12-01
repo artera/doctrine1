@@ -18,14 +18,14 @@ namespace Tests\Tickets {
         public function execTest($klass)
         {
             //stores old validation setting
-            $validation = \Doctrine1\Manager::getInstance()->getAttribute(\Doctrine1\Core::ATTR_VALIDATE);
-            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_ALL);
+            $validation = \Doctrine1\Manager::getInstance()->getValidate();
+            \Doctrine1\Manager::getInstance()->setValidate(\Doctrine1\Core::VALIDATE_ALL);
 
             $record       = new $klass();
             $record->name = 'test';
             $record->save();
 
-            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, $validation);
+            \Doctrine1\Manager::getInstance()->setValidate($validation);
         }
 
         public function testShouldAllowNotUsingAliases()

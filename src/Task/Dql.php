@@ -2,6 +2,8 @@
 
 namespace Doctrine1\Task;
 
+use Doctrine1\HydrationMode;
+
 class Dql extends \Doctrine1\Task
 {
     /**
@@ -29,11 +31,11 @@ class Dql extends \Doctrine1\Task
         $query = \Doctrine1\Query::create();
 
         $params = $this->getArgument('params');
-        $params = $params ? explode(',', $params):[];
+        $params = $params ? explode(',', $params) : [];
 
         $this->notify('executing: "' . $dql . '" (' . implode(', ', $params) . ')');
 
-        $results = $query->query($dql, $params, \Doctrine1\Core::HYDRATE_ARRAY);
+        $results = $query->query($dql, $params, HydrationMode::Array);
 
         $this->printResults($results);
     }

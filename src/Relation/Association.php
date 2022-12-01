@@ -157,7 +157,7 @@ class Association extends \Doctrine1\Relation
     public function fetchRelatedFor(\Doctrine1\Record $record)
     {
         $id = $record->getIncremented();
-        if (empty($id) || !$this->definition['table']->getAttribute(\Doctrine1\Core::ATTR_LOAD_REFERENCES)) {
+        if (empty($id) || !$this->definition['table']->getLoadReferences()) {
             $coll = \Doctrine1\Collection::create($this->getTable());
         } else {
             $coll = $this->getTable()->getConnection()->query($this->getRelationDql(1), [$id]);

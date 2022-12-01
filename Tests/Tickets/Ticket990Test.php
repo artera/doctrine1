@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Tickets {
     use Tests\DoctrineUnitTestCase;
 
@@ -21,7 +22,7 @@ namespace Tests\Tickets {
 
         public function testDontOverwriteIdentityMap()
         {
-            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_HYDRATE_OVERWRITE, false);
+            \Doctrine1\Manager::getInstance()->setHydrateOverwrite(false);
 
             $user       = \Doctrine1\Core::getTable('User')->createQuery()->fetchOne();
             $user->name = 'test';
@@ -46,12 +47,12 @@ namespace Tests\Tickets {
             $this->assertTrue($person->isModified());
             $this->assertEquals(['firstname' => 'Alice'], $person->getModified());
 
-            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_HYDRATE_OVERWRITE, true);
+            \Doctrine1\Manager::getInstance()->setHydrateOverwrite(true);
         }
 
         public function testRefreshAlwaysOverwrites()
         {
-            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_HYDRATE_OVERWRITE, false);
+            \Doctrine1\Manager::getInstance()->setHydrateOverwrite(false);
 
             $person            = new \Ticket_990_Person();
             $person->firstname = 'John';
@@ -63,7 +64,7 @@ namespace Tests\Tickets {
 
             $this->assertEquals('John', $person->firstname);
 
-            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_HYDRATE_OVERWRITE, true);
+            \Doctrine1\Manager::getInstance()->setHydrateOverwrite(true);
         }
     }
 }

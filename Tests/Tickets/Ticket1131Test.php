@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Tickets {
     use Tests\DoctrineUnitTestCase;
 
@@ -57,8 +58,8 @@ namespace Tests\Tickets {
 
         public function testTicketWithOverloadingAndTwoQueries()
         {
-            $orig = \Doctrine1\Manager::getInstance()->getAttribute(\Doctrine1\Core::ATTR_AUTO_ACCESSOR_OVERRIDE);
-            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_AUTO_ACCESSOR_OVERRIDE, true);
+            $orig = \Doctrine1\Manager::getInstance()->getAutoAccessorOverride();
+            \Doctrine1\Manager::getInstance()->setAutoAccessorOverride(true);
 
             $user = \Doctrine1\Query::create()
             ->from('Ticket_1131_User u')
@@ -73,7 +74,7 @@ namespace Tests\Tickets {
             $this->assertEquals($user->Role->id, 1);
             $this->assertFalse($user->role_id instanceof \Doctrine1\Record);
 
-            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_AUTO_ACCESSOR_OVERRIDE, $orig);
+            \Doctrine1\Manager::getInstance()->setAutoAccessorOverride($orig);
         }
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Core\Hydrate;
 
 use Tests\DoctrineUnitTestCase;
@@ -23,7 +24,7 @@ class ScalarTest extends DoctrineUnitTestCase
             ->from('User u')
             ->innerJoin('u.Phonenumber p');
 
-        $res = $q->execute([], \Doctrine1\Core::HYDRATE_SCALAR);
+        $res = $q->execute([], \Doctrine1\HydrationMode::Scalar);
 
         $this->assertTrue(is_array($res));
         $this->assertEquals(2, count($res));
@@ -60,7 +61,7 @@ class ScalarTest extends DoctrineUnitTestCase
         $q = \Doctrine1\Query::create();
         $q->select('u.*')->from('User u');
 
-        $res = $q->execute([], \Doctrine1\Core::HYDRATE_SCALAR);
+        $res = $q->execute([], \Doctrine1\HydrationMode::Scalar);
 
         $this->assertTrue(is_array($res));
         $this->assertEquals(1, count($res));
@@ -81,7 +82,7 @@ class ScalarTest extends DoctrineUnitTestCase
     {
         $q = \Doctrine1\Query::create();
         $q->select('u.name')->from('User u');
-        $res = $q->execute([], \Doctrine1\Core::HYDRATE_SINGLE_SCALAR);
+        $res = $q->execute([], \Doctrine1\HydrationMode::SingleScalar);
         $this->assertEquals('romanb', $res);
         $q->free();
     }
@@ -90,7 +91,7 @@ class ScalarTest extends DoctrineUnitTestCase
     {
         $q = \Doctrine1\Query::create();
         $q->select('COUNT(u.id) num_ids')->from('User u');
-        $res = $q->execute([], \Doctrine1\Core::HYDRATE_SINGLE_SCALAR);
+        $res = $q->execute([], \Doctrine1\HydrationMode::SingleScalar);
         $this->assertEquals(1, $res);
         $q->free();
     }
@@ -102,7 +103,7 @@ class ScalarTest extends DoctrineUnitTestCase
             ->from('User u')
             ->innerJoin('u.Phonenumber p');
 
-        $res = $q->execute([], \Doctrine1\Core::HYDRATE_SCALAR);
+        $res = $q->execute([], \Doctrine1\HydrationMode::Scalar);
 
         $this->assertTrue(is_array($res));
         $this->assertEquals(2, count($res));
@@ -130,7 +131,7 @@ class ScalarTest extends DoctrineUnitTestCase
             ->from('User u')
             ->innerJoin('u.Phonenumber p');
 
-        $res = $q->execute([], \Doctrine1\Core::HYDRATE_ARRAY_SHALLOW);
+        $res = $q->execute([], \Doctrine1\HydrationMode::ArrayShallow);
 
         $this->assertTrue(is_array($res));
         $this->assertEquals(2, count($res));
@@ -167,7 +168,7 @@ class ScalarTest extends DoctrineUnitTestCase
         $q = \Doctrine1\Query::create();
         $q->select('u.*')->from('User u');
 
-        $res = $q->execute([], \Doctrine1\Core::HYDRATE_ARRAY_SHALLOW);
+        $res = $q->execute([], \Doctrine1\HydrationMode::ArrayShallow);
 
         $this->assertTrue(is_array($res));
         $this->assertEquals(1, count($res));
@@ -191,7 +192,7 @@ class ScalarTest extends DoctrineUnitTestCase
             ->from('User u')
             ->innerJoin('u.Phonenumber p');
 
-        $res = $q->execute([], \Doctrine1\Core::HYDRATE_ARRAY_SHALLOW);
+        $res = $q->execute([], \Doctrine1\HydrationMode::ArrayShallow);
 
         $this->assertTrue(is_array($res));
         $this->assertEquals(2, count($res));

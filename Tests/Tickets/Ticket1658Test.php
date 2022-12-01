@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Tickets {
     use Tests\DoctrineUnitTestCase;
 
@@ -12,7 +13,7 @@ namespace Tests\Tickets {
 
         public function testTest()
         {
-            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_AUTO_ACCESSOR_OVERRIDE, true);
+            \Doctrine1\Manager::getInstance()->setAutoAccessorOverride(true);
             try {
                 $user           = new \Ticket_1658_User();
                 $user->password = 'test';
@@ -28,7 +29,7 @@ namespace Tests\Tickets {
             } catch (\Doctrine1\Exception $e) {
                 $this->assertEquals($e->getMessage(), 'Set password called');
             }
-            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_AUTO_ACCESSOR_OVERRIDE, false);
+            \Doctrine1\Manager::getInstance()->setAutoAccessorOverride(false);
         }
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Tickets {
     use Tests\DoctrineUnitTestCase;
 
@@ -22,7 +23,7 @@ namespace Tests\Tickets {
         {
             $q = \Doctrine1\Query::create()
             ->from('Ticket_1208_User u');
-            $user = $q->fetchOne([], \Doctrine1\Core::HYDRATE_ARRAY);
+            $user = $q->fetchOne([], \Doctrine1\HydrationMode::Array);
 
             $this->assertTrue(isset($user['pre_hydrate']));
             $this->assertTrue(isset($user['post_hydrate']));

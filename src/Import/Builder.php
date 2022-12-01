@@ -66,13 +66,13 @@ class Builder
     public function __construct()
     {
         $manager = \Doctrine1\Manager::getInstance();
-        if ($tableClass = $manager->getAttribute(\Doctrine1\Core::ATTR_TABLE_CLASS)) {
+        if ($tableClass = $manager->getTableClass()) {
             $this->baseTableClassName = $tableClass;
         }
-        if ($classPrefix = $manager->getAttribute(\Doctrine1\Core::ATTR_MODEL_CLASS_PREFIX)) {
+        if ($classPrefix = $manager->getModelClassPrefix()) {
             $this->classPrefix = $classPrefix;
         }
-        if ($tableClassFormat = $manager->getAttribute(\Doctrine1\Core::ATTR_TABLE_CLASS_FORMAT)) {
+        if ($tableClassFormat = $manager->getTableClassFormat()) {
             $this->tableClassFormat = $tableClassFormat;
         }
     }
@@ -286,7 +286,7 @@ class Builder
             }
 
             $columnName = $column['name'] ?? $name;
-            if ($manager->getAttribute(\Doctrine1\Core::ATTR_AUTO_ACCESSOR_OVERRIDE)) {
+            if ($manager->getAutoAccessorOverride()) {
                 $e          = explode(' as ', $columnName);
                 $fieldName  = $e[1] ?? $e[0];
                 $classified = \Doctrine1\Inflector::classify($fieldName);
@@ -295,7 +295,7 @@ class Builder
 
                 if ($refl->hasMethod($getter) || $refl->hasMethod($setter)) {
                     throw new \Doctrine1\Import\Exception(
-                        sprintf('When using the attribute ATTR_AUTO_ACCESSOR_OVERRIDE you cannot use the field name "%s" because it is reserved by Doctrine. You must choose another field name.', $fieldName)
+                        sprintf('When using the attribute setAutoAccessorOverride() you cannot use the field name "%s" because it is reserved by Doctrine. You must choose another field name.', $fieldName)
                     );
                 }
             }
@@ -355,7 +355,7 @@ class Builder
             $column['field_name'] = trim($parts[1] ?? $name);
         }
 
-        uasort($columns, fn($a, $b) => $a['name'] <=> $b['name']);
+        uasort($columns, fn ($a, $b) => $a['name'] <=> $b['name']);
         foreach ($columns as &$column) {
             $types = [];
             switch (strtolower($column['type'])) {
@@ -396,7 +396,7 @@ class Builder
             $docBlock->setTag(new PropertyTag($column['field_name'], $types));
         }
 
-        usort($relations, fn($a, $b) => $a['alias'] <=> $b['alias']);
+        usort($relations, fn ($a, $b) => $a['alias'] <=> $b['alias']);
         foreach ($relations as $relation) {
             $fieldName = $relation['alias'];
             $types = [];
@@ -452,7 +452,7 @@ class Builder
             $values = [];
             foreach ($value as $attr) {
                 if (is_string($attr)) {
-                    $const = \Doctrine1\Core::class . '::' . strtoupper($key) . '_' . strtoupper($attr);
+                    $const = Core::class . '::' . strtoupper($key) . '_' . strtoupper($attr);
                     if (defined($const)) {
                         $values[] = '\\' . $const;
                         continue;
@@ -462,7 +462,43 @@ class Builder
             }
 
             $values = implode(' ^ ', $values);
-            $build .= '$this->setAttribute(\\' . \Doctrine1\Core::class . '::ATTR_' . strtoupper($key) . ", $values);\n";
+
+            $build .= match ($key) {
+                'coll_key' => "\$this->setCollectionKey($values);\n",
+                'idxname_format' => "\$this->setIndexNameFormat($values);\n",
+                'seqname_format' => "\$this->setSequenceNameFormat($values);\n",
+                'tblname_format' => "\$this->setTableNameFormat($values);\n",
+                'fkname_format' => "\$this->setForeignKeyNameFormat($values);\n",
+                'quote_identifier' => "\$this->setQuoteIdentifier($values);\n",
+                'seqcol_name' => "\$this->setSequenceColumnName($values);\n",
+                'use_dql_callbacks' => "\$this->setUseDqlCallbacks($values);\n",
+                'export' => "\$this->setExportFlags($values);\n",
+                'portability' => "\$this->setPortability($values);\n",
+                'decimal_places' => "\$this->setDecimalPlaces($values);\n",
+                'validate' => "\$this->setValidate($values);\n",
+                'limit' => "\$this->setLimit($values);\n",
+                'use_native_set' => "\$this->setUseNativeSet($values);\n",
+                'use_native_enum' => "\$this->setUseNativeEnum($values);\n",
+                'hydrate_overwrite' => "\$this->setHydrateOverwrite($values);\n",
+                'query_cache_lifespan' => "\$this->setQueryCacheLifespan($values);\n",
+                'result_cache_lifespan' => "\$this->setResultCacheLifespan($values);\n",
+                'max_identifier_length' => "\$this->setMaxIdentifierLength($values);\n",
+                'charset' => "\$this->setCharset($values);\n",
+                'collate' => "\$this->setCollate($values);\n",
+                'default_sequence' => "\$this->setDefaultSequence($values);\n",
+                'default_column_options' => "\$this->setDefaultColumnOptions($values);\n",
+                'default_identifier_options' => "\$this->setDefaultIdentifierOptions($values);\n",
+                'auto_free_query_objects' => "\$this->setAutoFreeQueryObjects($values);\n",
+                'load_references' => "\$this->setLoadReferences($values);\n",
+                'auto_accessor_override' => "\$this->setAutoAccessorOverride($values);\n",
+                'cascade_saves' => "\$this->setCascadeSaves($values);\n",
+                'query_class' => "\$this->setQueryClass($values);\n",
+                'collection_class' => "\$this->setCollectionClass($values);\n",
+                'table_class' => "\$this->setTableClass($values);\n",
+                'table_class_format' => "\$this->setTableClassFormat($values);\n",
+                'model_class_prefix' => "\$this->setModelClassPrefix($values);\n",
+                default => '',
+            };
         }
 
         return $build;

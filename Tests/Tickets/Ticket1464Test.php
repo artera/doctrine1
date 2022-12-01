@@ -12,7 +12,7 @@ namespace Tests\Tickets {
 
         public function testTest()
         {
-            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_ALL);
+            \Doctrine1\Manager::getInstance()->setValidate(\Doctrine1\Core::VALIDATE_ALL);
             $user             = new \Ticket_1464_User();
                 $user->username   = 'jwage';
                 $user->created_at = '2004-10-14 11:51:17.621832+02';
@@ -20,7 +20,7 @@ namespace Tests\Tickets {
                 $user->created_at = '2004-10-14 11:51:17';
                 $user->save();
 
-            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_NONE);
+            \Doctrine1\Manager::getInstance()->setValidate(\Doctrine1\Core::VALIDATE_NONE);
         }
     }
 }

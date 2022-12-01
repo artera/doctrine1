@@ -287,8 +287,8 @@ class Mysql extends \Doctrine1\DataDict
                 return $length ? 'CHAR(' . $length . ')' : 'CHAR(255)';
             case 'enum':
             case 'set':
-                if (($this->conn->getAttribute(\Doctrine1\Core::ATTR_USE_NATIVE_SET) && $field['type'] === 'set')
-                || ($this->conn->getAttribute(\Doctrine1\Core::ATTR_USE_NATIVE_ENUM) && $field['type'] === 'enum')
+                if (($this->conn->getUseNativeSet() && $field['type'] === 'set')
+                || ($this->conn->getUseNativeEnum() && $field['type'] === 'enum')
                 ) {
                     $values = [];
                     foreach ($field['values'] as $value) {
@@ -301,7 +301,7 @@ class Mysql extends \Doctrine1\DataDict
                     } elseif ($field['type'] === 'set' && !empty($field['values'])) {
                         $length = strlen(implode(',', $field['values']));
                     } else {
-                        $length = isset($field['length']) && $field['length'] ? $field['length']:255;
+                        $length = isset($field['length']) && $field['length'] ? $field['length'] : 255;
                     }
 
                     $field['length'] = $length;
@@ -376,20 +376,20 @@ class Mysql extends \Doctrine1\DataDict
                 return 'DATETIME';
             case 'float':
                 $length = !empty($field['length']) ? $field['length'] : 18;
-                $scale  = !empty($field['scale']) ? $field['scale'] : $this->conn->getAttribute(\Doctrine1\Core::ATTR_DECIMAL_PLACES);
+                $scale  = !empty($field['scale']) ? $field['scale'] : $this->conn->getDecimalPlaces();
                 return 'FLOAT(' . $length . ', ' . $scale . ')';
             case 'double':
                 $length = !empty($field['length']) ? $field['length'] : 18;
-                $scale  = !empty($field['scale']) ? $field['scale'] : $this->conn->getAttribute(\Doctrine1\Core::ATTR_DECIMAL_PLACES);
+                $scale  = !empty($field['scale']) ? $field['scale'] : $this->conn->getDecimalPlaces();
                 return 'DOUBLE(' . $length . ', ' . $scale . ')';
             case 'decimal':
                 $length = !empty($field['length']) ? $field['length'] : 18;
-                $scale  = !empty($field['scale']) ? $field['scale'] : $this->conn->getAttribute(\Doctrine1\Core::ATTR_DECIMAL_PLACES);
+                $scale  = !empty($field['scale']) ? $field['scale'] : $this->conn->getDecimalPlaces();
                 return 'DECIMAL(' . $length . ', ' . $scale . ')';
             case 'bit':
                 return 'BIT';
         }
-        return $field['type'] . (isset($field['length']) ? '(' . $field['length'] . ')':null);
+        return $field['type'] . (isset($field['length']) ? '(' . $field['length'] . ')' : null);
     }
 
     /**
@@ -640,7 +640,7 @@ class Mysql extends \Doctrine1\DataDict
                 : $this->conn->quote($field['default']));
         }
 
-        $notnull  = (isset($field['notnull'])  && $field['notnull'])  ? ' NOT NULL' : '';
+        $notnull  = (isset($field['notnull'])  && $field['notnull']) ? ' NOT NULL' : '';
         $unsigned = (isset($field['unsigned']) && $field['unsigned']) ? ' UNSIGNED' : '';
         $comment  = (isset($field['comment']) && $field['comment'])
             ? ' COMMENT ' . $this->conn->quote($field['comment'], 'text') : '';

@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Tickets {
     use Tests\DoctrineUnitTestCase;
 
@@ -35,19 +36,19 @@ namespace Tests\Tickets {
 
         public function testTicket()
         {
-            $q      = new \Doctrine1\Query;
+            $q      = new \Doctrine1\Query();
             $result = $q->select('a.*, b.*, c.*')
             ->from('T1 a')
             ->leftJoin('a.T2 b')
             ->leftJoin('b.T3 c')
-            ->setHydrationMode(\Doctrine1\Core::HYDRATE_ARRAY)
+            ->setHydrationMode(\Doctrine1\HydrationMode::Array)
             ->fetchOne();
 
             // there are 10 rows in T3, and they all have hello_id = 10, so we should have 10 rows here
             $this->assertEquals(10, count($result['T2']['T3']));
 
             // now with object hydration.
-            $q      = new \Doctrine1\Query;
+            $q      = new \Doctrine1\Query();
             $result = $q->select('a.*, b.*, c.*')
             ->from('T1 a')
             ->leftJoin('a.T2 b')
@@ -75,7 +76,7 @@ namespace {
 
         public function setUp(): void
         {
-            parent :: setUp();
+            parent::setUp();
             $this->hasOne('T2', ['local' => 't2_id', 'foreign' => 't2_id']);
         }
     }
@@ -91,7 +92,7 @@ namespace {
 
         public function setUp(): void
         {
-            parent :: setUp();
+            parent::setUp();
             $this->hasMany('T3', ['local' => 'hello_id', 'foreign' => 'hello_id']);
         }
     }
@@ -107,7 +108,7 @@ namespace {
 
         public function setUp(): void
         {
-            parent :: setUp();
+            parent::setUp();
         }
     }
 }

@@ -2,6 +2,8 @@
 
 namespace Doctrine1;
 
+use Doctrine1\Query\State;
+
 /**
  * @template Record of Record
  * @template Type of Query\Type
@@ -129,8 +131,7 @@ class Query extends AbstractQuery implements \Countable
     public static function create(?Connection $conn = null, string $class = null): Query
     {
         if (!$class) {
-            /** @phpstan-var class-string<Query> $class */
-            $class = Manager::getInstance()->getAttribute(Core::ATTR_QUERY_CLASS);
+            $class = Manager::getInstance()->getQueryClass();
         }
         return new $class($conn);
     }
@@ -144,7 +145,7 @@ class Query extends AbstractQuery implements \Countable
     {
         $this->preQueried            = false;
         $this->pendingJoinConditions = [];
-        $this->state                 = self::STATE_DIRTY;
+        $this->state                 = State::Dirty;
     }
 
     /**
@@ -209,7 +210,7 @@ class Query extends AbstractQuery implements \Countable
     public function fetchArray($params = [])
     {
         /** @var array<string,mixed>[] */
-        return $this->execute($params, Core::HYDRATE_ARRAY);
+        return $this->execute($params, HydrationMode::Array);
     }
 
     /**
@@ -217,11 +218,11 @@ class Query extends AbstractQuery implements \Countable
      * of the collection.
      *
      * @param  mixed[] $params        Query parameters
-     * @param  int     $hydrationMode Hydration mode: see Core::HYDRATE_* constants
+     * @param  HydrationMode     $hydrationMode Hydration mode: see HydrationModes
      * @return Record|scalar Array or Record, depending on hydration mode. null if no result.
      * @phpstan-return Record|array<string,mixed>|scalar|null
      */
-    public function fetchOne($params = [], $hydrationMode = null)
+    public function fetchOne($params = [], ?HydrationMode $hydrationMode = null)
     {
         $collection = $this->execute($params, $hydrationMode);
 
@@ -261,7 +262,7 @@ class Query extends AbstractQuery implements \Countable
             $this->processPendingAggregates();
 
             return $this->getSqlAggregateAlias($dqlAlias);
-        } elseif (!($this->connection->getAttribute(Core::ATTR_PORTABILITY) & Core::PORTABILITY_EXPR)) {
+        } elseif (!($this->connection->getPortability() & Core::PORTABILITY_EXPR)) {
             return $dqlAlias;
         } else {
             throw new Query\Exception('Unknown aggregate alias: ' . $dqlAlias);
@@ -365,7 +366,7 @@ class Query extends AbstractQuery implements \Countable
         $table      = $this->queryComponents[$componentAlias]['table'];
 
         if (!isset($this->pendingFields[$componentAlias])) {
-            if ($this->hydrator->getHydrationMode() != Core::HYDRATE_NONE) {
+            if ($this->hydrator->getHydrationMode() != HydrationMode::None) {
                 if (!$this->isSubquery && $componentAlias == $this->getRootAlias()) {
                     throw new Query\Exception(
                         "The root class of the query (alias $componentAlias) "
@@ -383,9 +384,9 @@ class Query extends AbstractQuery implements \Countable
         if (!$this->isSubquery() && isset($this->queryComponents[$componentAlias]['parent'])) {
             $parentAlias = $this->queryComponents[$componentAlias]['parent'];
             if (is_string($parentAlias) && !isset($this->pendingFields[$parentAlias])
-                && $this->hydrator->getHydrationMode() != Core::HYDRATE_NONE
-                && $this->hydrator->getHydrationMode() != Core::HYDRATE_SCALAR
-                && $this->hydrator->getHydrationMode() != Core::HYDRATE_SINGLE_SCALAR
+                && $this->hydrator->getHydrationMode() != HydrationMode::None
+                && $this->hydrator->getHydrationMode() != HydrationMode::Scalar
+                && $this->hydrator->getHydrationMode() != HydrationMode::SingleScalar
             ) {
                 throw new Query\Exception(
                     'The left side of the join between '
@@ -1088,7 +1089,7 @@ class Query extends AbstractQuery implements \Countable
         // Initialize prepared parameters array
         $this->execParams = $this->getFlattenedParams();
 
-        if ($this->state !== self::STATE_DIRTY) {
+        if ($this->state !== State::Dirty) {
             $this->fixArrayParameterValues($this->getInternalParams());
 
             // Return compiled SQL
@@ -1143,7 +1144,7 @@ class Query extends AbstractQuery implements \Countable
                 $this->rootAlias = key($diffQueryComponents);
             }
         }
-        $this->state = self::STATE_CLEAN;
+        $this->state = State::Clean;
 
         // Proceed with the generated SQL
         if (empty($this->sqlParts['from'])) {
@@ -1157,7 +1158,7 @@ class Query extends AbstractQuery implements \Countable
         $rootAlias     = $this->getRootAlias();
 
         if (!empty($this->sqlParts['limit']) && $this->needsSubquery
-            && $table->getAttribute(Core::ATTR_QUERY_LIMIT) == Core::LIMIT_RECORDS
+            && $table->getLimit() == Limit::Records
         ) {
             // We do not need a limit-subquery if DISTINCT is used
             // and the selected fields are either from the root component or from a localKey relation (hasOne)
@@ -1235,7 +1236,7 @@ class Query extends AbstractQuery implements \Countable
             $idColumnName = $table->getColumnName($table->getIdentifier());
 
             // pgsql/mysql need special nested LIMIT subquery
-            $driverName = $this->connection->getAttribute(Core::ATTR_DRIVER_NAME);
+            $driverName = $this->connection->getAttribute(\PDO::ATTR_DRIVER_NAME);
             if ($driverName === 'mysql' || $driverName === 'pgsql') {
                 $subqueryAlias = $this->connection->quoteIdentifier('doctrine_subquery_alias');
                 $subquery = "SELECT $subqueryAlias.{$this->connection->quoteIdentifier($idColumnName)} FROM ($subquery) AS $subqueryAlias";
@@ -1347,7 +1348,7 @@ class Query extends AbstractQuery implements \Countable
         // what about composite keys?
         $primaryKey = $alias . '.' . $table->getColumnName($table->getIdentifier());
 
-        $driverName = $this->connection->getAttribute(Core::ATTR_DRIVER_NAME);
+        $driverName = $this->connection->getAttribute(\PDO::ATTR_DRIVER_NAME);
 
         // initialize the base of the subquery
         $subquery = 'SELECT DISTINCT ' . $this->connection->quoteIdentifier($primaryKey);
@@ -1362,7 +1363,7 @@ class Query extends AbstractQuery implements \Countable
                 $e = $this->tokenizer->bracketExplode($part, ' ');
                 foreach ($e as $f) {
                     $partOriginal = str_replace(',', '', trim($f));
-                    $part = trim(implode('.', array_map(fn($e) => trim($e, '[]`"'), explode('.', $partOriginal))));
+                    $part = trim(implode('.', array_map(fn ($e) => trim($e, '[]`"'), explode('.', $partOriginal))));
 
                     if (strpos($part, '.') === false) {
                         continue;
@@ -2050,11 +2051,11 @@ class Query extends AbstractQuery implements \Countable
      *
      * @param  string $query         Dql query
      * @param  array  $params        prepared statement parameters
-     * @param  int    $hydrationMode Core::HYDRATE_ARRAY or Core::HYDRATE_RECORD
-     * @see    Core::FETCH_* constants
+     * @param  ?HydrationMode    $hydrationMode HydrationMode::Array or HydrationMode::Record
+     * @see    PDO::FETCH_* constants
      * @return mixed
      */
-    public function query($query, $params = [], $hydrationMode = null)
+    public function query($query, $params = [], ?HydrationMode $hydrationMode = null)
     {
         $this->parseDqlQuery($query);
         return $this->execute($params, $hydrationMode);

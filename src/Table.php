@@ -57,7 +57,7 @@ class Table extends Configurable implements \Countable
      * @see Identifier constants
      * the type of identifier this table uses
      */
-    protected ?int $identifierType = null;
+    protected ?IdentifierType $identifierType = null;
 
     /**
      * Connection object that created this table
@@ -170,6 +170,8 @@ class Table extends Configurable implements \Countable
      */
     protected ?Record $record = null;
 
+    protected ?string $collectionKey = null;
+
     /**
      * the constructor
      *
@@ -189,10 +191,10 @@ class Table extends Configurable implements \Countable
 
         $this->parser = new Relation\Parser($this);
 
-        if ($charset = $this->getAttribute(Core::ATTR_DEFAULT_TABLE_CHARSET)) {
+        if ($charset = $this->getCharset()) {
             $this->charset = $charset;
         }
-        if ($collate = $this->getAttribute(Core::ATTR_DEFAULT_TABLE_COLLATE)) {
+        if ($collate = $this->getCollate()) {
             $this->collate = $collate;
         }
 
@@ -221,6 +223,19 @@ class Table extends Configurable implements \Countable
      */
     public function construct()
     {
+    }
+
+    public function getCollectionKey(): ?string
+    {
+        return $this->collectionKey;
+    }
+
+    public function setCollectionKey(?string $value): void
+    {
+        if ($value !== null && !$this->hasField($value)) {
+            throw new Exception("Couldn't set collection key attribute. No such field '$value'.");
+        }
+        $this->collectionKey = $value;
     }
 
     /**
@@ -329,14 +344,14 @@ class Table extends Configurable implements \Countable
      * copying in the schema the list of the fields which constitutes
      * the primary key.
      *
-     * @return int the identifier type
+     * @return IdentifierType the identifier type
      */
-    public function initIdentifier(): int
+    public function initIdentifier(): IdentifierType
     {
         $id_count = count($this->identifier);
 
         if ($id_count > 1) {
-            $this->identifierType = Core::IDENTIFIER_COMPOSITE;
+            $this->identifierType = IdentifierType::Composite;
             return $this->identifierType;
         }
 
@@ -360,19 +375,19 @@ class Table extends Configurable implements \Countable
                         case 'autoincrement':
                         case 'autoinc':
                             if ($value !== false) {
-                                $this->identifierType = Core::IDENTIFIER_AUTOINC;
+                                $this->identifierType = IdentifierType::Autoinc;
                                 $found = true;
                             }
                             break;
                         case 'seq':
                         case 'sequence':
-                            $this->identifierType = Core::IDENTIFIER_SEQUENCE;
+                            $this->identifierType = IdentifierType::Sequence;
                             $found                 = true;
 
                             if (is_string($value)) {
                                 $this->sequenceName = $value;
                             } else {
-                                if (($sequence = $this->getAttribute(Core::ATTR_DEFAULT_SEQUENCE)) !== null) {
+                                if (($sequence = $this->getDefaultSequence()) !== null) {
                                     $this->sequenceName = $sequence;
                                 } else {
                                     $this->sequenceName = $this->connection->formatter->getSequenceName($this->tableName);
@@ -383,27 +398,27 @@ class Table extends Configurable implements \Countable
                 }
 
                 if (!isset($this->identifierType)) {
-                    $this->identifierType = Core::IDENTIFIER_NATURAL;
+                    $this->identifierType = IdentifierType::Natural;
                 }
             }
 
             if (isset($pk)) {
                 if (!isset($this->identifierType)) {
-                    $this->identifierType = Core::IDENTIFIER_NATURAL;
+                    $this->identifierType = IdentifierType::Natural;
                 }
                 $this->identifier = [$pk];
                 return $this->identifierType;
             }
         }
 
-        $identifierOptions = $this->getAttribute(Core::ATTR_DEFAULT_IDENTIFIER_OPTIONS);
-        $name              = (isset($identifierOptions['name']) && $identifierOptions['name']) ? $identifierOptions['name']:'id';
+        $identifierOptions = $this->getDefaultIdentifierOptions();
+        $name              = (isset($identifierOptions['name']) && $identifierOptions['name']) ? $identifierOptions['name'] : 'id';
         $name              = sprintf($name, $this->getTableName());
 
-        $definition = ['type'          => (isset($identifierOptions['type']) && $identifierOptions['type']) ? $identifierOptions['type']:'integer',
-                        'length'        => (isset($identifierOptions['length']) && $identifierOptions['length']) ? $identifierOptions['length']:8,
-                        'autoincrement' => isset($identifierOptions['autoincrement']) ? $identifierOptions['autoincrement']:true,
-                        'primary'       => isset($identifierOptions['primary']) ? $identifierOptions['primary']:true];
+        $definition = ['type'          => (isset($identifierOptions['type']) && $identifierOptions['type']) ? $identifierOptions['type'] : 'integer',
+                        'length'        => (isset($identifierOptions['length']) && $identifierOptions['length']) ? $identifierOptions['length'] : 8,
+                        'autoincrement' => isset($identifierOptions['autoincrement']) ? $identifierOptions['autoincrement'] : true,
+                        'primary'       => isset($identifierOptions['primary']) ? $identifierOptions['primary'] : true];
 
         unset($identifierOptions['name'], $identifierOptions['type'], $identifierOptions['length']);
         foreach ($identifierOptions as $key => $value) {
@@ -414,7 +429,7 @@ class Table extends Configurable implements \Countable
 
         $this->setColumn($name, $definition['type'], $definition['length'], $definition, true);
         $this->identifier = [$name];
-        $this->identifierType = Core::IDENTIFIER_AUTOINC;
+        $this->identifierType = IdentifierType::Autoinc;
 
         $this->columnCount++;
         return $this->identifierType;
@@ -452,7 +467,7 @@ class Table extends Configurable implements \Countable
     public function getRecordInstance(): Record
     {
         if ($this->record === null) {
-            $this->record = new $this->name;
+            $this->record = new $this->name();
         }
         return $this->record;
     }
@@ -493,7 +508,7 @@ class Table extends Configurable implements \Countable
      */
     public function isIdentifierAutoincrement()
     {
-        return $this->getIdentifierType() === Core::IDENTIFIER_AUTOINC;
+        return $this->getIdentifierType() === IdentifierType::Autoinc;
     }
 
     /**
@@ -504,7 +519,7 @@ class Table extends Configurable implements \Countable
      */
     public function isIdentifierComposite()
     {
-        return $this->getIdentifierType() === Core::IDENTIFIER_COMPOSITE;
+        return $this->getIdentifierType() === IdentifierType::Composite;
     }
 
     /**
@@ -564,7 +579,7 @@ class Table extends Configurable implements \Countable
         $options = $this->getOptions();
         $options['foreignKeys'] = [];
 
-        if ($parseForeignKeys && $this->getAttribute(Core::ATTR_EXPORT) & Core::EXPORT_CONSTRAINTS) {
+        if ($parseForeignKeys && $this->getExportFlags() & Core::EXPORT_CONSTRAINTS) {
             $constraints = [];
 
             $emptyIntegrity = [
@@ -577,7 +592,7 @@ class Table extends Configurable implements \Countable
                 $fk['foreignTable'] = $relation->getTable()->getTableName();
 
                 // do not touch tables that have EXPORT_NONE attribute
-                if ($relation->getTable()->getAttribute(Core::ATTR_EXPORT) === Core::EXPORT_NONE) {
+                if ($relation->getTable()->getExportFlags() === Core::EXPORT_NONE) {
                     continue;
                 }
 
@@ -905,7 +920,7 @@ class Table extends Configurable implements \Countable
             $alias = ' ' . trim($alias);
         }
 
-        $class = $this->getAttribute(Core::ATTR_QUERY_CLASS);
+        $class = $this->getQueryClass();
 
         /** @phpstan-var Query<T, Query\Type\Select> */
         return Query::create(null, $class)
@@ -991,7 +1006,7 @@ class Table extends Configurable implements \Countable
     {
         // FIX ME: This is being used in places where an array is passed, but it should not be an array
         // For example in places where Doctrine should support composite foreign/primary keys
-        $fieldName = is_array($fieldName) ? $fieldName[0]:$fieldName;
+        $fieldName = is_array($fieldName) ? $fieldName[0] : $fieldName;
 
         if (isset($this->columnNames[$fieldName])) {
             return $this->columnNames[$fieldName];
@@ -1155,7 +1170,7 @@ class Table extends Configurable implements \Countable
             $this->fieldNames[$name]       = $fieldName;
         }
 
-        $defaultOptions = $this->getAttribute(Core::ATTR_DEFAULT_COLUMN_OPTIONS);
+        $defaultOptions = $this->getDefaultColumnOptions();
 
         if (isset($defaultOptions['length']) && $defaultOptions['length'] && $length == null) {
             $length = $defaultOptions['length'];
@@ -1304,7 +1319,7 @@ class Table extends Configurable implements \Countable
      *
      * This method finds out if the primary key is multifield.
      */
-    public function getIdentifierType(): ?int
+    public function getIdentifierType(): ?IdentifierType
     {
         return $this->identifierType;
     }
@@ -1431,9 +1446,9 @@ class Table extends Configurable implements \Countable
     /**
      * @phpstan-return T|Collection<T>|array<string,mixed>|null
      */
-    public function find(array|int|string $params = [], bool $hydrate_array = false, ?string $name = null): Collection|Record|array|null
+    public function find(array|int|string $params = [], bool $hydrateArray = false, ?string $name = null): Collection|Record|array|null
     {
-        $hydrationMode = $hydrate_array ? Core::HYDRATE_ARRAY : Core::HYDRATE_RECORD;
+        $hydrationMode = $hydrateArray ? HydrationMode::Array : HydrationMode::Record;
         $params = array_values((array) $params);
 
         try {
@@ -1476,9 +1491,9 @@ class Table extends Configurable implements \Countable
      *
      * @phpstan-return Collection<T>|array<string,mixed>[]
      */
-    public function findAll(bool $hydrate_array = false): Collection|array
+    public function findAll(bool $hydrateArray = false): Collection|array
     {
-        $hydrationMode = $hydrate_array ? Core::HYDRATE_ARRAY : Core::HYDRATE_RECORD;
+        $hydrationMode = $hydrateArray ? HydrationMode::Array : HydrationMode::Record;
         /** @phpstan-var Collection<T>|array<string,mixed>[] */
         return $this->createQuery('dctrn_find')->execute([], $hydrationMode);
     }
@@ -1490,9 +1505,9 @@ class Table extends Configurable implements \Countable
      * @param          array  $params        query parameters (a la PDO)
      * @phpstan-return Collection<T>|array<string,mixed>[]
      */
-    public function findBySql($dql, $params = [], bool $hydrate_array = false): Collection|array
+    public function findBySql($dql, $params = [], bool $hydrateArray = false): Collection|array
     {
-        $hydrationMode = $hydrate_array ? Core::HYDRATE_ARRAY : Core::HYDRATE_RECORD;
+        $hydrationMode = $hydrateArray ? HydrationMode::Array : HydrationMode::Record;
         /** @phpstan-var Collection<T>|array<string,mixed>[] */
         return $this->createQuery('dctrn_find')
             ->where($dql)->execute($params, $hydrationMode);
@@ -1505,9 +1520,9 @@ class Table extends Configurable implements \Countable
      * @param          mixed[] $params        preparated statement parameters
      * @phpstan-return Collection<T>|array<string,mixed>[]
      */
-    public function findByDql($dql, $params = [], bool $hydrate_array = false): Collection|array
+    public function findByDql($dql, $params = [], bool $hydrateArray = false): Collection|array
     {
-        $hydrationMode = $hydrate_array ? Core::HYDRATE_ARRAY : Core::HYDRATE_RECORD;
+        $hydrationMode = $hydrateArray ? HydrationMode::Array : HydrationMode::Record;
         $parser = $this->createQuery();
         $query  = 'FROM ' . $this->getComponentName() . ' dctrn_find WHERE ' . $dql;
 
@@ -1522,9 +1537,9 @@ class Table extends Configurable implements \Countable
      * @param          string $value         prepared statement parameter
      * @phpstan-return Collection<T>|array<string,mixed>[]
      */
-    public function findBy($fieldName, $value, bool $hydrate_array = false): Collection|array
+    public function findBy($fieldName, $value, bool $hydrateArray = false): Collection|array
     {
-        $hydrationMode = $hydrate_array ? Core::HYDRATE_ARRAY : Core::HYDRATE_RECORD;
+        $hydrationMode = $hydrateArray ? HydrationMode::Array : HydrationMode::Record;
         /** @phpstan-var Collection<T>|array<string,mixed>[] */
         return $this->createQuery('dctrn_find')
             ->where($this->buildFindByWhere($fieldName), (array) $value)
@@ -1538,9 +1553,9 @@ class Table extends Configurable implements \Countable
      * @param          scalar $value         prepared statement parameter
      * @phpstan-return T|array<string,mixed>|null
      */
-    public function findOneBy($fieldName, $value, bool $hydrate_array = false): Record|array|null
+    public function findOneBy($fieldName, $value, bool $hydrateArray = false): Record|array|null
     {
-        $hydrationMode = $hydrate_array ? Core::HYDRATE_ARRAY : Core::HYDRATE_RECORD;
+        $hydrationMode = $hydrateArray ? HydrationMode::Array : HydrationMode::Record;
         /** @phpstan-var T|array<string,mixed>|null */
         return $this->createQuery('dctrn_find')
             ->where($this->buildFindByWhere($fieldName), (array) $value)
@@ -1558,9 +1573,9 @@ class Table extends Configurable implements \Countable
      * @param          mixed[] $params        prepared statement params (if any)
      * @phpstan-return Collection<T>|array<string,mixed>[]
      */
-    public function execute($queryKey, $params = [], bool $hydrate_array = false): Collection|array
+    public function execute($queryKey, $params = [], bool $hydrateArray = false): Collection|array
     {
-        $hydrationMode = $hydrate_array ? Core::HYDRATE_ARRAY : Core::HYDRATE_RECORD;
+        $hydrationMode = $hydrateArray ? HydrationMode::Array : HydrationMode::Record;
         /** @phpstan-var Collection<T>|array<string,mixed>[] */
         return $this->createNamedQuery($queryKey)->execute($params, $hydrationMode);
     }
@@ -1575,9 +1590,9 @@ class Table extends Configurable implements \Countable
      * @param          mixed[] $params        prepared statement params (if any)
      * @phpstan-return T|array<string,mixed>|null
      */
-    public function executeOne($queryKey, $params = [], bool $hydrate_array = false): Record|array|null
+    public function executeOne($queryKey, $params = [], bool $hydrateArray = false): Record|array|null
     {
-        $hydrationMode = $hydrate_array ? Core::HYDRATE_ARRAY : Core::HYDRATE_RECORD;
+        $hydrationMode = $hydrateArray ? HydrationMode::Array : HydrationMode::Record;
         /** @phpstan-var T|array<string,mixed>|null */
         return $this->createNamedQuery($queryKey)->fetchOne($params, $hydrationMode);
     }
@@ -1691,7 +1706,7 @@ class Table extends Configurable implements \Countable
 
         if (isset($this->identityMap[$id])) {
             $record = $this->identityMap[$id];
-            if ($record->getTable()->getAttribute(Core::ATTR_HYDRATE_OVERWRITE) && !$record->state()->isLocked()) {
+            if ($record->getTable()->getHydrateOverwrite() && !$record->state()->isLocked()) {
                 $record->hydrate($this->data);
                 if ($record->state() == Record\State::PROXY) {
                     if (!$record->isInProxyState()) {
@@ -1833,7 +1848,7 @@ class Table extends Configurable implements \Countable
     /**
      * Retrieves an enum value.
      *
-     * This method finds a enum string value. If ATTR_USE_NATIVE_ENUM is set
+     * This method finds a enum string value. If setUseNativeEnum() is set
      * on the connection, index and value are the same thing.
      *
      * @param  string                $fieldName
@@ -1846,7 +1861,7 @@ class Table extends Configurable implements \Countable
             return false;
         }
 
-        if ($this->connection->getAttribute(Core::ATTR_USE_NATIVE_ENUM)) {
+        if ($this->connection->getUseNativeEnum()) {
             return $index;
         }
 
@@ -1867,7 +1882,7 @@ class Table extends Configurable implements \Countable
     {
         $values = $this->getEnumValues($fieldName);
 
-        if ($this->connection->getAttribute(Core::ATTR_USE_NATIVE_ENUM)) {
+        if ($this->connection->getUseNativeEnum()) {
             return $value;
         }
         $res = array_search($value, $values);
@@ -1875,9 +1890,7 @@ class Table extends Configurable implements \Countable
     }
 
     /**
-     * Validates a given field using table ATTR_VALIDATE rules.
-     *
-     * @see Core::ATTR_VALIDATE
+     * Validates a given field using table getValidate() rules.
      *
      * @param string|Record|None $value
      * @param Record|null $record
@@ -1909,7 +1922,7 @@ class Table extends Configurable implements \Countable
         $dataType = $this->requireTypeOf($fieldName);
 
         // Validate field type, if type validation is enabled
-        if ($this->getAttribute(Core::ATTR_VALIDATE) & Core::VALIDATE_TYPES) {
+        if ($this->getValidate() & Core::VALIDATE_TYPES) {
             if (!Validator::isValidType($value, $dataType)) {
                 $errorStack->add($fieldName, 'type');
             }
@@ -1939,7 +1952,7 @@ class Table extends Configurable implements \Countable
         }
 
         // Validate field length, if length validation is enabled
-        if ($this->getAttribute(Core::ATTR_VALIDATE) & Core::VALIDATE_LENGTHS
+        if ($this->getValidate() & Core::VALIDATE_LENGTHS
             && is_string($value)
             && !Validator::validateLength($value, $dataType, $this->getFieldLength($fieldName))
         ) {
@@ -2172,11 +2185,11 @@ class Table extends Configurable implements \Countable
                 case 'set':
                     return $value ? explode(',', $value) : [];
                 case 'boolean':
-                    return (boolean) $value;
+                    return (bool) $value;
                 case 'array':
                 case 'object':
                     if (is_string($value)) {
-                        $value = empty($value) ? null:unserialize($value);
+                        $value = empty($value) ? null : unserialize($value);
 
                         if ($value === false) {
                             throw new Table\Exception('Unserialization of ' . $fieldName . ' failed.');
@@ -2469,12 +2482,12 @@ class Table extends Configurable implements \Countable
             }
 
             // options can only be passed with named arguments
-            $hydrate_array = $named['hydrate_array'] ?? false;
+            $hydrateArray = $named['hydrateArray'] ?? false;
 
             $fieldName = $this->resolveFindByFieldName($by);
 
             if ($fieldName !== null && $this->hasField($fieldName)) {
-                return $this->$method($fieldName, $positional[0], $hydrate_array);
+                return $this->$method($fieldName, $positional[0], $hydrateArray);
             }
 
             if ($this->hasRelation($by)) {
@@ -2484,10 +2497,10 @@ class Table extends Configurable implements \Countable
                     throw new Table\Exception('Cannot findBy many relationship.');
                 }
 
-                return $this->$method($relation['local'], $positional[0], $hydrate_array);
+                return $this->$method($relation['local'], $positional[0], $hydrateArray);
             }
 
-            return $this->$method($by, $positional, $hydrate_array);
+            return $this->$method($by, $positional, $hydrateArray);
         }
 
         // Forward the method on to the record instance and see if it has anything or one of its behaviors

@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Query;
 
 use Tests\DoctrineUnitTestCase;
@@ -71,6 +72,6 @@ class MultiJoin2Test extends DoctrineUnitTestCase
             ->leftJoin('le.author a')
             ->where('c.parentCategoryId = 0')
             ->orderBy('c.position ASC, subCats.position ASC, b.position ASC')
-            ->execute([], \Doctrine1\Core::HYDRATE_ARRAY);
+            ->execute([], \Doctrine1\HydrationMode::Array);
     }
 }

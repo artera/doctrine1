@@ -12,6 +12,7 @@ class Sqlite extends \Doctrine1\DataDict
         switch ($field['type']) {
             case 'enum':
                 $field['length'] = isset($field['length']) && $field['length'] ? $field['length'] : 255;
+                // no break
             case 'text':
             case 'object':
             case 'array':
@@ -64,10 +65,10 @@ class Sqlite extends \Doctrine1\DataDict
                 return 'DOUBLE';
             case 'decimal':
                 $length = !empty($field['length']) ? $field['length'] : 18;
-                $scale  = !empty($field['scale']) ? $field['scale'] : $this->conn->getAttribute(\Doctrine1\Core::ATTR_DECIMAL_PLACES);
+                $scale  = !empty($field['scale']) ? $field['scale'] : $this->conn->getDecimalPlaces();
                 return 'DECIMAL(' . $length . ',' . $scale . ')';
         }
-        return $field['type'] . (isset($field['length']) ? '(' . $field['length'] . ')':null);
+        return $field['type'] . (isset($field['length']) ? '(' . $field['length'] . ')' : null);
     }
 
     /**

@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Tickets;
 
 use Tests\DoctrineUnitTestCase;
@@ -24,7 +25,7 @@ class Ticket1808Test extends DoctrineUnitTestCase
         $user2 = $userTable->findOneByNameAndLoginnameAndEmailId($user->name, $user->loginname, $user->email_id);
         $this->assertSame($user, $user2);
 
-        $test = $userTable->findOneByNameAndLoginnameAndEmailId($user->name, $user->loginname, $user->email_id, hydrate_array: true);
+        $test = $userTable->findOneByNameAndLoginnameAndEmailId($user->name, $user->loginname, $user->email_id, hydrateArray: true);
         $this->assertTrue(is_array($test));
     }
 }

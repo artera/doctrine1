@@ -58,7 +58,7 @@ class Statement
             $this->connection->getListener()->preStmtExecute($event);
 
             if ($input_parameters) {
-                if ($this->connection->getAttribute(\Doctrine1\Core::ATTR_PORTABILITY) & \Doctrine1\Core::PORTABILITY_EMPTY_TO_NULL) {
+                if ($this->connection->getPortability() & \Doctrine1\Core::PORTABILITY_EMPTY_TO_NULL) {
                     foreach ($input_parameters as $key => $value) {
                         if ($value === '') {
                             $input_parameters[$key] = null;

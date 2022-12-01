@@ -8,6 +8,7 @@ PHP=(
     -dpcov.enabled=1
     -dpcov.directory="$PWD"
     -dpcov.exclude='@/(Tests|vendor)/@'
+    -dzend_extension=xdebug.so -dxdebug.mode=debug
 )
 rm -rf Tests/Import/import_builder_test
 "${PHP[@]}" vendor/bin/phpunit "$@"

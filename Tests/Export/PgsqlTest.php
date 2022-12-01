@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Export;
 
 use Tests\DoctrineUnitTestCase;
@@ -31,7 +32,7 @@ class PgsqlTest extends DoctrineUnitTestCase
     }
     public function testQuoteAutoincPks()
     {
-        static::$conn->setAttribute(\Doctrine1\Core::ATTR_QUOTE_IDENTIFIER, true);
+        static::$conn->setQuoteIdentifier(true);
 
         $name = 'mytable';
 
@@ -51,11 +52,11 @@ class PgsqlTest extends DoctrineUnitTestCase
 
         $this->assertEquals(static::$adapter->pop(), 'CREATE TABLE "mytable" ("name" CHAR(10), "type" INT, PRIMARY KEY("name", "type"))');
 
-        static::$conn->setAttribute(\Doctrine1\Core::ATTR_QUOTE_IDENTIFIER, false);
+        static::$conn->setQuoteIdentifier(false);
     }
     public function testForeignKeyIdentifierQuoting()
     {
-        static::$conn->setAttribute(\Doctrine1\Core::ATTR_QUOTE_IDENTIFIER, true);
+        static::$conn->setQuoteIdentifier(true);
 
         $name = 'mytable';
 
@@ -73,7 +74,7 @@ class PgsqlTest extends DoctrineUnitTestCase
         $this->assertEquals($sql[0], 'CREATE TABLE "mytable" ("id" BOOLEAN, "foreignKey" INT)');
         $this->assertEquals($sql[1], 'ALTER TABLE "mytable" ADD FOREIGN KEY ("foreignKey") REFERENCES "sometable"("id") NOT DEFERRABLE INITIALLY IMMEDIATE');
 
-        static::$conn->setAttribute(\Doctrine1\Core::ATTR_QUOTE_IDENTIFIER, false);
+        static::$conn->setQuoteIdentifier(false);
     }
     public function testCreateTableSupportsDefaultAttribute()
     {
@@ -142,7 +143,7 @@ class PgsqlTest extends DoctrineUnitTestCase
 
     public function testAlterTableSqlIdentifierQuoting()
     {
-        static::$conn->setAttribute(\Doctrine1\Core::ATTR_QUOTE_IDENTIFIER, true);
+        static::$conn->setQuoteIdentifier(true);
 
         $changes = [
             'add'    => ['newfield' => ['type' => 'int']],

@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Tickets {
     use Tests\DoctrineUnitTestCase;
 
@@ -24,7 +25,7 @@ namespace Tests\Tickets {
         {
             $q = \Doctrine1\Core::getTable('Ticket_DC7_User')
             ->createQuery('u')
-            ->setHydrationMode(\Doctrine1\Core::HYDRATE_ON_DEMAND);
+            ->setHydrationMode(\Doctrine1\HydrationMode::OnDemand);
 
             $results = $q->execute();
             $this->assertEquals('Doctrine1\Collection\OnDemand', $results::class);

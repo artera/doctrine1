@@ -251,13 +251,13 @@ class RawSql extends AbstractQuery
             $this->sqlParts['where'][] = $string;
         }
 
-        $q .= (!empty($this->sqlParts['from']))?    ' FROM ' . implode(' ', $this->sqlParts['from']) : '';
-        $q .= (!empty($this->sqlParts['where']))?   ' WHERE ' . implode(' AND ', $this->sqlParts['where']) : '';
-        $q .= (!empty($this->sqlParts['groupby']))? ' GROUP BY ' . implode(', ', $this->sqlParts['groupby']) : '';
-        $q .= (!empty($this->sqlParts['having']))?  ' HAVING ' . implode(' AND ', $this->sqlParts['having']) : '';
-        $q .= (!empty($this->sqlParts['orderby']))? ' ORDER BY ' . implode(', ', $this->sqlParts['orderby']) : '';
-        $q .= (!empty($this->sqlParts['limit']))?   ' LIMIT ' . implode(' ', $this->sqlParts['limit']) : '';
-        $q .= (!empty($this->sqlParts['offset']))?  ' OFFSET ' . implode(' ', $this->sqlParts['offset']) : '';
+        $q .= (!empty($this->sqlParts['from'])) ? ' FROM ' . implode(' ', $this->sqlParts['from']) : '';
+        $q .= (!empty($this->sqlParts['where'])) ? ' WHERE ' . implode(' AND ', $this->sqlParts['where']) : '';
+        $q .= (!empty($this->sqlParts['groupby'])) ? ' GROUP BY ' . implode(', ', $this->sqlParts['groupby']) : '';
+        $q .= (!empty($this->sqlParts['having'])) ? ' HAVING ' . implode(' AND ', $this->sqlParts['having']) : '';
+        $q .= (!empty($this->sqlParts['orderby'])) ? ' ORDER BY ' . implode(', ', $this->sqlParts['orderby']) : '';
+        $q .= (!empty($this->sqlParts['limit'])) ? ' LIMIT ' . implode(' ', $this->sqlParts['limit']) : '';
+        $q .= (!empty($this->sqlParts['offset'])) ? ' OFFSET ' . implode(' ', $this->sqlParts['offset']) : '';
 
         if (!empty($string)) {
             array_pop($this->sqlParts['where']);
@@ -299,10 +299,10 @@ class RawSql extends AbstractQuery
             $this->sqlParts['where'][] = $string;
         }
 
-        $q .= (!empty($this->sqlParts['from']))?    ' FROM ' . implode(' ', $this->sqlParts['from']) : '';
-        $q .= (!empty($this->sqlParts['where']))?   ' WHERE ' . implode(' AND ', $this->sqlParts['where']) : '';
-        $q .= (!empty($this->sqlParts['groupby']))? ' GROUP BY ' . implode(', ', $this->sqlParts['groupby']) : '';
-        $q .= (!empty($this->sqlParts['having']))?  ' HAVING ' . implode(' AND ', $this->sqlParts['having']) : '';
+        $q .= (!empty($this->sqlParts['from'])) ? ' FROM ' . implode(' ', $this->sqlParts['from']) : '';
+        $q .= (!empty($this->sqlParts['where'])) ? ' WHERE ' . implode(' AND ', $this->sqlParts['where']) : '';
+        $q .= (!empty($this->sqlParts['groupby'])) ? ' GROUP BY ' . implode(', ', $this->sqlParts['groupby']) : '';
+        $q .= (!empty($this->sqlParts['having'])) ? ' HAVING ' . implode(' AND ', $this->sqlParts['having']) : '';
 
         $q .= ') as results';
 
@@ -435,7 +435,9 @@ class RawSql extends AbstractQuery
         $sql    = $this->getSqlQuery();
         $conn   = $this->getConnection();
         $params = $this->getFlattenedParams($params);
-        $hash   = md5($this->hydrator->getHydrationMode() . $conn->getName() . $conn->getOption('dsn') . $sql . var_export($params, true));
+        $scalarMode = $this->hydrator->getHydrationMode();
+        $scalarMode = $scalarMode instanceof HydrationMode ? $scalarMode->value : $scalarMode;
+        $hash   = md5($scalarMode . $conn->getName() . $conn->getOption('dsn') . $sql . var_export($params, true));
         return $hash;
     }
 }

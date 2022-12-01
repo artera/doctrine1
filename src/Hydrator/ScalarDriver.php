@@ -9,7 +9,7 @@ class ScalarDriver extends \Doctrine1\Hydrator\AbstractHydrator
         $cache  = [];
         $result = [];
 
-        while ($data = $stmt->fetch(\Doctrine1\Core::FETCH_ASSOC)) {
+        while ($data = $stmt->fetch(\PDO::FETCH_ASSOC)) {
             $result[] = $this->gatherRowData($data, $cache);
         }
 
@@ -61,7 +61,7 @@ class ScalarDriver extends \Doctrine1\Hydrator\AbstractHydrator
             $dqlAlias  = $cache[$key]['dqlAlias'];
             $fieldName = $cache[$key]['fieldName'];
 
-            $rowDataKey = $aliasPrefix ? $dqlAlias . '_' . $fieldName:$fieldName;
+            $rowDataKey = $aliasPrefix ? $dqlAlias . '_' . $fieldName : $fieldName;
 
             if ($cache[$key]['isSimpleType'] || $cache[$key]['isAgg']) {
                 $rowData[$rowDataKey] = $value;

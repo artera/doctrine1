@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Tickets {
     use Tests\DoctrineUnitTestCase;
 
@@ -8,13 +9,13 @@ namespace Tests\Tickets {
 
         public static function prepareData(): void
         {
-            $servant      = new \Ticket_DC24_Servant;
+            $servant      = new \Ticket_DC24_Servant();
             $servant->bar = 6;
             $servant->save();
 
             $servantId = $servant->identifier();
 
-            $master             = new \Ticket_DC24_Master;
+            $master             = new \Ticket_DC24_Master();
             $master->foo        = 6;
             $master->servant_id = $servantId['id'];
             $master->save();
@@ -29,15 +30,15 @@ namespace Tests\Tickets {
                 ->where('m.id = 1')
                 ->fetchOne();
 
-                $master->foo = 5;
-                $master->save();
+            $master->foo = 5;
+            $master->save();
 
-                $master2 = \Doctrine1\Query::create()
-                ->select('m.*')
-                ->from('Ticket_DC24_Master m')
-                ->where('m.id = 1')
-                ->fetchOne([], \Doctrine1\Core::HYDRATE_ARRAY);
-                $this->assertEquals($master2['servant_id'], 1);
+            $master2 = \Doctrine1\Query::create()
+            ->select('m.*')
+            ->from('Ticket_DC24_Master m')
+            ->where('m.id = 1')
+            ->fetchOne([], \Doctrine1\HydrationMode::Array);
+            $this->assertEquals($master2['servant_id'], 1);
         }
     }
 }

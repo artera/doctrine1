@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Record;
 
 use Tests\DoctrineUnitTestCase;
@@ -12,10 +13,10 @@ class RecordFilterTest extends DoctrineUnitTestCase
 
     public function testValueWrapper()
     {
-        $orig = \Doctrine1\Manager::getInstance()->getAttribute(\Doctrine1\Core::ATTR_AUTO_ACCESSOR_OVERRIDE);
-        \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_AUTO_ACCESSOR_OVERRIDE, true);
+        $orig = \Doctrine1\Manager::getInstance()->getAutoAccessorOverride();
+        \Doctrine1\Manager::getInstance()->setAutoAccessorOverride(true);
 
-        $e = new \RecordFilterTest;
+        $e = new \RecordFilterTest();
         $e->name = 'something';
         // $e->password = '123';
 
@@ -52,6 +53,6 @@ class RecordFilterTest extends DoctrineUnitTestCase
         // $this->assertEquals($e->rawGet('name'), 'something');
         // $this->assertEquals($e->password, '202cb962ac59075b964b07152d234b70');
 
-        // \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_AUTO_ACCESSOR_OVERRIDE, $orig);
+        // \Doctrine1\Manager::getInstance()->setAutoAccessorOverride($orig);
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests;
 
 use Doctrine1\Core;
@@ -36,7 +37,7 @@ class DoctrineUnitTestCase extends TestCase
     public static function setUpBeforeClass(): void
     {
         static::$manager = \Doctrine1\Manager::getInstance();
-        static::$manager->setAttribute(\Doctrine1\Core::ATTR_EXPORT, \Doctrine1\Core::EXPORT_ALL);
+        static::$manager->setExportFlags(\Doctrine1\Core::EXPORT_ALL);
 
         static::$tables = array_merge(
             static::$tables,
@@ -72,9 +73,9 @@ class DoctrineUnitTestCase extends TestCase
 
             static::$connection->evictTables();
             static::$dbh      = static::$adapter      = static::$connection->getDbh();
-            static::$listener = static::$manager->getAttribute(\Doctrine1\Core::ATTR_LISTENER);
+            static::$listener = static::$manager->getListener();
 
-            static::$manager->setAttribute(\Doctrine1\Core::ATTR_LISTENER, static::$listener);
+            static::$manager->setListener(static::$listener);
         } catch (\Doctrine1\Manager\Exception $e) {
             if (static::$driverName == 'main') {
                 static::$dbh = new \PDO('sqlite::memory:');
@@ -86,7 +87,7 @@ class DoctrineUnitTestCase extends TestCase
             static::$conn = static::$connection = static::$manager->openConnection(static::$dbh, static::$driverName);
 
             static::$listener = new \Doctrine1\EventListener();
-            static::$manager->setAttribute(\Doctrine1\Core::ATTR_LISTENER, static::$listener);
+            static::$manager->setListener(static::$listener);
         }
         static::$unitOfWork = static::$connection->unitOfWork;
         static::$connection->setListener(new \Doctrine1\EventListener());
@@ -96,8 +97,8 @@ class DoctrineUnitTestCase extends TestCase
             static::prepareData();
         }
 
-        static::$conn->setAttribute(\Doctrine1\Core::ATTR_USE_NATIVE_SET, false);
-        static::$conn->setAttribute(\Doctrine1\Core::ATTR_USE_NATIVE_ENUM, false);
+        static::$conn->setUseNativeSet(false);
+        static::$conn->setUseNativeEnum(false);
     }
 
     public static function tearDownAfterClass(): void
@@ -143,12 +144,12 @@ class DoctrineUnitTestCase extends TestCase
 
 
         $users[0]->name                          = 'zYne';
-        $users[0]['Email'] = new \Email;
+        $users[0]['Email'] = new \Email();
         $users[0]['Email']->address              = 'zYne@example.com';
         $users[0]['Phonenumber'][0]->phonenumber = '123 123';
 
         $users[1]->name                          = 'Arnold Schwarzenegger';
-        $users[1]->Email = new \Email;
+        $users[1]->Email = new \Email();
         $users[1]->Email->address                = 'arnold@example.com';
         $users[1]['Phonenumber'][0]->phonenumber = '123 123';
         $users[1]['Phonenumber'][1]->phonenumber = '456 456';
@@ -156,36 +157,36 @@ class DoctrineUnitTestCase extends TestCase
         $users[1]->Group[0]                      = $groups[2];
 
         $users[2]->name                        = 'Michael Caine';
-        $users[2]->Email = new \Email;
+        $users[2]->Email = new \Email();
         $users[2]->Email->address              = 'caine@example.com';
         $users[2]->Phonenumber[0]->phonenumber = '123 123';
 
         $users[3]->name                        = 'Takeshi Kitano';
-        $users[3]->Email = new \Email;
+        $users[3]->Email = new \Email();
         $users[3]->Email->address              = 'kitano@example.com';
         $users[3]->Phonenumber[0]->phonenumber = '111 222 333';
 
         $users[4]->name                          = 'Sylvester Stallone';
-        $users[4]->Email = new \Email;
+        $users[4]->Email = new \Email();
         $users[4]->Email->address                = 'stallone@example.com';
         $users[4]->Phonenumber[0]->phonenumber   = '111 555 333';
         $users[4]['Phonenumber'][1]->phonenumber = '123 213';
         $users[4]['Phonenumber'][2]->phonenumber = '444 555';
 
         $users[5]->name                        = 'Kurt Russell';
-        $users[5]->Email = new \Email;
+        $users[5]->Email = new \Email();
         $users[5]->Email->address              = 'russell@example.com';
         $users[5]->Phonenumber[0]->phonenumber = '111 222 333';
 
         $users[6]->name                          = 'Jean Reno';
-        $users[6]->Email = new \Email;
+        $users[6]->Email = new \Email();
         $users[6]->Email->address                = 'reno@example.com';
         $users[6]->Phonenumber[0]->phonenumber   = '111 222 333';
         $users[6]['Phonenumber'][1]->phonenumber = '222 123';
         $users[6]['Phonenumber'][2]->phonenumber = '123 456';
 
         $users[7]->name                        = 'Edward Furlong';
-        $users[7]->Email = new \Email;
+        $users[7]->Email = new \Email();
         $users[7]->Email->address              = 'furlong@example.com';
         $users[7]->Phonenumber[0]->phonenumber = '111 567 333';
 

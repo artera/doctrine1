@@ -18,7 +18,7 @@ namespace Tests\Tickets {
         {
             static::$dbh  = new \Doctrine1\Adapter\Mock('pgsql');
             static::$conn = \Doctrine1\Manager::getInstance()->openConnection(static::$dbh);
-            $this->assertEquals(\Doctrine1\Core::IDENTIFIER_NATURAL, static::$conn->getTable('UserNoAutoIncrement')->getIdentifierType());
+            $this->assertEquals(\Doctrine1\IdentifierType::Natural, static::$conn->getTable('UserNoAutoIncrement')->getIdentifierType());
         }
 
         public function testCreateNewUserNoAutoIncrement()

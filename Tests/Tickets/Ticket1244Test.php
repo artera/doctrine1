@@ -12,14 +12,14 @@ namespace Tests\Tickets {
 
         public function testTicket()
         {
-            $original = \Doctrine1\Manager::getInstance()->getAttribute(\Doctrine1\Core::ATTR_VALIDATE);
-            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_ALL);
+            $original = \Doctrine1\Manager::getInstance()->getValidate();
+            \Doctrine1\Manager::getInstance()->setValidate(\Doctrine1\Core::VALIDATE_ALL);
 
             $test       = new \Ticket_1244_Test();
             $test->test = null;
             $test->save();
 
-            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, $original);
+            \Doctrine1\Manager::getInstance()->setValidate($original);
         }
     }
 }

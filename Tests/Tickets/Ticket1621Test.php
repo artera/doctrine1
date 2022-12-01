@@ -148,7 +148,7 @@ namespace {
             $this->hasColumn('user_id as userId', 'integer', null);
             $this->hasColumn('address', 'string', 30);
 
-            $this->getTable()->type = 'INNODB';
+            $this->getTable()->type = 'InnoDB';
             $this->getTable()->collate = 'utf8_unicode_ci';
             $this->getTable()->charset = 'utf8';
         }

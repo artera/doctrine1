@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Tickets {
     use Tests\DoctrineUnitTestCase;
 
@@ -39,7 +40,7 @@ namespace Tests\Tickets {
             ->leftJoin('s.Courses c')
             ->leftJoin('c.Weekdays cw');
 
-            $semesters = $query->execute([], \Doctrine1\Core::HYDRATE_ARRAY);
+            $semesters = $query->execute([], \Doctrine1\HydrationMode::Array);
             $semester  = $semesters[0];
 
             $this->assertAllWeekdaysArePopulated($semester);

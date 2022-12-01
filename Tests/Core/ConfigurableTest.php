@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Core;
 
 use Tests\DoctrineUnitTestCase;
@@ -16,164 +17,112 @@ class ConfigurableTest extends DoctrineUnitTestCase
     public function testGetIndexNameFormatAttribute()
     {
         // default index name format is %_idx
-        $this->assertEquals(static::$manager->getAttribute(\Doctrine1\Core::ATTR_IDXNAME_FORMAT), '%s_idx');
+        $this->assertEquals(static::$manager->getIndexNameFormat(), '%s_idx');
     }
 
     public function testGetSequenceNameFormatAttribute()
     {
         // default sequence name format is %_seq
-        $this->assertEquals(static::$manager->getAttribute(\Doctrine1\Core::ATTR_SEQNAME_FORMAT), '%s_seq');
+        $this->assertEquals(static::$manager->getSequenceNameFormat(), '%s_seq');
     }
 
     public function testSetIndexNameFormatAttribute()
     {
-        $original = static::$manager->getAttribute(\Doctrine1\Core::ATTR_IDXNAME_FORMAT);
-        static::$manager->setAttribute(\Doctrine1\Core::ATTR_IDXNAME_FORMAT, '%_index');
+        $original = static::$manager->getIndexNameFormat();
+        static::$manager->setIndexNameFormat('%_index');
 
-        $this->assertEquals(static::$manager->getAttribute(\Doctrine1\Core::ATTR_IDXNAME_FORMAT), '%_index');
-        static::$manager->setAttribute(\Doctrine1\Core::ATTR_IDXNAME_FORMAT, $original);
+        $this->assertEquals(static::$manager->getIndexNameFormat(), '%_index');
+        static::$manager->setIndexNameFormat($original);
     }
 
     public function testSetSequenceNameFormatAttribute()
     {
-        $original = static::$manager->getAttribute(\Doctrine1\Core::ATTR_SEQNAME_FORMAT);
-        static::$manager->setAttribute(\Doctrine1\Core::ATTR_SEQNAME_FORMAT, '%_sequence');
+        $original = static::$manager->getSequenceNameFormat();
+        static::$manager->setSequenceNameFormat('%_sequence');
 
-        $this->assertEquals(static::$manager->getAttribute(\Doctrine1\Core::ATTR_SEQNAME_FORMAT), '%_sequence');
-        static::$manager->setAttribute(\Doctrine1\Core::ATTR_SEQNAME_FORMAT, $original);
+        $this->assertEquals(static::$manager->getSequenceNameFormat(), '%_sequence');
+        static::$manager->setSequenceNameFormat($original);
     }
 
     public function testExceptionIsThrownWhenSettingIndexNameFormatAttributeAtTableLevel()
     {
         $this->expectException(\Doctrine1\Exception::class);
-        static::$connection->getTable('Entity')->setAttribute(\Doctrine1\Core::ATTR_IDXNAME_FORMAT, '%s_idx');
+        static::$connection->getTable('Entity')->setIndexNameFormat('%s_idx');
     }
 
     public function testExceptionIsThrownWhenSettingSequenceNameFormatAttributeAtTableLevel()
     {
         $this->expectException(\Doctrine1\Exception::class);
-        static::$connection->getTable('Entity')->setAttribute(\Doctrine1\Core::ATTR_SEQNAME_FORMAT, '%s_seq');
-    }
-
-    public function testSettingFieldCaseIsSuccesfulWithZero()
-    {
-        $original = static::$connection->getAttribute(\Doctrine1\Core::ATTR_FIELD_CASE);
-        static::$connection->setAttribute(\Doctrine1\Core::ATTR_FIELD_CASE, 0);
-        static::$connection->setAttribute(\Doctrine1\Core::ATTR_FIELD_CASE, $original);
-    }
-
-    public function testSettingFieldCaseIsSuccesfulWithCaseConstants()
-    {
-        $original = static::$connection->getAttribute(\Doctrine1\Core::ATTR_FIELD_CASE);
-        static::$connection->setAttribute(\Doctrine1\Core::ATTR_FIELD_CASE, CASE_LOWER);
-        static::$connection->setAttribute(\Doctrine1\Core::ATTR_FIELD_CASE, $original);
-    }
-
-    public function testSettingFieldCaseIsSuccesfulWithCaseConstants2()
-    {
-        $original = static::$connection->getAttribute(\Doctrine1\Core::ATTR_FIELD_CASE);
-        static::$connection->setAttribute(\Doctrine1\Core::ATTR_FIELD_CASE, CASE_UPPER);
-        static::$connection->setAttribute(\Doctrine1\Core::ATTR_FIELD_CASE, $original);
-    }
-
-    public function testExceptionIsThrownWhenSettingFieldCaseToNotZeroOneOrTwo()
-    {
-        $this->expectException(\Doctrine1\Exception::class);
-        static::$connection->setAttribute(\Doctrine1\Core::ATTR_FIELD_CASE, -1);
-    }
-
-    public function testExceptionIsThrownWhenSettingFieldCaseToNotZeroOneOrTwo2()
-    {
-        $this->expectException(\Doctrine1\Exception::class);
-        static::$connection->setAttribute(\Doctrine1\Core::ATTR_FIELD_CASE, 5);
+        static::$connection->getTable('Entity')->setSequenceNameFormat('%s_seq');
     }
 
     public function testDefaultQuoteIdentifierAttributeValueIsFalse()
     {
-        $this->assertEquals(static::$manager->getAttribute(\Doctrine1\Core::ATTR_QUOTE_IDENTIFIER), false);
-    }
-
-    public function testQuoteIdentifierAttributeAcceptsBooleans()
-    {
-        static::$manager->setAttribute(\Doctrine1\Core::ATTR_QUOTE_IDENTIFIER, true);
-
-        $this->assertEquals(static::$manager->getAttribute(\Doctrine1\Core::ATTR_QUOTE_IDENTIFIER), true);
-        static::$manager->setAttribute(\Doctrine1\Core::ATTR_QUOTE_IDENTIFIER, false);
+        $this->assertEquals(static::$manager->getQuoteIdentifier(), false);
     }
 
     public function testDefaultSequenceColumnNameAttributeValueIsId()
     {
-        $this->assertEquals(static::$manager->getAttribute(\Doctrine1\Core::ATTR_SEQCOL_NAME), 'id');
+        $this->assertEquals(static::$manager->getSequenceColumnName(), 'id');
     }
 
     public function testSequenceColumnNameAttributeAcceptsStrings()
     {
-        $original = static::$manager->getAttribute(\Doctrine1\Core::ATTR_SEQCOL_NAME);
-        static::$manager->setAttribute(\Doctrine1\Core::ATTR_SEQCOL_NAME, 'sequence');
+        $original = static::$manager->getSequenceColumnName();
+        static::$manager->setSequenceColumnName('sequence');
 
-        $this->assertEquals(static::$manager->getAttribute(\Doctrine1\Core::ATTR_SEQCOL_NAME), 'sequence');
-        static::$manager->setAttribute(\Doctrine1\Core::ATTR_SEQCOL_NAME, $original);
+        $this->assertEquals(static::$manager->getSequenceColumnName(), 'sequence');
+        static::$manager->setSequenceColumnName($original);
     }
 
     public function testValidatorAttributeAcceptsBooleans()
     {
-        static::$manager->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, true);
+        static::$manager->setValidate(true);
 
-        $this->assertEquals(static::$manager->getAttribute(\Doctrine1\Core::ATTR_VALIDATE), true);
-        static::$manager->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, false);
+        $this->assertEquals(static::$manager->getValidate(), true);
+        static::$manager->setValidate(false);
     }
 
     public function testDefaultPortabilityAttributeValueIsAll()
     {
-        $this->assertEquals(static::$manager->getAttribute(\Doctrine1\Core::ATTR_PORTABILITY), \Doctrine1\Core::PORTABILITY_NONE);
+        $this->assertEquals(static::$manager->getPortability(), \Doctrine1\Core::PORTABILITY_NONE);
     }
 
     public function testPortabilityAttributeAcceptsPortabilityConstants()
     {
-        static::$manager->setAttribute(\Doctrine1\Core::ATTR_PORTABILITY, \Doctrine1\Core::PORTABILITY_RTRIM | \Doctrine1\Core::PORTABILITY_FIX_CASE);
+        static::$manager->setPortability(\Doctrine1\Core::PORTABILITY_RTRIM | \Doctrine1\Core::PORTABILITY_FIX_CASE);
 
         $this->assertEquals(
-            static::$manager->getAttribute(\Doctrine1\Core::ATTR_PORTABILITY),
+            static::$manager->getPortability(),
             \Doctrine1\Core::PORTABILITY_RTRIM | \Doctrine1\Core::PORTABILITY_FIX_CASE
         );
-        static::$manager->setAttribute(\Doctrine1\Core::ATTR_PORTABILITY, \Doctrine1\Core::PORTABILITY_ALL);
+        static::$manager->setPortability(\Doctrine1\Core::PORTABILITY_ALL);
     }
 
     public function testDefaultListenerIsDoctrineEventListener()
     {
-        $this->assertTrue(static::$manager->getAttribute(\Doctrine1\Core::ATTR_LISTENER) instanceof \Doctrine1\EventListener);
+        $this->assertTrue(static::$manager->getListener()instanceof \Doctrine1\EventListener);
     }
 
     public function testListenerAttributeAcceptsEventListenerObjects()
     {
-        $original = static::$manager->getAttribute(\Doctrine1\Core::ATTR_LISTENER);
-        static::$manager->setAttribute(\Doctrine1\Core::ATTR_LISTENER, new \Doctrine1\EventListener());
+        $original = static::$manager->getListener();
+        static::$manager->setListener(new \Doctrine1\EventListener());
 
-        $this->assertTrue(static::$manager->getAttribute(\Doctrine1\Core::ATTR_LISTENER) instanceof \Doctrine1\EventListener);
-        static::$manager->setAttribute(\Doctrine1\Core::ATTR_LISTENER, $original);
+        $this->assertTrue(static::$manager->getListener() instanceof \Doctrine1\EventListener);
+        static::$manager->setListener($original);
     }
 
     public function testCollectionKeyAttributeAcceptsValidColumnName()
     {
-        $original = static::$connection->getTable('User')->getAttribute(\Doctrine1\Core::ATTR_COLL_KEY);
-        static::$connection->getTable('User')->setAttribute(\Doctrine1\Core::ATTR_COLL_KEY, 'name');
-        static::$connection->getTable('User')->setAttribute(\Doctrine1\Core::ATTR_COLL_KEY, $original);
+        $original = static::$connection->getTable('User')->getCollectionKey();
+        static::$connection->getTable('User')->setCollectionKey('name');
+        static::$connection->getTable('User')->setCollectionKey($original);
     }
 
     public function testSettingInvalidColumnNameToCollectionKeyAttributeThrowsException()
     {
         $this->expectException(\Doctrine1\Exception::class);
-        static::$connection->getTable('User')->setAttribute(\Doctrine1\Core::ATTR_COLL_KEY, 'unknown');
-    }
-
-    public function testSettingCollectionKeyAttributeOnOtherThanTableLevelThrowsException()
-    {
-        $this->expectException(\Doctrine1\Exception::class);
-        static::$connection->setAttribute(\Doctrine1\Core::ATTR_COLL_KEY, 'name');
-    }
-
-    public function testGetAttributes()
-    {
-        $this->assertTrue(is_array(static::$manager->getAttributes()));
+        static::$connection->getTable('User')->setCollectionKey('unknown');
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Query;
 
 use Tests\DoctrineUnitTestCase;
@@ -21,9 +22,9 @@ class JoinTest extends DoctrineUnitTestCase
         $c->City[1]->name = 'City 2';
         $c->City[2]->name = 'City 3';
 
-        $c->City[0]->District = new \Record_District;
+        $c->City[0]->District = new \Record_District();
         $c->City[0]->District->name = 'District 1';
-        $c->City[2]->District = new \Record_District;
+        $c->City[2]->District = new \Record_District();
         $c->City[2]->District->name = 'District 2';
 
         $this->assertEquals(gettype($c->City[0]->District), 'object');
@@ -141,7 +142,7 @@ class JoinTest extends DoctrineUnitTestCase
             ->from('Record_Country c')->leftJoin('c.City c2')->leftJoin('c2.District d')
             ->where('c.id = ?', [1]);
 
-        $countries = $q->execute([], \Doctrine1\Core::HYDRATE_ARRAY);
+        $countries = $q->execute([], \Doctrine1\HydrationMode::Array);
 
         $c = $countries[0];
         $this->assertEquals($c['City'][0]['name'], 'City 1');

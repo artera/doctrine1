@@ -11,13 +11,12 @@ class Schema
      *
      * @param  string  $directory    The directory of models to build the schema from
      * @param  array   $models       The array of model names to build the schema for
-     * @param  integer $modelLoading The model loading strategy to use to load the models from the passed directory
      * @return array
      */
-    public function buildSchema($directory = null, $models = [], $modelLoading = null)
+    public function buildSchema($directory = null, $models = [])
     {
         if ($directory !== null) {
-            $loadedModels = \Doctrine1\Core::filterInvalidModels(\Doctrine1\Core::loadModels($directory, $modelLoading));
+            $loadedModels = \Doctrine1\Core::filterInvalidModels(\Doctrine1\Core::loadModels($directory));
         } else {
             $loadedModels = \Doctrine1\Core::getLoadedModels();
         }
@@ -113,11 +112,10 @@ class Schema
      * @param  string  $format
      * @param  string  $directory
      * @param  array   $models
-     * @param  integer $modelLoading The model loading strategy to use to load the models from the passed directory
      */
-    public function exportSchema($schema, $format = 'yml', $directory = null, $models = [], $modelLoading = null): int|string|null
+    public function exportSchema($schema, $format = 'yml', $directory = null, $models = []): int|string|null
     {
-        $array = $this->buildSchema($directory, $models, $modelLoading);
+        $array = $this->buildSchema($directory, $models);
 
         if (is_dir($schema)) {
             $schema = $schema . DIRECTORY_SEPARATOR . 'schema.' . $format;

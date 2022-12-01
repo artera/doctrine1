@@ -234,7 +234,7 @@ class LimitTest extends DoctrineUnitTestCase
 
     public function testLimitAttribute()
     {
-        static::$manager->setAttribute(\Doctrine1\Core::ATTR_QUERY_LIMIT, \Doctrine1\Core::LIMIT_ROWS);
+        static::$manager->setLimit(\Doctrine1\Limit::Rows);
 
         static::$connection->clear();
         $q = new \Doctrine1\Query();
@@ -243,7 +243,7 @@ class LimitTest extends DoctrineUnitTestCase
 
         $this->assertCount(3, $users);
         $this->assertMatchesSnapshot($q->getSqlQuery());
-        static::$manager->setAttribute(\Doctrine1\Core::ATTR_QUERY_LIMIT, \Doctrine1\Core::LIMIT_RECORDS);
+        static::$manager->setLimit(\Doctrine1\Limit::Records);
     }
 
     public function testLimitWithManyToManyAndColumnAggregationInheritance()

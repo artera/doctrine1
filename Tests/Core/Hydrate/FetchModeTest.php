@@ -1,6 +1,8 @@
 <?php
+
 namespace Tests\Core\Hydrate;
 
+use Doctrine1\HydrationMode;
 use Tests\DoctrineUnitTestCase;
 
 class FetchModeTest extends DoctrineUnitTestCase
@@ -11,7 +13,7 @@ class FetchModeTest extends DoctrineUnitTestCase
 
         $q->select('u.*, p.*')->from('User u')->innerJoin('u.Phonenumber p')->where("u.name = 'zYne'");
 
-        $users = $q->execute([], \Doctrine1\Core::HYDRATE_ARRAY);
+        $users = $q->execute([], HydrationMode::Array);
 
         $this->assertTrue(is_array($users));
 
@@ -24,7 +26,7 @@ class FetchModeTest extends DoctrineUnitTestCase
 
         $q->select('u.*, p.*')->from('User u')->innerJoin('u.Phonenumber p');
 
-        $users = $q->execute([], \Doctrine1\Core::HYDRATE_ARRAY);
+        $users = $q->execute([], HydrationMode::Array);
 
         $this->assertTrue(is_array($users));
 
@@ -37,7 +39,7 @@ class FetchModeTest extends DoctrineUnitTestCase
 
         $q->select('u.*, p.*')->from('User u')->innerJoin('u.Phonenumber p')->where("u.name = 'Jean Reno'");
 
-        $users = $q->execute([], \Doctrine1\Core::HYDRATE_ARRAY);
+        $users = $q->execute([], HydrationMode::Array);
 
         $this->assertTrue(is_array($users));
 
@@ -51,7 +53,7 @@ class FetchModeTest extends DoctrineUnitTestCase
 
         $q->select('u.*, e.*')->from('User u')->innerJoin('u.Email e');
 
-        $users = $q->execute([], \Doctrine1\Core::HYDRATE_ARRAY);
+        $users = $q->execute([], HydrationMode::Array);
 
         $this->assertEquals(count($users), 8);
         $this->assertEquals($users[0]['Email']['address'], 'zYne@example.com');
@@ -63,7 +65,7 @@ class FetchModeTest extends DoctrineUnitTestCase
 
         $q->select('u.*, e.*')->from('User u')->innerJoin('u.Email e')->where("u.name = 'zYne'");
 
-        $users = $q->execute([], \Doctrine1\Core::HYDRATE_ARRAY);
+        $users = $q->execute([], HydrationMode::Array);
 
         $this->assertEquals(count($users), 1);
         $this->assertEquals($users[0]['Email']['address'], 'zYne@example.com');
@@ -75,7 +77,7 @@ class FetchModeTest extends DoctrineUnitTestCase
 
         $q->select('u.*, e.*')->from('User u')->innerJoin('u.Email e');
 
-        $users = $q->execute([], \Doctrine1\Core::HYDRATE_RECORD);
+        $users = $q->execute([], HydrationMode::Record);
         $count = count(static::$conn);
 
         $this->assertEquals(count($users), 8);
@@ -100,7 +102,7 @@ class FetchModeTest extends DoctrineUnitTestCase
         $q = new \Doctrine1\Query();
 
         $q->select('u.*, p.*')->from('User u')->innerJoin('u.Phonenumber p');
-        $users = $q->execute([], \Doctrine1\Core::HYDRATE_RECORD);
+        $users = $q->execute([], HydrationMode::Record);
         $count = count(static::$conn);
 
         $this->assertEquals(count($users), 8);
@@ -117,7 +119,7 @@ class FetchModeTest extends DoctrineUnitTestCase
         $q = new \Doctrine1\Query();
 
         $q->select('u.*')->from('User u');
-        $users = $q->execute([], \Doctrine1\Core::HYDRATE_RECORD);
+        $users = $q->execute([], HydrationMode::Record);
         $count = static::$conn->count();
 
         $this->assertEquals(count($users), 8);
@@ -136,7 +138,7 @@ class FetchModeTest extends DoctrineUnitTestCase
 
         $q = new \Doctrine1\Query();
         $q->select('u.*')->from('User u')->where('u.id = ?');
-        $users = $q->execute([$u->id], \Doctrine1\Core::HYDRATE_ARRAY);
+        $users = $q->execute([$u->id], HydrationMode::Array);
         $this->assertEquals($users[0]['created'], null);
     }
 
@@ -149,7 +151,7 @@ class FetchModeTest extends DoctrineUnitTestCase
 
         $q = new \Doctrine1\Query();
         $q->select('COUNT(u.id) num')->from('User u')->where('u.id = ?');
-        $res = $q->execute([$u->id], \Doctrine1\Core::HYDRATE_NONE);
+        $res = $q->execute([$u->id], HydrationMode::None);
         $this->assertEquals(1, $res[0][0]);
     }
 }

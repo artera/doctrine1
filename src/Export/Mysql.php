@@ -73,6 +73,19 @@ class Mysql extends \Doctrine1\Export
      *                        => 'utf8', 'collate' =>
      *                        'utf8_unicode_ci', 'type'    =>
      *                        'innodb', );
+     * @phpstan-param array{
+     *   comment?: string,
+     *   charset?: string,
+     *   collate?: string,
+     *   type?: string,
+     *   foreignKeys?: array{
+     *     local: mixed,
+     *   }[],
+     *   indexes?: array{
+     *     fields: string | string[],
+     *   }[],
+     *   primary?: string[],
+     * } $options
      *
      * @return array
      */
@@ -167,7 +180,7 @@ class Mysql extends \Doctrine1\Export
         if (isset($options['type'])) {
             $type = $options['type'];
         } else {
-            $type = $this->conn->getAttribute(\Doctrine1\Core::ATTR_DEFAULT_TABLE_TYPE);
+            $type = $this->conn->getDefaultMySQLEngine();
         }
 
         if ($type) {
@@ -402,11 +415,17 @@ class Mysql extends \Doctrine1\Export
      *                              => 'utf8', 'collate' =>
      *                              'utf8_unicode_ci', 'type'    =>
      *                              'innodb', );
+     * @phpstan-param array{
+     *   comment?: string,
+     *   charset?: string,
+     *   collate?: string,
+     *   type?: string,
+     * } $options
      */
     public function createSequence($sequenceName, $start = 1, array $options = []): bool
     {
         $sequenceName = $this->conn->quoteIdentifier($sequenceName, true);
-        $seqcolName   = $this->conn->quoteIdentifier($this->conn->getAttribute(\Doctrine1\Core::ATTR_SEQCOL_NAME), true);
+        $seqcolName   = $this->conn->quoteIdentifier($this->conn->getSequenceColumnName(), true);
 
         $optionsStrings = [];
 
@@ -427,7 +446,7 @@ class Mysql extends \Doctrine1\Export
         if (isset($options['type'])) {
             $type = $options['type'];
         } else {
-            $type = $this->conn->getAttribute(\Doctrine1\Core::ATTR_DEFAULT_TABLE_TYPE);
+            $type = $this->conn->getDefaultMySQLEngine();
         }
         if ($type) {
             $optionsStrings[] = 'ENGINE = ' . $type;
@@ -532,14 +551,14 @@ class Mysql extends \Doctrine1\Export
                     ? null : $this->valid_default_values[$field['type']];
 
                 if ($field['default'] === ''
-                    && ($this->conn->getAttribute(\Doctrine1\Core::ATTR_PORTABILITY) & \Doctrine1\Core::PORTABILITY_EMPTY_TO_NULL)
+                    && ($this->conn->getPortability() & \Doctrine1\Core::PORTABILITY_EMPTY_TO_NULL)
                 ) {
                     $field['default'] = ' ';
                 }
             }
 
             // Proposed patch:
-            if ($field['type'] == 'enum' && $this->conn->getAttribute(\Doctrine1\Core::ATTR_USE_NATIVE_ENUM)) {
+            if ($field['type'] == 'enum' && $this->conn->getUseNativeEnum()) {
                 $fieldType = 'varchar';
             } else {
                 $fieldType = $field['type'];

@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Tickets {
     use Tests\DoctrineUnitTestCase;
 
@@ -45,8 +46,8 @@ namespace Tests\Tickets {
         public function testLimitSubqueryQuoteIdentifier(): void
         {
             // Change the quote identifier
-            $curQuoteIdentifier = $this->getConnection()->getAttribute(\Doctrine1\Core::ATTR_QUOTE_IDENTIFIER);
-            $this->getConnection()->setAttribute(\Doctrine1\Core::ATTR_QUOTE_IDENTIFIER, true);
+            $curQuoteIdentifier = $this->getConnection()->getQuoteIdentifier();
+            $this->getConnection()->setQuoteIdentifier(true);
 
             $q = \Doctrine1\Query::create()
             ->select('c.id')
@@ -57,7 +58,7 @@ namespace Tests\Tickets {
             $this->assertMatchesSnapshot($q->getSqlQuery());
 
             // Restoring quote identifier
-            $this->getConnection()->setAttribute(\Doctrine1\Core::ATTR_QUOTE_IDENTIFIER, $curQuoteIdentifier);
+            $this->getConnection()->setQuoteIdentifier($curQuoteIdentifier);
         }
 
 

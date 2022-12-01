@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Tickets {
     use Tests\DoctrineUnitTestCase;
 
@@ -13,7 +14,7 @@ namespace Tests\Tickets {
 
         public function testDqlCallbacks()
         {
-            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_USE_DQL_CALLBACKS, true);
+            \Doctrine1\Manager::getInstance()->setUseDqlCallbacks(true);
 
             $table = \Doctrine1\Core::getTable('RecordTest2');
             $table->addRecordListener(new \RecordTest2Listener());
@@ -39,7 +40,7 @@ namespace Tests\Tickets {
 
             $this->assertTrue($test2->RecordTest1 instanceof \Doctrine1\Collection);
 
-            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_USE_DQL_CALLBACKS, false);
+            \Doctrine1\Manager::getInstance()->setUseDqlCallbacks(false);
         }
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Tickets;
 
 use Tests\DoctrineUnitTestCase;
@@ -49,7 +50,7 @@ class TicketDC112Test extends DoctrineUnitTestCase
 
         $this->assertEquals($q->getResultCacheHash(), 'testing');
         $q->setResultCacheHash(null);
-        $this->assertEquals($q->getResultCacheHash(), '9b6aafa501ac37b902719cd5061f412d');
+        $this->assertEquals($q->getResultCacheHash(), 'fabb70b46fb4fc119a88c4fbc13b061a');
     }
 
     public function testDeleteByRegex()

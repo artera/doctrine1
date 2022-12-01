@@ -8,7 +8,7 @@ namespace Tests\Tickets {
 
         public function testTest()
         {
-            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, true);
+            \Doctrine1\Manager::getInstance()->setValidate(true);
             $user                = new \Ticket_255_User();
             $user->username      = 'jwage';
             $user->email_address = 'jonwage@gmail.com';
@@ -23,7 +23,7 @@ namespace Tests\Tickets {
             $user->password      = 'changeme';
             $user->save();
 
-            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, false);
+            \Doctrine1\Manager::getInstance()->setValidate(false);
         }
 
         public function testTest2()
@@ -32,7 +32,7 @@ namespace Tests\Tickets {
             $conn = \Doctrine1\Manager::connection($dbh);
             $sql  = $conn->export->exportClassesSql([\Ticket_255_User::class]);
 
-            $this->assertEquals($sql[0], 'CREATE TABLE ticket_255__user (id BIGINT AUTO_INCREMENT, username VARCHAR(255), email_address VARCHAR(255), password VARCHAR(255), UNIQUE INDEX username_email_address_unqidx_idx (username, email_address), PRIMARY KEY(id)) ENGINE = INNODB');
+            $this->assertEquals($sql[0], 'CREATE TABLE ticket_255__user (id BIGINT AUTO_INCREMENT, username VARCHAR(255), email_address VARCHAR(255), password VARCHAR(255), UNIQUE INDEX username_email_address_unqidx_idx (username, email_address), PRIMARY KEY(id)) ENGINE = InnoDB');
         }
     }
 }

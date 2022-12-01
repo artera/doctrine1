@@ -2,6 +2,8 @@
 
 namespace Doctrine1\Hydrator;
 
+use Doctrine1\HydrationMode;
+
 /**
  * @phpstan-template Collection of \Traversable|array
  * @phpstan-template Item
@@ -77,19 +79,19 @@ abstract class Graph extends \Doctrine1\Hydrator\AbstractHydrator
 
         $event = new \Doctrine1\Event(null, \Doctrine1\Event::HYDRATE, null);
 
-        if ($this->hydrationMode == \Doctrine1\Core::HYDRATE_ON_DEMAND) {
+        if ($this->hydrationMode == HydrationMode::OnDemand) {
             if ($this->priorRow !== null) {
                 $data            = $this->priorRow;
                 $this->priorRow = null;
             } else {
-                $data = $stmt->fetch(\Doctrine1\Core::FETCH_ASSOC);
+                $data = $stmt->fetch(\PDO::FETCH_ASSOC);
                 if (!$data) {
                     return $result;
                 }
             }
             $activeRootIdentifier = null;
         } else {
-            $data = $stmt->fetch(\Doctrine1\Core::FETCH_ASSOC);
+            $data = $stmt->fetch(\PDO::FETCH_ASSOC);
             if (!$data) {
                 return $result;
             }
@@ -98,7 +100,7 @@ abstract class Graph extends \Doctrine1\Hydrator\AbstractHydrator
         do {
             $table = $this->queryComponents[$rootAlias]['table'];
 
-            if ($table->getConnection()->getAttribute(\Doctrine1\Core::ATTR_PORTABILITY) & \Doctrine1\Core::PORTABILITY_RTRIM) {
+            if ($table->getConnection()->getPortability() & \Doctrine1\Core::PORTABILITY_RTRIM) {
                 array_map('rtrim', $data);
             }
 
@@ -106,7 +108,7 @@ abstract class Graph extends \Doctrine1\Hydrator\AbstractHydrator
             $nonemptyComponents = [];
             $rowData = $this->gatherRowData($data, $cache, $id, $nonemptyComponents);
 
-            if ($this->hydrationMode == \Doctrine1\Core::HYDRATE_ON_DEMAND) {
+            if ($this->hydrationMode == HydrationMode::OnDemand) {
                 if (!isset($activeRootIdentifier)) {
                     // first row for this record
                     $activeRootIdentifier = $id[$rootAlias];
@@ -250,7 +252,7 @@ abstract class Graph extends \Doctrine1\Hydrator\AbstractHydrator
                     $this->setLastElement($prev, $coll, $index, $dqlAlias, $oneToOne);
                 }
             }
-        } while ($data = $stmt->fetch(\Doctrine1\Core::FETCH_ASSOC));
+        } while ($data = $stmt->fetch(\PDO::FETCH_ASSOC));
 
         $stmt->closeCursor();
         $this->flush();

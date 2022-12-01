@@ -14,7 +14,7 @@ class Cms_Category extends \Doctrine1\Record
         $this->hasColumn('active', 'integer', 11);
         $this->getTable()->collate = 'utf8_unicode_ci';
         $this->getTable()->charset = 'utf8';
-        $this->getTable()->type = 'INNODB';
+        $this->getTable()->type = 'InnoDB';
         $this->index('index_parent', ['fields' => ['parent']]);
     }
 }

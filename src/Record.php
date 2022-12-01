@@ -289,7 +289,7 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
      */
     public function isValid($deep = false, $hooks = true)
     {
-        if (!$this->_table->getAttribute(Core::ATTR_VALIDATE)) {
+        if (!$this->_table->getValidate()) {
             return true;
         }
 
@@ -610,9 +610,9 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
 
         $message = sprintf("Validation failed in class %s\n\n", static::class);
 
-        $message .= '  ' . count($errorStack) . ' field' . (count($errorStack) > 1 ?  's' : null) . ' had validation error' . (count($errorStack) > 1 ?  's' : null) . ":\n\n";
+        $message .= '  ' . count($errorStack) . ' field' . (count($errorStack) > 1 ? 's' : null) . ' had validation error' . (count($errorStack) > 1 ? 's' : null) . ":\n\n";
         foreach ($errorStack as $field => $errors) {
-            $message .= '    * ' . count($errors) . ' validator' . (count($errors) > 1 ?  's' : null) . " failed on $field (" . implode(', ', $errors) . ")\n";
+            $message .= '    * ' . count($errors) . ' validator' . (count($errors) > 1 ? 's' : null) . " failed on $field (" . implode(', ', $errors) . ")\n";
         }
         return $message;
     }
@@ -759,31 +759,32 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
      */
     private function prepareIdentifiers($exists = true)
     {
-        switch ($this->_table->getIdentifierType()) {
-            case Core::IDENTIFIER_AUTOINC:
-            case Core::IDENTIFIER_SEQUENCE:
-            case Core::IDENTIFIER_NATURAL:
-                $name = $this->_table->getIdentifier();
-                if (is_array($name)) {
-                    $name = $name[0];
-                }
-                if ($exists) {
-                    if (isset($this->_data[$name]) && !$this->_data[$name] instanceof None) {
-                        $this->_id[$name] = $this->_data[$name];
-                    }
-                }
-                break;
-            case Core::IDENTIFIER_COMPOSITE:
-                $names = (array) $this->_table->getIdentifier();
+        if ($this->_table->getIdentifierType() === null) {
+            return;
+        }
 
-                foreach ($names as $name) {
-                    if ($this->_data[$name] instanceof None) {
-                        $this->_id[$name] = null;
-                    } else {
-                        $this->_id[$name] = $this->_data[$name];
-                    }
+        if ($this->_table->getIdentifierType() === IdentifierType::Composite) {
+            $names = (array) $this->_table->getIdentifier();
+
+            foreach ($names as $name) {
+                if ($this->_data[$name] instanceof None) {
+                    $this->_id[$name] = null;
+                } else {
+                    $this->_id[$name] = $this->_data[$name];
                 }
-                break;
+            }
+
+            return;
+        }
+
+        $name = $this->_table->getIdentifier();
+        if (is_array($name)) {
+            $name = $name[0];
+        }
+        if ($exists) {
+            if (isset($this->_data[$name]) && !$this->_data[$name] instanceof None) {
+                $this->_id[$name] = $this->_data[$name];
+            }
         }
     }
 
@@ -958,8 +959,8 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
         }
         $id = array_values($id);
 
-        $overwrite = $this->getTable()->getAttribute(Core::ATTR_HYDRATE_OVERWRITE);
-        $this->getTable()->setAttribute(Core::ATTR_HYDRATE_OVERWRITE, true);
+        $overwrite = $this->getTable()->getHydrateOverwrite();
+        $this->getTable()->setHydrateOverwrite(true);
 
         if ($deep) {
             $query = $this->getTable()->createQuery();
@@ -970,15 +971,15 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
             $this->clearRelated();
             $record = $query->fetchOne($id);
         } else {
-            // Use HYDRATE_ARRAY to avoid clearing object relations
+            // Use HydrationMode::Array to avoid clearing object relations
             /** @phpstan-var array<string, mixed>|null */
-            $record = $this->getTable()->find($id, hydrate_array: true);
+            $record = $this->getTable()->find($id, hydrateArray: true);
             if ($record) {
                 $this->hydrate($record);
             }
         }
 
-        $this->getTable()->setAttribute(Core::ATTR_HYDRATE_OVERWRITE, $overwrite);
+        $this->getTable()->setHydrateOverwrite($overwrite);
 
         if ($record === null) {
             throw new Record\Exception('Failed to refresh. Record does not exist.');
@@ -1149,7 +1150,7 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
             }
 
             $table = $this->getTable();
-            $data  = empty($data) ? $table->find($id, hydrate_array: true) : $data;
+            $data  = empty($data) ? $table->find($id, hydrateArray: true) : $data;
 
             if (is_array($data)) {
                 $this->cleanData($data);
@@ -1338,7 +1339,7 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
         static $inAccessor = [];
 
         if (empty($inAccessor[$fieldName]) && $accessors
-        && ($this->_table->getAttribute(Core::ATTR_AUTO_ACCESSOR_OVERRIDE) || $this->hasAccessor($fieldName))) {
+        && ($this->_table->getAutoAccessorOverride() || $this->hasAccessor($fieldName))) {
             $componentName = $this->_table->getComponentName();
             $accessor = $this->getAccessor($fieldName) ?? 'get' . Inflector::classify($fieldName);
 
@@ -1423,7 +1424,7 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
         static $inMutator = [];
 
         if (empty($inMutator[$fieldName]) && $mutators
-        && ($this->_table->getAttribute(Core::ATTR_AUTO_ACCESSOR_OVERRIDE) || $this->hasMutator($fieldName))) {
+        && ($this->_table->getAutoAccessorOverride() || $this->hasMutator($fieldName))) {
             $componentName = $this->_table->getComponentName();
             $mutator       = $this->getMutator($fieldName) ?? 'set' . Inflector::classify($fieldName);
 
@@ -2003,7 +2004,7 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
                 }
             }
 
-            if ($this->_table->getIdentifierType() == Core::IDENTIFIER_AUTOINC) {
+            if ($this->_table->getIdentifierType() === IdentifierType::Autoinc) {
                 $i = $this->_table->getIdentifier();
                 if (is_array($i)) {
                     throw new Exception("Multi column identifiers are not supported for auto increments");
@@ -2267,7 +2268,7 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
     {
         $data   = $this->_data;
         $idtype = $this->_table->getIdentifierType();
-        if ($idtype === Core::IDENTIFIER_AUTOINC || $idtype === Core::IDENTIFIER_SEQUENCE) {
+        if ($idtype === IdentifierType::Autoinc || $idtype === IdentifierType::Sequence) {
             $id = $this->_table->getIdentifier();
             if (is_scalar($id)) {
                 unset($data[$id]);
@@ -2645,7 +2646,7 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
             assert($localFieldDef !== null);
 
             if ($localFieldDef['type'] == 'integer') {
-                $identifier = (integer) $identifier;
+                $identifier = (int) $identifier;
             }
 
             $foreignFieldName = $rel->getForeignFieldName();
@@ -2654,13 +2655,13 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
 
             if ($foreignFieldDef['type'] == 'integer') {
                 foreach ($ids as $i => $id) {
-                    $ids[$i] = (integer) $id;
+                    $ids[$i] = (int) $id;
                 }
             }
 
             foreach ($ids as $id) {
                 /** @var Record $record */
-                $record                    = new $modelClassName;
+                $record                    = new $modelClassName();
                 $record[$localFieldName]   = $identifier;
                 $record[$foreignFieldName] = $id;
                 $record->save();
@@ -2830,16 +2831,6 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
         $this->_table->unique($fields, $options, $createUniqueIndex);
     }
 
-    /**
-     * @param  string|int $attr
-     * @param  mixed      $value
-     * @return void
-     */
-    public function setAttribute($attr, $value)
-    {
-        $this->_table->setAttribute($attr, $value);
-    }
-
     public function setTableName(string $tableName): void
     {
         $this->_table->setTableName($tableName);
@@ -2875,28 +2866,9 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
         $this->_table->subclasses = array_keys($map);
     }
 
-    /**
-     * attribute
-     * sets or retrieves an option
-     *
-     * @see    Core::ATTR_* constants   availible attributes
-     * @param  mixed $attr
-     * @param  mixed $value
-     * @return mixed
-     */
-    public function attribute($attr, $value)
+    public function setCollectionKey(?string $value): void
     {
-        if ($value == null) {
-            if (is_array($attr)) {
-                foreach ($attr as $k => $v) {
-                    $this->_table->setAttribute($k, $v);
-                }
-            } else {
-                return $this->_table->getAttribute($attr);
-            }
-        } else {
-            $this->_table->setAttribute($attr, $value);
-        }
+        $this->_table->setCollectionKey($value);
     }
 
     /**
@@ -2952,7 +2924,7 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
     public function hasColumns(array $definitions)
     {
         foreach ($definitions as $name => $options) {
-            $length = isset($options['length']) ? $options['length']:null;
+            $length = isset($options['length']) ? $options['length'] : null;
             $this->hasColumn($name, $options['type'], $length, $options);
         }
     }

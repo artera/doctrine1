@@ -2,6 +2,8 @@
 
 namespace Doctrine1\Hydrator;
 
+use Doctrine1\HydrationMode;
+
 abstract class AbstractHydrator
 {
     /**
@@ -13,15 +15,15 @@ abstract class AbstractHydrator
 
     protected ?array $priorRow = null;
 
-    /** @phpstan-var int|class-string<\Doctrine1\Hydrator\AbstractHydrator> */
-    protected int|string $hydrationMode;
+    /** @phpstan-var HydrationMode|class-string<\Doctrine1\Hydrator\AbstractHydrator> */
+    protected HydrationMode|string $hydrationMode;
 
     /**
      * @param array $queryComponents
      * @param array $tableAliases
-     * @phpstan-param int|class-string<\Doctrine1\Hydrator\AbstractHydrator> $hydrationMode
+     * @phpstan-param HydrationMode|class-string<\Doctrine1\Hydrator\AbstractHydrator> $hydrationMode
      */
-    public function __construct(array $queryComponents = [], array $tableAliases = [], int|string $hydrationMode = \Doctrine1\Core::HYDRATE_RECORD)
+    public function __construct(array $queryComponents = [], array $tableAliases = [], HydrationMode|string $hydrationMode = HydrationMode::Record)
     {
         $this->setQueryComponents($queryComponents);
         $this->setTableAliases($tableAliases);
@@ -53,10 +55,10 @@ abstract class AbstractHydrator
     /**
      * Get the hydration mode
      *
-     * @phpstan-return int|class-string<\Doctrine1\Hydrator\AbstractHydrator>
-     * @return int|string One of the \Doctrine1\Core::HYDRATE_* constants
+     * @phpstan-return HydrationMode|class-string<\Doctrine1\Hydrator\AbstractHydrator>
+     * @return HydrationMode|string One of the \Doctrine1\HydrationModes constants
      */
-    public function getHydrationMode(): int|string
+    public function getHydrationMode(): HydrationMode|string
     {
         return $this->hydrationMode;
     }
@@ -64,12 +66,12 @@ abstract class AbstractHydrator
     /**
      * Set the hydration mode
      *
-     * @phpstan-param int|class-string<\Doctrine1\Hydrator\AbstractHydrator> $hydrationMode
-     * @param int|string $hydrationMode One of the \Doctrine1\Core::HYDRATE_* constants or
+     * @phpstan-param HydrationMode|class-string<\Doctrine1\Hydrator\AbstractHydrator> $hydrationMode
+     * @param HydrationMode|string $hydrationMode One of the \Doctrine1\HydrationModes constants or
      *                              a string representing the name of the hydration
      *                              mode or or an instance of the hydration class
      */
-    public function setHydrationMode(int|string $hydrationMode): void
+    public function setHydrationMode(HydrationMode|string $hydrationMode): void
     {
         $this->hydrationMode = $hydrationMode;
     }

@@ -13,8 +13,8 @@ class Hydrator
 
     protected ?string $rootAlias = null;
 
-    /** @phpstan-var int|class-string<Hydrator\AbstractHydrator> */
-    protected int|string $hydrationMode = Core::HYDRATE_RECORD;
+    /** @phpstan-var HydrationMode|class-string<Hydrator\AbstractHydrator> */
+    protected HydrationMode|string $hydrationMode = HydrationMode::Record;
 
     /**
      * @phpstan-var array<string, array{table: Table, map: ?string, parent?: string, relation?: Relation, ref?: bool, agg?: array<string, string>}>
@@ -29,10 +29,10 @@ class Hydrator
     /**
      * Get the hydration mode
      *
-     * @phpstan-return int|class-string<Hydrator\AbstractHydrator>
-     * @return int|string $hydrationMode One of the Core::HYDRATE_* constants
+     * @phpstan-return HydrationMode|class-string<Hydrator\AbstractHydrator>
+     * @return HydrationMode|string $hydrationMode One of the HydrationModes
      */
-    public function getHydrationMode(): int|string
+    public function getHydrationMode(): HydrationMode|string
     {
         return $this->hydrationMode;
     }
@@ -40,12 +40,12 @@ class Hydrator
     /**
      * Set the hydration mode
      *
-     * @phpstan-param int|class-string<Hydrator\AbstractHydrator> $hydrationMode
-     * @param int|string $hydrationMode One of the Core::HYDRATE_* constants or
+     * @phpstan-param HydrationMode|class-string<Hydrator\AbstractHydrator> $hydrationMode
+     * @param HydrationMode|string $hydrationMode One of the HydrationModes or
      *                             a string representing the name of the hydration
      *                             mode or or an instance of the hydration class
      */
-    public function setHydrationMode(int|string $hydrationMode): void
+    public function setHydrationMode(HydrationMode|string $hydrationMode): void
     {
         $this->hydrationMode = $hydrationMode;
     }
@@ -73,17 +73,18 @@ class Hydrator
     /**
      * Get the name of the driver class for the passed hydration mode
      *
-     * @phpstan-param int|class-string<Hydrator\AbstractHydrator>|null $mode
+     * @phpstan-param HydrationMode|class-string<Hydrator\AbstractHydrator>|null $mode
      * @phpstan-return Hydrator\AbstractHydrator|class-string<Hydrator\AbstractHydrator>
      */
-    public function getHydratorDriverClassName(int|string|null $mode = null): string|Hydrator\AbstractHydrator
+    public function getHydratorDriverClassName(HydrationMode|string|null $mode = null): string|Hydrator\AbstractHydrator
     {
-        if ($mode === null) {
-            $mode = $this->hydrationMode;
+        $mode ??= $this->hydrationMode;
+        if ($mode instanceof HydrationMode) {
+            $mode = $mode->value;
         }
 
         if (!isset($this->hydrators[$mode])) {
-            throw new Hydrator\Exception('Invalid hydration mode specified: ' . $this->hydrationMode);
+            throw new Hydrator\Exception('Invalid hydration mode specified: ' . json_encode($this->hydrationMode));
         }
 
         return $this->hydrators[$mode];
@@ -91,9 +92,9 @@ class Hydrator
 
     /**
      * Get an instance of the hydration driver for the passed hydration mode
-     * @phpstan-param int|class-string<Hydrator\AbstractHydrator> $mode
+     * @phpstan-param HydrationMode|class-string<Hydrator\AbstractHydrator> $mode
      */
-    public function getHydratorDriver(int|string $mode, array $tableAliases): Hydrator\AbstractHydrator
+    public function getHydratorDriver(HydrationMode|string $mode, array $tableAliases): Hydrator\AbstractHydrator
     {
         $driverClass = $this->getHydratorDriverClassName($mode);
         if (is_object($driverClass)) {

@@ -8,7 +8,7 @@ class ArrayShallowDriver extends \Doctrine1\Hydrator\ScalarDriver
     {
         $cache  = [];
         $result = [];
-        while ($data = $stmt->fetch(\Doctrine1\Core::FETCH_ASSOC)) {
+        while ($data = $stmt->fetch(\PDO::FETCH_ASSOC)) {
             $result[] = $this->gatherRowData($data, $cache, false);
         }
         return $result;

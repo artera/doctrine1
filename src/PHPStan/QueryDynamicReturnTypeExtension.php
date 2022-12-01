@@ -1,6 +1,10 @@
-<?php declare(strict_types = 1);
+<?php
+
+declare(strict_types=1);
+
 namespace Doctrine1\PHPStan;
 
+use Doctrine1\HydrationMode;
 use PHPStan\Type\Type;
 use PHPStan\Type\ThisType;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
@@ -12,7 +16,7 @@ use PHPStan\Type\StringType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\IntegerType;
 use PHPStan\Type\NullType;
-use PHPStan\Type\Constant\ConstantIntegerType;
+use PHPStan\Type\Enum\EnumCaseObjectType;
 use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Analyser\OutOfClassScope;
@@ -66,20 +70,20 @@ class QueryDynamicReturnTypeExtension extends AbstractExtension implements Dynam
 
         if ($hydrateArg === null) {
             // argument not used, imply default of false
-            $hydrationMode = \Doctrine1\Core::HYDRATE_RECORD;
+            $hydrationMode = HydrationMode::Record;
         } else {
             // argument used, read value if static
             $argType = $scope->getType($hydrateArg->value);
-            if ($argType instanceof ConstantIntegerType) {
-                $hydrationMode = $argType->getValue();
+            if ($argType instanceof EnumCaseObjectType) {
+                $hydrationMode = HydrationMode::from($argType->getEnumCaseName());
             } elseif ($argType instanceof NullType) {
-                $hydrationMode = \Doctrine1\Core::HYDRATE_RECORD;
+                $hydrationMode = HydrationMode::Record;
             } else {
                 return $returnType;
             }
         }
 
-        if (!in_array($hydrationMode, [\Doctrine1\Core::HYDRATE_RECORD, \Doctrine1\Core::HYDRATE_ARRAY, \Doctrine1\Core::HYDRATE_SCALAR, \Doctrine1\Core::HYDRATE_ON_DEMAND])) {
+        if (!in_array($hydrationMode, [HydrationMode::Record, HydrationMode::Array, HydrationMode::Scalar, HydrationMode::OnDemand])) {
             return $returnType;
         }
 
@@ -119,7 +123,7 @@ class QueryDynamicReturnTypeExtension extends AbstractExtension implements Dynam
         return new GenericObjectType($selfType->getClassName(), $templateTypes);
     }
 
-    protected function getExecuteReturnType(Type $selfType, UnionType $returnType, int $hydrationMode): Type
+    protected function getExecuteReturnType(Type $selfType, UnionType $returnType, HydrationMode $hydrationMode): Type
     {
         $select = true;
         if ($selfType instanceof GenericObjectType) {
@@ -137,9 +141,9 @@ class QueryDynamicReturnTypeExtension extends AbstractExtension implements Dynam
         }
 
         $objectType = null;
-        if ($hydrationMode === \Doctrine1\Core::HYDRATE_RECORD) {
+        if ($hydrationMode === HydrationMode::Record) {
             $objectType = new ObjectType(\Doctrine1\Collection::class);
-        } elseif ($hydrationMode === \Doctrine1\Core::HYDRATE_ON_DEMAND) {
+        } elseif ($hydrationMode === HydrationMode::OnDemand) {
             $objectType = new ObjectType(\Doctrine1\Collection\OnDemand::class);
         }
 
@@ -154,7 +158,7 @@ class QueryDynamicReturnTypeExtension extends AbstractExtension implements Dynam
                 if ($type instanceof ObjectType && $objectType->isSuperTypeOf($type)->yes()) {
                     $types[] = $type;
                 }
-            } elseif ($hydrationMode === \Doctrine1\Core::HYDRATE_ARRAY || $hydrationMode === \Doctrine1\Core::HYDRATE_SCALAR) {
+            } elseif ($hydrationMode === HydrationMode::Array || $hydrationMode === HydrationMode::Scalar) {
                 if ($type instanceof ArrayType) {
                     $types[] = $type;
                 }
@@ -163,9 +167,9 @@ class QueryDynamicReturnTypeExtension extends AbstractExtension implements Dynam
         return TypeCombinator::union(...$types);
     }
 
-    protected function getFetchOneReturnType(Type $selfType, UnionType $returnType, int $hydrationMode): Type
+    protected function getFetchOneReturnType(Type $selfType, UnionType $returnType, HydrationMode $hydrationMode): Type
     {
-        if ($hydrationMode === \Doctrine1\Core::HYDRATE_ON_DEMAND) {
+        if ($hydrationMode === HydrationMode::OnDemand) {
             return $returnType;
         }
 
@@ -176,15 +180,15 @@ class QueryDynamicReturnTypeExtension extends AbstractExtension implements Dynam
                 continue;
             }
 
-            if ($hydrationMode === \Doctrine1\Core::HYDRATE_RECORD) {
+            if ($hydrationMode === HydrationMode::Record) {
                 if ($type instanceof ObjectType) {
                     $types[] = $type;
                 }
-            } elseif ($hydrationMode === \Doctrine1\Core::HYDRATE_ARRAY) {
+            } elseif ($hydrationMode === HydrationMode::Array) {
                 if ($type instanceof ArrayType) {
                     $types[] = $type;
                 }
-            } elseif ($hydrationMode === \Doctrine1\Core::HYDRATE_SCALAR) {
+            } elseif ($hydrationMode === HydrationMode::Scalar) {
                 if (!$type instanceof ArrayType && !$type instanceof ObjectType) {
                     $types[] = $type;
                 }

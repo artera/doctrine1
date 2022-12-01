@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Tickets {
     use Tests\DoctrineUnitTestCase;
 
@@ -10,7 +11,7 @@ namespace Tests\Tickets {
             static::$tables[] = 'T1195_Item';
             static::$tables[] = 'T1195_Ref';
 
-            parent :: prepareTables();
+            parent::prepareTables();
         }
 
         public static function prepareData(): void
@@ -69,11 +70,11 @@ namespace Tests\Tickets {
             ->leftJoin('items i ON r.item_id=i.id');
 
 
-            $res = $q->execute([], \Doctrine1\Core::HYDRATE_ARRAY);
+            $res = $q->execute([], \Doctrine1\HydrationMode::Array);
             $this->assertEquals(sizeof($res), 2);
 
             $q->distinct();
-            $res = $q->execute([], \Doctrine1\Core::HYDRATE_ARRAY);
+            $res = $q->execute([], \Doctrine1\HydrationMode::Array);
             $this->assertEquals(sizeof($res), 1);
         }
 

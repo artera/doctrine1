@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Relation;
 
 use Tests\DoctrineUnitTestCase;
@@ -68,7 +69,7 @@ class CircularSavingTest extends DoctrineUnitTestCase
         $n2->save();
 
         $q    = new \Doctrine1\Query();
-        $coll = $q->from('NestReference')->execute([], \Doctrine1\Core::HYDRATE_ARRAY);
+        $coll = $q->from('NestReference')->execute([], \Doctrine1\HydrationMode::Array);
 
         $this->assertEquals(count($coll), 1);
     }

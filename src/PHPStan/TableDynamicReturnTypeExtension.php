@@ -1,4 +1,7 @@
-<?php declare(strict_types = 1);
+<?php
+
+declare(strict_types=1);
+
 namespace Doctrine1\PHPStan;
 
 use PHPStan\Type\Type;
@@ -105,17 +108,17 @@ class TableDynamicReturnTypeExtension extends AbstractExtension implements Dynam
         $vartype = $scope->getType($methodCall->var);
         $parameters = $parametersAcceptor->getParameters();
 
-        // find the hydrate_array argument by name or position
-        $hydrateArg = $this->findArg('hydrate_array', $methodCall, $parameters);
+        // find the hydrateArray argument by name or position
+        $hydrateArg = $this->findArg('hydrateArray', $methodCall, $parameters);
 
         if ($hydrateArg === null) {
             // argument not used, imply default of false
-            $hydrate_array = false;
+            $hydrateArray = false;
         } else {
             // argument used, read value if static
             $argType = $scope->getType($hydrateArg->value);
             if ($argType instanceof ConstantBooleanType) {
-                $hydrate_array = $argType->getValue();
+                $hydrateArray = $argType->getValue();
             } else {
                 return $returnType;
             }
@@ -123,7 +126,7 @@ class TableDynamicReturnTypeExtension extends AbstractExtension implements Dynam
 
         $allowedObjectType = null;
 
-        if (!$hydrate_array && $methodReflection->getName() === 'find') {
+        if (!$hydrateArray && $methodReflection->getName() === 'find') {
             $allowedObjectType = new ObjectType(\Doctrine1\Record::class);
 
             $nameArg = $this->findArg('name', $methodCall, $parameters);
@@ -139,11 +142,11 @@ class TableDynamicReturnTypeExtension extends AbstractExtension implements Dynam
         $types = [];
         foreach ($returnType->getTypes() as $type) {
             if ($type instanceof ArrayType) {
-                if ($hydrate_array) {
+                if ($hydrateArray) {
                     $types[] = $type;
                 }
             } elseif ($type instanceof ObjectType) {
-                if (!$hydrate_array && ($allowedObjectType === null || $allowedObjectType->isSuperTypeOf($type)->yes())) {
+                if (!$hydrateArray && ($allowedObjectType === null || $allowedObjectType->isSuperTypeOf($type)->yes())) {
                     $types[] = $type;
                 }
             } else {

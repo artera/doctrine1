@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Misc;
 
 use Tests\DoctrineUnitTestCase;
@@ -46,7 +47,7 @@ class ColumnAliasTest extends DoctrineUnitTestCase
         $q->select('c.*, b.name')->from('ColumnAliasTest c')
             ->innerJoin('c.book b')
             ->where('c.anotherField = ?', 'camelCase')
-            ->setHydrationMode(\Doctrine1\Core::HYDRATE_ARRAY);
+            ->setHydrationMode(\Doctrine1\HydrationMode::Array);
         $result = $q->execute();
         $this->assertEquals($result[0]['alias1'], 'first');
         $this->assertEquals($result[0]['alias2'], 123);
@@ -57,7 +58,7 @@ class ColumnAliasTest extends DoctrineUnitTestCase
 
     public function testAliasesAreSupportedForRecordPropertyAccessors()
     {
-        $record = new \ColumnAliasTest;
+        $record = new \ColumnAliasTest();
         $record->alias1 = 'someone';
         $record->alias2 = 187;
 

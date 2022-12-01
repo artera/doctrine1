@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Tickets {
     use Tests\DoctrineUnitTestCase;
 
@@ -13,8 +14,8 @@ namespace Tests\Tickets {
 
         public function testAutomaticAccessorsAndMutators()
         {
-            $orig = \Doctrine1\Manager::getInstance()->getAttribute(\Doctrine1\Core::ATTR_AUTO_ACCESSOR_OVERRIDE);
-            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_AUTO_ACCESSOR_OVERRIDE, true);
+            $orig = \Doctrine1\Manager::getInstance()->getAutoAccessorOverride();
+            \Doctrine1\Manager::getInstance()->setAutoAccessorOverride(true);
             $user           = new \Ticket_1077_User();
             $user->username = 'jwage';
             $user->password = 'changeme';
@@ -28,7 +29,7 @@ namespace Tests\Tickets {
 
             $this->assertSame($user->phonenumbersTest, $numbers);
 
-            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_AUTO_ACCESSOR_OVERRIDE, $orig);
+            \Doctrine1\Manager::getInstance()->setAutoAccessorOverride($orig);
         }
 
         public function testDefiningCustomAccessorsAndMutators()

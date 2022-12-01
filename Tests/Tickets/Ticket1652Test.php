@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Tickets {
     use Tests\DoctrineUnitTestCase;
 
@@ -23,11 +24,10 @@ namespace Tests\Tickets {
         {
             $doctrine = new \ReflectionClass(\Doctrine1\Core::class);
             if ($doctrine->hasConstant('VALIDATE_USER')) {
-                \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_USER);
+                \Doctrine1\Manager::getInstance()->setValidate(\Doctrine1\Core::VALIDATE_USER);
             } else {
                 //I only want my overridden Record->validate()-methods for validation
-                \Doctrine1\Manager::getInstance()->setAttribute(
-                    \Doctrine1\Core::ATTR_VALIDATE,
+                \Doctrine1\Manager::getInstance()->setValidate(
                     \Doctrine1\Core::VALIDATE_ALL & ~\Doctrine1\Core::VALIDATE_LENGTHS & ~\Doctrine1\Core::VALIDATE_CONSTRAINTS & ~\Doctrine1\Core::VALIDATE_TYPES
                 );
             }
@@ -46,7 +46,7 @@ namespace Tests\Tickets {
 
             $this->assertNotEquals($user->name, 'test');
             //reset validation to default for further testcases
-            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_NONE);
+            \Doctrine1\Manager::getInstance()->setValidate(\Doctrine1\Core::VALIDATE_NONE);
         }
     }
 }

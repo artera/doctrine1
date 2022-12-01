@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Tickets {
     use Tests\DoctrineUnitTestCase;
 
@@ -6,7 +7,7 @@ namespace Tests\Tickets {
     {
         public function testTest()
         {
-            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_USE_DQL_CALLBACKS, true);
+            \Doctrine1\Manager::getInstance()->setUseDqlCallbacks(true);
             $userTable = \Doctrine1\Core::getTable('User');
             $userTable->addRecordListener(new \Ticket_1315_Listener());
 
@@ -15,13 +16,13 @@ namespace Tests\Tickets {
                 ->from('User u')
                 ->execute();
 
-            $userTable->setAttribute(\Doctrine1\Core::ATTR_RECORD_LISTENER, null);
+            $userTable->setRecordListener(null);
 
             $q = \Doctrine1\Query::create()
                 ->from('User u')
                 ->execute();
 
-            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_USE_DQL_CALLBACKS, false);
+            \Doctrine1\Manager::getInstance()->setUseDqlCallbacks(false);
         }
     }
 }

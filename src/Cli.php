@@ -16,7 +16,7 @@ class Cli
      *
      * @var string
      */
-    const TASK_BASE_CLASS = Task::class;
+    public const TASK_BASE_CLASS = Task::class;
 
     /**
      * @var string

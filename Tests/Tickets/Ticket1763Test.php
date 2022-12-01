@@ -12,7 +12,7 @@ namespace Tests\Tickets {
 
         public function testTest()
         {
-            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_ALL);
+            \Doctrine1\Manager::getInstance()->setValidate(\Doctrine1\Core::VALIDATE_ALL);
             $user  = new \Ticket_1763_User();
             $valid = $user->isValid();
             $this->assertFalse($valid);
@@ -27,7 +27,7 @@ namespace Tests\Tickets {
                 $this->validateErrorString($e->getMessage());
             }
 
-            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_NONE);
+            \Doctrine1\Manager::getInstance()->setValidate(\Doctrine1\Core::VALIDATE_NONE);
         }
 
         protected function validateErrorString($string)

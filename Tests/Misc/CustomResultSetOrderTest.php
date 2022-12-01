@@ -1,11 +1,11 @@
 <?php
+
 namespace Tests\Misc;
 
 use Tests\DoctrineUnitTestCase;
 
 class CustomResultSetOrderTest extends DoctrineUnitTestCase
 {
-
     /**
      * Prepares the data under test.
      *
@@ -82,7 +82,7 @@ class CustomResultSetOrderTest extends DoctrineUnitTestCase
                 ->from('CategoryWithPosition c')
                 ->leftJoin('c.Boards b')
                 ->orderBy('c.position ASC, b.position ASC')
-                ->execute([], \Doctrine1\Core::HYDRATE_ARRAY);
+                ->execute([], \Doctrine1\HydrationMode::Array);
 
         $this->assertEquals(3, count($categories), 'Some categories were doubled!');
 

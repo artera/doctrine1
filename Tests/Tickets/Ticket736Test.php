@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Tickets {
     use Tests\DoctrineUnitTestCase;
 
@@ -77,7 +78,7 @@ namespace {
         public function postHydrate(\Doctrine1\Event $event)
         {
             $contents = $event->data;
-            $delegate = \Doctrine1\Core::getTable('T736_ModuleDelegate')->find($contents['moduledelegateid'], hydrate_array: !$contents instanceof \Doctrine1\Record);
+            $delegate = \Doctrine1\Core::getTable('T736_ModuleDelegate')->find($contents['moduledelegateid'], hydrateArray: !$contents instanceof \Doctrine1\Record);
             if ($contents instanceof \Doctrine1\Record) {
                 $contents->mapValue('moduledata', $delegate);
                 $delegate->parent = $contents;

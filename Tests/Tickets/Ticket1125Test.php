@@ -19,6 +19,6 @@ class Ticket1125Test extends DoctrineUnitTestCase
                                          'length'        => 4],
                         'name' => ['type' => 'string']];
         static::$conn->export->createTable('test', $fields);
-        $this->assertEquals(static::$dbh->pop(), 'CREATE TABLE test (id INT AUTO_INCREMENT, name TEXT, PRIMARY KEY(id)) ENGINE = INNODB');
+        $this->assertEquals(static::$dbh->pop(), 'CREATE TABLE test (id INT AUTO_INCREMENT, name TEXT, PRIMARY KEY(id)) ENGINE = InnoDB');
     }
 }

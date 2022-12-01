@@ -22,6 +22,6 @@ class ForeignKeyTest extends \Doctrine1\Record
             'local' => 'id', 'foreign' => 'parent_id', 'cascade' => ['delete']]
         );
 
-        $this->getTable()->type = 'INNODB';
+        $this->getTable()->type = 'InnoDB';
     }
 }

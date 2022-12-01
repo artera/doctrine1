@@ -18,7 +18,7 @@ namespace Tests\Tickets {
 
         public function testValidate()
         {
-            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_ALL);
+            \Doctrine1\Manager::getInstance()->setValidate(\Doctrine1\Core::VALIDATE_ALL);
 
             $user = new \Ticket_1653_User();
             $mail = new \Ticket_1653_Email();
@@ -32,7 +32,7 @@ namespace Tests\Tickets {
             $this->assertFalse($user->isValid(true));
 
             //reset validation to default for further testcases
-            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_NONE);
+            \Doctrine1\Manager::getInstance()->setValidate(\Doctrine1\Core::VALIDATE_NONE);
         }
 
         public function testModified()

@@ -13,7 +13,7 @@ class Sqlite extends \Doctrine1\Sequence
     public function nextId($seqName, $onDemand = true): int
     {
         $sequenceName = $this->conn->quoteIdentifier($this->conn->formatter->getSequenceName($seqName), true);
-        $seqcolName   = $this->conn->quoteIdentifier($this->conn->getAttribute(\Doctrine1\Core::ATTR_SEQCOL_NAME), true);
+        $seqcolName   = $this->conn->quoteIdentifier($this->conn->getSequenceColumnName(), true);
         $query        = 'INSERT INTO ' . $sequenceName . ' (' . $seqcolName . ') VALUES (NULL)';
 
         try {
@@ -67,7 +67,7 @@ class Sqlite extends \Doctrine1\Sequence
     public function currId($seqName): int
     {
         $sequenceName = $this->conn->quoteIdentifier($this->conn->formatter->getSequenceName($seqName), true);
-        $seqcolName   = $this->conn->quoteIdentifier($this->conn->getAttribute(\Doctrine1\Core::ATTR_SEQCOL_NAME), true);
+        $seqcolName   = $this->conn->quoteIdentifier($this->conn->getSequenceColumnName(), true);
 
         $query = 'SELECT MAX(' . $seqcolName . ') FROM ' . $sequenceName;
 

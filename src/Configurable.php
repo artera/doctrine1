@@ -5,82 +5,489 @@ namespace Doctrine1;
 abstract class Configurable
 {
     /**
-     * @var array $attributes               an array of containing all attributes
-     */
-    protected array $attributes = [];
-
-    /**
      * @var ?Configurable $parent   the parent of this component
      */
     protected $parent;
 
-    /**
-     * sets a given attribute
-     *
-     * <code>
-     * $manager->setAttribute(Core::ATTR_PORTABILITY, Core::PORTABILITY_ALL);
-     * </code>
-     *
-     * @param  int|string $attribute either a Core::ATTR_* integer constant or a string
-     *                          corresponding to a constant
-     * @param  mixed $value     the value of the attribute
-     * @see    Core::ATTR_* constants
-     * @throws Exception           if the value is invalid
-     *
-     * @return $this
-     */
-    public function setAttribute(int|string $attribute, mixed $value): self
-    {
-        if (is_string($attribute)) {
-            $attribute = (int) constant("Core::$attribute");
-        }
-        switch ($attribute) {
-            case Core::ATTR_LISTENER:
-                $this->setEventListener($value);
-                break;
-            case Core::ATTR_COLL_KEY:
-                if (!($this instanceof Table)) {
-                    throw new Exception('This attribute can only be set at table level.');
-                }
-                if ($value !== null && !$this->hasField($value)) {
-                    throw new Exception("Couldn't set collection key attribute. No such field '$value'.");
-                }
-                break;
-            case Core::ATTR_CACHE:
-            case Core::ATTR_RESULT_CACHE:
-            case Core::ATTR_QUERY_CACHE:
-                if ($value !== null) {
-                    if (!($value instanceof CacheInterface)) {
-                        throw new Exception('Cache driver should implement CacheInterface');
-                    }
-                }
-                break;
-            case Core::ATTR_SEQCOL_NAME:
-                if (!is_string($value)) {
-                    throw new Exception('Sequence column name attribute only accepts string values');
-                }
-                break;
-            case Core::ATTR_FIELD_CASE:
-                if ($value != 0 && $value != CASE_LOWER && $value != CASE_UPPER) {
-                    throw new Exception('Field case attribute should be either 0, CASE_LOWER or CASE_UPPER constant.');
-                }
-                break;
-            case Core::ATTR_SEQNAME_FORMAT:
-            case Core::ATTR_IDXNAME_FORMAT:
-            case Core::ATTR_TBLNAME_FORMAT:
-            case Core::ATTR_FKNAME_FORMAT:
-                if ($this instanceof Table) {
-                    throw new Exception(
-                        'Sequence / index name format attributes cannot be set'
-                                           . 'at table level (only at connection or global level).'
-                    );
-                }
-                break;
-        }
 
-        $this->attributes[$attribute] = $value;
-        return $this;
+    // EXPORT =================================================================
+    protected ?int $exportFlags = null;
+
+    public function getExportFlags(): int
+    {
+        return $this->exportFlags ?? $this->parent?->getExportFlags() ?? Core::EXPORT_ALL;
     }
+
+    public function setExportFlags(?int $value): void
+    {
+        $this->exportFlags = $value;
+    }
+
+    // PORTABILITY ============================================================
+    protected ?int $portability = null;
+
+    public function getPortability(): int
+    {
+        return $this->portability ?? $this->parent?->getPortability() ?? Core::PORTABILITY_NONE;
+    }
+
+    public function setPortability(?int $value): void
+    {
+        $this->portability = $value;
+    }
+
+    // VALIDATE ===============================================================
+    protected int|bool|null $validate = null;
+
+    public function getValidate(): int|bool
+    {
+        return $this->validate ?? $this->parent?->getValidate() ?? Core::VALIDATE_NONE;
+    }
+
+    public function setValidate(int|bool|null $value): void
+    {
+        $this->validate = $value;
+    }
+
+    // DECIMAL PLACES =========================================================
+    protected ?int $decimalPlaces = null;
+
+    public function getDecimalPlaces(): int
+    {
+        return $this->decimalPlaces ?? $this->parent?->getDecimalPlaces() ?? 2;
+    }
+
+    public function setDecimalPlaces(?int $value): void
+    {
+        $this->decimalPlaces = $value;
+    }
+
+    // LIMIT ==================================================================
+    protected ?Limit $limit = null;
+
+    public function getLimit(): Limit
+    {
+        return $this->limit ?? $this->parent?->getLimit() ?? Limit::Records;
+    }
+
+    public function setLimit(?Limit $value): void
+    {
+        $this->limit = $value;
+    }
+
+    // QUERY CACHE LIFESPAN ===================================================
+    protected ?int $queryCacheLifespan = null;
+
+    public function getQueryCacheLifespan(): ?int
+    {
+        return $this->queryCacheLifespan ?? $this->parent?->getQueryCacheLifespan() ?? null;
+    }
+
+    public function setQueryCacheLifespan(?int $value): void
+    {
+        $this->queryCacheLifespan = $value;
+    }
+
+    // RESULT CACHE LIFESPAN ==================================================
+    protected ?int $resultCacheLifespan = null;
+
+    public function getResultCacheLifespan(): ?int
+    {
+        return $this->resultCacheLifespan ?? $this->parent?->getResultCacheLifespan() ?? null;
+    }
+
+    public function setResultCacheLifespan(?int $value): void
+    {
+        $this->resultCacheLifespan = $value;
+    }
+
+    // MAX IDENTIFIER LENGTH ==================================================
+    protected ?int $maxIdentifierLength = null;
+
+    public function getMaxIdentifierLength(): ?int
+    {
+        return $this->maxIdentifierLength ?? $this->parent?->getMaxIdentifierLength() ?? null;
+    }
+
+    public function setMaxIdentifierLength(?int $value): void
+    {
+        $this->maxIdentifierLength = $value;
+    }
+
+    // DEFAULT IDENTIFIER OPTIONS =============================================
+    protected ?array $defaultIdentifierOptions = null;
+
+    public function getDefaultIdentifierOptions(): array
+    {
+        return $this->defaultIdentifierOptions ?? $this->parent?->getDefaultIdentifierOptions() ?? [];
+    }
+
+    public function setDefaultIdentifierOptions(?array $value): void
+    {
+        $this->defaultIdentifierOptions = $value;
+    }
+
+    // DEFAULT COLUMN OPTIONS =================================================
+    protected ?array $defaultColumnOptions = null;
+
+    public function getDefaultColumnOptions(): array
+    {
+        return $this->defaultColumnOptions ?? $this->parent?->getDefaultColumnOptions() ?? [];
+    }
+
+    public function setDefaultColumnOptions(?array $value): void
+    {
+        $this->defaultColumnOptions = $value;
+    }
+
+    // DEFAULT CHARSET ========================================================
+    protected ?string $charset = null;
+
+    public function getCharset(): ?string
+    {
+        return $this->charset ?? $this->parent?->getCharset() ?? null;
+    }
+
+    public function setCharset(?string $value): void
+    {
+        $this->charset = $value;
+    }
+
+    // DEFAULT COLLATE ========================================================
+    protected ?string $collate = null;
+
+    public function getCollate(): ?string
+    {
+        return $this->collate ?? $this->parent?->getCollate() ?? null;
+    }
+
+    public function setCollate(?string $value): void
+    {
+        $this->collate = $value;
+    }
+
+    // DEFAULT SEQUENCE =======================================================
+    protected ?string $defaultSequence = null;
+
+    public function getDefaultSequence(): ?string
+    {
+        return $this->defaultSequence ?? $this->parent?->getDefaultSequence() ?? null;
+    }
+
+    public function setDefaultSequence(?string $value): void
+    {
+        $this->defaultSequence = $value;
+    }
+
+    // DEFAULT TABLE ENGINE ===================================================
+    protected ?string $defaultMySQLEngine = null;
+
+    public function getDefaultMySQLEngine(): string
+    {
+        return $this->defaultMySQLEngine ?? $this->parent?->getDefaultMySQLEngine() ?? MySQLEngine::InnoDB->value;
+    }
+
+    public function setDefaultMySQLEngine(MySQLEngine|string|null $value): void
+    {
+        $this->defaultMySQLEngine = $value instanceof MySQLEngine ? $value->value : $value;
+    }
+
+    // AUTO FREE QUERY OBJECTS ================================================
+    protected ?bool $autoFreeQueryObjects = null;
+
+    public function getAutoFreeQueryObjects(): bool
+    {
+        return $this->autoFreeQueryObjects ?? $this->parent?->getAutoFreeQueryObjects() ?? false;
+    }
+
+    public function setAutoFreeQueryObjects(?bool $value): void
+    {
+        $this->autoFreeQueryObjects = $value;
+    }
+
+    // AUTO ACCESSOR_OVERRIDE =================================================
+    protected ?bool $autoAccessorOverride = null;
+
+    public function getAutoAccessorOverride(): bool
+    {
+        return $this->autoAccessorOverride ?? $this->parent?->getAutoAccessorOverride() ?? false;
+    }
+
+    public function setAutoAccessorOverride(?bool $value): void
+    {
+        $this->autoAccessorOverride = $value;
+    }
+
+    // CASCADE SAVES ==========================================================
+    protected ?bool $cascadeSaves = null;
+
+    public function getCascadeSaves(): bool
+    {
+        return $this->cascadeSaves ?? $this->parent?->getCascadeSaves() ?? true;
+    }
+
+    public function setCascadeSaves(?bool $value): void
+    {
+        $this->cascadeSaves = $value;
+    }
+
+    // HYDRATE OVERWRITE ======================================================
+    protected ?bool $loadReferences = null;
+
+    public function getLoadReferences(): bool
+    {
+        return $this->loadReferences ?? $this->parent?->getLoadReferences() ?? true;
+    }
+
+    public function setLoadReferences(?bool $value): void
+    {
+        $this->loadReferences = $value;
+    }
+
+    // HYDRATE OVERWRITE ======================================================
+    protected ?bool $hydrateOverwrite = null;
+
+    public function getHydrateOverwrite(): bool
+    {
+        return $this->hydrateOverwrite ?? $this->parent?->getHydrateOverwrite() ?? true;
+    }
+
+    public function setHydrateOverwrite(?bool $value): void
+    {
+        $this->hydrateOverwrite = $value;
+    }
+
+    // MODEL CLASS PREFIX =====================================================
+    protected ?string $modelClassPrefix = null;
+
+    public function getModelClassPrefix(): string
+    {
+        return $this->modelClassPrefix ?? $this->parent?->getModelClassPrefix() ?? '';
+    }
+
+    public function setModelClassPrefix(?string $value): void
+    {
+        $this->modelClassPrefix = $value;
+    }
+
+    // QUERY CLASS ============================================================
+    /** @var class-string<Query>|null */
+    protected ?string $queryClass = null;
+
+    /** @return class-string<Query> */
+    public function getQueryClass(): string
+    {
+        return $this->queryClass ?? $this->parent?->getQueryClass() ?? Query::class;
+    }
+
+    /** @param class-string<Query>|null $value */
+    public function setQueryClass(?string $value): void
+    {
+        $this->queryClass = $value;
+    }
+
+    // COLLECTION CLASS =======================================================
+    /** @var class-string<Collection>|null */
+    protected ?string $collectionClass = null;
+
+    /** @return class-string<Collection> */
+    public function getCollectionClass(): string
+    {
+        return $this->collectionClass ?? $this->parent?->getCollectionClass() ?? Collection::class;
+    }
+
+    /** @param class-string<Collection>|null $value */
+    public function setCollectionClass(?string $value): void
+    {
+        $this->collectionClass = $value;
+    }
+
+    // TABLE CLASS ============================================================
+    /** @var class-string<Table>|null */
+    protected ?string $tableClass = null;
+
+    /** @return class-string<Table> */
+    public function getTableClass(): string
+    {
+        return $this->tableClass ?? $this->parent?->getTableClass() ?? Table::class;
+    }
+
+    /** @param class-string<Table>|null $value */
+    public function setTableClass(?string $value): void
+    {
+        $this->tableClass = $value;
+    }
+
+    // TABLE CLASS FORMAT =====================================================
+    protected ?string $tableClassFormat = null;
+
+    public function getTableClassFormat(): string
+    {
+        return $this->tableClassFormat ?? $this->parent?->getTableClassFormat() ?? '%sTable';
+    }
+
+    public function setTableClassFormat(?string $value): void
+    {
+        $this->tableClassFormat = $value;
+    }
+
+    // QUOTE IDENTIFIER =======================================================
+    protected ?bool $quoteIdentifier = null;
+
+    public function getQuoteIdentifier(): bool
+    {
+        return $this->quoteIdentifier ?? $this->parent?->getQuoteIdentifier() ?? false;
+    }
+
+    public function setQuoteIdentifier(?bool $value): void
+    {
+        $this->quoteIdentifier = $value;
+    }
+
+    // USE NATIVE SET ========================================================
+    protected ?bool $useNativeSet = null;
+
+    public function getUseNativeSet(): bool
+    {
+        return $this->useNativeSet ?? $this->parent?->getUseNativeSet() ?? false;
+    }
+
+    public function setUseNativeSet(?bool $value): void
+    {
+        $this->useNativeSet = $value;
+    }
+
+    // USE NATIVE ENUM ========================================================
+    protected ?bool $useNativeEnum = null;
+
+    public function getUseNativeEnum(): bool
+    {
+        return $this->useNativeEnum ?? $this->parent?->getUseNativeEnum() ?? false;
+    }
+
+    public function setUseNativeEnum(?bool $value): void
+    {
+        $this->useNativeEnum = $value;
+    }
+
+    // USE DQL CALLBACKS ======================================================
+    protected ?bool $useDqlCallbacks = null;
+
+    public function getUseDqlCallbacks(): bool
+    {
+        return $this->useDqlCallbacks ?? $this->parent?->getUseDqlCallbacks() ?? false;
+    }
+
+    public function setUseDqlCallbacks(?bool $value): void
+    {
+        $this->useDqlCallbacks = $value;
+    }
+
+    // SEQUENCE COLUMN NAME ===================================================
+    protected ?string $sequenceColumnName = null;
+
+    public function getSequenceColumnName(): string
+    {
+        return $this->sequenceColumnName ?? $this->parent?->getSequenceColumnName() ?? 'id';
+    }
+
+    public function setSequenceColumnName(?string $value): void
+    {
+        $this->sequenceColumnName = $value;
+    }
+
+    // SEQUENCE NAME FORMAT ===================================================
+    protected ?string $sequenceNameFormat = null;
+
+    public function getSequenceNameFormat(): string
+    {
+        return $this->sequenceNameFormat ?? $this->parent?->getSequenceNameFormat() ?? '%s_seq';
+    }
+
+    public function setSequenceNameFormat(?string $value): void
+    {
+        if ($this instanceof Table) {
+            throw new Exception('Sequence name format cannot be set at table level (only at connection or global level).');
+        }
+        $this->sequenceNameFormat = $value;
+    }
+
+    // INDEX NAME FORMAT ======================================================
+    protected ?string $indexNameFormat = null;
+
+    public function getIndexNameFormat(): string
+    {
+        return $this->indexNameFormat ?? $this->parent?->getIndexNameFormat() ?? '%s_idx';
+    }
+
+    public function setIndexNameFormat(?string $value): void
+    {
+        if ($this instanceof Table) {
+            throw new Exception('Index name format cannot be set at table level (only at connection or global level).');
+        }
+        $this->indexNameFormat = $value;
+    }
+
+    // TABLE NAME FORMAT ======================================================
+    protected ?string $tableNameFormat = null;
+
+    public function getTableNameFormat(): string
+    {
+        return $this->tableNameFormat ?? $this->parent?->getTableNameFormat() ?? '%s';
+    }
+
+    public function setTableNameFormat(?string $value): void
+    {
+        if ($this instanceof Table) {
+            throw new Exception('Table name format cannot be set at table level (only at connection or global level).');
+        }
+        $this->tableNameFormat = $value;
+    }
+
+    // FOREIGN KEY NAME FORMAT ================================================
+    protected ?string $foreignKeyNameFormat = null;
+
+    public function getForeignKeyNameFormat(): string
+    {
+        return $this->foreignKeyNameFormat ?? $this->parent?->getForeignKeyNameFormat() ?? '%s';
+    }
+
+    public function setForeignKeyNameFormat(?string $value): void
+    {
+        if ($this instanceof Table) {
+            throw new Exception('Foreign key name format cannot be set at table level (only at connection or global level).');
+        }
+        $this->foreignKeyNameFormat = $value;
+    }
+
+    // QUERY CACHE ============================================================
+    protected ?CacheInterface $queryCache = null;
+
+    public function getQueryCache(): ?CacheInterface
+    {
+        return $this->queryCache ?? $this->parent?->getQueryCache();
+    }
+
+    public function setQueryCache(?CacheInterface $value): void
+    {
+        $this->queryCache = $value;
+    }
+
+    // RESULT CACHE ===========================================================
+    protected ?CacheInterface $resultCache = null;
+
+    public function getResultCache(): ?CacheInterface
+    {
+        return $this->resultCache ?? $this->parent?->getResultCache();
+    }
+
+    public function setResultCache(?CacheInterface $value): void
+    {
+        $this->resultCache = $value;
+    }
+
+    // LISTENER ===============================================================
+    protected EventListenerInterface|Overloadable|null $listener = null;
 
     /**
      * @return $this
@@ -91,66 +498,17 @@ abstract class Configurable
     }
 
     /**
-     * @phpstan-param Record\ListenerInterface|Overloadable<Record\ListenerInterface> $listener
-     * @return $this
-     */
-    public function addRecordListener(Record\ListenerInterface|Overloadable $listener, ?string $name = null): self
-    {
-        if (!isset($this->attributes[Core::ATTR_RECORD_LISTENER])
-            || !($this->attributes[Core::ATTR_RECORD_LISTENER] instanceof Record\Listener\Chain)
-        ) {
-            $this->attributes[Core::ATTR_RECORD_LISTENER] = new Record\Listener\Chain();
-        }
-        $this->attributes[Core::ATTR_RECORD_LISTENER]->add($listener, $name);
-
-        return $this;
-    }
-
-    /**
-     * @phpstan-return Record\ListenerInterface|Overloadable<Record\ListenerInterface>
-     * @throws EventListener\Exception
-     */
-    public function getRecordListener(): Record\ListenerInterface|Overloadable
-    {
-        if (!isset($this->attributes[Core::ATTR_RECORD_LISTENER])) {
-            if (isset($this->parent)) {
-                return $this->parent->getRecordListener();
-            }
-            throw new EventListener\Exception('Could not get a listener');
-        }
-        return $this->attributes[Core::ATTR_RECORD_LISTENER];
-    }
-
-    /**
-     * @phpstan-param Record\ListenerInterface|Overloadable<Record\ListenerInterface> $listener
-     * @return $this
-     * @throws Exception
-     */
-    public function setRecordListener(Record\ListenerInterface|Overloadable $listener): self
-    {
-        // @phpstan-ignore-next-line
-        if (!($listener instanceof Record\ListenerInterface)
-            && !($listener instanceof Overloadable)
-        ) {
-            throw new Exception("Couldn't set eventlistener. Record listeners should implement either Record\ListenerInterface or Overloadable");
-        }
-        $this->attributes[Core::ATTR_RECORD_LISTENER] = $listener;
-
-        return $this;
-    }
-
-    /**
      * @phpstan-param EventListenerInterface|Overloadable<EventListenerInterface> $listener
      * @return $this
      */
     public function addListener(EventListenerInterface|Overloadable $listener, ?string $name = null): self
     {
-        if (!isset($this->attributes[Core::ATTR_LISTENER])
-            || !($this->attributes[Core::ATTR_LISTENER] instanceof EventListener\Chain)
+        if (!isset($this->listener)
+            || !($this->listener instanceof EventListener\Chain)
         ) {
-            $this->attributes[Core::ATTR_LISTENER] = new EventListener\Chain();
+            $this->listener = new EventListener\Chain();
         }
-        $this->attributes[Core::ATTR_LISTENER]->add($listener, $name);
+        $this->listener->add($listener, $name);
 
         return $this;
     }
@@ -161,13 +519,13 @@ abstract class Configurable
      */
     public function getListener(): EventListenerInterface|Overloadable
     {
-        if (!isset($this->attributes[Core::ATTR_LISTENER])) {
+        if (!isset($this->listener)) {
             if (isset($this->parent)) {
                 return $this->parent->getListener();
             }
             throw new EventListener\Exception('Could not get a listener');
         }
-        return $this->attributes[Core::ATTR_LISTENER];
+        return $this->listener;
     }
 
     /**
@@ -175,71 +533,57 @@ abstract class Configurable
      * @return $this
      * @throws EventListener\Exception
      */
-    public function setListener(EventListenerInterface|Overloadable $listener): self
+    public function setListener(EventListenerInterface|Overloadable|null $listener): self
     {
-        // @phpstan-ignore-next-line
-        if (!$listener instanceof EventListenerInterface
-            && !$listener instanceof Overloadable
+        $this->listener = $listener;
+        return $this;
+    }
+
+    // RECORD LISTENER ========================================================
+    protected Record\ListenerInterface|Overloadable|null $recordListener = null;
+
+    /**
+     * @phpstan-param Record\ListenerInterface|Overloadable<Record\ListenerInterface> $listener
+     * @return $this
+     */
+    public function addRecordListener(Record\ListenerInterface|Overloadable $listener, ?string $name = null): self
+    {
+        if (!isset($this->recordListener)
+            || !($this->recordListener instanceof Record\Listener\Chain)
         ) {
-            throw new EventListener\Exception("Couldn't set eventlistener. EventListeners should implement either EventListenerInterface or Overloadable");
+            $this->recordListener = new Record\Listener\Chain();
         }
-        $this->attributes[Core::ATTR_LISTENER] = $listener;
+        $this->recordListener->add($listener, $name);
 
         return $this;
     }
 
     /**
-     * returns the value of an attribute
+     * @phpstan-return Record\ListenerInterface|Overloadable<Record\ListenerInterface>
+     * @throws EventListener\Exception
      */
-    public function getAttribute(int $attribute): mixed
+    public function getRecordListener(): Record\ListenerInterface|Overloadable
     {
-        if (isset($this->attributes[$attribute])) {
-            return $this->attributes[$attribute];
+        if (!isset($this->recordListener)) {
+            if (isset($this->parent)) {
+                return $this->parent->getRecordListener();
+            }
+            throw new EventListener\Exception('Could not get a listener');
         }
-
-        if (isset($this->parent)) {
-            return $this->parent->getAttribute($attribute);
-        }
-        return null;
+        return $this->recordListener;
     }
 
     /**
-     * Unset an attribute from this levels attributes
+     * @phpstan-param Record\ListenerInterface|Overloadable<Record\ListenerInterface> $listener
+     * @return $this
      */
-    public function unsetAttribute(int $attribute): void
+    public function setRecordListener(Record\ListenerInterface|Overloadable|null $listener): self
     {
-        if (isset($this->attributes[$attribute])) {
-            unset($this->attributes[$attribute]);
-        }
+        $this->recordListener = $listener;
+        return $this;
     }
 
-    /**
-     * returns all attributes as an array
-     */
-    public function getAttributes(): array
-    {
-        return $this->attributes;
-    }
-
-    public function setCharset(string $charset): void
-    {
-        $this->setAttribute(Core::ATTR_DEFAULT_TABLE_CHARSET, $charset);
-    }
-
-    public function getCharset(): mixed
-    {
-        return $this->getAttribute(Core::ATTR_DEFAULT_TABLE_CHARSET);
-    }
-
-    public function setCollate(string $collate): void
-    {
-        $this->setAttribute(Core::ATTR_DEFAULT_TABLE_COLLATE, $collate);
-    }
-
-    public function getCollate(): mixed
-    {
-        return $this->getAttribute(Core::ATTR_DEFAULT_TABLE_COLLATE);
-    }
+    // ========================================================================
 
     /**
      * sets a parent for this configurable component

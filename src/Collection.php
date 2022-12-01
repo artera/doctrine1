@@ -64,7 +64,7 @@ class Collection extends Access implements \Countable, \IteratorAggregate, \Seri
         }
 
         if ($keyColumn === null) {
-            $keyColumn = $table->getAttribute(Core::ATTR_COLL_KEY);
+            $keyColumn = $table->getCollectionKey();
         }
 
         if ($keyColumn !== null) {
@@ -83,8 +83,7 @@ class Collection extends Access implements \Countable, \IteratorAggregate, \Seri
             if (!$table instanceof Table) {
                 $table = Core::getTable($table);
             }
-            /** @phpstan-var class-string<Collection> $class */
-            $class = $table->getAttribute(Core::ATTR_COLLECTION_CLASS);
+            $class = $table->getCollectionClass();
         }
 
         return new $class($table, $keyColumn);
@@ -647,7 +646,7 @@ class Collection extends Access implements \Countable, \IteratorAggregate, \Seri
     }
 
     /**
-     * Mimics the result of a $query->execute(array(), Core::HYDRATE_ARRAY);
+     * Mimics the result of a $query->execute(array(), HydrationMode::Array);
      * @phpstan-return array<string, array<string, mixed>|null>
      */
     public function toArray(bool $deep = true, bool $prefixKey = false): array

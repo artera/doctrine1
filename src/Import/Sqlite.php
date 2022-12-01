@@ -2,6 +2,8 @@
 
 namespace Doctrine1\Import;
 
+use Doctrine1\Casing;
+
 /**
  * @template Connection of \Doctrine1\Connection\Sqlite
  * @extends \Doctrine1\Import<Connection>
@@ -56,8 +58,8 @@ class Sqlite extends \Doctrine1\Import
                 $result[] = $sqn;
             }
         }
-        if ($this->conn->getAttribute(\Doctrine1\Core::ATTR_FIELD_CASE) && ($this->conn->getAttribute(\Doctrine1\Core::ATTR_PORTABILITY) & \Doctrine1\Core::PORTABILITY_FIX_CASE)) {
-            $result = array_map(($this->conn->getAttribute(\Doctrine1\Core::ATTR_FIELD_CASE) == CASE_LOWER ? 'strtolower' : 'strtoupper'), $result);
+        if ($this->conn->fieldCase && ($this->conn->getPortability() & \Doctrine1\Core::PORTABILITY_FIX_CASE)) {
+            $result = array_map(($this->conn->fieldCase === Casing::Lower ? 'strtolower' : 'strtoupper'), $result);
         }
         return $result;
     }
@@ -74,7 +76,7 @@ class Sqlite extends \Doctrine1\Import
 
         $query = "SELECT sql FROM sqlite_master WHERE type='index' AND ";
 
-        if ($this->conn->getAttribute(\Doctrine1\Core::ATTR_FIELD_CASE) && ($this->conn->getAttribute(\Doctrine1\Core::ATTR_PORTABILITY) & \Doctrine1\Core::PORTABILITY_FIX_CASE)) {
+        if ($this->conn->fieldCase && ($this->conn->getPortability() & \Doctrine1\Core::PORTABILITY_FIX_CASE)) {
             $query .= 'LOWER(tbl_name) = ' . strtolower($table);
         } else {
             $query .= 'tbl_name = ' . $table;
@@ -92,8 +94,8 @@ class Sqlite extends \Doctrine1\Import
             }
         }
 
-        if ($this->conn->getAttribute(\Doctrine1\Core::ATTR_FIELD_CASE) && ($this->conn->getAttribute(\Doctrine1\Core::ATTR_PORTABILITY) & \Doctrine1\Core::PORTABILITY_FIX_CASE)) {
-            $result = array_change_key_case($result, $this->conn->getAttribute(\Doctrine1\Core::ATTR_FIELD_CASE));
+        if ($this->conn->fieldCase && ($this->conn->getPortability() & \Doctrine1\Core::PORTABILITY_FIX_CASE)) {
+            $result = array_change_key_case($result, $this->conn->fieldCase->value);
         }
         return array_keys($result);
     }

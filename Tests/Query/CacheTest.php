@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Query;
 
 use Tests\DoctrineUnitTestCase;
@@ -31,7 +32,7 @@ class CacheTest extends DoctrineUnitTestCase
     {
         $cache = $this->getCacheDriver();
 
-        \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_QUERY_CACHE, $cache);
+        \Doctrine1\Manager::getInstance()->setQueryCache($cache);
 
         $q = \Doctrine1\Query::create()
             ->select('u.id, u.name, p.id')
@@ -122,7 +123,7 @@ class CacheTest extends DoctrineUnitTestCase
         $q = new \Doctrine1\Query();
 
         $cache = $this->getCacheDriver();
-        static::$conn->setAttribute(\Doctrine1\Core::ATTR_CACHE, $cache);
+        static::$conn->setResultCache($cache);
 
         $q->useResultCache(true);
         $q->select('u.name')->from('User u')->leftJoin('u.Phonenumber p')
@@ -138,7 +139,7 @@ class CacheTest extends DoctrineUnitTestCase
         $this->assertTrue($cache->contains($q->calculateResultCacheHash([5])));
         $this->assertEquals(count($coll), 1);
 
-        static::$conn->setAttribute(\Doctrine1\Core::ATTR_CACHE, null);
+        static::$conn->setResultCache(null);
     }
 
     public function testResultCacheLifeSpan()
@@ -149,18 +150,18 @@ class CacheTest extends DoctrineUnitTestCase
         $q->free();
 
         // 0 = cache forever
-        static::$manager->setAttribute(\Doctrine1\Core::ATTR_RESULT_CACHE_LIFESPAN, 0);
+        static::$manager->setResultCacheLifespan(0);
         $q = new \Doctrine1\Query();
         $this->assertSame(0, $q->getResultCacheLifeSpan());
         $q->free();
 
-        static::$manager->setAttribute(\Doctrine1\Core::ATTR_RESULT_CACHE_LIFESPAN, 3600);
+        static::$manager->setResultCacheLifespan(3600);
         $q = new \Doctrine1\Query();
         $this->assertSame(3600, $q->getResultCacheLifeSpan());
         $q->free();
 
         // test that value set on connection level has precedence
-        static::$conn->setAttribute(\Doctrine1\Core::ATTR_RESULT_CACHE_LIFESPAN, 42);
+        static::$conn->setResultCacheLifespan(42);
         $q = new \Doctrine1\Query();
         $this->assertSame(42, $q->getResultCacheLifeSpan());
         $q->free();
@@ -182,18 +183,18 @@ class CacheTest extends DoctrineUnitTestCase
         $q->free();
 
         // 0 = forever
-        static::$manager->setAttribute(\Doctrine1\Core::ATTR_QUERY_CACHE_LIFESPAN, 0);
+        static::$manager->setQueryCacheLifespan(0);
         $q = new \Doctrine1\Query();
         $this->assertSame(0, $q->getQueryCacheLifeSpan());
         $q->free();
 
-        static::$manager->setAttribute(\Doctrine1\Core::ATTR_QUERY_CACHE_LIFESPAN, 3600);
+        static::$manager->setQueryCacheLifespan(3600);
         $q = new \Doctrine1\Query();
         $this->assertSame(3600, $q->getQueryCacheLifeSpan());
         $q->free();
 
         // test that value set on connection level has precedence
-        static::$conn->setAttribute(\Doctrine1\Core::ATTR_QUERY_CACHE_LIFESPAN, 42);
+        static::$conn->setQueryCacheLifespan(42);
         $q = new \Doctrine1\Query();
         $this->assertSame(42, $q->getQueryCacheLifeSpan());
         $q->free();

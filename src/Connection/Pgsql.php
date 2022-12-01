@@ -47,10 +47,12 @@ class Pgsql extends \Doctrine1\Connection
         parent::__construct($manager, $adapter);
     }
 
-    public function setCharset(string $charset): void
+    public function setCharset(?string $charset): void
     {
-        $query = 'SET NAMES ' . $this->quote($charset);
-        $this->exec($query);
+        if ($charset !== null) {
+            $query = 'SET NAMES ' . $this->quote($charset);
+            $this->exec($query);
+        }
         parent::setCharset($charset);
     }
 

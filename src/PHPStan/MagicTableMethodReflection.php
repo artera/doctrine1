@@ -1,4 +1,6 @@
-<?php declare(strict_types = 1);
+<?php
+
+declare(strict_types=1);
 
 namespace Doctrine1\PHPStan;
 
@@ -69,8 +71,8 @@ class MagicTableMethodReflection implements MethodReflection
 
     public function getVariants(): array
     {
-        $parameters = array_map(fn($name) => new StableDummyParameter($name, new MixedType(), false, null, false, null), $this->parameters);
-        $parameters[] = new StableDummyParameter('hydrate_array', new BooleanType(), true, null, false, new ConstantBooleanType(false));
+        $parameters = array_map(fn ($name) => new StableDummyParameter($name, new MixedType(), false, null, false, null), $this->parameters);
+        $parameters[] = new StableDummyParameter('hydrateArray', new BooleanType(), true, null, false, new ConstantBooleanType(false));
 
         return [
             new FunctionVariant(TemplateTypeMap::createEmpty(), null, $parameters, false, $this->returnType),

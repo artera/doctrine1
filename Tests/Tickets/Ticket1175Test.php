@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Tickets {
     use Tests\DoctrineUnitTestCase;
 
@@ -71,7 +72,7 @@ namespace {
             $this->hasColumn('owner_id', 'integer', 4);
             $this->hasColumn('filename', 'string', 64);
             $this->hasColumn('otype', 'integer', 4);
-            $this->setAttribute(\Doctrine1\Core::ATTR_EXPORT, \Doctrine1\Core::EXPORT_ALL ^ \Doctrine1\Core::EXPORT_CONSTRAINTS);
+            $this->_table->setExportFlags(\Doctrine1\Core::EXPORT_ALL ^ \Doctrine1\Core::EXPORT_CONSTRAINTS);
 
             $this->setSubClasses(['gUserImage' => ['otype' => 1],'gBlogImage' => ['otype' => 2]]);
         }
@@ -103,7 +104,7 @@ namespace {
             $this->hasColumn('owner_id', 'integer', 4);
             $this->hasColumn('filename', 'string', 64);
             $this->hasColumn('otype', 'integer', 4);
-            $this->setAttribute(\Doctrine1\Core::ATTR_EXPORT, \Doctrine1\Core::EXPORT_ALL ^ \Doctrine1\Core::EXPORT_CONSTRAINTS);
+            $this->_table->setExportFlags(\Doctrine1\Core::EXPORT_ALL ^ \Doctrine1\Core::EXPORT_CONSTRAINTS);
 
             $this->setSubClasses(['gUserFile' => ['otype' => 1],'gBlogFile' => ['otype' => 2]]);
         }

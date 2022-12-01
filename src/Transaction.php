@@ -48,7 +48,7 @@ class Transaction extends Connection\Module
     {
         $this->conn->connect();
 
-        $listener = $this->conn->getAttribute(Core::ATTR_LISTENER);
+        $listener = $this->conn->getListener();
 
         if (count($this->savePoints)) {
             // TODO: use stronger algorithm to avoid name collisions

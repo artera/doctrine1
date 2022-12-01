@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Export;
 
 use Tests\DoctrineUnitTestCase;
@@ -41,8 +42,8 @@ class MysqlTest extends DoctrineUnitTestCase
 
         static::$conn->export->createTable($name, $fields);
 
-        // INNODB is the default type
-        $this->assertEquals(static::$adapter->pop(), 'CREATE TABLE mytable (id INT UNSIGNED) ENGINE = INNODB');
+        // InnoDB is the default type
+        $this->assertEquals(static::$adapter->pop(), 'CREATE TABLE mytable (id INT UNSIGNED) ENGINE = InnoDB');
     }
 
     public function testCreateTableSupportsMultiplePks()
@@ -54,7 +55,7 @@ class MysqlTest extends DoctrineUnitTestCase
         $options = ['primary' => ['name', 'type']];
         static::$conn->export->createTable($name, $fields, $options);
 
-        $this->assertEquals(static::$adapter->pop(), 'CREATE TABLE mytable (name CHAR(10), type MEDIUMINT, PRIMARY KEY(name, type)) ENGINE = INNODB');
+        $this->assertEquals(static::$adapter->pop(), 'CREATE TABLE mytable (name CHAR(10), type MEDIUMINT, PRIMARY KEY(name, type)) ENGINE = InnoDB');
     }
 
     public function testCreateTableSupportsAutoincPks()
@@ -63,11 +64,11 @@ class MysqlTest extends DoctrineUnitTestCase
 
         $fields  = ['id' => ['type' => 'integer', 'unsigned' => 1, 'autoincrement' => true]];
         $options = ['primary' => ['id'],
-                        'type'     => 'INNODB'];
+                        'type'     => 'InnoDB'];
 
         static::$conn->export->createTable($name, $fields, $options);
 
-        $this->assertEquals(static::$adapter->pop(), 'CREATE TABLE mytable (id INT UNSIGNED AUTO_INCREMENT, PRIMARY KEY(id)) ENGINE = INNODB');
+        $this->assertEquals(static::$adapter->pop(), 'CREATE TABLE mytable (id INT UNSIGNED AUTO_INCREMENT, PRIMARY KEY(id)) ENGINE = InnoDB');
     }
 
     public function testCreateTableSupportsCharType()
@@ -178,7 +179,7 @@ class MysqlTest extends DoctrineUnitTestCase
             "CREATE TABLE mytable (letter VARCHAR(1) DEFAULT 'a' NOT NULL) ENGINE = MYISAM"
         );
 
-        static::$conn->setAttribute(\Doctrine1\Core::ATTR_USE_NATIVE_ENUM, true);
+        static::$conn->setUseNativeEnum(true);
         static::$conn->export->createTable($name, $fields, $options);
 
         $this->assertEquals(
@@ -210,7 +211,7 @@ class MysqlTest extends DoctrineUnitTestCase
             "CREATE TABLE mytable (letter VARCHAR(5) DEFAULT 'a' NOT NULL) ENGINE = MYISAM"
         );
 
-        static::$conn->setAttribute(\Doctrine1\Core::ATTR_USE_NATIVE_SET, true);
+        static::$conn->setUseNativeSet(true);
         static::$conn->export->createTable($name, $fields, $options);
 
         $this->assertEquals(
@@ -226,7 +227,7 @@ class MysqlTest extends DoctrineUnitTestCase
         $fields = ['id'         => ['type' => 'boolean', 'primary' => true],
                         'foreignKey' => ['type' => 'integer']
                         ];
-        $options = ['type'        => 'INNODB',
+        $options = ['type'        => 'InnoDB',
                          'foreignKeys' => [['local'        => 'foreignKey',
                                                       'foreign'      => 'id',
                                                       'foreignTable' => 'sometable']]
@@ -235,20 +236,20 @@ class MysqlTest extends DoctrineUnitTestCase
 
         $sql = static::$conn->export->createTableSql($name, $fields, $options);
 
-        $this->assertEquals($sql[0], 'CREATE TABLE mytable (id TINYINT(1), foreignKey INT, INDEX foreignKey_idx (foreignKey)) ENGINE = INNODB');
+        $this->assertEquals($sql[0], 'CREATE TABLE mytable (id TINYINT(1), foreignKey INT, INDEX foreignKey_idx (foreignKey)) ENGINE = InnoDB');
         $this->assertEquals($sql[1], 'ALTER TABLE mytable ADD FOREIGN KEY (foreignKey) REFERENCES sometable(id)');
     }
 
     public function testForeignKeyIdentifierQuoting()
     {
-        static::$conn->setAttribute(\Doctrine1\Core::ATTR_QUOTE_IDENTIFIER, true);
+        static::$conn->setQuoteIdentifier(true);
 
         $name = 'mytable';
 
         $fields = ['id'         => ['type' => 'boolean', 'primary' => true],
                         'foreignKey' => ['type' => 'integer']
                         ];
-        $options = ['type'        => 'INNODB',
+        $options = ['type'        => 'InnoDB',
                          'foreignKeys' => [['local'        => 'foreignKey',
                                                       'foreign'      => 'id',
                                                       'foreignTable' => 'sometable']]
@@ -257,15 +258,15 @@ class MysqlTest extends DoctrineUnitTestCase
 
         $sql = static::$conn->export->createTableSql($name, $fields, $options);
 
-        $this->assertEquals($sql[0], 'CREATE TABLE `mytable` (`id` TINYINT(1), `foreignKey` INT, INDEX `foreignKey_idx` (`foreignKey`)) ENGINE = INNODB');
+        $this->assertEquals($sql[0], 'CREATE TABLE `mytable` (`id` TINYINT(1), `foreignKey` INT, INDEX `foreignKey_idx` (`foreignKey`)) ENGINE = InnoDB');
         $this->assertEquals($sql[1], 'ALTER TABLE `mytable` ADD FOREIGN KEY (`foreignKey`) REFERENCES `sometable`(`id`)');
 
-        static::$conn->setAttribute(\Doctrine1\Core::ATTR_QUOTE_IDENTIFIER, false);
+        static::$conn->setQuoteIdentifier(false);
     }
 
     public function testIndexIdentifierQuoting()
     {
-        static::$conn->setAttribute(\Doctrine1\Core::ATTR_QUOTE_IDENTIFIER, true);
+        static::$conn->setQuoteIdentifier(true);
 
         $fields = ['id'    => ['type' => 'integer', 'unsigned' => 1, 'autoincrement' => true],
                          'name' => ['type' => 'string', 'length' => 4],
@@ -281,9 +282,9 @@ class MysqlTest extends DoctrineUnitTestCase
         //and then the index so i replaced it with the ones below
         //$this->assertEquals($var, 'CREATE TABLE sometable (id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(4), INDEX myindex (id, name))');
 
-        $this->assertEquals(static::$adapter->pop(), 'CREATE TABLE `sometable` (`id` INT UNSIGNED AUTO_INCREMENT, `name` VARCHAR(4), INDEX `myindex_idx` (`id`, `name`), PRIMARY KEY(`id`)) ENGINE = INNODB');
+        $this->assertEquals(static::$adapter->pop(), 'CREATE TABLE `sometable` (`id` INT UNSIGNED AUTO_INCREMENT, `name` VARCHAR(4), INDEX `myindex_idx` (`id`, `name`), PRIMARY KEY(`id`)) ENGINE = InnoDB');
 
-        static::$conn->setAttribute(\Doctrine1\Core::ATTR_QUOTE_IDENTIFIER, false);
+        static::$conn->setQuoteIdentifier(false);
     }
 
     public function testCreateTableDoesNotAutoAddIndexesWhenIndexForFkFieldAlreadyExists()
@@ -293,7 +294,7 @@ class MysqlTest extends DoctrineUnitTestCase
         $fields = ['id'         => ['type' => 'boolean', 'primary' => true],
                         'foreignKey' => ['type' => 'integer']
                         ];
-        $options = ['type'        => 'INNODB',
+        $options = ['type'        => 'InnoDB',
                          'foreignKeys' => [['local'        => 'foreignKey',
                                                       'foreign'      => 'id',
                                                       'foreignTable' => 'sometable']],
@@ -302,7 +303,7 @@ class MysqlTest extends DoctrineUnitTestCase
 
 
         $sql = static::$conn->export->createTableSql($name, $fields, $options);
-        $this->assertEquals($sql[0], 'CREATE TABLE mytable (id TINYINT(1), foreignKey INT, INDEX myindex_idx (foreignKey)) ENGINE = INNODB');
+        $this->assertEquals($sql[0], 'CREATE TABLE mytable (id TINYINT(1), foreignKey INT, INDEX myindex_idx (foreignKey)) ENGINE = InnoDB');
         $this->assertEquals($sql[1], 'ALTER TABLE mytable ADD FOREIGN KEY (foreignKey) REFERENCES sometable(id)');
     }
 
@@ -334,7 +335,7 @@ class MysqlTest extends DoctrineUnitTestCase
         $fields = ['id'   => ['sorting' => 'ASC'],
                         'name' => ['sorting' => 'unknown']];
 
-                        $this->expectException(\Doctrine1\Export\Exception::class);
+        $this->expectException(\Doctrine1\Export\Exception::class);
         static::$conn->export->getIndexFieldDeclarationList($fields);
     }
 
@@ -358,7 +359,7 @@ class MysqlTest extends DoctrineUnitTestCase
                          ];
 
         static::$conn->export->createTable('sometable', $fields, $options);
-        $this->assertEquals(static::$adapter->pop(), 'CREATE TABLE sometable (id INT UNSIGNED AUTO_INCREMENT, name VARCHAR(4), INDEX myindex_idx (name), PRIMARY KEY(id)) ENGINE = INNODB');
+        $this->assertEquals(static::$adapter->pop(), 'CREATE TABLE sometable (id INT UNSIGNED AUTO_INCREMENT, name VARCHAR(4), INDEX myindex_idx (name), PRIMARY KEY(id)) ENGINE = InnoDB');
     }
 
     public function testCreateTableSupportsIndexesWithCustomSorting()
@@ -378,7 +379,7 @@ class MysqlTest extends DoctrineUnitTestCase
 
         static::$conn->export->createTable('sometable', $fields, $options);
 
-        $this->assertEquals(static::$adapter->pop(), 'CREATE TABLE sometable (id INT UNSIGNED AUTO_INCREMENT, name VARCHAR(4), INDEX myindex_idx (id ASC, name DESC), PRIMARY KEY(id)) ENGINE = INNODB');
+        $this->assertEquals(static::$adapter->pop(), 'CREATE TABLE sometable (id INT UNSIGNED AUTO_INCREMENT, name VARCHAR(4), INDEX myindex_idx (id ASC, name DESC), PRIMARY KEY(id)) ENGINE = InnoDB');
     }
     public function testCreateTableSupportsFulltextIndexes()
     {
@@ -408,7 +409,7 @@ class MysqlTest extends DoctrineUnitTestCase
         $fields = ['id'   => ['type' => 'boolean', 'primary' => true],
                         'lang' => ['type' => 'integer', 'primary' => true]
                         ];
-        $options = ['type'        => 'INNODB',
+        $options = ['type'        => 'InnoDB',
                          'foreignKeys' => [['local'        => ['id', 'lang' ],
                                                       'foreign'      => ['id', 'lang'],
                                                       'foreignTable' => 'sometable']]
@@ -416,7 +417,7 @@ class MysqlTest extends DoctrineUnitTestCase
 
         $sql = static::$conn->export->createTableSql($name, $fields, $options);
 
-        $this->assertEquals($sql[0], 'CREATE TABLE mytable (id TINYINT(1), lang INT, INDEX id_idx (id), INDEX lang_idx (lang)) ENGINE = INNODB');
+        $this->assertEquals($sql[0], 'CREATE TABLE mytable (id TINYINT(1), lang INT, INDEX id_idx (id), INDEX lang_idx (lang)) ENGINE = InnoDB');
         $this->assertEquals($sql[1], 'ALTER TABLE mytable ADD FOREIGN KEY (id, lang) REFERENCES sometable(id, lang)');
     }
 
@@ -429,7 +430,7 @@ class MysqlTest extends DoctrineUnitTestCase
             ]
         );
 
-        $this->assertEquals($sql[0], 'CREATE TABLE mytable (name VARCHAR(255) CHARACTER SET utf8) ENGINE = INNODB');
+        $this->assertEquals($sql[0], 'CREATE TABLE mytable (name VARCHAR(255) CHARACTER SET utf8) ENGINE = InnoDB');
     }
 
     public function testCreateTableSupportsFieldCollation()
@@ -441,6 +442,6 @@ class MysqlTest extends DoctrineUnitTestCase
             ]
         );
 
-        $this->assertEquals($sql[0], 'CREATE TABLE mytable (name VARCHAR(255) COLLATE utf8_general_ci) ENGINE = INNODB');
+        $this->assertEquals($sql[0], 'CREATE TABLE mytable (name VARCHAR(255) COLLATE utf8_general_ci) ENGINE = InnoDB');
     }
 }

@@ -14,8 +14,8 @@ namespace Tests\Tickets {
 
         public function testTest()
         {
-            $orig = \Doctrine1\Manager::getInstance()->getAttribute(\Doctrine1\Core::ATTR_VALIDATE);
-            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, \Doctrine1\Core::VALIDATE_ALL);
+            $orig = \Doctrine1\Manager::getInstance()->getValidate();
+            \Doctrine1\Manager::getInstance()->setValidate(\Doctrine1\Core::VALIDATE_ALL);
             $brand                                         = new \Ticket_1383_Brand;
             $brand->name                                   = 'The Great Brand';
             $brand->Ticket_1383_Brand_Image[0]->name       = 'imagename';
@@ -23,7 +23,7 @@ namespace Tests\Tickets {
             $brand->Ticket_1383_Brand_Image[0]->owner_type = 0;
             $brand->save();
 
-            \Doctrine1\Manager::getInstance()->setAttribute(\Doctrine1\Core::ATTR_VALIDATE, $orig);
+            \Doctrine1\Manager::getInstance()->setValidate($orig);
         }
     }
 }
