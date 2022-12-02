@@ -2,7 +2,13 @@
 
 namespace Doctrine1\Import;
 
+use Doctrine1\Collection;
 use Doctrine1\Core;
+use Doctrine1\Inflector;
+use Doctrine1\Manager;
+use Doctrine1\Record;
+use Doctrine1\Relation;
+use Doctrine1\Table;
 use Laminas\Code\Generator\ClassGenerator;
 use Laminas\Code\Generator\DocBlockGenerator;
 use Laminas\Code\Generator\MethodGenerator;
@@ -43,15 +49,15 @@ class Builder
 
     /**
      * Base class name for generated classes
-     * @phpstan-var class-string<\Doctrine1\Record>
+     * @phpstan-var class-string<Record>
      */
-    protected string $baseClassName = \Doctrine1\Record::class;
+    protected string $baseClassName = Record::class;
 
     /**
      * Base table class name for generated classes
-     * @phpstan-var class-string<\Doctrine1\Table>
+     * @phpstan-var class-string<Table>
      */
-    protected string $baseTableClassName = \Doctrine1\Table::class;
+    protected string $baseTableClassName = Table::class;
 
     /**
      * Format to use for generating the model table classes
@@ -65,7 +71,7 @@ class Builder
 
     public function __construct()
     {
-        $manager = \Doctrine1\Manager::getInstance();
+        $manager = Manager::getInstance();
         if ($tableClass = $manager->getTableClass()) {
             $this->baseTableClassName = $tableClass;
         }
@@ -126,7 +132,7 @@ class Builder
 
     public function setOption(string $key, mixed $value): void
     {
-        $name = 'set' . \Doctrine1\Inflector::classify($key);
+        $name = 'set' . Inflector::classify($key);
 
         if (method_exists($this, $name)) {
             $this->$name($value);
@@ -202,10 +208,10 @@ class Builder
                 $alias = (isset($relation['alias']) && $relation['alias'] !== $this->classPrefix . $relation['class']) ? " as {$relation['alias']}" : '';
 
                 if (!isset($relation['type'])) {
-                    $relation['type'] = \Doctrine1\Relation::ONE;
+                    $relation['type'] = Relation::ONE;
                 }
 
-                if ($relation['type'] === \Doctrine1\Relation::ONE) {
+                if ($relation['type'] === Relation::ONE) {
                     $hasMethod = 'hasOne';
                 } else {
                     $hasMethod = 'hasMany';
@@ -268,14 +274,14 @@ class Builder
 
     public function buildColumns(array $columns): ?string
     {
-        $manager = \Doctrine1\Manager::getInstance();
+        $manager = Manager::getInstance();
         $refl = new \ReflectionClass($this->baseClassName);
 
         $build = null;
         foreach ($columns as $name => $column) {
             // An alias cannot passed via column name and column alias definition
             if (isset($column['name']) && stripos($column['name'], ' as ') && isset($column['alias'])) {
-                throw new \Doctrine1\Import\Exception(
+                throw new Exception(
                     sprintf('When using a column alias you cannot pass it via column name and column alias definition (column: %s).', $column['name'])
                 );
             }
@@ -294,7 +300,7 @@ class Builder
                 $setter     = "set$classified";
 
                 if ($refl->hasMethod($getter) || $refl->hasMethod($setter)) {
-                    throw new \Doctrine1\Import\Exception(
+                    throw new Exception(
                         sprintf('When using the attribute setAutoAccessorOverride() you cannot use the field name "%s" because it is reserved by Doctrine. You must choose another field name.', $fieldName)
                     );
                 }
@@ -400,8 +406,8 @@ class Builder
         foreach ($relations as $relation) {
             $fieldName = $relation['alias'];
             $types = [];
-            if (isset($relation['type']) && $relation['type'] == \Doctrine1\Relation::MANY) {
-                $types[] = "\Doctrine1\Collection<{$relation['class']}>";
+            if (isset($relation['type']) && $relation['type'] == Relation::MANY) {
+                $types[] = '\\' . Collection::class . "<{$relation['class']}>";
             } else {
                 $types[] = $this->classPrefix . $relation['class'];
 
@@ -606,10 +612,10 @@ class Builder
 
     public function buildTableClassDefinition(string $className, array $definition, array $options = []): string
     {
-        /** @var class-string<\Doctrine1\Table> */
+        /** @var class-string<Table> */
         $extends = $options['extends'] ?? $this->baseTableClassName;
         if ($extends !== $this->baseTableClassName) {
-            /** @var class-string<\Doctrine1\Table> */
+            /** @var class-string<Table> */
             $extends = $this->classPrefix . $extends;
         }
 
@@ -626,9 +632,7 @@ class Builder
         $gen = new ClassGenerator($className, docBlock: $docBlock);
         $gen->setExtendedClass($extends);
 
-        $getInstanceBody = <<<PHP
-        return \Doctrine1\Core::getTable({$definition['className']}::class);
-        PHP;
+        $getInstanceBody = 'return \\' . Core::class . "::getTable({$definition['className']}::class);";
 
         $method = new MethodGenerator('getInstance', body: $getInstanceBody);
         $method->setStatic(true);
@@ -659,7 +663,7 @@ class Builder
             throw new \Doctrine1\Import\Builder\Exception("Couldn't write file $path");
         }
 
-        \Doctrine1\Core::loadModel($className, $path);
+        Core::loadModel($className, $path);
     }
 
     public function writeDefinition(array $definition): void
@@ -681,18 +685,13 @@ class Builder
         \Doctrine1\Lib::makeDirectories($path);
         $path .= DIRECTORY_SEPARATOR . $fileName;
 
-        if (!empty($definition['connection'])) {
-            $code .= "// Connection Component Binding\n";
-            $code .= "\Doctrine1\Manager::getInstance()->bindComponent({$this->varExport($definition['connectionClassName'])}, {$this->varExport($definition['connection'])});\n";
-        }
-
         if (empty($definition['generate_once']) || !file_exists($path)) {
             if (file_put_contents($path, "<?php\n\n$code") === false) {
                 throw new \Doctrine1\Import\Builder\Exception("Couldn't write file $path");
             }
         }
 
-        \Doctrine1\Core::loadModel($className, $path);
+        Core::loadModel($className, $path);
     }
 
     private function varExport(mixed $var): string

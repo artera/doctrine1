@@ -973,7 +973,7 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
         /** @var class-string<Table> */
         $class = sprintf($this->getTableClassFormat(), $name);
 
-        if (!class_exists($class, false) || !in_array(Table::class, class_parents($class) ?: [])) {
+        if (!class_exists($class) || !in_array(Table::class, class_parents($class) ?: [])) {
             $class = $this->getTableClass();
         }
 

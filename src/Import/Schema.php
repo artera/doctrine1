@@ -2,6 +2,8 @@
 
 namespace Doctrine1\Import;
 
+use Doctrine1\Record;
+
 class Schema
 {
     /**
@@ -46,7 +48,7 @@ class Schema
         'generateAccessors'    => false,
         'baseClassPrefix'      => 'Base',
         'baseClassesDirectory' => 'generated',
-        'baseClassName'        => '\Doctrine1\Record',
+        'baseClassName'        => Record::class,
     ];
 
     /**
@@ -313,7 +315,7 @@ class Schema
 
             $columns = [];
 
-            $className = isset($table['className']) ? (string) $table['className']:(string) $className;
+            $className = isset($table['className']) ? (string) $table['className'] : (string) $className;
 
             if (isset($table['inheritance']['keyField']) || isset($table['inheritance']['keyValue'])) {
                 $table['inheritance']['type'] = 'column_aggregation';
@@ -329,9 +331,9 @@ class Schema
                 }
             }
 
-            $connection = isset($table['connection']) ? $table['connection']:'current';
+            $connection = isset($table['connection']) ? $table['connection'] : 'current';
 
-            $columns = isset($table['columns']) ? $table['columns']:[];
+            $columns = isset($table['columns']) ? $table['columns'] : [];
 
             if (!empty($columns)) {
                 foreach ($columns as $columnName => $field) {
@@ -382,7 +384,7 @@ class Schema
                         $colDesc['sequence'] = null;
                     }
 
-                    $colDesc['values'] = isset($field['values']) ? (array) $field['values']:null;
+                    $colDesc['values'] = isset($field['values']) ? (array) $field['values'] : null;
 
                     // Include all the specified and valid validators in the colDesc
                     $validators = array_keys(\Doctrine1\Manager::getInstance()->getValidators());
@@ -402,7 +404,7 @@ class Schema
                 if (isset($table[$key]) && !isset($build[$className][$key])) {
                     $build[$className][$key] = $table[$key];
                 } else {
-                    $build[$className][$key] = isset($build[$className][$key]) ? $build[$className][$key]:$defaultValue;
+                    $build[$className][$key] = isset($build[$className][$key]) ? $build[$className][$key] : $defaultValue;
                 }
             }
 
@@ -553,8 +555,8 @@ class Schema
 
                             // Set the detected foreign key type and length to the same as the primary key
                             // of the related table
-                            $type                                                    = isset($array[$columnClassName]['columns']['id']['type']) ? $array[$columnClassName]['columns']['id']['type']:'integer';
-                            $length                                                  = isset($array[$columnClassName]['columns']['id']['length']) ? $array[$columnClassName]['columns']['id']['length']:8;
+                            $type                                                    = isset($array[$columnClassName]['columns']['id']['type']) ? $array[$columnClassName]['columns']['id']['type'] : 'integer';
+                            $length                                                  = isset($array[$columnClassName]['columns']['id']['length']) ? $array[$columnClassName]['columns']['id']['length'] : 8;
                             $array[$className]['columns'][$column['name']]['type']   = $type;
                             $array[$className]['columns'][$column['name']]['length'] = $length;
                         }
@@ -572,7 +574,7 @@ class Schema
             $relations = $properties['relations'];
 
             foreach ($relations as $alias => $relation) {
-                $class = isset($relation['class']) ? $relation['class']:$alias;
+                $class = isset($relation['class']) ? $relation['class'] : $alias;
                 if (!isset($array[$class])) {
                     continue;
                 }
@@ -581,11 +583,11 @@ class Schema
 
                 // Attempt to guess the local and foreign
                 if (isset($relation['refClass'])) {
-                    $relation['local']   = isset($relation['local']) ? $relation['local']:\Doctrine1\Inflector::tableize($name) . '_id';
-                    $relation['foreign'] = isset($relation['foreign']) ? $relation['foreign']:\Doctrine1\Inflector::tableize($class) . '_id';
+                    $relation['local']   = isset($relation['local']) ? $relation['local'] : \Doctrine1\Inflector::tableize($name) . '_id';
+                    $relation['foreign'] = isset($relation['foreign']) ? $relation['foreign'] : \Doctrine1\Inflector::tableize($class) . '_id';
                 } else {
-                    $relation['local']   = isset($relation['local']) ? $relation['local']:\Doctrine1\Inflector::tableize($relation['class']) . '_id';
-                    $relation['foreign'] = isset($relation['foreign']) ? $relation['foreign']:'id';
+                    $relation['local']   = isset($relation['local']) ? $relation['local'] : \Doctrine1\Inflector::tableize($relation['class']) . '_id';
+                    $relation['foreign'] = isset($relation['foreign']) ? $relation['foreign'] : 'id';
                 }
 
                 if (isset($relation['refClass'])) {
@@ -593,13 +595,13 @@ class Schema
                 }
 
                 if (isset($relation['type']) && $relation['type']) {
-                    $relation['type'] = $relation['type'] === 'one' ? \Doctrine1\Relation::ONE:\Doctrine1\Relation::MANY;
+                    $relation['type'] = $relation['type'] === 'one' ? \Doctrine1\Relation::ONE : \Doctrine1\Relation::MANY;
                 } else {
                     $relation['type'] = \Doctrine1\Relation::ONE;
                 }
 
                 if (isset($relation['foreignType']) && $relation['foreignType']) {
-                    $relation['foreignType'] = $relation['foreignType'] === 'one' ? \Doctrine1\Relation::ONE:\Doctrine1\Relation::MANY;
+                    $relation['foreignType'] = $relation['foreignType'] === 'one' ? \Doctrine1\Relation::ONE : \Doctrine1\Relation::MANY;
                 }
 
                 $relation['key'] = $this->buildUniqueRelationKey($relation);
@@ -643,8 +645,8 @@ class Schema
                 $newRelation                 = [];
                 $newRelation['foreign']      = $relation['local'];
                 $newRelation['local']        = $relation['foreign'];
-                $newRelation['class']        = isset($relation['foreignClass']) ? $relation['foreignClass']:$className;
-                $newRelation['alias']        = isset($relation['foreignAlias']) ? $relation['foreignAlias']:$className;
+                $newRelation['class']        = isset($relation['foreignClass']) ? $relation['foreignClass'] : $className;
+                $newRelation['alias']        = isset($relation['foreignAlias']) ? $relation['foreignAlias'] : $className;
                 $newRelation['foreignAlias'] = $alias;
 
                 // this is so that we know that this relation was autogenerated and
@@ -653,12 +655,12 @@ class Schema
 
                 if (isset($relation['refClass'])) {
                     $newRelation['refClass'] = $relation['refClass'];
-                    $newRelation['type']     = isset($relation['foreignType']) ? $relation['foreignType']:$relation['type'];
+                    $newRelation['type']     = isset($relation['foreignType']) ? $relation['foreignType'] : $relation['type'];
                 } else {
                     if (isset($relation['foreignType'])) {
                         $newRelation['type'] = $relation['foreignType'];
                     } else {
-                        $newRelation['type'] = $relation['type'] === \Doctrine1\Relation::ONE ? \Doctrine1\Relation::MANY:\Doctrine1\Relation::ONE;
+                        $newRelation['type'] = $relation['type'] === \Doctrine1\Relation::ONE ? \Doctrine1\Relation::MANY : \Doctrine1\Relation::ONE;
                     }
                 }
 
@@ -712,7 +714,7 @@ class Schema
      */
     protected function buildUniqueRelationKey($relation)
     {
-        return md5($relation['local'] . $relation['foreign'] . $relation['class'] . (isset($relation['refClass']) ? $relation['refClass']:null));
+        return md5($relation['local'] . $relation['foreign'] . $relation['class'] . (isset($relation['refClass']) ? $relation['refClass'] : null));
     }
 
     /**

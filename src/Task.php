@@ -80,15 +80,10 @@ abstract class Task
      */
     public static function deriveTaskName($className)
     {
-        $nameParts = explode('\\', $className);
-
-        foreach ($nameParts as &$namePart) {
-            $prefix   = __CLASS__ . '_';
-            $baseName = strpos($namePart, $prefix) === 0 ? substr($namePart, strlen($prefix)) : $namePart;
-            $namePart = str_replace('_', '-', Inflector::tableize($baseName));
+        if (($pos = strrpos($className, '\\')) !== false) {
+            $className = substr($className, $pos + 1);
         }
-
-        return implode('-', $nameParts);
+        return str_replace('_', '-', Inflector::tableize($className));
     }
 
     public function notify(?string $notification = null): ?string

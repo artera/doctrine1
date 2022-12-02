@@ -234,7 +234,7 @@ class Cli
     protected function includeAndRegisterDoctrineTaskClasses($directories = null)
     {
         if ($directories === null) {
-            $directories = Core::getPath() . DIRECTORY_SEPARATOR . 'Doctrine' . DIRECTORY_SEPARATOR . 'Task';
+            $directories = Core::getPath() . '/src/Task';
         }
 
         foreach ((array) $directories as $directory) {
@@ -275,25 +275,15 @@ class Cli
 
         foreach ($iterator as $file) {
             $baseName = $file->getFileName();
-
-            /*
-             * Class-files must start with an uppercase letter.  This additional check will help prevent us
-             * accidentally running 'executable' scripts that may be mixed-in with the class files.
-             */
             $matched = (bool) preg_match('/^([A-Z].*?)\.php$/', $baseName, $matches);
 
-            if (!($matched && (strpos($baseName, '.inc') === false))) {
+            if (!$matched) {
                 continue;
             }
 
             $expectedClassName = self::TASK_BASE_CLASS . '\\' . $matches[1];
 
-            if (!class_exists($expectedClassName)) {
-                include_once $file->getPathName();
-            }
-
-            //So was the expected class included, and is it a task?  If so, we'll let the calling function know.
-            if (class_exists($expectedClassName, false) && $this->classIsTask($expectedClassName)) {
+            if (class_exists($expectedClassName) && $this->classIsTask($expectedClassName)) {
                 $taskClassesIncluded[] = $expectedClassName;
             }
         }
@@ -314,7 +304,7 @@ class Cli
      */
     public function registerTaskClass($className)
     {
-        //Simply ignore registered classes
+        // Simply ignore registered classes
         if ($this->taskClassIsRegistered($className)) {
             return;
         }
@@ -326,7 +316,6 @@ class Cli
         if (!$this->classIsTask($className)) {
             throw new \DomainException("The class \"{$className}\" is not a Doctrine Task");
         }
-        /** @phpstan-var class-string<Task> $className */
 
         $this->registeredTask[$className] = $this->createTaskInstance($className, $this);
     }
@@ -336,6 +325,7 @@ class Cli
      *
      * @param  string $className
      * @phpstan-param class-string $className
+     * @phpstan-assert class-string<Task> $className
      * @return bool
      */
     protected function classIsTask($className)
@@ -415,13 +405,15 @@ class Cli
      *
      * N.B. This should really only be called by Cli::run().  Exceptions should be thrown when errors occur:
      * it's up to Cli::run() to determine how those exceptions are reported.
-     *
-     * @param  Throwable $exception
-     * @return void
      */
-    protected function notifyException(Throwable $exception)
+    protected function notifyException(Throwable $exception): void
     {
-        echo $this->formatExceptionMessage($exception);
+        $s = $this->formatExceptionMessage($exception);
+        if (defined('STDERR')) {
+            fwrite(STDERR, $s);
+            return;
+        }
+        echo $s;
     }
 
     /**
@@ -461,7 +453,7 @@ class Cli
             // Do not rethrow exceptions by default
             if ($this->getConfigValue('rethrow_exceptions', false)) {
                 $exceptionClass = get_class($exception);
-                /** * @var Throwable $exception */
+                /** @var Throwable $exception */
                 $exception = new $exceptionClass($this->formatExceptionMessage($exception));
                 throw $exception;
             }
