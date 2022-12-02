@@ -1073,6 +1073,10 @@ class Table extends Configurable implements \Countable
      */
     public function setColumnOption(string $columnName, string $option, mixed $value): void
     {
+        if ($option == 'default') {
+            $this->hasDefaultValues = true;
+        }
+
         if ($option == 'primary') {
             if ($value && !in_array($columnName, $this->identifier)) {
                 $this->identifier[] = $columnName;
