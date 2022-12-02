@@ -262,7 +262,7 @@ abstract class Configurable
 
     public function getModelNamespace(): string
     {
-        return $this->modelCNamespace?? $this->parent?->getModelNamespace() ?? '\\';
+        return $this->modelNamespace?? $this->parent?->getModelNamespace() ?? '\\';
     }
 
     public function setModelNamespace(?string $value): void

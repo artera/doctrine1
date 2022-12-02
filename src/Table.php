@@ -238,6 +238,19 @@ class Table extends Configurable implements \Countable
         $this->collectionKey = $value;
     }
 
+    /** @phpstan-return class-string<T> */
+    public function getRecordClass(): string
+    {
+        $name = $this->name;
+
+        if (!class_exists($name)) {
+            $name = trim(trim($this->getModelNamespace(), '\\') . "\\$name", '\\');
+        }
+
+        /** @phpstan-var class-string<T> $name */
+        return $name;
+    }
+
     /**
      * Initializes the in-memory table definition.
      *
@@ -246,45 +259,24 @@ class Table extends Configurable implements \Countable
      */
     public function initDefinition(): Record
     {
-        $name = $this->name;
-        $record = new $name($this);
+        $class = $this->getRecordClass();
+        $record = new $class($this);
 
-        $names = [];
-
-        $class = $name;
-
-        // get parent classes
-
-        do {
-            if ($class === Record::class) {
-                break;
-            }
-
-            $name    = $class;
-            $names[] = $name;
-        } while ($class = get_parent_class($class));
-
-        if ($class === false) {
-            throw new Table\Exception('Class "' . $name . '" must be a child class of Record');
-        }
-
-        // reverse names
-        $names = array_reverse($names);
-        // save parents
-        array_pop($names);
-        $this->parents = $names;
+        $parents = class_parents($class) ?: [];
+        array_pop($parents);
+        $this->parents = array_reverse($parents);
 
         // create database table
         if (method_exists($record, 'setTableDefinition')) {
             $record->setTableDefinition();
             // get the declaring class of setTableDefinition method
-            $method = new ReflectionMethod($this->name, 'setTableDefinition');
+            $method = new ReflectionMethod($record, 'setTableDefinition');
             $class = $method->getDeclaringClass();
         } else {
             $class = new ReflectionClass($class);
         }
 
-        foreach (array_reverse($this->parents) as $parent) {
+        foreach ($parents as $parent) {
             if ($parent === $class->getName()) {
                 continue;
             }
