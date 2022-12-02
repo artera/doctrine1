@@ -442,10 +442,10 @@ class Builder
             $docBlock->setTag(new PropertyTag($fieldName, $types));
         }
 
-        $genericOver = $this->getTableClassName($topLevelClass, false);
+        $genericOver = $this->getTableClassName($topLevelClass);
         $docBlock->setTag([
             'name' => 'phpstan-extends',
-            'content' => "\\{$gen->getExtendedClass()}<{$genericOver}>",
+            'content' => "\\{$gen->getExtendedClass()}<\\{$genericOver}>",
         ]);
 
         $gen->setDocBlock($docBlock);
@@ -647,14 +647,14 @@ class Builder
             $docBlock->setWordWrap(false);
             $docBlock->setTag([
                 'name' => 'phpstan-extends',
-                'content' => sprintf('\\%s<%s>', $extends, $definition['topLevelClassName']),
+                'content' => sprintf('\\%s<\\%s>', $extends, $this->getFullModelClassName($definition['topLevelClassName'])),
             ]);
         }
 
         $gen = new ClassGenerator($className, docBlock: $docBlock);
         $gen->setExtendedClass($extends);
 
-        $getInstanceBody = 'return \\' . Core::class . "::getTable({$definition['className']}::class);";
+        $getInstanceBody = sprintf('return \\%s::getTable(\\%s::class);', Core::class, $this->getFullModelClassName($definition['className']));
 
         $method = new MethodGenerator('getInstance', body: $getInstanceBody);
         $method->setStatic(true);

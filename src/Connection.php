@@ -961,6 +961,30 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
         return isset($this->tables[$name]);
     }
 
+    /** @phpstan-return class-string<Table> */
+    public function getTableClassName(string $name): string
+    {
+        $namespace = '';
+        if (class_exists($name)) {
+            if (($pos = strrpos($name, '\\')) !== false) {
+                $namespace = substr($name, 0, $pos);
+                $name = substr($name, $pos + 1);
+            }
+        } else {
+            $namespace = $this->getModelNamespace();
+        }
+
+        $class = sprintf($this->getTableClassFormat(), $name);
+        $class = trim(trim($namespace, '\\') . "\\$class", '\\');
+
+        if (!class_exists($class) || !in_array(Table::class, class_parents($class) ?: [])) {
+            $class = $this->getTableClass();
+        }
+
+        /** @phpstan-var class-string<Table> $class */
+        return $class;
+    }
+
     /**
      * returns a table object for given component name
      */
@@ -970,13 +994,7 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
             return $this->tables[$name];
         }
 
-        /** @var class-string<Table> */
-        $class = sprintf($this->getTableClassFormat(), $name);
-
-        if (!class_exists($class) || !in_array(Table::class, class_parents($class) ?: [])) {
-            $class = $this->getTableClass();
-        }
-
+        $class = $this->getTableClassName($name);
         return new $class($name, $this, true);
     }
 
