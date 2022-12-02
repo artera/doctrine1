@@ -247,9 +247,6 @@ class Table extends Configurable implements \Countable
     public function initDefinition(): Record
     {
         $name = $this->name;
-        if (!class_exists($name) || empty($name)) {
-            throw new Exception("Couldn't find class $name");
-        }
         $record = new $name($this);
 
         $names = [];
@@ -2232,7 +2229,7 @@ class Table extends Configurable implements \Countable
      */
     public function setTableName(string $tableName): void
     {
-        $this->tableName = $this->connection->formatter->getTableName($tableName);
+        $this->tableName = $tableName;
     }
 
     /**

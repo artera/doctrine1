@@ -249,13 +249,10 @@ class Core
      * Recursively load all models from a directory or array of directories
      *
      * @param string|string[]|null  $directory    Path to directory of models or array of directory paths
-     * @param string|null  $classPrefix  The class prefix of the models to load. This is useful if the class name and file name are not the same
      * @throws Exception
      */
-    public static function loadModels(string|array|null $directory, ?string $classPrefix = null): array
+    public static function loadModels(string|array|null $directory): array
     {
-        $classPrefix ??= Manager::getInstance()->getModelClassPrefix();
-
         $loadedModels = [];
 
         if ($directory !== null) {
@@ -275,10 +272,6 @@ class Core
 
                     if (end($e) === 'php' && strpos($file->getFileName(), '.inc') === false) {
                         $className = $e[0];
-
-                        if ($classPrefix && $classPrefix != substr($className, 0, strlen($classPrefix))) {
-                            $className = $classPrefix . $className;
-                        }
 
                         if (!class_exists($className, false)) {
                             self::loadModel($className, $file->getPathName());

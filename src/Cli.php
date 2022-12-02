@@ -452,9 +452,6 @@ class Cli
         } catch (Throwable $exception) {
             // Do not rethrow exceptions by default
             if ($this->getConfigValue('rethrow_exceptions', false)) {
-                $exceptionClass = get_class($exception);
-                /** @var Throwable $exception */
-                $exception = new $exceptionClass($this->formatExceptionMessage($exception));
                 throw $exception;
             }
 

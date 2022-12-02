@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Core;
 
 use Tests\DoctrineUnitTestCase;
@@ -147,7 +148,7 @@ class ConnectionTest extends DoctrineUnitTestCase
         $table = static::$connection->getTable('Group');
         $this->assertTrue($table instanceof \Doctrine1\Table);
 
-        $this->expectException(\Doctrine1\Exception::class);
+        $this->expectException(\Error::class);
         $table = static::$connection->getTable('Unknown');
 
         $table = static::$connection->getTable('User');

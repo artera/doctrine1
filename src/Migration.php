@@ -137,8 +137,7 @@ class Migration
      */
     public function setTableName($tableName)
     {
-        $this->migrationTableName = $this->connection
-            ->formatter->getTableName($tableName);
+        $this->migrationTableName = $tableName;
     }
 
     /**
@@ -150,7 +149,7 @@ class Migration
      */
     public function loadMigrationClassesFromDirectory($directory = null)
     {
-        $directory = $directory ? $directory:$this->migrationClassesDirectory;
+        $directory = $directory ? $directory : $this->migrationClassesDirectory;
 
         $classesToLoad = [];
         $classes       = get_declared_classes();
@@ -265,7 +264,7 @@ class Migration
 
         $result = $this->connection->fetchColumn('SELECT version FROM ' . $this->migrationTableName);
 
-        return isset($result[0]) ? $result[0]:0;
+        return isset($result[0]) ? $result[0] : 0;
     }
 
     /**
@@ -279,7 +278,7 @@ class Migration
 
         $result = $this->connection->fetchColumn('SELECT version FROM ' . $this->migrationTableName);
 
-        return isset($result[0]) ? true:false;
+        return isset($result[0]) ? true : false;
     }
 
     /**
@@ -292,7 +291,7 @@ class Migration
         $versions = array_keys($this->migrationClasses);
         rsort($versions);
 
-        return isset($versions[0]) ? $versions[0]:0;
+        return isset($versions[0]) ? $versions[0] : 0;
     }
 
     /**
@@ -473,7 +472,7 @@ class Migration
             throw new Migration\Exception('Already at version # ' . $to);
         }
 
-        $direction = $from > $to ? 'down':'up';
+        $direction = $from > $to ? 'down' : 'up';
 
         if ($direction === 'up') {
             for ($i = $from + 1; $i <= $to; $i++) {

@@ -257,7 +257,7 @@ class RawSqlTest extends DoctrineUnitTestCase
     {
         $query = new \Doctrine1\RawSql();
         $query->parseDqlQueryPart('select', '{test.test}');
-        $this->expectException(\Doctrine1\RawSql\Exception::class);
+        $this->expectException(\Error::class);
         $query->getSqlQuery();
     }
 }

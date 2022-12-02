@@ -248,16 +248,4 @@ class Formatter extends Connection\Module
             preg_replace('/[^a-z0-9_\$]/i', '_', $fkey)
         );
     }
-
-    /**
-     * adds table name formatting to a table name
-     *
-     * @param  string $table name of the table
-     * @return string   formatted table name
-     */
-    public function getTableName($table)
-    {
-        $format = $this->conn->getTableNameFormat();
-        return sprintf($format, str_replace(sprintf($format, null), '', $table));
-    }
 }

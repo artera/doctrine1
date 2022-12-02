@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Tickets;
 
 use Tests\DoctrineUnitTestCase;
@@ -26,7 +27,7 @@ END;
         $path = dirname(__FILE__) . '/../tmp';
         $import->importSchema([$yml], 'yml', $path);
 
-        include_once $path . '/generated/BaseTicket_1527_User.php';
+        include_once $path . '/BaseTicket_1527_User.php';
         include_once $path . '/Ticket_1527_User.php';
         $username = \Doctrine1\Core::getTable('Ticket_1527_User')->getDefinitionOf('username');
         $this->assertEquals($username['extra']['test'], '123');

@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Import;
 
 use Tests\DoctrineUnitTestCase;
@@ -25,7 +26,7 @@ class ImportTest extends DoctrineUnitTestCase
         static::$conn->import->importSchema('Import/_files', ['tmp123']);
 
         $this->assertTrue(file_exists('Import/_files/ImportTestUser.php'));
-        $this->assertTrue(file_exists('Import/_files/generated/BaseImportTestUser.php'));
+        $this->assertTrue(file_exists('Import/_files/BaseImportTestUser.php'));
         \Doctrine1\Lib::removeDirectories('Import/_files');
     }
 }

@@ -46,8 +46,7 @@ class Schema
         'generateBaseClasses'  => true,
         'generateTableClasses' => false,
         'generateAccessors'    => false,
-        'baseClassPrefix'      => 'Base',
-        'baseClassesDirectory' => 'generated',
+        'baseClassFormat'      => 'Base%s',
         'baseClassName'        => Record::class,
     ];
 

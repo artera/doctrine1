@@ -14,8 +14,6 @@ class BuilderTest extends DoctrineUnitTestCase
         $import->setOption('generateTableClasses', true);
         $import->importSchema([dirname(__DIR__) . '/schema.yml'], 'yml', $path);
 
-        $models = \Doctrine1\Core::loadModels($path);
-
         $schemaTestInheritanceParent = new \ReflectionClass(\SchemaTestInheritanceParent::class);
         $schemaTestInheritanceChild1 = new \ReflectionClass(\SchemaTestInheritanceChild1::class);
         $schemaTestInheritanceChild2 = new \ReflectionClass(\SchemaTestInheritanceChild2::class);

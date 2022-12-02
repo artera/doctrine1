@@ -23,11 +23,6 @@ class Builder
     protected string $path = '';
 
     /**
-     * File suffix to use when writing class definitions
-     */
-    protected string $suffix = '.php';
-
-    /**
      * Bool true/false for whether or not to generate base classes
      */
     protected bool $generateBaseClasses = true;
@@ -38,14 +33,9 @@ class Builder
     protected bool $generateTableClasses = false;
 
     /**
-     * Prefix to use for generated base classes
+     * Format to use for generated base classes
      */
-    protected string $baseClassPrefix = 'Base';
-
-    /**
-     * Directory to put the generate base classes in
-     */
-    protected string $baseClassesDirectory = 'generated';
+    protected string $baseClassFormat = 'Base%s';
 
     /**
      * Base class name for generated classes
@@ -65,9 +55,9 @@ class Builder
     protected string $tableClassFormat = '%sTable';
 
     /**
-     * Prefix to all generated classes
+     * Format to user for generated model classes
      */
-    protected string $classPrefix = '';
+    protected string $namespace = '\\';
 
     public function __construct()
     {
@@ -75,12 +65,47 @@ class Builder
         if ($tableClass = $manager->getTableClass()) {
             $this->baseTableClassName = $tableClass;
         }
-        if ($classPrefix = $manager->getModelClassPrefix()) {
-            $this->classPrefix = $classPrefix;
+        if ($namespace = $manager->getModelNamespace()) {
+            $this->namespace = $namespace;
         }
         if ($tableClassFormat = $manager->getTableClassFormat()) {
             $this->tableClassFormat = $tableClassFormat;
         }
+    }
+
+    public function getFullModelClassName(string $name): string
+    {
+        return ltrim($this->namespace . '\\' . ltrim($name, '\\'), '\\');
+    }
+
+    public function getBaseClassName(string $name, bool $full = true): string
+    {
+        $name = sprintf($this->baseClassFormat, $name);
+        if (!$full) {
+            return $name;
+        }
+        return ltrim($this->namespace . '\\' . ltrim($name, '\\'), '\\');
+    }
+
+    public function getTableClassName(string $name, bool $full = true): string
+    {
+        $name = sprintf($this->tableClassFormat, $name);
+        if (!$full) {
+            return $name;
+        }
+        return ltrim($this->namespace . '\\' . ltrim($name, '\\'), '\\');
+    }
+
+    protected function classNameToFileName(string $name): string
+    {
+        $filename = str_replace('\\', DIRECTORY_SEPARATOR, trim($name, '\\')) . '.php';
+
+        $namespacePath = str_replace('\\', DIRECTORY_SEPARATOR, trim($this->namespace, '\\')) . DIRECTORY_SEPARATOR;
+        if (str_starts_with($filename, $namespacePath)) {
+            $filename = ltrim(substr($filename, strlen($namespacePath)), DIRECTORY_SEPARATOR);
+        }
+
+        return $filename;
     }
 
     /**
@@ -144,7 +169,7 @@ class Builder
     /**
      * Build the table definition of a \Doctrine1\Record object
      */
-    public function buildTableDefinition(ClassGenerator $gen, array $definition, string $prefix = ''): void
+    public function buildTableDefinition(ClassGenerator $gen, array $definition): void
     {
         $type = $definition['inheritance']['type'] ?? null;
         if ($type === 'simple' || $type === 'column_aggregation') {
@@ -184,7 +209,7 @@ class Builder
         if (!empty($definition['inheritance']['subclasses']) && is_array($definition['inheritance']['subclasses'])) {
             $subClasses = [];
             foreach ($definition['inheritance']['subclasses'] as $className => $def) {
-                $className = $this->classPrefix . $className;
+                $className = $this->getFullModelClassName($className);
                 $subClasses[$className] = $def;
             }
             $ret[] = "\$this->setSubClasses({$this->varExport($subClasses)});";
@@ -205,11 +230,9 @@ class Builder
         if (!empty($definition['relations']) && is_array($definition['relations'])) {
             foreach ($definition['relations'] as $name => $relation) {
                 $class = $relation['class'] ?? $name;
-                $alias = (isset($relation['alias']) && $relation['alias'] !== $this->classPrefix . $relation['class']) ? " as {$relation['alias']}" : '';
+                $alias = (isset($relation['alias']) && $relation['alias'] !== $this->getFullModelClassName($relation['class'])) ? " as {$relation['alias']}" : '';
 
-                if (!isset($relation['type'])) {
-                    $relation['type'] = Relation::ONE;
-                }
+                $relation['type'] ??= Relation::ONE;
 
                 if ($relation['type'] === Relation::ONE) {
                     $hasMethod = 'hasOne';
@@ -233,10 +256,10 @@ class Builder
                 ]));
 
                 if (!empty($relExport['refClass'])) {
-                    $relExport['refClass'] = $this->classPrefix . $relExport['refClass'];
+                    $relExport['refClass'] = $this->getFullModelClassName($relExport['refClass']);
                 }
 
-                $row = "\$this->$hasMethod({$this->varExport($this->classPrefix . $class . $alias)}, {$this->varExport($relExport)});\n";
+                $row = "\$this->$hasMethod({$this->varExport($this->getFullModelClassName($class . $alias))}, {$this->varExport($relExport)});\n";
 
                 $sortBy = $relation['alias'] ?? $relation['class'] ?? $name;
                 $ret[$sortBy] = $row;
@@ -409,7 +432,7 @@ class Builder
             if (isset($relation['type']) && $relation['type'] == Relation::MANY) {
                 $types[] = '\\' . Collection::class . "<{$relation['class']}>";
             } else {
-                $types[] = $this->classPrefix . $relation['class'];
+                $types[] = $this->getFullModelClassName($relation['class']);
 
                 $column = $columns[$relation['local']];
                 if (empty($column['notnull']) && empty($column['primary'])) {
@@ -419,10 +442,10 @@ class Builder
             $docBlock->setTag(new PropertyTag($fieldName, $types));
         }
 
-        $genericOver = sprintf($this->tableClassFormat, $topLevelClass);
+        $genericOver = $this->getTableClassName($topLevelClass, false);
         $docBlock->setTag([
             'name' => 'phpstan-extends',
-            'content' => "{$gen->getExtendedClass()}<{$genericOver}>",
+            'content' => "\\{$gen->getExtendedClass()}<{$genericOver}>",
         ]);
 
         $gen->setDocBlock($docBlock);
@@ -473,7 +496,6 @@ class Builder
                 'coll_key' => "\$this->setCollectionKey($values);\n",
                 'idxname_format' => "\$this->setIndexNameFormat($values);\n",
                 'seqname_format' => "\$this->setSequenceNameFormat($values);\n",
-                'tblname_format' => "\$this->setTableNameFormat($values);\n",
                 'fkname_format' => "\$this->setForeignKeyNameFormat($values);\n",
                 'quote_identifier' => "\$this->setQuoteIdentifier($values);\n",
                 'seqcol_name' => "\$this->setSequenceColumnName($values);\n",
@@ -502,7 +524,7 @@ class Builder
                 'collection_class' => "\$this->setCollectionClass($values);\n",
                 'table_class' => "\$this->setTableClass($values);\n",
                 'table_class_format' => "\$this->setTableClassFormat($values);\n",
-                'model_class_prefix' => "\$this->setModelClassPrefix($values);\n",
+                'model_class_format' => "\$this->setModelClassFormat($values);\n",
                 default => '',
             };
         }
@@ -543,23 +565,21 @@ class Builder
     {
         $gen = new ClassGenerator();
 
-        if ($this->classPrefix) {
-            $definition['className'] = $this->classPrefix . $definition['className'];
-            if (isset($definition['connectionClassName'])) {
-                $definition['connectionClassName'] = $this->classPrefix . $definition['connectionClassName'];
-            }
-            $definition['topLevelClassName'] = $this->classPrefix . $definition['topLevelClassName'];
-            if (isset($definition['inheritance']['extends'])) {
-                $definition['inheritance']['extends'] = $this->classPrefix . $definition['inheritance']['extends'];
-            }
+        $definition['className'] = $definition['className'];
+        if (isset($definition['connectionClassName'])) {
+            $definition['connectionClassName'] = $definition['connectionClassName'];
+        }
+        $definition['topLevelClassName'] = $definition['topLevelClassName'];
+        if (isset($definition['inheritance']['extends'])) {
+            $definition['inheritance']['extends'] = $definition['inheritance']['extends'];
         }
 
-        $gen->setName($this->classPrefix . $className);
+        $gen->setName($className);
         $gen->setExtendedClass($definition['inheritance']['extends'] ?? $this->baseClassName);
         $gen->setAbstract($definition['abstract'] ?? false);
 
         if (empty($definition['no_definition'])) {
-            $this->buildTableDefinition($gen, $definition, $this->classPrefix);
+            $this->buildTableDefinition($gen, $definition);
             $this->buildSetUp($gen, $definition);
         }
 
@@ -575,7 +595,7 @@ class Builder
     public function buildRecord(array $definition): void
     {
         if (!isset($definition['className'])) {
-            throw new \Doctrine1\Import\Builder\Exception('Missing class name.');
+            throw new Exception('Missing class name.');
         }
 
         $definition['topLevelClassName'] = $definition['className'];
@@ -587,17 +607,19 @@ class Builder
 
             // If we have a package then we need to make this extend the package definition and not the base definition
             // The package definition will then extends the base definition
-            $topLevel['inheritance']['extends'] = $this->baseClassPrefix . $topLevel['className'];
+            $topLevel['inheritance']['extends'] = $this->getBaseClassName($topLevel['className']);
             $topLevel['no_definition']          = true;
             $topLevel['generate_once']          = true;
             $topLevel['is_main_class']          = true;
             unset($topLevel['connection']);
 
-            $topLevel['tableClassName']              = sprintf($this->tableClassFormat, $topLevel['className']);
-            $topLevel['inheritance']['tableExtends'] = isset($definition['inheritance']['extends']) ? sprintf($this->tableClassFormat, $definition['inheritance']['extends']) : $this->baseTableClassName;
+            $topLevel['tableClassName']              = $topLevel['className'];
+            $topLevel['inheritance']['tableExtends'] = isset($definition['inheritance']['extends'])
+                ? $this->getTableClassName($definition['inheritance']['extends'])
+                : $this->baseTableClassName;
 
             $baseClass                    = $definition;
-            $baseClass['className']       = $this->baseClassPrefix . $baseClass['className'];
+            $baseClass['className']       = $topLevel['className'];
             $baseClass['abstract']        = true;
             $baseClass['override_parent'] = false;
             $baseClass['is_base_class']   = true;
@@ -616,7 +638,7 @@ class Builder
         $extends = $options['extends'] ?? $this->baseTableClassName;
         if ($extends !== $this->baseTableClassName) {
             /** @var class-string<Table> */
-            $extends = $this->classPrefix . $extends;
+            $extends = $this->getFullModelClassName($extends);
         }
 
         $docBlock = null;
@@ -625,7 +647,7 @@ class Builder
             $docBlock->setWordWrap(false);
             $docBlock->setTag([
                 'name' => 'phpstan-extends',
-                'content' => sprintf('%s<%s>', $extends, $definition['topLevelClassName']),
+                'content' => sprintf('\\%s<%s>', $extends, $definition['topLevelClassName']),
             ]);
         }
 
@@ -644,23 +666,16 @@ class Builder
 
     public function writeTableClassDefinition(array $definition, string $path, array $options = []): void
     {
-        if ($this->classPrefix) {
-            $className = $this->classPrefix . $definition['tableClassName'];
-            $fileName = $className . $this->suffix;
-        } else {
-            $className = $definition['tableClassName'];
-            $fileName  = $className . $this->suffix;
-        }
+        $className = $this->getTableClassName($definition['tableClassName']);
+        $fileName = $this->classNameToFileName($className);
 
-        \Doctrine1\Lib::makeDirectories($path);
         $path .= DIRECTORY_SEPARATOR . $fileName;
+        \Doctrine1\Lib::makeDirectories(dirname($path));
 
         $code = $this->buildTableClassDefinition($className, $definition, $options);
 
-        \Doctrine1\Lib::makeDirectories(dirname($path));
-
         if (!file_exists($path) && file_put_contents($path, "<?php\n\n$code") === false) {
-            throw new \Doctrine1\Import\Builder\Exception("Couldn't write file $path");
+            throw new Exception("Couldn't write file $path");
         }
 
         Core::loadModel($className, $path);
@@ -668,27 +683,25 @@ class Builder
 
     public function writeDefinition(array $definition): void
     {
-        $className = $definition['className'];
-        $code = $this->buildDefinition($className, $definition);
-        $fileName = $className . $this->suffix;
         $path = $this->path;
 
-        if (!empty($definition['is_main_class'])) {
-            if ($this->generateTableClasses()) {
-                $this->writeTableClassDefinition($definition, $path, ['extends' => $definition['inheritance']['tableExtends']]);
-            }
-        } elseif (!empty($definition['is_base_class'])) {
-            $path .= DIRECTORY_SEPARATOR . $this->baseClassesDirectory;
+        $className = empty($definition['is_main_class'])
+            ? $this->getBaseClassName($definition['className'])
+            : $this->getFullModelClassName($definition['className']);
+
+        if (!empty($definition['is_main_class']) && $this->generateTableClasses()) {
+            $this->writeTableClassDefinition($definition, $path, ['extends' => $definition['inheritance']['tableExtends']]);
         }
 
-        // If we have a writePath from the if else conditionals above then use it
-        \Doctrine1\Lib::makeDirectories($path);
-        $path .= DIRECTORY_SEPARATOR . $fileName;
+        $fileName = $this->classNameToFileName($className);
 
-        if (empty($definition['generate_once']) || !file_exists($path)) {
-            if (file_put_contents($path, "<?php\n\n$code") === false) {
-                throw new \Doctrine1\Import\Builder\Exception("Couldn't write file $path");
-            }
+        $path .= DIRECTORY_SEPARATOR . $fileName;
+        \Doctrine1\Lib::makeDirectories(dirname($path));
+
+        $code = $this->buildDefinition($className, $definition);
+
+        if ((empty($definition['generate_once']) || !file_exists($path)) && file_put_contents($path, "<?php\n\n$code") === false) {
+            throw new Exception("Couldn't write file $path");
         }
 
         Core::loadModel($className, $path);

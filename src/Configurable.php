@@ -257,17 +257,17 @@ abstract class Configurable
         $this->hydrateOverwrite = $value;
     }
 
-    // MODEL CLASS PREFIX =====================================================
-    protected ?string $modelClassPrefix = null;
+    // MODEL NAMESPACE ========================================================
+    protected ?string $modelNamespace = null;
 
-    public function getModelClassPrefix(): string
+    public function getModelNamespace(): string
     {
-        return $this->modelClassPrefix ?? $this->parent?->getModelClassPrefix() ?? '';
+        return $this->modelCNamespace?? $this->parent?->getModelNamespace() ?? '\\';
     }
 
-    public function setModelClassPrefix(?string $value): void
+    public function setModelNamespace(?string $value): void
     {
-        $this->modelClassPrefix = $value;
+        $this->modelNamespace = $value;
     }
 
     // QUERY CLASS ============================================================
@@ -426,22 +426,6 @@ abstract class Configurable
             throw new Exception('Index name format cannot be set at table level (only at connection or global level).');
         }
         $this->indexNameFormat = $value;
-    }
-
-    // TABLE NAME FORMAT ======================================================
-    protected ?string $tableNameFormat = null;
-
-    public function getTableNameFormat(): string
-    {
-        return $this->tableNameFormat ?? $this->parent?->getTableNameFormat() ?? '%s';
-    }
-
-    public function setTableNameFormat(?string $value): void
-    {
-        if ($this instanceof Table) {
-            throw new Exception('Table name format cannot be set at table level (only at connection or global level).');
-        }
-        $this->tableNameFormat = $value;
     }
 
     // FOREIGN KEY NAME FORMAT ================================================
