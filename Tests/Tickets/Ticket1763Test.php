@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Tickets {
     use Tests\DoctrineUnitTestCase;
 
@@ -20,12 +21,7 @@ namespace Tests\Tickets {
             $this->validateErrorString($string);
 
             $this->expectException(\Exception::class);
-            try {
-                $user->save();
-                $this->assertTrue(false);
-            } catch (Exception $e) {
-                $this->validateErrorString($e->getMessage());
-            }
+            $user->save();
 
             \Doctrine1\Manager::getInstance()->setValidate(\Doctrine1\Core::VALIDATE_NONE);
         }

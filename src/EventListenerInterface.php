@@ -4,113 +4,35 @@ namespace Doctrine1;
 
 interface EventListenerInterface
 {
-    /**
-     * @return void
-     */
-    public function preTransactionCommit(Event $event);
-
-    /**
-     * @return void
-     */
-    public function postTransactionCommit(Event $event);
-
-    /**
-     * @return void
-     */
-    public function preTransactionRollback(Event $event);
-
-    /**
-     * @return void
-     */
-    public function postTransactionRollback(Event $event);
-
-    /**
-     * @return void
-     */
-    public function preTransactionBegin(Event $event);
-
-    /**
-     * @return void
-     */
-    public function postTransactionBegin(Event $event);
-
-    /**
-     * @return void
-     */
-    public function postConnect(Event $event);
-
-    /**
-     * @return void
-     */
-    public function preConnect(Event $event);
-
-    /**
-     * @return void
-     */
-    public function preQuery(Event $event);
-
-    /**
-     * @return void
-     */
-    public function postQuery(Event $event);
-
-    /**
-     * @return void
-     */
-    public function prePrepare(Event $event);
-
-    /**
-     * @return void
-     */
-    public function postPrepare(Event $event);
-
-    /**
-     * @return void
-     */
-    public function preExec(Event $event);
-
-    /**
-     * @return void
-     */
-    public function postExec(Event $event);
-
-    /**
-     * @return void
-     */
-    public function preError(Event $event);
-
-    /**
-     * @return void
-     */
-    public function postError(Event $event);
-
-    /**
-     * @return void
-     */
-    public function preFetch(Event $event);
-
-    /**
-     * @return void
-     */
-    public function postFetch(Event $event);
-
-    /**
-     * @return void
-     */
-    public function preFetchAll(Event $event);
-
-    /**
-     * @return void
-     */
-    public function postFetchAll(Event $event);
-
-    /**
-     * @return void
-     */
-    public function preStmtExecute(Event $event);
-
-    /**
-     * @return void
-     */
-    public function postStmtExecute(Event $event);
+    public function onOpen(Connection $connection): void;
+    public function preClose(Event $event): void;
+    public function postClose(Event $event): void;
+    public function preTransactionCommit(Event $event): void;
+    public function postTransactionCommit(Event $event): void;
+    public function preTransactionRollback(Event $event): void;
+    public function postTransactionRollback(Event $event): void;
+    public function preTransactionBegin(Event $event): void;
+    public function postTransactionBegin(Event $event): void;
+    public function preSavepointCommit(Event $event): void;
+    public function postSavepointCommit(Event $event): void;
+    public function preSavepointRollback(Event $event): void;
+    public function postSavepointRollback(Event $event): void;
+    public function preSavepointCreate(Event $event): void;
+    public function postSavepointCreate(Event $event): void;
+    public function postConnect(Event $event): void;
+    public function preConnect(Event $event): void;
+    public function preQuery(Event $event): void;
+    public function postQuery(Event $event): void;
+    public function prePrepare(Event $event): void;
+    public function postPrepare(Event $event): void;
+    public function preExec(Event $event): void;
+    public function postExec(Event $event): void;
+    public function preError(Event $event): void;
+    public function postError(Event $event): void;
+    public function preFetch(Event $event): void;
+    public function postFetch(Event $event): void;
+    public function preFetchAll(Event $event): void;
+    public function postFetchAll(Event $event): void;
+    public function preStmtExecute(Event $event): void;
+    public function postStmtExecute(Event $event): void;
 }

@@ -2,6 +2,9 @@
 
 namespace Doctrine1\Hydrator;
 
+use Doctrine1\Collection;
+use Doctrine1\None;
+
 /** @extends \Doctrine1\Hydrator\Graph<\Doctrine1\Collection<\Doctrine1\Record>, \Doctrine1\Record> */
 class RecordDriver extends \Doctrine1\Hydrator\Graph
 {
@@ -18,7 +21,7 @@ class RecordDriver extends \Doctrine1\Hydrator\Graph
     /** @phpstan-param class-string<\Doctrine1\Record> $component */
     public function getElementCollection(string $component)
     {
-        $coll = \Doctrine1\Collection::create($component);
+        $coll = Collection::create($component);
         $this->collections[] = $coll;
         return $coll;
     }
@@ -30,7 +33,7 @@ class RecordDriver extends \Doctrine1\Hydrator\Graph
     {
         if (!isset($this->initializedRelations[$record->getOid()][$name])) {
             $relation = $record->getTable()->getRelation($name);
-            $coll = \Doctrine1\Collection::create($relation->getTable()->getComponentName(), $keyColumn);
+            $coll = Collection::create($relation->getTable()->getComponentName(), $keyColumn);
             $coll->setReference($record, $relation);
             $record[$name]                                         = $coll;
             $this->initializedRelations[$record->getOid()][$name] = true;
@@ -38,14 +41,14 @@ class RecordDriver extends \Doctrine1\Hydrator\Graph
         return true;
     }
 
-    public function registerCollection(\Doctrine1\Collection $coll): void
+    public function registerCollection(Collection $coll): void
     {
         $this->collections[] = $coll;
     }
 
-    public function getNullPointer(): ?\Doctrine1\None
+    public function getNullPointer(): ?None
     {
-        return \Doctrine1\None::instance();
+        return None::instance();
     }
 
     public function getElement(array $data, string $component)
@@ -66,7 +69,7 @@ class RecordDriver extends \Doctrine1\Hydrator\Graph
 
     public function setLastElement(array &$prev, &$coll, int|bool $index, string $dqlAlias, bool $oneToOne): void
     {
-        if ($coll instanceof \Doctrine1\None || $coll === null) {
+        if ($coll instanceof None || $coll === null) {
             unset($prev[$dqlAlias]); // Ticket #1228
             return;
         }

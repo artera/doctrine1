@@ -2,31 +2,36 @@
 
 namespace Doctrine1;
 
+use Doctrine1\Column\Type;
+use Doctrine1\Table;
 use Throwable;
 
 /**
  * @template Connection of Connection
  * @extends Connection\Module<Connection>
+ * @phpstan-type ExportableOptions = array{
+ *   name?: string,
+ *   tableName?: string,
+ *   sequenceName?: ?string,
+ *   inheritanceMap?: array,
+ *   enumMap?: array,
+ *   type?: ?string,
+ *   charset?: ?string,
+ *   collate?: ?string,
+ *   treeImpl?: mixed,
+ *   treeOptions?: array,
+ *   indexes?: array{type?: string, fields?: string[]}[],
+ *   parents?: array,
+ *   queryParts?: array,
+ *   subclasses?: array,
+ *   orderBy?: mixed,
+ *   checks?: array,
+ *   primary?: string[],
+ *   foreignKeys?: mixed[],
+ * }
  */
 class Export extends Connection\Module
 {
-    /**
-     * @var array
-     */
-    protected $valid_default_values = [
-        'text'      => '',
-        'boolean'   => true,
-        'integer'   => 0,
-        'decimal'   => 0.0,
-        'float'     => 0.0,
-        'timestamp' => '1970-01-01 00:00:00',
-        'time'      => '00:00:00',
-        'date'      => '1970-01-01',
-        'clob'      => '',
-        'blob'      => '',
-        'string'    => ''
-    ];
-
     /**
      * drop an existing database
      * (this method is implemented by the drivers)
@@ -186,18 +191,12 @@ class Export extends Connection\Module
      * create a new table
      *
      * @param string $name    Name of the database that should be created
-     * @param array  $fields  Associative array that contains the definition of each field of the new table
-     *                        The indexes of the array entries are the names of the fields of the table an
-     *                        the array entry values are associative arrays like those that are meant to be
-     *                        passed with the field definitions to get[Type]Declaration() functions. array(
-     *                        'id' => array( 'type' => 'integer', 'unsigned' => 1 'notnull' => 1 'default'
-     *                        => 0 ), 'name' => array( 'type' => 'text', 'length' => 12 ), 'password' =>
-     *                        array( 'type' => 'text', 'length' => 12 ) );
-     * @param array  $options An associative array of table options:
-     *
+     * @param Column[] $fields
+     * @param array|null $options An associative array of table options:
+     * @phpstan-param ?ExportableOptions $options
      * @return array
      */
-    public function createTableSql($name, array $fields, array $options = [])
+    public function createTableSql(string $name, array $fields, ?array $options = null): array
     {
         if (!$name) {
             throw new Export\Exception('no valid table name specified');
@@ -210,12 +209,12 @@ class Export extends Connection\Module
         $queryFields = $this->getFieldDeclarationList($fields);
 
 
-        if (isset($options['primary']) && !empty($options['primary'])) {
+        if (!empty($options['primary'])) {
             $primaryKeys = array_map([$this->conn, 'quoteIdentifier'], array_values($options['primary']));
             $queryFields .= ', PRIMARY KEY(' . implode(', ', $primaryKeys) . ')';
         }
 
-        if (isset($options['indexes']) && !empty($options['indexes'])) {
+        if (!empty($options['indexes'])) {
             foreach ($options['indexes'] as $index => $definition) {
                 $indexDeclaration = $this->getIndexDeclaration($index, $definition);
                 $queryFields .= ', ' . $indexDeclaration;
@@ -248,28 +247,32 @@ class Export extends Connection\Module
      * create a new table
      *
      * @param string $name    Name of the database that should be created
-     * @param array  $fields  Associative array that contains the definition of each field of the new table
-     * @param array  $options An associative array of table options:
+     * @param Column[] $fields  Associative array that contains the definition of each field of the new table
+     * @param array|null $options An associative array of table options:
+     * @phpstan-param ?ExportableOptions $options
      * @see   Export::createTableSql()
-     *
      * @return void
      */
-    public function createTable($name, array $fields, array $options = [])
+    public function createTable($name, array $fields, ?array $options = null)
     {
         // Build array of the primary keys if any of the individual field definitions
         // specify primary => true
         $count = 0;
-        foreach ($fields as $fieldName => $field) {
-            if (isset($field['primary']) && $field['primary']) {
+        foreach ($fields as $field) {
+            if (is_array($field)) { // @phpstan-ignore-line
+                throw new \InvalidArgumentException('Fields should be of class \Doctrine1\Column');
+            }
+
+            if ($field->primary) {
                 if ($count == 0) {
                     $options['primary'] = [];
                 }
                 $count++;
-                $options['primary'][] = $fieldName;
+                $options['primary'][] = $field->name;
             }
         }
 
-        $sql = (array) $this->createTableSql($name, $fields, $options);
+        $sql = $this->createTableSql($name, $fields, $options);
 
         foreach ($sql as $query) {
             $this->conn->execute($query);
@@ -535,37 +538,15 @@ class Export extends Connection\Module
     /**
      * Get declaration of a number of field in bulk
      *
-     * @param array $fields a multidimensional associative array.
-     *                      The first dimension determines the
-     *                      field name, while the second
-     *                      dimension is keyed with the name of
-     *                      the properties of the field being
-     *                      declared as array indexes. Currently,
-     *                      the types of supported field
-     *                      properties are as follows: length
-     *                      Integer value that determines the
-     *                      maximum length of the text field. If
-     *                      this argument is missing the field
-     *                      should be declared to have the
-     *                      longest length allowed by the DBMS.
-     *                      default Text value to be used as
-     *                      default for this field. notnull
-     *                      Boolean flag that indicates whether
-     *                      this field is constrained to not be
-     *                      set to null. charset Text value with
-     *                      the default CHARACTER SET for this
-     *                      field. collation Text value with the
-     *                      default COLLATION for this field.
-     *                      unique unique constraint
-     *
+     * @param Column[] $fields
      * @return string
      */
-    public function getFieldDeclarationList(array $fields)
+    public function getFieldDeclarationList(array $fields): string
     {
         $queryFields = [];
 
-        foreach ($fields as $fieldName => $field) {
-            $query = $this->getDeclaration($fieldName, $field);
+        foreach ($fields as $field) {
+            $query = $this->getDeclaration($field);
 
             $queryFields[] = $query;
         }
@@ -576,57 +557,31 @@ class Export extends Connection\Module
      * Obtain DBMS specific SQL code portion needed to declare a generic type
      * field to be used in statements like CREATE TABLE.
      *
-     * @param string $name  name the field to be declared.
-     * @param array  $field associative array with the name of the properties
-     *                      of the field being declared as array indexes.
-     *                      Currently, the types of supported field
-     *                      properties are as follows: length Integer value
-     *                      that determines the maximum length of the text
-     *                      field. If this argument is missing the field
-     *                      should be declared to have the longest length
-     *                      allowed by the DBMS. default Text value to be
-     *                      used as default for this field. notnull Boolean
-     *                      flag that indicates whether this field is
-     *                      constrained to not be set to null. charset Text
-     *                      value with the default CHARACTER SET for this
-     *                      field. collation Text value with the default
-     *                      COLLATION for this field. unique unique
-     *                      constraint check column check constraint
-     *
-     * @return string  DBMS specific SQL code portion that should be used to
+     * @return string DBMS specific SQL code portion that should be used to
      *      declare the specified field.
      */
-    public function getDeclaration($name, array $field)
+    public function getDeclaration(Column $field): string
     {
         $default = $this->getDefaultFieldDeclaration($field);
-
-        $charset = (isset($field['charset']) && $field['charset']) ?
-                    ' ' . $this->getCharsetFieldDeclaration($field['charset']) : '';
-
-        $collation = (isset($field['collation']) && $field['collation']) ?
-                    ' ' . $this->getCollationFieldDeclaration($field['collation']) : '';
-
+        $charset = $field->charset ? ' ' . $this->getCharsetFieldDeclaration($field->charset) : '';
+        $collation = $field->collation ? ' ' . $this->getCollationFieldDeclaration($field->collation) : '';
         $notnull = $this->getNotNullFieldDeclaration($field);
+        $unique = $field->unique ? ' ' . $this->getUniqueFieldDeclaration() : '';
+        $check = $field->check ? ' ' . $field->check : '';
 
-        $unique = (isset($field['unique']) && $field['unique']) ?
-                    ' ' . $this->getUniqueFieldDeclaration() : '';
-
-        $check = (isset($field['check']) && $field['check']) ?
-                    ' ' . $field['check'] : '';
-
-        $method = 'get' . $field['type'] . 'Declaration';
+        $method = 'get' . $field->type->value . 'Declaration';
 
         try {
             if (method_exists($this->conn->dataDict, $method)) {
-                return $this->conn->dataDict->$method($name, $field);
+                return $this->conn->dataDict->$method($field);
             } else {
                 $dec = $this->conn->dataDict->getNativeDeclaration($field);
             }
 
-            return $this->conn->quoteIdentifier($name, true)
+            return $this->conn->quoteIdentifier($field->name, true)
                  . ' ' . $dec . $charset . $default . $notnull . $unique . $check . $collation;
         } catch (Throwable $e) {
-            throw new Exception('Around field ' . $name . ': ' . $e->getMessage());
+            throw new Exception('Around field ' . $field->name . ': ' . $e->getMessage(), previous: $e);
         }
     }
 
@@ -635,31 +590,34 @@ class Export extends Connection\Module
      * Obtain DBMS specific SQL code portion needed to set a default value
      * declaration to be used in statements like CREATE TABLE.
      *
-     * @param  array $field field definition array
-     * @return string           DBMS specific SQL code portion needed to set a default value
+     * @return string DBMS specific SQL code portion needed to set a default value
      */
-    public function getDefaultFieldDeclaration($field)
+    public function getDefaultFieldDeclaration(Column $field): string
     {
         $default = '';
 
-        if (array_key_exists('default', $field)) {
-            if ($field['default'] === '') {
-                $field['default'] = empty($field['notnull'])
-                    ? null : $this->valid_default_values[$field['type']];
+        if ($field->hasDefault()) {
+            $default = $field->default;
 
-                if ($field['default'] === ''
-                    && ($this->conn->getPortability() & Core::PORTABILITY_EMPTY_TO_NULL)
-                ) {
-                    $field['default'] = null;
+            if (empty($default)) {
+                $default = $field->notnull
+                    ? $field->type->default()
+                    : null;
+
+                if (empty($default) && ($this->conn->getPortability() & Core::PORTABILITY_EMPTY_TO_NULL)) {
+                    $default = null;
                 }
             }
 
-            if ($field['type'] === 'boolean') {
-                $field['default'] = $this->conn->convertBooleans($field['default']);
+            if ($field->type === Type::Boolean) {
+                $default = $this->conn->convertBooleans($default);
             }
-            $default = ' DEFAULT ' . ($field['default'] === null
-                ? 'NULL'
-                : $this->conn->quote($field['default'], $field['type']));
+
+            $default = ' DEFAULT ' . (
+                $default === null
+                    ? 'NULL'
+                    : $this->conn->quote($default, $field->type->value)
+            );
         }
 
         return $default;
@@ -671,12 +629,11 @@ class Export extends Connection\Module
      * Obtain DBMS specific SQL code portion needed to set a NOT NULL
      * declaration to be used in statements like CREATE TABLE.
      *
-     * @param  array $definition field definition array
-     * @return string           DBMS specific SQL code portion needed to set a default value
+     * @return string DBMS specific SQL code portion needed to set a default value
      */
-    public function getNotNullFieldDeclaration(array $definition)
+    public function getNotNullFieldDeclaration(Column $column)
     {
-        return (isset($definition['notnull']) && $definition['notnull']) ? ' NOT NULL' : '';
+        return $column->notnull ? ' NOT NULL' : '';
     }
 
 
@@ -684,22 +641,23 @@ class Export extends Connection\Module
      * Obtain DBMS specific SQL code portion needed to set a CHECK constraint
      * declaration to be used in statements like CREATE TABLE.
      *
-     * @param  array $definition check definition
-     * @return string               DBMS specific SQL code portion needed to set a CHECK constraint
+     * @param array $definition check definition
+     * @phpstan-param (string|Column)[] $definition
+     * @return string DBMS specific SQL code portion needed to set a CHECK constraint
      */
     public function getCheckDeclaration(array $definition)
     {
         $constraints = [];
         foreach ($definition as $field => $def) {
             if (is_string($def)) {
-                $constraints[] = 'CHECK (' . $def . ')';
+                $constraints[] = "CHECK ($def)";
             } else {
-                if (isset($def['min'])) {
-                    $constraints[] = 'CHECK (' . $field . ' >= ' . $def['min'] . ')';
+                if ($def->min !== null) {
+                    $constraints[] = "CHECK ($field >= {$def->min})";
                 }
 
-                if (isset($def['max'])) {
-                    $constraints[] = 'CHECK (' . $field . ' <= ' . $def['max'] . ')';
+                if ($def->max !== null) {
+                    $constraints[] = "CHECK ($field <= {$def->max})";
                 }
             }
         }
@@ -712,10 +670,11 @@ class Export extends Connection\Module
      * declaration to be used in statements like CREATE TABLE.
      *
      * @param  string $name       name of the index
-     * @param  array  $definition index definition
-     * @return string               DBMS specific SQL code portion needed to set an index
+     * @param  array $definition index definition
+     * @phpstan-param array{type?: string, fields?: array<string, string | mixed[]>} $definition
+     * @return string DBMS specific SQL code portion needed to set an index
      */
-    public function getIndexDeclaration($name, array $definition)
+    public function getIndexDeclaration(string $name, array $definition): string
     {
         $name = $this->conn->quoteIdentifier($name);
         $type = '';
@@ -742,10 +701,10 @@ class Export extends Connection\Module
     }
 
     /**
-     * getIndexFieldDeclarationList
      * Obtain DBMS specific SQL code portion needed to set an index
      * declaration to be used in statements like CREATE TABLE.
      *
+     * @param array<string, string | mixed[]> $fields
      * @return string
      */
     public function getIndexFieldDeclarationList(array $fields)
@@ -936,7 +895,7 @@ class Export extends Connection\Module
      * @return string  DBMS specific SQL code portion needed to set the CHARACTER SET
      *                 of a field declaration.
      */
-    public function getCharsetFieldDeclaration($charset)
+    public function getCharsetFieldDeclaration(string $charset): string
     {
         return '';
     }
@@ -949,7 +908,7 @@ class Export extends Connection\Module
      * @return string  DBMS specific SQL code portion needed to set the COLLATION
      *                 of a field declaration.
      */
-    public function getCollationFieldDeclaration($collation)
+    public function getCollationFieldDeclaration(string $collation): string
     {
         return '';
     }
@@ -1102,7 +1061,7 @@ class Export extends Connection\Module
                     // we only want to silence table already exists errors
                     if ($e->getPortableCode() !== Core::ERR_ALREADY_EXISTS) {
                         $savepoint->rollback();
-                        throw new Export\Exception($e->getMessage() . '. Failing Query: ' . $query);
+                        throw new Export\Exception("{$e->getMessage()}. Failing Query: $query", previous: $e);
                     }
                 }
             }

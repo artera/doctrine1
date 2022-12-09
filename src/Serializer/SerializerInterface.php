@@ -2,21 +2,15 @@
 
 namespace Doctrine1\Serializer;
 
+use Doctrine1\Column;
+use Doctrine1\Table;
+
 interface SerializerInterface
 {
     /**
-     * @phpstan-param array{
-     *   type: string,
-     *   length: int,
-     *   notnull?: bool,
-     *   values?: array,
-     *   default?: mixed,
-     *   autoincrement?: bool,
-     *   values?: mixed[],
-     * } $column
-     * @return scalar
+     * @return scalar|null
      */
-    public function serialize(mixed $value, array $column, \Doctrine1\Table $table): mixed;
+    public function serialize(mixed $value, Column $column, Table $table): mixed;
 
-    public function areEquivalent(mixed $a, mixed $b, array $column, \Doctrine1\Table $table): bool;
+    public function areEquivalent(mixed $a, mixed $b, Column $column, Table $table): bool;
 }

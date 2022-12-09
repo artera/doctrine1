@@ -2,26 +2,29 @@
 
 namespace Doctrine1\Serializer;
 
+use Doctrine1\Column;
+use Doctrine1\Table;
+
 class Boolean implements SerializerInterface
 {
-    protected function checkCompatibility(mixed $value, string $type): void
+    protected function checkCompatibility(mixed $value, Column\Type $type): void
     {
-        if ($type !== 'boolean' || $value === null || !is_scalar($value)) {
+        if ($type !== Column\Type::Boolean || $value === null || !is_scalar($value)) {
             throw new Exception\Incompatible();
         }
     }
 
-    public function serialize(mixed $value, array $column, \Doctrine1\Table $table): mixed
+    public function serialize(mixed $value, Column $column, Table $table): mixed
     {
-        $this->checkCompatibility($value, $column['type']);
+        $this->checkCompatibility($value, $column->type);
         $value = $table->getConnection()->convertBooleans($value);
         assert(!is_array($value)); // checkCompatibility requires a scalar type and convertBooleans only returns an array if the input is an array
         return $value;
     }
 
-    public function areEquivalent(mixed $a, mixed $b, array $column, \Doctrine1\Table $table): bool
+    public function areEquivalent(mixed $a, mixed $b, Column $column, Table $table): bool
     {
-        $this->checkCompatibility($a, $column['type']);
+        $this->checkCompatibility($a, $column->type);
         if (is_numeric($a)) {
             $a = (int) $a;
         }

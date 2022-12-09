@@ -1,7 +1,7 @@
 Article:
   columns:
     title: string(255)
-    content: clob
+    content: string
 
 Article_Category:
   columns:

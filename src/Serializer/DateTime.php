@@ -2,6 +2,9 @@
 
 namespace Doctrine1\Serializer;
 
+use Doctrine1\Column;
+use Doctrine1\Table;
+
 class DateTime implements SerializerInterface
 {
     public function __construct(
@@ -9,7 +12,7 @@ class DateTime implements SerializerInterface
     ) {
     }
 
-    public function serialize(mixed $value, array $column, \Doctrine1\Table $table): mixed
+    public function serialize(mixed $value, Column $column, Table $table): mixed
     {
         if (!$value instanceof \DateTimeInterface) {
             throw new Exception\Incompatible();
@@ -19,24 +22,13 @@ class DateTime implements SerializerInterface
         }
         // only include the time part for other types of columns like timestamp/datetime/string
         // so that we compare only the date part for equivalence
-        if ($column['type'] === 'date') {
+        if ($column->type === Column\Type::Date) {
             return $value->setTimezone($this->timezone)->format('Y-m-d');
         }
         return $value->setTimezone($this->timezone)->format('Y-m-d H:i:s');
     }
 
-    /**
-     * @phpstan-param array{
-     *   type: string,
-     *   length: int,
-     *   notnull?: bool,
-     *   values?: array,
-     *   default?: mixed,
-     *   autoincrement?: bool,
-     *   values?: mixed[],
-     * } $column
-     */
-    public function areEquivalent(mixed $a, mixed $b, array $column, \Doctrine1\Table $table): bool
+    public function areEquivalent(mixed $a, mixed $b, Column $column, Table $table): bool
     {
         return $this->serialize($a, $column, $table) === $this->serialize($b, $column, $table);
     }

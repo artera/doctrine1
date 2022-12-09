@@ -275,7 +275,7 @@ namespace Tests\Query {
                 ->where('CURRENT_DATE() BETWEEN u.QueryTest_Subscription.begin AND u.QueryTest_Subscription.begin')
                 ->addWhere('u.id != 5');
 
-            $expected = 'SELECT q.id AS q__id FROM query_test__user q LEFT JOIN query_test__subscription q2 ON q.subscriptionid = q2.id WHERE (CURRENT_DATE() BETWEEN q2.begin AND q2.begin AND q.id != 5)';
+            $expected = 'SELECT q.id AS q__id FROM query_test__user q LEFT JOIN query_test__subscription q2 ON q.subscriptionId = q2.id WHERE (CURRENT_DATE() BETWEEN q2.begin AND q2.begin AND q.id != 5)';
 
             $this->assertEquals($q1->getSqlQuery(), $expected);
         }
@@ -351,7 +351,7 @@ namespace Tests\Query {
 namespace {
     class MyQuery extends \Doctrine1\Query
     {
-        public function preQuery()
+        public function preQuery(): void
         {
             $this->where('u.id = 4');
         }

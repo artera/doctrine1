@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Export;
 
 use Tests\DoctrineUnitTestCase;
@@ -10,7 +11,7 @@ class SchemaTest extends DoctrineUnitTestCase
                       'EntityAddress',
                       'Email',
                       'Phonenumber',
-                      'Groupuser',
+                      'GroupUser',
                       'Group',
                       'User',
                       'Album',

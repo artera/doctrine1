@@ -29,8 +29,8 @@ abstract class AbstractTestCase extends DoctrineUnitTestCase
                 ->useResultCache($cache, 3600, 'hans_query')
                 ->execute();
 
-            $this->assertEquals(1, count($u));
-            $this->assertEquals('Hans', $u[0]->name);
+            static::assertCount(1, $u);
+            static::assertEquals('Hans', $u[0]->name);
 
             if ($i == 0) {
                 // Store where we're at with query count

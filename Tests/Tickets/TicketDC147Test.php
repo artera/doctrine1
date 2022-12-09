@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Tickets {
     use Tests\DoctrineUnitTestCase;
 
@@ -43,36 +44,36 @@ DC147_Product:
         Multiple: ISBN3
 END;
             file_put_contents('test.yml', $yml);
-                \Doctrine1\Core::loadData('test.yml', true);
+            \Doctrine1\Core::loadData('test.yml', true);
 
-                static::$conn->clear();
+            static::$conn->clear();
 
-                $query = new \Doctrine1\Query();
-                $query->from('DC147_Product p, p.MultipleValues v, v.Multiple m')
-                ->where('p.name = ?', 'book3');
+            $query = new \Doctrine1\Query();
+            $query->from('DC147_Product p, p.MultipleValues v, v.Multiple m')
+            ->where('p.name = ?', 'book3');
 
-                $product = $query->fetchOne();
+            $product = $query->fetchOne();
 
-                $this->assertEquals($product->name, 'book3');
-                $this->assertEquals($product->MultipleValues->count(), 2);
-                $this->assertEquals($product->MultipleValues[0]->value, '123345678');
-                $this->assertEquals(is_object($product->MultipleValues[0]->Multiple), true);
-                $this->assertEquals($product->MultipleValues[0]->Multiple->name, 'isbn2');
+            $this->assertEquals($product->name, 'book3');
+            $this->assertEquals($product->MultipleValues->count(), 2);
+            $this->assertEquals($product->MultipleValues[0]->value, '123345678');
+            $this->assertEquals(is_object($product->MultipleValues[0]->Multiple), true);
+            $this->assertEquals($product->MultipleValues[0]->Multiple->name, 'isbn2');
 
-                $query = new \Doctrine1\Query();
-                $query->from('DC147_Product p, p.MultipleValues v, v.Multiple m')
-                ->where('p.name = ?', 'book4');
+            $query = new \Doctrine1\Query();
+            $query->from('DC147_Product p, p.MultipleValues v, v.Multiple m')
+            ->where('p.name = ?', 'book4');
 
-                $product = $query->fetchOne();
+            $product = $query->fetchOne();
 
-                $this->assertEquals($product->name, 'book4');
-                $this->assertEquals($product->MultipleValues->count(), 2);
-                $this->assertEquals($product->MultipleValues[0]->value, '444455555');
-                $this->assertEquals($product->MultipleValues[1]->value, '232323233');
-                $this->assertEquals(is_object($product->MultipleValues[0]->Multiple), true);
-                $this->assertEquals(is_object($product->MultipleValues[1]->Multiple), true);
-                $this->assertEquals($product->MultipleValues[0]->Multiple->name, 'isbn2');
-                $this->assertEquals($product->MultipleValues[1]->Multiple->name, 'isbn3');
+            $this->assertEquals($product->name, 'book4');
+            $this->assertEquals($product->MultipleValues->count(), 2);
+            $this->assertEquals($product->MultipleValues[0]->value, '444455555');
+            $this->assertEquals($product->MultipleValues[1]->value, '232323233');
+            $this->assertEquals(is_object($product->MultipleValues[0]->Multiple), true);
+            $this->assertEquals(is_object($product->MultipleValues[1]->Multiple), true);
+            $this->assertEquals($product->MultipleValues[0]->Multiple->name, 'isbn2');
+            $this->assertEquals($product->MultipleValues[1]->Multiple->name, 'isbn3');
 
 
             unlink('test.yml');
@@ -141,7 +142,7 @@ namespace {
         {
             $this->hasColumn('product_id', 'integer', null, ['type' => 'integer', 'primary' => true]);
             $this->hasColumn('multiple_id', 'integer', null, ['type' => 'integer', 'primary' => true]);
-            $this->hasColumn('value', 'clob', null, ['type' => 'clob']);
+            $this->hasColumn('value', 'string', null, ['type' => 'string']);
         }
 
         public function setUp(): void

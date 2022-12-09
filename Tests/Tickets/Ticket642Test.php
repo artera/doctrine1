@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Tickets {
     use Tests\DoctrineUnitTestCase;
 
@@ -17,7 +18,7 @@ namespace Tests\Tickets {
             $queries = static::$dbh->getAll();
 
             // Default was not being defined, even if notnull was set
-            $this->assertEquals("CREATE TABLE st_dummy_obj (id BIGINT AUTO_INCREMENT, startdate DATETIME DEFAULT '0000-00-00 00:00:00' NOT NULL, PRIMARY KEY(id)) ENGINE = InnoDB", $queries[1]);
+            $this->assertEquals("CREATE TABLE st_dummy_obj (id BIGINT AUTO_INCREMENT, startDate DATETIME DEFAULT '0000-00-00 00:00:00' NOT NULL, PRIMARY KEY(id)) ENGINE = InnoDB", $queries[1]);
         }
     }
 }

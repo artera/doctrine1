@@ -2,6 +2,8 @@
 
 namespace Doctrine1\Migration;
 
+use Doctrine1\Column;
+
 class Process
 {
     /**
@@ -25,10 +27,13 @@ class Process
     /**
      * Process a created table change
      *
-     * @param  array $table Table definition
-     * @return void
+     * @phpstan-param array{
+     *   tableName: string,
+     *   fields: Column[],
+     *   options: ?(mixed[]),
+     * } $table
      */
-    public function processCreatedTable(array $table)
+    public function processCreatedTable(array $table): void
     {
         $this->getConnection()->export->createTable($table['tableName'], $table['fields'], $table['options']);
     }

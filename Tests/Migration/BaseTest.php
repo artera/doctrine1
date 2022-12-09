@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Migration {
     use Tests\DoctrineUnitTestCase;
 
@@ -68,7 +69,7 @@ namespace {
     {
         public $mergedOptions = [];
 
-        public function table($upDown, $tableName, array $fields = [], array $options = [])
+        public function table(string $upDown, string $tableName, array $fields = [], array $options = []): void
         {
             $this->mergedOptions = $options;
         }

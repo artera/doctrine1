@@ -24,7 +24,7 @@ BlogPost:
   columns:
     user_id: integer
     title: string(255)
-    body: clob
+    body: string
   relations:
     User:
       onDelete: CASCADE

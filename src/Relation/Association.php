@@ -2,7 +2,13 @@
 
 namespace Doctrine1\Relation;
 
-class Association extends \Doctrine1\Relation
+use Doctrine1\Collection;
+use Doctrine1\Record;
+use Doctrine1\Relation;
+use Doctrine1\Table;
+use Doctrine1\Column;
+
+class Association extends Relation
 {
     /**
      * @var array $definition @see __construct()
@@ -10,12 +16,12 @@ class Association extends \Doctrine1\Relation
      *   alias: string,
      *   foreign: string,
      *   local: string,
-     *   class: class-string<\Doctrine1\Record>,
+     *   class: class-string<Record>,
      *   type: int,
-     *   table: \Doctrine1\Table,
-     *   localTable: \Doctrine1\Table,
+     *   table: Table,
+     *   localTable: Table,
      *   name: ?string,
-     *   refTable: \Doctrine1\Table,
+     *   refTable: Table,
      *   onDelete: ?string,
      *   onUpdate: ?string,
      *   deferred: ?bool,
@@ -36,12 +42,12 @@ class Association extends \Doctrine1\Relation
      *   alias: string,
      *   foreign: string,
      *   local: string,
-     *   class: class-string<\Doctrine1\Record>,
+     *   class: class-string<Record>,
      *   type: int,
-     *   table: \Doctrine1\Table,
-     *   localTable: \Doctrine1\Table,
+     *   table: Table,
+     *   localTable: Table,
      *   name?: ?string,
-     *   refTable: \Doctrine1\Table,
+     *   refTable: Table,
      *   onDelete?: ?string,
      *   onUpdate?: ?string,
      *   deferred?: ?bool,
@@ -58,13 +64,13 @@ class Association extends \Doctrine1\Relation
     public function __construct(array $definition)
     {
         if (!array_key_exists('refTable', $definition)) {
-            throw new \Doctrine1\Exception("refTable is required!");
+            throw new Exception("refTable is required!");
         }
         parent::__construct($definition);
     }
 
     /**
-     * @return \Doctrine1\Table
+     * @return Table
      */
     public function getAssociationFactory()
     {
@@ -72,7 +78,7 @@ class Association extends \Doctrine1\Relation
     }
 
     /**
-     * @return \Doctrine1\Table
+     * @return Table
      */
     public function getAssociationTable()
     {
@@ -152,13 +158,13 @@ class Association extends \Doctrine1\Relation
     /**
      * fetches a component related to given record
      *
-     * @return \Doctrine1\Collection
+     * @return Collection
      */
-    public function fetchRelatedFor(\Doctrine1\Record $record)
+    public function fetchRelatedFor(Record $record)
     {
         $id = $record->getIncremented();
         if (empty($id) || !$this->definition['table']->getLoadReferences()) {
-            $coll = \Doctrine1\Collection::create($this->getTable());
+            $coll = Collection::create($this->getTable());
         } else {
             $coll = $this->getTable()->getConnection()->query($this->getRelationDql(1), [$id]);
         }

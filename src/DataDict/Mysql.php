@@ -2,6 +2,9 @@
 
 namespace Doctrine1\DataDict;
 
+use Doctrine1\Column;
+use Doctrine1\Column\Type;
+
 class Mysql extends \Doctrine1\DataDict
 {
     /**
@@ -274,60 +277,52 @@ class Mysql extends \Doctrine1\DataDict
         'ZEROFILL',
     ];
 
-    public function getNativeDeclaration($field)
+    public function getNativeDeclaration(Column $field): string
     {
-        if (!isset($field['type'])) {
+        if (!isset($field->type)) {
             throw new \Doctrine1\DataDict\Exception('Missing column type.');
         }
 
-        switch ($field['type']) {
-            case 'char':
-                $length = (!empty($field['length'])) ? $field['length'] : false;
+        $length = $field->length;
 
-                return $length ? 'CHAR(' . $length . ')' : 'CHAR(255)';
-            case 'enum':
-            case 'set':
-                if (($this->conn->getUseNativeSet() && $field['type'] === 'set')
-                || ($this->conn->getUseNativeEnum() && $field['type'] === 'enum')
+        switch ($field->type) {
+            case Type::Enum:
+            case Type::Set:
+                if (($this->conn->getUseNativeSet() && $field->type === Type::Set)
+                || ($this->conn->getUseNativeEnum() && $field->type === Type::Enum)
                 ) {
                     $values = [];
-                    foreach ($field['values'] as $value) {
+                    foreach ($field->values as $value) {
                         $values[] = $this->conn->quote($value, 'varchar');
                     }
-                    return strtoupper($field['type']) . '(' . implode(', ', $values) . ')';
+                    return strtoupper($field->type->value) . '(' . implode(', ', $values) . ')';
                 } else {
-                    if ($field['type'] === 'enum' && !empty($field['values'])) {
-                        $length = max(array_map('strlen', $field['values']));
-                    } elseif ($field['type'] === 'set' && !empty($field['values'])) {
-                        $length = strlen(implode(',', $field['values']));
+                    if ($field->type === Type::Enum && !empty($field->values)) {
+                        $length = max(array_map('strlen', $field->values));
+                    } elseif ($field->type === Type::Set && !empty($field->values)) {
+                        $length = strlen(implode(',', $field->values));
                     } else {
-                        $length = isset($field['length']) && $field['length'] ? $field['length'] : 255;
+                        $length = $field->length ?? 255;
                     }
-
-                    $field['length'] = $length;
                 }
                 // no break
-            case 'varchar':
-            case 'string':
-            case 'gzip':
-                if (!isset($field['length'])) {
-                    if (array_key_exists('default', $field)) {
-                        $field['length'] = $this->conn->varchar_max_length;
+            case Type::String:
+                if (!isset($length)) {
+                    if ($field->hasDefault()) {
+                        $length = $this->conn->varchar_max_length;
                     } else {
-                        $field['length'] = false;
+                        $length = false;
                     }
                 }
 
-                $length = ($field['length'] <= $this->conn->varchar_max_length) ? $field['length'] : false;
-                $fixed  = (isset($field['fixed'])) ? $field['fixed'] : false;
+                $length = $field->length <= $this->conn->varchar_max_length ? $field->length : false;
+                $fixed  = isset($field->fixed) ? $field->fixed : false;
 
-                return $fixed ? ($length ? 'CHAR(' . $length . ')' : 'CHAR(255)')
-                    : ($length ? 'VARCHAR(' . $length . ')' : 'TEXT');
-            case 'array':
-            case 'object':
-            case 'clob':
-                if (!empty($field['length'])) {
-                    $length = $field['length'];
+                return $fixed ? ('CHAR(' . ($length ?? 255) . ')')
+                    : ($length ? "VARCHAR($length)" : 'TEXT');
+            case Type::Array:
+            case Type::Object:
+                if (isset($length)) {
                     if ($length <= 255) {
                         return 'TINYTEXT';
                     } elseif ($length <= 65532) {
@@ -337,9 +332,8 @@ class Mysql extends \Doctrine1\DataDict
                     }
                 }
                 return 'LONGTEXT';
-            case 'blob':
-                if (!empty($field['length'])) {
-                    $length = $field['length'];
+            case Type::BLOB:
+                if (isset($length)) {
                     if ($length <= 255) {
                         return 'TINYBLOB';
                     } elseif ($length <= 65532) {
@@ -349,10 +343,8 @@ class Mysql extends \Doctrine1\DataDict
                     }
                 }
                 return 'LONGBLOB';
-            case 'integer':
-            case 'int':
-                if (!empty($field['length'])) {
-                    $length = $field['length'];
+            case Type::Integer:
+                if (isset($length)) {
                     if ($length <= 1) {
                         return 'TINYINT';
                     } elseif ($length == 2) {
@@ -361,35 +353,35 @@ class Mysql extends \Doctrine1\DataDict
                         return 'MEDIUMINT';
                     } elseif ($length == 4) {
                         return 'INT';
-                    } elseif ($length > 4) {
+                    } else {
                         return 'BIGINT';
                     }
                 }
                 return 'INT';
-            case 'boolean':
+            case Type::Boolean:
                 return 'TINYINT(1)';
-            case 'date':
+            case Type::Date:
                 return 'DATE';
-            case 'time':
+            case Type::Time:
                 return 'TIME';
-            case 'timestamp':
+            case Type::Timestamp:
                 return 'DATETIME';
-            case 'float':
-                $length = !empty($field['length']) ? $field['length'] : 18;
-                $scale  = !empty($field['scale']) ? $field['scale'] : $this->conn->getDecimalPlaces();
-                return 'FLOAT(' . $length . ', ' . $scale . ')';
-            case 'double':
-                $length = !empty($field['length']) ? $field['length'] : 18;
-                $scale  = !empty($field['scale']) ? $field['scale'] : $this->conn->getDecimalPlaces();
-                return 'DOUBLE(' . $length . ', ' . $scale . ')';
-            case 'decimal':
-                $length = !empty($field['length']) ? $field['length'] : 18;
-                $scale  = !empty($field['scale']) ? $field['scale'] : $this->conn->getDecimalPlaces();
-                return 'DECIMAL(' . $length . ', ' . $scale . ')';
-            case 'bit':
+            case Type::Float:
+                $length ??= 18;
+                $scale  = !empty($field->scale) ? $field->scale : $this->conn->getDecimalPlaces();
+                return "FLOAT($length, $scale)";
+            case Type::Double:
+                $length ??= 18;
+                $scale  = !empty($field->scale) ? $field->scale : $this->conn->getDecimalPlaces();
+                return "DOUBLE($length, $scale)";
+            case Type::Decimal:
+                $length ??= 18;
+                $scale  = !empty($field->scale) ? $field->scale : $this->conn->getDecimalPlaces();
+                return "DECIMAL($length, $scale)";
+            case Type::Bit:
                 return 'BIT';
         }
-        return $field['type'] . (isset($field['length']) ? '(' . $field['length'] . ')' : null);
+        return $field->type->value . (isset($length) ? '(' . $length . ')' : null);
     }
 
     /**
@@ -418,7 +410,7 @@ class Mysql extends \Doctrine1\DataDict
 
         if (!isset($field['name'])) {
             // Mysql's DESCRIBE returns a "Field" column, not a "Name" column
-            // this method is called with output from that query in \Doctrine1\Import\Mysql::listTableColumns
+            // this method is called with output from that query in Doctrine_Import_Mysql::listTableColumns
             if (isset($field['field'])) {
                 $field['name'] = $field['field'];
             } else {
@@ -588,7 +580,7 @@ class Mysql extends \Doctrine1\DataDict
      * @return string  DBMS specific SQL code portion needed to set the CHARACTER SET
      *                 of a field declaration.
      */
-    public function getCharsetFieldDeclaration($charset)
+    public function getCharsetFieldDeclaration(string $charset): string
     {
         return 'CHARACTER SET ' . $charset;
     }
@@ -601,7 +593,7 @@ class Mysql extends \Doctrine1\DataDict
      * @return string  DBMS specific SQL code portion needed to set the COLLATION
      *                 of a field declaration.
      */
-    public function getCollationFieldDeclaration($collation)
+    public function getCollationFieldDeclaration(string $collation): string
     {
         return 'COLLATE ' . $collation;
     }
@@ -610,42 +602,31 @@ class Mysql extends \Doctrine1\DataDict
      * Obtain DBMS specific SQL code portion needed to declare an integer type
      * field to be used in statements like CREATE TABLE.
      *
-     * @param  string $name  name the field to be declared.
-     * @param  array  $field associative array with the name of the properties
-     *                       of the field being declared as array indexes.
-     *                       Currently, the types of supported field
-     *                       properties are as follows: unsigned Boolean flag
-     *                       that indicates whether the field should be
-     *                       declared as unsigned integer if possible. default
-     *                       Integer value to be used as default for this
-     *                       field. notnull Boolean flag that indicates
-     *                       whether this field is constrained to not be set
-     *                       to null.
      * @return string  DBMS specific SQL code portion that should be used to
      *                 declare the specified field.
      */
-    public function getIntegerDeclaration($name, $field)
+    public function getIntegerDeclaration(Column $field): string
     {
-        $unique  = (isset($field['unique']) && $field['unique']) ? ' UNIQUE' : '';
+        $unique  = $field->unique ? ' UNIQUE' : '';
         $default = $autoinc = '';
-        if (!empty($field['autoincrement'])) {
+        if ($field->autoincrement) {
             $autoinc = ' AUTO_INCREMENT';
-        } elseif (array_key_exists('default', $field)) {
-            if ($field['default'] === '') {
-                $field['default'] = empty($field['notnull']) ? null : 0;
+        } elseif ($field->hasDefault()) {
+            $default = $field->default;
+            if ($default === '') {
+                $default = $field->notnull ? 0 : null;
             }
 
-            $default = ' DEFAULT ' . ($field['default'] === null
+            $default = ' DEFAULT ' . ($default === null
                 ? 'NULL'
-                : $this->conn->quote($field['default']));
+                : $this->conn->quote($default));
         }
 
-        $notnull  = (isset($field['notnull'])  && $field['notnull']) ? ' NOT NULL' : '';
-        $unsigned = (isset($field['unsigned']) && $field['unsigned']) ? ' UNSIGNED' : '';
-        $comment  = (isset($field['comment']) && $field['comment'])
-            ? ' COMMENT ' . $this->conn->quote($field['comment'], 'text') : '';
+        $notnull  = $field->notnull ? ' NOT NULL' : '';
+        $unsigned = $field->unsigned ? ' UNSIGNED' : '';
+        $comment  = $field->comment ? ' COMMENT ' . $this->conn->quote($field->comment, 'text') : '';
 
-        $name = $this->conn->quoteIdentifier($name, true);
+        $name = $this->conn->quoteIdentifier($field->name, true);
 
         return $name . ' ' . $this->getNativeDeclaration($field) . $unsigned
             . $default . $unique . $notnull . $autoinc . $comment;

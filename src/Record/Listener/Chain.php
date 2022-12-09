@@ -28,7 +28,7 @@ class Chain extends \Doctrine1\Access implements \Doctrine1\Record\ListenerInter
      *
      * @return void
      */
-    public function setOption($name, $value = null)
+    public function setOption(mixed $name, mixed $value = null): void
     {
         if (is_array($name)) {
             $this->options = \Doctrine1\Lib::arrayDeepMerge($this->options, $name);
@@ -44,7 +44,7 @@ class Chain extends \Doctrine1\Access implements \Doctrine1\Record\ListenerInter
      * @param  string $name the name of the option
      * @return mixed        the value of given option
      */
-    public function getOption($name)
+    public function getOption(string $name): mixed
     {
         if (isset($this->options[$name])) {
             return $this->options[$name];
@@ -58,7 +58,7 @@ class Chain extends \Doctrine1\Access implements \Doctrine1\Record\ListenerInter
      *
      * @return array $options
      */
-    public function getOptions()
+    public function getOptions(): array
     {
         return $this->options;
     }
@@ -112,10 +112,7 @@ class Chain extends \Doctrine1\Access implements \Doctrine1\Record\ListenerInter
         $this->listeners[$key] = $listener;
     }
 
-    /**
-     * @return void
-     */
-    public function preSerialize(\Doctrine1\Event $event)
+    public function preSerialize(\Doctrine1\Event $event): void
     {
         $disabled = $this->getOption('disabled');
 
@@ -130,10 +127,7 @@ class Chain extends \Doctrine1\Access implements \Doctrine1\Record\ListenerInter
         }
     }
 
-    /**
-     * @return void
-     */
-    public function postSerialize(\Doctrine1\Event $event)
+    public function postSerialize(\Doctrine1\Event $event): void
     {
         $disabled = $this->getOption('disabled');
 
@@ -148,10 +142,7 @@ class Chain extends \Doctrine1\Access implements \Doctrine1\Record\ListenerInter
         }
     }
 
-    /**
-     * @return void
-     */
-    public function preUnserialize(\Doctrine1\Event $event)
+    public function preUnserialize(\Doctrine1\Event $event): void
     {
         $disabled = $this->getOption('disabled');
 
@@ -166,10 +157,7 @@ class Chain extends \Doctrine1\Access implements \Doctrine1\Record\ListenerInter
         }
     }
 
-    /**
-     * @return void
-     */
-    public function postUnserialize(\Doctrine1\Event $event)
+    public function postUnserialize(\Doctrine1\Event $event): void
     {
         $disabled = $this->getOption('disabled');
 
@@ -184,10 +172,7 @@ class Chain extends \Doctrine1\Access implements \Doctrine1\Record\ListenerInter
         }
     }
 
-    /**
-     * @return void
-     */
-    public function preDqlSelect(\Doctrine1\Event $event)
+    public function preDqlSelect(\Doctrine1\Event $event): void
     {
         $disabled = $this->getOption('disabled');
 
@@ -202,10 +187,7 @@ class Chain extends \Doctrine1\Access implements \Doctrine1\Record\ListenerInter
         }
     }
 
-    /**
-     * @return void
-     */
-    public function preSave(\Doctrine1\Event $event)
+    public function preSave(\Doctrine1\Event $event): void
     {
         $disabled = $this->getOption('disabled');
 
@@ -220,10 +202,7 @@ class Chain extends \Doctrine1\Access implements \Doctrine1\Record\ListenerInter
         }
     }
 
-    /**
-     * @return void
-     */
-    public function postSave(\Doctrine1\Event $event)
+    public function postSave(\Doctrine1\Event $event): void
     {
         $disabled = $this->getOption('disabled');
 
@@ -238,10 +217,7 @@ class Chain extends \Doctrine1\Access implements \Doctrine1\Record\ListenerInter
         }
     }
 
-    /**
-     * @return void
-     */
-    public function preDqlDelete(\Doctrine1\Event $event)
+    public function preDqlDelete(\Doctrine1\Event $event): void
     {
         $disabled = $this->getOption('disabled');
 
@@ -256,10 +232,7 @@ class Chain extends \Doctrine1\Access implements \Doctrine1\Record\ListenerInter
         }
     }
 
-    /**
-     * @return void
-     */
-    public function preDelete(\Doctrine1\Event $event)
+    public function preDelete(\Doctrine1\Event $event): void
     {
         $disabled = $this->getOption('disabled');
 
@@ -274,10 +247,7 @@ class Chain extends \Doctrine1\Access implements \Doctrine1\Record\ListenerInter
         }
     }
 
-    /**
-     * @return void
-     */
-    public function postDelete(\Doctrine1\Event $event)
+    public function postDelete(\Doctrine1\Event $event): void
     {
         $disabled = $this->getOption('disabled');
 
@@ -292,10 +262,7 @@ class Chain extends \Doctrine1\Access implements \Doctrine1\Record\ListenerInter
         }
     }
 
-    /**
-     * @return void
-     */
-    public function preDqlUpdate(\Doctrine1\Event $event)
+    public function preDqlUpdate(\Doctrine1\Event $event): void
     {
         $disabled = $this->getOption('disabled');
 
@@ -310,10 +277,7 @@ class Chain extends \Doctrine1\Access implements \Doctrine1\Record\ListenerInter
         }
     }
 
-    /**
-     * @return void
-     */
-    public function preUpdate(\Doctrine1\Event $event)
+    public function preUpdate(\Doctrine1\Event $event): void
     {
         $disabled = $this->getOption('disabled');
 
@@ -328,10 +292,7 @@ class Chain extends \Doctrine1\Access implements \Doctrine1\Record\ListenerInter
         }
     }
 
-    /**
-     * @return void
-     */
-    public function postUpdate(\Doctrine1\Event $event)
+    public function postUpdate(\Doctrine1\Event $event): void
     {
         $disabled = $this->getOption('disabled');
 
@@ -346,10 +307,7 @@ class Chain extends \Doctrine1\Access implements \Doctrine1\Record\ListenerInter
         }
     }
 
-    /**
-     * @return void
-     */
-    public function preInsert(\Doctrine1\Event $event)
+    public function preInsert(\Doctrine1\Event $event): void
     {
         $disabled = $this->getOption('disabled');
 
@@ -364,10 +322,7 @@ class Chain extends \Doctrine1\Access implements \Doctrine1\Record\ListenerInter
         }
     }
 
-    /**
-     * @return void
-     */
-    public function postInsert(\Doctrine1\Event $event)
+    public function postInsert(\Doctrine1\Event $event): void
     {
         $disabled = $this->getOption('disabled');
 
@@ -382,10 +337,7 @@ class Chain extends \Doctrine1\Access implements \Doctrine1\Record\ListenerInter
         }
     }
 
-    /**
-     * @return void
-     */
-    public function preHydrate(\Doctrine1\Event $event)
+    public function preHydrate(\Doctrine1\Event $event): void
     {
         $disabled = $this->getOption('disabled');
 
@@ -400,10 +352,7 @@ class Chain extends \Doctrine1\Access implements \Doctrine1\Record\ListenerInter
         }
     }
 
-    /**
-     * @return void
-     */
-    public function postHydrate(\Doctrine1\Event $event)
+    public function postHydrate(\Doctrine1\Event $event): void
     {
         $disabled = $this->getOption('disabled');
 
@@ -418,10 +367,7 @@ class Chain extends \Doctrine1\Access implements \Doctrine1\Record\ListenerInter
         }
     }
 
-    /**
-     * @return void
-     */
-    public function preValidate(\Doctrine1\Event $event)
+    public function preValidate(\Doctrine1\Event $event): void
     {
         $disabled = $this->getOption('disabled');
 
@@ -436,10 +382,7 @@ class Chain extends \Doctrine1\Access implements \Doctrine1\Record\ListenerInter
         }
     }
 
-    /**
-     * @return void
-     */
-    public function postValidate(\Doctrine1\Event $event)
+    public function postValidate(\Doctrine1\Event $event): void
     {
         $disabled = $this->getOption('disabled');
 

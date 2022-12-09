@@ -2,6 +2,7 @@
 
 namespace Doctrine1\Hydrator;
 
+use Doctrine1\Column\Type;
 use Doctrine1\HydrationMode;
 
 /**
@@ -297,7 +298,7 @@ abstract class Graph extends \Doctrine1\Hydrator\AbstractHydrator
                     $cache[$key]['isIdentifier'] = false;
                 }
                 $type = $table->getTypeOfColumn($last);
-                if ($type == 'integer' || $type == 'string') {
+                if ($type === Type::Integer || $type === Type::String) {
                     $cache[$key]['isSimpleType'] = true;
                 } else {
                     $cache[$key]['type']         = $type;

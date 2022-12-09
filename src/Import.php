@@ -346,6 +346,8 @@ class Import extends Connection\Module
                 continue;
             }
 
+            $manager->setCurrentConnection($name);
+
             $builder = new Import\Builder();
             $builder->setTargetPath($directory);
             $builder->setOptions($options);

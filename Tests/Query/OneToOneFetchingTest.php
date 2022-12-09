@@ -118,7 +118,8 @@ class OneToOneFetchingTest extends DoctrineUnitTestCase
     public function testOneToOneArrayFetchingWithEmptyRelations()
     {
         // temporarily remove the relation to fake a non-existant one
-        $board              = static::$connection->query('FROM QueryTest_Board b WHERE b.name = ?', ['Testboard'])->getFirst();
+        $board = static::$connection->query('FROM QueryTest_Board b WHERE b.name = ?', ['Testboard']);
+        $board = $board[0];
         $lastEntryId        = $board->lastEntryId;
         $board->lastEntryId = 0;
         $board->save();

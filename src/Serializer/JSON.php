@@ -3,26 +3,28 @@
 namespace Doctrine1\Serializer;
 
 use JsonSerializable;
+use Doctrine1\Column;
+use Doctrine1\Table;
 
 class JSON implements SerializerInterface
 {
-    protected function checkCompatibility(mixed $value, string $type): void
+    protected function checkCompatibility(mixed $value, Column\Type $type): void
     {
-        if ($type !== 'json' || !(is_scalar($value) || is_array($value) || $value instanceof JsonSerializable)) {
+        if ($type !== Column\Type::JSON || !(is_scalar($value) || is_array($value) || $value instanceof JsonSerializable)) {
             throw new Exception\Incompatible();
         }
     }
 
-    public function serialize(mixed $value, array $column, \Doctrine1\Table $table): mixed
+    public function serialize(mixed $value, Column $column, Table $table): mixed
     {
-        $this->checkCompatibility($value, $column['type']);
+        $this->checkCompatibility($value, $column->type);
         return json_encode($value, JSON_THROW_ON_ERROR);
     }
 
-    public function areEquivalent(mixed $a, mixed $b, array $column, \Doctrine1\Table $table): bool
+    public function areEquivalent(mixed $a, mixed $b, Column $column, Table $table): bool
     {
-        $this->checkCompatibility($a, $column['type']);
-        $this->checkCompatibility($b, $column['type']);
+        $this->checkCompatibility($a, $column->type);
+        $this->checkCompatibility($b, $column->type);
         return $a === $b;
     }
 }

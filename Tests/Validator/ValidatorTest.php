@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Validator;
 
 use Tests\DoctrineUnitTestCase;
@@ -237,7 +238,6 @@ class ValidatorTest extends DoctrineUnitTestCase
             $this->assertCount(1, $invalidRecords);
 
             $stack = $invalidRecords[0]->errorStack();
-            var_dump($stack);
 
             $this->assertCount(1, $stack);
             $this->assertContains('notNobody', $stack['loginname']);  // validateOnUpdate() hook constraint

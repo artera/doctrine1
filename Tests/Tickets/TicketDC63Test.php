@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Tickets {
     use Tests\DoctrineUnitTestCase;
 
@@ -28,10 +29,11 @@ namespace {
             $this->hasColumn('username', 'string', 255);
             $this->hasColumn('password', 'string', 255, ['primary' => true]);
 
-            $this->setColumnOptions(['username', 'email_address'], ['unique' => true]);
-            $this->setColumnOptions(['username'], ['primary' => true]);
-            $this->setColumnOptions(['password'], ['primary' => false]);
-            $this->setColumnOption('username', 'notnull', true);
+            $this->_table->column('username')->unique = true;
+            $this->_table->column('username')->primary = true;
+            $this->_table->column('username')->notnull = true;
+            $this->_table->column('email_address')->unique = true;
+            $this->_table->column('password')->primary = false;
         }
     }
 }

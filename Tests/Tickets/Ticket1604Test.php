@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Tickets {
     use Tests\DoctrineUnitTestCase;
 
@@ -15,7 +16,7 @@ namespace Tests\Tickets {
             'ALTER TABLE ticket_1604__email_adresses ADD CONSTRAINT ticket_1604__email_adresses_user_id_ticket_1604__user_id FOREIGN KEY (user_id) REFERENCES ticket_1604__user(id)'
             ];
 
-            $this->assertEquals($sql, $def);
+            $this->assertEquals($def, $sql);
         }
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Tickets {
     use Tests\DoctrineUnitTestCase;
 
@@ -14,28 +15,28 @@ namespace Tests\Tickets {
         public function testTest()
         {
             $user                = new \Ticket_1341_User();
-                $user->username      = 'jwage';
-                $user->password      = 'changeme';
-                $user->Profile->name = 'Jonathan H. Wage';
-                $user->save();
+            $user->username      = 'jwage';
+            $user->password      = 'changeme';
+            $user->Profile->name = 'Jonathan H. Wage';
+            $user->save();
 
-                $this->assertEquals(
-                    $user->toArray(true),
-                    [
-                    'id'       => '1',
-                    'username' => 'jwage',
-                    'password' => 'changeme',
-                    'Profile'  => [
-                    'id'      => '1',
-                    'name'    => 'Jonathan H. Wage',
-                    'user_id' => '1',
-                    ],
-                    ]
-                );
-                $q = \Doctrine1\Query::create()
-                    ->from('Ticket_1341_User u')
-                    ->leftJoin('u.Profile p');
-                $this->assertEquals($q->getSqlQuery(), 'SELECT t.id AS t__id, t.username AS t__username, t.password AS t__password, t2.id AS t2__id, t2.name AS t2__name, t2.userid AS t2__userid FROM ticket_1341__user t LEFT JOIN ticket_1341__profile t2 ON t.id = t2.userid');
+            $this->assertEquals(
+                $user->toArray(true),
+                [
+                'id'       => '1',
+                'username' => 'jwage',
+                'password' => 'changeme',
+                'Profile'  => [
+                'id'      => '1',
+                'name'    => 'Jonathan H. Wage',
+                'user_id' => '1',
+                ],
+                ]
+            );
+            $q = \Doctrine1\Query::create()
+                ->from('Ticket_1341_User u')
+                ->leftJoin('u.Profile p');
+            $this->assertEquals($q->getSqlQuery(), 'SELECT t.id AS t__id, t.username AS t__username, t.password AS t__password, t2.id AS t2__id, t2.name AS t2__name, t2.userId AS t2__userId FROM ticket_1341__user t LEFT JOIN ticket_1341__profile t2 ON t.id = t2.userid');
         }
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Core\Table {
     use Tests\DoctrineUnitTestCase;
 

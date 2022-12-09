@@ -2,6 +2,9 @@
 
 namespace Doctrine1\Relation;
 
+use Doctrine1\Column;
+use Doctrine1\Table;
+
 class Parser
 {
     /**
@@ -43,7 +46,7 @@ class Parser
     public function getPendingRelation(string $name): array
     {
         if (!isset($this->pending[$name])) {
-            throw new \Doctrine1\Relation\Exception('Unknown pending relation ' . $name);
+            throw new Exception('Unknown pending relation ' . $name);
         }
 
         return $this->pending[$name];
@@ -99,7 +102,7 @@ class Parser
         $alias = isset($e[1]) ? $e[1] : $name;
 
         if (!isset($options['type'])) {
-            throw new \Doctrine1\Relation\Exception('Relation type not set.');
+            throw new Exception('Relation type not set.');
         }
 
         if ($this->hasRelation($alias)) {
@@ -175,16 +178,16 @@ class Parser
                     }
                 }
                 if (in_array($def['class'], $localClasses)) {
-                    $rel = new \Doctrine1\Relation\Nest($def);
+                    $rel = new Nest($def);
                 } else {
-                    $rel = new \Doctrine1\Relation\Association($def);
+                    $rel = new Association($def);
                 }
             } else {
                 // simple foreign key relation
                 $def = $this->completeDefinition($def);
 
                 if (isset($def['localKey']) && $def['localKey']) {
-                    $rel = new \Doctrine1\Relation\LocalKey($def);
+                    $rel = new LocalKey($def);
 
                     // Automatically index for foreign keys
                     $foreign = (array) $def['foreign'];
@@ -196,7 +199,7 @@ class Parser
                         }
                     }
                 } else {
-                    $rel = new \Doctrine1\Relation\ForeignKey($def);
+                    $rel = new ForeignKey($def);
                 }
             }
             if (isset($rel)) {
@@ -308,8 +311,9 @@ class Parser
      * @param \Doctrine1\Table $table table object to retrieve identifiers from
      *
      * @return array|string
+     * @phpstan-return string[]|string
      */
-    public function getIdentifiers(\Doctrine1\Table $table)
+    public function getIdentifiers(Table $table)
     {
         $componentNameToLower = strtolower($table->getComponentName());
         if (is_array($table->getIdentifier())) {
@@ -329,9 +333,10 @@ class Parser
     /**
      * @param  array          $classes      an array of class names
      * @param  \Doctrine1\Table $foreignTable foreign table object
-     * @return array|string                            an array of column names
+     * @return array|string
+     * @phpstan-return string[]|string
      */
-    public function guessColumns(array $classes, \Doctrine1\Table $foreignTable)
+    public function guessColumns(array $classes, Table $foreignTable)
     {
         $conn    = $this->table->getConnection();
         $found   = false;
@@ -358,7 +363,7 @@ class Parser
         }
 
         if (!$found) {
-            throw new \Doctrine1\Relation\Exception("Couldn't find columns.");
+            throw new Exception("Couldn't find columns.");
         }
 
         return $columns;
@@ -448,7 +453,7 @@ class Parser
                     $def['localKey'] = true;
                     try {
                         $def['local'] = $this->guessColumns($foreignClasses, $this->table);
-                    } catch (\Doctrine1\Relation\Exception $e) {
+                    } catch (Exception $e) {
                         $def['local'] = $localIdColumnName;
                     }
                 } else {
@@ -501,22 +506,15 @@ class Parser
                 // auto-add columns and auto-build relation
                 $columns = [];
                 foreach ((array) $this->table->getIdentifierColumnNames() as $id) {
-                    // ?? should this not be $this->table->getComponentName() ??
-                    $column = strtolower($table->getComponentName())
-                            . '_' . $id;
-
-                    $col    = $this->table->getColumnDefinition($id);
+                    $col    = $this->table->getColumn($id);
                     assert($col !== null);
-                    $type   = $col['type'];
-                    $length = $col['length'];
 
-                    unset($col['type']);
-                    unset($col['length']);
-                    unset($col['autoincrement']);
-                    unset($col['sequence']);
-                    unset($col['primary']);
+                    $column = $col->rename(strtolower($table->getComponentName()) . '_' . $id);
+                    $column->primary = false;
+                    $column->autoincrement = false;
+                    $column->sequence = null;
 
-                    $def['table']->setColumn($column, $type, $length, $col);
+                    $def['table']->setColumn($column);
 
                     $columns[] = $column;
                 }

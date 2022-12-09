@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Record {
     use Tests\DoctrineUnitTestCase;
 
@@ -27,8 +28,6 @@ namespace Tests\Record {
             $object->objecttest    = new \TestObject(13);
             $object->enumtest      = 'java';
             $object->blobtest      = 'blobtest';
-            $object->clobtest      = 'clobtest';
-            $object->gziptest      = 'gziptest';
             // $object->timestamptest = '2007-08-07 11:55:00';
             $object->timestamptest = \DateTimeImmutable::createFromFormat('Y-m-d H:i:s O', '2007-08-07 11:55:00 GMT+0');
             $object->timetest      = '11:55:00';
@@ -48,8 +47,6 @@ namespace Tests\Record {
             $this->assertSame($object_before->enumtest, $object_after->enumtest);
             $this->assertEquals($object_before->objecttest, $object_after->objecttest);
             $this->assertSame($object_before->blobtest, $object_after->blobtest);
-            $this->assertSame($object_before->clobtest, $object_after->clobtest);
-            $this->assertSame($object_before->gziptest, $object_after->gziptest);
             $this->assertEquals($object_before->timestamptest, $object_after->timestamptest);
             $this->assertSame($object_before->timetest, $object_after->timetest);
             $this->assertEquals($object_before->datetest, $object_after->datetest);

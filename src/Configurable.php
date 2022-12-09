@@ -127,19 +127,6 @@ abstract class Configurable
         $this->defaultIdentifierOptions = $value;
     }
 
-    // DEFAULT COLUMN OPTIONS =================================================
-    protected ?array $defaultColumnOptions = null;
-
-    public function getDefaultColumnOptions(): array
-    {
-        return $this->defaultColumnOptions ?? $this->parent?->getDefaultColumnOptions() ?? [];
-    }
-
-    public function setDefaultColumnOptions(?array $value): void
-    {
-        $this->defaultColumnOptions = $value;
-    }
-
     // DEFAULT CHARSET ========================================================
     protected ?string $charset = null;
 
@@ -329,6 +316,32 @@ abstract class Configurable
     public function setTableClassFormat(?string $value): void
     {
         $this->tableClassFormat = $value;
+    }
+
+    // ENUM IMPLEMENTATION ====================================================
+    protected ?EnumSetImplementation $enumImplementation = null;
+
+    public function getEnumImplementation(): EnumSetImplementation
+    {
+        return $this->enumImplementation ?? $this->parent?->getEnumImplementation() ?? EnumSetImplementation::String;
+    }
+
+    public function setEnumImplementation(?EnumSetImplementation $value): void
+    {
+        $this->enumImplementation = $value;
+    }
+
+    // SET IMPLEMENTATION =====================================================
+    protected ?EnumSetImplementation $setImplementation = null;
+
+    public function getSetImplementation(): EnumSetImplementation
+    {
+        return $this->setImplementation ?? $this->parent?->getSetImplementation() ?? EnumSetImplementation::String;
+    }
+
+    public function setSetImplementation(?EnumSetImplementation $value): void
+    {
+        $this->setImplementation = $value;
     }
 
     // QUOTE IDENTIFIER =======================================================

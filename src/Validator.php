@@ -2,6 +2,7 @@
 
 namespace Doctrine1;
 
+use Doctrine1\Column\Type;
 use Laminas\Validator\ValidatorInterface;
 
 class Validator
@@ -58,32 +59,22 @@ class Validator
      * Validates the length of a field.
      *
      * @param  string          $value         Value to validate
-     * @param  string          $type          Type of field being validated
+     * @param  Type            $type          Type of field being validated
      * @param  string|null|int $maximumLength Maximum length allowed for the column
      */
-    public static function validateLength($value, $type, $maximumLength): bool
+    public static function validateLength(string $value, Type $type, string|null|int $maximumLength): bool
     {
         if ($maximumLength === null) {
             return true;
         }
-        if ($type === 'timestamp' || $type === 'integer' || $type === 'enum' || $type === 'set') {
-            return true;
-        } elseif ($type == 'array' || $type == 'object') {
-            $length = strlen(serialize($value));
-        } elseif ($type == 'decimal' || $type == 'float') {
-            $length = strlen(preg_replace('/[^0-9]/', '', $value) ?? $value);
-        } elseif ($type == 'blob') {
-            $length = strlen($value);
-        } else {
-            $validator = new \Laminas\Validator\StringLength([
-                'max' => $maximumLength,
-            ]);
-            return $validator->isValid($value);
-        }
-        if ($length > $maximumLength) {
-            return false;
-        }
-        return true;
+
+        return match ($type) {
+            Type::Timestamp, Type::Integer, Type::Enum, Type::Set => true,
+            Type::Array, Type::Object => strlen(serialize($value)) <= $maximumLength,
+            Type::Decimal, Type::Float => strlen(preg_replace('/[^0-9]/', '', $value) ?? $value) <= $maximumLength,
+            Type::BLOB => strlen($value) <= $maximumLength,
+            default => (new \Laminas\Validator\StringLength(['max' => $maximumLength]))->isValid($value),
+        };
     }
 
     /**
@@ -98,55 +89,38 @@ class Validator
      * Validate the type of the passed variable
      *
      * @param  mixed  $var  Variable to validate
-     * @param  string $type Type of the variable expected
+     * @param  Type|string $type Type of the variable expected
      */
-    public static function isValidType($var, $type): bool
+    public static function isValidType($var, Type|string $type): bool
     {
+        if (is_string($type)) {
+            $type = Type::fromNative($type);
+        }
+
         if ($var instanceof Expression) {
             return true;
         } elseif ($var === null) {
             return true;
         } elseif (is_object($var)) {
-            return $type == 'object';
+            return $type === Type::Object;
         } elseif (is_array($var)) {
-            return $type == 'array';
+            return $type === Type::Array;
         }
 
-        switch ($type) {
-            case 'float':
-            case 'double':
-            case 'decimal':
-                return (string) $var == strval(floatval($var));
-            case 'integer':
-                return (string) $var == strval(round(floatval($var)));
-            case 'string':
-                return is_string($var) || is_numeric($var);
-            case 'blob':
-                return is_string($var) || is_resource($var);
-            case 'clob':
-            case 'gzip':
-                return is_string($var);
-            case 'array':
-                return is_array($var);
-            case 'object':
-                return is_object($var);
-            case 'boolean':
-                return is_bool($var) || (is_numeric($var) && ($var == 0 || $var == 1));
-            case 'timestamp':
-                $validator = new Validator\Timestamp();
-                return $validator->isValid($var);
-            case 'time':
-                $validator = new Validator\Time();
-                return $validator->isValid($var);
-            case 'date':
-                $validator = new Validator\Date();
-                return $validator->isValid($var);
-            case 'enum':
-                return is_string($var) || is_int($var);
-            case 'set':
-                return is_array($var) || is_string($var);
-            default:
-                return true;
-        }
+        return match ($type) {
+            Type::Float, Type::Decimal => (string) $var == strval(floatval($var)),
+            Type::Integer => (string) $var == strval(round(floatval($var))),
+            Type::String => is_string($var) || is_numeric($var),
+            Type::BLOB => is_string($var) || is_resource($var),
+            Type::Array => is_array($var),
+            Type::Object => is_object($var),
+            Type::Boolean => is_bool($var) || (is_numeric($var) && ($var == 0 || $var == 1)),
+            Type::Timestamp => (new Validator\Timestamp())->isValid($var),
+            Type::Time => (new Validator\Time())->isValid($var),
+            Type::Date => (new Validator\Date())->isValid($var),
+            Type::Enum => is_string($var) || is_int($var),
+            Type::Set => is_array($var) || is_string($var),
+            default => true,
+        };
     }
 }

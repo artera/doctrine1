@@ -107,7 +107,6 @@ class Manager extends Configurable implements \Countable, \IteratorAggregate
         $this->registerSerializer(new Serializer\JSON(), 40);
 
         // last resort, these shouldn't exist imho
-        $this->registerSerializer(new Serializer\Gzip(), 0);
         $this->registerSerializer(new Serializer\ArrayOrObject(), 0);
 
         $this->clearDeserializers();

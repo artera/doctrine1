@@ -2,6 +2,9 @@
 
 namespace Doctrine1\DataDict;
 
+use Doctrine1\Column;
+use Doctrine1\Column\Type;
+
 class Pgsql extends \Doctrine1\DataDict
 {
     /**
@@ -306,83 +309,60 @@ class Pgsql extends \Doctrine1\DataDict
         'zone',
     ];
 
-    public function getNativeDeclaration(array $field)
+    public function getNativeDeclaration(Column $field): string
     {
-        if (!isset($field['type'])) {
-            throw new \Doctrine1\DataDict\Exception('Missing column type.');
-        }
+        $length   = $field->length;
 
-        // Postgres enum type by name containing enum
-        if (strpos($field['type'], 'enum') !== false) {
-            $field['type'] = 'enum';
-        }
-
-        switch ($field['type']) {
-            case 'enum':
-                $field['length'] = isset($field['length']) && $field['length'] ? $field['length'] : 255;
+        switch ($field->type) {
+            case Type::Enum:
+                $length ??= 255;
                 // no break
-            case 'char':
-            case 'string':
-            case 'array':
-            case 'object':
-            case 'varchar':
-            case 'gzip':
-                // TODO: what is the maximum VARCHAR length in pgsql ?
-                $length = (isset($field['length']) && $field['length'] && $field['length'] < 10000) ? $field['length'] : null;
-
-                $fixed = ((isset($field['fixed']) && $field['fixed']) || $field['type'] == 'char') ? true : false;
-
+            case Type::String:
+            case Type::Array:
+            case Type::Object:
+                $fixed = ($field->fixed || $field->type == 'char') ? true : false;
                 return $fixed ? ($length ? 'CHAR(' . $length . ')' : 'CHAR(' . $this->conn->varchar_max_length . ')')
                     : ($length ? 'VARCHAR(' . $length . ')' : 'TEXT');
 
-            case 'clob':
-                return 'TEXT';
-            case 'blob':
+            case Type::BLOB:
                 return 'BYTEA';
-            case 'integer':
-            case 'int':
-                if (!empty($field['autoincrement'])) {
-                    if (!empty($field['length'])) {
-                        $length = $field['length'];
-                        if ($length > 4) {
-                            return 'BIGSERIAL';
-                        }
+            case Type::Integer:
+                if ($field->autoincrement) {
+                    if ($length > 4) {
+                        return 'BIGSERIAL';
                     }
                     return 'SERIAL';
                 }
-                if (!empty($field['length'])) {
-                    $length = $field['length'];
-                    if ($length <= 2) {
-                        return 'SMALLINT';
-                    } elseif ($length == 3 || $length == 4) {
-                        return 'INT';
-                    } elseif ($length > 4) {
-                        return 'BIGINT';
-                    }
+                if ($length <= 0) {
+                    return 'INT';
+                } elseif ($length <= 2) {
+                    return 'SMALLINT';
+                } elseif ($length == 3 || $length == 4) {
+                    return 'INT';
                 }
-                return 'INT';
-            case 'inet':
+                return 'BIGINT';
+            case Type::Inet:
                 return 'INET';
-            case 'bit':
-            case 'varbit':
+            case Type::Bit:
                 return 'VARBIT';
-            case 'boolean':
+            case Type::Boolean:
                 return 'BOOLEAN';
-            case 'date':
+            case Type::Date:
                 return 'DATE';
-            case 'time':
+            case Type::Time:
                 return 'TIME';
-            case 'timestamp':
+            case Type::DateTime:
+            case Type::Timestamp:
                 return 'TIMESTAMP';
-            case 'float':
-            case 'double':
+            case Type::Float:
+            case Type::Double:
                 return 'FLOAT';
-            case 'decimal':
-                $length = !empty($field['length']) ? $field['length'] : 18;
-                $scale  = !empty($field['scale']) ? $field['scale'] : $this->conn->getDecimalPlaces();
+            case Type::Decimal:
+                $length ??= 18;
+                $scale  = $field->scale ?: $this->conn->getDecimalPlaces();
                 return 'NUMERIC(' . $length . ',' . $scale . ')';
         }
-        return $field['type'] . (isset($field['length']) ? '(' . $field['length'] . ')' : null);
+        return $field->type->value . ($length !== null ? '(' . $length . ')' : null);
     }
 
     /**
@@ -567,52 +547,31 @@ class Pgsql extends \Doctrine1\DataDict
      * Obtain DBMS specific SQL code portion needed to declare an integer type
      * field to be used in statements like CREATE TABLE.
      *
-     * @param  string $name  name the field to be declared.
-     * @param  array  $field associative array with the name of the properties
-     *                       of the field being declared as array indexes.
-     *                       Currently, the types of supported field
-     *                       properties are as follows: unsigned Boolean flag
-     *                       that indicates whether the field should be
-     *                       declared as unsigned integer if possible. default
-     *                       Integer value to be used as default for this
-     *                       field. notnull Boolean flag that indicates
-     *                       whether this field is constrained to not be set
-     *                       to null.
      * @return string DBMS specific SQL code portion that should be used to
      *       declare the specified field.
      */
-    public function getIntegerDeclaration($name, $field)
+    public function getIntegerDeclaration(Column $field): string
     {
-        /**
-        if ( !empty($field['unsigned'])) {
-            $this->conn->warnings[] = "unsigned integer field \"$name\" is being declared as signed integer";
-        }
-        */
-
-        if (!empty($field['autoincrement'])) {
-            $name = $this->conn->quoteIdentifier($name, true);
+        if ($field->autoincrement) {
+            $name = $this->conn->quoteIdentifier($field->name, true);
             return $name . ' ' . $this->getNativeDeclaration($field);
         }
 
         $default = '';
-        if (array_key_exists('default', $field)) {
-            if ($field['default'] === '') {
-                $field['default'] = empty($field['notnull']) ? null : 0;
+        if ($field->hasDefault()) {
+            $default = $field->default;
+            if ($default === '') {
+                $default = $field->notnull ? 0 : null;
             }
 
-            $default = ' DEFAULT ' . ($field['default'] === null
+            $default = ' DEFAULT ' . ($default === null
                 ? 'NULL'
-                : $this->conn->quote($field['default'], $field['type']));
+                : $this->conn->quote($default, $field->type->value));
         }
-        /**
-        TODO: is this needed ?
-        elseif (empty($field['notnull'])) {
-            $default = ' DEFAULT NULL';
-        }
-        */
 
-        $notnull = empty($field['notnull']) ? '' : ' NOT NULL';
-        $name    = $this->conn->quoteIdentifier($name, true);
+        $notnull = $field->notnull ? ' NOT NULL' : '';
+
+        $name = $this->conn->quoteIdentifier($field->name, true);
         return $name . ' ' . $this->getNativeDeclaration($field) . $default . $notnull;
     }
 

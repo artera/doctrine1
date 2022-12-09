@@ -2,49 +2,39 @@
 
 namespace Doctrine1\Migration;
 
+use Doctrine1\Column;
+
 abstract class Base
 {
     /**
      * The default options for tables created using \Doctrine1\Migration\Base::createTable()
-     *
-     * @var array
      */
-    private static $defaultTableOptions = [];
+    private static array $defaultTableOptions = [];
 
-    /**
-     * @var array
-     */
-    protected $changes = [];
+    protected array $changes = [];
 
-    /**
-     * @var array
-     */
-    protected static $opposites = ['created_table'       => 'dropped_table',
-                                         'dropped_table'       => 'created_table',
-                                         'created_constraint'  => 'dropped_constraint',
-                                         'dropped_constraint'  => 'created_constraint',
-                                         'created_foreign_key' => 'dropped_foreign_key',
-                                         'dropped_foreign_key' => 'created_foreign_key',
-                                         'created_column'      => 'dropped_column',
-                                         'dropped_column'      => 'created_column',
-                                         'created_index'       => 'dropped_index',
-                                         'dropped_index'       => 'created_index',
-                                         ];
+    protected static array $opposites = [
+        'created_table'       => 'dropped_table',
+        'dropped_table'       => 'created_table',
+        'created_constraint'  => 'dropped_constraint',
+        'dropped_constraint'  => 'created_constraint',
+        'created_foreign_key' => 'dropped_foreign_key',
+        'dropped_foreign_key' => 'created_foreign_key',
+        'created_column'      => 'dropped_column',
+        'dropped_column'      => 'created_column',
+        'created_index'       => 'dropped_index',
+        'dropped_index'       => 'created_index',
+    ];
 
     /**
      * Get the changes that have been added on this migration class instance
-     *
-     * @return array $changes
      */
-    public function getChanges()
+    public function getChanges(): array
     {
         return $this->changes;
     }
 
-    /**
-     * @return int
-     */
-    public function getNumChanges()
+    public function getNumChanges(): int
     {
         return count($this->changes);
     }
@@ -54,9 +44,8 @@ abstract class Base
      *
      * @param  string $type   The type of change
      * @param  array  $change The array of information for the change
-     * @return array
      */
-    protected function addChange($type, array $change = [])
+    protected function addChange(string $type, array $change = []): array
     {
         if (isset($change['upDown']) && $change['upDown'] !== null && isset(self::$opposites[$type])) {
             $upDown = $change['upDown'];
@@ -73,10 +62,8 @@ abstract class Base
      * Sets the default options for tables created using \Doctrine1\Migration\Base::createTable()
      *
      * @param array $options
-     *
-     * @return void
      */
-    public static function setDefaultTableOptions(array $options)
+    public static function setDefaultTableOptions(array $options): void
     {
         self::$defaultTableOptions = $options;
     }
@@ -98,24 +85,26 @@ abstract class Base
      * @param  string $tableName Name of the table
      * @param  array  $fields    Array of fields for table
      * @param  array  $options   Array of options for the table
-     * @return void
      */
-    public function table($upDown, $tableName, array $fields = [], array $options = [])
+    public function table(string $upDown, string $tableName, array $fields = [], array $options = []): void
     {
-        $options = get_defined_vars();
-
-        $this->addChange('created_table', $options);
+        $this->addChange('created_table', [
+            'upDown' => $upDown,
+            'tableName' => $tableName,
+            'fields' => $fields,
+            'options' => $options,
+        ]);
     }
 
     /**
      * Add a create table change.
      *
      * @param  string $tableName Name of the table
+     * @phpstan-param Column[] $fields
      * @param  array  $fields    Array of fields for table
      * @param  array  $options   Array of options for the table
-     * @return void
      */
-    public function createTable($tableName, array $fields = [], array $options = [])
+    public function createTable(string $tableName, array $fields = [], array $options = []): void
     {
         $this->table('up', $tableName, $fields, array_merge(self::getDefaultTableOptions(), $options));
     }
@@ -124,9 +113,8 @@ abstract class Base
      * Add a drop table change.
      *
      * @param  string $tableName Name of the table
-     * @return void
      */
-    public function dropTable($tableName)
+    public function dropTable(string $tableName): void
     {
         $this->table('down', $tableName);
     }
@@ -136,9 +124,8 @@ abstract class Base
      *
      * @param  string $oldTableName Name of the table to change
      * @param  string $newTableName Name to change the table to
-     * @return void
      */
-    public function renameTable($oldTableName, $newTableName)
+    public function renameTable(string $oldTableName, string $newTableName): void
     {
         $options = get_defined_vars();
 
@@ -152,9 +139,8 @@ abstract class Base
      * @param  string      $tableName      Name of the table.
      * @param  string|null $constraintName Name of the constraint.
      * @param  array       $definition     Array for the constraint definition.
-     * @return void
      */
-    public function constraint($upDown, $tableName, $constraintName, array $definition)
+    public function constraint(string $upDown, string $tableName, ?string $constraintName, array $definition): void
     {
         $options = get_defined_vars();
 
@@ -167,9 +153,8 @@ abstract class Base
      * @param  string      $tableName      Name of the table.
      * @param  string|null $constraintName Name of the constraint.
      * @param  array       $definition     Array for the constraint definition.
-     * @return void
      */
-    public function createConstraint($tableName, $constraintName, array $definition)
+    public function createConstraint(string $tableName, ?string $constraintName, array $definition): void
     {
         $this->constraint('up', $tableName, $constraintName, $definition);
     }
@@ -180,9 +165,8 @@ abstract class Base
      * @param  string      $tableName      Name of the table.
      * @param  string|null $constraintName Name of the constraint.
      * @param  bool        $primary
-     * @return void
      */
-    public function dropConstraint($tableName, $constraintName, $primary = false)
+    public function dropConstraint(string $tableName, ?string $constraintName, bool $primary = false): void
     {
         $this->constraint('down', $tableName, $constraintName, ['primary' => $primary]);
     }
@@ -193,9 +177,8 @@ abstract class Base
      * @param  string $direction
      * @param  string $tableName   Name of the table
      * @param  array  $columnNames Array of column names and column definitions
-     * @return void
      */
-    public function primaryKey($direction, $tableName, $columnNames)
+    public function primaryKey(string $direction, string $tableName, $columnNames): void
     {
         if ($direction == 'up') {
             $this->createPrimaryKey($tableName, $columnNames);
@@ -224,9 +207,8 @@ abstract class Base
      *
      * @param  string $tableName   Name of the table
      * @param  array  $columnNames Array of column names and column definitions
-     * @return void
      */
-    public function createPrimaryKey($tableName, $columnNames)
+    public function createPrimaryKey(string $tableName, $columnNames): void
     {
         $autoincrement = false;
         $fields        = [];
@@ -287,9 +269,8 @@ abstract class Base
      *
      * @param  string $tableName   Name of the table
      * @param  array  $columnNames Array of column names and column definitions
-     * @return void
      */
-    public function dropPrimaryKey($tableName, $columnNames)
+    public function dropPrimaryKey(string $tableName, $columnNames): void
     {
         // un-autoincrement
         foreach ((array) $columnNames as $columnName => $def) {
@@ -316,9 +297,8 @@ abstract class Base
      * @param  string $tableName  Name of the table.
      * @param  string $name       Name of the foreign key.
      * @param  array  $definition Array for the foreign key definition
-     * @return void
      */
-    public function foreignKey($upDown, $tableName, $name, array $definition = [])
+    public function foreignKey(string $upDown, string $tableName, string $name, array $definition = []): void
     {
         $definition['name'] = $name;
         $options            = get_defined_vars();
@@ -343,9 +323,8 @@ abstract class Base
      *
      * @param  string $tableName Name of the table.
      * @param  string $name      Name of the foreign key.
-     * @return void
      */
-    public function dropForeignKey($tableName, $name)
+    public function dropForeignKey(string $tableName, string $name): void
     {
         $this->foreignKey('down', $tableName, $name);
     }
@@ -359,9 +338,8 @@ abstract class Base
      * @param  string $type       Type of the column
      * @param  string $length     Length of the column
      * @param  array  $options    Array of options for the column
-     * @return void
      */
-    public function column($upDown, $tableName, $columnName, $type = null, $length = null, array $options = [])
+    public function column(string $upDown, string $tableName, string $columnName, $type = null, $length = null, array $options = []): void
     {
         $options = get_defined_vars();
         if (!isset($options['options']['length'])) {
@@ -381,9 +359,8 @@ abstract class Base
      * @param  string $type       Type of the column
      * @param  string $length     Length of the column
      * @param  array  $options    Array of options for the column
-     * @return void
      */
-    public function addColumn($tableName, $columnName, $type, $length = null, array $options = [])
+    public function addColumn(string $tableName, string $columnName, string $type, $length = null, array $options = []): void
     {
         $this->column('up', $tableName, $columnName, $type, $length, $options);
     }
@@ -393,9 +370,8 @@ abstract class Base
      *
      * @param  string $tableName  Name of the table
      * @param  string $columnName Name of the column
-     * @return void
      */
-    public function removeColumn($tableName, $columnName)
+    public function removeColumn(string $tableName, string $columnName): void
     {
         $this->column('down', $tableName, $columnName);
     }
@@ -406,9 +382,8 @@ abstract class Base
      * @param  string $tableName     Name of the table to rename the column on
      * @param  string $oldColumnName The old column name
      * @param  string $newColumnName The new column name
-     * @return void
      */
-    public function renameColumn($tableName, $oldColumnName, $newColumnName)
+    public function renameColumn(string $tableName, string $oldColumnName, string $newColumnName): void
     {
         $options = get_defined_vars();
 
@@ -423,9 +398,8 @@ abstract class Base
      * @param  string $type       New type of column
      * @param  string $length     The length of the column
      * @param  array  $options    New options for the column
-     * @return void
      */
-    public function changeColumn($tableName, $columnName, $type = null, $length = null, array $options = [])
+    public function changeColumn(string $tableName, string $columnName, $type = null, $length = null, array $options = []): void
     {
         $options                      = get_defined_vars();
         $options['options']['length'] = $length;
@@ -440,9 +414,8 @@ abstract class Base
      * @param  string $tableName  Name of the table
      * @param  string $indexName  Name of the index
      * @param  array  $definition Array for the index definition
-     * @return void
      */
-    public function index($upDown, $tableName, $indexName, array $definition = [])
+    public function index(string $upDown, string $tableName, string $indexName, array $definition = []): void
     {
         $options = get_defined_vars();
 
@@ -455,9 +428,8 @@ abstract class Base
      * @param  string $tableName  Name of the table
      * @param  string $indexName  Name of the index
      * @param  array  $definition Array for the index definition
-     * @return void
      */
-    public function addIndex($tableName, $indexName, array $definition)
+    public function addIndex(string $tableName, string $indexName, array $definition): void
     {
         $this->index('up', $tableName, $indexName, $definition);
     }
@@ -467,38 +439,25 @@ abstract class Base
      *
      * @param  string $tableName Name of the table
      * @param  string $indexName Name of the index
-     * @return void
      */
-    public function removeIndex($tableName, $indexName)
+    public function removeIndex(string $tableName, string $indexName): void
     {
         $this->index('down', $tableName, $indexName);
     }
 
-    /**
-     * @return void
-     */
-    public function preUp()
+    public function preUp(): void
     {
     }
 
-    /**
-     * @return void
-     */
-    public function postUp()
+    public function postUp(): void
     {
     }
 
-    /**
-     * @return void
-     */
-    public function preDown()
+    public function preDown(): void
     {
     }
 
-    /**
-     * @return void
-     */
-    public function postDown()
+    public function postDown(): void
     {
     }
 }

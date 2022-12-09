@@ -296,6 +296,8 @@ class Core
      * If you do not specify $classes it will return all of the currently loaded Records
      *
      * @param  array|null $classes Array of classes to filter through, otherwise uses get_declared_classes()
+     * @phpstan-param list<class-string<Record>> $classes
+     * @phpstan-return list<class-string<Record>>
      */
     public static function getLoadedModels(?array $classes = null): array
     {
@@ -312,6 +314,7 @@ class Core
      * This will also inheritently initialize any model behaviors and add
      * them to the $models array
      * @phpstan-param string[] $models
+     * @phpstan-return list<class-string<Record>>
      */
     public static function initializeModels(array $models): array
     {
@@ -332,16 +335,14 @@ class Core
             }
         }
 
-        $models = self::filterInvalidModels($models);
-
-        return $models;
+        return self::filterInvalidModels($models);
     }
 
     /**
      * Filter through an array of classes and return all the classes that are valid models.
      * This will inflect the class, causing it to be loaded in to memory.
      * @phpstan-param string[] $classes
-     * @phpstan-return class-string<Record>[]
+     * @phpstan-return list<class-string<Record>>
      */
     public static function filterInvalidModels(array $classes): array
     {

@@ -31,7 +31,6 @@ namespace Tests\Tickets {
             ->innerJoin('person.T1015_Points points WITH person.id = 1');
 
             $results = $q->execute([], \Doctrine1\HydrationMode::Array);
-            //var_dump($results);
             $person = $results[0];
 
             // number of points for person id of 1 should be 15
@@ -47,7 +46,6 @@ namespace Tests\Tickets {
             ->addComponent('points', 'person.T1015_Points points');
 
             $results = $q->execute([], \Doctrine1\HydrationMode::Array);
-            //var_dump($results);
             $person = $results[0];
 
             // number of points for person id of 1 should be 15

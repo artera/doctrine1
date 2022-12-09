@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Misc;
 
 use Tests\DoctrineUnitTestCase;
@@ -25,7 +26,7 @@ class PessimisticLockingTest extends DoctrineUnitTestCase
         $entry1->save();
     }
 
-    protected static array $tables = ['Forum_Entry', 'Entity', 'Phonenumber', 'Email', 'Groupuser'];
+    protected static array $tables = ['Forum_Entry', 'Entity', 'Phonenumber', 'Email', 'GroupUser'];
 
     /**
      * Tests the basic locking mechanism

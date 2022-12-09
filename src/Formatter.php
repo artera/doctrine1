@@ -51,7 +51,7 @@ class Formatter extends Connection\Module
      *
      * @return mixed[]|bool|int|float
      */
-    public function convertBooleans(array|string|bool|int|float $item): array|string|bool|int|float
+    public function convertBooleans(array|string|bool|int|float|null $item): array|string|bool|int|float|null
     {
         if (is_array($item)) {
             foreach ($item as $k => $value) {
@@ -162,9 +162,7 @@ class Formatter extends Connection\Module
             case 'char':
             case 'varchar':
             case 'text':
-            case 'gzip':
             case 'blob':
-            case 'clob':
             case 'enum':
             case 'set':
             case 'boolean':

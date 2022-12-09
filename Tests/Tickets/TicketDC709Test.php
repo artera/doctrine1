@@ -1,6 +1,9 @@
 <?php
+
 namespace Tests\Tickets;
 
+use Doctrine1\Column;
+use Doctrine1\Column\Type;
 use Tests\DoctrineUnitTestCase;
 
 class TicketDC709Test extends DoctrineUnitTestCase
@@ -13,12 +16,12 @@ class TicketDC709Test extends DoctrineUnitTestCase
     {
         $dbh = new \Doctrine1\Adapter\Mock('mysql');
 
-        $conn = \Doctrine1\Manager::getInstance()->connection($dbh, 'mysql', false);
+        $conn = \Doctrine1\Manager::getInstance()->connection($dbh, 'mysql');
 
         $sql = $conn->export->createTableSql(
             'mytable',
             [
-            'name' => ['type' => 'string', 'length' => 255, 'comment' => "This comment isn't breaking"]
+                new Column('name', Type::String, 255, comment: "This comment isn't breaking"),
             ]
         );
 

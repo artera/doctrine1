@@ -2,6 +2,8 @@
 
 namespace Doctrine1\Hydrator;
 
+use Doctrine1\Column\Type;
+
 class ScalarDriver extends \Doctrine1\Hydrator\AbstractHydrator
 {
     public function hydrateResultSet(\Doctrine1\Connection\Statement $stmt): array
@@ -49,7 +51,7 @@ class ScalarDriver extends \Doctrine1\Hydrator\AbstractHydrator
 
                 // cache type information
                 $type = $table->getTypeOfColumn($columnName);
-                if ($type == 'integer' || $type == 'string') {
+                if ($type === Type::Integer || $type === Type::String) {
                     $cache[$key]['isSimpleType'] = true;
                 } else {
                     $cache[$key]['type']         = $type;

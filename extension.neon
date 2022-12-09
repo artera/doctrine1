@@ -1,3 +1,8 @@
+parameters:
+  doctrine1:
+    namespace: null
+    tableFormat: null
+
 services:
   - class: Doctrine1\PHPStan\TableDynamicReturnTypeExtension
     tags:
@@ -5,9 +10,20 @@ services:
       - phpstan.broker.dynamicMethodReturnTypeExtension
 
   - class: Doctrine1\PHPStan\QueryDynamicReturnTypeExtension
+    arguments:
+      namespace: %doctrine1.namespace%
     tags:
       - phpstan.broker.dynamicMethodReturnTypeExtension
 
   - class: Doctrine1\PHPStan\CoreDynamicReturnTypeExtension
+    arguments:
+      namespace: %doctrine1.namespace%
+      tableFormat: %doctrine1.tableFormat%
     tags:
       - phpstan.broker.dynamicStaticMethodReturnTypeExtension
+
+parametersSchema:
+  doctrine1: structure([
+    namespace: schema(string(), nullable())
+    tableFormat: schema(string(), nullable())
+  ])

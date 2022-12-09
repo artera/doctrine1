@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Record;
 
 use Doctrine1\Collection;
@@ -9,7 +10,6 @@ class RecordTest extends DoctrineUnitTestCase
     protected static array $tables = [
         'enumTest',
         'fieldNameTest',
-        'GzipTest',
         'Book',
         'EntityAddress',
         'UnderscoreColumn',
@@ -89,33 +89,9 @@ class RecordTest extends DoctrineUnitTestCase
         $null->save();
     }
 
-    public function testGzipType()
-    {
-        $gzip       = new \GzipTest();
-        $gzip->gzip = 'compressed';
-
-        $this->assertEquals($gzip->gzip, 'compressed');
-        $gzip->save();
-        $this->assertEquals($gzip->gzip, 'compressed');
-        $gzip->refresh();
-        $this->assertEquals($gzip->gzip, 'compressed');
-
-        static::$connection->clear();
-        $gzip = $gzip->getTable()->find($gzip->id);
-        $this->assertEquals($gzip->gzip, 'compressed');
-
-        $gzip->gzip = 'compressed 2';
-
-        $this->assertEquals($gzip->gzip, 'compressed 2');
-        $gzip->save();
-        $this->assertEquals($gzip->gzip, 'compressed 2');
-        $gzip->refresh();
-        $this->assertEquals($gzip->gzip, 'compressed 2');
-    }
-
     public function testDefaultValues()
     {
-        $test = new \FieldNameTest;
+        $test = new \FieldNameTest();
 
         $this->assertEquals($test->someColumn, 'some string');
         $this->assertEquals($test->someEnum, 'php');
@@ -590,122 +566,122 @@ class RecordTest extends DoctrineUnitTestCase
     {
         $user = static::$connection->getTable('User')->find(5);
 
-            $this->assertTrue($user->Phonenumber instanceof \Doctrine1\Collection);
-            $this->assertEquals($user->Phonenumber->count(), 3);
+        $this->assertTrue($user->Phonenumber instanceof \Doctrine1\Collection);
+        $this->assertEquals($user->Phonenumber->count(), 3);
 
-            $coll = new \Doctrine1\Collection('Phonenumber');
+        $coll = new \Doctrine1\Collection('Phonenumber');
 
-            $user->Phonenumber = $coll;
-            $this->assertEquals($user->Phonenumber->count(), 0);
-            $user->save();
+        $user->Phonenumber = $coll;
+        $this->assertEquals($user->Phonenumber->count(), 0);
+        $user->save();
 
-            $user->getTable()->clear();
+        $user->getTable()->clear();
 
-            $user = static::$connection->getTable('User')->find(5);
+        $user = static::$connection->getTable('User')->find(5);
 
-            $this->assertEquals($user->Phonenumber->count(), 0);
-            $this->assertEquals(Collection::class, $user->Phonenumber::class);
+        $this->assertEquals($user->Phonenumber->count(), 0);
+        $this->assertEquals(Collection::class, $user->Phonenumber::class);
 
-            $user->Phonenumber[0]->phonenumber;
-            $this->assertEquals($user->Phonenumber->count(), 1);
+        $user->Phonenumber[0]->phonenumber;
+        $this->assertEquals($user->Phonenumber->count(), 1);
 
-            // ADDING REFERENCES
+        // ADDING REFERENCES
 
-            $user->Phonenumber[0]->phonenumber = '123 123';
+        $user->Phonenumber[0]->phonenumber = '123 123';
 
-            $this->assertEquals($user->Phonenumber->count(), 1);
-            $user->Phonenumber[1]->phonenumber = '123 123';
-            $this->assertEquals($user->Phonenumber->count(), 2);
+        $this->assertEquals($user->Phonenumber->count(), 1);
+        $user->Phonenumber[1]->phonenumber = '123 123';
+        $this->assertEquals($user->Phonenumber->count(), 2);
 
-            $user->save();
-
-
-            $this->assertEquals($user->Phonenumber->count(), 2);
-
-            unset($user);
-            $user = static::$connection->getTable('User')->find(5);
-            $this->assertEquals($user->Phonenumber->count(), 2);
-
-            $user->Phonenumber[3]->phonenumber = '123 123';
-            $user->save();
-
-            $this->assertEquals($user->Phonenumber->count(), 3);
-            unset($user);
-            $user = static::$connection->getTable('User')->find(5);
-            $this->assertEquals($user->Phonenumber->count(), 3);
-
-            // DELETING REFERENCES
-
-            $user->Phonenumber->delete();
-
-            $this->assertEquals($user->Phonenumber->count(), 0);
-            unset($user);
-            $user = static::$connection->getTable('User')->find(5);
-            $this->assertEquals($user->Phonenumber->count(), 0);
-
-            // ADDING REFERENCES WITH STRING KEYS
-
-            $user->Phonenumber['home']->phonenumber = '123 123';
-            $user->Phonenumber['work']->phonenumber = '444 444';
-            $user->save();
-
-            $this->assertEquals($user->Phonenumber->count(), 2);
-            unset($user);
-            $user = static::$connection->getTable('User')->find(5);
-            $this->assertEquals($user->Phonenumber->count(), 2);
-
-            // REPLACING ONE-TO-MANY REFERENCE
-            unset($coll);
-            $coll                      = new \Doctrine1\Collection('Phonenumber');
-            $coll[0]->phonenumber      = '123 123';
-            $coll['home']->phonenumber = '444 444';
-            $coll['work']->phonenumber = '444 444';
-
-            $user->Phonenumber = $coll;
-            $user->save();
-            $this->assertEquals($user->Phonenumber->count(), 3);
-
-            $user = static::$connection->getTable('User')->find(5);
-            //$this->assertEquals($user->Phonenumber->count(), 3);
+        $user->save();
 
 
-            // ONE-TO-ONE REFERENCES
+        $this->assertEquals($user->Phonenumber->count(), 2);
 
-            $user->Email->address = 'drinker@drinkmore.info';
-            $this->assertTrue($user->Email instanceof \Email);
-            $this->assertEquals($user->Email->address, 'drinker@drinkmore.info');
+        unset($user);
+        $user = static::$connection->getTable('User')->find(5);
+        $this->assertEquals($user->Phonenumber->count(), 2);
 
-            $user->save();
+        $user->Phonenumber[3]->phonenumber = '123 123';
+        $user->save();
 
-            $this->assertTrue($user->Email instanceof \Email);
-            $this->assertEquals($user->Email->address, 'drinker@drinkmore.info');
-            $this->assertEquals($user->Email->id, $user->email_id);
+        $this->assertEquals($user->Phonenumber->count(), 3);
+        unset($user);
+        $user = static::$connection->getTable('User')->find(5);
+        $this->assertEquals($user->Phonenumber->count(), 3);
 
-            $user = static::$connection->getTable('User')->find(5);
+        // DELETING REFERENCES
 
-            $this->assertTrue($user->Email instanceof \Email);
-            $this->assertEquals($user->Email->id, $user->email_id);
-            $this->assertEquals($user->Email->state(), \Doctrine1\Record\State::CLEAN);
-            $this->assertEquals($user->Email->address, 'drinker@drinkmore.info');
-            $id = $user->Email->id;
+        $user->Phonenumber->delete();
 
-            // REPLACING ONE-TO-ONE REFERENCES
+        $this->assertEquals($user->Phonenumber->count(), 0);
+        unset($user);
+        $user = static::$connection->getTable('User')->find(5);
+        $this->assertEquals($user->Phonenumber->count(), 0);
 
-            $email          = static::$connection->create('Email');
-            $email->address = 'absolutist@nottodrink.com';
-            $user->Email    = $email;
+        // ADDING REFERENCES WITH STRING KEYS
 
-            $this->assertTrue($user->Email instanceof \Email);
-            $this->assertEquals($user->Email->address, 'absolutist@nottodrink.com');
-            $user->save();
-            unset($user);
+        $user->Phonenumber['home']->phonenumber = '123 123';
+        $user->Phonenumber['work']->phonenumber = '444 444';
+        $user->save();
 
-            $user = static::$connection->getTable('User')->find(5);
-            $this->assertTrue($user->Email instanceof \Email);
-            $this->assertEquals($user->Email->address, 'absolutist@nottodrink.com');
+        $this->assertEquals($user->Phonenumber->count(), 2);
+        unset($user);
+        $user = static::$connection->getTable('User')->find(5);
+        $this->assertEquals($user->Phonenumber->count(), 2);
 
-            $emails = static::$connection->query("FROM Email WHERE Email.id = $id");
-            //$this->assertEquals(count($emails),0);
+        // REPLACING ONE-TO-MANY REFERENCE
+        unset($coll);
+        $coll                      = new \Doctrine1\Collection('Phonenumber');
+        $coll[0]->phonenumber      = '123 123';
+        $coll['home']->phonenumber = '444 444';
+        $coll['work']->phonenumber = '444 444';
+
+        $user->Phonenumber = $coll;
+        $user->save();
+        $this->assertEquals($user->Phonenumber->count(), 3);
+
+        $user = static::$connection->getTable('User')->find(5);
+        //$this->assertEquals($user->Phonenumber->count(), 3);
+
+
+        // ONE-TO-ONE REFERENCES
+
+        $user->Email->address = 'drinker@drinkmore.info';
+        $this->assertTrue($user->Email instanceof \Email);
+        $this->assertEquals($user->Email->address, 'drinker@drinkmore.info');
+
+        $user->save();
+
+        $this->assertTrue($user->Email instanceof \Email);
+        $this->assertEquals($user->Email->address, 'drinker@drinkmore.info');
+        $this->assertEquals($user->Email->id, $user->email_id);
+
+        $user = static::$connection->getTable('User')->find(5);
+
+        $this->assertTrue($user->Email instanceof \Email);
+        $this->assertEquals($user->Email->id, $user->email_id);
+        $this->assertEquals($user->Email->state(), \Doctrine1\Record\State::CLEAN);
+        $this->assertEquals($user->Email->address, 'drinker@drinkmore.info');
+        $id = $user->Email->id;
+
+        // REPLACING ONE-TO-ONE REFERENCES
+
+        $email          = static::$connection->create('Email');
+        $email->address = 'absolutist@nottodrink.com';
+        $user->Email    = $email;
+
+        $this->assertTrue($user->Email instanceof \Email);
+        $this->assertEquals($user->Email->address, 'absolutist@nottodrink.com');
+        $user->save();
+        unset($user);
+
+        $user = static::$connection->getTable('User')->find(5);
+        $this->assertTrue($user->Email instanceof \Email);
+        $this->assertEquals($user->Email->address, 'absolutist@nottodrink.com');
+
+        $emails = static::$connection->query("FROM Email WHERE Email.id = $id");
+        //$this->assertEquals(count($emails),0);
     }
 
     public function testDeleteReference()
@@ -877,7 +853,7 @@ class RecordTest extends DoctrineUnitTestCase
     public function testAggregateWithCommaGroupBy()
     {
         $query = \Doctrine1\Query::create()->from('EntityAddress e')->groupby('COALESCE(e.user_id, e.address_id)');
-            $this->assertEquals($query->getSqlQuery(), 'SELECT e.user_id AS e__user_id, e.address_id AS e__address_id FROM entity_address e GROUP BY COALESCE(e.user_id, e.address_id)');
+        $this->assertEquals($query->getSqlQuery(), 'SELECT e.user_id AS e__user_id, e.address_id AS e__address_id FROM entity_address e GROUP BY COALESCE(e.user_id, e.address_id)');
     }
 
     public function testFirstCharUnderscoreInColumnNameAndTableName()

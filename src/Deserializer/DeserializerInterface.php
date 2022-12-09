@@ -2,18 +2,10 @@
 
 namespace Doctrine1\Deserializer;
 
+use Doctrine1\Column;
+use Doctrine1\Table;
+
 interface DeserializerInterface
 {
-    /**
-     * @phpstan-param array{
-     *   type: string,
-     *   length: int,
-     *   notnull?: bool,
-     *   values?: array,
-     *   default?: mixed,
-     *   autoincrement?: bool,
-     *   values?: mixed[],
-     * } $column
-     */
-    public function deserialize(mixed $value, array $column, \Doctrine1\Table $table): mixed;
+    public function deserialize(mixed $value, Column $column, Table $table): mixed;
 }

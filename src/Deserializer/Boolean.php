@@ -2,18 +2,21 @@
 
 namespace Doctrine1\Deserializer;
 
+use Doctrine1\Column;
+use Doctrine1\Table;
+
 class Boolean implements DeserializerInterface
 {
-    protected function checkCompatibility(mixed $value, string $type): void
+    protected function checkCompatibility(mixed $value, Column\Type $type): void
     {
-        if ($type !== 'boolean' || !is_scalar($value)) {
+        if ($type !== Column\Type::Boolean || !is_scalar($value)) {
             throw new Exception\Incompatible();
         }
     }
 
-    public function deserialize(mixed $value, array $column, \Doctrine1\Table $table): mixed
+    public function deserialize(mixed $value, Column $column, Table $table): mixed
     {
-        $this->checkCompatibility($value, $column['type']);
+        $this->checkCompatibility($value, $column->type);
         return (bool) $value;
     }
 }

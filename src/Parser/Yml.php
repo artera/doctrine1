@@ -34,9 +34,7 @@ class Yml extends \Doctrine1\Parser
             return $array;
         } catch (\Throwable $e) {
             // rethrow the exceptions
-            $rethrowed_exception = new \Doctrine1\Parser\Exception($e->getMessage(), $e->getCode());
-
-            throw $rethrowed_exception;
+            throw new \Doctrine1\Parser\Exception($e->getMessage(), $e->getCode(), $e);
         }
     }
 }

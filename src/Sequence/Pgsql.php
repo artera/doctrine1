@@ -22,12 +22,12 @@ class Pgsql extends \Doctrine1\Sequence
                 try {
                     $result = $this->conn->export->createSequence($seqName);
                 } catch (\Doctrine1\Exception $e) {
-                    throw new \Doctrine1\Sequence\Exception('on demand sequence ' . $seqName . ' could not be created');
+                    throw new \Doctrine1\Sequence\Exception("On demand sequence $seqName could not be created", previous: $e);
                 }
 
                 return $this->nextId($seqName, false);
             } else {
-                throw new \Doctrine1\Sequence\Exception('sequence ' . $seqName . ' does not exist');
+                throw new \Doctrine1\Sequence\Exception("Sequence $seqName does not exist", previous: $e);
             }
         }
 

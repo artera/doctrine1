@@ -100,7 +100,7 @@ class Collection extends Access implements \Countable, \IteratorAggregate, \Seri
     }
 
     /**
-     * Set the data for the Doctrin_Collection instance
+     * Set the data for the Collection instance
      *
      * @param Record[] $data
      * @phpstan-param T[] $data

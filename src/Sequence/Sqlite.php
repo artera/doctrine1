@@ -26,12 +26,12 @@ class Sqlite extends \Doctrine1\Sequence
                 try {
                     $this->conn->export->createSequence($seqName, 2);
                 } catch (\Doctrine1\Exception $e) {
-                    throw new \Doctrine1\Sequence\Exception('on demand sequence ' . $seqName . ' could not be created');
+                    throw new \Doctrine1\Sequence\Exception("On demand sequence $seqName could not be created", previous: $e);
                 }
                 // First ID of a newly created sequence is 1
                 return 1;
             } else {
-                throw new \Doctrine1\Sequence\Exception('sequence ' . $seqName . ' does not exist');
+                throw new \Doctrine1\Sequence\Exception("Sequence $seqName does not exist", previous: $e);
             }
         }
 

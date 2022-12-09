@@ -1,6 +1,9 @@
 <?php
+
 namespace Tests\DataDict;
 
+use Doctrine1\Column;
+use Doctrine1\Column\Type;
 use Tests\DoctrineUnitTestCase;
 
 class SqliteTest extends DoctrineUnitTestCase
@@ -52,106 +55,99 @@ class SqliteTest extends DoctrineUnitTestCase
 
     public function testGetNativeDefinitionSupportsIntegerType()
     {
-        $a = ['type' => 'integer', 'length' => 20, 'fixed' => false];
+        $a = new Column('_', Type::Integer, length: 20, fixed: false);
 
         $this->assertEquals(static::$connection->dataDict->getNativeDeclaration($a), 'INTEGER');
 
-        $a['length'] = 4;
+        $a = new Column('_', Type::Integer, length: 4, fixed: false);
 
         $this->assertEquals(static::$connection->dataDict->getNativeDeclaration($a), 'INTEGER');
 
-        $a['length'] = 2;
+        $a = new Column('_', Type::Integer, length: 2, fixed: false);
 
         $this->assertEquals(static::$connection->dataDict->getNativeDeclaration($a), 'INTEGER');
     }
 
     public function testGetNativeDefinitionSupportsFloatType()
     {
-        $a = ['type' => 'float', 'length' => 20, 'fixed' => false];
+        $a = new Column('_', Type::Float, fixed: false);
 
         $this->assertEquals(static::$connection->dataDict->getNativeDeclaration($a), 'DOUBLE');
     }
 
     public function testGetNativeDefinitionSupportsBooleanType()
     {
-        $a = ['type' => 'boolean', 'fixed' => false];
+        $a = new Column('_', Type::Boolean, fixed: false);
 
         $this->assertEquals(static::$connection->dataDict->getNativeDeclaration($a), 'INTEGER');
     }
 
     public function testGetNativeDefinitionSupportsDateType()
     {
-        $a = ['type' => 'date', 'fixed' => false];
+        $a = new Column('_', Type::Date, fixed: false);
 
         $this->assertEquals(static::$connection->dataDict->getNativeDeclaration($a), 'DATE');
     }
 
     public function testGetNativeDefinitionSupportsTimestampType()
     {
-        $a = ['type' => 'timestamp', 'fixed' => false];
+        $a = new Column('_', Type::Timestamp, fixed: false);
 
         $this->assertEquals(static::$connection->dataDict->getNativeDeclaration($a), 'DATETIME');
     }
 
     public function testGetNativeDefinitionSupportsTimeType()
     {
-        $a = ['type' => 'time', 'fixed' => false];
+        $a = new Column('_', Type::Time, fixed: false);
 
         $this->assertEquals(static::$connection->dataDict->getNativeDeclaration($a), 'TIME');
     }
 
-    public function testGetNativeDefinitionSupportsClobType()
-    {
-        $a = ['type' => 'clob'];
-
-        $this->assertEquals(static::$connection->dataDict->getNativeDeclaration($a), 'LONGTEXT');
-    }
-
     public function testGetNativeDefinitionSupportsBlobType()
     {
-        $a = ['type' => 'blob'];
+        $a = new Column('_', Type::BLOB);
 
         $this->assertEquals(static::$connection->dataDict->getNativeDeclaration($a), 'LONGBLOB');
     }
 
     public function testGetNativeDefinitionSupportsCharType()
     {
-        $a = ['type' => 'char', 'length' => 10];
+        $a = new Column('_', Type::String, 10, fixed: true);
 
         $this->assertEquals(static::$connection->dataDict->getNativeDeclaration($a), 'CHAR(10)');
     }
 
     public function testGetNativeDefinitionSupportsVarcharType()
     {
-        $a = ['type' => 'varchar', 'length' => 10];
+        $a = new Column('_', Type::String, 10);
 
         $this->assertEquals(static::$connection->dataDict->getNativeDeclaration($a), 'VARCHAR(10)');
     }
 
     public function testGetNativeDefinitionSupportsArrayType()
     {
-        $a = ['type' => 'array', 'length' => 40];
+        $a = new Column('_', Type::Array, 40);
 
         $this->assertEquals(static::$connection->dataDict->getNativeDeclaration($a), 'VARCHAR(40)');
     }
 
     public function testGetNativeDefinitionSupportsStringType()
     {
-        $a = ['type' => 'string'];
+        $a = new Column('_', Type::String);
 
         $this->assertEquals(static::$connection->dataDict->getNativeDeclaration($a), 'TEXT');
     }
 
     public function testGetNativeDefinitionSupportsArrayType2()
     {
-        $a = ['type' => 'array'];
+        $a = new Column('_', Type::Array);
 
         $this->assertEquals(static::$connection->dataDict->getNativeDeclaration($a), 'TEXT');
     }
 
     public function testGetNativeDefinitionSupportsObjectType()
     {
-        $a = ['type' => 'object'];
+        $a = new Column('_', Type::Object);
 
         $this->assertEquals(static::$connection->dataDict->getNativeDeclaration($a), 'TEXT');
     }

@@ -3,6 +3,7 @@
 namespace Doctrine1;
 
 use ArrayIterator;
+use Doctrine1\Column\Type;
 use Doctrine1\Record\State;
 use Doctrine1\Serializer;
 use Doctrine1\Deserializer;
@@ -10,7 +11,6 @@ use Doctrine1\Deserializer;
 /**
  * @phpstan-template T of Table
  * @phpstan-implements \ArrayAccess<string, mixed>
- * @phpstan-import-type ColumnOptionName from Table
  */
 abstract class Record implements \Countable, \IteratorAggregate, \Serializable, \ArrayAccess
 {
@@ -708,7 +708,19 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
 
         $deserializers = $deserialize ? $this->getDeserializers() : [];
 
-        foreach ($this->_table->getFieldNames() as $fieldName) {
+        $fieldNames = $this->_table->getFieldNames();
+
+        // Fix field name case first
+        foreach (array_keys($tmp) as $fieldName) {
+            $fixedFieldName = Lib::arrayCISearch($fieldName, $fieldNames);
+            if ($fixedFieldName !== null && $fixedFieldName !== $fieldName) {
+                $tmp[$fixedFieldName] = $tmp[$fieldName];
+                unset($tmp[$fieldName]);
+            }
+            unset($fixedFieldName);
+        }
+
+        foreach ($fieldNames as $fieldName) {
             if (isset($tmp[$fieldName])) { // value present
                 if (!empty($deserializers)) {
                     $tmp[$fieldName] = $this->_table->deserializeColumnValue($tmp[$fieldName], $fieldName, $deserializers);
@@ -819,24 +831,13 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
 
             $type = $this->_table->getTypeOf($k);
 
-            if ($v instanceof Record && $type != 'object') {
+            if ($v instanceof Record && $type !== Type::Object) {
                 unset($vars['_data'][$k]);
                 continue;
             }
 
-            switch ($type) {
-                case 'array':
-                case 'object':
-                    if (version_compare(PHP_VERSION, '5.4.0', '<')) {
-                        $vars['_data'][$k] = serialize($vars['_data'][$k]);
-                    }
-                    break;
-                case 'gzip':
-                    $vars['_data'][$k] = gzcompress($vars['_data'][$k]);
-                    break;
-                case 'enum':
-                    $vars['_data'][$k] = $this->_table->enumIndex($k, $vars['_data'][$k]);
-                    break;
+            if ($type === Type::Enum) {
+                $vars['_data'][$k] = $this->_table->enumIndex($k, $vars['_data'][$k]);
             }
         }
 
@@ -867,19 +868,8 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
         }
 
         foreach ($this->_data as $k => $v) {
-            switch ($this->_table->getTypeOf($k)) {
-                case 'array':
-                case 'object':
-                    if (version_compare(PHP_VERSION, '5.4.0', '<')) {
-                        $this->_data[$k] = unserialize($this->_data[$k]);
-                    }
-                    break;
-                case 'gzip':
-                    $this->_data[$k] = gzuncompress($this->_data[$k]);
-                    break;
-                case 'enum':
-                    $this->_data[$k] = $this->_table->enumValue($k, $this->_data[$k]);
-                    break;
+            if ($this->_table->getTypeOf($k) === Type::Enum) {
+                $this->_data[$k] = $this->_table->enumValue($k, $this->_data[$k]);
             }
         }
 
@@ -1444,10 +1434,10 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
         if (array_key_exists($fieldName, $this->_values)) {
             $this->_values[$fieldName] = $value;
         } elseif (array_key_exists($fieldName, $this->_data)) {
-            $column = $this->_table->getColumnDefinition($this->_table->getColumnName($fieldName));
+            $column = $this->_table->getDefinitionOf($fieldName);
             assert($column !== null);
 
-            if ($value instanceof Record && $column['type'] !== 'object') {
+            if ($value instanceof Record && $column->type !== Type::Object) {
                 $id = $value->getIncremented();
 
                 if ($id !== null) {
@@ -1602,7 +1592,7 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
      *
      * @return bool Whether or not Doctrine considers the value modified
      */
-    protected function isValueModified(array $column, mixed $old, mixed $new): bool
+    protected function isValueModified(Column $column, mixed $old, mixed $new): bool
     {
         if ($new instanceof Expression) {
             return true;
@@ -1624,19 +1614,17 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
             return $old !== $new;
         }
 
-        $type = $column['type'];
-
         if (is_numeric($old) && is_numeric($new)) {
-            if (in_array($type, ['decimal', 'float'])) {
+            if (in_array($column->type, [Type::Decimal, Type::Float], true)) {
                 return $old * 100 != $new * 100;
             }
 
-            if (in_array($type, ['integer', 'int'])) {
+            if ($column->type === Type::Integer) {
                 return $old != $new;
             }
         }
 
-        if (in_array($type, ['timestamp', 'date', 'datetime'])) {
+        if (in_array($column->type, [Type::Timestamp, Type::Date, Type::DateTime], true)) {
             $oldStrToTime = strtotime((string) $old);
             if ($oldStrToTime) {
                 return $oldStrToTime !== strtotime((string) $new);
@@ -1690,7 +1678,7 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
                 }
 
                 // one-to-one relation found
-                if (!($value instanceof Record) && !($value instanceof None)) {
+                if (!($value instanceof Record) && !$value instanceof None) {
                     throw new Record\Exception("Couldn't call Core::set(), second argument should be an instance of Record or None when setting one-to-one references.");
                 }
 
@@ -1852,7 +1840,7 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
         $a = [];
         $modified = $last ? $this->_lastModified : $this->_modified;
         foreach ($modified as $fieldName) {
-            $column = $this->_table->getColumnDefinition($this->_table->getColumnName($fieldName));
+            $column = $this->_table->getDefinitionOf($fieldName);
             assert($column !== null);
 
             if ($old) {
@@ -1925,11 +1913,11 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
                 continue;
             }
 
-            $column = $this->_table->getColumnDefinition($this->_table->getColumnName($field));
+            $column = $this->_table->getDefinitionOf($field);
             assert($column !== null);
 
             // we cannot use serializers in this case but it should be fine
-            if ($dataValue instanceof Record && $column['type'] !== 'object') {
+            if ($dataValue instanceof Record && $column->type !== Type::Object) {
                 $prepared[$field] = $dataValue->getIncremented();
                 if ($prepared[$field] !== null) {
                     $this->_data[$field] = $prepared[$field];
@@ -2642,18 +2630,18 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
         if ($rel instanceof Relation\Association) {
             $modelClassName = $rel->getAssociationTable()->getComponentName();
             $localFieldName = $rel->getLocalFieldName();
-            $localFieldDef  = $rel->getAssociationTable()->getColumnDefinition($localFieldName);
+            $localFieldDef  = $rel->getAssociationTable()->getColumn($localFieldName);
             assert($localFieldDef !== null);
 
-            if ($localFieldDef['type'] == 'integer') {
+            if ($localFieldDef->type === Type::Integer) {
                 $identifier = (int) $identifier;
             }
 
             $foreignFieldName = $rel->getForeignFieldName();
-            $foreignFieldDef  = $rel->getAssociationTable()->getColumnDefinition($foreignFieldName);
+            $foreignFieldDef  = $rel->getAssociationTable()->getColumn($foreignFieldName);
             assert($foreignFieldDef !== null);
 
-            if ($foreignFieldDef['type'] == 'integer') {
+            if ($foreignFieldDef->type === Type::Integer) {
                 foreach ($ids as $i => $id) {
                     $ids[$i] = (int) $id;
                 }
@@ -2801,16 +2789,16 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
      * if the second parameter is set this method defines an index
      * if not this method retrieves index named $name
      *
-     * @param  string $name       the name of the index
-     * @param  array  $definition the definition array
+     * @param string $name       the name of the index
+     * @param array $definition the definition array
+     * @phpstan-param array{type?: string, fields?: string[]} $definition
      * @return mixed
      */
     public function index(string $name, array $definition = [])
     {
-        if (!$definition) {
+        if (!isset($definition['fields'])) {
             return $this->_table->getIndex($name);
         }
-
         $this->_table->addIndex($name, $definition);
     }
 
@@ -2821,12 +2809,12 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
      * and validate the values on save. The UNIQUE index is not created in the
      * database until you use @see export().
      *
-     * @param  array $fields            values are fieldnames
-     * @param  array $options           array of options for unique validator
+     * @param  string[] $fields            values are fieldnames
+     * @param  mixed[] $options           array of options for unique validator
      * @param  bool  $createUniqueIndex Whether or not to create a unique index in the database
      * @return void
      */
-    public function unique($fields, $options = [], $createUniqueIndex = true)
+    public function unique(array $fields, array $options = [], bool $createUniqueIndex = true): void
     {
         $this->_table->unique($fields, $options, $createUniqueIndex);
     }
@@ -2836,11 +2824,13 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
         $this->_table->setTableName($tableName);
     }
 
+    /** @phpstan-param array<string, mixed> $map */
     public function setInheritanceMap(array $map): void
     {
         $this->_table->inheritanceMap = $map;
     }
 
+    /** @phpstan-param array<class-string<Record>, array<string, mixed>> $map */
     public function setSubclasses(array $map): void
     {
         $class = get_class($this);
@@ -2858,6 +2848,7 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
             return;
         } else {
             // Put an index on the key column
+            assert(!empty($map));
             $mapFieldName = array_keys(end($map));
             $this->index($this->getTable()->getTableName() . '_' . $mapFieldName[0], ['fields' => [$mapFieldName[0]]]);
         }
@@ -2901,64 +2892,81 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
         return $this;
     }
 
+    public function setColumn(Column $column): void
+    {
+        $this->_table->setColumn($column);
+    }
+
     /**
      * Sets a column definition
+     * @deprecated
      *
-     * @param  string  $name
-     * @param  string  $type
-     * @param  integer $length
-     * @param  mixed   $options
+     * @param  non-empty-string  $name
+     * @param  ?positive-int $length
      * @return void
      */
-    public function hasColumn($name, $type = null, $length = null, $options = [])
+    public function hasColumn(string $name, string $type, ?int $length = null, array|string $options = []): void
     {
-        $this->_table->setColumn($name, $type, $length, $options);
+        if (is_string($options)) {
+            $options = [$options => true];
+        }
+
+        foreach ($options as $k => $v) {
+            if (is_numeric($k)) {
+                $options[$v] = true;
+                unset($options[$k]);
+            }
+        }
+
+        $validators = [];
+        foreach (['date', 'time', 'timestamp', 'range', 'notblank', 'email', 'ip', 'regexp'] as $validatorName) {
+            if (isset($options[$validatorName])) {
+                $validators[$validatorName] = $options[$validatorName];
+            }
+        }
+
+        $this->setColumn(new Column(
+            name: $name,
+            type: Type::fromNative($type),
+            length: $length,
+            owner: $options['owner'] ?? null,
+            primary: !empty($options['primary']),
+            default: $options['default'] ?? null,
+            notnull: !empty($options['notnull']),
+            values: isset($options['values']) && is_array($options['values']) ? $options['values'] : [],
+            autoincrement: !empty($options['autoincrement']),
+            unique: !empty($options['unique']),
+            protected: !empty($options['protected']),
+            sequence: $options['sequence'] ?? null,
+            zerofill: !empty($options['zerofill']),
+            unsigned: !empty($options['unsigned']),
+            scale: $options['scale'] ?? 0,
+            fixed: !empty($options['fixed']),
+            comment: $options['comment'] ?? null,
+            charset: $options['charset'] ?? null,
+            collation: $options['collation'] ?? null,
+            check: $options['check'] ?? null,
+            min: $options['min'] ?? null,
+            max: $options['max'] ?? null,
+            extra: isset($options['extra']) && is_array($options['extra']) ? $options['extra'] : [],
+            virtual: !empty($options['virtual']),
+            meta: isset($options['meta']) && is_array($options['meta']) ? $options['meta'] : [],
+            validators: $validators,
+        ));
     }
 
     /**
      * Set multiple column definitions at once
      *
-     * @param  array $definitions
+     * @param Column[] $columns
+     * @phpstan-param list<Column> $columns
      * @return void
      */
-    public function hasColumns(array $definitions)
+    public function setColumns(array $columns)
     {
-        foreach ($definitions as $name => $options) {
-            $length = isset($options['length']) ? $options['length'] : null;
-            $this->hasColumn($name, $options['type'], $length, $options);
+        foreach ($columns as $column) {
+            $this->setColumn($column);
         }
-    }
-
-    /**
-     * Customize the array of options for a column or multiple columns. First
-     * argument can be a single field/column name or an array of them. The second
-     * argument is an array of options.
-     *
-     *     [php]
-     *     public function setTableDefinition(): void
-     *     {
-     *         parent::setTableDefinition();
-     *         $this->setColumnOptions('username', array(
-     *             'unique' => true
-     *         ));
-     *     }
-     *
-     * @param  string|string[] $name
-     * @phpstan-param  array<ColumnOptionName, mixed> $options
-     */
-    public function setColumnOptions(string|array $name, array $options): void
-    {
-        $this->_table->setColumnOptions($name, $options);
-    }
-
-    /**
-     * Set an individual column option
-     *
-     * @phpstan-param ColumnOptionName $option
-     */
-    public function setColumnOption(string $columnName, string $option, mixed $value): void
-    {
-        $this->_table->setColumnOption($columnName, $option, $value);
     }
 
     /**

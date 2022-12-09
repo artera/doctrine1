@@ -220,6 +220,7 @@ abstract class Relation implements \ArrayAccess
         $this->definition[$offset] = false;
     }
 
+    /** @phpstan-return RelationDefinition */
     public function toArray(): array
     {
         return $this->definition;

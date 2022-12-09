@@ -115,15 +115,12 @@ class Sqlite extends \Doctrine1\Import
         $columns     = [];
         foreach ($result as $key => $val) {
             $val = array_change_key_case($val, CASE_LOWER);
-            /**
- * @var \Doctrine1\DataDict\Sqlite $dataDict
-*/
+            /** @var \Doctrine1\DataDict\Sqlite $dataDict */
             $dataDict = $this->conn->dataDict;
             $decl     = $dataDict->getPortableDeclaration($val);
 
             $description = [
                     'name'          => $val['name'],
-                    'ntype'         => $val['type'],
                     'type'          => $decl['type'][0],
                     'alltypes'      => $decl['type'],
                     'notnull'       => (bool) $val['notnull'],

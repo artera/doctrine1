@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Tickets {
     use Tests\DoctrineUnitTestCase;
 
@@ -45,7 +46,7 @@ namespace {
             $this->hasColumn('PHP_TYPE as phpType', 'integer', 11, []);
 
             $this->setSubclasses(
-                ['Child1713A' => ['phpType' => 1]]
+                [Child1713A::class => ['phpType' => 1]]
             );
         }
 

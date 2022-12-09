@@ -2,6 +2,8 @@
 
 namespace Doctrine1\Locking\Manager;
 
+use Doctrine1\Column;
+use Doctrine1\Column\Type;
 use PDOException;
 
 class Pessimistic
@@ -33,29 +35,17 @@ class Pessimistic
         $this->conn = $conn;
 
         if ($this->conn->getExportFlags() & \Doctrine1\Core::EXPORT_TABLES) {
-            $columns                = [];
-            $columns['object_type'] = ['type'           => 'string',
-                                                   'length'  => 50,
-                                                   'notnull' => true,
-                                                   'primary' => true];
-
-            $columns['object_key'] = ['type'            => 'string',
-                                                   'length'  => 250,
-                                                   'notnull' => true,
-                                                   'primary' => true];
-
-            $columns['user_ident'] = ['type'            => 'string',
-                                                   'length'  => 50,
-                                                   'notnull' => true];
-
-            $columns['timestamp_obtained'] = ['type'    => 'integer',
-                                                   'length'  => 10,
-                                                   'notnull' => true];
+            $columns = [
+                new Column('object_type', Type::String, 50, notnull: true, primary: true),
+                new Column('object_key', Type::String, 250, notnull: true, primary: true),
+                new Column('user_ident', Type::String, 50, notnull: true),
+                new Column('timestamp_obtained', Type::Integer, 10, notnull: true),
+            ];
 
             $options = ['primary' => ['object_type', 'object_key']];
             try {
                 $this->conn->export->createTable($this->lockTable, $columns, $options);
-            } catch (\Throwable $e) {
+            } catch (PDOException $e) {
             }
         }
     }
@@ -102,7 +92,7 @@ class Pessimistic
                 $gotLock = true;
 
                 // we catch an Exception here instead of PDOException since we might also be catching \Doctrine1\Exception
-            } catch (\Throwable $pkviolation) {
+            } catch (PDOException $pkviolation) {
                 // PK violation occured => existing lock!
             }
 
@@ -125,9 +115,9 @@ class Pessimistic
                     $stmt->execute();
                 }
             }
-        } catch (\Throwable $pdoe) {
+        } catch (PDOException $pdoe) {
             $savepoint->rollback();
-            throw new \Doctrine1\Locking\Exception($pdoe->getMessage());
+            throw new \Doctrine1\Locking\Exception($pdoe->getMessage(), previous: $pdoe);
         }
 
         $savepoint->commit();
@@ -169,7 +159,7 @@ class Pessimistic
 
             return ($count > 0);
         } catch (PDOException $pdoe) {
-            throw new \Doctrine1\Locking\Exception($pdoe->getMessage());
+            throw new \Doctrine1\Locking\Exception($pdoe->getMessage(), previous: $pdoe);
         }
     }
 
@@ -207,7 +197,7 @@ class Pessimistic
             /** @var scalar|null */
             $userIdent = $stmt->fetchColumn();
         } catch (PDOException $pdoe) {
-            throw new \Doctrine1\Locking\Exception($pdoe->getMessage());
+            throw new \Doctrine1\Locking\Exception($pdoe->getMessage(), previous: $pdoe);
         }
 
         return $userIdent;
@@ -267,7 +257,7 @@ class Pessimistic
 
             return $count;
         } catch (PDOException $pdoe) {
-            throw new \Doctrine1\Locking\Exception($pdoe->getMessage());
+            throw new \Doctrine1\Locking\Exception($pdoe->getMessage(), previous: $pdoe);
         }
     }
 }

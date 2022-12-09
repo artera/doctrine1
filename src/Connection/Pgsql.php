@@ -56,7 +56,7 @@ class Pgsql extends \Doctrine1\Connection
         parent::setCharset($charset);
     }
 
-    public function convertBooleans(array|string|bool|int|float $item): array|string|bool|int|float
+    public function convertBooleans(array|string|bool|int|float|null $item): array|string|bool|int|float|null
     {
         if (is_array($item)) {
             foreach ($item as $key => $value) {

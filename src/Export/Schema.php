@@ -2,6 +2,10 @@
 
 namespace Doctrine1\Export;
 
+use Doctrine1\Column;
+use Doctrine1\Record;
+use Doctrine1\Relation;
+
 class Schema
 {
     /**
@@ -12,6 +16,20 @@ class Schema
      * @param  string  $directory    The directory of models to build the schema from
      * @param  array   $models       The array of model names to build the schema for
      * @return array
+     * @phpstan-return array<class-string<Record>, array{
+     *   tableName: string,
+     *   connection: string,
+     *   relations?: array<string, array{
+     *     refClass?: class-string<Record>,
+     *     class?: class-string<Record>,
+     *     local: string,
+     *     foreign: string,
+     *     type: 'one' | 'many',
+     *   }>,
+     *   columns: array<string, array{
+     *     type: string,
+     *   }>,
+     * }>
      */
     public function buildSchema($directory = null, $models = [])
     {
@@ -22,11 +40,7 @@ class Schema
         }
 
         $array = [];
-
-        $parent = new \ReflectionClass('\Doctrine1\Record');
-
-        $sql = [];
-        $fks = [];
+        $parent = new \ReflectionClass(Record::class);
 
         // we iterate through the diff of previously declared classes
         // and currently declared classes
@@ -39,64 +53,52 @@ class Schema
 
             $data = $recordTable->getExportableFormat();
 
-            $table               = [];
-            $table['connection'] = $recordTable->getConnection()->getName();
-            $remove              = ['ptype', 'ntype', 'alltypes'];
-            // Fix explicit length in schema, concat it to type in this format: type(length)
-            foreach ($data['columns'] as $name => &$column) {
-                if (!is_array($column)) {
-                    continue;
-                }
+            $table = [
+                'tableName' => $data['tableName'],
+                'connection' => $recordTable->getConnection()->getName(),
+                'relations' => [],
+                'columns' => array_map(function (Column $column) {
+                    $columnArr = $column->toArray();
 
-                if (!empty($column['length'])) {
-                    if (!empty($column['scale'])) {
-                        $column['type'] .= '(' . $column['length'] . ', ' . $column['scale'] . ')';
-                        unset($column['scale']);
-                    } else {
-                        $column['type'] .= '(' . $column['length'] . ')';
+                    // Fix explicit length in schema, concat it to type in this format: type(length)
+                    if (!empty($column->length)) {
+                        if ($column->scale) {
+                            $columnArr['type'] .= "({$column->length}, {$column->scale})";
+                        } else {
+                            $columnArr['type'] .= "({$column->length})";
+                        }
+                        unset($columnArr['scale']);
+                        unset($columnArr['length']);
                     }
-                    unset($column['length']);
-                }
 
-                // Strip out schema information which is not necessary to be dumped to the yaml schema file
-                foreach ($remove as $value) {
-                    /** @var string $value */
-                    unset($column[$value]);
-                }
-
-                // If type is the only property of the column then lets abbreviate the syntax
-                // columns: { name: string(255) }
-                if (count($column) === 1 && isset($column['type'])) {
-                    $column = $column['type'];
-                }
-            }
-            $table['tableName'] = $data['tableName'];
-            $table['columns']   = $data['columns'];
+                    return $columnArr;
+                }, $data['columns']),
+            ];
 
             $relations = $recordTable->getRelations();
             foreach ($relations as $key => $relation) {
                 $relationData = $relation->toArray();
 
-                $relationKey = $relationData['alias'];
+                $relationKey = $relation->getAlias();
 
-                if (isset($relationData['refTable']) && $relationData['refTable']) {
-                    $table['relations'][$relationKey]['refClass'] = $relationData['refTable']->getComponentName();
+                $relationInfo = [
+                    'local' => $relation->getLocal(),
+                    'foreign' => $relation->getForeign(),
+                    'type' => match ($relation->getType()) {
+                        Relation::MANY => 'many',
+                        default => 'one',
+                    },
+                ];
+
+                if (isset($relationData['refTable'])) {
+                    $relationInfo['refClass'] = $relationData['refTable']->getComponentName();
                 }
 
-                if (isset($relationData['class']) && $relationData['class'] && $relation['class'] != $relationKey) {
-                    $table['relations'][$relationKey]['class'] = $relationData['class'];
+                if ($relation['class'] != $relationKey) {
+                    $relationInfo['class'] = $relationData['class'];
                 }
 
-                $table['relations'][$relationKey]['local']   = $relationData['local'];
-                $table['relations'][$relationKey]['foreign'] = $relationData['foreign'];
-
-                if ($relationData['type'] === \Doctrine1\Relation::ONE) {
-                    $table['relations'][$relationKey]['type'] = 'one';
-                } elseif ($relationData['type'] === \Doctrine1\Relation::MANY) {
-                    $table['relations'][$relationKey]['type'] = 'many';
-                } else {
-                    $table['relations'][$relationKey]['type'] = 'one';
-                }
+                $table['relations'][$relationKey] = $relationInfo;
             }
 
             $array[$className] = $table;

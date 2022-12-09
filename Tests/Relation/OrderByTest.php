@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Relation {
     use Tests\DoctrineUnitTestCase;
 
@@ -119,7 +120,7 @@ namespace {
         public function setTableDefinition(): void
         {
             $this->hasColumn('title', 'string', 255);
-            $this->hasColumn('content', 'clob');
+            $this->hasColumn('content', 'string');
             $this->hasColumn('user_id', 'integer');
         }
 

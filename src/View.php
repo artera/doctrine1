@@ -88,7 +88,7 @@ class View
         try {
             $this->connection->execute($sql, $this->query->getFlattenedParams());
         } catch (Exception $e) {
-            throw new View\Exception($e->__toString());
+            throw new View\Exception($e->__toString(), previous: $e);
         }
     }
 
@@ -103,7 +103,7 @@ class View
         try {
             $this->connection->execute(sprintf(self::DROP, $this->name));
         } catch (Exception $e) {
-            throw new View\Exception($e->__toString());
+            throw new View\Exception($e->__toString(), previous: $e);
         }
     }
 

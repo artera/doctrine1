@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Tickets {
     use Tests\DoctrineUnitTestCase;
 
@@ -24,19 +25,19 @@ Ticket_Product:
       name: test
 END;
             file_put_contents('test.yml', $yml);
-                \Doctrine1\Core::loadData('test.yml', true);
+            \Doctrine1\Core::loadData('test.yml', true);
 
-                static::$conn->clear();
+            static::$conn->clear();
 
-                $query = new \Doctrine1\Query();
-                $query->from('Ticket_Product p, p.Site s')
-                ->where('p.name = ?', 'book');
+            $query = new \Doctrine1\Query();
+            $query->from('Ticket_Product p, p.Site s')
+            ->where('p.name = ?', 'book');
 
-                $product = $query->execute()->getFirst();
+            $product = $query->execute()->getFirst();
 
-                $this->assertEquals($product->name, 'book');
-                $this->assertEquals(is_object($product->Site), true);
-                $this->assertEquals($product->Site->name, 'test');
+            $this->assertEquals($product->name, 'book');
+            $this->assertEquals(is_object($product->Site), true);
+            $this->assertEquals($product->Site->name, 'test');
 
 
             unlink('test.yml');
@@ -61,21 +62,21 @@ Ticket_MultipleValue:
     Product: Product_1
 END;
             file_put_contents('test.yml', $yml);
-                \Doctrine1\Core::loadData('test.yml', true);
+            \Doctrine1\Core::loadData('test.yml', true);
 
-                static::$conn->clear();
+            static::$conn->clear();
 
-                $query = new \Doctrine1\Query();
-                $query->from('Ticket_Product p, p.MultipleValues v, v.Multiple m')
-                ->where('p.name = ?', 'book2');
+            $query = new \Doctrine1\Query();
+            $query->from('Ticket_Product p, p.MultipleValues v, v.Multiple m')
+            ->where('p.name = ?', 'book2');
 
-                $product = $query->fetchOne();
+            $product = $query->fetchOne();
 
-                $this->assertEquals($product->name, 'book2');
-                $this->assertEquals($product->MultipleValues->count(), 1);
-                $this->assertEquals($product->MultipleValues[0]->value, '123345678');
-                $this->assertEquals(is_object($product->MultipleValues[0]->Multiple), true);
-                $this->assertEquals($product->MultipleValues[0]->Multiple->name, 'isbn');
+            $this->assertEquals($product->name, 'book2');
+            $this->assertEquals($product->MultipleValues->count(), 1);
+            $this->assertEquals($product->MultipleValues[0]->value, '123345678');
+            $this->assertEquals(is_object($product->MultipleValues[0]->Multiple), true);
+            $this->assertEquals($product->MultipleValues[0]->Multiple->name, 'isbn');
 
 
             unlink('test.yml');
@@ -98,21 +99,21 @@ Ticket_Product:
         Multiple: ISBN2
 END;
             file_put_contents('test.yml', $yml);
-                \Doctrine1\Core::loadData('test.yml', true);
+            \Doctrine1\Core::loadData('test.yml', true);
 
-                static::$conn->clear();
+            static::$conn->clear();
 
-                $query = new \Doctrine1\Query();
-                $query->from('Ticket_Product p, p.MultipleValues v, v.Multiple m')
-                ->where('p.name = ?', 'book3');
+            $query = new \Doctrine1\Query();
+            $query->from('Ticket_Product p, p.MultipleValues v, v.Multiple m')
+            ->where('p.name = ?', 'book3');
 
-                $product = $query->fetchOne();
+            $product = $query->fetchOne();
 
-                $this->assertEquals($product->name, 'book3');
-                $this->assertEquals($product->MultipleValues->count(), 1);
-                $this->assertEquals($product->MultipleValues[0]->value, '123345678');
-                $this->assertEquals(is_object($product->MultipleValues[0]->Multiple), true);
-                $this->assertEquals($product->MultipleValues[0]->Multiple->name, 'isbn2');
+            $this->assertEquals($product->name, 'book3');
+            $this->assertEquals($product->MultipleValues->count(), 1);
+            $this->assertEquals($product->MultipleValues[0]->value, '123345678');
+            $this->assertEquals(is_object($product->MultipleValues[0]->Multiple), true);
+            $this->assertEquals($product->MultipleValues[0]->Multiple->name, 'isbn2');
 
 
             unlink('test.yml');
@@ -181,7 +182,7 @@ namespace {
         {
             $this->hasColumn('product_id', 'integer', null, ['type' => 'integer', 'primary' => true]);
             $this->hasColumn('multiple_id', 'integer', null, ['type' => 'integer', 'primary' => true]);
-            $this->hasColumn('value', 'clob', null, ['type' => 'clob']);
+            $this->hasColumn('value', 'string', null, ['type' => 'string']);
         }
 
         public function setUp(): void

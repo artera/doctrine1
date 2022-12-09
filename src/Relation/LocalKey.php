@@ -27,8 +27,8 @@ class LocalKey extends \Doctrine1\Relation
         }
 
         if ($related === null) {
-            $column = $record->getTable()->getColumnDefinition($this->definition['local']);
-            if (!empty($column['notnull']) || !empty($column['primary'])) {
+            $column = $record->getTable()->getColumn($this->definition['local']);
+            if ($column?->notnull || $column?->primary) {
                 $related = $this->getTable()->create();
             } else {
                 return null;

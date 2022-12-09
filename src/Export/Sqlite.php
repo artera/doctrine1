@@ -2,9 +2,13 @@
 
 namespace Doctrine1\Export;
 
+use Doctrine1\Column;
 use PDO;
 use PDOException;
 
+/**
+ * @phpstan-import-type ExportableOptions from \Doctrine1\Export
+ */
 class Sqlite extends \Doctrine1\Export
 {
     /**
@@ -88,14 +92,7 @@ class Sqlite extends \Doctrine1\Export
         return $query;
     }
 
-    /**
-     * getIndexFieldDeclarationList
-     * Obtain DBMS specific SQL code portion needed to set an index
-     * declaration to be used in statements like CREATE TABLE.
-     *
-     * @return string
-     */
-    public function getIndexFieldDeclarationList(array $fields)
+    public function getIndexFieldDeclarationList(array $fields): string
     {
         $declFields = [];
 
@@ -126,18 +123,12 @@ class Sqlite extends \Doctrine1\Export
      * create a new table
      *
      * @param string $name    Name of the database that should be created
-     * @param array  $fields  Associative array that contains the definition of each field of the new table
-     *                        The indexes of the array entries are the names of the fields of the table an
-     *                        the array entry values are associative arrays like those that are meant to be
-     *                        passed with the field definitions to get[Type]Declaration() functions. array(
-     *                        'id' => array( 'type' => 'integer', 'unsigned' => 1 'notnull' => 1 'default'
-     *                        => 0 ), 'name' => array( 'type' => 'text', 'length' => 12 ), 'password' =>
-     *                        array( 'type' => 'text', 'length' => 12 ) );
-     * @param array  $options An associative array of table options:
-     *
+     * @param Column[] $fields
+     * @param array|null $options An associative array of table options:
+     * @phpstan-param ?ExportableOptions $options
      * @return array
      */
-    public function createTableSql($name, array $fields, array $options = [])
+    public function createTableSql(string $name, array $fields, ?array $options = null): array
     {
         if (!$name) {
             throw new \Doctrine1\Export\Exception('no valid table name specified');
@@ -150,9 +141,7 @@ class Sqlite extends \Doctrine1\Export
 
         $autoinc = false;
         foreach ($fields as $field) {
-            if (isset($field['autoincrement']) && $field['autoincrement']
-                || (isset($field['autoinc']) && $field['autoinc'])
-            ) {
+            if ($field->autoincrement) {
                 $autoinc = true;
                 break;
             }
@@ -253,7 +242,7 @@ class Sqlite extends \Doctrine1\Export
             try {
                 $result = $this->conn->exec('DROP TABLE ' . $sequenceName);
             } catch (\Doctrine1\Connection\Exception $e) {
-                throw new \Doctrine1\Export\Exception('could not drop inconsistent sequence table');
+                throw new \Doctrine1\Export\Exception('could not drop inconsistent sequence table', previous: $e);
             }
         }
         throw new \Doctrine1\Export\Exception('could not create sequence table');
@@ -273,9 +262,19 @@ class Sqlite extends \Doctrine1\Export
     }
 
     /**
-     * @param  string $name
-     * @param  bool   $check
-     * @return string|bool
+     * alter an existing table
+     *
+     * @param string  $name    name of the table that is intended to be changed.
+     * @phpstan-param array{
+     *   add?: Column[],
+     *   remove?: string[],
+     *   rename?: array<string, string>,
+     *   name?: string,
+     * } $changes
+     * @param  boolean $check   indicates whether the function should just check if the DBMS driver
+     *                          can perform the requested table alterations if the value is true or
+     *                          actually perform them otherwise.
+     * @return boolean|string
      */
     public function alterTableSql($name, array $changes, $check = false)
     {
@@ -285,6 +284,7 @@ class Sqlite extends \Doctrine1\Export
         foreach ($changes as $changeName => $change) {
             switch ($changeName) {
                 case 'add':
+                case 'remove':
                 case 'change':
                 case 'rename':
                 case 'name':
@@ -301,51 +301,43 @@ class Sqlite extends \Doctrine1\Export
         $query = '';
         if (!empty($changes['name'])) {
             $change_name = $this->conn->quoteIdentifier($changes['name']);
-            $query .= 'RENAME TO ' . $change_name;
+            $query .= "RENAME TO $change_name";
         }
 
         if (!empty($changes['add']) && is_array($changes['add'])) {
-            foreach ($changes['add'] as $fieldName => $field) {
+            foreach ($changes['add'] as $field) {
                 if ($query) {
                     $query .= ', ';
                 }
-                $query .= 'ADD ' . $this->getDeclaration($fieldName, $field);
+                $query .= "ADD {$this->getDeclaration($field)}";
+            }
+        }
+
+        if (!empty($changes['remove']) && is_array($changes['remove'])) {
+            foreach ($changes['remove'] as $fieldName) {
+                if ($query) {
+                    $query .= ', ';
+                }
+                $fieldName = $this->conn->quoteIdentifier($fieldName);
+                $query .= "DROP $fieldName";
             }
         }
 
         $rename = [];
         if (!empty($changes['rename']) && is_array($changes['rename'])) {
-            foreach ($changes['rename'] as $fieldName => $field) {
-                $rename[$field['name']] = $fieldName;
-            }
-        }
-
-        if (!empty($changes['change']) && is_array($changes['change'])) {
-            foreach ($changes['change'] as $fieldName => $field) {
-                if ($query) {
-                    $query .= ', ';
-                }
-                if (isset($rename[$fieldName])) {
-                    $oldFieldName = $rename[$fieldName];
-                    unset($rename[$fieldName]);
-                } else {
-                    $oldFieldName = $fieldName;
-                }
-                $oldFieldName = $this->conn->quoteIdentifier($oldFieldName, true);
-                $query .= 'CHANGE ' . $oldFieldName . ' '
-                        . $this->getDeclaration($fieldName, $field['definition']);
+            foreach ($changes['rename'] as $oldFieldName => $fieldName) {
+                $rename[$fieldName] = $oldFieldName;
             }
         }
 
         if (!empty($rename) && is_array($rename)) {
-            foreach ($rename as $renameName => $renamedField) {
+            foreach ($rename as $oldFieldName => $fieldName) {
                 if ($query) {
                     $query .= ', ';
                 }
-                $field        = $changes['rename'][$renamedField];
-                $renamedField = $this->conn->quoteIdentifier($renamedField, true);
-                $query .= 'CHANGE ' . $renamedField . ' '
-                        . $this->getDeclaration($field['name'], $field['definition']);
+                $oldFieldName = $this->conn->quoteIdentifier($oldFieldName, true);
+                $fieldName = $this->conn->quoteIdentifier($fieldName, true);
+                $query .= "RENAME COLUMN $oldFieldName TO $fieldName";
             }
         }
 
@@ -355,7 +347,7 @@ class Sqlite extends \Doctrine1\Export
 
         $name = $this->conn->quoteIdentifier($name, true);
 
-        return 'ALTER TABLE ' . $name . ' ' . $query;
+        return "ALTER TABLE $name $query";
     }
 
     /**

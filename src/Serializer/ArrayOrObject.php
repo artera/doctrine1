@@ -2,24 +2,27 @@
 
 namespace Doctrine1\Serializer;
 
+use Doctrine1\Column;
+use Doctrine1\Table;
+
 class ArrayOrObject implements SerializerInterface
 {
-    protected function checkCompatibility(mixed $value, string $type): void
+    protected function checkCompatibility(mixed $value, Column\Type $type): void
     {
-        if (!in_array($type, ['array', 'object']) || !(is_array($value) || is_object($value))) {
+        if (!in_array($type, [Column\Type::Array, Column\Type::Object]) || !(is_array($value) || is_object($value))) {
             throw new Exception\Incompatible();
         }
     }
 
-    public function serialize(mixed $value, array $column, \Doctrine1\Table $table): mixed
+    public function serialize(mixed $value, Column $column, Table $table): mixed
     {
-        $this->checkCompatibility($value, $column['type']);
+        $this->checkCompatibility($value, $column->type);
         return serialize($value);
     }
 
-    public function areEquivalent(mixed $a, mixed $b, array $column, \Doctrine1\Table $table): bool
+    public function areEquivalent(mixed $a, mixed $b, Column $column, Table $table): bool
     {
-        $this->checkCompatibility($a, $column['type']);
+        $this->checkCompatibility($a, $column->type);
         return $a === $b;
     }
 }

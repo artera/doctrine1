@@ -55,27 +55,15 @@ class SelfAssociation extends \Doctrine1\Relation\Association
         $tableName             = $record->getTable()->getTableName();
         $identifierColumnNames = $record->getTable()->getIdentifierColumnNames();
         $identifier            = array_pop($identifierColumnNames);
+        $foreign = $this->getForeign();
+        $local = $this->getLocal();
 
-        $sub = 'SELECT ' . $this->getForeign() .
-                   ' FROM ' . $assocTable .
-                   ' WHERE ' . $this->getLocal() .
-                   ' = ?';
-
-        $sub2 = 'SELECT ' . $this->getLocal() .
-                  ' FROM ' . $assocTable .
-                  ' WHERE ' . $this->getForeign() .
-                  ' = ?';
+        $sub = "SELECT $foreign FROM $assocTable WHERE $local = ?";
+        $sub2 = "SELECT $local FROM $assocTable WHERE $foreign = ?";
 
         $q->select('{' . $tableName . '.*}, {' . $assocTable . '.*}')
-            ->from(
-                $tableName . ' INNER JOIN ' . $assocTable . ' ON ' .
-                 $tableName . '.' . $identifier . ' = ' . $assocTable . '.' . $this->getLocal() . ' OR ' .
-                 $tableName . '.' . $identifier . ' = ' . $assocTable . '.' . $this->getForeign()
-            )
-            ->where(
-                $tableName . '.' . $identifier . ' IN (' . $sub . ') OR ' .
-                  $tableName . '.' . $identifier . ' IN (' . $sub2 . ')'
-            );
+            ->from("$tableName INNER JOIN $assocTable ON $tableName.$identifier = $assocTable.$local OR $tableName.$identifier = $assocTable.$foreign")
+            ->where("$tableName.$identifier IN ($sub) OR $tableName.$identifier IN ($sub2)");
         $q->addComponent($tableName, $record->getTable()->getComponentName());
         $q->addComponent($assocTable, $record->getTable()->getComponentName() . '.' . $this->getAssociationFactory()->getComponentName());
         $q->orderBy((string) $this->getOrderByStatement($tableName, true));

@@ -372,14 +372,9 @@ class UnitOfWork extends \Doctrine1\Connection\Module
 
                         $id = array_values($obj->identifier());
 
-                        if (!empty($id)) {
-                            foreach ((array) $rel->getLocal() as $k => $columnName) {
-                                $field = $record->getTable()->getFieldName($columnName);
-
-                                if (isset($id[$k]) && $id[$k] && $record->getTable()->hasField($field)) {
-                                    $record->set($field, $id[$k]);
-                                }
-                            }
+                        if (count($id) === 1) {
+                            $field = $record->getTable()->getFieldName($rel->getLocal());
+                            $record->set($field, $id[0]);
                         }
                     }
                 }

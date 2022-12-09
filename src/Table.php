@@ -3,6 +3,7 @@
 namespace Doctrine1;
 
 use Closure;
+use Doctrine1\Column\Type;
 use Doctrine1\Serializer\WithSerializers;
 use Doctrine1\Deserializer\WithDeserializers;
 use Doctrine1\Deserializer;
@@ -13,29 +14,25 @@ use ReflectionMethod;
 /**
  * @phpstan-template T of Record
  *
- * @phpstan-type ColumnOptionName = 'primary' | 'type' | 'length' | 'notnull' | 'values' | 'default' | 'autoincrement' | 'values' | 'owner' | 'unique' | 'protected' | 'sequence' | 'zerofill' | 'scale' | 'fixed' | 'comment' | 'alias' | 'extra' | 'virtual' | 'meta'
- *
- * @phpstan-type ColumnDefinition = array{
- *   type: string,
- *   length: int,
- *   notnull?: bool,
- *   values?: mixed[],
- *   default?: mixed,
- *   autoincrement?: bool,
- *   values?: mixed[],
- *   owner?: string,
- *   primary?: bool,
- *   unique?: bool,
- *   protected?: bool,
- *   sequence?: string,
- *   zerofill?: bool,
- *   scale?: int,
- *   fixed?: bool,
- *   comment?: string,
- *   alias?: string,
- *   extra?: mixed,
- *   virtual?: bool,
- *   meta?: bool,
+ * @phpstan-type ExportableOptions = array{
+ *   name: string,
+ *   tableName: string,
+ *   sequenceName: ?string,
+ *   inheritanceMap: array<string, mixed>,
+ *   enumMap: array,
+ *   type: ?string,
+ *   charset: ?string,
+ *   collate: ?string,
+ *   treeImpl: mixed,
+ *   treeOptions: array,
+ *   indexes: array{type?: string, fields?: string[]}[],
+ *   parents: array,
+ *   queryParts: array,
+ *   subclasses: string[],
+ *   orderBy: mixed,
+ *   checks: array,
+ *   primary: string[],
+ *   foreignKeys: mixed[],
  * }
  */
 class Table extends Configurable implements \Countable
@@ -78,8 +75,8 @@ class Table extends Configurable implements \Countable
      * an array of column definitions,
      * keys are column names and values are column definitions
      *
-     * @var array<string, array<string,mixed>> $columns
-     * @phpstan-var array<string, ColumnDefinition>
+     * @var Column[] $columns
+     * @phpstan-var array<string, Column>
      */
     protected array $columns = [];
 
@@ -127,8 +124,11 @@ class Table extends Configurable implements \Countable
     /** database table name, in most cases this is the same as component name but in some cases where one-table-multi-class inheritance is used this will be the name of the inherited table */
     public string $tableName = '';
 
-    /** inheritanceMap is used for inheritance mapping, keys representing columns and values
-     * the column values that should correspond to child classes */
+    /**
+     * inheritanceMap is used for inheritance mapping, keys representing columns and values
+     * the column values that should correspond to child classes
+     * @phpstan-var array<string, mixed>
+     */
     public array $inheritanceMap = [];
 
     /** enum value arrays */
@@ -149,6 +149,7 @@ class Table extends Configurable implements \Countable
     /** the parent classes of this component */
     public array $parents = [];
     public array $queryParts = [];
+    /** @var string[] */
     public array $subclasses = [];
     public mixed $orderBy = null;
     public ?\ReflectionClass $declaringClass = null;
@@ -238,19 +239,6 @@ class Table extends Configurable implements \Countable
         $this->collectionKey = $value;
     }
 
-    /** @phpstan-return class-string<T> */
-    public function getRecordClass(): string
-    {
-        $name = $this->name;
-
-        if (!class_exists($name)) {
-            $name = trim(trim($this->getModelNamespace(), '\\') . "\\$name", '\\');
-        }
-
-        /** @phpstan-var class-string<T> $name */
-        return $name;
-    }
-
     /**
      * Initializes the in-memory table definition.
      *
@@ -259,22 +247,17 @@ class Table extends Configurable implements \Countable
      */
     public function initDefinition(): Record
     {
-        $class = $this->getRecordClass();
+        $class = $this->getComponentName();
         $record = new $class($this);
 
         $parents = class_parents($class) ?: [];
         array_pop($parents);
         $this->parents = array_reverse($parents);
 
-        // create database table
-        if (method_exists($record, 'setTableDefinition')) {
-            $record->setTableDefinition();
-            // get the declaring class of setTableDefinition method
-            $method = new ReflectionMethod($record, 'setTableDefinition');
-            $class = $method->getDeclaringClass();
-        } else {
-            $class = new ReflectionClass($class);
-        }
+        $record->setTableDefinition();
+        // get the declaring class of setTableDefinition method
+        $method = new ReflectionMethod($record, 'setTableDefinition');
+        $class = $method->getDeclaringClass();
 
         foreach ($parents as $parent) {
             if ($parent === $class->getName()) {
@@ -290,16 +273,16 @@ class Table extends Configurable implements \Countable
             $found         = false;
             $parentColumns = $parentTable->getColumns();
 
-            foreach ($parentColumns as $columnName => $definition) {
-                if (!isset($definition['primary']) || $definition['primary'] === false) {
-                    if (isset($this->columns[$columnName])) {
+            foreach ($parentColumns as $column) {
+                if (!$column->primary) {
+                    if (isset($this->columns[$column->name])) {
                         $found = true;
                         break;
-                    } elseif (!isset($parentColumns[$columnName]['owner'])) {
-                        $parentColumns[$columnName]['owner'] = $parentTable->getComponentName();
+                    } else {
+                        $parentColumns[$column->name]->owner ??= $parentTable->getComponentName();
                     }
                 } else {
-                    unset($parentColumns[$columnName]);
+                    unset($parentColumns[$column->name]);
                 }
             }
 
@@ -307,9 +290,9 @@ class Table extends Configurable implements \Countable
                 continue;
             }
 
-            foreach ($parentColumns as $columnName => $definition) {
-                $fullName = $columnName . ' as ' . $parentTable->getFieldName($columnName);
-                $this->setColumn($fullName, $definition['type'], $definition['length'], $definition, true);
+            foreach ($parentColumns as $column) {
+                $fullName = $column->name . ' as ' . $parentTable->getFieldName($column->name);
+                $this->setColumn($column->rename($fullName), true);
             }
 
             break;
@@ -352,37 +335,19 @@ class Table extends Configurable implements \Countable
                     continue;
                 }
 
-                $found = false;
-                foreach ($e as $option => $value) {
-                    if ($found) {
-                        break;
-                    }
+                if ($e->autoincrement !== false || $e->sequence !== null) {
+                    $this->identifierType = IdentifierType::Autoinc;
 
-                    $e2 = explode(':', $option);
-
-                    switch (strtolower($e2[0])) {
-                        case 'autoincrement':
-                        case 'autoinc':
-                            if ($value !== false) {
-                                $this->identifierType = IdentifierType::Autoinc;
-                                $found = true;
-                            }
-                            break;
-                        case 'seq':
-                        case 'sequence':
-                            $this->identifierType = IdentifierType::Sequence;
-                            $found                 = true;
-
-                            if (is_string($value)) {
-                                $this->sequenceName = $value;
+                    if ($e->sequence !== null) {
+                        if (is_string($e->sequence)) {
+                            $this->sequenceName = $e->sequence;
+                        } else {
+                            if (($sequence = $this->getDefaultSequence()) !== null) {
+                                $this->sequenceName = $sequence;
                             } else {
-                                if (($sequence = $this->getDefaultSequence()) !== null) {
-                                    $this->sequenceName = $sequence;
-                                } else {
-                                    $this->sequenceName = $this->connection->formatter->getSequenceName($this->tableName);
-                                }
+                                $this->sequenceName = $this->connection->formatter->getSequenceName($this->tableName);
                             }
-                            break;
+                        }
                     }
                 }
 
@@ -401,22 +366,17 @@ class Table extends Configurable implements \Countable
         }
 
         $identifierOptions = $this->getDefaultIdentifierOptions();
-        $name              = (isset($identifierOptions['name']) && $identifierOptions['name']) ? $identifierOptions['name'] : 'id';
-        $name              = sprintf($name, $this->getTableName());
+        $name = empty($identifierOptions['name']) ? 'id' : $identifierOptions['name'];
+        /** @var non-empty-string $name */
+        $name = sprintf($name, $this->getTableName());
 
-        $definition = ['type'          => (isset($identifierOptions['type']) && $identifierOptions['type']) ? $identifierOptions['type'] : 'integer',
-                        'length'        => (isset($identifierOptions['length']) && $identifierOptions['length']) ? $identifierOptions['length'] : 8,
-                        'autoincrement' => isset($identifierOptions['autoincrement']) ? $identifierOptions['autoincrement'] : true,
-                        'primary'       => isset($identifierOptions['primary']) ? $identifierOptions['primary'] : true];
-
-        unset($identifierOptions['name'], $identifierOptions['type'], $identifierOptions['length']);
-        foreach ($identifierOptions as $key => $value) {
-            if (!isset($definition[$key]) || !$definition[$key]) {
-                $definition[$key] = $value;
-            }
-        }
-
-        $this->setColumn($name, $definition['type'], $definition['length'], $definition, true);
+        $this->setColumn(new Column(
+            $name,
+            type: empty($identifierOptions['type']) ? Column\Type::Integer : $identifierOptions['type'],
+            length: empty($identifierOptions['length']) ? 8 : $identifierOptions['length'],
+            primary: $identifierOptions['primary'] ?? true,
+            autoincrement: isset($identifierOptions['autoincrement']) ? $identifierOptions['autoincrement'] : true,
+        ), true);
         $this->identifier = [$name];
         $this->identifierType = IdentifierType::Autoinc;
 
@@ -435,11 +395,7 @@ class Table extends Configurable implements \Countable
      */
     public function getColumnOwner(string $columnName): string
     {
-        if (isset($this->columns[$columnName]['owner'])) {
-            return $this->columns[$columnName]['owner'];
-        } else {
-            return $this->getComponentName();
-        }
+        return $this->columns[$columnName]?->owner ?? $this->getComponentName();
     }
 
     /**
@@ -469,7 +425,7 @@ class Table extends Configurable implements \Countable
      */
     public function isInheritedColumn($columnName)
     {
-        return (isset($this->columns[$columnName]['owner']));
+        return isset($this->columns[$columnName]->owner);
     }
 
     /**
@@ -535,14 +491,10 @@ class Table extends Configurable implements \Countable
      *
      * @param  boolean $parseForeignKeys whether to include foreign keys definition in the options
      * @return array<string, mixed>
-     * @phpstan-import-type ColumnDefinition from Table
      * @phpstan-return array{
      *   tableName: string,
-     *   columns: array<string, ColumnDefinition>,
-     *   options: array{
-     *     primary: string[],
-     *     foreignKeys: mixed[],
-     *   },
+     *   columns: array<string, Column>,
+     *   options: ExportableOptions,
      * }
      */
     public function getExportableFormat($parseForeignKeys = true)
@@ -550,19 +502,20 @@ class Table extends Configurable implements \Countable
         $columns = [];
         $primary = [];
 
-        foreach ($this->getColumns() as $name => $definition) {
-            if (isset($definition['owner'])) {
+        foreach ($this->getColumns() as $column) {
+            if ($column->owner !== null) {
                 continue;
             }
 
-            if ($definition['type'] === 'boolean' && isset($definition['default'])) {
-                $definition['default'] = $this->getConnection()->convertBooleans($definition['default']);
+            if ($column->type === Column\Type::Boolean && $column->hasDefault()) {
+                $column->default = $this->getConnection()->convertBooleans($column->default);
             }
-            $columns[$name] = $definition;
 
-            if (isset($definition['primary']) && $definition['primary']) {
-                $primary[] = $name;
+            if ($column->primary) {
+                $primary[] = $column->name;
             }
+
+            $columns[$column->name] = $column;
         }
 
         $options = $this->getOptions();
@@ -592,16 +545,20 @@ class Table extends Configurable implements \Countable
                     continue;
                 }
 
-                $integrity = ['onUpdate' => $fk['onUpdate'],
-                                   'onDelete' => $fk['onDelete']];
+                $integrity = [
+                    'onUpdate' => $fk['onUpdate'],
+                    'onDelete' => $fk['onDelete']
+                ];
 
                 $fkName = $relation->getForeignKeyName();
 
                 if ($relation instanceof Relation\LocalKey) {
-                    $def = ['name'         => $fkName,
-                                 'local'        => $relation->getLocalColumnName(),
-                                 'foreign'      => $relation->getForeignColumnName(),
-                                 'foreignTable' => $relation->getTable()->getTableName()];
+                    $def = [
+                        'name'         => $fkName,
+                        'local'        => $relation->getLocalColumnName(),
+                        'foreign'      => $relation->getForeignColumnName(),
+                        'foreignTable' => $relation->getTable()->getTableName(),
+                    ];
 
                     if ($integrity !== $emptyIntegrity) {
                         $def = array_merge($def, $integrity);
@@ -660,7 +617,7 @@ class Table extends Configurable implements \Countable
      *   name: string,
      *   tableName: string,
      *   sequenceName: ?string,
-     *   inheritanceMap: array,
+     *   inheritanceMap: array<string, mixed>,
      *   enumMap: array,
      *   type: ?string,
      *   charset: ?string,
@@ -670,7 +627,7 @@ class Table extends Configurable implements \Countable
      *   indexes: array,
      *   parents: array,
      *   queryParts: array,
-     *   subclasses: array,
+     *   subclasses: string[],
      *   orderBy: mixed,
      *   checks: array,
      * }
@@ -740,8 +697,9 @@ class Table extends Configurable implements \Countable
      * This method adds an INDEX to the schema definition.
      * It does not add the index to the physical table in the db; @see export().
      *
-     * @param  string $index      index name
-     * @param  array  $definition keys are type, fields
+     * @param string $index      index name
+     * @param array $definition keys are type, fields
+     * @phpstan-param array{type?: string, fields?: string[]} $definition
      * @return void
      */
     public function addIndex($index, array $definition)
@@ -785,12 +743,12 @@ class Table extends Configurable implements \Countable
      *
      * @param  string[] $fields             values are fieldnames
      * @param  mixed[]  $options            array of options for unique validator
-     * @param  bool     $createdUniqueIndex Whether or not to create a unique index in the database
+     * @param  bool     $createUniqueIndex Whether or not to create a unique index in the database
      * @return void
      */
-    public function unique($fields, $options = [], $createdUniqueIndex = true)
+    public function unique(array $fields, array $options = [], bool $createUniqueIndex = true): void
     {
-        if ($createdUniqueIndex) {
+        if ($createUniqueIndex) {
             $name       = implode('_', $fields) . '_unqidx';
             $definition = ['type' => 'unique', 'fields' => $fields];
             $this->addIndex($name, $definition);
@@ -879,6 +837,7 @@ class Table extends Configurable implements \Countable
     /**
      * Retrieves all relation objects defined on this table.
      *
+     * @phpstan-return Relation[]
      * @return array
      */
     public function getRelations()
@@ -991,11 +950,15 @@ class Table extends Configurable implements \Countable
      * @param  string|string[] $fieldName column alias
      * @return string column name
      */
-    public function getColumnName($fieldName)
+    public function getColumnName($fieldName, bool $caseSensitive = true): string
     {
         // FIX ME: This is being used in places where an array is passed, but it should not be an array
         // For example in places where Doctrine should support composite foreign/primary keys
         $fieldName = is_array($fieldName) ? $fieldName[0] : $fieldName;
+
+        if (!$caseSensitive) {
+            return Lib::arrayCIGet($fieldName, $this->columnNames) ?? strtolower($fieldName);
+        }
 
         if (isset($this->columnNames[$fieldName])) {
             return $this->columnNames[$fieldName];
@@ -1006,15 +969,19 @@ class Table extends Configurable implements \Countable
 
     /**
      * Retrieves a column definition from this table schema.
-     *
-     * @param string $columnName
-     * @return array column definition; @see $columns
-     * @phpstan-return ColumnDefinition|null
      */
-    public function getColumnDefinition($columnName): ?array
+    public function getColumn(string $columnName): ?Column
     {
-        if (!isset($this->columns[$columnName])) {
-            return null;
+        return $this->columns[$columnName] ?? null;
+    }
+
+    /**
+     * Retrieves a column definition from this table schema.
+     */
+    public function column(string $columnName): Column
+    {
+        if (!array_key_exists($columnName, $this->columns)) {
+            throw new Table\Exception("Column $columnName doesn't exist.");
         }
         return $this->columns[$columnName];
     }
@@ -1023,82 +990,29 @@ class Table extends Configurable implements \Countable
      * Returns a column alias for a column name.
      *
      * If no alias can be found the column name is returned.
-     *
-     * @param  string $columnName column name
-     * @return string column alias
      */
-    public function getFieldName($columnName)
+    public function getFieldName(string $columnName, bool $caseSensitive = true): string
     {
+        if (!$caseSensitive) {
+            return Lib::arrayCIGet($columnName, $this->fieldNames) ?? $columnName;
+        }
+
         if (isset($this->fieldNames[$columnName])) {
             return $this->fieldNames[$columnName];
         }
+
         return $columnName;
-    }
-
-    /**
-     * Customize the array of options for a column or multiple columns. First
-     * argument can be a single field/column name or an array of them. The second
-     * argument is an array of options.
-     *
-     *     [php]
-     *     public function setTableDefinition(): void
-     *     {
-     *         parent::setTableDefinition();
-     *         $this->setColumnOptions('username', array(
-     *             'unique' => true
-     *         ));
-     *     }
-     *
-     * @param  string|string[] $columnName
-     * @param  mixed[] $options
-     * @phpstan-param array<ColumnOptionName, mixed> $options
-     * @return void
-     */
-    public function setColumnOptions(string|array $columnName, array $options)
-    {
-        if (is_array($columnName)) {
-            foreach ($columnName as $name) {
-                $this->setColumnOptions($name, $options);
-            }
-        } else {
-            foreach ($options as $option => $value) {
-                $this->setColumnOption($columnName, $option, $value);
-            }
-        }
-    }
-
-    /**
-     * Set an individual column option
-     * @phpstan-param ColumnOptionName $option
-     */
-    public function setColumnOption(string $columnName, string $option, mixed $value): void
-    {
-        if ($option == 'default') {
-            $this->hasDefaultValues = true;
-        }
-
-        if ($option == 'primary') {
-            if ($value && !in_array($columnName, $this->identifier)) {
-                $this->identifier[] = $columnName;
-            } elseif (!$value && in_array($columnName, $this->identifier)) {
-                $key = array_search($columnName, $this->identifier);
-                unset($this->identifier[$key]);
-            }
-        }
-
-        $columnName = $this->getColumnName($columnName);
-        $this->columns[$columnName][$option] = $value;
     }
 
     /**
      * Set multiple column definitions at once
      *
-     * @param  array<string, mixed> $definitions
+     * @param Column[] $columns
      */
-    public function setColumns(array $definitions): void
+    public function setColumns(array $columns): void
     {
-        foreach ($definitions as $name => $options) {
-            $this->setColumn($name, $options['type'], $options['length'], $options);
+        foreach ($columns as $column) {
+            $this->setColumn($column);
         }
     }
 
@@ -1107,129 +1021,34 @@ class Table extends Configurable implements \Countable
      *
      * This method does not alter the database table; @see export();
      *
-     * @see    $columns;
-     * @param  string  $name    column physical name
-     * @param  string  $type    type of data
-     * @param  integer $length  maximum length
-     * @param  mixed   $options
-     * @param  boolean $prepend Whether to prepend or append the new column to the column list.
-     *                          By default the column gets appended.
-     * @throws Table\Exception     if trying use wrongly typed parameter
+     * @see $columns;
+     * @param boolean $prepend Whether to prepend or append the new column to the column list.
+     *                         By default the column gets appended.
+     * @throws Table\Exception if trying use wrongly typed parameter
      * @return void
      */
-    public function setColumn($name, $type = null, $length = null, $options = [], $prepend = false)
+    public function setColumn(Column $column, $prepend = false)
     {
-        if (is_string($options)) {
-            $options = explode('|', $options);
-        }
-
-        foreach ($options as $k => $option) {
-            if (is_numeric($k)) {
-                if (!empty($option)) {
-                    $options[$option] = true;
-                }
-                unset($options[$k]);
-            }
-        }
-
-        // extract column name & field name
-        if (stripos($name, ' as ')) {
-            if (strpos($name, ' as ')) {
-                $parts = explode(' as ', $name);
-            } else {
-                $parts = explode(' AS ', $name);
-            }
-
-            if (count($parts) > 1) {
-                $fieldName = $parts[1];
-            } else {
-                $fieldName = $parts[0];
-            }
-
-            $name = strtolower($parts[0]);
-        } else {
-            $fieldName = $name;
-            $name      = strtolower($name);
-        }
-
-        $name      = trim($name);
-        $fieldName = trim($fieldName);
-
         if ($prepend) {
-            $this->columnNames = array_merge([$fieldName => $name], $this->columnNames);
-            $this->fieldNames  = array_merge([$name => $fieldName], $this->fieldNames);
+            $this->columnNames = array_merge([$column->fieldName => $column->name], $this->columnNames);
+            $this->fieldNames  = array_merge([$column->name => $column->fieldName], $this->fieldNames);
         } else {
-            $this->columnNames[$fieldName] = $name;
-            $this->fieldNames[$name]       = $fieldName;
-        }
-
-        $defaultOptions = $this->getDefaultColumnOptions();
-
-        if (isset($defaultOptions['length']) && $defaultOptions['length'] && $length == null) {
-            $length = $defaultOptions['length'];
-        }
-
-        if ($length == null) {
-            switch ($type) {
-                case 'integer':
-                    $length = 8;
-                    break;
-                case 'decimal':
-                    $length = 18;
-                    break;
-                case 'string':
-                case 'clob':
-                case 'float':
-                case 'array':
-                case 'object':
-                case 'blob':
-                case 'gzip':
-                    //All the DataDict driver classes have work-arounds to deal
-                    //with unset lengths.
-                    $length = null;
-                    break;
-                case 'boolean':
-                    $length = 1;
-                    // no break
-                case 'date':
-                    // YYYY-MM-DD ISO 8601
-                    $length = 10;
-                    // no break
-                case 'time':
-                    // HH:NN:SS+00:00 ISO 8601
-                    $length = 14;
-                    // no break
-                case 'timestamp':
-                    // YYYY-MM-DDTHH:MM:SS+00:00 ISO 8601
-                    $length = 25;
-            }
-        }
-
-        $options['type']   = $type;
-        $options['length'] = $length;
-
-        if (strtolower($fieldName) != $name) {
-            $options['alias'] = $fieldName;
-        }
-
-        foreach ($defaultOptions as $key => $value) {
-            if (!array_key_exists($key, $options) || $options[$key] === null) {
-                $options[$key] = $value;
-            }
+            $this->columnNames[$column->fieldName] = $column->name;
+            $this->fieldNames[$column->name] = $column->fieldName;
         }
 
         if ($prepend) {
-            $this->columns = array_merge([$name => $options], $this->columns);
+            $this->columns = array_merge([$column->name => $column], $this->columns);
         } else {
-            $this->columns[$name] = $options;
+            $this->columns[$column->name] = $column;
         }
 
-        if (isset($options['primary']) && $options['primary']) {
-            if (!in_array($fieldName, $this->identifier)) {
-                $this->identifier[] = $fieldName;
+        if ($column->primary) {
+            if (!in_array($column->fieldName, $this->identifier)) {
+                $this->identifier[] = $column->fieldName;
             }
         }
-        if (isset($options['default'])) {
+        if ($column->hasDefault()) {
             $this->hasDefaultValues = true;
         }
     }
@@ -1250,18 +1069,18 @@ class Table extends Configurable implements \Countable
      * @param  string $fieldName column name
      * @return mixed                default value as set in definition
      */
-    public function getDefaultValueOf($fieldName)
+    public function getDefaultValueOf(string $fieldName)
     {
-        $columnName = $this->getColumnName($fieldName);
+        $columnName = $this->getColumnName($fieldName, false);
         if (!isset($this->columns[$columnName])) {
             throw new Table\Exception("Couldn't get default value. Column $columnName doesn't exist.");
         }
 
-        if (!isset($this->columns[$columnName]['default'])) {
+        if (!$this->columns[$columnName]->hasDefault()) {
             return null;
         }
 
-        $default = $this->columns[$columnName]['default'];
+        $default = $this->columns[$columnName]->default;
         if ($default instanceof Closure) {
             $default = $default();
         }
@@ -1272,8 +1091,8 @@ class Table extends Configurable implements \Countable
     /** @param Deserializer\DeserializerInterface[]|null $deserializers */
     public function deserializeColumnValue(mixed $value, string $fieldName, ?array $deserializers = null): mixed
     {
-        $column = $this->getColumnDefinition($this->getColumnName($fieldName));
-        if ($column === null || ($value === null && empty($column['notnull']))) {
+        $column = $this->getColumn($this->getColumnName($fieldName, false));
+        if ($column === null || ($value === null && !$column->notnull)) {
             return $value;
         }
         if ($deserializers === null) {
@@ -1319,13 +1138,18 @@ class Table extends Configurable implements \Countable
 
     /**
      * Finds out whether the table definition contains a given column.
-     *
-     * @param  string $columnName
-     * @return boolean
      */
-    public function hasColumn($columnName)
+    public function hasColumn(string $columnName, bool $caseSensitive = true): bool
     {
-        return isset($this->columns[strtolower($columnName)]);
+        if (!$caseSensitive) {
+            foreach ($this->columns as $name => $_) {
+                if (strtolower($name) === strtolower($columnName)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        return isset($this->columns[$columnName]);
     }
 
     /**
@@ -1333,12 +1157,17 @@ class Table extends Configurable implements \Countable
      *
      * This method returns true if @see hasColumn() returns true or if an alias
      * named $fieldName exists.
-     *
-     * @param  string $fieldName
-     * @return boolean
      */
-    public function hasField($fieldName)
+    public function hasField(string $fieldName, bool $caseSensitive = true): bool
     {
+        if (!$caseSensitive) {
+            foreach ($this->columnNames as $name => $_) {
+                if (strtolower($name) === strtolower($fieldName)) {
+                    return true;
+                }
+            }
+            return false;
+        }
         return isset($this->columnNames[$fieldName]);
     }
 
@@ -1830,12 +1659,8 @@ class Table extends Configurable implements \Countable
      */
     public function getEnumValues($fieldName)
     {
-        $columnName = $this->getColumnName($fieldName);
-        if (isset($this->columns[$columnName]['values'])) {
-            return $this->columns[$columnName]['values'];
-        } else {
-            return [];
-        }
+        $columnName = $this->getColumnName($fieldName, false);
+        return $this->columns[$columnName]->values;
     }
 
     /**
@@ -1858,9 +1683,9 @@ class Table extends Configurable implements \Countable
             return $index;
         }
 
-        $columnName = $this->getColumnName($fieldName);
+        $columnName = $this->getColumnName($fieldName, false);
 
-        return isset($this->columns[$columnName]['values'][$index]) ? $this->columns[$columnName]['values'][$index] : false;
+        return isset($this->columns[$columnName]->values[$index]) ? $this->columns[$columnName]->values[$index] : false;
     }
 
     /**
@@ -1919,14 +1744,14 @@ class Table extends Configurable implements \Countable
             if (!Validator::isValidType($value, $dataType)) {
                 $errorStack->add($fieldName, 'type');
             }
-            if ($dataType == 'enum') {
+            if ($dataType === Type::Enum) {
                 $enumIndex = $this->enumIndex($fieldName, $value);
                 if ($enumIndex === null && $value !== null) {
                     $errorStack->add($fieldName, 'enum');
                 }
             }
-            if ($dataType == 'set') {
-                $values = $this->columns[$fieldName]['values'] ?? [];
+            if ($dataType === Type::Set) {
+                $values = $this->columns[$fieldName]->values ?? [];
                 // Convert string to array
                 if (is_string($value)) {
                     $value = $value ? explode(',', $value) : [];
@@ -1945,15 +1770,16 @@ class Table extends Configurable implements \Countable
         }
 
         // Validate field length, if length validation is enabled
-        if ($this->getValidate() & Core::VALIDATE_LENGTHS
+        if (
+            $this->getValidate() & Core::VALIDATE_LENGTHS
             && is_string($value)
-            && !Validator::validateLength($value, $dataType, $this->getFieldLength($fieldName))
+            && !Validator::validateLength($value, $dataType, $this->getDefinitionOf($fieldName)?->length)
         ) {
             $errorStack->add($fieldName, 'length');
         }
 
         // Run all custom validators
-        $validators = $this->getFieldValidators($fieldName);
+        $validators = $this->getColumn($this->getColumnName($fieldName))?->getValidators() ?? [];
 
         // Skip rest of validation if value is allowed to be null
         if ($value === null && !isset($validators['notnull']) && !isset($validators['notblank'])) {
@@ -1987,8 +1813,8 @@ class Table extends Configurable implements \Countable
      * Retrieves all columns of the table.
      *
      * @see    $columns;
-     * @return array<string,array<string,mixed>>    keys are column names and values are definition
-     * @phpstan-return array<string, ColumnDefinition>
+     * @return Column[] keys are column names and values are definition
+     * @phpstan-return array<string, Column>
      */
     public function getColumns()
     {
@@ -2008,7 +1834,7 @@ class Table extends Configurable implements \Countable
             return false;
         }
 
-        $columnName = $this->getColumnName($fieldName);
+        $columnName = $this->getColumnName($fieldName, false);
         unset($this->columnNames[$fieldName], $this->fieldNames[$columnName], $this->columns[$columnName]);
         $this->columnCount = count($this->columns);
         return true;
@@ -2020,7 +1846,7 @@ class Table extends Configurable implements \Countable
      * @param  string[]|null $fieldNames
      * @return string[] numeric array
      */
-    public function getColumnNames(array $fieldNames = null)
+    public function getColumnNames(array $fieldNames = null): array
     {
         if ($fieldNames === null) {
             return array_keys($this->columns);
@@ -2038,9 +1864,19 @@ class Table extends Configurable implements \Countable
      *
      * @return string[] numeric array
      */
-    public function getIdentifierColumnNames()
+    public function getIdentifierColumnNames(): array
     {
         return $this->getColumnNames((array) $this->getIdentifier());
+    }
+
+    /**
+     * Returns an array with all the identifier column names.
+     *
+     * @return Column[] numeric array
+     */
+    public function getIdentifierColumns(): array
+    {
+        return array_filter(array_map(fn ($name) => $this->getColumn($name), $this->getIdentifierColumnNames()));
     }
 
     /**
@@ -2070,31 +1906,29 @@ class Table extends Configurable implements \Countable
      *
      * This method retrieves the definition of the column, basing of $fieldName
      * which can be a column name or a field name (alias).
-     *
-     * @return array<string,mixed>|null null on failure
      */
-    public function getDefinitionOf(string $fieldName): ?array
+    public function getDefinitionOf(string $fieldName): ?Column
     {
-        $columnName = $this->getColumnName($fieldName);
-        return $this->getColumnDefinition($columnName);
+        $columnName = $this->getColumnName($fieldName, false);
+        return $this->getColumn($columnName);
     }
 
     /**
      * Retrieves the type of a field.
      *
-     * @return string|null null on failure
+     * @return Type|null null on failure
      */
-    public function getTypeOf(string $fieldName): ?string
+    public function getTypeOf(string $fieldName): ?Type
     {
-        return $this->getTypeOfColumn($this->getColumnName($fieldName));
+        return $this->getTypeOfColumn($this->getColumnName($fieldName, false));
     }
 
     /**
      * Retrieves the type of a field.
      */
-    public function requireTypeOf(string $fieldName): string
+    public function requireTypeOf(string $fieldName): Type
     {
-        $type = $this->getTypeOfColumn($this->getColumnName($fieldName));
+        $type = $this->getTypeOfColumn($this->getColumnName($fieldName, false));
         if ($type === null) {
             throw new Table\Exception("Column $fieldName doesn't exist.");
         }
@@ -2104,11 +1938,11 @@ class Table extends Configurable implements \Countable
     /**
      * Retrieves the type of a column.
      *
-     * @return string|null null if column is not found
+     * @return Type|null null if column is not found
      */
-    public function getTypeOfColumn(string $columnName): ?string
+    public function getTypeOfColumn(string $columnName): ?Type
     {
-        return $this->columns[$columnName]['type'] ?? null;
+        return $this->columns[$columnName]->type ?? null;
     }
 
     /**
@@ -2141,7 +1975,6 @@ class Table extends Configurable implements \Countable
      * the type of the given column.
      *
      * 1. It unserializes array and object typed columns
-     * 2. Uncompresses gzip typed columns
      * 3. Initializes special null object pointer for null values (for fast column existence checking purposes)
      *
      * example:
@@ -2152,15 +1985,14 @@ class Table extends Configurable implements \Countable
      * </code>
      *
      * @throws Table\Exception     if unserialization of array/object typed column fails or
-     * @throws Table\Exception     if uncompression of gzip typed column fails         *
      * @param  string                    $fieldName the name of the field
      * @param  string|null|None $value     field value
-     * @param  string|null               $typeHint  Type hint used to pass in the type of the value to prepare
+     * @param  Type|null               $typeHint  Type hint used to pass in the type of the value to prepare
      *                                              if it is already known. This enables the method to skip
      *                                              the type determination. Used i.e. during hydration.
      * @return mixed            prepared value
      */
-    public function prepareValue(string $fieldName, $value, $typeHint = null)
+    public function prepareValue(string $fieldName, $value, ?Type $typeHint = null)
     {
         if ($value === None::instance()) {
             return $value;
@@ -2170,17 +2002,12 @@ class Table extends Configurable implements \Countable
             $type = $typeHint ?? $this->getTypeOf($fieldName);
 
             switch ($type) {
-                case 'enum':
-                case 'integer':
-                case 'string':
-                    // don't do any casting here PHP INT_MAX is smaller than what the databases support
-                    break;
-                case 'set':
+                case Type::Set:
                     return $value ? explode(',', $value) : [];
-                case 'boolean':
+                case Type::Boolean:
                     return (bool) $value;
-                case 'array':
-                case 'object':
+                case Type::Array:
+                case Type::Object:
                     if (is_string($value)) {
                         $value = empty($value) ? null : unserialize($value);
 
@@ -2190,13 +2017,6 @@ class Table extends Configurable implements \Countable
                         return $value;
                     }
                     break;
-                case 'gzip':
-                    $value = gzuncompress($value);
-
-                    if ($value === false) {
-                        throw new Table\Exception('Uncompressing of ' . $fieldName . ' failed.');
-                    }
-                    return $value;
             }
         }
         return $value;
@@ -2209,7 +2029,14 @@ class Table extends Configurable implements \Countable
      */
     public function getComponentName(): string
     {
-        return $this->name;
+        $name = $this->name;
+
+        if (!class_exists($name)) {
+            $name = Lib::namespaceConcat($this->getModelNamespace(), $name);
+        }
+
+        /** @phpstan-var class-string<T> $name */
+        return $name;
     }
 
     /**
@@ -2256,65 +2083,6 @@ class Table extends Configurable implements \Countable
     {
         $this->queryParts[$queryPart] = $value;
         return $this;
-    }
-
-    /**
-     * Gets the names of all validators being applied on a field.
-     *
-     * @return array<string, mixed[]> names of validators
-     */
-    public function getFieldValidators(string $fieldName): array
-    {
-        $validators = [];
-        $columnName = $this->getColumnName($fieldName);
-        // this loop is a dirty workaround to get the validators filtered out of
-        // the options, since everything is squeezed together currently
-        foreach ($this->columns[$columnName] as $name => $args) {
-            if (in_array($name, [
-                'primary',
-                'protected',
-                'autoincrement',
-                'default',
-                'values',
-                'sequence',
-                'zerofill',
-                'owner',
-                'scale',
-                'type',
-                'length',
-                'fixed',
-                'comment',
-                'alias',
-                'extra',
-                'virtual',
-                'meta',
-                'unique',
-            ])) {
-                continue;
-            }
-            if ($name == 'notnull' && isset($this->columns[$columnName]['autoincrement'])
-                && $this->columns[$columnName]['autoincrement'] === true
-            ) {
-                continue;
-            }
-            // skip it if it's explicitly set to FALSE (i.e. notnull => false)
-            if ($args === false) {
-                continue;
-            }
-            $validators[$name] = $args === true ? [] : (array) $args;
-        }
-
-        return $validators;
-    }
-
-    /**
-     * Gets the maximum length of a field.
-     * For integer fields, length is bytes occupied.
-     * For decimal fields, it is the total number of cyphers
-     */
-    public function getFieldLength(string $fieldName): ?int
-    {
-        return $this->columns[$this->getColumnName($fieldName)]['length'];
     }
 
     /**
@@ -2427,10 +2195,10 @@ class Table extends Configurable implements \Countable
     protected function resolveFindByFieldName(string $name): ?string
     {
         $fieldName = Inflector::tableize($name);
-        if ($this->hasColumn($name) || $this->hasField($name)) {
-            return $this->getFieldName($this->getColumnName($name));
-        } elseif ($this->hasColumn($fieldName) || $this->hasField($fieldName)) {
-            return $this->getFieldName($this->getColumnName($fieldName));
+        if ($this->hasColumn($name, false) || $this->hasField($name, false)) {
+            return $this->getFieldName($this->getColumnName($name, false));
+        } elseif ($this->hasColumn($fieldName, false) || $this->hasField($fieldName, false)) {
+            return $this->getFieldName($this->getColumnName($fieldName, false));
         } else {
             return null;
         }

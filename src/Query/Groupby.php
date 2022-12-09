@@ -62,8 +62,8 @@ class Groupby extends \Doctrine1\Query\Part
                                     throw new \Doctrine1\Query\Exception('Unknown column ' . $field);
                                 }
 
-                                if (isset($def['owner'])) {
-                                    $componentAlias = $componentAlias . '.' . $def['owner'];
+                                if ($def->owner !== null) {
+                                    $componentAlias = "$componentAlias.{$def->owner}";
                                 }
 
                                 $tableAlias = $this->query->getSqlTableAlias($componentAlias);
@@ -103,13 +103,13 @@ class Groupby extends \Doctrine1\Query\Part
                                     $found = true;
 
                                     $def = $table->getDefinitionOf($term[0]);
+                                    assert($def !== null);
 
                                     // get the actual column name from field name
                                     $term[0] = $table->getColumnName($term[0]);
 
-
-                                    if (isset($def['owner'])) {
-                                        $componentAlias = $componentAlias . '.' . $def['owner'];
+                                    if ($def->owner !== null) {
+                                        $componentAlias = "$componentAlias.{$def->owner}";
                                     }
 
                                     $tableAlias = $this->query->getSqlTableAlias($componentAlias);

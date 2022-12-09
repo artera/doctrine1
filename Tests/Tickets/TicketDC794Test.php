@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Tickets {
     use Tests\DoctrineUnitTestCase;
 
@@ -14,9 +15,9 @@ namespace Tests\Tickets {
         {
             $table = \Doctrine1\Core::getTable('Ticket_DC794_Model');
 
-            $this->assertEquals($table->buildFindByWhere('IdOrigenOportunidadClienteOrId'), '(dctrn_find.idOrigenOportunidadCliente = ? OR dctrn_find.id = ?)');
-            $this->assertEquals($table->buildFindByWhere('IdAndIdOrIdOrigenOportunidadCliente'), 'dctrn_find.id = ? AND (dctrn_find.id = ? OR dctrn_find.idOrigenOportunidadCliente = ?)');
-            $this->assertEquals($table->buildFindByWhere('UsernameOrIdOrIdOrigenOportunidadCliente'), '(dctrn_find.Username = ? OR dctrn_find.id = ? OR dctrn_find.idOrigenOportunidadCliente = ?)');
+            $this->assertEquals('(dctrn_find.idOrigenOportunidadCliente = ? OR dctrn_find.id = ?)', $table->buildFindByWhere('IdOrigenOportunidadClienteOrId'));
+            $this->assertEquals('dctrn_find.id = ? AND (dctrn_find.id = ? OR dctrn_find.idOrigenOportunidadCliente = ?)', $table->buildFindByWhere('IdAndIdOrIdOrigenOportunidadCliente'));
+            $this->assertEquals('(dctrn_find.Username = ? OR dctrn_find.id = ? OR dctrn_find.idOrigenOportunidadCliente = ?)', $table->buildFindByWhere('UsernameOrIdOrIdOrigenOportunidadCliente'));
         }
     }
 }

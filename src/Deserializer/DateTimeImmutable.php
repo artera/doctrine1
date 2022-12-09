@@ -2,32 +2,35 @@
 
 namespace Doctrine1\Deserializer;
 
+use Doctrine1\Column;
+use Doctrine1\Table;
+
 class DateTimeImmutable implements DeserializerInterface
 {
     public function __construct(
         protected \DateTimeZone $timezone,
-        protected array $validTypes = ['date', 'datetime', 'timestamp'],
+        protected array $validTypes = [Column\Type::Date, Column\Type::DateTime, Column\Type::Timestamp],
     ) {
     }
 
-    protected function checkCompatibility(mixed $value, string $type): void
+    protected function checkCompatibility(mixed $value, Column\Type $type): void
     {
-        if (!in_array($type, $this->validTypes) || !is_scalar($value)) {
+        if (!in_array($type, $this->validTypes, true) || !is_scalar($value)) {
             throw new Exception\Incompatible();
         }
     }
 
-    public function deserialize(mixed $value, array $column, \Doctrine1\Table $table): mixed
+    public function deserialize(mixed $value, Column $column, Table $table): mixed
     {
-        $this->checkCompatibility($value, $column['type']);
+        $this->checkCompatibility($value, $column->type);
 
         if ($value === null || (is_string($value) && substr($value, 0, 10) === '0000-00-00')) {
-            if (empty($column['notnull'])) {
+            if (!$column->notnull) {
                 return null;
             }
 
-            if (!empty($column['default'])) {
-                $value = $column['default'];
+            if ($column->hasDefault()) {
+                $value = $column->default;
             }
         }
 

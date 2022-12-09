@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Tickets {
     use Tests\DoctrineUnitTestCase;
 
@@ -82,24 +83,18 @@ namespace {
     {
         public function setTableDefinition(): void
         {
-            static $columns = [
-            'id' => [
-                'type'     => 'integer',
-                'length'   => 4,
+            $this->hasColumn('id', 'integer', 4, [
                 'unsigned' => true,
                 'notnull'  => true,
                 'primary'  => true,
                 'autoinc'  => true
-            ],
-            'name' => [
-                'type'    => 'string',
-                'length'  => 32,
+            ]);
+
+            $this->hasColumn('name', 'string', 32, [
                 'notnull' => true
-            ]
-            ];
+            ]);
 
             $this->setTableName('files_types');
-            $this->hasColumns($columns);
         }
 
         public function setUp(): void
@@ -118,29 +113,22 @@ namespace {
     {
         public function setTableDefinition(): void
         {
-            static $columns = [
-            'id' => [
-                'type'     => 'integer',
-                'length'   => 10,
+            $this->hasColumn('id', 'integer', 10, [
                 'unsigned' => true,
                 'notnull'  => true,
                 'primary'  => true,
                 'autoinc'  => true
-            ],
-            'type_id' => [
-                'type'    => 'integer',
-                'length'  => 4,
+            ]);
+
+            $this->hasColumn('type_id', 'integer', 4, [
                 'notnull' => true
-            ],
-            'filename' => [
-                'type'    => 'string',
-                'length'  => 255,
+            ]);
+
+            $this->hasColumn('filename', 'string', 255, [
                 'notnull' => true
-            ]
-            ];
+            ]);
 
             $this->setTableName('files');
-            $this->hasColumns($columns);
         }
 
         public function setUp(): void

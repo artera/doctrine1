@@ -2,6 +2,7 @@
 
 namespace Doctrine1;
 
+use Doctrine1\Column\Type;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use ReflectionClass;
@@ -515,15 +516,26 @@ class Migration
                 }
                 foreach ($changes as $value) {
                     list($type, $change) = $value;
-                    $funcName            = 'process' . Inflector::classify($type);
-                    if (method_exists($this->process, $funcName)) {
-                        try {
-                            $this->process->$funcName($change);
-                        } catch (Throwable $e) {
-                            $this->addError($e);
-                        }
-                    } else {
-                        throw new Migration\Exception(sprintf('Invalid migration change type: %s', $type));
+
+                    try {
+                        match ($type) {
+                            'created_table' => $this->process->processCreatedTable($change),
+                            'dropped_table' => $this->process->processDroppedTable($change),
+                            'renamed_table' => $this->process->processRenamedTable($change),
+                            'created_column' => $this->process->processCreatedColumn($change),
+                            'dropped_column' => $this->process->processDroppedColumn($change),
+                            'renamed_column' => $this->process->processRenamedColumn($change),
+                            'changed_column' => $this->process->processChangedColumn($change),
+                            'created_index' => $this->process->processCreatedIndex($change),
+                            'dropped_index' => $this->process->processDroppedIndex($change),
+                            'created_constraint' => $this->process->processCreatedConstraint($change),
+                            'dropped_constraint' => $this->process->processDroppedConstraint($change),
+                            'created_foreign_key' => $this->process->processCreatedForeignKey($change),
+                            'dropped_foreign_key' => $this->process->processDroppedForeignKey($change),
+                            default => throw new Migration\Exception(sprintf('Invalid migration change type: %s', $type)),
+                        };
+                    } catch (Throwable $e) {
+                        $this->addError($e);
                     }
                 }
             }
@@ -538,23 +550,20 @@ class Migration
     /**
      * Create the migration table and return true. If it already exists it will
      * silence the exception and return false
-     *
-     * @return boolean $created Whether or not the table was created. Exceptions
-     *                          are silenced when table already exists
      */
-    protected function createMigrationTable(): bool
+    protected function createMigrationTable(): void
     {
         if ($this->migrationTableCreated) {
-            return true;
+            return;
         }
 
         $this->migrationTableCreated = true;
 
         try {
-            $this->connection->export->createTable($this->migrationTableName, ['version' => ['type' => 'integer', 'size' => 11]]);
-            return true;
-        } catch (Throwable $e) {
-            return false;
+            $this->connection->export->createTable($this->migrationTableName, [
+                new Column('version', Type::Integer, 11),
+            ]);
+        } catch (Connection\Exception) {
         }
     }
 }

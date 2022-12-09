@@ -7,6 +7,15 @@ use Doctrine1\Query\State;
 /**
  * @template Record of Record
  * @template Type of Query\Type
+ *
+ * @phpstan-type QueryComponent = array{
+ *   table: Table,
+ *   map?: ?string,
+ *   parent?: string,
+ *   relation?: Relation,
+ *   ref?: bool,
+ *   agg?: string[],
+ * }
  */
 abstract class AbstractQuery
 {
@@ -124,7 +133,7 @@ abstract class AbstractQuery
 
 
     /**
-     * @phpstan-var array<string, array{table: Table, map?: ?string, parent?: string, relation?: Relation, ref?: bool, agg?: string[]}>
+     * @phpstan-var array<string, QueryComponent>
      * @var array<string,mixed> $queryComponents   Two dimensional array containing the components of this query,
      *                                informations about their relations and other related information.
      *                                The components are constructed during query parsing.
@@ -202,6 +211,7 @@ abstract class AbstractQuery
 
     /**
      * an array of parser objects, each DQL query part has its own parser
+     * @var array<string, Query\Part>
      */
     protected array $parsers = [];
 
@@ -235,14 +245,7 @@ abstract class AbstractQuery
         $this->connection = $connection;
     }
 
-    /**
-     * setOption
-     *
-     * @param  string $name  option name
-     * @param  string $value option value
-     * @return void
-     */
-    public function setOption($name, $value)
+    public function setOption(string $name, string $value): void
     {
         if (!isset($this->options[$name])) {
             throw new Query\Exception('Unknown option ' . $name);
@@ -251,22 +254,20 @@ abstract class AbstractQuery
     }
 
     /**
-     * hasSqlTableAlias
      * whether or not this object has given tableAlias
      *
      * @param  string $sqlTableAlias the table alias to be checked
      * @return boolean              true if this object has given alias, otherwise false
      */
-    public function hasSqlTableAlias($sqlTableAlias)
+    public function hasSqlTableAlias(string $sqlTableAlias): bool
     {
-        return (isset($this->tableAliasMap[$sqlTableAlias]));
+        return isset($this->tableAliasMap[$sqlTableAlias]);
     }
 
     /**
-     * getTableAliasMap
      * returns all table aliases
      *
-     * @return array<string,string>        table aliases as an array
+     * @return array<string, string>        table aliases as an array
      */
     public function getTableAliasMap()
     {
@@ -274,14 +275,13 @@ abstract class AbstractQuery
     }
 
     /**
-     * getDql
      * returns the DQL query that is represented by this query object.
      *
      * the query is built from $dqlParts
      *
      * @return string   the DQL query
      */
-    public function getDql()
+    public function getDql(): string
     {
         $q = '';
         if ($this->type->isSelect()) {
@@ -306,14 +306,13 @@ abstract class AbstractQuery
     }
 
     /**
-     * getSqlQueryPart
      * gets an SQL query part from the SQL query part array
      *
      * @param  string $part query part string
      * @throws Query\Exception   if trying to set unknown query part
      * @return mixed     this object
      */
-    public function getSqlQueryPart($part)
+    public function getSqlQueryPart(string $part)
     {
         if (!isset($this->sqlParts[$part])) {
             throw new Query\Exception('Unknown SQL query part ' . $part);
@@ -322,7 +321,6 @@ abstract class AbstractQuery
     }
 
     /**
-     * setSqlQueryPart
      * sets an SQL query part in the SQL query part array
      *
      * @param  string          $name the name of the query part to be set
@@ -330,7 +328,7 @@ abstract class AbstractQuery
      * @throws Query\Exception   if trying to set unknown query part
      * @return $this     this object
      */
-    public function setSqlQueryPart($name, $part)
+    public function setSqlQueryPart(string $name, string|array $part): self
     {
         if (!isset($this->sqlParts[$name])) {
             throw new Query\Exception('Unknown query part ' . $name);
@@ -350,7 +348,6 @@ abstract class AbstractQuery
     }
 
     /**
-     * addSqlQueryPart
      * adds an SQL query part to the SQL query part array
      *
      * @param  string          $name the name of the query part to be added
@@ -358,7 +355,7 @@ abstract class AbstractQuery
      * @throws Query\Exception   if trying to add unknown query part
      * @return $this     this object
      */
-    public function addSqlQueryPart($name, $part)
+    public function addSqlQueryPart(string $name, string|array $part): self
     {
         if (!isset($this->sqlParts[$name])) {
             throw new Query\Exception('Unknown query part ' . $name);
@@ -372,14 +369,13 @@ abstract class AbstractQuery
     }
 
     /**
-     * removeSqlQueryPart
      * removes a query part from the query part array
      *
      * @param  string $name the name of the query part to be removed
      * @throws Query\Exception   if trying to remove unknown query part
      * @return $this     this object
      */
-    public function removeSqlQueryPart($name)
+    public function removeSqlQueryPart(string $name): self
     {
         if (!isset($this->sqlParts[$name])) {
             throw new Query\Exception('Unknown query part ' . $name);
@@ -395,14 +391,13 @@ abstract class AbstractQuery
     }
 
     /**
-     * removeDqlQueryPart
      * removes a dql query part from the dql query part array
      *
      * @param  string $name the name of the query part to be removed
      * @throws Query\Exception   if trying to remove unknown query part
      * @return $this     this object
      */
-    public function removeDqlQueryPart($name)
+    public function removeDqlQueryPart(string $name): self
     {
         if (!isset($this->dqlParts[$name])) {
             throw new Query\Exception('Unknown query part ' . $name);
@@ -420,9 +415,9 @@ abstract class AbstractQuery
     /**
      * Get raw array of parameters for query and all parts.
      *
-     * @return array $params
+     * @return array<string, mixed> $params
      */
-    public function getParams()
+    public function getParams(): array
     {
         return $this->params;
     }
@@ -430,11 +425,9 @@ abstract class AbstractQuery
     /**
      * Get flattened array of parameters for query.
      * Used internally and used to pass flat array of params to the database.
-     *
-     * @param  mixed $params
-     * @return array
+     * @param mixed $params
      */
-    public function getFlattenedParams($params = [])
+    public function getFlattenedParams($params = []): array
     {
         return array_merge(
             (array) $params,
@@ -449,37 +442,24 @@ abstract class AbstractQuery
         );
     }
 
-    /**
-     * getInternalParams
-     *
-     * @param  array $params
-     * @return array
-     */
-    public function getInternalParams($params = [])
+    public function getInternalParams(array $params = []): array
     {
         return array_merge($params, $this->execParams);
     }
 
     /**
-     * setParams
-     *
-     * @param array $params
-     *
-     * @return void
+     * @param array<string, mixed> $params
      */
-    public function setParams(array $params = [])
+    public function setParams(array $params = []): void
     {
         $this->params = $params;
     }
 
     /**
-     * getCountQueryParams
      * Retrieves the parameters for count query
-     *
-     * @param  array $params
-     * @return array Parameters array
+     * @param mixed $params
      */
-    public function getCountQueryParams($params = [])
+    public function getCountQueryParams($params = []): array
     {
         if (!is_array($params)) {
             $params = [$params];
@@ -503,12 +483,7 @@ abstract class AbstractQuery
         return $this->execParams;
     }
 
-    /**
-     * @nodoc
-     * @param  array $params
-     * @return void
-     */
-    public function fixArrayParameterValues($params = [])
+    public function fixArrayParameterValues(array $params = []): void
     {
         $i = 0;
 
@@ -535,7 +510,7 @@ abstract class AbstractQuery
      * @param  View $view database view
      * @return void
      */
-    public function setView(View $view)
+    public function setView(View $view): void
     {
         $this->view = $view;
     }
@@ -546,17 +521,12 @@ abstract class AbstractQuery
      *
      * @return View|null        the view associated with this query object
      */
-    public function getView()
+    public function getView(): ?View
     {
         return $this->view;
     }
 
-    /**
-     * limitSubqueryUsed
-     *
-     * @return boolean
-     */
-    public function isLimitSubqueryUsed()
+    public function isLimitSubqueryUsed(): bool
     {
         return $this->isLimitSubqueryUsed;
     }
@@ -572,7 +542,7 @@ abstract class AbstractQuery
      * @param  string $componentAlias
      * @return string|null $str  SQL condition string
      */
-    public function getInheritanceCondition($componentAlias)
+    public function getInheritanceCondition(string $componentAlias): ?string
     {
         $map = $this->queryComponents[$componentAlias]['table']->inheritanceMap;
 
@@ -607,7 +577,6 @@ abstract class AbstractQuery
     }
 
     /**
-     * getSqlTableAlias
      * some database need the identifier lengths to be < ~30 chars
      * hence Doctrine creates as short identifier aliases as possible
      *
@@ -618,7 +587,7 @@ abstract class AbstractQuery
      * @param  string $tableName      the table name from which the table alias is being created
      * @return string                   the generated / fetched short alias
      */
-    public function getSqlTableAlias($componentAlias, $tableName = null)
+    public function getSqlTableAlias(string $componentAlias, ?string $tableName = null): string
     {
         $alias = array_search($componentAlias, $this->tableAliasMap);
 
@@ -634,13 +603,12 @@ abstract class AbstractQuery
     }
 
     /**
-     * generateNewSqlTableAlias
      * generates a new alias from given table alias
      *
      * @param  string $oldAlias table alias from which to generate the new alias from
      * @return string               the created table alias
      */
-    public function generateNewSqlTableAlias($oldAlias)
+    public function generateNewSqlTableAlias(string $oldAlias): string
     {
         if (isset($this->tableAliasMap[$oldAlias])) {
             // generate a new alias
@@ -661,13 +629,12 @@ abstract class AbstractQuery
     }
 
     /**
-     * getSqlTableAliasSeed
      * returns the alias seed for given table alias
      *
      * @param  string $sqlTableAlias table alias that identifies the alias seed
      * @return integer              table alias seed
      */
-    public function getSqlTableAliasSeed($sqlTableAlias)
+    public function getSqlTableAliasSeed(string $sqlTableAlias): int
     {
         if (!isset($this->tableAliasSeeds[$sqlTableAlias])) {
             return 0;
@@ -676,25 +643,24 @@ abstract class AbstractQuery
     }
 
     /**
-     * hasAliasDeclaration
      * whether or not this object has a declaration for given component alias
      *
      * @param  string $componentAlias the component alias the retrieve the declaration from
      * @return boolean
      */
-    public function hasAliasDeclaration($componentAlias)
+    public function hasAliasDeclaration(string $componentAlias): bool
     {
         return isset($this->queryComponents[$componentAlias]);
     }
 
     /**
-     * getQueryComponent
      * get the declaration for given component alias
      *
      * @param  string $componentAlias the component alias the retrieve the declaration from
      * @return array                    the alias declaration
+     * @phpstan-return QueryComponent
      */
-    public function getQueryComponent($componentAlias)
+    public function getQueryComponent(string $componentAlias): array
     {
         if (!isset($this->queryComponents[$componentAlias])) {
             throw new Query\Exception('Unknown component alias ' . $componentAlias);
@@ -721,12 +687,11 @@ abstract class AbstractQuery
     }
 
     /**
-     * getRootAlias
      * returns the alias of the root component
      *
      * @return string
      */
-    public function getRootAlias()
+    public function getRootAlias(): string
     {
         if (!$this->queryComponents) {
             $this->getSqlQuery([], false);
@@ -735,24 +700,22 @@ abstract class AbstractQuery
     }
 
     /**
-     * getRootDeclaration
      * returns the root declaration
      *
-     * @return array
+     * @phpstan-return QueryComponent
      */
-    public function getRootDeclaration()
+    public function getRootDeclaration(): array
     {
         $map = $this->queryComponents[$this->rootAlias];
         return $map;
     }
 
     /**
-     * getRoot
      * returns the root component for this object
      *
      * @return Table       root components table
      */
-    public function getRoot()
+    public function getRoot(): Table
     {
         if (!isset($this->queryComponents[$this->rootAlias]['table'])) {
             throw new Query\Exception('Root component not initialized.');
@@ -762,7 +725,6 @@ abstract class AbstractQuery
     }
 
     /**
-     * generateSqlTableAlias
      * generates a table alias from given table name and associates
      * it with given component alias
      *
@@ -770,7 +732,7 @@ abstract class AbstractQuery
      * @param  string $tableName      the table name from which to generate the table alias
      * @return string                   the generated table alias
      */
-    public function generateSqlTableAlias($componentAlias, $tableName)
+    public function generateSqlTableAlias(string $componentAlias, string $tableName): string
     {
         preg_match('/([^_|\d])/', $tableName, $matches);
         $char = strtolower($matches[0]);
@@ -794,13 +756,12 @@ abstract class AbstractQuery
     }
 
     /**
-     * getComponentAlias
      * get component alias associated with given table alias
      *
      * @param  string $sqlTableAlias the SQL table alias that identifies the component alias
      * @return string               component alias
      */
-    public function getComponentAlias($sqlTableAlias)
+    public function getComponentAlias(string $sqlTableAlias): string
     {
         $sqlTableAlias = trim($sqlTableAlias, '[]`"');
         if (!isset($this->tableAliasMap[$sqlTableAlias])) {
@@ -810,13 +771,12 @@ abstract class AbstractQuery
     }
 
     /**
-     * calculateQueryCacheHash
      * calculate hash key for query cache
      *
      * @param  mixed $params
      * @return string    the hash
      */
-    public function calculateQueryCacheHash($params = [])
+    public function calculateQueryCacheHash($params = []): string
     {
         $paramString = '';
         $dql         = $this->getDql();
@@ -831,13 +791,12 @@ abstract class AbstractQuery
     }
 
     /**
-     * calculateResultCacheHash
      * calculate hash key for result cache
      *
      * @param  array $params
      * @return string    the hash
      */
-    public function calculateResultCacheHash($params = [])
+    public function calculateResultCacheHash($params = []): string
     {
         $dql    = $this->getDql();
         $conn   = $this->getConnection();
@@ -855,7 +814,7 @@ abstract class AbstractQuery
      * @param  array $params
      * @return string $hash
      */
-    public function getResultCacheHash($params = [])
+    public function getResultCacheHash($params = []): string
     {
         if ($this->resultCacheHash) {
             return $this->resultCacheHash;
@@ -1005,10 +964,8 @@ abstract class AbstractQuery
 
     /**
      * Blank template method free(). Override to be used to free query object memory
-     *
-     * @return void
      */
-    public function free()
+    public function free(): void
     {
     }
 
@@ -1054,7 +1011,7 @@ abstract class AbstractQuery
      * @param  array $params
      * @return void
      */
-    protected function invokePreQuery($params = [])
+    protected function invokePreQuery(array $params = []): void
     {
         if (!$this->preQueried && $this->getConnection()->getUseDqlCallbacks()) {
             $this->preQueried = true;
@@ -1089,7 +1046,7 @@ abstract class AbstractQuery
      * @param  array $params
      * @return array $components
      */
-    protected function getDqlCallbackComponents($params = [])
+    protected function getDqlCallbackComponents(array $params = []): array
     {
         $componentsBefore = [];
         if ($this->isSubquery()) {
@@ -1113,10 +1070,8 @@ abstract class AbstractQuery
 
     /**
      * Blank hook methods which can be implemented in Query child classes
-     *
-     * @return void
      */
-    public function preQuery()
+    public function preQuery(): void
     {
     }
 
@@ -1176,14 +1131,14 @@ abstract class AbstractQuery
      * @param  array|Collection|string $customComponent
      * @return string           serialized string representation of this query
      */
-    public function getCachedForm($customComponent = null)
+    public function getCachedForm(array|Collection|string $customComponent = null): string
     {
         $componentInfo = [];
 
         foreach ($this->getQueryComponents() as $alias => $components) {
             if (!isset($components['parent'])) {
                 $componentInfo[$alias]['name'] = $components['table']->getComponentName();
-            } else {
+            } elseif (isset($components['relation'])) {
                 $componentInfo[$alias]['name'] = $components['parent'] . '.' . $components['relation']->getAlias();
             }
             if (isset($components['agg'])) {
@@ -1215,7 +1170,7 @@ abstract class AbstractQuery
      * @param  array|scalar|null $params
      * @return $this
      */
-    public function addSelect($select, $params = [])
+    public function addSelect(string $select, $params = []): self
     {
         if (is_array($params)) {
             $this->params['select'] = array_merge($this->params['select'], $params);
@@ -1233,7 +1188,7 @@ abstract class AbstractQuery
      * @param  string $sqlTableAlias  the table alias to be added
      * @return $this
      */
-    public function addSqlTableAlias($sqlTableAlias, $componentAlias)
+    public function addSqlTableAlias(string $sqlTableAlias, string $componentAlias): self
     {
         $this->tableAliasMap[$sqlTableAlias] = $componentAlias;
         return $this;
@@ -1246,7 +1201,7 @@ abstract class AbstractQuery
      * @param  string $from Query FROM part
      * @return $this
      */
-    public function addFrom($from)
+    public function addFrom(string $from): self
     {
         return $this->addDqlQueryPart('from', $from, true);
     }
@@ -1258,7 +1213,7 @@ abstract class AbstractQuery
      * @param  array|scalar|null $params
      * @return $this   this object
      */
-    public function addWhere($where, $params = [])
+    public function addWhere(string $where, $params = []): self
     {
         return $this->andWhere($where, $params);
     }
@@ -1273,7 +1228,7 @@ abstract class AbstractQuery
      * @param  array|scalar|null $params An array of parameters or a simple scalar
      * @return $this
      */
-    public function andWhere($where, $params = [])
+    public function andWhere(string $where, $params = []): self
     {
         if (is_array($params)) {
             $this->params['where'] = array_merge($this->params['where'], $params);
@@ -1298,7 +1253,7 @@ abstract class AbstractQuery
      * @param  array|scalar|null $params An array of parameters or a simple scalar
      * @return $this
      */
-    public function orWhere($where, $params = [])
+    public function orWhere(string $where, $params = []): self
     {
         if (is_array($params)) {
             $this->params['where'] = array_merge($this->params['where'], $params);
@@ -1321,7 +1276,7 @@ abstract class AbstractQuery
      * @param  boolean      $not    whether or not to use NOT in front of IN
      * @return $this
      */
-    public function whereIn($expr, $params = [], $not = false)
+    public function whereIn(string $expr, $params = [], bool $not = false): self
     {
         return $this->andWhereIn($expr, $params, $not);
     }
@@ -1337,7 +1292,7 @@ abstract class AbstractQuery
      * @param  boolean      $not    Whether or not to use NOT in front of IN. Defaults to false (simple IN clause)
      * @return $this   this object.
      */
-    public function andWhereIn($expr, $params = [], $not = false)
+    public function andWhereIn(string $expr, $params = [], bool $not = false): self
     {
         if (is_array($params) && (count($params) == 0)) {
             // if there's no params, change WHERE x IN (), which is invalid SQL, to WHERE x IN (NULL)
@@ -1364,7 +1319,7 @@ abstract class AbstractQuery
      * @param  boolean      $not    Whether or not to use NOT in front of IN
      * @return $this
      */
-    public function orWhereIn($expr, $params = [], $not = false)
+    public function orWhereIn(string $expr, $params = [], bool $not = false): self
     {
         if (is_array($params) && (count($params) == 0)) {
             // if there's no params, change WHERE x IN (), which is invalid SQL, to WHERE x IN (NULL)
@@ -1379,12 +1334,9 @@ abstract class AbstractQuery
     }
 
     /**
-     * @param  string       $expr
-     * @param  array|scalar $params
-     * @param  bool         $not
-     * @return string
+     * @param  array|scalar $params An array of parameters or a simple scalar
      */
-    protected function processWhereIn($expr, $params = [], $not = false)
+    protected function processWhereIn(string $expr, $params = [], bool $not = false): string
     {
         $params = (array) $params;
 
@@ -1420,7 +1372,7 @@ abstract class AbstractQuery
      * @param  array|scalar $params an array of parameters or a simple scalar
      * @return $this       this object
      */
-    public function whereNotIn($expr, $params = [])
+    public function whereNotIn(string $expr, $params = []): self
     {
         return $this->whereIn($expr, $params, true);
     }
@@ -1433,7 +1385,7 @@ abstract class AbstractQuery
      * @param  array|scalar $params An array of parameters or a simple scalar
      * @return $this
      */
-    public function andWhereNotIn($expr, $params = [])
+    public function andWhereNotIn(string $expr, $params = []): self
     {
         return $this->andWhereIn($expr, $params, true);
     }
@@ -1445,7 +1397,7 @@ abstract class AbstractQuery
      * @param  array|scalar $params An array of parameters or a simple scalar
      * @return $this
      */
-    public function orWhereNotIn($expr, $params = [])
+    public function orWhereNotIn(string $expr, $params = []): self
     {
         return $this->orWhereIn($expr, $params, true);
     }
@@ -1460,7 +1412,7 @@ abstract class AbstractQuery
      * @param  array|scalar $params an array of parameters or a simple scalar
      * @return $this
      */
-    public function addGroupBy($groupby, $params = [])
+    public function addGroupBy(string $groupby, $params = []): self
     {
         if (is_array($params)) {
             $this->params['groupby'] = array_merge($this->params['groupby'], $params);
@@ -1483,7 +1435,7 @@ abstract class AbstractQuery
      * @param  array|scalar $params an array of parameters or a simple scalar
      * @return $this
      */
-    public function addHaving($having, $params = [])
+    public function addHaving(string $having, $params = []): self
     {
         if (is_array($params)) {
             $this->params['having'] = array_merge($this->params['having'], $params);
@@ -1501,7 +1453,7 @@ abstract class AbstractQuery
      * @param  array|scalar $params an array of parameters or a simple scalar
      * @return $this
      */
-    public function addOrderBy($orderby, $params = [])
+    public function addOrderBy(string $orderby, $params = []): self
     {
         if (is_array($params)) {
             $this->params['orderby'] = array_merge($this->params['orderby'], $params);
@@ -1519,7 +1471,7 @@ abstract class AbstractQuery
      * @return $this
      * @phpstan-return static<Record, Query\Type\Select>
      */
-    public function select($select = null, $params = [])
+    public function select(string $select =  null, $params = []): self
     {
         $this->type = Query\Type::SELECT();
         if ($select) {
@@ -1547,7 +1499,7 @@ abstract class AbstractQuery
      * @param  bool $flag Whether or not the SELECT is DISTINCT (default true).
      * @return $this
      */
-    public function distinct($flag = true)
+    public function distinct(bool $flag = true): self
     {
         $this->sqlParts['distinct'] = (bool) $flag;
         return $this;
@@ -1560,7 +1512,7 @@ abstract class AbstractQuery
      * @param  bool $flag Whether or not the SELECT is FOR UPDATE (default true).
      * @return $this
      */
-    public function forUpdate($flag = true)
+    public function forUpdate(bool $flag = true): self
     {
         $this->sqlParts['forUpdate'] = (bool) $flag;
         return $this;
@@ -1574,7 +1526,7 @@ abstract class AbstractQuery
      * @return $this
      * @phpstan-return static<Record, Query\Type\Delete>
      */
-    public function delete($from = null)
+    public function delete(string $from = null): self
     {
         $this->type = Query\Type::DELETE();
         if ($from != null) {
@@ -1591,7 +1543,7 @@ abstract class AbstractQuery
      * @return $this
      * @phpstan-return static<Record, Query\Type\Update>
      */
-    public function update($from = null)
+    public function update(string $from = null): self
     {
         $this->type = Query\Type::UPDATE();
         if ($from != null) {
@@ -1609,7 +1561,7 @@ abstract class AbstractQuery
      * @param  array|scalar $params
      * @return $this
      */
-    public function set($key, $value = null, $params = null)
+    public function set($key, $value = null, $params = null): self
     {
         if (is_array($key)) {
             foreach ($key as $k => $v) {
@@ -1639,7 +1591,7 @@ abstract class AbstractQuery
      * @param  string $from Query FROM part
      * @return $this
      */
-    public function from($from)
+    public function from(string $from): self
     {
         return $this->addDqlQueryPart('from', $from);
     }
@@ -1652,7 +1604,7 @@ abstract class AbstractQuery
      * @param  array|scalar $params
      * @return $this
      */
-    public function innerJoin($join, $params = [])
+    public function innerJoin(string $join, $params = []): self
     {
         if (is_array($params)) {
             $this->params['join'] = array_merge($this->params['join'], $params);
@@ -1671,7 +1623,7 @@ abstract class AbstractQuery
      * @param  array|scalar $params
      * @return $this
      */
-    public function leftJoin($join, $params = [])
+    public function leftJoin(string $join, $params = []): self
     {
         if (is_array($params)) {
             $this->params['join'] = array_merge($this->params['join'], $params);
@@ -1690,7 +1642,7 @@ abstract class AbstractQuery
      * @param  array|scalar|null $params an array of parameters or a simple scalar
      * @return $this
      */
-    public function groupBy($groupby, $params = [])
+    public function groupBy(string $groupby, $params = []): self
     {
         $this->params['groupby'] = [];
 
@@ -1711,7 +1663,7 @@ abstract class AbstractQuery
      * @param  array|scalar|null $params an array of parameters or a simple scalar
      * @return $this
      */
-    public function where($where, $params = [])
+    public function where(string $where, $params = []): self
     {
         $this->params['where'] = [];
 
@@ -1732,7 +1684,7 @@ abstract class AbstractQuery
      * @param  array|scalar $params an array of parameters or a simple scalar
      * @return $this
      */
-    public function having($having, $params = [])
+    public function having(string $having, $params = []): self
     {
         $this->params['having'] = [];
         if (is_array($params)) {
@@ -1755,7 +1707,7 @@ abstract class AbstractQuery
      * @param  array|scalar $params an array of parameters or a simple scalar
      * @return $this
      */
-    public function orderBy($orderby, $params = [])
+    public function orderBy(string $orderby, $params = []): self
     {
         $this->params['orderby'] = [];
 
@@ -1775,7 +1727,7 @@ abstract class AbstractQuery
      * @param  integer $limit limit to be used for limiting the query results
      * @return $this
      */
-    public function limit($limit)
+    public function limit(int $limit): self
     {
         return $this->addDqlQueryPart('limit', $limit);
     }
@@ -1787,17 +1739,15 @@ abstract class AbstractQuery
      * @param  integer $offset offset to be used for paginating the query
      * @return $this
      */
-    public function offset($offset)
+    public function offset(int $offset): self
     {
         return $this->addDqlQueryPart('offset', $offset);
     }
 
     /**
      * Resets all the sql parts.
-     *
-     * @return void
      */
-    protected function clear()
+    protected function clear(): void
     {
         $this->sqlParts = [
             'select'    => [],
@@ -1815,10 +1765,7 @@ abstract class AbstractQuery
         ];
     }
 
-    /**
-     * @return $this
-     */
-    public function setHydrationMode(HydrationMode $hydrationMode)
+    public function setHydrationMode(HydrationMode $hydrationMode): self
     {
         $this->hydrator->setHydrationMode($hydrationMode);
         return $this;
@@ -1827,9 +1774,9 @@ abstract class AbstractQuery
     /**
      * Gets the components of this query.
      *
-     * @return array
+     * @phpstan-return array<string, QueryComponent>
      */
-    public function getQueryComponents()
+    public function getQueryComponents(): array
     {
         return $this->queryComponents;
     }
@@ -1837,9 +1784,9 @@ abstract class AbstractQuery
     /**
      * Return the SQL parts.
      *
-     * @return array The parts
+     * @return array<string, mixed> The parts
      */
-    public function getSqlParts()
+    public function getSqlParts(): array
     {
         return $this->sqlParts;
     }
@@ -1915,9 +1862,9 @@ abstract class AbstractQuery
 
     /**
      * @param  boolean $expire whether or not to force cache expiration
-     * @return $this     this object
+     * @return $this
      */
-    public function expireResultCache($expire = true)
+    public function expireResultCache(bool $expire = true): self
     {
         $this->expireResultCache = $expire;
         return $this;
@@ -1925,9 +1872,9 @@ abstract class AbstractQuery
 
     /**
      * @param  boolean $expire whether or not to force cache expiration
-     * @return $this     this object
+     * @return $this
      */
-    public function expireQueryCache($expire = true)
+    public function expireQueryCache(bool $expire = true): self
     {
         $this->expireQueryCache = $expire;
         return $this;
@@ -1935,12 +1882,12 @@ abstract class AbstractQuery
 
     /**
      * @param  integer $timeToLive how long the cache entry is valid (in seconds)
-     * @return $this     this object
+     * @return $this
      */
-    public function setResultCacheLifeSpan($timeToLive)
+    public function setResultCacheLifeSpan(?int $timeToLive): self
     {
         if ($timeToLive !== null) {
-            $timeToLive = (int) $timeToLive;
+            $timeToLive = $timeToLive;
         }
         $this->resultCacheTTL = $timeToLive;
 
@@ -1959,7 +1906,7 @@ abstract class AbstractQuery
      * setQueryCacheLifeSpan
      *
      * @param  integer|null $timeToLive how long the cache entry is valid
-     * @return $this     this object
+     * @return $this
      */
     public function setQueryCacheLifeSpan(?int $timeToLive): self
     {
@@ -1979,10 +1926,8 @@ abstract class AbstractQuery
 
     /**
      * returns the cache driver used for caching result sets
-     *
-     * @return CacheInterface   cache driver
      */
-    public function getResultCacheDriver()
+    public function getResultCacheDriver(): CacheInterface
     {
         if ($this->resultCache instanceof CacheInterface) {
             return $this->resultCache;
@@ -1992,12 +1937,9 @@ abstract class AbstractQuery
     }
 
     /**
-     * getQueryCacheDriver
      * returns the cache driver used for caching queries
-     *
-     * @return CacheInterface    cache driver
      */
-    public function getQueryCacheDriver()
+    public function getQueryCacheDriver(): CacheInterface
     {
         if ($this->queryCache instanceof CacheInterface) {
             return $this->queryCache;
@@ -2006,11 +1948,6 @@ abstract class AbstractQuery
         }
     }
 
-    /**
-     * getConnection
-     *
-     * @return Connection
-     */
     public function getConnection(): Connection
     {
         return $this->connection;
@@ -2086,14 +2023,14 @@ abstract class AbstractQuery
      * @return Query\Part
      * @todo   Doc/Description: What is the parameter for? Which parsers are available?
      */
-    protected function getParser($name)
+    protected function getParser(string $name): Query\Part
     {
         $name = ucwords(strtolower($name));
 
         if (!isset($this->parsers[$name])) {
             $class = __NAMESPACE__ . "\\Query\\$name";
 
-            if (!class_exists($class)) {
+            if (!class_exists($class) || !is_subclass_of($class, Query\Part::class)) {
                 throw new Query\Exception('Unknown parser ' . $name);
             }
 
@@ -2133,10 +2070,8 @@ abstract class AbstractQuery
 
     /**
      * Gets the disableLimitSubquery property.
-     *
-     * @return boolean
      */
-    public function getDisableLimitSubquery()
+    public function getDisableLimitSubquery(): bool
     {
         return $this->disableLimitSubquery;
     }
@@ -2144,22 +2079,13 @@ abstract class AbstractQuery
     /**
      * Allows you to set the disableLimitSubquery property -- setting this to true will
      * restrict the query object from using the limit sub query method of tranversing many relationships.
-     *
-     * @param boolean $disableLimitSubquery
-     *
-     * @return void
      */
-    public function setDisableLimitSubquery($disableLimitSubquery)
+    public function setDisableLimitSubquery(bool $disableLimitSubquery): void
     {
         $this->disableLimitSubquery = $disableLimitSubquery;
     }
 
-    /**
-     * @param  array $array1
-     * @param  array $array2
-     * @return array
-     */
-    protected static function arrayDiffAssocRecursive($array1, $array2)
+    protected static function arrayDiffAssocRecursive(array $array1, array $array2): array
     {
         $difference = [];
         foreach ($array1 as $key => $value) {

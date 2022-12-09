@@ -2,6 +2,9 @@
 
 namespace Doctrine1\Cache;
 
+use Doctrine1\Column;
+use Doctrine1\Column\Type;
+
 class Db extends Driver
 {
     /**
@@ -120,26 +123,13 @@ class Db extends Driver
      */
     public function createTable(): void
     {
-        $name = $this->options['tableName'];
-
-        $fields = [
-            'id' => [
-                'type' => 'string',
-                'length' => 255
-            ],
-            'data' => [
-                'type' => 'blob'
-            ],
-            'expire' => [
-                'type' => 'timestamp'
-            ]
-        ];
-
-        $options = [
-            'primary' => ['id']
-        ];
-
-        $this->getConnection()->export->createTable($name, $fields, $options);
+        $this->getConnection()->export->createTable($this->options['tableName'], [
+            new Column('id', Type::String, 255),
+            new Column('data', Type::BLOB),
+            new Column('expire', Type::Timestamp),
+        ], [
+            'primary' => ['id'],
+        ]);
     }
 
     /**

@@ -4,223 +4,140 @@ namespace Doctrine1;
 
 /**
  * EventListener     all event listeners extend this base class
- *                            the empty methods allow child classes to only implement the methods they need to implement
+ *                   the empty methods allow child classes to only implement the methods they need to implement
  */
 class EventListener implements EventListenerInterface
 {
-    /**
-     * @return void
-     */
-    public function preClose(Event $event)
-    {
-    }
-    /**
-     * @return void
-     */
-    public function postClose(Event $event)
+    public function preClose(Event $event): void
     {
     }
 
-    /**
-     * @return void
-     */
-    public function onCollectionDelete(Collection $collection)
-    {
-    }
-    /**
-     * @return void
-     */
-    public function onPreCollectionDelete(Collection $collection)
+    public function postClose(Event $event): void
     {
     }
 
-    /**
-     * @return void
-     */
-    public function onOpen(Connection $connection)
+    public function onCollectionDelete(Collection $collection): void
     {
     }
 
-    /**
-     * @return void
-     */
-    public function preTransactionCommit(Event $event)
-    {
-    }
-    /**
-     * @return void
-     */
-    public function postTransactionCommit(Event $event)
+    public function onPreCollectionDelete(Collection $collection): void
     {
     }
 
-    /**
-     * @return void
-     */
-    public function preTransactionRollback(Event $event)
-    {
-    }
-    /**
-     * @return void
-     */
-    public function postTransactionRollback(Event $event)
+    public function onOpen(Connection $connection): void
     {
     }
 
-    /**
-     * @return void
-     */
-    public function preTransactionBegin(Event $event)
+    public function preTransactionCommit(Event $event): void
     {
     }
-    /**
-     * @return void
-     */
-    public function postTransactionBegin(Event $event)
+
+    public function postTransactionCommit(Event $event): void
+    {
+    }
+
+    public function preTransactionRollback(Event $event): void
+    {
+    }
+
+    public function postTransactionRollback(Event $event): void
+    {
+    }
+
+    public function preTransactionBegin(Event $event): void
+    {
+    }
+
+    public function postTransactionBegin(Event $event): void
     {
     }
 
 
-    /**
-     * @return void
-     */
-    public function preSavepointCommit(Event $event)
-    {
-    }
-    /**
-     * @return void
-     */
-    public function postSavepointCommit(Event $event)
+    public function preSavepointCommit(Event $event): void
     {
     }
 
-    /**
-     * @return void
-     */
-    public function preSavepointRollback(Event $event)
-    {
-    }
-    /**
-     * @return void
-     */
-    public function postSavepointRollback(Event $event)
+    public function postSavepointCommit(Event $event): void
     {
     }
 
-    /**
-     * @return void
-     */
-    public function preSavepointCreate(Event $event)
-    {
-    }
-    /**
-     * @return void
-     */
-    public function postSavepointCreate(Event $event)
+    public function preSavepointRollback(Event $event): void
     {
     }
 
-    /**
-     * @return void
-     */
-    public function postConnect(Event $event)
-    {
-    }
-    /**
-     * @return void
-     */
-    public function preConnect(Event $event)
+    public function postSavepointRollback(Event $event): void
     {
     }
 
-    /**
-     * @return void
-     */
-    public function preQuery(Event $event)
-    {
-    }
-    /**
-     * @return void
-     */
-    public function postQuery(Event $event)
+    public function preSavepointCreate(Event $event): void
     {
     }
 
-    /**
-     * @return void
-     */
-    public function prePrepare(Event $event)
-    {
-    }
-    /**
-     * @return void
-     */
-    public function postPrepare(Event $event)
+    public function postSavepointCreate(Event $event): void
     {
     }
 
-    /**
-     * @return void
-     */
-    public function preExec(Event $event)
-    {
-    }
-    /**
-     * @return void
-     */
-    public function postExec(Event $event)
+    public function postConnect(Event $event): void
     {
     }
 
-    /**
-     * @return void
-     */
-    public function preError(Event $event)
-    {
-    }
-    /**
-     * @return void
-     */
-    public function postError(Event $event)
+    public function preConnect(Event $event): void
     {
     }
 
-    /**
-     * @return void
-     */
-    public function preFetch(Event $event)
-    {
-    }
-    /**
-     * @return void
-     */
-    public function postFetch(Event $event)
+    public function preQuery(Event $event): void
     {
     }
 
-    /**
-     * @return void
-     */
-    public function preFetchAll(Event $event)
-    {
-    }
-    /**
-     * @return void
-     */
-    public function postFetchAll(Event $event)
+    public function postQuery(Event $event): void
     {
     }
 
-    /**
-     * @return void
-     */
-    public function preStmtExecute(Event $event)
+    public function prePrepare(Event $event): void
     {
     }
-    /**
-     * @return void
-     */
-    public function postStmtExecute(Event $event)
+
+    public function postPrepare(Event $event): void
+    {
+    }
+
+    public function preExec(Event $event): void
+    {
+    }
+
+    public function postExec(Event $event): void
+    {
+    }
+
+    public function preError(Event $event): void
+    {
+    }
+
+    public function postError(Event $event): void
+    {
+    }
+
+    public function preFetch(Event $event): void
+    {
+    }
+
+    public function postFetch(Event $event): void
+    {
+    }
+
+    public function preFetchAll(Event $event): void
+    {
+    }
+
+    public function postFetchAll(Event $event): void
+    {
+    }
+
+    public function preStmtExecute(Event $event): void
+    {
+    }
+
+    public function postStmtExecute(Event $event): void
     {
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Tickets {
     use Tests\DoctrineUnitTestCase;
 
@@ -132,29 +133,17 @@ namespace {
         {
             $this->setTableName('t1277_users');
 
-            $this->hasColumns(
-                [
+            $this->hasColumn('id', 'integer', 4, [
+                'notnull'       => true,
+                'autoincrement' => true,
+                'primary'       => true
+            ]);
 
-                'id' => [
-                    'type'          => 'integer',
-                    'length'        => 4,
-                    'notnull'       => true,
-                    'autoincrement' => true,
-                    'primary'       => true
-                ],
+            $this->hasColumn('username', 'string', 50);
 
-                'username' => [
-                    'type'   => 'string',
-                    'length' => 50
-                ],
-
-                'email' => [
-                    'type'    => 'string',
-                    'length'  => 50,
-                    'default' => null,
-                ],
-                ]
-            );
+            $this->hasColumn('email', 'string', null, [
+                'default' => null,
+            ]);
         }
     }
 }

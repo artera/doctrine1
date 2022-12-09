@@ -31,7 +31,7 @@ class SavePoint
             try {
                 $conn->getDbh()->beginTransaction();
             } catch (\Throwable $e) {
-                throw new Exception($e->getMessage());
+                throw new Exception($e->getMessage(), previous: $e);
             }
             $listener->postTransactionBegin($event);
         } else {
@@ -127,7 +127,7 @@ class SavePoint
                 $this->setInactive();
                 $conn->getDbh()->rollBack();
             } catch (\Throwable $e) {
-                throw new Exception($e->getMessage());
+                throw new Exception($e->getMessage(), previous: $e);
             }
             $listener->postTransactionRollback($event);
         } else {

@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Misc;
 
 use Tests\DoctrineUnitTestCase;

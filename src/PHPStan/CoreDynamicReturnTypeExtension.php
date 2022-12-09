@@ -1,4 +1,7 @@
-<?php declare(strict_types = 1);
+<?php
+
+declare(strict_types=1);
+
 namespace Doctrine1\PHPStan;
 
 use PHPStan\Type\Type;
@@ -12,6 +15,19 @@ use PHPStan\Analyser\Scope;
 
 class CoreDynamicReturnTypeExtension extends AbstractExtension implements DynamicStaticMethodReturnTypeExtension
 {
+    private string $namespace = '\\';
+    private string $tableFormat = '%sTable';
+
+    public function __construct(?string $namespace = null, ?string $tableFormat = null)
+    {
+        if ($namespace !== null) {
+            $this->namespace = $namespace;
+        }
+        if ($tableFormat !== null) {
+            $this->tableFormat = $tableFormat;
+        }
+    }
+
     public function getClass(): string
     {
         return \Doctrine1\Core::class;
@@ -29,8 +45,11 @@ class CoreDynamicReturnTypeExtension extends AbstractExtension implements Dynami
             $componentNameArg = $scope->getType($args[0]->value);
 
             if ($componentNameArg instanceof ConstantStringType) {
-                // TODO: handle different table class-name formats
-                $tableClass = "{$componentNameArg->getValue()}Table";
+                $basename = $componentNameArg->getValue();
+                if (($pos = strrpos($basename, '\\')) !== false) {
+                    $basename = substr($basename, $pos + 1);
+                }
+                $tableClass = \Doctrine1\Lib::namespaceConcat($this->namespace, sprintf($this->tableFormat, $basename), true);
                 return new ObjectType($tableClass);
             }
         }

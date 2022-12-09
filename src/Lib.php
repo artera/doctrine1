@@ -2,7 +2,7 @@
 
 namespace Doctrine1;
 
-class Lib
+abstract class Lib
 {
     // Code from symfony sfToolkit class. See LICENSE
     // code from php at moechofe dot com (array_merge comment on php.net)
@@ -52,6 +52,79 @@ class Lib
 
         $first = self::arrayDeepMerge($first, $second);
         return self::arrayDeepMerge($first, ...$rest);
+    }
+
+    /**
+     * @phpstan-param list<string> $array
+     */
+    public static function arrayCISearch(string $value, array $array): ?string
+    {
+        $value = strtolower($value);
+        foreach ($array as $arrayValue) {
+            if ($value === strtolower($arrayValue)) {
+                return $arrayValue;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @phpstan-param list<string> $array
+     */
+    public static function arrayCIIsSet(string $value, array $array): bool
+    {
+        $value = strtolower($value);
+        foreach ($array as $arrayValue) {
+            if ($value === strtolower($arrayValue)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @phpstan-return ($key is int ? int : string)
+     */
+    public static function arrayCIKeySearch(string|int $key, array $array): string|int|null
+    {
+        if (is_int($key)) {
+            return array_key_exists($key, $array) ? $key : null;
+        }
+
+        $key = strtolower($key);
+        foreach (array_keys($array) as $arrayKey) {
+            if ($key === strtolower($arrayKey)) {
+                return $arrayKey;
+            }
+        }
+
+        return null;
+    }
+
+    public static function arrayCIKeyIsSet(string|int $key, array $array): bool
+    {
+        $key = static::arrayCIKeySearch($key, $array);
+        return isset($array[$key]);
+    }
+
+    /**
+     * @phpstan-param array<int | string, string> $array
+     */
+    public static function arrayCIGet(string|int $key, array $array): string|null
+    {
+        if (is_int($key)) {
+            return array_key_exists($key, $array) ? $array[$key] : null;
+        }
+
+        $key = strtolower($key);
+        foreach ($array as $arrayKey => $value) {
+            if (!is_int($arrayKey) && $key === strtolower($arrayKey)) {
+                return $value;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -171,5 +244,16 @@ class Lib
         }
 
         return true;
+    }
+
+    public static function classPathNormalize(string $classpath): string
+    {
+        return trim(preg_replace('/\\\{2,}/', '\\', $classpath) ?? $classpath, '\\');
+    }
+
+    public static function namespaceConcat(string $namespace, string $class, bool $absolute = false, bool $force = false): string
+    {
+        $classpath = static::classPathNormalize("$namespace\\$class");
+        return $absolute ? "\\$classpath" : $classpath;
     }
 }

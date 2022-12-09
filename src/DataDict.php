@@ -31,20 +31,8 @@ abstract class DataDict extends Connection\Module
      * Obtain DBMS specific SQL code portion needed to declare an text type
      * field to be used in statements like CREATE TABLE.
      *
-     * @param array $field associative array with the name of the properties
-     *                     of the field being declared as array indexes.
-     *                     Currently, the types of supported field
-     *                     properties are as follows: length Integer value
-     *                     that determines the maximum length of the text
-     *                     field. If this argument is missing the field
-     *                     should be declared to have the longest length
-     *                     allowed by the DBMS. default Text value to be
-     *                     used as default for this field. notnull Boolean
-     *                     flag that indicates whether this field is
-     *                     constrained to not be set to null.
-     *
      * @return string  DBMS specific SQL code portion that should be used to
      *      declare the specified field.
      */
-    abstract public function getNativeDeclaration(array $field);
+    abstract public function getNativeDeclaration(Column $field): string;
 }

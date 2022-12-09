@@ -2,103 +2,27 @@
 
 namespace Doctrine1\Record;
 
+use Doctrine1\Event;
+
 interface ListenerInterface
 {
-    /**
-     * @param  string $name
-     * @param  mixed  $value
-     * @return void
-     */
-    public function setOption($name, $value = null);
-
-    /**
-     * @return array
-     */
-    public function getOptions();
-
-    /**
-     * @param  string $name
-     * @return mixed
-     */
-    public function getOption($name);
-
-    /**
-     * @return void
-     */
-    public function preSerialize(\Doctrine1\Event $event);
-
-    /**
-     * @return void
-     */
-    public function postSerialize(\Doctrine1\Event $event);
-
-    /**
-     * @return void
-     */
-    public function preUnserialize(\Doctrine1\Event $event);
-
-    /**
-     * @return void
-     */
-    public function postUnserialize(\Doctrine1\Event $event);
-
-    /**
-     * @return void
-     */
-    public function preSave(\Doctrine1\Event $event);
-
-    /**
-     * @return void
-     */
-    public function postSave(\Doctrine1\Event $event);
-
-    /**
-     * @return void
-     */
-    public function preDelete(\Doctrine1\Event $event);
-
-    /**
-     * @return void
-     */
-    public function postDelete(\Doctrine1\Event $event);
-
-    /**
-     * @return void
-     */
-    public function preUpdate(\Doctrine1\Event $event);
-
-    /**
-     * @return void
-     */
-    public function postUpdate(\Doctrine1\Event $event);
-
-    /**
-     * @return void
-     */
-    public function preInsert(\Doctrine1\Event $event);
-
-    /**
-     * @return void
-     */
-    public function postInsert(\Doctrine1\Event $event);
-
-    /**
-     * @return void
-     */
-    public function preHydrate(\Doctrine1\Event $event);
-
-    /**
-     * @return void
-     */
-    public function postHydrate(\Doctrine1\Event $event);
-
-    /**
-     * @return void
-     */
-    public function preValidate(\Doctrine1\Event $event);
-
-    /**
-     * @return void
-     */
-    public function postValidate(\Doctrine1\Event $event);
+    public function setOption(string $name, mixed $value = null): void;
+    public function getOptions(): array;
+    public function getOption(string $name): mixed;
+    public function preSerialize(Event $event): void;
+    public function postSerialize(Event $event): void;
+    public function preUnserialize(Event $event): void;
+    public function postUnserialize(Event $event): void;
+    public function preSave(Event $event): void;
+    public function postSave(Event $event): void;
+    public function preDelete(Event $event): void;
+    public function postDelete(Event $event): void;
+    public function preUpdate(Event $event): void;
+    public function postUpdate(Event $event): void;
+    public function preInsert(Event $event): void;
+    public function postInsert(Event $event): void;
+    public function preHydrate(Event $event): void;
+    public function postHydrate(Event $event): void;
+    public function preValidate(Event $event): void;
+    public function postValidate(Event $event): void;
 }

@@ -1,6 +1,9 @@
 <?php
+
 namespace Tests\DataDict;
 
+use Doctrine1\Column;
+use Doctrine1\Column\Type;
 use Tests\DoctrineUnitTestCase;
 
 class MysqlTest extends DoctrineUnitTestCase
@@ -389,7 +392,7 @@ class MysqlTest extends DoctrineUnitTestCase
 
     public function testGetNativeDefinitionSupportsEnumTypes()
     {
-        $a = ['type' => 'enum', 'fixed' => false, 'values' => ['a', 'b', 'c']];
+        $a = new Column('_', Type::Enum, fixed: false, values: ['a', 'b', 'c']);
 
         // Native ENUM type disabled, should be VARCHAR
         static::$conn->setUseNativeEnum(false);
@@ -408,7 +411,7 @@ class MysqlTest extends DoctrineUnitTestCase
 
     public function testGetNativeDefinitionSupportsSetTypes()
     {
-        $a = ['type' => 'set', 'fixed' => false, 'values' => ['a', 'b', 'c']];
+        $a = new Column('_', Type::Set, fixed: false, values: ['a', 'b', 'c']);
 
         // Native SET type disabled, should be VARCHAR
         static::$conn->setUseNativeSet(false);
@@ -425,113 +428,106 @@ class MysqlTest extends DoctrineUnitTestCase
 
     public function testGetNativeDefinitionSupportsIntegerType()
     {
-        $a = ['type' => 'integer', 'length' => 20, 'fixed' => false];
+        $a = new Column('_', Type::Integer, length: 20, fixed: false);
 
         $this->assertEquals(static::$connection->dataDict->getNativeDeclaration($a), 'BIGINT');
 
-        $a['length'] = 4;
+        $a = new Column('_', Type::Integer, length: 4, fixed: false);
 
         $this->assertEquals(static::$connection->dataDict->GetNativeDeclaration($a), 'INT');
 
-        $a['length'] = 2;
+        $a = new Column('_', Type::Integer, length: 2, fixed: false);
 
         $this->assertEquals(static::$connection->dataDict->GetNativeDeclaration($a), 'SMALLINT');
     }
 
     public function testGetNativeDeclarationSupportsFloatType()
     {
-        $a = ['type' => 'float', 'length' => 20, 'fixed' => false];
+        $a = new Column('_', Type::Float, length: 20, fixed: false);
 
         $this->assertEquals(static::$connection->dataDict->GetNativeDeclaration($a), 'FLOAT(20, 2)');
     }
 
     public function testGetNativeDeclarationSupportsBooleanType()
     {
-        $a = ['type' => 'boolean', 'fixed' => false];
+        $a = new Column('_', Type::Boolean, fixed: false);
 
         $this->assertEquals(static::$connection->dataDict->GetNativeDeclaration($a), 'TINYINT(1)');
     }
 
     public function testGetNativeDeclarationSupportsDateType()
     {
-        $a = ['type' => 'date', 'fixed' => false];
+        $a = new Column('_', Type::Date, fixed: false);
 
         $this->assertEquals(static::$connection->dataDict->GetNativeDeclaration($a), 'DATE');
     }
 
     public function testGetNativeDeclarationSupportsTimestampType()
     {
-        $a = ['type' => 'timestamp', 'fixed' => false];
+        $a = new Column('_', Type::Timestamp, fixed: false);
 
         $this->assertEquals(static::$connection->dataDict->GetNativeDeclaration($a), 'DATETIME');
     }
 
     public function testGetNativeDeclarationSupportsTimeType()
     {
-        $a = ['type' => 'time', 'fixed' => false];
+        $a = new Column('_', Type::Time, fixed: false);
 
         $this->assertEquals(static::$connection->dataDict->GetNativeDeclaration($a), 'TIME');
     }
 
-    public function testGetNativeDeclarationSupportsClobType()
-    {
-        $a = ['type' => 'clob'];
-
-        $this->assertEquals(static::$connection->dataDict->GetNativeDeclaration($a), 'LONGTEXT');
-    }
-
     public function testGetNativeDeclarationSupportsBlobType()
     {
-        $a = ['type' => 'blob'];
+        $a = new Column('_', Type::BLOB);
 
         $this->assertEquals(static::$connection->dataDict->GetNativeDeclaration($a), 'LONGBLOB');
     }
 
     public function testGetNativeDeclarationSupportsCharType()
     {
-        $a = ['type' => 'char', 'length' => 10];
+        $a = new Column('_', Type::String, fixed: true, length: 10);
 
         $this->assertEquals(static::$connection->dataDict->GetNativeDeclaration($a), 'CHAR(10)');
     }
 
     public function testGetNativeDeclarationSupportsVarcharType()
     {
-        $a = ['type' => 'varchar', 'length' => 10];
+        $a = new Column('_', Type::String, length: 10);
 
         $this->assertEquals(static::$connection->dataDict->GetNativeDeclaration($a), 'VARCHAR(10)');
     }
 
     public function testGetNativeDeclarationSupportsArrayType()
     {
-        $a = ['type' => 'array', 'length' => 40];
+        $a = new Column('_', Type::Array, length: 40);
 
         $this->assertEquals(static::$connection->dataDict->GetNativeDeclaration($a), 'TINYTEXT');
     }
 
     public function testGetNativeDeclarationSupportsStringType()
     {
-        $a = ['type' => 'string'];
+        $a = new Column('_', Type::String);
 
         $this->assertEquals(static::$connection->dataDict->GetNativeDeclaration($a), 'TEXT');
     }
 
     public function testGetNativeDeclarationSupportsStringTypeWithLongLength()
     {
-        $a = ['type' => 'string', 'length' => 2000];
+        $a = new Column('_', Type::String, length: 2000);
 
         $this->assertEquals(static::$connection->dataDict->GetNativeDeclaration($a), 'TEXT');
     }
 
     public function testGetNativeDeclarationSupportsArrayType2()
     {
-        $a = ['type' => 'array'];
+        $a = new Column('_', Type::Array);
 
         $this->assertEquals(static::$connection->dataDict->GetNativeDeclaration($a), 'LONGTEXT');
     }
 
     public function testGetNativeDeclarationSupportsObjectType()
     {
-        $a = ['type' => 'object'];
+        $a = new Column('_', Type::Object);
 
         $this->assertEquals(static::$connection->dataDict->GetNativeDeclaration($a), 'LONGTEXT');
     }

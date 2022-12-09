@@ -10,12 +10,10 @@ class Chain extends \Doctrine1\Access implements \Doctrine1\EventListenerInterfa
     protected $listeners = [];
 
     /**
-     * add
      * adds a listener to the chain of listeners
      *
      * @param  object $listener
      * @param  string $name
-     * @return void
      */
     public function add($listener, $name = null): void
     {
@@ -47,8 +45,6 @@ class Chain extends \Doctrine1\Access implements \Doctrine1\EventListenerInterfa
     }
 
     /**
-     * set
-     *
      * @param  mixed                  $key
      * @param  \Doctrine1\EventListener $listener
      * @return void
@@ -59,13 +55,9 @@ class Chain extends \Doctrine1\Access implements \Doctrine1\EventListenerInterfa
     }
 
     /**
-     * onLoad
      * an event invoked when \Doctrine1\Record is being loaded from database
-     *
-     * @param  \Doctrine1\Record $record
-     * @return void
      */
-    public function onLoad(\Doctrine1\Record $record)
+    public function onLoad(\Doctrine1\Record $record): void
     {
         foreach ($this->listeners as $listener) {
             $listener->onLoad($record);
@@ -73,14 +65,10 @@ class Chain extends \Doctrine1\Access implements \Doctrine1\EventListenerInterfa
     }
 
     /**
-     * onPreLoad
      * an event invoked when \Doctrine1\Record is being loaded
      * from database but not yet initialized
-     *
-     * @param  \Doctrine1\Record $record
-     * @return void
      */
-    public function onPreLoad(\Doctrine1\Record $record)
+    public function onPreLoad(\Doctrine1\Record $record): void
     {
         foreach ($this->listeners as $listener) {
             $listener->onPreLoad($record);
@@ -88,13 +76,9 @@ class Chain extends \Doctrine1\Access implements \Doctrine1\EventListenerInterfa
     }
 
     /**
-     * onSleep
      * an event invoked when \Doctrine1\Record is serialized
-     *
-     * @param  \Doctrine1\Record $record
-     * @return void
      */
-    public function onSleep(\Doctrine1\Record $record)
+    public function onSleep(\Doctrine1\Record $record): void
     {
         foreach ($this->listeners as $listener) {
             $listener->onSleep($record);
@@ -102,13 +86,9 @@ class Chain extends \Doctrine1\Access implements \Doctrine1\EventListenerInterfa
     }
 
     /**
-     * onWakeUp
      * an event invoked when \Doctrine1\Record is unserialized
-     *
-     * @param  \Doctrine1\Record $record
-     * @return void
      */
-    public function onWakeUp(\Doctrine1\Record $record)
+    public function onWakeUp(\Doctrine1\Record $record): void
     {
         foreach ($this->listeners as $listener) {
             $listener->onWakeUp($record);
@@ -116,13 +96,9 @@ class Chain extends \Doctrine1\Access implements \Doctrine1\EventListenerInterfa
     }
 
     /**
-     * postClose
      * an event invoked after \Doctrine1\Connection is closed
-     *
-     * @param  \Doctrine1\Event $event
-     * @return void
      */
-    public function postClose(\Doctrine1\Event $event)
+    public function postClose(\Doctrine1\Event $event): void
     {
         foreach ($this->listeners as $listener) {
             $listener->postClose($event);
@@ -130,13 +106,9 @@ class Chain extends \Doctrine1\Access implements \Doctrine1\EventListenerInterfa
     }
 
     /**
-     * preClose
      * an event invoked before \Doctrine1\Connection is closed
-     *
-     * @param  \Doctrine1\Event $event
-     * @return void
      */
-    public function preClose(\Doctrine1\Event $event)
+    public function preClose(\Doctrine1\Event $event): void
     {
         foreach ($this->listeners as $listener) {
             $listener->preClose($event);
@@ -144,13 +116,9 @@ class Chain extends \Doctrine1\Access implements \Doctrine1\EventListenerInterfa
     }
 
     /**
-     * onOpen
      * an event invoked after \Doctrine1\Connection is opened
-     *
-     * @param  \Doctrine1\Connection $connection
-     * @return void
      */
-    public function onOpen(\Doctrine1\Connection $connection)
+    public function onOpen(\Doctrine1\Connection $connection): void
     {
         foreach ($this->listeners as $listener) {
             $listener->onOpen($connection);
@@ -158,13 +126,9 @@ class Chain extends \Doctrine1\Access implements \Doctrine1\EventListenerInterfa
     }
 
     /**
-     * onTransactionCommit
      * an event invoked after a \Doctrine1\Connection transaction is committed
-     *
-     * @param  \Doctrine1\Event $event
-     * @return void
      */
-    public function postTransactionCommit(\Doctrine1\Event $event)
+    public function postTransactionCommit(\Doctrine1\Event $event): void
     {
         foreach ($this->listeners as $listener) {
             $listener->postTransactionCommit($event);
@@ -172,13 +136,9 @@ class Chain extends \Doctrine1\Access implements \Doctrine1\EventListenerInterfa
     }
 
     /**
-     * onPreTransactionCommit
      * an event invoked before a \Doctrine1\Connection transaction is committed
-     *
-     * @param  \Doctrine1\Event $event
-     * @return void
      */
-    public function preTransactionCommit(\Doctrine1\Event $event)
+    public function preTransactionCommit(\Doctrine1\Event $event): void
     {
         foreach ($this->listeners as $listener) {
             $listener->preTransactionCommit($event);
@@ -186,13 +146,9 @@ class Chain extends \Doctrine1\Access implements \Doctrine1\EventListenerInterfa
     }
 
     /**
-     * onTransactionRollback
      * an event invoked after a \Doctrine1\Connection transaction is being rolled back
-     *
-     * @param  \Doctrine1\Event $event
-     * @return void
      */
-    public function postTransactionRollback(\Doctrine1\Event $event)
+    public function postTransactionRollback(\Doctrine1\Event $event): void
     {
         foreach ($this->listeners as $listener) {
             $listener->postTransactionRollback($event);
@@ -200,13 +156,9 @@ class Chain extends \Doctrine1\Access implements \Doctrine1\EventListenerInterfa
     }
 
     /**
-     * onPreTransactionRollback
      * an event invoked before a \Doctrine1\Connection transaction is being rolled back
-     *
-     * @param  \Doctrine1\Event $event
-     * @return void
      */
-    public function preTransactionRollback(\Doctrine1\Event $event)
+    public function preTransactionRollback(\Doctrine1\Event $event): void
     {
         foreach ($this->listeners as $listener) {
             $listener->preTransactionRollback($event);
@@ -214,13 +166,9 @@ class Chain extends \Doctrine1\Access implements \Doctrine1\EventListenerInterfa
     }
 
     /**
-     * onTransactionBegin
      * an event invoked after a \Doctrine1\Connection transaction has been started
-     *
-     * @param  \Doctrine1\Event $event
-     * @return void
      */
-    public function postTransactionBegin(\Doctrine1\Event $event)
+    public function postTransactionBegin(\Doctrine1\Event $event): void
     {
         foreach ($this->listeners as $listener) {
             $listener->postTransactionBegin($event);
@@ -228,13 +176,9 @@ class Chain extends \Doctrine1\Access implements \Doctrine1\EventListenerInterfa
     }
 
     /**
-     * onTransactionBegin
      * an event invoked before a \Doctrine1\Connection transaction is being started
-     *
-     * @param  \Doctrine1\Event $event
-     * @return void
      */
-    public function preTransactionBegin(\Doctrine1\Event $event)
+    public function preTransactionBegin(\Doctrine1\Event $event): void
     {
         foreach ($this->listeners as $listener) {
             $listener->preTransactionBegin($event);
@@ -242,14 +186,10 @@ class Chain extends \Doctrine1\Access implements \Doctrine1\EventListenerInterfa
     }
 
     /**
-     * postSavepointCommit
      * an event invoked after a \Doctrine1\Connection transaction with savepoint
      * is committed
-     *
-     * @param  \Doctrine1\Event $event
-     * @return void
      */
-    public function postSavepointCommit(\Doctrine1\Event $event)
+    public function postSavepointCommit(\Doctrine1\Event $event): void
     {
         foreach ($this->listeners as $listener) {
             $listener->postSavepointCommit($event);
@@ -257,14 +197,10 @@ class Chain extends \Doctrine1\Access implements \Doctrine1\EventListenerInterfa
     }
 
     /**
-     * preSavepointCommit
      * an event invoked before a \Doctrine1\Connection transaction with savepoint
      * is committed
-     *
-     * @param  \Doctrine1\Event $event
-     * @return void
      */
-    public function preSavepointCommit(\Doctrine1\Event $event)
+    public function preSavepointCommit(\Doctrine1\Event $event): void
     {
         foreach ($this->listeners as $listener) {
             $listener->preSavepointCommit($event);
@@ -272,14 +208,10 @@ class Chain extends \Doctrine1\Access implements \Doctrine1\EventListenerInterfa
     }
 
     /**
-     * postSavepointRollback
      * an event invoked after a \Doctrine1\Connection transaction with savepoint
      * is being rolled back
-     *
-     * @param  \Doctrine1\Event $event
-     * @return void
      */
-    public function postSavepointRollback(\Doctrine1\Event $event)
+    public function postSavepointRollback(\Doctrine1\Event $event): void
     {
         foreach ($this->listeners as $listener) {
             $listener->postSavepointRollback($event);
@@ -287,14 +219,10 @@ class Chain extends \Doctrine1\Access implements \Doctrine1\EventListenerInterfa
     }
 
     /**
-     * preSavepointRollback
      * an event invoked before a \Doctrine1\Connection transaction with savepoint
      * is being rolled back
-     *
-     * @param  \Doctrine1\Event $event
-     * @return void
      */
-    public function preSavepointRollback(\Doctrine1\Event $event)
+    public function preSavepointRollback(\Doctrine1\Event $event): void
     {
         foreach ($this->listeners as $listener) {
             $listener->preSavepointRollback($event);
@@ -302,14 +230,10 @@ class Chain extends \Doctrine1\Access implements \Doctrine1\EventListenerInterfa
     }
 
     /**
-     * postSavepointCreate
      * an event invoked after a \Doctrine1\Connection transaction with savepoint
      * has been started
-     *
-     * @param  \Doctrine1\Event $event
-     * @return void
      */
-    public function postSavepointCreate(\Doctrine1\Event $event)
+    public function postSavepointCreate(\Doctrine1\Event $event): void
     {
         foreach ($this->listeners as $listener) {
             $listener->postSavepointCreate($event);
@@ -317,23 +241,17 @@ class Chain extends \Doctrine1\Access implements \Doctrine1\EventListenerInterfa
     }
 
     /**
-     * preSavepointCreate
      * an event invoked before a \Doctrine1\Connection transaction with savepoint
      * is being started
-     *
-     * @param  \Doctrine1\Event $event
-     * @return void
      */
-    public function preSavepointCreate(\Doctrine1\Event $event)
+    public function preSavepointCreate(\Doctrine1\Event $event): void
     {
         foreach ($this->listeners as $listener) {
             $listener->preSavepointCreate($event);
         }
     }
-    // @end
 
     /**
-     * onCollectionDelete
      * an event invoked after a \Doctrine1\Collection is being deleted
      *
      * @param  \Doctrine1\Collection $collection
@@ -347,7 +265,6 @@ class Chain extends \Doctrine1\Access implements \Doctrine1\EventListenerInterfa
     }
 
     /**
-     * onCollectionDelete
      * an event invoked after a \Doctrine1\Collection is being deleted
      *
      * @param  \Doctrine1\Collection $collection
@@ -360,160 +277,112 @@ class Chain extends \Doctrine1\Access implements \Doctrine1\EventListenerInterfa
         }
     }
 
-    /**
-     * @return void
-     */
-    public function postConnect(\Doctrine1\Event $event)
+    public function postConnect(\Doctrine1\Event $event): void
     {
         foreach ($this->listeners as $listener) {
             $listener->postConnect($event);
         }
     }
 
-    /**
-     * @return void
-     */
-    public function preConnect(\Doctrine1\Event $event)
+    public function preConnect(\Doctrine1\Event $event): void
     {
         foreach ($this->listeners as $listener) {
             $listener->preConnect($event);
         }
     }
 
-    /**
-     * @return void
-     */
-    public function preQuery(\Doctrine1\Event $event)
+    public function preQuery(\Doctrine1\Event $event): void
     {
         foreach ($this->listeners as $listener) {
             $listener->preQuery($event);
         }
     }
 
-    /**
-     * @return void
-     */
-    public function postQuery(\Doctrine1\Event $event)
+    public function postQuery(\Doctrine1\Event $event): void
     {
         foreach ($this->listeners as $listener) {
             $listener->postQuery($event);
         }
     }
 
-    /**
-     * @return void
-     */
-    public function prePrepare(\Doctrine1\Event $event)
+    public function prePrepare(\Doctrine1\Event $event): void
     {
         foreach ($this->listeners as $listener) {
             $listener->prePrepare($event);
         }
     }
 
-    /**
-     * @return void
-     */
-    public function postPrepare(\Doctrine1\Event $event)
+    public function postPrepare(\Doctrine1\Event $event): void
     {
         foreach ($this->listeners as $listener) {
             $listener->postPrepare($event);
         }
     }
 
-    /**
-     * @return void
-     */
-    public function preExec(\Doctrine1\Event $event)
+    public function preExec(\Doctrine1\Event $event): void
     {
         foreach ($this->listeners as $listener) {
             $listener->preExec($event);
         }
     }
 
-    /**
-     * @return void
-     */
-    public function postExec(\Doctrine1\Event $event)
+    public function postExec(\Doctrine1\Event $event): void
     {
         foreach ($this->listeners as $listener) {
             $listener->postExec($event);
         }
     }
 
-    /**
-     * @return void
-     */
-    public function preError(\Doctrine1\Event $event)
+    public function preError(\Doctrine1\Event $event): void
     {
         foreach ($this->listeners as $listener) {
             $listener->preError($event);
         }
     }
 
-    /**
-     * @return void
-     */
-    public function postError(\Doctrine1\Event $event)
+    public function postError(\Doctrine1\Event $event): void
     {
         foreach ($this->listeners as $listener) {
             $listener->postError($event);
         }
     }
 
-    /**
-     * @return void
-     */
-    public function preFetch(\Doctrine1\Event $event)
+    public function preFetch(\Doctrine1\Event $event): void
     {
         foreach ($this->listeners as $listener) {
             $listener->preFetch($event);
         }
     }
 
-    /**
-     * @return void
-     */
-    public function postFetch(\Doctrine1\Event $event)
+    public function postFetch(\Doctrine1\Event $event): void
     {
         foreach ($this->listeners as $listener) {
             $listener->postFetch($event);
         }
     }
 
-    /**
-     * @return void
-     */
-    public function preFetchAll(\Doctrine1\Event $event)
+    public function preFetchAll(\Doctrine1\Event $event): void
     {
         foreach ($this->listeners as $listener) {
             $listener->preFetchAll($event);
         }
     }
 
-    /**
-     * @return void
-     */
-    public function postFetchAll(\Doctrine1\Event $event)
+    public function postFetchAll(\Doctrine1\Event $event): void
     {
         foreach ($this->listeners as $listener) {
             $listener->postFetchAll($event);
         }
     }
 
-    /**
-     * @return void
-     */
-    public function preStmtExecute(\Doctrine1\Event $event)
+    public function preStmtExecute(\Doctrine1\Event $event): void
     {
         foreach ($this->listeners as $listener) {
             $listener->preStmtExecute($event);
         }
     }
 
-    /**
-     * @return void
-     */
-    public function postStmtExecute(\Doctrine1\Event $event)
+    public function postStmtExecute(\Doctrine1\Event $event): void
     {
         foreach ($this->listeners as $listener) {
             $listener->postStmtExecute($event);

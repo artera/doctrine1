@@ -2,45 +2,28 @@
 
 namespace Doctrine1\DataDict;
 
+use Doctrine1\Column;
+use Doctrine1\Column\Type;
+
 class Sqlite extends \Doctrine1\DataDict
 {
-    public function getNativeDeclaration(array $field)
+    public function getNativeDeclaration(Column $field): string
     {
-        if (!isset($field['type'])) {
-            throw new \Doctrine1\DataDict\Exception('Missing column type.');
-        }
-        switch ($field['type']) {
-            case 'enum':
-                $field['length'] = isset($field['length']) && $field['length'] ? $field['length'] : 255;
+        $length   = $field->length;
+
+        switch ($field->type) {
+            case Type::Enum:
+                $length ??= 255;
                 // no break
-            case 'text':
-            case 'object':
-            case 'array':
-            case 'string':
-            case 'char':
-            case 'gzip':
-            case 'varchar':
-                $length = (isset($field['length']) && $field['length']) ? $field['length'] : null;
-
-                $fixed = ((isset($field['fixed']) && $field['fixed']) || $field['type'] == 'char') ? true : false;
-
+            case Type::Text:
+            case Type::String:
+            case Type::Object:
+            case Type::Array:
+                $fixed = ($field->fixed || $field->type == 'char') ? true : false;
                 return $fixed ? ($length ? 'CHAR(' . $length . ')' : 'CHAR(' . $this->conn->varchar_max_length . ')')
                     : ($length ? 'VARCHAR(' . $length . ')' : 'TEXT');
-            case 'clob':
-                if (!empty($field['length'])) {
-                    $length = $field['length'];
-                    if ($length <= 255) {
-                        return 'TINYTEXT';
-                    } elseif ($length <= 65535) {
-                        return 'TEXT';
-                    } elseif ($length <= 16777215) {
-                        return 'MEDIUMTEXT';
-                    }
-                }
-                return 'LONGTEXT';
-            case 'blob':
-                if (!empty($field['length'])) {
-                    $length = $field['length'];
+            case Type::BLOB:
+                if (!empty($length)) {
                     if ($length <= 255) {
                         return 'TINYBLOB';
                     } elseif ($length <= 65535) {
@@ -50,25 +33,25 @@ class Sqlite extends \Doctrine1\DataDict
                     }
                 }
                 return 'LONGBLOB';
-            case 'integer':
-            case 'boolean':
-            case 'int':
+            case Type::Integer:
+            case Type::Boolean:
                 return 'INTEGER';
-            case 'date':
+            case Type::Date:
                 return 'DATE';
-            case 'time':
+            case Type::Time:
                 return 'TIME';
-            case 'timestamp':
+            case Type::DateTime:
+            case Type::Timestamp:
                 return 'DATETIME';
-            case 'float':
-            case 'double':
+            case Type::Float:
+            case Type::Double:
                 return 'DOUBLE';
-            case 'decimal':
-                $length = !empty($field['length']) ? $field['length'] : 18;
-                $scale  = !empty($field['scale']) ? $field['scale'] : $this->conn->getDecimalPlaces();
+            case Type::Decimal:
+                $length ??= 18;
+                $scale  = $field->scale ?: $this->conn->getDecimalPlaces();
                 return 'DECIMAL(' . $length . ',' . $scale . ')';
         }
-        return $field['type'] . (isset($field['length']) ? '(' . $field['length'] . ')' : null);
+        return $field->type->value . ($length !== null ? '(' . $length . ')' : null);
     }
 
     /**
@@ -79,7 +62,7 @@ class Sqlite extends \Doctrine1\DataDict
      */
     public function getPortableDeclaration(array $field)
     {
-        $e             = explode('(', $field['type']);
+        $e = explode('(', $field['type']);
         $field['type'] = $e[0];
         if (isset($e[1])) {
             $length          = trim($e[1], ')');
@@ -89,7 +72,7 @@ class Sqlite extends \Doctrine1\DataDict
         $dbType = strtolower($field['type']);
 
         if (!$dbType) {
-            throw new \Doctrine1\DataDict\Exception('Missing "type" from field definition');
+            throw new Exception('Missing "type" from field definition');
         }
 
         $length   = $field['length'] ?? null;
@@ -216,51 +199,35 @@ class Sqlite extends \Doctrine1\DataDict
      * Obtain DBMS specific SQL code portion needed to declare an integer type
      * field to be used in statements like CREATE TABLE.
      *
-     * @param  string $name  name the field to be declared.
-     * @param  array  $field associative array with the name of the properties
-     *                       of the field being declared as array indexes.
-     *                       Currently, the types of supported field
-     *                       properties are as follows: unsigned Boolean flag
-     *                       that indicates whether the field should be
-     *                       declared as unsigned integer if possible. default
-     *                       Integer value to be used as default for this
-     *                       field. notnull Boolean flag that indicates
-     *                       whether this field is constrained to not be set
-     *                       to null.
      * @return string  DBMS specific SQL code portion that should be used to
      *                 declare the specified field.
      * @access protected
      */
-    public function getIntegerDeclaration($name, array $field)
+    public function getIntegerDeclaration(Column $field): string
     {
         $default = $autoinc = '';
         $type    = $this->getNativeDeclaration($field);
 
-        $autoincrement = isset($field['autoincrement']) && $field['autoincrement'];
-
-        if ($autoincrement) {
+        if ($field->autoincrement) {
             $autoinc = ' PRIMARY KEY AUTOINCREMENT';
             $type    = 'INTEGER';
-        } elseif (array_key_exists('default', $field)) {
-            if ($field['default'] === '') {
-                $field['default'] = empty($field['notnull']) ? null : 0;
+        } elseif ($field->hasDefault()) {
+            $default = $field->default;
+            if ($default === '') {
+                $default = $field->notnull ? 0 : null;
             }
 
-            $default = ' DEFAULT ' . ($field['default'] === null
+            $default = ' DEFAULT ' . ($default === null
                 ? 'NULL'
-                : $this->conn->quote($field['default'], $field['type']));
-        }/**
-        elseif (empty($field['notnull'])) {
-            $default = ' DEFAULT NULL';
+                : $this->conn->quote($default, $field->type->value));
         }
-        */
 
-        $notnull = (isset($field['notnull']) && $field['notnull']) ? ' NOT NULL' : '';
+        $notnull = $field->notnull ? ' NOT NULL' : '';
 
         // sqlite does not support unsigned attribute for autoinremented fields
-        $unsigned = (isset($field['unsigned']) && $field['unsigned'] && !$autoincrement) ? ' UNSIGNED' : '';
+        $unsigned = $field->unsigned && !$field->autoincrement ? ' UNSIGNED' : '';
 
-        $name = $this->conn->quoteIdentifier($name, true);
+        $name = $this->conn->quoteIdentifier($field->name, true);
         return $name . ' ' . $type . $unsigned . $default . $notnull . $autoinc;
     }
 }

@@ -242,7 +242,7 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
             try {
                 return $this->dbh->getAttribute($attribute);
             } catch (\Throwable $e) {
-                throw new Connection\Exception('Attribute ' . $attribute . ' not found.');
+                throw new Connection\Exception("Attribute $attribute not found.", previous: $e);
             }
         } else {
             if (!isset($this->pendingAttributes[$attribute])) {
@@ -395,7 +395,7 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
                     );
                     $this->dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                 } catch (PDOException $e) {
-                    throw new Connection\Exception('PDO Connection Error: ' . $e->getMessage());
+                    throw new Connection\Exception("PDO Connection Error: {$e->getMessage()}", previous: $e);
                 }
                 $found = true;
             }
@@ -665,11 +665,11 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
      *
      * This method takes care of that conversion
      *
-     * @param array|bool|int|float $item
+     * @param array|string|bool|int|float|null $item
      *
-     * @return mixed[]|bool|int|float
+     * @return mixed[]|bool|int|float|null
      */
-    public function convertBooleans(array|string|bool|int|float $item): array|string|bool|int|float
+    public function convertBooleans(array|string|bool|int|float|null $item): array|string|bool|int|float|null
     {
         return $this->formatter->convertBooleans($item);
     }

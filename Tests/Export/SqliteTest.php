@@ -2,6 +2,8 @@
 
 namespace Tests\Export;
 
+use Doctrine1\Column;
+use Doctrine1\Column\Type;
 use Tests\DoctrineUnitTestCase;
 
 class SqliteTest extends DoctrineUnitTestCase
@@ -24,7 +26,9 @@ class SqliteTest extends DoctrineUnitTestCase
     {
         $name = 'mytable';
 
-        $fields = ['id' => ['type' => 'integer', 'unsigned' => 1, 'autoincrement' => true]];
+        $fields = [
+            new Column('id', Type::Integer, unsigned: true, autoincrement: true),
+        ];
 
         static::$conn->export->createTable($name, $fields);
 
@@ -33,9 +37,10 @@ class SqliteTest extends DoctrineUnitTestCase
     public function testCreateTableSupportsDefaultAttribute()
     {
         $name   = 'mytable';
-        $fields = ['name'  => ['type' => 'char', 'length' => 10, 'default' => 'def'],
-                         'type' => ['type' => 'integer', 'length' => 3, 'default' => 12]
-                         ];
+        $fields = [
+            new Column('name', Type::String, 10, fixed: true, default: 'def'),
+            new Column('type', Type::Integer, 3, default: 12),
+        ];
 
         $options = ['primary' => ['name', 'type']];
         static::$conn->export->createTable($name, $fields, $options);
@@ -45,8 +50,10 @@ class SqliteTest extends DoctrineUnitTestCase
     public function testCreateTableSupportsMultiplePks()
     {
         $name   = 'mytable';
-        $fields = ['name'  => ['type' => 'char', 'length' => 10],
-                         'type' => ['type' => 'integer', 'length' => 3]];
+        $fields = [
+            new Column('name', Type::String, 10, fixed: true),
+            new Column('type', Type::Integer, 3),
+        ];
 
         $options = ['primary' => ['name', 'type']];
         static::$conn->export->createTable($name, $fields, $options);
@@ -55,9 +62,10 @@ class SqliteTest extends DoctrineUnitTestCase
     }
     public function testCreateTableSupportsIndexes()
     {
-        $fields = ['id'    => ['type' => 'integer', 'unsigned' => 1, 'autoincrement' => true, 'unique' => true],
-                         'name' => ['type' => 'string', 'length' => 4],
-                         ];
+        $fields = [
+            new Column('id', Type::Integer, unsigned: true, autoincrement: true, unique: true),
+            new Column('name', Type::String, 4),
+        ];
 
         $options = ['primary' => ['id'],
                          'indexes' => ['myindex' => ['fields' => ['id', 'name']]]
@@ -77,9 +85,10 @@ class SqliteTest extends DoctrineUnitTestCase
     {
         static::$conn->setQuoteIdentifier(true);
 
-        $fields = ['id'    => ['type' => 'integer', 'unsigned' => 1, 'autoincrement' => true, 'unique' => true],
-                         'name' => ['type' => 'string', 'length' => 4],
-                         ];
+        $fields = [
+            new Column('id', Type::Integer, unsigned: true, autoincrement: true, unique: true),
+            new Column('name', Type::String, 4),
+        ];
 
         $options = ['primary' => ['id'],
                          'indexes' => ['myindex' => ['fields' => ['id', 'name']]]
@@ -102,8 +111,10 @@ class SqliteTest extends DoctrineUnitTestCase
         static::$conn->setQuoteIdentifier(true);
 
         $name   = 'mytable';
-        $fields = ['name'  => ['type' => 'char', 'length' => 10],
-                         'type' => ['type' => 'integer', 'length' => 3]];
+        $fields = [
+            new Column('name', Type::String, 10, fixed: true),
+            new Column('type', Type::Integer, 3),
+        ];
 
         $options = ['primary' => ['name', 'type']];
         static::$conn->export->createTable($name, $fields, $options);
@@ -122,9 +133,10 @@ class SqliteTest extends DoctrineUnitTestCase
     }
     public function testCreateTableSupportsIndexesWithCustomSorting()
     {
-        $fields = ['id'    => ['type' => 'integer', 'unsigned' => 1, 'autoincrement' => true, 'unique' => true],
-                         'name' => ['type' => 'string', 'length' => 4],
-                         ];
+        $fields = [
+            new Column('id', Type::Integer, unsigned: true, autoincrement: true, unique: true),
+            new Column('name', Type::String, 4),
+        ];
 
         $options = ['primary' => ['id'],
                          'indexes' => ['myindex' => [
@@ -144,15 +156,4 @@ class SqliteTest extends DoctrineUnitTestCase
 
         $this->assertEquals(static::$adapter->pop(), 'CREATE TABLE sometable (id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(4))');
     }
-
-    /**
-    public function testExportSupportsEmulationOfCascadingDeletes()
-    {
-        $r = new \ForeignKeyTest;
-        $this->assertEquals(static::$adapter->pop(), 'COMMIT');
-        $this->assertEquals(static::$adapter->pop(), 'CREATE TRIGGER doctrine_foreign_key_test_cscd_delete AFTER DELETE ON foreign_key_test BEGIN DELETE FROM foreign_key_test WHERE parent_id = old.id;END;');
-        $this->assertEquals(static::$adapter->pop(), 'CREATE TABLE foreign_key_test (id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(2147483647), code INTEGER, content VARCHAR(4000), parent_id INTEGER)');
-        $this->assertEquals(static::$adapter->pop(), 'BEGIN TRANSACTION');
-    }
-    */
 }

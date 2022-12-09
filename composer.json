@@ -3,12 +3,24 @@
     "type": "library",
     "version": "3.0.0",
     "description": "PHP 8.1+ Database ORM",
-    "keywords": ["orm", "database"],
+    "keywords": [
+        "orm",
+        "database"
+    ],
     "license": "LGPL-2.1-or-later",
     "authors": [
-        {"name": "Massimiliano Torromeo", "email": "massimiliano.torromeo@gmail.com"},
-        {"name": "Konsta Vesterinen", "email": "kvesteri@cc.hut.fi"},
-        {"name": "Jonathan Wage", "email": "jonwage@gmail.com"}
+        {
+            "name": "Massimiliano Torromeo",
+            "email": "massimiliano.torromeo@gmail.com"
+        },
+        {
+            "name": "Konsta Vesterinen",
+            "email": "kvesteri@cc.hut.fi"
+        },
+        {
+            "name": "Jonathan Wage",
+            "email": "jonwage@gmail.com"
+        }
     ],
     "autoload": {
         "psr-4": {
@@ -19,7 +31,9 @@
         "psr-4": {
             "Tests\\": "Tests"
         },
-        "classmap": ["Tests/models"]
+        "classmap": [
+            "Tests/models"
+        ]
     },
     "replace": {
         "doctrine/doctrine1": "*"
@@ -45,9 +59,6 @@
     "scripts": {
         "test": "php -d zend.assertions=on -d apc.enabled=on -d apc.enable_cli=on vendor/bin/phpunit",
         "phpstan": "phpstan analyze -c phpstan.neon --no-progress --ansi --memory-limit=768M",
-        "static-analysis": [
-            "@phpstan"
-        ],
         "style-check": "php-cs-fixer fix --dry-run -vv"
     },
     "extra": {

@@ -2,11 +2,13 @@
 
 namespace Doctrine1\Export;
 
+use Doctrine1\Column;
 use PDOException;
 
 /**
  * @template Connection of \Doctrine1\Connection\Pgsql
  * @extends \Doctrine1\Export<Connection>
+ * @phpstan-import-type ExportableOptions from \Doctrine1\Export
  */
 class Pgsql extends \Doctrine1\Export
 {
@@ -81,6 +83,13 @@ class Pgsql extends \Doctrine1\Export
      * generates the sql for altering an existing table on postgresql
      *
      * @param  string  $name    name of the table that is intended to be changed.
+     * @phpstan-param array{
+     *   add?: Column[],
+     *   remove?: string[],
+     *   change?: array<string, Column>,
+     *   rename?: array<string, string>,
+     *   name?: string,
+     * } $changes
      * @param  array   $changes associative array that contains the details of each type      *
      * @param  boolean $check   indicates whether the function should just check if the DBMS driver
      *                          can perform the requested table alterations if the value is true or
@@ -90,6 +99,8 @@ class Pgsql extends \Doctrine1\Export
      */
     public function alterTableSql($name, array $changes, $check = false)
     {
+        $qName = $this->conn->quoteIdentifier($name, true);
+
         foreach ($changes as $changeName => $change) {
             switch ($changeName) {
                 case 'add':
@@ -110,54 +121,43 @@ class Pgsql extends \Doctrine1\Export
         $sql = [];
 
         if (isset($changes['add']) && is_array($changes['add'])) {
-            foreach ($changes['add'] as $fieldName => $field) {
-                $query = 'ADD ' . $this->getDeclaration($fieldName, $field);
-                $sql[] = 'ALTER TABLE ' . $this->conn->quoteIdentifier($name, true) . ' ' . $query;
+            foreach ($changes['add'] as $field) {
+                $sql[] = "ALTER TABLE $qName ADD {$this->getDeclaration($field)}";
             }
         }
 
         if (isset($changes['remove']) && is_array($changes['remove'])) {
-            foreach ($changes['remove'] as $fieldName => $field) {
+            foreach ($changes['remove'] as $fieldName) {
                 $fieldName = $this->conn->quoteIdentifier($fieldName, true);
-                $query     = 'DROP ' . $fieldName;
-                $sql[]     = 'ALTER TABLE ' . $this->conn->quoteIdentifier($name, true) . ' ' . $query;
+                $sql[] = "ALTER TABLE $qName DROP $fieldName";
             }
         }
 
         if (isset($changes['change']) && is_array($changes['change'])) {
             foreach ($changes['change'] as $fieldName => $field) {
                 $fieldName = $this->conn->quoteIdentifier($fieldName, true);
-                if (isset($field['definition']['type'])) {
-                    $serverInfo = $this->conn->getServerVersion();
 
-                    if (is_array($serverInfo) && $serverInfo['major'] < 8) {
-                        throw new \Doctrine1\Export\Exception('changing column type for "' . $field['type'] . '\" requires PostgreSQL 8.0 or above');
-                    }
-                    $query = 'ALTER ' . $fieldName . ' TYPE ' . $this->conn->dataDict->getNativeDeclaration($field['definition']);
-                    $sql[] = 'ALTER TABLE ' . $this->conn->quoteIdentifier($name, true) . ' ' . $query;
+                $sql[] = "ALTER TABLE $qName ALTER $fieldName TYPE {$this->conn->dataDict->getNativeDeclaration($field)}";
+
+                if ($field->hasDefault()) {
+                    $sql[] = "ALTER TABLE $qName ALTER $fieldName SET DEFAULT {$this->conn->quote($field->default, $field->type->value)}";
                 }
-                if (array_key_exists('default', $field['definition'])) {
-                    $query = 'ALTER ' . $fieldName . ' SET DEFAULT ' . $this->conn->quote($field['definition']['default'], $field['definition']['type']);
-                    $sql[] = 'ALTER TABLE ' . $this->conn->quoteIdentifier($name, true) . ' ' . $query;
-                }
-                if (isset($field['definition']['notnull'])) {
-                    $query = 'ALTER ' . $fieldName . ' ' . ($field['definition']['notnull'] ? 'SET' : 'DROP') . ' NOT NULL';
-                    $sql[] = 'ALTER TABLE ' . $this->conn->quoteIdentifier($name, true) . ' ' . $query;
-                }
+
+                $query = "ALTER $fieldName " . ($field->notnull ? 'SET' : 'DROP') . ' NOT NULL';
+                $sql[] = "ALTER TABLE $qName $query";
             }
         }
 
         if (isset($changes['rename']) && is_array($changes['rename'])) {
-            foreach ($changes['rename'] as $fieldName => $field) {
-                $fieldName = $this->conn->quoteIdentifier($fieldName, true);
-                $sql[]     = 'ALTER TABLE ' . $this->conn->quoteIdentifier($name, true) . ' RENAME COLUMN ' . $fieldName . ' TO ' . $this->conn->quoteIdentifier($field['name'], true);
+            foreach ($changes['rename'] as $oldFieldName => $fieldName) {
+                $oldFieldName = $this->conn->quoteIdentifier($oldFieldName, true);
+                $sql[]     = "ALTER TABLE $qName RENAME COLUMN $oldFieldName TO {$this->conn->quoteIdentifier($fieldName, true)}";
             }
         }
 
-        $name = $this->conn->quoteIdentifier($name, true);
         if (isset($changes['name'])) {
             $changeName = $this->conn->quoteIdentifier($changes['name'], true);
-            $sql[]      = 'ALTER TABLE ' . $this->conn->quoteIdentifier($name, true) . ' RENAME TO ' . $changeName;
+            $sql[]      = "ALTER TABLE $qName RENAME TO $changeName";
         }
 
         return $sql;
@@ -260,14 +260,15 @@ class Pgsql extends \Doctrine1\Export
     }
 
     /**
-     * Creates a table.
+     * create a new table
      *
-     * @param  string $name
-     * @param  array  $fields
-     * @param  array  $options
+     * @param string $name    Name of the database that should be created
+     * @param Column[] $fields
+     * @param array|null $options An associative array of table options:
+     * @phpstan-param ?ExportableOptions $options
      * @return array
      */
-    public function createTableSql($name, array $fields, array $options = [])
+    public function createTableSql(string $name, array $fields, ?array $options = null): array
     {
         if (!$name) {
             throw new \Doctrine1\Export\Exception('no valid table name specified');

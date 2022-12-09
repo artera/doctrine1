@@ -36,7 +36,7 @@ class RawSql extends AbstractQuery
         $this->useQueryCache(false);
     }
 
-    protected function clear()
+    protected function clear(): void
     {
         $this->preQuery              = false;
         $this->pendingJoinConditions = [];
@@ -189,7 +189,7 @@ class RawSql extends AbstractQuery
                 try {
                     $this->addComponent($e[0], ucwords($e[0]));
                 } catch (Exception $exception) {
-                    throw new RawSql\Exception('The associated component for table alias ' . $e[0] . ' couldn\'t be found.');
+                    throw new RawSql\Exception("The associated component for table alias {$e[0]} couldn't be found.", previous: $exception);
                 }
             }
 
@@ -430,7 +430,7 @@ class RawSql extends AbstractQuery
      * @param  array $params
      * @return string    the hash
      */
-    public function calculateResultCacheHash($params = [])
+    public function calculateResultCacheHash($params = []): string
     {
         $sql    = $this->getSqlQuery();
         $conn   = $this->getConnection();

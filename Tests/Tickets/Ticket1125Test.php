@@ -1,6 +1,9 @@
 <?php
+
 namespace Tests\Tickets;
 
+use Doctrine1\Column;
+use Doctrine1\Column\Type;
 use Tests\DoctrineUnitTestCase;
 
 class Ticket1125Test extends DoctrineUnitTestCase
@@ -13,11 +16,10 @@ class Ticket1125Test extends DoctrineUnitTestCase
 
     public function testTest()
     {
-        $fields = ['id' => ['primary'          => true,
-                                         'autoincrement' => true,
-                                         'type'          => 'integer',
-                                         'length'        => 4],
-                        'name' => ['type' => 'string']];
+        $fields = [
+            new Column('id', Type::Integer, 4, primary: true, autoincrement: true),
+            new Column('name', Type::String),
+        ];
         static::$conn->export->createTable('test', $fields);
         $this->assertEquals(static::$dbh->pop(), 'CREATE TABLE test (id INT AUTO_INCREMENT, name TEXT, PRIMARY KEY(id)) ENGINE = InnoDB');
     }

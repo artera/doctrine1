@@ -14,13 +14,13 @@ class Mysql extends \Doctrine1\Import
      * @var array
      */
     protected $sql = [
-                            'listDatabases'   => 'SHOW DATABASES',
-                            'listTableFields' => 'SHOW FULL COLUMNS FROM %s',
-                            'listSequences'   => 'SHOW TABLES',
-                            'listTables'      => 'SHOW TABLES',
-                            'listUsers'       => 'SELECT DISTINCT USER FROM USER',
-                            'listViews'       => "SHOW FULL TABLES %s WHERE Table_type = 'VIEW'",
-                            ];
+        'listDatabases'   => 'SHOW DATABASES',
+        'listTableFields' => 'SHOW FULL COLUMNS FROM %s',
+        'listSequences'   => 'SHOW TABLES',
+        'listTables'      => 'SHOW TABLES',
+        'listUsers'       => 'SELECT DISTINCT USER FROM USER',
+        'listViews'       => "SHOW FULL TABLES %s WHERE Table_type = 'VIEW'",
+    ];
 
     /**
      * lists all database sequences
@@ -139,7 +139,9 @@ class Mysql extends \Doctrine1\Import
         foreach ($result as $val) {
             $val = array_change_key_case($val, CASE_LOWER);
 
-            $decl = $this->conn->dataDict->getPortableDeclaration($val);
+            /** @var \Doctrine1\DataDict\Mysql $dataDict */
+            $dataDict = $this->conn->dataDict;
+            $decl     = $dataDict->getPortableDeclaration($val);
 
             $val['default'] = $val['default'] === 'CURRENT_TIMESTAMP' ? null : $val['default'];
 
@@ -147,7 +149,6 @@ class Mysql extends \Doctrine1\Import
                 'name'          => $val['field'],
                 'type'          => $decl['type'][0],
                 'alltypes'      => $decl['type'],
-                'ntype'         => $val['type'],
                 'length'        => $decl['length'],
                 'fixed'         => (bool) $decl['fixed'],
                 'unsigned'      => (bool) $decl['unsigned'],

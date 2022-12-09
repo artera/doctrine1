@@ -4,7 +4,9 @@ namespace Doctrine1\Import;
 
 use Doctrine1\Collection;
 use Doctrine1\Core;
+use Doctrine1\EnumSetImplementation;
 use Doctrine1\Inflector;
+use Doctrine1\Lib;
 use Doctrine1\Manager;
 use Doctrine1\Record;
 use Doctrine1\Relation;
@@ -14,6 +16,9 @@ use Laminas\Code\Generator\DocBlockGenerator;
 use Laminas\Code\Generator\MethodGenerator;
 use Laminas\Code\Generator\ValueGenerator;
 use Laminas\Code\Generator\DocBlock\Tag\PropertyTag;
+use Laminas\Code\Generator\EnumGenerator\Cases\BackedCases;
+use Laminas\Code\Generator\EnumGenerator\EnumGenerator;
+use Laminas\Code\Generator\EnumGenerator\Name;
 
 class Builder
 {
@@ -55,27 +60,39 @@ class Builder
     protected string $tableClassFormat = '%sTable';
 
     /**
+     * Method to use when implementing enum columns
+     */
+    protected EnumSetImplementation $enumImplementation = EnumSetImplementation::String;
+
+    /**
+     * Method to use when implementing set columns
+     */
+    protected EnumSetImplementation $setImplementation = EnumSetImplementation::String;
+
+    /**
      * Format to user for generated model classes
      */
     protected string $namespace = '\\';
 
     public function __construct()
     {
-        $manager = Manager::getInstance();
-        if ($tableClass = $manager->getTableClass()) {
+        $conn = Manager::connection();
+        if ($tableClass = $conn->getTableClass()) {
             $this->baseTableClassName = $tableClass;
         }
-        if ($namespace = $manager->getModelNamespace()) {
+        if ($namespace = $conn->getModelNamespace()) {
             $this->namespace = $namespace;
         }
-        if ($tableClassFormat = $manager->getTableClassFormat()) {
+        if ($tableClassFormat = $conn->getTableClassFormat()) {
             $this->tableClassFormat = $tableClassFormat;
         }
+        $this->enumImplementation = $conn->getEnumImplementation();
+        $this->setImplementation = $conn->getSetImplementation();
     }
 
     public function getFullModelClassName(string $name): string
     {
-        return ltrim($this->namespace . '\\' . ltrim($name, '\\'), '\\');
+        return Lib::namespaceConcat($this->namespace, $name);
     }
 
     public function getBaseClassName(string $name, bool $full = true): string
@@ -84,7 +101,7 @@ class Builder
         if (!$full) {
             return $name;
         }
-        return ltrim($this->namespace . '\\' . ltrim($name, '\\'), '\\');
+        return Lib::namespaceConcat($this->namespace, $name);
     }
 
     public function getTableClassName(string $name, bool $full = true): string
@@ -93,7 +110,7 @@ class Builder
         if (!$full) {
             return $name;
         }
-        return ltrim($this->namespace . '\\' . ltrim($name, '\\'), '\\');
+        return Lib::namespaceConcat($this->namespace, $name);
     }
 
     protected function classNameToFileName(string $name): string
@@ -333,11 +350,9 @@ class Builder
 
             $options = $column;
 
-            // Remove name, alltypes, ntype. They are not needed in options array
+            // Remove name, alltypes. They are not needed in options array
             unset($options['name']);
             unset($options['alltypes']);
-            unset($options['ntype']);
-
 
             if (!empty($options['primary'])) {
                 // Remove notnull => true if the column is primary
@@ -386,8 +401,103 @@ class Builder
 
         uasort($columns, fn ($a, $b) => $a['name'] <=> $b['name']);
         foreach ($columns as &$column) {
+            $columnType = strtolower($column['type']);
             $types = [];
+
+            if (in_array($columnType, ['enum', 'set'], true)) {
+                $columnImplementation = match ($columnType) {
+                    'enum' => $this->enumImplementation,
+                    'set' => $this->setImplementation,
+                };
+                $importAs = null;
+
+                if (isset($column['meta']['importAs'])) {
+                    $importAs = $column['meta']['importAs'];
+
+                    if (!is_array($importAs)) {
+                        $importAs = [
+                            'type' => $importAs,
+                            'name' => null,
+                        ];
+                    }
+
+                    $columnImplementation = EnumSetImplementation::tryFrom($importAs['type']) ?? $columnImplementation;
+                }
+
+                if ($columnImplementation === EnumSetImplementation::Enum) {
+                    if (!empty($importAs['name'])) {
+                        $enumClassName = trim($importAs['name'], '\\');
+                    } else {
+                        $enumClassName = Lib::namespaceConcat($gen->getNamespaceName() ?? $this->namespace, Inflector::classify($column['name']));
+                    }
+                } else {
+                    $enumClassName = null;
+                }
+
+                if (!empty($enumClassName)) {
+                    $enumCases = [];
+                    foreach ($column['values'] as $v) {
+                        $k = Inflector::classify($v);
+                        if (is_string($v) && !empty($v) && !empty($k)) {
+                            $enumCases[$k] = $v;
+                        }
+                    }
+
+                    $enum = EnumGenerator::withConfig([
+                        'name' => $enumClassName,
+                        'backedCases' => [
+                            'type' => 'string',
+                            'cases' => $enumCases,
+                        ],
+                    ]);
+
+                    $path = $this->path . DIRECTORY_SEPARATOR . $this->classNameToFileName($enumClassName);
+                    Lib::makeDirectories(dirname($path));
+
+                    if (file_exists($path)) {
+                        $newCode = $enum->generate();
+                        if (!preg_match("/(?:^\s*case [a-z0-9]+ = (?:'[^']+'|\d+);\n)+/im", $newCode, $matches)) {
+                            throw new Exception("Could not match enum cases in generated code for $enumClassName");
+                        }
+                        $newCode = $matches[0];
+                        if (($code = file_get_contents($path)) === false) {
+                            throw new Exception("Couldn't read file $path");
+                        }
+
+                        // remove all cases from enum's code
+                        $code = preg_replace("/\b\s*case\s+[a-z0-9]+\s*=\s*(?:'[^']+'|\d+)\s*;\s*/i", '', $code) ?? $code;
+
+                        // add new enum cases at the top of the enum declaration
+                        $code = preg_replace('/^(\s*enum\s+[a-z0-9]+\s*:\s*(?:int|string)\s*\{)(?:\s*(}))?/im', "\$1\n$newCode\$2", $code);
+                    } else {
+                        $code = "<?php\n\n{$enum->generate()}";
+                    }
+
+                    if (file_put_contents($path, $code) === false) {
+                        throw new Exception("Couldn't write file $path");
+                    }
+                }
+
+                $type = match ($columnImplementation) {
+                    EnumSetImplementation::String => 'string',
+                    EnumSetImplementation::PHPStan => implode('|', array_map([$this, 'varExport'], $column['values'])),
+                    EnumSetImplementation::Enum => "\\$enumClassName",
+                };
+
+                if ($columnType === 'set') {
+                    if ($columnImplementation === EnumSetImplementation::PHPStan) {
+                        $type = "($type)";
+                    }
+                    $type .= '[]';
+                }
+
+                $types[] = $type;
+            }
+
             switch (strtolower($column['type'])) {
+                case 'enum':
+                case 'set':
+                    break;
                 case 'boolean':
                 case 'integer':
                 case 'float':
@@ -400,18 +510,12 @@ class Builder
                 case 'decimal':
                     $types[] = 'float';
                     break;
-                case 'set':
-                    $types[] = 'string[]';
-                    break;
                 case 'json':
                 case 'blob':
-                case 'clob':
                 case 'timestamp':
                 case 'time':
                 case 'date':
                 case 'datetime':
-                case 'enum':
-                case 'gzip':
                     $types[] = 'string';
                     break;
             }
@@ -514,7 +618,6 @@ class Builder
                 'charset' => "\$this->setCharset($values);\n",
                 'collate' => "\$this->setCollate($values);\n",
                 'default_sequence' => "\$this->setDefaultSequence($values);\n",
-                'default_column_options' => "\$this->setDefaultColumnOptions($values);\n",
                 'default_identifier_options' => "\$this->setDefaultIdentifierOptions($values);\n",
                 'auto_free_query_objects' => "\$this->setAutoFreeQueryObjects($values);\n",
                 'load_references' => "\$this->setLoadReferences($values);\n",
@@ -670,7 +773,7 @@ class Builder
         $fileName = $this->classNameToFileName($className);
 
         $path .= DIRECTORY_SEPARATOR . $fileName;
-        \Doctrine1\Lib::makeDirectories(dirname($path));
+        Lib::makeDirectories(dirname($path));
 
         $code = $this->buildTableClassDefinition($className, $definition, $options);
 
@@ -696,7 +799,7 @@ class Builder
         $fileName = $this->classNameToFileName($className);
 
         $path .= DIRECTORY_SEPARATOR . $fileName;
-        \Doctrine1\Lib::makeDirectories(dirname($path));
+        Lib::makeDirectories(dirname($path));
 
         $code = $this->buildDefinition($className, $definition);
 

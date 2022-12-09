@@ -30,6 +30,6 @@ END;
         include_once $path . '/BaseTicket_1527_User.php';
         include_once $path . '/Ticket_1527_User.php';
         $username = \Doctrine1\Core::getTable('Ticket_1527_User')->getDefinitionOf('username');
-        $this->assertEquals($username['extra']['test'], '123');
+        $this->assertEquals($username->extra['test'], '123');
     }
 }

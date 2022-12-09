@@ -102,7 +102,7 @@ class Query extends AbstractQuery implements \Countable
     protected array $pendingFields = [];
 
     /**
-     * @var array $parsers an array of parser objects, each DQL query part has its own parser
+     * @var array<string, Query\Part> $parsers an array of parser objects, each DQL query part has its own parser
      */
     protected array $parsers = [];
 
@@ -138,10 +138,8 @@ class Query extends AbstractQuery implements \Countable
 
     /**
      * Clears all the sql parts.
-     *
-     * @return void
      */
-    protected function clear()
+    protected function clear(): void
     {
         $this->preQueried            = false;
         $this->pendingJoinConditions = [];
@@ -687,8 +685,8 @@ class Query extends AbstractQuery implements \Countable
                                     throw new Query\Exception('Unknown column ' . $field);
                                 }
 
-                                if (isset($def['owner'])) {
-                                    $componentAlias = $componentAlias . '.' . $def['owner'];
+                                if ($def->owner !== null) {
+                                    $componentAlias = "$componentAlias.{$def->owner}";
                                 }
 
                                 $tableAlias = $this->getSqlTableAlias($componentAlias);
@@ -722,8 +720,8 @@ class Query extends AbstractQuery implements \Countable
                                 $term[0] = $table->getColumnName($term[0]);
 
 
-                                if ($def && isset($def['owner'])) {
-                                    $componentAlias = $componentAlias . '.' . $def['owner'];
+                                if ($def?->owner !== null) {
+                                    $componentAlias = "$componentAlias.{$def->owner}";
                                 }
 
                                 $tableAlias = $this->getSqlTableAlias($componentAlias);
@@ -792,7 +790,7 @@ class Query extends AbstractQuery implements \Countable
             }
             $expr = call_user_func_array($callback, $args);
         } catch (Expression\Exception $e) {
-            throw new Query\Exception('Unknown function ' . $name . '.');
+            throw new Query\Exception("Unknown function $name.", previous: $e);
         }
 
         return $expr;
@@ -2103,10 +2101,8 @@ class Query extends AbstractQuery implements \Countable
      * PHP's current GC to reclaim the memory.
      * This method can therefore be used to reduce memory usage when creating
      * a lot of query objects during a request.
-     *
-     * @return void
      */
-    public function free()
+    public function free(): void
     {
         $this->reset();
         $this->parsers  = [];

@@ -32,6 +32,15 @@ use PHPStan\Analyser\Scope;
 
 class QueryDynamicReturnTypeExtension extends AbstractExtension implements DynamicMethodReturnTypeExtension
 {
+    private string $namespace = '\\';
+
+    public function __construct(?string $namespace = null)
+    {
+        if ($namespace !== null) {
+            $this->namespace = $namespace;
+        }
+    }
+
     public function getClass(): string
     {
         return \Doctrine1\AbstractQuery::class;
@@ -108,10 +117,14 @@ class QueryDynamicReturnTypeExtension extends AbstractExtension implements Dynam
 
         if ($from !== null) {
             $from = $from->getValue();
-            if (!preg_match('/^\s*([a-z0-9_]+)/i', $from, $matches)) {
+            if (!preg_match('/^\s*([a-z0-9_\\\\]+)/i', $from, $matches)) {
                 return $returnType;
             }
             $from = $matches[1];
+
+            if (!class_exists($from)) {
+                $from = \Doctrine1\Lib::namespaceConcat($this->namespace, $from);
+            }
 
             if (!class_exists($from)) {
                 return $returnType;

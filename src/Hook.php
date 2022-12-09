@@ -37,9 +37,7 @@ class Hook
      * @phpstan-var array<string, class-string<Hook\Parser>|Hook\Parser>
      */
     protected $typeParsers = [
-        'char'    => Hook\WordLike::class,
         'string'  => Hook\WordLike::class,
-        'varchar' => Hook\WordLike::class,
         'integer' => Hook\Integer::class,
         'enum'    => Hook\Integer::class,
     ];
@@ -104,13 +102,10 @@ class Hook
      *
      * @param  array $params an associative array containing field
      *                       names and their values
-     * @return boolean              whether or not the hooking was
+     * @return bool whether or not the hooking was
      */
-    public function hookWhere($params)
+    public function hookWhere(array $params): bool
     {
-        if (!is_array($params)) {
-            return false;
-        }
         foreach ($params as $name => $value) {
             if ($value === '' || $value === '-') {
                 continue;
@@ -123,15 +118,10 @@ class Hook
                 $map   = $this->query->getQueryComponent($alias);
                 $table = $map['table'];
 
-                if (!$table) {
-                    throw new Exception('Unknown alias ' . $alias);
-                }
-
                 if ($def = $table->getDefinitionOf($column)) {
-                    $def[0] = gettype($value);
-                    if (isset($this->typeParsers[$def[0]])) {
-                        $name   = $this->typeParsers[$def[0]];
-                        $parser = new $name;
+                    if (isset($this->typeParsers[$def->type->value])) {
+                        $name   = $this->typeParsers[$def->type->value];
+                        $parser = new $name();
 
                         $parser->parse($alias, $column, $value);
 
