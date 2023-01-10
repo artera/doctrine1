@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Record {
     use Tests\DoctrineUnitTestCase;
 
@@ -21,7 +22,7 @@ namespace Tests\Record {
         }
         public function testCascadingDeleteEmulation()
         {
-            $r                    = new \ForeignKeyTest;
+            $r                    = new \ForeignKeyTest();
             $r->name              = 'Parent';
             $r->Children[0]->name = 'Child 1';
             $this->assertEquals($r->id, null);
@@ -55,7 +56,7 @@ namespace Tests\Record {
             $cascadeListener = new \CascadeDeleteListener($this);
             static::$conn->getTable('ForeignKeyTest')->addRecordListener($cascadeListener);
 
-            $r                                 = new \ForeignKeyTest;
+            $r                                 = new \ForeignKeyTest();
             $r->name                           = 'Parent';
             $r->Children[0]->name              = 'Child 1';
             $r->Children[0]->Children[0]->name = 'Child 1 Child 1';
@@ -169,14 +170,14 @@ namespace {
             $this->test = $test;
         }
 
-        public function preDelete(\Doctrine1\Event $event)
+        public function preDelete(\Doctrine1\Event $event): void
         {
             $this->test->assertEquals(\Doctrine1\Record\State::CLEAN, $event->getInvoker()->state());
             $this->preDeleteInvoked = true;
             $this->preDeleteInvocationCount++;
         }
 
-        public function postDelete(\Doctrine1\Event $event)
+        public function postDelete(\Doctrine1\Event $event): void
         {
             $this->test->assertEquals(\Doctrine1\Record\State::TCLEAN, $event->getInvoker()->state());
             $this->postDeleteInvoked = true;
@@ -192,8 +193,8 @@ namespace {
         }
     }
 
-/* The following is a typical one-to-one cascade => delete scenario. The association
-    is bidirectional, as is the cascade. */
+    /* The following is a typical one-to-one cascade => delete scenario. The association
+        is bidirectional, as is the cascade. */
 
     class CascadeDelete_HouseOwner extends \Doctrine1\Record
     {
@@ -227,9 +228,9 @@ namespace {
     }
 
 
-/* The following is just a stand-alone class with a composite-key to test the new
-   deletion routines with composite keys. Composite foreign keys are currently not
-   supported, so we can't test this class in a cascade => delete scenario. */
+    /* The following is just a stand-alone class with a composite-key to test the new
+       deletion routines with composite keys. Composite foreign keys are currently not
+       supported, so we can't test this class in a cascade => delete scenario. */
 
     class CascadeDelete_CompositeKeyItem extends \Doctrine1\Record
     {
@@ -241,9 +242,9 @@ namespace {
     }
 
 
-/* The following is an app-level cascade => delete setup of a many-many association
-   Note that such a scenario is very unlikely in the real world and also pretty
-   slow. */
+    /* The following is an app-level cascade => delete setup of a many-many association
+       Note that such a scenario is very unlikely in the real world and also pretty
+       slow. */
 
     class CascadeDelete_ManyManySideA extends \Doctrine1\Record
     {

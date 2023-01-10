@@ -2,6 +2,9 @@
 
 namespace Doctrine1\Import;
 
+use Doctrine1\Column;
+use Doctrine1\Column\Type;
+
 /**
  * @template Connection of \Doctrine1\Connection\Pgsql
  * @extends \Doctrine1\Import<Connection>
@@ -135,17 +138,13 @@ class Pgsql extends \Doctrine1\Import
         return $this->conn->fetchColumn($query);
     }
 
-    /**
-     * lists table constraints
-     *
-     * @param  string $table database table name
-     * @return array
-     */
-    public function listTableColumns($table)
+    public function listTableColumns(string $table): array
     {
         $table  = $this->conn->quote($table);
         $query  = sprintf($this->sql['listTableColumns'], $table);
         $result = $this->conn->fetchAssoc($query);
+        /** @var \Doctrine1\DataDict\Pgsql $dataDict */
+        $dataDict = $this->conn->dataDict;
 
         $columns = [];
         foreach ($result as $key => $val) {
@@ -161,53 +160,49 @@ class Pgsql extends \Doctrine1\Import
                 $val['length'] = $length;
             }
 
-            /** @var \Doctrine1\DataDict\Pgsql $dataDict */
-            $dataDict = $this->conn->dataDict;
-            $decl     = $dataDict->getPortableDeclaration($val);
-
-            $description = [
-                'name'     => $val['field'],
-                'type'     => $decl['type'][0],
-                'alltypes' => $decl['type'],
-                'length'   => $decl['length'],
-                'fixed'    => (bool) $decl['fixed'],
-                'unsigned' => (bool) $decl['unsigned'],
-                'notnull'  => $val['isnotnull'] == 'NO',
-                'default'  => $val['default'],
-                'primary'  => $val['pri'] == 't',
-            ];
+            $decl = $dataDict->getPortableDeclaration($val);
 
             // If postgres enum type
             if ($val['type'] == 'e') {
-                $description['default'] = isset($decl['default']) ? $decl['default'] : null;
+                $decl['default'] = isset($decl['default']) ? $decl['default'] : null;
                 $t_result = $this->conn->fetchAssoc(sprintf('select enum_range(null::%s) as range ', $decl['enum_name']));
                 if (isset($t_result[0])) {
-                    $range                 = (string) $t_result[0]['range'];
-                    $range                 = str_replace('{', '', $range);
-                    $range                 = str_replace('}', '', $range);
-                    $range                 = explode(',', $range);
-                    $description['values'] = $range;
+                    $range = (string) $t_result[0]['range'];
+                    $range = str_replace('{', '', $range);
+                    $range = str_replace('}', '', $range);
+                    $range = explode(',', $range);
+                    $decl['values'] = $range;
                 }
             }
 
-            $matches = [];
-
-            if (preg_match("/^nextval\('(.*)'(::.*)?\)$/", $description['default'], $matches)) {
-                $description['sequence'] = $this->conn->formatter->fixSequenceName($matches[1]);
-                $description['default']  = null;
-            } elseif (preg_match("/^'(.*)'::character varying$/", $description['default'], $matches)) {
-                $description['default'] = $matches[1];
-            } elseif (preg_match('/^(.*)::character varying$/', $description['default'], $matches)) {
-                $description['default'] = $matches[1];
-            } elseif ($description['type'] == 'boolean') {
-                if ($description['default'] === 'true') {
-                    $description['default'] = true;
-                } elseif ($description['default'] === 'false') {
-                    $description['default'] = false;
+            if (preg_match("/^nextval\('(.*)'(::.*)?\)$/", $decl['default'], $matches)) {
+                $decl['sequence'] = $this->conn->formatter->fixSequenceName($matches[1]);
+                $decl['default']  = null;
+            } elseif (preg_match("/^'(.*)'::character varying$/", $decl['default'], $matches)) {
+                $decl['default'] = $matches[1];
+            } elseif (preg_match('/^(.*)::character varying$/', $decl['default'], $matches)) {
+                $decl['default'] = $matches[1];
+            } elseif ($decl['type'] == 'boolean') {
+                if ($decl['default'] === 'true') {
+                    $decl['default'] = true;
+                } elseif ($decl['default'] === 'false') {
+                    $decl['default'] = false;
                 }
             }
 
-            $columns[$val['field']] = $description;
+            $columns[] = new Column(
+                $val['field'],
+                Type::fromNative($decl['type'][0]),
+                // alltypes: $decl['type'],
+                length: $decl['length'],
+                fixed: (bool) $decl['fixed'],
+                unsigned: (bool) $decl['unsigned'],
+                primary: $val['pri'] == 't',
+                default: $val['default'],
+                notnull: $val['isnotnull'] == 'NO',
+                sequence: $decl['sequence'] ?? null,
+                values: $decl['values'] ?? [],
+            );
         }
 
         return $columns;
@@ -268,7 +263,7 @@ class Pgsql extends \Doctrine1\Import
         return $this->conn->fetchColumn($table);
     }
 
-    public function listTableRelations($table)
+    public function listTableRelations(string $table): array
     {
         $sql   = $this->sql['listTableRelations'];
         $param = ['^(' . $table . ')$'];

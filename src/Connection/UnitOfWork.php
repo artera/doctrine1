@@ -2,7 +2,9 @@
 
 namespace Doctrine1\Connection;
 
+use Doctrine1\Collection;
 use Doctrine1\IdentifierType;
+use Doctrine1\None;
 use PDOException;
 
 /**
@@ -14,12 +16,8 @@ class UnitOfWork extends \Doctrine1\Connection\Module
     /**
      * Saves the given record and all associated records.
      * (The save() operation is always cascaded in 0.10/1.0).
-     *
-     * @param  \Doctrine1\Record $record
-     * @param  bool            $replace
-     * @return bool
      */
-    public function saveGraph(\Doctrine1\Record $record, $replace = false)
+    public function saveGraph(\Doctrine1\Record $record, bool $replace = false): bool
     {
         $record->assignInheritanceValues();
 
@@ -126,14 +124,12 @@ class UnitOfWork extends \Doctrine1\Connection\Module
      * in an application-level delete cascade.
      *
      * this event can be listened by the onPreDelete and onDelete listeners
-     *
-     * @return boolean      true on success, false on failure
      */
-    public function delete(\Doctrine1\Record $record)
+    public function delete(\Doctrine1\Record $record): void
     {
         $deletions = [];
         $this->collectDeletions($record, $deletions);
-        return $this->executeDeletions($deletions);
+        $this->executeDeletions($deletions);
     }
 
     /**
@@ -141,10 +137,8 @@ class UnitOfWork extends \Doctrine1\Connection\Module
      * application-level delete cascades.
      *
      * @param array $deletions Map of the records to delete. Keys=Oids Values=Records.
-     *
-     * @return void
      */
-    private function collectDeletions(\Doctrine1\Record $record, array &$deletions)
+    private function collectDeletions(\Doctrine1\Record $record, array &$deletions): void
     {
         if (!$record->exists()) {
             return;
@@ -159,9 +153,8 @@ class UnitOfWork extends \Doctrine1\Connection\Module
      * (usually triggered through $record->delete()).
      *
      * @param  array $deletions Map of the records to delete. Keys=Oids Values=Records.
-     * @return true
      */
-    private function executeDeletions(array $deletions)
+    private function executeDeletions(array $deletions): void
     {
         // collect class names
         $classNames = [];
@@ -216,7 +209,7 @@ class UnitOfWork extends \Doctrine1\Connection\Module
                     $sql .= $this->buildSqlCompositeKeyCondition($columnNames, count($identifierMaps));
                     $this->conn->exec($sql, $params);
                 } else {
-                    $sql .= $this->buildSqlSingleKeyCondition($columnNames, count($params));
+                    $sql .= $this->buildSqlSingleKeyCondition($columnNames[0], count($params));
                     $this->conn->exec($sql, $params);
                 }
 
@@ -238,31 +231,29 @@ class UnitOfWork extends \Doctrine1\Connection\Module
         }
 
         $savepoint->commit();
-        return true;
     }
 
     /**
      * Builds the SQL condition to target multiple records who have a single-column
      * primary key.
      *
-     * @param  array   $columnNames
      * @param  integer $numRecords  The number of records that are going to be deleted.
      * @return string  The SQL condition "pk = ? OR pk = ? OR pk = ? ..."
      */
-    private function buildSqlSingleKeyCondition($columnNames, $numRecords)
+    private function buildSqlSingleKeyCondition(string $columnName, int $numRecords): string
     {
-        $idColumn = $this->conn->quoteIdentifier($columnNames[0]);
+        $idColumn = $this->conn->quoteIdentifier($columnName);
         return implode(' OR ', array_fill(0, $numRecords, "$idColumn = ?"));
     }
 
     /**
      * Builds the SQL condition to target multiple records who have a composite primary key.
      *
-     * @param  array   $columnNames
+     * @phpstan-param list<string> $columnNames
      * @param  integer $numRecords  The number of records that are going to be deleted.
      * @return string  The SQL condition "(pk1 = ? AND pk2 = ?) OR (pk1 = ? AND pk2 = ?) ..."
      */
-    private function buildSqlCompositeKeyCondition($columnNames, $numRecords)
+    private function buildSqlCompositeKeyCondition(array $columnNames, int $numRecords): string
     {
         $singleCondition = '';
         foreach ($columnNames as $columnName) {
@@ -289,9 +280,8 @@ class UnitOfWork extends \Doctrine1\Connection\Module
      *
      * @param  \Doctrine1\Record $record The record for which the delete operation will be cascaded.
      * @throws PDOException    If something went wrong at database level
-     * @return void
      */
-    protected function cascadeDelete(\Doctrine1\Record $record, array &$deletions)
+    protected function cascadeDelete(\Doctrine1\Record $record, array &$deletions): void
     {
         foreach ($record->getTable()->getRelations() as $relation) {
             if ($relation->isCascadeDelete()) {
@@ -319,16 +309,12 @@ class UnitOfWork extends \Doctrine1\Connection\Module
     }
 
     /**
-     * saveRelatedForeignKeys
      * saves all related (through ForeignKey) records to $record
      *
      * @throws PDOException         if something went wrong at database level
-     *
-     * @param \Doctrine1\Record $record
-     *
      * @return \Doctrine1\Relation\ForeignKey[]
      */
-    public function saveRelatedForeignKeys(\Doctrine1\Record $record)
+    public function saveRelatedForeignKeys(\Doctrine1\Record $record): array
     {
         $saveLater = [];
         foreach ($record->getReferences() as $k => $v) {
@@ -342,13 +328,10 @@ class UnitOfWork extends \Doctrine1\Connection\Module
     }
 
     /**
-     * saveRelatedLocalKeys
      * saves all related (through LocalKey) records to $record
      *
      * @throws PDOException         if something went wrong at database level
      * @throws \Doctrine1\Validator\Exception
-     *
-     * @param \Doctrine1\Record $record
      */
     public function saveRelatedLocalKeys(\Doctrine1\Record $record): void
     {
@@ -362,20 +345,22 @@ class UnitOfWork extends \Doctrine1\Connection\Module
                 $local   = $rel->getLocal();
                 $foreign = $rel->getForeign();
 
-                if ($rel instanceof \Doctrine1\Relation\LocalKey) {
-                    // ONE-TO-ONE relationship
-                    $obj = $record->get($rel->getAlias());
+                if (!$rel instanceof \Doctrine1\Relation\LocalKey) {
+                    continue;
+                }
 
-                    // Protection against infinite function recursion before attempting to save
-                    if ($obj instanceof \Doctrine1\Record && $obj->isModified()) {
-                        $obj->save($this->conn);
+                // ONE-TO-ONE relationship
+                $obj = $record->get($rel->getAlias());
 
-                        $id = array_values($obj->identifier());
+                // Protection against infinite function recursion before attempting to save
+                if ($obj instanceof \Doctrine1\Record && $obj->isModified()) {
+                    $obj->save($this->conn);
 
-                        if (count($id) === 1) {
-                            $field = $record->getTable()->getFieldName($rel->getLocal());
-                            $record->set($field, $id[0]);
-                        }
+                    $id = array_values($obj->identifier());
+
+                    if (count($id) === 1) {
+                        $field = $record->getTable()->getFieldName($rel->getLocal());
+                        $record->set($field, $id[0]);
                     }
                 }
             }
@@ -385,8 +370,6 @@ class UnitOfWork extends \Doctrine1\Connection\Module
     }
 
     /**
-     * saveAssociations
-     *
      * this method takes a diff of one-to-many / many-to-many original and
      * current collections and applies the changes
      *
@@ -397,36 +380,40 @@ class UnitOfWork extends \Doctrine1\Connection\Module
      *
      * @throws \Doctrine1\Connection\Exception         if something went wrong at database level
      * @param  \Doctrine1\Record $record
-     * @return void
      */
-    public function saveAssociations(\Doctrine1\Record $record)
+    public function saveAssociations(\Doctrine1\Record $record): void
     {
         foreach ($record->getReferences() as $k => $v) {
+            if ($v === null || $v instanceof None) {
+                continue;
+            }
+
             $rel = $record->getTable()->getRelation($k);
 
-            if ($rel instanceof \Doctrine1\Relation\Association) {
-                if ($this->conn->getCascadeSaves() || $v->isModified()) {
-                    $v->save($this->conn, false);
-                }
-
-                $assocTable = $rel->getAssociationTable();
-                foreach ($v->getDeleteDiff() as $r) {
-                    $query = 'DELETE FROM ' . $assocTable->getTableName()
-                           . ' WHERE ' . $rel->getForeignRefColumnName() . ' = ?'
-                           . ' AND ' . $rel->getLocalRefColumnName() . ' = ?';
-
-                    $this->conn->execute($query, [$r->getIncremented(), $record->getIncremented()]);
-                }
-
-                foreach ($v->getInsertDiff() as $r) {
-                    $assocRecord = $assocTable->create();
-                    $assocRecord->set($assocTable->getFieldName($rel->getForeign()), $r);
-                    $assocRecord->set($assocTable->getFieldName($rel->getLocal()), $record);
-                    $this->saveGraph($assocRecord);
-                }
-                // take snapshot of collection state, so that we know when its modified again
-                $v->takeSnapshot();
+            if (!$rel instanceof \Doctrine1\Relation\Association) {
+                continue;
             }
+
+            assert($v instanceof Collection);
+
+            if ($this->conn->getCascadeSaves() || $v->isModified()) {
+                $v->save($this->conn, false);
+            }
+
+            $assocTable = $rel->getAssociationTable();
+            foreach ($v->getDeleteDiff() as $r) {
+                $query = "DELETE FROM {$assocTable->getTableName()} WHERE {$rel->getForeignRefColumnName()} = ? AND {$rel->getLocalRefColumnName()} = ?";
+                $this->conn->execute($query, [$r->getIncremented(), $record->getIncremented()]);
+            }
+
+            foreach ($v->getInsertDiff() as $r) {
+                $assocRecord = $assocTable->create();
+                $assocRecord->set($assocTable->getFieldName($rel->getForeign()), $r);
+                $assocRecord->set($assocTable->getFieldName($rel->getLocal()), $record);
+                $this->saveGraph($assocRecord);
+            }
+            // take snapshot of collection state, so that we know when its modified again
+            $v->takeSnapshot();
         }
     }
 
@@ -453,13 +440,11 @@ class UnitOfWork extends \Doctrine1\Connection\Module
     }
 
     /**
-     * saveAll
      * persists all the pending records from all tables
      *
      * @throws PDOException         if something went wrong at database level
-     * @return void
      */
-    public function saveAll()
+    public function saveAll(): void
     {
         // get the flush tree
         $tree = $this->buildFlushTree($this->conn->getTables());
@@ -480,26 +465,25 @@ class UnitOfWork extends \Doctrine1\Connection\Module
     /**
      * updates given record
      *
-     * @param  \Doctrine1\Record $record record to be updated
      * @return boolean                  whether or not the update was successful
      */
     public function update(\Doctrine1\Record $record): bool
     {
         $event = $record->invokeSaveHooks('pre', 'update');
 
-        if ($record->isValid(false, false)) {
-            $table = $record->getTable();
-            $identifier = $record->identifier();
-            $array = $record->getPrepared();
-            $this->conn->update($table, $array, $identifier);
-            $record->assignIdentifier(true);
-
-            $record->invokeSaveHooks('post', 'update', $event);
-
-            return true;
+        if (!$record->isValid(false, false)) {
+            return false;
         }
 
-        return false;
+        $table = $record->getTable();
+        $identifier = $record->identifier();
+        $array = $record->getPrepared();
+        $this->conn->update($table, $array, $identifier);
+        $record->assignIdentifier(true);
+
+        $record->invokeSaveHooks('post', 'update', $event);
+
+        return true;
     }
 
     /**
@@ -510,65 +494,61 @@ class UnitOfWork extends \Doctrine1\Connection\Module
      * processSingleInsert(), trigger insert hooks and validation of data
      * if required.
      *
-     * @param  \Doctrine1\Record $record
      * @return boolean                  false if record is not valid
      */
     public function insert(\Doctrine1\Record $record): bool
     {
         $event = $record->invokeSaveHooks('pre', 'insert');
 
-        if ($record->isValid(false, false)) {
-            $table = $record->getTable();
-            $this->processSingleInsert($record);
-
-            $table->addRecord($record);
-            $record->invokeSaveHooks('post', 'insert', $event);
-
-            return true;
+        if (!$record->isValid(false, false)) {
+            return false;
         }
 
-        return false;
+        $table = $record->getTable();
+        $this->processSingleInsert($record);
+
+        $table->addRecord($record);
+        $record->invokeSaveHooks('post', 'insert', $event);
+
+        return true;
     }
 
     /**
      * Replaces a record into database.
      *
-     * @param  \Doctrine1\Record $record
      * @return boolean                  false if record is not valid
      */
-    public function replace(\Doctrine1\Record $record)
+    public function replace(\Doctrine1\Record $record): bool
     {
         if ($record->exists()) {
             return $this->update($record);
-        } else {
-            if ($record->isValid()) {
-                $this->assignSequence($record);
+        } elseif (!$record->isValid()) {
+            return false;
+        }
 
-                $saveEvent   = $record->invokeSaveHooks('pre', 'save');
-                $insertEvent = $record->invokeSaveHooks('pre', 'insert');
+        $this->assignSequence($record);
 
-                $table      = $record->getTable();
-                $identifier = (array) $table->getIdentifier();
-                $data       = $record->getPrepared();
+        $saveEvent   = $record->invokeSaveHooks('pre', 'save');
+        $insertEvent = $record->invokeSaveHooks('pre', 'insert');
 
-                foreach ($data as $key => $value) {
-                    if ($value instanceof \Doctrine1\Expression) {
-                        $data[$key] = $value->getSql();
-                    }
-                }
+        $table      = $record->getTable();
+        $identifier = (array) $table->getIdentifier();
+        $data       = $record->getPrepared();
 
-                $result = $this->conn->replace($table, $data, $identifier);
-
-                $record->invokeSaveHooks('post', 'insert', $insertEvent);
-                $record->invokeSaveHooks('post', 'save', $saveEvent);
-
-                $this->assignIdentifier($record);
-
-                return true;
-            } else {
-                return false;
+        foreach ($data as $key => $value) {
+            if ($value instanceof \Doctrine1\Expression) {
+                $data[$key] = $value->getSql();
             }
         }
+
+        $result = $this->conn->replace($table, $data, $identifier);
+
+        $record->invokeSaveHooks('post', 'insert', $insertEvent);
+        $record->invokeSaveHooks('post', 'save', $saveEvent);
+
+        $this->assignIdentifier($record);
+
+        return true;
     }
 
     /**
@@ -576,11 +556,8 @@ class UnitOfWork extends \Doctrine1\Connection\Module
      *
      * This method inserts the data of a single record in its assigned table,
      * assigning to it the autoincrement primary key (if any is defined).
-     *
-     * @param  \Doctrine1\Record $record
-     * @return void
      */
-    public function processSingleInsert(\Doctrine1\Record $record)
+    public function processSingleInsert(\Doctrine1\Record $record): void
     {
         $fields = $record->getPrepared();
         $table  = $record->getTable();
@@ -598,7 +575,6 @@ class UnitOfWork extends \Doctrine1\Connection\Module
     }
 
     /**
-     * buildFlushTree
      * builds a flush tree that is used in transactions
      *
      * The returned array has all the initialized components in
@@ -608,7 +584,7 @@ class UnitOfWork extends \Doctrine1\Connection\Module
      * @param  (\Doctrine1\Table|class-string<\Doctrine1\Record>)[] $tables an array of \Doctrine1\Table objects or component names
      * @return array            an array of component names in flushing order
      */
-    public function buildFlushTree(array $tables)
+    public function buildFlushTree(array $tables): array
     {
         // determine classes to order. only necessary because the $tables param
         // can contain strings or table objects...
@@ -728,11 +704,7 @@ class UnitOfWork extends \Doctrine1\Connection\Module
         return array_values($flushList);
     }
 
-    /**
-     * @param  array $fields
-     * @return int|null
-     */
-    protected function assignSequence(\Doctrine1\Record $record, &$fields = null)
+    protected function assignSequence(\Doctrine1\Record $record, array &$fields = null): ?int
     {
         $table = $record->getTable();
         $seq   = $table->sequenceName;
@@ -755,10 +727,7 @@ class UnitOfWork extends \Doctrine1\Connection\Module
         return null;
     }
 
-    /**
-     * @return void
-     */
-    protected function assignIdentifier(\Doctrine1\Record $record)
+    protected function assignIdentifier(\Doctrine1\Record $record): void
     {
         $table      = $record->getTable();
         $identifier = $table->getIdentifier();

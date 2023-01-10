@@ -30,7 +30,7 @@ namespace Tests\Tickets {
 namespace {
     class Ticket_1315_Listener extends \Doctrine1\Record\Listener
     {
-        public function preDqlSelect(\Doctrine1\Event $event)
+        public function preDqlSelect(\Doctrine1\Event $event): void
         {
             throw new \Doctrine1\Exception('Test');
         }

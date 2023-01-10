@@ -43,7 +43,7 @@ namespace Tests\Tickets {
 namespace {
     class Ticket1205HydrationListener extends \Doctrine1\Record\Listener
     {
-        public function postHydrate(\Doctrine1\Event $event)
+        public function postHydrate(\Doctrine1\Event $event): void
         {
             throw new \Exception('This is called so we are successfull!');
         }

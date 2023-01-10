@@ -64,6 +64,7 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
 
     /**
      * an array containing all the references
+     * @phpstan-var array<string, Record|Collection|None|null>
      */
     protected array $_references = [];
 
@@ -192,11 +193,8 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
      * Set whether or not to serialize references.
      * This is used by caching since we want to serialize references when caching
      * but not when just normally serializing a instance
-     *
-     * @param  boolean $bool
-     * @return boolean $bool
      */
-    public function serializeReferences($bool = null)
+    public function serializeReferences(bool $bool = null): bool
     {
         if ($bool !== null) {
             $this->_serializeReferences = $bool;
@@ -207,8 +205,6 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
     /**
      * this method is used for setting up relations and attributes
      * it should be implemented by child classes
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -219,13 +215,10 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
     }
 
     /**
-     * construct
      * Empty template method to provide concrete Record classes with the possibility
      * to hook into the constructor procedure
-     *
-     * @return void
      */
-    public function construct()
+    public function construct(): void
     {
     }
 
@@ -244,12 +237,12 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
      * $this->invokeSaveHooks('pre', 'save');
      * </code>
      *
-     * @param  string         $when  'post' or 'pre'
-     * @param  string         $type  serialize, unserialize, save, delete, update, insert, validate, dqlSelect, dqlDelete, hydrate
+     * @phpstan-param 'post'|'pre' $when
+     * @phpstan-param 'serialize'|'unserialize'|'save'|'delete'|'update'|'insert'|'validate'|'dqlSelect'|'dqlDelete'|'hydrate' $type
      * @param  Event $event event raised
      * @return Event        the event generated using the type, if not specified
      */
-    public function invokeSaveHooks($when, $type, $event = null)
+    public function invokeSaveHooks(string $when, string $type, ?Event $event = null): Event
     {
         $func = $when . ucfirst($type);
 
@@ -272,10 +265,8 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
 
     /**
      * makes all the already used save hooks available again
-     *
-     * @return void
      */
-    public function clearInvokedSaveHooks()
+    public function clearInvokedSaveHooks(): void
     {
         $this->_invokedSaveHooks = [];
     }
@@ -287,7 +278,7 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
      * @param  boolean $hooks invoke save hooks before start
      * @return boolean        whether or not this record is valid
      */
-    public function isValid($deep = false, $hooks = true)
+    public function isValid(bool $deep = false, bool $hooks = true): bool
     {
         if (!$this->_table->getValidate()) {
             return true;
@@ -354,10 +345,8 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
      * Empty template method to provide concrete Record classes with the possibility
      * to hook into the validation procedure, doing any custom / specialized
      * validations that are neccessary.
-     *
-     * @return void
      */
-    protected function validate()
+    protected function validate(): void
     {
     }
 
@@ -365,10 +354,8 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
      * Empty template method to provide concrete Record classes with the possibility
      * to hook into the validation procedure only when the record is going to be
      * updated.
-     *
-     * @return void
      */
-    protected function validateOnUpdate()
+    protected function validateOnUpdate(): void
     {
     }
 
@@ -376,98 +363,72 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
      * Empty template method to provide concrete Record classes with the possibility
      * to hook into the validation procedure only when the record is going to be
      * inserted into the data store the first time.
-     *
-     * @return void
      */
-    protected function validateOnInsert()
+    protected function validateOnInsert(): void
     {
     }
 
     /**
      * Empty template method to provide concrete Record classes with the possibility
      * to hook into the serializing procedure.
-     *
-     * @param  Event $event
-     * @return void
      */
-    public function preSerialize($event)
+    public function preSerialize(Event $event): void
     {
     }
 
     /**
      * Empty template method to provide concrete Record classes with the possibility
      * to hook into the serializing procedure.
-     *
-     * @param  Event $event
-     * @return void
      */
-    public function postSerialize($event)
+    public function postSerialize(Event $event): void
     {
     }
 
     /**
      * Empty template method to provide concrete Record classes with the possibility
      * to hook into the serializing procedure.
-     *
-     * @param  Event $event
-     * @return void
      */
-    public function preUnserialize($event)
+    public function preUnserialize(Event $event): void
     {
     }
 
     /**
      * Empty template method to provide concrete Record classes with the possibility
      * to hook into the serializing procedure.
-     *
-     * @param  Event $event
-     * @return void
      */
-    public function postUnserialize($event)
+    public function postUnserialize(Event $event): void
     {
     }
 
     /**
      * Empty template method to provide concrete Record classes with the possibility
      * to hook into the saving procedure.
-     *
-     * @param  Event $event
-     * @return void
      */
-    public function preSave($event)
+    public function preSave(Event $event): void
     {
     }
 
     /**
      * Empty template method to provide concrete Record classes with the possibility
      * to hook into the saving procedure.
-     *
-     * @param  Event $event
-     * @return void
      */
-    public function postSave($event)
+    public function postSave(Event $event): void
     {
     }
 
     /**
      * Empty template method to provide concrete Record classes with the possibility
      * to hook into the deletion procedure.
-     *
-     * @param  Event $event
-     * @return void
      */
-    public function preDelete($event)
+    public function preDelete(Event $event): void
     {
     }
 
     /**
      * Empty template method to provide concrete Record classes with the possibility
      * to hook into the deletion procedure.
-     *
-     * @param  Event $event
-     * @return void
      */
-    public function postDelete($event)
+    public function postDelete(Event $event): void
     {
     }
 
@@ -475,11 +436,8 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
      * Empty template method to provide concrete Record classes with the possibility
      * to hook into the saving procedure only when the record is going to be
      * updated.
-     *
-     * @param  Event $event
-     * @return void
      */
-    public function preUpdate($event)
+    public function preUpdate(Event $event): void
     {
     }
 
@@ -487,35 +445,26 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
      * Empty template method to provide concrete Record classes with the possibility
      * to hook into the saving procedure only when the record is going to be
      * updated.
-     *
-     * @param  Event $event
-     * @return void
      */
-    public function postUpdate($event)
+    public function postUpdate(Event $event): void
     {
     }
 
     /**
      * Empty template method to provide concrete Record classes with the possibility
      * to hook into the saving procedure only when the record is going to be
-     * inserted into the data store the first time.
-     *
-     * @param  Event $event
-     * @return void
+     * inserted into the data store the first tim
      */
-    public function preInsert($event)
+    public function preInsert(Event $event): void
     {
     }
 
     /**
      * Empty template method to provide concrete Record classes with the possibility
      * to hook into the saving procedure only when the record is going to be
-     * inserted into the data store the first time.
-     *
-     * @param  Event $event
-     * @return void
+     * inserted into the data store the first time
      */
-    public function postInsert($event)
+    public function postInsert(Event $event): void
     {
     }
 
@@ -523,76 +472,55 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
      * Empty template method to provide concrete Record classes with the possibility
      * to hook into the validation procedure. Useful for cleaning up data before
      * validating it.
-     *
-     * @param  Event $event
-     * @return void
      */
-    public function preValidate($event)
+    public function preValidate(Event $event): void
     {
     }
     /**
      * Empty template method to provide concrete Record classes with the possibility
      * to hook into the validation procedure.
-     *
-     * @param  Event $event
-     * @return void
      */
-    public function postValidate($event)
+    public function postValidate(Event $event): void
     {
     }
 
     /**
      * Empty template method to provide Record classes with the ability to alter DQL select
      * queries at runtime
-     *
-     * @param  Event $event
-     * @return void
      */
-    public function preDqlSelect($event)
+    public function preDqlSelect(Event $event): void
     {
     }
 
     /**
      * Empty template method to provide Record classes with the ability to alter DQL update
      * queries at runtime
-     *
-     * @param  Event $event
-     * @return void
      */
-    public function preDqlUpdate($event)
+    public function preDqlUpdate(Event $event): void
     {
     }
 
     /**
      * Empty template method to provide Record classes with the ability to alter DQL delete
      * queries at runtime
-     *
-     * @param  Event $event
-     * @return void
      */
-    public function preDqlDelete($event)
+    public function preDqlDelete(Event $event): void
     {
     }
 
     /**
      * Empty template method to provide Record classes with the ability to alter hydration
      * before it runs
-     *
-     * @param  Event $event
-     * @return void
      */
-    public function preHydrate($event)
+    public function preHydrate(Event $event): void
     {
     }
 
     /**
      * Empty template method to provide Record classes with the ability to alter hydration
      * after it runs
-     *
-     * @param  Event $event
-     * @return void
      */
-    public function postHydrate($event)
+    public function postHydrate(Event $event): void
     {
     }
 
@@ -622,7 +550,7 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
      *
      * @return Validator\ErrorStack    returns the errorStack associated with this record
      */
-    public function getErrorStack()
+    public function getErrorStack(): Validator\ErrorStack
     {
         if ($this->_errorStack === null) {
             $this->_errorStack = new Validator\ErrorStack(static::class);
@@ -648,10 +576,8 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
 
     /**
      * Assign the inheritance column values
-     *
-     * @return void
      */
-    public function assignInheritanceValues()
+    public function assignInheritanceValues(): void
     {
         $map = $this->_table->inheritanceMap;
         foreach ($map as $k => $v) {
@@ -665,7 +591,6 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
     }
 
     /**
-     * setDefaultValues
      * sets the default values for records internal data
      *
      * @param  boolean $overwrite whether or not to overwrite the already set values
@@ -763,13 +688,11 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
     }
 
     /**
-     * prepareIdentifiers
      * prepares identifiers for later use
      *
      * @param  boolean $exists whether or not this record exists in persistent data store
-     * @return void
      */
-    private function prepareIdentifiers($exists = true)
+    private function prepareIdentifiers(bool $exists = true): void
     {
         if ($this->_table->getIdentifierType() === null) {
             return;
@@ -927,7 +850,6 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
     }
 
     /**
-     * refresh
      * refresh internal data from the database
      *
      * @param bool $deep If true, fetch also current relations. Caution: this deletes
@@ -985,7 +907,6 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
     }
 
     /**
-     * refresh
      * refresh data of related objects from the database
      *
      * @param string|null $name name of a related component.
@@ -1032,7 +953,6 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
      * Clear a related reference or all references
      *
      * @param  string|null $name The relationship reference to clear
-     * @return void
      */
     public function clearRelated(?string $name = null): void
     {
@@ -1093,7 +1013,7 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
      * @return array                        an array containing all the properties
      * @phpstan-return array<string, mixed>
      */
-    public function getData()
+    public function getData(): array
     {
         return $this->_data;
     }
@@ -1104,9 +1024,8 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
      *
      * @param  string $fieldName name of the property
      * @throws Record\Exception    if trying to get an unknown property
-     * @return mixed
      */
-    public function rawGet($fieldName)
+    public function rawGet(string $fieldName): mixed
     {
         if (!array_key_exists($fieldName, $this->_data)) {
             throw new Record\Exception('Unknown property ' . $fieldName);
@@ -1125,7 +1044,7 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
      * @param  array $data overwriting data to load in the record. Instance is hydrated from the table if not specified.
      * @return boolean
      */
-    public function load(array $data = [])
+    public function load(array $data = []): bool
     {
         // only load the data from database if the Record is in proxy state
         if ($this->exists() && $this->isInProxyState()) {
@@ -1166,10 +1085,8 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
 
     /**
      * indicates whether record has any not loaded fields
-     *
-     * @return boolean
      */
-    public function isInProxyState()
+    public function isInProxyState(): bool
     {
         $count = 0;
         foreach ($this->_data as $value) {
@@ -1186,12 +1103,8 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
     /**
      * sets a fieldname to have a custom accessor or check if a field has a custom
      * accessor defined (when called without $accessor parameter).
-     *
-     * @param  string $fieldName
-     * @param  string $accessor
-     * @return boolean|null
      */
-    public function hasAccessor($fieldName, $accessor = null)
+    public function hasAccessor(string $fieldName, ?string $accessor = null): ?bool
     {
         $componentName = $this->_table->getComponentName();
         if ($accessor) {
@@ -1205,11 +1118,8 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
 
     /**
      * clears the accessor for a field name
-     *
-     * @param  string $fieldName
-     * @return void
      */
-    public function clearAccessor($fieldName)
+    public function clearAccessor(string $fieldName): void
     {
         $componentName = $this->_table->getComponentName();
         unset(self::$_customAccessors[$componentName][$fieldName]);
@@ -1221,7 +1131,7 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
      * @param  string $fieldName
      * @return string|null $accessor
      */
-    public function getAccessor($fieldName)
+    public function getAccessor(string $fieldName): ?string
     {
         if ($this->hasAccessor($fieldName)) {
             $componentName = $this->_table->getComponentName();
@@ -1233,10 +1143,8 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
 
     /**
      * gets all accessors for this component instance
-     *
-     * @return array $accessors
      */
-    public function getAccessors()
+    public function getAccessors(): array
     {
         $componentName = $this->_table->getComponentName();
         return isset(self::$_customAccessors[$componentName]) ? self::$_customAccessors[$componentName] : [];
@@ -1245,12 +1153,8 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
     /**
      * sets a fieldname to have a custom mutator or check if a field has a custom
      * mutator defined (when called without the $mutator parameter)
-     *
-     * @param  string $fieldName
-     * @param  string $mutator
-     * @return boolean|null
      */
-    public function hasMutator($fieldName, $mutator = null)
+    public function hasMutator(string $fieldName, ?string $mutator = null): ?bool
     {
         $componentName = $this->_table->getComponentName();
         if ($mutator) {
@@ -1264,11 +1168,8 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
 
     /**
      * gets the custom mutator for a field name
-     *
-     * @param  string $fieldName
-     * @return string|null
      */
-    public function getMutator($fieldName)
+    public function getMutator(string $fieldName): ?string
     {
         if ($this->hasMutator($fieldName)) {
             $componentName = $this->_table->getComponentName();
@@ -1280,11 +1181,8 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
 
     /**
      * clears the custom mutator for a field name
-     *
-     * @param  string $fieldName
-     * @return void
      */
-    public function clearMutator($fieldName)
+    public function clearMutator(string $fieldName): void
     {
         $componentName = $this->_table->getComponentName();
         unset(self::$_customMutators[$componentName][$fieldName]);
@@ -1292,10 +1190,8 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
 
     /**
      * gets all custom mutators for this component instance
-     *
-     * @return array $mutators
      */
-    public function getMutators()
+    public function getMutators(): array
     {
         $componentName = $this->_table->getComponentName();
         return self::$_customMutators[$componentName];
@@ -1303,14 +1199,8 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
 
     /**
      * Set a fieldname to have a custom accessor and mutator
-     *
-     * @param string $fieldName
-     * @param string $accessor
-     * @param string $mutator
-     *
-     * @return void
      */
-    public function hasAccessorMutator($fieldName, $accessor, $mutator)
+    public function hasAccessorMutator(string $fieldName, ?string $accessor, ?string $mutator): void
     {
         $this->hasAccessor($fieldName, $accessor);
         $this->hasMutator($fieldName, $mutator);
@@ -1322,9 +1212,8 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
      * @param  string  $fieldName name of the property or related component
      * @param  boolean $load      whether or not to invoke the loading procedure
      * @throws Record\Exception        if trying to get a value of unknown property / related component
-     * @return mixed
      */
-    public function get($fieldName, $load = true, bool $accessors = false)
+    public function get(string $fieldName, bool $load = true, bool $accessors = false): mixed
     {
         static $inAccessor = [];
 
@@ -1400,16 +1289,15 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
     /**
      * alters mapped values, properties and related components.
      *
-     * @param mixed   $fieldName name of the property or reference
+     * @param string  $fieldName name of the property or reference
      * @param mixed   $value     value of the property or reference
      * @param boolean $load      whether or not to refresh / load the uninitialized record data
      *
      * @throws Record\Exception    if trying to set a value for unknown property / related component
      * @throws Record\Exception    if trying to set a value of wrong type for related component
-     *
      * @return $this
      */
-    public function set($fieldName, $value, $load = true, bool $mutators = false)
+    public function set(string $fieldName, mixed $value, bool $load = true, bool $mutators = false): self
     {
         static $inMutator = [];
 
@@ -1455,7 +1343,6 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
                 if ($value === null) {
                     $value = $this->_table->getDefaultValueOf($fieldName);
                 }
-                /** @phpstan-ignore-next-line */
                 $this->_data[$fieldName] = $value;
                 $this->_modified[] = $fieldName;
                 $this->_oldValues[$fieldName] = $old;
@@ -1473,7 +1360,7 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
         } else {
             try {
                 $this->coreSetRelated($fieldName, $value);
-            } catch (Table\Exception $e) {
+            } catch (Table\Exception|\TypeError $e) {
                 $success = false;
                 foreach ($this->_table->getFilters() as $filter) {
                     try {
@@ -1508,11 +1395,8 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
 
     /**
      * deletes a column or a related component.
-     *
-     * @param  string $name
-     * @return void
      */
-    public function __unset($name)
+    public function __unset(string $name): void
     {
         if (array_key_exists($name, $this->_data)) {
             $this->_data[$name] = [];
@@ -1562,9 +1446,8 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
      *
      * @param  string $name  the name of the mapped value
      * @param  mixed  $value mixed value to be mapped
-     * @return void
      */
-    public function mapValue($name, $value = null)
+    public function mapValue(string $name, mixed $value = null): void
     {
         $this->_values[$name] = $value;
     }
@@ -1573,9 +1456,8 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
      * Tests whether a mapped value exists
      *
      * @param  string $name the name of the property
-     * @return boolean
      */
-    public function hasMappedValue($name)
+    public function hasMappedValue(string $name): bool
     {
         return array_key_exists($name, $this->_values);
     }
@@ -1641,13 +1523,13 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
      * This method inserts a related component instance in this record
      * relations, populating the foreign keys accordingly.
      *
-     * @param  string                                   $name  related component alias in the relation
-     * @param  Record|Collection|null $value object to be linked as a related component
+     * @param  string $name  related component alias in the relation
+     * @param  Record|Collection|None|null $value object to be linked as a related component
      * @return $this|null
      *
      * @todo Refactor. What about composite keys?
      */
-    public function coreSetRelated($name, $value)
+    public function coreSetRelated(string $name, Record|Collection|None|null $value): ?self
     {
         $rel = $this->_table->getRelation($name);
 
@@ -1659,13 +1541,12 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
         if ($rel instanceof Relation\ForeignKey || $rel instanceof Relation\LocalKey) {
             if (!$rel->isOneToOne()) {
                 // one-to-many relation found
-                if (!($value instanceof Collection)) {
+                if (!$value instanceof Collection) {
                     throw new Record\Exception("Couldn't call Core::set(), second argument should be an instance of Collection when setting one-to-many references.");
                 }
 
-                if (isset($this->_references[$name])) {
+                if (isset($this->_references[$name]) && $this->_references[$name] instanceof Collection) {
                     $this->_references[$name]->setData($value->getData());
-
                     return $this;
                 }
             } else {
@@ -1678,7 +1559,7 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
                 }
 
                 // one-to-one relation found
-                if (!($value instanceof Record) && !$value instanceof None) {
+                if (!$value instanceof Record && !$value instanceof None) {
                     throw new Record\Exception("Couldn't call Core::set(), second argument should be an instance of Record or None when setting one-to-one references.");
                 }
 
@@ -1733,30 +1614,24 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
 
     /**
      * returns Record instances which need to be deleted on save
-     *
-     * @return array
      */
-    public function getPendingDeletes()
+    public function getPendingDeletes(): array
     {
         return $this->_pendingDeletes;
     }
 
     /**
      * returns Record instances which need to be unlinked (deleting the relation) on save
-     *
-     * @return array $pendingUnlinks
      */
-    public function getPendingUnlinks()
+    public function getPendingUnlinks(): array
     {
         return $this->_pendingUnlinks;
     }
 
     /**
      * resets pending record unlinks
-     *
-     * @return void
      */
-    public function resetPendingUnlinks()
+    public function resetPendingUnlinks(): void
     {
         $this->_pendingUnlinks = [];
     }
@@ -1771,9 +1646,8 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
      * @param  Connection $conn optional connection parameter
      * @throws Exception                    if record is not valid and validation is active
      * @throws Validator\Exception if record is not valid and validation is active
-     * @return void
      */
-    public function save(Connection $conn = null)
+    public function save(Connection $conn = null): void
     {
         if ($conn === null) {
             $conn = $this->_table->getConnection();
@@ -1790,7 +1664,7 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
      * @param  Connection $conn optional connection parameter
      * @return bool TRUE if the record was saved sucessfully without errors, FALSE otherwise.
      */
-    public function trySave(Connection $conn = null)
+    public function trySave(Connection $conn = null): bool
     {
         try {
             $this->save($conn);
@@ -1815,9 +1689,8 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
      * @throws Connection\Exception        if some of the key values was null
      * @throws Connection\Exception        if there were no key fields
      * @throws Connection\Exception        if something fails at database level
-     * @return bool
      */
-    public function replace(Connection $conn = null)
+    public function replace(Connection $conn = null): bool
     {
         if ($conn === null) {
             $conn = $this->_table->getConnection();
@@ -1830,7 +1703,6 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
      *
      * @param          boolean $old  pick the old values (instead of the new ones)
      * @param          boolean $last pick only lastModified values (@see getLastModified())
-     * @return         array $a
      * @phpstan-return array<string, mixed>
      */
     public function getModified(bool $old = false, bool $last = false): array
@@ -1863,9 +1735,8 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
      * returns an array of the modified fields from the last transaction.
      *
      * @param  boolean $old pick the old values (instead of the new ones)
-     * @return array
      */
-    public function getLastModified($old = false)
+    public function getLastModified(bool $old = false): array
     {
         return $this->getModified($old, true);
     }
@@ -1895,10 +1766,9 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
      * adds column aggregation inheritance and converts Records into primary
      * key values.
      *
-     * @return array
      * @todo   What about a little bit more expressive name? getPreparedData?
      */
-    public function getPrepared()
+    public function getPrepared(): array
     {
         $prepared = [];
         $modifiedFields = $this->_modified;
@@ -1942,7 +1812,7 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
     /**
      * implements Countable interface
      *
-     * @return integer          the number of columns in this record
+     * @return integer the number of columns in this record
      */
     public function count(): int
     {
@@ -1951,10 +1821,8 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
 
     /**
      * alias for @see count()
-     *
-     * @return integer          the number of columns in this record
      */
-    public function columnCount()
+    public function columnCount(): int
     {
         return $this->count();
     }
@@ -1966,7 +1834,7 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
      * @param boolean $prefixKey not used
      * @phpstan-return array<string, mixed>|null
      */
-    public function toArray($deep = true, $prefixKey = false): ?array
+    public function toArray(bool $deep = true, bool $prefixKey = false): ?array
     {
         if ($this->_state->isLocked()) {
             return null;
@@ -2028,9 +1896,8 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
      * @link   http://www.doctrine-project.org/documentation/manual/1_1/en/working-with-models
      * @param  array|Record $data array of data to merge, see link for documentation
      * @param  bool                  $deep whether or not to merge relations
-     * @return void
      */
-    public function merge($data, $deep = true)
+    public function merge(array|Record $data, bool $deep = true): void
     {
         if ($data instanceof $this) {
             $array = $data->toArray($deep) ?: [];
@@ -2049,9 +1916,8 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
      * @link   http://www.doctrine-project.org/documentation/manual/1_1/en/working-with-models
      * @param  array $array array of data, see link for documentation
      * @param  bool  $deep  whether or not to act on relations
-     * @return void
      */
-    public function fromArray(array $array, $deep = true)
+    public function fromArray(array $array, bool $deep = true): void
     {
         $refresh = false;
         foreach ($array as $key => $value) {
@@ -2108,10 +1974,8 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
      *
      * @param array $array representation of a Record
      * @param bool  $deep  whether or not to act on relations
-     *
-     * @return void
      */
-    public function synchronizeWithArray(array $array, $deep = true)
+    public function synchronizeWithArray(array $array, bool $deep = true): void
     {
         $refresh = false;
         foreach ($array as $key => $value) {
@@ -2160,10 +2024,8 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
 
     /**
      * returns true if this record is saved in the database, otherwise false (it is transient)
-     *
-     * @return boolean
      */
-    public function exists()
+    public function exists(): bool
     {
         return !$this->_state->isTransient();
     }
@@ -2172,9 +2034,8 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
      * returns true if this record was modified, otherwise false
      *
      * @param  boolean $deep whether to process also the relations for changes
-     * @return boolean
      */
-    public function isModified($deep = false)
+    public function isModified(bool $deep = false): bool
     {
         $modified = $this->_state->isDirty();
         if (!$modified && $deep) {
@@ -2209,10 +2070,9 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
     /**
      * checks existence of properties and related components
      *
-     * @param  mixed $fieldName name of the property or reference
-     * @return boolean
+     * @param  string $fieldName name of the property or reference
      */
-    public function hasRelation($fieldName)
+    public function hasRelation(string $fieldName): bool
     {
         if (isset($this->_data[$fieldName]) || isset($this->_id[$fieldName])) {
             return true;
@@ -2235,15 +2095,13 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
      * this operation is isolated by a transaction
      *
      * this event can be listened by the onPreDelete and onDelete listeners
-     *
-     * @return boolean      true if successful
      */
-    public function delete(Connection $conn = null)
+    public function delete(Connection $conn = null): void
     {
         if ($conn == null) {
             $conn = $this->_table->getConnection();
         }
-        return $conn->unitOfWork->delete($this);
+        $conn->unitOfWork->delete($this);
     }
 
     /**
@@ -2252,7 +2110,7 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
      * @param  boolean $deep whether to duplicates the objects targeted by the relations
      * @return static
      */
-    public function copy($deep = false)
+    public function copy(bool $deep = false): self
     {
         $data   = $this->_data;
         $idtype = $this->_table->getIdentifierType();
@@ -2291,9 +2149,8 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
      * assigns an identifier to the instance, for database storage
      *
      * @param  scalar|array<string, scalar> $id a key value or an array of keys
-     * @return void
      */
-    public function assignIdentifier($id = false)
+    public function assignIdentifier(mixed $id = false): void
     {
         if ($id === false) {
             $this->_id = [];
@@ -2323,21 +2180,17 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
 
     /**
      * returns the primary keys of this object
-     *
-     * @return array
      */
-    public function identifier()
+    public function identifier(): array
     {
         return $this->_id;
     }
 
     /**
      * returns the value of autoincremented primary key of this object (if any)
-     *
-     * @return integer|null
      * @todo   Better name?
      */
-    final public function getIncremented()
+    final public function getIncremented(): int|string|null
     {
         $id = current($this->_id);
         if ($id === false) {
@@ -2348,14 +2201,13 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
     }
 
     /**
-     * getLast
      * this method is used internally by Query
      * it is needed to provide compatibility between
      * records and collections
      *
      * @return $this
      */
-    public function getLast()
+    public function getLast(): self
     {
         return $this;
     }
@@ -2364,22 +2216,18 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
      * tests whether a relation is set
      *
      * @param  string $name relation alias
-     * @return boolean
      */
-    public function hasReference($name)
+    public function hasReference(string $name): bool
     {
         return isset($this->_references[$name]);
     }
 
     /**
      * gets a related component
-     *
-     * @param  string $name
-     * @return Record|Collection|null
      */
-    public function reference($name)
+    public function reference(string $name): Record|Collection|null
     {
-        if (isset($this->_references[$name])) {
+        if (isset($this->_references[$name]) && !$this->_references[$name] instanceof None) {
             return $this->_references[$name];
         }
 
@@ -2389,13 +2237,11 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
     /**
      * gets a related component and fails if it does not exist
      *
-     * @param  string $name
-     * @return Record|Collection
      * @throws Record\Exception        if trying to get an unknown related component
      */
-    public function obtainReference($name)
+    public function obtainReference(string $name): Record|Collection
     {
-        if (isset($this->_references[$name])) {
+        if (isset($this->_references[$name]) && !$this->_references[$name] instanceof None) {
             return $this->_references[$name];
         }
         throw new Record\Exception("Unknown reference $name");
@@ -2404,49 +2250,41 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
     /**
      * get all related components
      *
+     * @phpstan-return array<string, Record|Collection|null|None>
      * @return array    various Collection or Record instances
      */
-    public function getReferences()
+    public function getReferences(): array
     {
         return $this->_references;
     }
 
     /**
      * set a related component
-     *
-     * @param string $alias
-     * @param Record|Collection $coll
-     *
-     * @return void
      */
-    final public function setRelated($alias, Record|Collection $coll)
+    final public function setRelated(string $alias, Record|Collection $coll): void
     {
         $this->_references[$alias] = $coll;
     }
 
     /**
-     * loadReference
      * loads a related component
      *
      * @throws Table\Exception             if trying to load an unknown related component
      * @param  string $name alias of the relation
-     * @return void
      */
-    public function loadReference($name)
+    public function loadReference(string $name): void
     {
-        $rel                      = $this->_table->getRelation($name);
+        $rel = $this->_table->getRelation($name);
         $this->_references[$name] = $rel->fetchRelatedFor($this);
     }
 
     /**
-     * call
-     *
      * @param  callable $callback valid callback
      * @param  string   $column   column name
      * @param  mixed    ...$args  optional callback arguments
-     * @return $this provides a fluent interface
+     * @return $this
      */
-    public function call($callback, $column, ...$args)
+    public function call(callable $callback, string $column, mixed ...$args): self
     {
         // Put $column on front of $args to maintain previous behavior
         array_unshift($args, $column);
@@ -2471,16 +2309,15 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
     }
 
     /**
-     * unlink
      * removes links from this record to given records
      * if no ids are given, it removes all links
      *
      * @param  string  $alias related component alias
-     * @param  array   $ids   the identifiers of the related records
+     * @param  array|string|int   $ids   the identifiers of the related records
      * @param  boolean $now   whether or not to execute now or set as pending unlinks
-     * @return $this  this object (fluent interface)
+     * @return $this
      */
-    public function unlink($alias, $ids = [], $now = false)
+    public function unlink(string $alias, array|string|int $ids = [], bool $now = false): self
     {
         $ids = (array) $ids;
 
@@ -2490,7 +2327,7 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
         }
 
         $allIds = [];
-        if (isset($this->_references[$alias])) {
+        if (isset($this->_references[$alias]) && !$this->_references[$alias] instanceof None) {
             if ($this->_references[$alias] instanceof Record) {
                 $allIds[] = $this->_references[$alias]->identifier();
                 if (in_array($this->_references[$alias]->identifier(), $ids) || empty($ids)) {
@@ -2524,9 +2361,9 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
      *
      * @param  string $alias related component alias
      * @param  array  $ids   the identifiers of the related records
-     * @return $this  this object (fluent interface)
+     * @return $this
      */
-    public function unlinkInDb($alias, $ids = [])
+    public function unlinkInDb(string $alias, array $ids = []): self
     {
         $rel = $this->getTable()->getRelation($alias);
 
@@ -2564,11 +2401,11 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
      * creates links from this record to given records
      *
      * @param  string  $alias related component alias
-     * @param  array   $ids   the identifiers of the related records
+     * @param  array|string|int   $ids   the identifiers of the related records
      * @param  boolean $now   wether or not to execute now or set pending
-     * @return $this  this object (fluent interface)
+     * @return $this
      */
-    public function link($alias, $ids, $now = false)
+    public function link(string $alias, array|string|int $ids, bool $now = false): self
     {
         $ids = (array) $ids;
 
@@ -2618,9 +2455,9 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
      *
      * @param  string $alias related component alias
      * @param  array  $ids   the identifiers of the related records
-     * @return $this  this object (fluent interface)
+     * @return $this
      */
-    public function linkInDb($alias, $ids)
+    public function linkInDb(string $alias, array $ids): self
     {
         $identifier = array_values($this->identifier());
         $identifier = array_shift($identifier);
@@ -2693,10 +2530,8 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
      * Reset the modified array and store the old array in lastModified so it
      * can be accessed by users after saving a record, since the modified array
      * is reset after the object is saved.
-     *
-     * @return void
      */
-    protected function resetModified()
+    protected function resetModified(): void
     {
         if (!empty($this->_modified)) {
             $this->_lastModified = $this->_modified;
@@ -2712,10 +2547,8 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
      * done with the entity afterwards can lead to unpredictable results.
      *
      * @param boolean $deep whether to free also the related components
-     *
-     * @return void
      */
-    public function free($deep = false)
+    public function free(bool $deep = false): void
     {
         if (!$this->_state->isLocked()) {
             $this->_state = $this->_state->lock();
@@ -2730,7 +2563,7 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
 
             if ($deep) {
                 foreach ($this->_references as $name => $reference) {
-                    if (!($reference instanceof None)) {
+                    if ($reference && !$reference instanceof None) {
                         $reference->free($deep);
                     }
                 }
@@ -2741,8 +2574,6 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
     }
 
     /**
-     * magic method
-     *
      * @return string representation of this object
      */
     public function __toString()
@@ -2751,8 +2582,6 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
     }
 
     /**
-     * addListener
-     *
      * @phpstan-param Record\ListenerInterface|Overloadable<Record\ListenerInterface> $listener
      * @return $this
      */
@@ -2763,8 +2592,6 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
     }
 
     /**
-     * getListener
-     *
      * @phpstan-return Record\ListenerInterface|Overloadable<Record\ListenerInterface>|null
      */
     public function getListener(): Record\ListenerInterface|Overloadable|null
@@ -2773,8 +2600,6 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
     }
 
     /**
-     * setListener
-     *
      * @phpstan-param Record\ListenerInterface|Overloadable<Record\ListenerInterface> $listener
      * @return $this
      */
@@ -2792,14 +2617,15 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
      * @param string $name       the name of the index
      * @param array $definition the definition array
      * @phpstan-param array{type?: string, fields?: string[]} $definition
-     * @return mixed
+     * @return mixed[]|null
      */
-    public function index(string $name, array $definition = [])
+    public function index(string $name, array $definition = []): ?array
     {
         if (!isset($definition['fields'])) {
             return $this->_table->getIndex($name);
         }
         $this->_table->addIndex($name, $definition);
+        return null;
     }
 
     /**
@@ -2812,7 +2638,6 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
      * @param  string[] $fields            values are fieldnames
      * @param  mixed[] $options           array of options for unique validator
      * @param  bool  $createUniqueIndex Whether or not to create a unique index in the database
-     * @return void
      */
     public function unique(array $fields, array $options = [], bool $createUniqueIndex = true): void
     {
@@ -2868,12 +2693,11 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
      * @param  string|array ...$args First: the name of the related component
      *                               Second: relation options
      * @see    Relation::_$definition
-     * @return $this          this object
+     * @return $this
      */
-    public function hasOne(...$args)
+    public function hasOne(string|array ...$args): self
     {
         $this->_table->bind($args, Relation::ONE);
-
         return $this;
     }
 
@@ -2883,12 +2707,11 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
      * @param  string|array ...$args First: the name of the related component
      *                               Second: relation options
      * @see    Relation::_$definition
-     * @return $this          this object
+     * @return $this
      */
-    public function hasMany(...$args)
+    public function hasMany(string|array ...$args): self
     {
         $this->_table->bind($args, Relation::MANY);
-
         return $this;
     }
 
@@ -2903,7 +2726,6 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
      *
      * @param  non-empty-string  $name
      * @param  ?positive-int $length
-     * @return void
      */
     public function hasColumn(string $name, string $type, ?int $length = null, array|string $options = []): void
     {
@@ -2960,9 +2782,8 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
      *
      * @param Column[] $columns
      * @phpstan-param list<Column> $columns
-     * @return void
      */
-    public function setColumns(array $columns)
+    public function setColumns(array $columns): void
     {
         foreach ($columns as $column) {
             $this->setColumn($column);
@@ -2974,9 +2795,9 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
      * binds query parts to given component
      *
      * @param  array $queryParts an array of pre-bound query parts
-     * @return $this          this object
+     * @return $this
      */
-    public function bindQueryParts(array $queryParts)
+    public function bindQueryParts(array $queryParts): self
     {
         $this->_table->bindQueryParts($queryParts);
 
@@ -2988,11 +2809,11 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
      *
      * This method will add a CHECK constraint to the record table.
      *
-     * @param  mixed  $constraint either a SQL constraint portion or an array of CHECK constraints. If array, all values will be added as constraint
+     * @param  array|string|int|null  $constraint either a SQL constraint portion or an array of CHECK constraints. If array, all values will be added as constraint
      * @param  string $name       optional constraint name. Not used if $constraint is an array.
-     * @return $this      this object
+     * @return $this
      */
-    public function check($constraint, $name = null)
+    public function check(array|string|int|null $constraint, ?string $name = null): self
     {
         if (is_array($constraint)) {
             foreach ($constraint as $name => $def) {

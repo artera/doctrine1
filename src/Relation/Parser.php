@@ -509,13 +509,14 @@ class Parser
                     $col    = $this->table->getColumn($id);
                     assert($col !== null);
 
-                    $column = $col->rename(strtolower($table->getComponentName()) . '_' . $id);
-                    $column->primary = false;
-                    $column->autoincrement = false;
-                    $column->sequence = null;
+                    $column = $col->modify([
+                        'name' => strtolower($table->getComponentName()) . '_' . $id,
+                        'primary' => false,
+                        'autoincrement' => false,
+                        'sequence' => null,
+                    ]);
 
                     $def['table']->setColumn($column);
-
                     $columns[] = $column;
                 }
                 if (count($columns) > 1) {

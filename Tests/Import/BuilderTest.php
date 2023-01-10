@@ -77,7 +77,11 @@ class BuilderTest extends DoctrineUnitTestCase
     {
         $builder = new \Doctrine1\Import\Builder();
         $builder->setOption('baseTableClassName', \MyBaseTable::class);
-        $class = $builder->buildTableClassDefinition(\MyTestTable::class, ['className' => \MyTest::class]);
+        $class = $builder->buildTableClassDefinition(\MyTestTable::class, new \Doctrine1\Import\Definition\Table(
+            \MyTest::class,
+            \MyTest::class,
+            [],
+        ));
         $this->assertNotFalse(strpos($class, 'class MyTestTable extends MyBaseTable'));
     }
 }

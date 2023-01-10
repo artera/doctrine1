@@ -87,7 +87,7 @@ namespace {
 
     class RecordTest2Listener extends \Doctrine1\Record\Listener
     {
-        public function preDqlSelect(\Doctrine1\Event $event)
+        public function preDqlSelect(\Doctrine1\Event $event): void
         {
             $params = $event->getParams();
             $alias  = $params['alias'];

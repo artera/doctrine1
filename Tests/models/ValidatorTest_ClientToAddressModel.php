@@ -1,4 +1,5 @@
 <?php
+
 class ValidatorTest_ClientToAddressModel extends \Doctrine1\Record
 {
     public function setTableDefinition(): void
@@ -7,7 +8,7 @@ class ValidatorTest_ClientToAddressModel extends \Doctrine1\Record
         $this->hasColumn('address_id', 'integer', 11, ['primary' => true]);
     }
 
-    public function construct()
+    public function construct(): void
     {
     }
 

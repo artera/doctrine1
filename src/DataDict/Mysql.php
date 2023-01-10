@@ -288,19 +288,21 @@ class Mysql extends \Doctrine1\DataDict
         switch ($field->type) {
             case Type::Enum:
             case Type::Set:
+                $stringValues = $field->stringValues();
+
                 if (($this->conn->getUseNativeSet() && $field->type === Type::Set)
                 || ($this->conn->getUseNativeEnum() && $field->type === Type::Enum)
                 ) {
                     $values = [];
-                    foreach ($field->values as $value) {
+                    foreach ($stringValues as $value) {
                         $values[] = $this->conn->quote($value, 'varchar');
                     }
                     return strtoupper($field->type->value) . '(' . implode(', ', $values) . ')';
                 } else {
-                    if ($field->type === Type::Enum && !empty($field->values)) {
-                        $length = max(array_map('strlen', $field->values));
-                    } elseif ($field->type === Type::Set && !empty($field->values)) {
-                        $length = strlen(implode(',', $field->values));
+                    if ($field->type === Type::Enum && !empty($stringValues)) {
+                        $length = max(array_map('strlen', $stringValues));
+                    } elseif ($field->type === Type::Set && !empty($stringValues)) {
+                        $length = strlen(implode(',', $stringValues));
                     } else {
                         $length = $field->length ?? 255;
                     }
@@ -410,7 +412,7 @@ class Mysql extends \Doctrine1\DataDict
 
         if (!isset($field['name'])) {
             // Mysql's DESCRIBE returns a "Field" column, not a "Name" column
-            // this method is called with output from that query in Doctrine_Import_Mysql::listTableColumns
+            // this method is called with output from that query in \Doctrine1\Import\Mysql::listTableColumns
             if (isset($field['field'])) {
                 $field['name'] = $field['field'];
             } else {

@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Tickets {
     use Tests\DoctrineUnitTestCase;
 
@@ -31,7 +32,7 @@ namespace Tests\Tickets {
 
         protected function newStudentCourse($student, $course)
         {
-            $sc             = new \T638_StudentCourse;
+            $sc             = new \T638_StudentCourse();
             $sc->student_id = $student->id;
             $sc->course_id  = $course->id;
             $sc->save();
@@ -44,7 +45,7 @@ namespace Tests\Tickets {
             $course1  = $this->newCourse('MATH001', 'Maths');
             $course2  = $this->newCourse('ENG002', 'English Literature');
 
-            $sc = new \T638_StudentCourse;
+            $sc = new \T638_StudentCourse();
             $sc->set('Student', $student1);
             $sc->set('Course', $course1);
 
@@ -93,9 +94,9 @@ namespace {
         {
         }
 
-        public function set($fieldName, $value, $load = true, bool $mutators = false)
+        public function set(string $fieldName, mixed $value, bool $load = true, bool $mutators = false): self
         {
-            parent::set($fieldName, $value, $load);
+            return parent::set($fieldName, $value, $load);
         }
     }
 

@@ -9,6 +9,8 @@ use Doctrine1\Inflector;
 use Doctrine1\Lib;
 use Doctrine1\Manager;
 use Doctrine1\Record;
+use Doctrine1\Column;
+use Doctrine1\Column\Type;
 use Doctrine1\Relation;
 use Doctrine1\Table;
 use Laminas\Code\Generator\ClassGenerator;
@@ -95,6 +97,7 @@ class Builder
         return Lib::namespaceConcat($this->namespace, $name);
     }
 
+    /** @phpstan-return ($full is true ? class-string<Record> : string) */
     public function getBaseClassName(string $name, bool $full = true): string
     {
         $name = sprintf($this->baseClassFormat, $name);
@@ -186,46 +189,30 @@ class Builder
     /**
      * Build the table definition of a \Doctrine1\Record object
      */
-    public function buildTableDefinition(ClassGenerator $gen, array $definition): void
+    public function buildTableDefinition(ClassGenerator $gen, Definition\Table $definition): void
     {
-        $type = $definition['inheritance']['type'] ?? null;
-        if ($type === 'simple' || $type === 'column_aggregation') {
+        if ($definition->inheritanceType === 'simple' || $definition->inheritanceType === 'column_aggregation') {
             return;
         }
 
         $ret = [];
 
-        if ($type === 'concrete') {
+        if ($definition->inheritanceType === 'concrete') {
             $ret[] = 'parent::setTableDefinition();';
         }
 
-        if (!empty($definition['tableName'])) {
-            $ret[] = "\$this->setTableName({$this->varExport($definition['tableName'])});";
+        if (!empty($definition->name)) {
+            $ret[] = "\$this->setTableName({$this->varExport(Inflector::tableize($definition->name))});";
         }
 
-        if (!empty($definition['columns']) && is_array($definition['columns'])) {
-            $ret[] = $this->buildColumns($definition['columns']);
-        }
+        $ret[] = $this->buildColumns($gen, $definition->columns);
+        $ret[] = $this->buildIndexes($definition->indexes);
+        $ret[] = $this->buildAttributes($definition->attributes);
+        $ret[] = $this->buildChecks($definition->checks);
 
-        if (!empty($definition['indexes']) && is_array($definition['indexes'])) {
-            $ret[] = $this->buildIndexes($definition['indexes']);
-        }
-
-        if (!empty($definition['attributes']) && is_array($definition['attributes'])) {
-            $ret[] = $this->buildAttributes($definition['attributes']);
-        }
-
-        if (!empty($definition['options']) && is_array($definition['options'])) {
-            $ret[] = $this->buildOptions($definition['options']);
-        }
-
-        if (!empty($definition['checks']) && is_array($definition['checks'])) {
-            $ret[] = $this->buildChecks($definition['checks']);
-        }
-
-        if (!empty($definition['inheritance']['subclasses']) && is_array($definition['inheritance']['subclasses'])) {
+        if (!empty($definition->subclasses)) {
             $subClasses = [];
-            foreach ($definition['inheritance']['subclasses'] as $className => $def) {
+            foreach ($definition->subclasses as $className => $def) {
                 $className = $this->getFullModelClassName($className);
                 $subClasses[$className] = $def;
             }
@@ -240,55 +227,42 @@ class Builder
         $gen->addMethodFromGenerator($method);
     }
 
-    public function buildSetUp(ClassGenerator $gen, array $definition): void
+    public function buildSetUp(ClassGenerator $gen, Definition\Table $definition): void
     {
         $ret = [];
 
-        if (!empty($definition['relations']) && is_array($definition['relations'])) {
-            foreach ($definition['relations'] as $name => $relation) {
-                $class = $relation['class'] ?? $name;
-                $alias = (isset($relation['alias']) && $relation['alias'] !== $this->getFullModelClassName($relation['class'])) ? " as {$relation['alias']}" : '';
+        foreach ($definition->relations as $relation) {
+            $class = $relation->class . ($relation->alias !== $relation->class ? " as {$relation->alias}" : '');
 
-                $relation['type'] ??= Relation::ONE;
-
-                if ($relation['type'] === Relation::ONE) {
-                    $hasMethod = 'hasOne';
-                } else {
-                    $hasMethod = 'hasMany';
-                }
-
-                $relExport = array_intersect_key($relation, array_flip([
-                    'refClass',
-                    'refClassRelationAlias',
-                    'local',
-                    'foreign',
-                    'onDelete',
-                    'onUpdate',
-                    'cascade',
-                    'equal',
-                    'owningSide',
-                    'foreignKeyName',
-                    'orderBy',
-                    'deferred',
-                ]));
-
-                if (!empty($relExport['refClass'])) {
-                    $relExport['refClass'] = $this->getFullModelClassName($relExport['refClass']);
-                }
-
-                $row = "\$this->$hasMethod({$this->varExport($this->getFullModelClassName($class . $alias))}, {$this->varExport($relExport)});\n";
-
-                $sortBy = $relation['alias'] ?? $relation['class'] ?? $name;
-                $ret[$sortBy] = $row;
+            if ($relation->many) {
+                $hasMethod = 'hasMany';
+            } else {
+                $hasMethod = 'hasOne';
             }
 
-            ksort($ret);
-            $ret = array_values($ret);
+            $relExport = array_filter([
+                'refClass' => $relation->refClass === null ? null : $this->getFullModelClassName($relation->refClass),
+                'refClassRelationAlias' => $relation->refClassRelationAlias,
+                'local' => $relation->local,
+                'foreign' => $relation->foreign,
+                'onDelete' => $relation->onDelete,
+                'onUpdate' => $relation->onUpdate,
+                'cascade' => $relation->cascade,
+                'equal' => $relation->equal,
+                'owningSide' => $relation->owningSide,
+                'foreignKeyName' => $relation->foreignKeyName,
+                'orderBy' => $relation->orderBy,
+                'deferred' => $relation->deferred,
+            ]);
+
+            $row = "\$this->$hasMethod({$this->varExport($class)}, {$this->varExport($relExport)});\n";
+
+            $sortBy = $relation->alias ?? $relation->class;
+            $ret[$sortBy] = $row;
         }
 
-        if (!empty($definition['listeners']) && is_array($definition['listeners'])) {
-            $ret[] = $this->buildListeners($definition['listeners']);
-        }
+        ksort($ret);
+        $ret = array_values($ret);
 
         $code = implode("\n", $ret);
         $code = trim($code);
@@ -312,73 +286,85 @@ class Builder
         return $build;
     }
 
-    public function buildColumns(array $columns): ?string
+    /**
+     * @phpstan-param list<Column> $columns
+     */
+    public function buildColumns(ClassGenerator $gen, array $columns): string
     {
         $manager = Manager::getInstance();
         $refl = new \ReflectionClass($this->baseClassName);
 
-        $build = null;
-        foreach ($columns as $name => $column) {
-            // An alias cannot passed via column name and column alias definition
-            if (isset($column['name']) && stripos($column['name'], ' as ') && isset($column['alias'])) {
-                throw new Exception(
-                    sprintf('When using a column alias you cannot pass it via column name and column alias definition (column: %s).', $column['name'])
-                );
-            }
+        $build = '';
 
-            // Update column name if an alias is provided
-            if (isset($column['alias']) && !isset($column['name'])) {
-                $column['name'] = "{$name} as {$column['alias']}";
-            }
-
-            $columnName = $column['name'] ?? $name;
+        foreach ($columns as $column) {
             if ($manager->getAutoAccessorOverride()) {
-                $e          = explode(' as ', $columnName);
-                $fieldName  = $e[1] ?? $e[0];
-                $classified = \Doctrine1\Inflector::classify($fieldName);
+                $classified = \Doctrine1\Inflector::classify($column->fieldName);
                 $getter     = "get$classified";
                 $setter     = "set$classified";
 
                 if ($refl->hasMethod($getter) || $refl->hasMethod($setter)) {
                     throw new Exception(
-                        sprintf('When using the attribute setAutoAccessorOverride() you cannot use the field name "%s" because it is reserved by Doctrine. You must choose another field name.', $fieldName)
+                        sprintf('When using the attribute setAutoAccessorOverride() you cannot use the field name "%s" because it is reserved by Doctrine. You must choose another field name.', $column->fieldName)
                     );
                 }
             }
 
-            $build .= "\$this->hasColumn({$this->varExport($columnName)}, {$this->varExport($column['type'])}, {$this->varExport($column['length'])}";
+            $default = $column->hasDefault() ? $column->default : null;
+            $values = $column->stringValues();
 
-            $options = $column;
+            if ($default !== null && in_array($column->type, [Type::Set, Type::Enum], true)) {
+                $columnImplementation = $column->enumImplementation($manager);
 
-            // Remove name, alltypes. They are not needed in options array
-            unset($options['name']);
-            unset($options['alltypes']);
-
-            if (!empty($options['primary'])) {
-                // Remove notnull => true if the column is primary
-                // Primary columns are implied to be notnull in Doctrine
-                if (!empty($options['notnull'])) {
-                    unset($options['notnull']);
+                if ($column->type === Type::Set) {
+                    $default = empty($default) ? [] : explode(',', $default);
                 }
 
-                // Remove default if the value is 0 and the column is a primary key
-                // Doctrine defaults to 0 if it is a primary key
-                if (isset($options['default']) && $options['default'] == 0) {
-                    unset($options['default']);
-                }
-            }
+                if ($columnImplementation === EnumSetImplementation::Enum) {
+                    $enumClassName = $column->enumClassName($manager, $gen->getNamespaceName() ?? $this->namespace);
 
-            foreach ($options as $key => $value) {
-                if ($value === null || (is_array($value) && empty($value))) {
-                    unset($options[$key]);
+                    if ($enumClassName !== null) {
+                        $default = match ($column->type) {
+                            Type::Enum => new ValueGenerator("\\$enumClassName::" . Inflector::classify($default), ValueGenerator::TYPE_CONSTANT),
+                            Type::Set => array_map(fn ($v) => new ValueGenerator("\\$enumClassName::" . Inflector::classify($v), ValueGenerator::TYPE_CONSTANT), $default),
+                        };
+                        $values = $enumClassName;
+                    }
                 }
             }
 
-            if (is_array($options) && !empty($options)) {
-                $build .= ', ' . $this->varExport($options);
-            }
+            $build .= <<<EOF
+            \$this->setColumn(new \Doctrine1\Column(
+                name: {$this->varExport($column->name)},
+                type: {$this->varExport($column->type)},
+                length: {$this->varExport($column->length)},
+                fieldName: {$this->varExport($column->alias())},
+                owner: {$this->varExport($column->owner)},
+                primary: {$this->varExport($column->primary)},
+                default: {$this->varExport($default, arrayDepth: 1)},
+                hasDefault: {$this->varExport($column->hasDefault())},
+                notnull: {$this->varExport($column->notnull)},
+                values: {$this->varExport($values, arrayDepth: 1)},
+                autoincrement: {$this->varExport($column->autoincrement)},
+                unique: {$this->varExport($column->unique)},
+                protected: {$this->varExport($column->protected)},
+                sequence: {$this->varExport($column->sequence)},
+                zerofill: {$this->varExport($column->zerofill)},
+                unsigned: {$this->varExport($column->unsigned)},
+                scale: {$this->varExport($column->scale)},
+                fixed: {$this->varExport($column->fixed)},
+                comment: {$this->varExport($column->comment)},
+                charset: {$this->varExport($column->charset)},
+                collation: {$this->varExport($column->collation)},
+                check: {$this->varExport($column->check)},
+                min: {$this->varExport($column->min)},
+                max: {$this->varExport($column->max)},
+                extra: {$this->varExport($column->extra, arrayDepth: 1)},
+                virtual: {$this->varExport($column->virtual)},
+                meta: {$this->varExport($column->meta, arrayDepth: 1)},
+                validators: {$this->varExport($column->validators, arrayDepth: 1)},
+            ));
 
-            $build .= ");\n";
+            EOF;
         }
 
         return $build;
@@ -387,56 +373,25 @@ class Builder
     /**
      * Build the phpDoc for a class definition
      */
-    public function buildPhpDocs(ClassGenerator $gen, array $columns, array $relations, string $topLevelClass): void
+    public function buildPhpDocs(ClassGenerator $gen, Definition\Table $definition): void
     {
+        $manager = Manager::connection();
+
         $docBlock = new DocBlockGenerator();
         $docBlock->setWordWrap(false);
 
-        foreach ($columns as $name => &$column) {
-            $name = $column['name'] ?? $name;
-            // extract column name & field name
-            $parts = preg_split('/\s+as\s+/i', $name, 2) ?: [$name];
-            $column['field_name'] = trim($parts[1] ?? $name);
-        }
-
-        uasort($columns, fn ($a, $b) => $a['name'] <=> $b['name']);
-        foreach ($columns as &$column) {
-            $columnType = strtolower($column['type']);
+        $columns = $definition->columns;
+        uasort($columns, fn ($a, $b) => $a->fieldName <=> $b->fieldName);
+        foreach ($columns as $column) {
             $types = [];
 
-            if (in_array($columnType, ['enum', 'set'], true)) {
-                $columnImplementation = match ($columnType) {
-                    'enum' => $this->enumImplementation,
-                    'set' => $this->setImplementation,
-                };
-                $importAs = null;
+            if (in_array($column->type, [Type::Enum, Type::Set], true)) {
+                $columnImplementation = $column->enumImplementation($manager);
+                $enumClassName = $column->enumClassName($manager, $gen->getNamespaceName() ?? $this->namespace);
 
-                if (isset($column['meta']['importAs'])) {
-                    $importAs = $column['meta']['importAs'];
-
-                    if (!is_array($importAs)) {
-                        $importAs = [
-                            'type' => $importAs,
-                            'name' => null,
-                        ];
-                    }
-
-                    $columnImplementation = EnumSetImplementation::tryFrom($importAs['type']) ?? $columnImplementation;
-                }
-
-                if ($columnImplementation === EnumSetImplementation::Enum) {
-                    if (!empty($importAs['name'])) {
-                        $enumClassName = trim($importAs['name'], '\\');
-                    } else {
-                        $enumClassName = Lib::namespaceConcat($gen->getNamespaceName() ?? $this->namespace, Inflector::classify($column['name']));
-                    }
-                } else {
-                    $enumClassName = null;
-                }
-
-                if (!empty($enumClassName)) {
+                if (!empty($enumClassName) && $columnImplementation !== null) {
                     $enumCases = [];
-                    foreach ($column['values'] as $v) {
+                    foreach ($column->stringValues() as $v) {
                         $k = Inflector::classify($v);
                         if (is_string($v) && !empty($v) && !empty($k)) {
                             $enumCases[$k] = $v;
@@ -480,11 +435,11 @@ class Builder
 
                 $type = match ($columnImplementation) {
                     EnumSetImplementation::String => 'string',
-                    EnumSetImplementation::PHPStan => implode('|', array_map([$this, 'varExport'], $column['values'])),
+                    EnumSetImplementation::PHPStan => implode('|', array_map([$this, 'varExport'], $column->stringValues())),
                     EnumSetImplementation::Enum => "\\$enumClassName",
                 };
 
-                if ($columnType === 'set') {
+                if ($column->type === Type::Set) {
                     if ($columnImplementation === EnumSetImplementation::PHPStan) {
                         $type = "($type)";
                     }
@@ -494,59 +449,64 @@ class Builder
                 $types[] = $type;
             }
 
-            switch (strtolower($column['type'])) {
-                case 'enum':
-                case 'set':
+            switch ($column->type) {
+                case Type::Enum:
+                case Type::Set:
                     break;
-                case 'boolean':
-                case 'integer':
-                case 'float':
-                case 'string':
-                case 'array':
-                case 'object':
+                case Type::Boolean:
+                case Type::Integer:
+                case Type::Float:
+                case Type::String:
+                case Type::Array:
+                case Type::Object:
                 default:
-                    $types[] = strtolower($column['type']);
+                    $types[] = $column->type->value;
                     break;
-                case 'decimal':
+                case Type::Decimal:
                     $types[] = 'float';
                     break;
-                case 'json':
-                case 'blob':
-                case 'timestamp':
-                case 'time':
-                case 'date':
-                case 'datetime':
+                case Type::JSON:
+                case Type::BLOB:
+                case Type::Timestamp:
+                case Type::Time:
+                case Type::Date:
+                case Type::DateTime:
                     $types[] = 'string';
                     break;
             }
 
             // Add "null" union types for columns that aren't marked as notnull = true
             // But not our primary columns, as they're notnull = true implicitly in Doctrine
-            if (empty($column['notnull']) && empty($column['primary'])) {
+            if (!$column->notnull && !$column->primary) {
                 $types[] = 'null';
             }
 
-            $docBlock->setTag(new PropertyTag($column['field_name'], $types));
+            $docBlock->setTag(new PropertyTag($column->fieldName, $types));
         }
 
-        usort($relations, fn ($a, $b) => $a['alias'] <=> $b['alias']);
+        $relations = $definition->relations;
+        usort($relations, fn ($a, $b) => $a->alias <=> $b->alias);
         foreach ($relations as $relation) {
-            $fieldName = $relation['alias'];
+            $fieldName = $relation->alias;
             $types = [];
-            if (isset($relation['type']) && $relation['type'] == Relation::MANY) {
-                $types[] = '\\' . Collection::class . "<{$relation['class']}>";
+            if ($relation->many) {
+                $types[] = '\\' . Collection::class . "<\\{$this->getFullModelClassName($relation->class)}>";
             } else {
-                $types[] = $this->getFullModelClassName($relation['class']);
+                $types[] = '\\' . $this->getFullModelClassName($relation->class);
 
-                $column = $columns[$relation['local']];
-                if (empty($column['notnull']) && empty($column['primary'])) {
-                    $types[] = 'null';
+                foreach ($definition->columns as $column) {
+                    if ($column->name === $relation->local) {
+                        if (!$column->notnull && !$column->primary) {
+                            $types[] = 'null';
+                        }
+                        break;
+                    }
                 }
             }
             $docBlock->setTag(new PropertyTag($fieldName, $types));
         }
 
-        $genericOver = $this->getTableClassName($topLevelClass);
+        $genericOver = $this->getTableClassName($definition->topLevelClassName);
         $docBlock->setTag([
             'name' => 'phpstan-extends',
             'content' => "\\{$gen->getExtendedClass()}<\\{$genericOver}>",
@@ -635,15 +595,6 @@ class Builder
         return $build;
     }
 
-    public function buildOptions(array $options): string
-    {
-        $build = '';
-        foreach ($options as $name => $value) {
-            $build .= "\$this->getTable()->$name = {$this->varExport($value)};\n";
-        }
-        return $build;
-    }
-
     public function buildIndexes(array $indexes): string
     {
         $build = '';
@@ -653,79 +604,40 @@ class Builder
         return $build;
     }
 
-    public function buildToString(ClassGenerator $gen, array $definition): void
-    {
-        if (empty($definition['toString'])) {
-            return;
-        }
-
-        $method = new MethodGenerator('__toString', body: "(string) \$this->{$definition['toString']};");
-        $method->setReturnType('string');
-        $gen->addMethodFromGenerator($method);
-    }
-
-    public function buildDefinition(string $className, array $definition): string
+    public function buildDefinition(string $className, Definition\Table $definition): string
     {
         $gen = new ClassGenerator();
 
-        $definition['className'] = $definition['className'];
-        if (isset($definition['connectionClassName'])) {
-            $definition['connectionClassName'] = $definition['connectionClassName'];
-        }
-        $definition['topLevelClassName'] = $definition['topLevelClassName'];
-        if (isset($definition['inheritance']['extends'])) {
-            $definition['inheritance']['extends'] = $definition['inheritance']['extends'];
-        }
-
         $gen->setName($className);
-        $gen->setExtendedClass($definition['inheritance']['extends'] ?? $this->baseClassName);
-        $gen->setAbstract($definition['abstract'] ?? false);
+        $gen->setExtendedClass($definition->extends ?? $this->baseClassName);
+        $gen->setAbstract($definition->isBaseClass);
 
-        if (empty($definition['no_definition'])) {
+        if (!$definition->isMainClass) {
             $this->buildTableDefinition($gen, $definition);
             $this->buildSetUp($gen, $definition);
         }
 
-        $this->buildToString($gen, $definition);
-
-        if (!empty($definition['is_base_class']) || !$this->generateBaseClasses()) {
-            $this->buildPhpDocs($gen, $definition['columns'], $definition['relations'] ?? [], $definition['topLevelClassName']);
+        if ($definition->isBaseClass || !$this->generateBaseClasses()) {
+            $this->buildPhpDocs($gen, $definition);
         }
 
         return $gen->generate();
     }
 
-    public function buildRecord(array $definition): void
+    public function buildRecord(Definition\Table $definition): void
     {
-        if (!isset($definition['className'])) {
-            throw new Exception('Missing class name.');
-        }
-
-        $definition['topLevelClassName'] = $definition['className'];
-
         if ($this->generateBaseClasses()) {
             // Top level definition that extends from all the others
-            $topLevel = $definition;
-            unset($topLevel['tableName']);
+            $topLevel = clone $definition;
 
             // If we have a package then we need to make this extend the package definition and not the base definition
             // The package definition will then extends the base definition
-            $topLevel['inheritance']['extends'] = $this->getBaseClassName($topLevel['className']);
-            $topLevel['no_definition']          = true;
-            $topLevel['generate_once']          = true;
-            $topLevel['is_main_class']          = true;
-            unset($topLevel['connection']);
+            $topLevel->extends = $this->getBaseClassName($topLevel->className);
+            $topLevel->tableExtends = $definition->extends ? $this->getTableClassName($definition->extends) : $this->baseTableClassName;
+            $topLevel->isMainClass = true;
 
-            $topLevel['tableClassName']              = $topLevel['className'];
-            $topLevel['inheritance']['tableExtends'] = isset($definition['inheritance']['extends'])
-                ? $this->getTableClassName($definition['inheritance']['extends'])
-                : $this->baseTableClassName;
-
-            $baseClass                    = $definition;
-            $baseClass['className']       = $topLevel['className'];
-            $baseClass['abstract']        = true;
-            $baseClass['override_parent'] = false;
-            $baseClass['is_base_class']   = true;
+            $baseClass = clone $definition;
+            $baseClass->isBaseClass = true;
 
             $this->writeDefinition($baseClass);
 
@@ -735,29 +647,25 @@ class Builder
         }
     }
 
-    public function buildTableClassDefinition(string $className, array $definition, array $options = []): string
+    public function buildTableClassDefinition(string $className, Definition\Table $definition, ?string $extends = null): string
     {
-        /** @var class-string<Table> */
-        $extends = $options['extends'] ?? $this->baseTableClassName;
+        $extends = $definition->tableExtends ?? $this->baseTableClassName;
         if ($extends !== $this->baseTableClassName) {
             /** @var class-string<Table> */
             $extends = $this->getFullModelClassName($extends);
         }
 
-        $docBlock = null;
-        if (isset($definition['topLevelClassName'])) {
-            $docBlock = new DocBlockGenerator();
-            $docBlock->setWordWrap(false);
-            $docBlock->setTag([
-                'name' => 'phpstan-extends',
-                'content' => sprintf('\\%s<\\%s>', $extends, $this->getFullModelClassName($definition['topLevelClassName'])),
-            ]);
-        }
+        $docBlock = new DocBlockGenerator();
+        $docBlock->setWordWrap(false);
+        $docBlock->setTag([
+            'name' => 'phpstan-extends',
+            'content' => sprintf('\\%s<\\%s>', $extends, $this->getFullModelClassName($definition->topLevelClassName)),
+        ]);
 
         $gen = new ClassGenerator($className, docBlock: $docBlock);
         $gen->setExtendedClass($extends);
 
-        $getInstanceBody = sprintf('return \\%s::getTable(\\%s::class);', Core::class, $this->getFullModelClassName($definition['className']));
+        $getInstanceBody = sprintf('return \\%s::getTable(\\%s::class);', Core::class, $this->getFullModelClassName($definition->className));
 
         $method = new MethodGenerator('getInstance', body: $getInstanceBody);
         $method->setStatic(true);
@@ -767,15 +675,15 @@ class Builder
         return $gen->generate();
     }
 
-    public function writeTableClassDefinition(array $definition, string $path, array $options = []): void
+    public function writeTableClassDefinition(Definition\Table $definition, string $path): void
     {
-        $className = $this->getTableClassName($definition['tableClassName']);
+        $className = $this->getTableClassName($definition->className);
         $fileName = $this->classNameToFileName($className);
 
         $path .= DIRECTORY_SEPARATOR . $fileName;
         Lib::makeDirectories(dirname($path));
 
-        $code = $this->buildTableClassDefinition($className, $definition, $options);
+        $code = $this->buildTableClassDefinition($className, $definition);
 
         if (!file_exists($path) && file_put_contents($path, "<?php\n\n$code") === false) {
             throw new Exception("Couldn't write file $path");
@@ -784,16 +692,16 @@ class Builder
         Core::loadModel($className, $path);
     }
 
-    public function writeDefinition(array $definition): void
+    public function writeDefinition(Definition\Table $definition): void
     {
         $path = $this->path;
 
-        $className = empty($definition['is_main_class'])
-            ? $this->getBaseClassName($definition['className'])
-            : $this->getFullModelClassName($definition['className']);
+        $className = !$definition->isMainClass
+            ? $this->getBaseClassName($definition->className)
+            : $this->getFullModelClassName($definition->className);
 
-        if (!empty($definition['is_main_class']) && $this->generateTableClasses()) {
-            $this->writeTableClassDefinition($definition, $path, ['extends' => $definition['inheritance']['tableExtends']]);
+        if ($definition->isMainClass && $this->generateTableClasses()) {
+            $this->writeTableClassDefinition($definition, $path);
         }
 
         $fileName = $this->classNameToFileName($className);
@@ -803,15 +711,23 @@ class Builder
 
         $code = $this->buildDefinition($className, $definition);
 
-        if ((empty($definition['generate_once']) || !file_exists($path)) && file_put_contents($path, "<?php\n\n$code") === false) {
+        if ((!$definition->isMainClass || !file_exists($path)) && file_put_contents($path, "<?php\n\n$code") === false) {
             throw new Exception("Couldn't write file $path");
         }
 
         Core::loadModel($className, $path);
     }
 
-    private function varExport(mixed $var): string
+    private function varExport(mixed $var, bool $multiline = true, int $arrayDepth = 0): string
     {
-        return (string) (new ValueGenerator($var));
+        if ($var instanceof ValueGenerator) {
+            $gen = $var;
+        } else {
+            $gen = new ValueGenerator($var, outputMode: $multiline ? ValueGenerator::OUTPUT_MULTIPLE_LINE : ValueGenerator::OUTPUT_SINGLE_LINE);
+        }
+        if ($arrayDepth > 0) {
+            $gen->setArrayDepth($arrayDepth);
+        }
+        return (string) $gen;
     }
 }

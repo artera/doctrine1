@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Tickets {
     use Tests\DoctrineUnitTestCase;
 
@@ -43,6 +44,8 @@ namespace Tests\Tickets {
 }
 
 namespace {
+    use Doctrine1\Event;
+
     class Ticket_1865_Profile extends \Doctrine1\Record
     {
         public function setUp(): void
@@ -70,7 +73,7 @@ namespace {
             $this->hasColumn('loginname', 'string', 20, ['unique']);
             $this->hasColumn('password', 'string', 16);
         }
-        public function preInsert($event)
+        public function preInsert(Event $event): void
         {
             $this->Profile;
             $this->Profile->icq = '';

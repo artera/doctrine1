@@ -2,6 +2,7 @@
 
 namespace Doctrine1;
 
+use BackedEnum;
 use Doctrine1\Column\Type;
 
 class Column
@@ -21,17 +22,19 @@ class Column
      * @phpstan-param int<0, 30> $scale
      * @phpstan-param ?class-string<Record> $owner
      * @phpstan-param array<string, bool|mixed[]> $validators
+     * @phpstan-param list<string>|class-string<BackedEnum> $values
      */
     public function __construct(
         string $name,
         public readonly Type $type,
         ?int $length = null,
+        ?string $fieldName = null,
         public ?string $owner = null,
         public bool $primary = false,
         public mixed $default = null,
         bool $hasDefault = false,
         public bool $notnull = false,
-        public array $values = [],
+        protected array|string $values = [],
         public bool $autoincrement = false,
         public bool $unique = false,
         public bool $protected = false,
@@ -49,16 +52,20 @@ class Column
         public mixed $extra = null,
         public bool $virtual = false,
         public array $meta = [],
-        protected array $validators = [],
+        public array $validators = [],
     ) {
         $name = trim($name);
 
         // extract column name & field name
         if (preg_match('/^(.+)\s+as\s+(.+)$/i', $name, $matches)) {
+            if ($fieldName !== null) {
+                throw new Exception('Invalid $fieldName and $name with alias combination');
+            }
+
             $name = $matches[1];
             $fieldName = $matches[2];
         } else {
-            $fieldName = $name;
+            $fieldName ??= $name;
         }
 
         if (empty($name)) {
@@ -79,8 +86,8 @@ class Column
             Type::Date => 10, // YYYY-MM-DD ISO 8601
             Type::Time => 14, // HH:NN:SS+00:00 ISO 8601
             Type::DateTime, Type::Timestamp => 25, // YYYY-MM-DDTHH:MM:SS+00:00 ISO 8601
-            Type::Set => strlen(implode(',', $this->values)) ?: null,
-            Type::Enum => max(...array_map('strlen', $this->values)) ?: null,
+            Type::Set => strlen(implode(',', $this->values())) ?: null,
+            Type::Enum => max(...array_map('strlen', $this->values())) ?: null,
             default => null,
         };
 
@@ -89,39 +96,99 @@ class Column
         }
     }
 
-    /**
-     * @phpstan-param non-empty-string $name
-     */
-    public function rename(string $name): self
+    public function values(): array
     {
-        return new Column(
-            $name,
-            type: $this->type,
-            length: $this->length,
-            owner: $this->owner,
-            primary: $this->primary,
-            default: $this->hasDefault() ? $this->default : null,
-            hasDefault: $this->hasDefault(),
-            notnull: $this->notnull,
-            values: $this->values,
-            autoincrement: $this->autoincrement,
-            unique: $this->unique,
-            protected: $this->protected,
-            sequence: $this->sequence,
-            zerofill: $this->zerofill,
-            unsigned: $this->unsigned,
-            scale: $this->scale,
-            fixed: $this->fixed,
-            comment: $this->comment,
-            charset: $this->charset,
-            collation: $this->collation,
-            check: $this->check,
-            min: $this->min,
-            max: $this->max,
-            extra: $this->extra,
-            virtual: $this->virtual,
-            meta: $this->meta,
-            validators: $this->validators,
+        if (is_array($this->values)) {
+            return $this->values;
+        }
+        return $this->values::cases();
+    }
+
+    public function stringValues(): array
+    {
+        if (is_array($this->values)) {
+            return $this->values;
+        }
+
+        $values = [];
+        foreach ($this->values() as $case) {
+            $values[] = $case->value;
+        }
+        return $values;
+    }
+
+    /**
+     * @phpstan-return class-string<BackedEnum>
+     */
+    public function getEnumClass(): ?string
+    {
+        return is_string($this->values) ? $this->values : null;
+    }
+
+    /**
+     * @phpstan-param array{
+     *   name?: string,
+     *   type?: Type,
+     *   length?: ?int,
+     *   fieldName?: ?string,
+     *   owner?: ?string,
+     *   primary?: bool,
+     *   default?: mixed,
+     *   hasDefault?: bool,
+     *   notnull?: bool,
+     *   values?: array|string,
+     *   autoincrement?: bool,
+     *   unique?: bool,
+     *   protected?: bool,
+     *   sequence?: ?string,
+     *   zerofill?: bool,
+     *   unsigned?: bool,
+     *   scale?: int,
+     *   fixed?: bool,
+     *   comment?: ?string,
+     *   charset?: ?string,
+     *   collation?: ?string,
+     *   check?: ?string,
+     *   min?: ?int,
+     *   max?: ?int,
+     *   extra?: mixed,
+     *   virtual?: bool,
+     *   meta?: array,
+     *   validators?: array,
+     * } $changes
+     * @return static
+     */
+    public function modify(array $changes): self
+    {
+        return new static(
+            $changes['name'] ?? $this->name,
+            type:          array_key_exists('type', $changes) ? $changes['type'] : $this->type,
+            length:        array_key_exists('length', $changes) ? $changes['length'] : $this->length,
+            fieldName:     array_key_exists('fieldName', $changes) ? $changes['fieldName'] : $this->fieldName,
+            owner:         array_key_exists('owner', $changes) ? $changes['owner'] : $this->owner,
+            primary:       array_key_exists('primary', $changes) ? $changes['primary'] : $this->primary,
+            default:       array_key_exists('default', $changes) ? $changes['default'] : ($this->hasDefault() ? $this->default : null),
+            hasDefault:    array_key_exists('hasDefault', $changes) ? $changes['hasDefault'] : $this->hasDefault(),
+            notnull:       array_key_exists('notnull', $changes) ? $changes['notnull'] : $this->notnull,
+            values:        array_key_exists('values', $changes) ? $changes['values'] : $this->values,
+            autoincrement: array_key_exists('autoincrement', $changes) ? $changes['autoincrement'] : $this->autoincrement,
+            unique:        array_key_exists('unique', $changes) ? $changes['unique'] : $this->unique,
+            protected:     array_key_exists('protected', $changes) ? $changes['protected'] : $this->protected,
+            sequence:      array_key_exists('sequence', $changes) ? $changes['sequence'] : $this->sequence,
+            zerofill:      array_key_exists('zerofill', $changes) ? $changes['zerofill'] : $this->zerofill,
+            unsigned:      array_key_exists('unsigned', $changes) ? $changes['unsigned'] : $this->unsigned,
+            scale:         array_key_exists('scale', $changes) ? $changes['scale'] : $this->scale,
+            fixed:         array_key_exists('fixed', $changes) ? $changes['fixed'] : $this->fixed,
+            comment:       array_key_exists('comment', $changes) ? $changes['comment'] : $this->comment,
+            charset:       array_key_exists('charset', $changes) ? $changes['charset'] : $this->charset,
+            collation:     array_key_exists('collation', $changes) ? $changes['collation'] : $this->collation,
+            check:         array_key_exists('check', $changes) ? $changes['check'] : $this->check,
+            min:           array_key_exists('min', $changes) ? $changes['min'] : $this->min,
+            max:           array_key_exists('max', $changes) ? $changes['max'] : $this->max,
+            extra:         array_key_exists('extra', $changes) ? $changes['extra'] : $this->extra,
+            virtual:       array_key_exists('virtual', $changes) ? $changes['virtual'] : $this->virtual,
+            meta:          array_key_exists('meta', $changes) ? $changes['meta'] : $this->meta,
+            validators:    array_key_exists('validators', $changes) ? $changes['validators'] : $this->validators,
         );
     }
 
@@ -199,7 +266,7 @@ class Column
             'primary' => $this->primary,
             'default' => $this->default,
             'notnull' => $this->notnull,
-            'values' => $this->values,
+            'values' => $this->values(),
             'autoincrement' => $this->autoincrement,
             'unique' => $this->unique,
             'protected' => $this->protected,
@@ -213,5 +280,68 @@ class Column
             'meta' => $this->meta,
             'validators' => $this->validators,
         ];
+    }
+
+    public function enumImplementation(Configurable $conf): EnumSetImplementation
+    {
+        $columnImplementation = match ($this->type) {
+            Type::Set => $conf->getSetImplementation(),
+            default => $conf->getEnumImplementation(),
+        };
+
+        $importAs = null;
+
+        if (isset($this->meta['importAs'])) {
+            $importAs = $this->meta['importAs'];
+
+            if (!is_array($importAs)) {
+                $importAs = [
+                    'type' => $importAs,
+                    'name' => null,
+                ];
+            }
+
+            $columnImplementation = EnumSetImplementation::tryFrom($importAs['type']) ?? $columnImplementation;
+        }
+
+        return $columnImplementation;
+    }
+
+    public function enumClassName(Configurable $conf, string $namespace): ?string
+    {
+        $columnImplementation = match ($this->type) {
+            Type::Enum => $conf->getEnumImplementation(),
+            Type::Set => $conf->getSetImplementation(),
+            default => null,
+        };
+
+        if ($columnImplementation === null) {
+            return null;
+        }
+
+        $importAs = null;
+
+        if (isset($this->meta['importAs'])) {
+            $importAs = $this->meta['importAs'];
+
+            if (!is_array($importAs)) {
+                $importAs = [
+                    'type' => $importAs,
+                    'name' => null,
+                ];
+            }
+
+            $columnImplementation = EnumSetImplementation::tryFrom($importAs['type']) ?? $columnImplementation;
+        }
+
+        if ($columnImplementation !== EnumSetImplementation::Enum) {
+            return null;
+        }
+
+        if (!empty($importAs['name'])) {
+            return trim($importAs['name'], '\\');
+        } else {
+            return Lib::namespaceConcat($namespace, Inflector::classify($this->name));
+        }
     }
 }

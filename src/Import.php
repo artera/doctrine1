@@ -2,6 +2,8 @@
 
 namespace Doctrine1;
 
+use Doctrine1\Import\Definition;
+
 /**
  * @template Connection of Connection
  * @extends Connection\Module<Connection>
@@ -95,20 +97,20 @@ class Import extends Connection\Module
      * )
      *
      * @param  string $table database table name
-     * @return array
+     * @phpstan-return list<array{table: string, local: string, foreign: string}>
      */
-    public function listTableRelations($table)
+    public function listTableRelations(string $table): array
     {
         throw new Import\Exception(__FUNCTION__ . ' not supported by this driver.');
     }
 
     /**
-     * lists table constraints
+     * lists table columns
      *
      * @param  string $table database table name
-     * @return array
+     * @phpstan-return list<Column>
      */
-    public function listTableColumns($table)
+    public function listTableColumns(string $table): array
     {
         throw new Import\Exception(__FUNCTION__ . ' not supported by this driver.');
     }
@@ -352,48 +354,46 @@ class Import extends Connection\Module
             $builder->setTargetPath($directory);
             $builder->setOptions($options);
 
+            /** @phpstan-var array<string, Definition\Table> */
             $definitions = [];
 
             foreach ($connection->import->listTables() as $table) {
-                $definition = [];
-                $definition['tableName'] = $table;
-                $definition['className'] = Inflector::classify(Inflector::tableize($table));
-                $definition['columns'] = $connection->import->listTableColumns($table);
-                $definition['connection'] = $connection->getName();
-                $definition['connectionClassName'] = $definition['className'];
-                $definition['relations'] = [];
-
-                try {
-                    $unsortedRelations = $connection->import->listTableRelations($table);
-                } catch (Import\Exception $e) {
-                    $unsortedRelations = [];
-                }
+                $tableClassName = Inflector::classify(Inflector::tableize($table));
+                $definition = new Definition\Table(
+                    name: $table,
+                    className: $tableClassName,
+                    columns: $connection->import->listTableColumns($table),
+                );
 
                 $relations = [];
-                foreach ($definition['columns'] as $columnName => $column) {
-                    foreach ($unsortedRelations as $relation) {
-                        if ($relation['local'] === $columnName) {
-                            $relations[] = $relation;
-                            break;
+                try {
+                    $unsortedRelations = $connection->import->listTableRelations($table);
+
+                    foreach ($definition->columns as $column) {
+                        foreach ($unsortedRelations as $relation) {
+                            if ($relation['local'] === $column->name) {
+                                $relations[] = $relation;
+                                break;
+                            }
                         }
                     }
+                } catch (Import\Exception) {
                 }
-                unset($unsortedRelations);
 
                 foreach ($relations as $relation) {
                     $table = $relation['table'];
                     $class = Inflector::classify(Inflector::tableize($table));
 
-                    $columnDefinition = $definition['columns'][$relation['local']];
-                    if (!empty($columnDefinition['meta']['relation_alias'])) {
-                        $alias = $columnDefinition['meta']['relation_alias'];
-                        if (isset($definition['relations'][$alias])) {
+                    $column = $definition->getColumn($relation['local']);
+                    if (!empty($column?->meta['relation_alias'])) {
+                        $alias = $column->meta['relation_alias'];
+                        if ($definition->getRelationByAlias($alias) !== null) {
                             throw new Import\Exception('The alias name requested via database meta-comments is already taken by another relation');
                         }
                     } else {
                         $aliasNum = 1;
                         $alias = $class;
-                        while (isset($definition['relations'][$alias])) {
+                        while ($definition->getRelationByAlias($alias) !== null) {
                             if (substr($relation['local'], 0, 3) === 'id_') {
                                 $alias = Inflector::classify(Inflector::tableize(substr($relation['local'], 3)));
                             } else {
@@ -403,48 +403,46 @@ class Import extends Connection\Module
                         }
                     }
 
-                    $definition['relations'][$alias] = [
-                        'alias'   => $alias,
-                        'class'   => $class,
-                        'local'   => $relation['local'],
-                        'foreign' => $relation['foreign']
-                    ];
+                    $definition->relations[] = new Definition\Relation(
+                        $alias,
+                        $class,
+                        $relation['local'],
+                        $relation['foreign']
+                    );
                 }
 
-                $definitionId = strtolower($definition['className']);
+                $definitionId = strtolower($definition->className);
                 $definitions[$definitionId] = $definition;
-                $classes[] = $definition['className'];
+                $classes[] = $definition->className;
             }
 
             // Build opposite end of relationships
             foreach ($definitions as $definition) {
-                $className = $definition['className'];
+                foreach ($definition->relations as $relation) {
+                    $definitionId = strtolower($relation->class);
 
-                foreach ($definition['relations'] as $relation) {
-                    $definitionId = strtolower($relation['class']);
-
-                    $columnDefinition = $definition['columns'][$relation['local']];
-                    if (!empty($columnDefinition['meta']['inverse_relation_alias'])) {
-                        $alias = $columnDefinition['meta']['inverse_relation_alias'];
-                        if (isset($definitions[$definitionId]['relations'][$alias])) {
+                    $column = $definition->getColumn($relation->local);
+                    if (!empty($column?->meta['inverse_relation_alias'])) {
+                        $alias = $column->meta['inverse_relation_alias'];
+                        if ($definitions[$definitionId]->getRelationByAlias($alias) !== null) {
                             throw new Import\Exception('The alias name requested via database meta-comments is already taken by another relation');
                         }
                     } else {
                         $aliasNum = 1;
-                        $alias = $className;
-                        while (isset($definitions[$definitionId]['relations'][$alias])) {
+                        $alias = $definition->className;
+                        while ($definitions[$definitionId]->getRelationByAlias($alias) !== null) {
                             $aliasNum++;
-                            $alias = "$className{$aliasNum}";
+                            $alias = "{$definition->className}{$aliasNum}";
                         }
                     }
 
-                    $definitions[$definitionId]['relations'][$alias] = [
-                        'type'    => Relation::MANY,
-                        'alias'   => $alias,
-                        'class'   => $className,
-                        'local'   => $relation['foreign'],
-                        'foreign' => $relation['local']
-                    ];
+                    $definitions[$definitionId]->relations[] = new Definition\Relation(
+                        $alias,
+                        $definition->className,
+                        $relation->foreign,
+                        $relation->local,
+                        true,
+                    );
                 }
             }
 

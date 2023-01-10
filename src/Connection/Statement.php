@@ -2,6 +2,7 @@
 
 namespace Doctrine1\Connection;
 
+use BackedEnum;
 use PDO;
 use PDOException;
 use PDOStatement;
@@ -121,12 +122,18 @@ class Statement
     /**
      * Filter query parameters that are not present in the query string
      * @param string $query
-     * @param string[] $params
+     * @param (string|BackedEnum)[] $params
      * @param array<string, string> $aliases
      * @return mixed[]
      */
     public function filterParams(string $query, array $params = [], iterable $aliases = []): array
     {
+        foreach ($params as &$v) {
+            if ($v instanceof BackedEnum) {
+                $v = $v->value;
+            }
+        }
+
         if (empty($params) || strpos($query, '?') !== false) {
             return $params;
         }

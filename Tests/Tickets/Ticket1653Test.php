@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Tickets {
     use Tests\DoctrineUnitTestCase;
 
@@ -71,11 +72,10 @@ namespace {
             );
         }
 
-        protected function validate()
+        protected function validate(): void
         {
             if ($this->name == 'test') {
                 $this->getErrorStack()->add('badName', 'No testnames allowed!');
-                return false;
             }
         }
     }

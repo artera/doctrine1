@@ -918,14 +918,14 @@ class RecordTest extends DoctrineUnitTestCase
         $this->assertEquals($user->name, 'jon wage changed2');
     }
 
-    public function testDeleteReturnBooleanAndThrowsException()
+    public function testDeleteThrowsException()
     {
         $user            = new \User();
         $user->name      = 'jonnnn wage';
         $user->loginname = 'jwage3';
         $user->save();
+        $user->delete();
 
-        $this->assertTrue($user->delete());
         // delete() on transient objects should just be ignored.
         $user->delete();
     }

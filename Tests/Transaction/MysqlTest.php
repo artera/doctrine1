@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Transaction {
     use Tests\DoctrineUnitTestCase;
 
@@ -113,58 +114,57 @@ namespace {
     {
         protected $messages = [];
 
-        public function preTransactionCommit(\Doctrine1\Event $event)
+        public function preTransactionCommit(\Doctrine1\Event $event): void
         {
             $this->messages[] = __FUNCTION__;
         }
-        public function postTransactionCommit(\Doctrine1\Event $event)
-        {
-            $this->messages[] = __FUNCTION__;
-        }
-
-        public function preTransactionRollback(\Doctrine1\Event $event)
-        {
-            $this->messages[] = __FUNCTION__;
-        }
-        public function postTransactionRollback(\Doctrine1\Event $event)
+        public function postTransactionCommit(\Doctrine1\Event $event): void
         {
             $this->messages[] = __FUNCTION__;
         }
 
-        public function preTransactionBegin(\Doctrine1\Event $event)
+        public function preTransactionRollback(\Doctrine1\Event $event): void
         {
             $this->messages[] = __FUNCTION__;
         }
-        public function postTransactionBegin(\Doctrine1\Event $event)
-        {
-            $this->messages[] = __FUNCTION__;
-        }
-
-
-        public function preSavepointCommit(\Doctrine1\Event $event)
-        {
-            $this->messages[] = __FUNCTION__;
-        }
-        public function postSavepointCommit(\Doctrine1\Event $event)
+        public function postTransactionRollback(\Doctrine1\Event $event): void
         {
             $this->messages[] = __FUNCTION__;
         }
 
-        public function preSavepointRollback(\Doctrine1\Event $event)
+        public function preTransactionBegin(\Doctrine1\Event $event): void
         {
             $this->messages[] = __FUNCTION__;
         }
-        public function postSavepointRollback(\Doctrine1\Event $event)
-        {
-            $this->messages[] = __FUNCTION__;
-        }
-
-        public function preSavepointCreate(\Doctrine1\Event $event)
+        public function postTransactionBegin(\Doctrine1\Event $event): void
         {
             $this->messages[] = __FUNCTION__;
         }
 
-        public function postSavepointCreate(\Doctrine1\Event $event)
+        public function preSavepointCommit(\Doctrine1\Event $event): void
+        {
+            $this->messages[] = __FUNCTION__;
+        }
+        public function postSavepointCommit(\Doctrine1\Event $event): void
+        {
+            $this->messages[] = __FUNCTION__;
+        }
+
+        public function preSavepointRollback(\Doctrine1\Event $event): void
+        {
+            $this->messages[] = __FUNCTION__;
+        }
+        public function postSavepointRollback(\Doctrine1\Event $event): void
+        {
+            $this->messages[] = __FUNCTION__;
+        }
+
+        public function preSavepointCreate(\Doctrine1\Event $event): void
+        {
+            $this->messages[] = __FUNCTION__;
+        }
+
+        public function postSavepointCreate(\Doctrine1\Event $event): void
         {
             $this->messages[] = __FUNCTION__;
         }

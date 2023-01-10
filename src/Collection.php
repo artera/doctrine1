@@ -416,7 +416,7 @@ class Collection extends Access implements \Countable, \IteratorAggregate, \Seri
             $table = $this->relation['table'];
             $relations = $table->getRelations();
             foreach ($relations as $relation) {
-                if ($this->relation['class'] == $relation['localTable']->name && $relation->getLocal() == $this->relation->getForeignFieldName()) {
+                if ($this->relation['class'] == $relation['localTable']->getComponentName() && $relation->getLocal() == $this->relation->getForeignFieldName()) {
                     $record->{$relation['alias']} = $this->reference;
                     break;
                 }

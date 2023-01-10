@@ -32,6 +32,8 @@ namespace Tests\Tickets {
 }
 
 namespace {
+    use Doctrine1\Event;
+
     class Ticket_1208_User extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
@@ -40,14 +42,14 @@ namespace {
             $this->hasColumn('password', 'string', 255);
         }
 
-        public function preHydrate($event)
+        public function preHydrate(Event $event): void
         {
             $data                = $event->data;
             $data['pre_hydrate'] = 'pre hydrate value';
             $event->data         = $data;
         }
 
-        public function postHydrate($event)
+        public function postHydrate(Event $event): void
         {
             $data                 = $event->data;
             $data['post_hydrate'] = 'post hydrate value';

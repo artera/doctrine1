@@ -65,7 +65,7 @@ namespace {
         }
 
 
-        public function preUpdate($event)
+        public function preUpdate($event): void
         {
             $this->parent->lastchange = date('Y-m-d H:i:s', time());
             $this->parent->save();
@@ -75,7 +75,7 @@ namespace {
 
     class T736_ModuleLoaderListener extends \Doctrine1\Record\Listener
     {
-        public function postHydrate(\Doctrine1\Event $event)
+        public function postHydrate(\Doctrine1\Event $event): void
         {
             $contents = $event->data;
             $delegate = \Doctrine1\Core::getTable('T736_ModuleDelegate')->find($contents['moduledelegateid'], hydrateArray: !$contents instanceof \Doctrine1\Record);

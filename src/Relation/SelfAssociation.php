@@ -1,6 +1,6 @@
 <?php
 
-namespace Doctrine1\Relation\Association;
+namespace Doctrine1\Relation;
 
 class SelfAssociation extends \Doctrine1\Relation\Association
 {

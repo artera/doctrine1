@@ -2,6 +2,7 @@
 
 namespace Doctrine1;
 
+use BackedEnum;
 use Closure;
 use Doctrine1\Column\Type;
 use Doctrine1\Serializer\WithSerializers;
@@ -146,7 +147,10 @@ class Table extends Configurable implements \Countable
     /** the check constraints of this table, eg. 'price > dicounted_price' */
     public array $checks = [];
 
-    /** the parent classes of this component */
+    /**
+     * the parent classes of this component
+     * @phpstan-var list<class-string<Record>>
+     */
     public array $parents = [];
     public array $queryParts = [];
     /** @var string[] */
@@ -249,8 +253,10 @@ class Table extends Configurable implements \Countable
     {
         $class = $this->getComponentName();
         $record = new $class($this);
+        assert($record instanceof Record);
 
-        $parents = class_parents($class) ?: [];
+        /** @phpstan-var list<class-string<Record>> */
+        $parents = array_values(class_parents($class) ?: []);
         array_pop($parents);
         $this->parents = array_reverse($parents);
 
@@ -292,7 +298,7 @@ class Table extends Configurable implements \Countable
 
             foreach ($parentColumns as $column) {
                 $fullName = $column->name . ' as ' . $parentTable->getFieldName($column->name);
-                $this->setColumn($column->rename($fullName), true);
+                $this->setColumn($column->modify(['name' => $fullName]), true);
             }
 
             break;
@@ -412,7 +418,7 @@ class Table extends Configurable implements \Countable
     public function getRecordInstance(): Record
     {
         if ($this->record === null) {
-            $this->record = new $this->name();
+            $this->record = new ($this->getComponentName())();
         }
         return $this->record;
     }
@@ -1220,7 +1226,7 @@ class Table extends Configurable implements \Countable
     public function create(array $array = []): Record
     {
         /** @phpstan-var T $record */
-        $record = new $this->name($this, true);
+        $record = new ($this->getComponentName())($this, true);
         $record->fromArray($array);
         return $record;
     }
@@ -1660,7 +1666,7 @@ class Table extends Configurable implements \Countable
     public function getEnumValues($fieldName)
     {
         $columnName = $this->getColumnName($fieldName, false);
-        return $this->columns[$columnName]->values;
+        return $this->columns[$columnName]->stringValues();
     }
 
     /**
@@ -1684,8 +1690,9 @@ class Table extends Configurable implements \Countable
         }
 
         $columnName = $this->getColumnName($fieldName, false);
+        $values = $this->columns[$columnName]->stringValues();
 
-        return isset($this->columns[$columnName]->values[$index]) ? $this->columns[$columnName]->values[$index] : false;
+        return isset($values[$index]) ? $values[$index] : false;
     }
 
     /**
@@ -1737,21 +1744,29 @@ class Table extends Configurable implements \Countable
             }
         }
 
-        $dataType = $this->requireTypeOf($fieldName);
+        $columnName = $this->getColumnName($fieldName, false);
+        $column = $this->column($columnName);
 
         // Validate field type, if type validation is enabled
         if ($this->getValidate() & Core::VALIDATE_TYPES) {
-            if (!Validator::isValidType($value, $dataType)) {
+            if (!Validator::isValidType($value, $column->type)) {
                 $errorStack->add($fieldName, 'type');
             }
-            if ($dataType === Type::Enum) {
-                $enumIndex = $this->enumIndex($fieldName, $value);
-                if ($enumIndex === null && $value !== null) {
-                    $errorStack->add($fieldName, 'enum');
+            if ($column->type === Type::Enum) {
+                if ($value instanceof BackedEnum) {
+                    if (!in_array($value, $column->values(), true)) {
+                        $errorStack->add($fieldName, 'enum');
+                    }
+                } elseif ($value !== null) {
+                    if (!in_array($value, $column->stringValues(), true)) {
+                        $errorStack->add($fieldName, 'enum');
+                    }
                 }
             }
-            if ($dataType === Type::Set) {
-                $values = $this->columns[$fieldName]->values ?? [];
+            if ($column->type === Type::Set) {
+                $values = $column->values();
+                $stringValues = $column->stringValues();
+
                 // Convert string to array
                 if (is_string($value)) {
                     $value = $value ? explode(',', $value) : [];
@@ -1761,8 +1776,14 @@ class Table extends Configurable implements \Countable
                 // Make sure each set value is valid
                 if (is_iterable($value)) {
                     foreach ($value as $k => $v) {
-                        if (!in_array($v, $values)) {
-                            $errorStack->add($fieldName, 'set');
+                        if ($v instanceof BackedEnum) {
+                            if (!in_array($v, $values, true)) {
+                                $errorStack->add($fieldName, 'enum');
+                            }
+                        } elseif ($v !== null) {
+                            if (!in_array($v, $stringValues, true)) {
+                                $errorStack->add($fieldName, 'enum');
+                            }
                         }
                     }
                 }
@@ -1773,13 +1794,13 @@ class Table extends Configurable implements \Countable
         if (
             $this->getValidate() & Core::VALIDATE_LENGTHS
             && is_string($value)
-            && !Validator::validateLength($value, $dataType, $this->getDefinitionOf($fieldName)?->length)
+            && !Validator::validateLength($value, $column->type, $column->length)
         ) {
             $errorStack->add($fieldName, 'length');
         }
 
         // Run all custom validators
-        $validators = $this->getColumn($this->getColumnName($fieldName))?->getValidators() ?? [];
+        $validators = $column->getValidators();
 
         // Skip rest of validation if value is allowed to be null
         if ($value === null && !isset($validators['notnull']) && !isset($validators['notblank'])) {
@@ -1787,11 +1808,6 @@ class Table extends Configurable implements \Countable
         }
 
         foreach ($validators as $validatorName => $options) {
-            if (!is_string($validatorName)) {
-                $validatorName = $options;
-                $options = [];
-            }
-
             $validator = Validator::getValidator($validatorName);
             if (!empty($options) && $validator instanceof AbstractValidator) {
                 $validator->setOptions($options);
@@ -2031,7 +2047,7 @@ class Table extends Configurable implements \Countable
     {
         $name = $this->name;
 
-        if (!class_exists($name)) {
+        if (!class_exists($name) && strpos($name, '\\') === false) {
             $name = Lib::namespaceConcat($this->getModelNamespace(), $name);
         }
 

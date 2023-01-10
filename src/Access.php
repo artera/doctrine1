@@ -88,9 +88,6 @@ abstract class Access implements \ArrayAccess
      */
     public function offsetGet(mixed $offset): mixed
     {
-        // array notation with no index was causing 'undefined variable: $offset' notices in php7,
-        // for example:
-        // $record->Relations[]->name = 'test';
         if (!isset($offset)) {
             return $this->get(null);
         }

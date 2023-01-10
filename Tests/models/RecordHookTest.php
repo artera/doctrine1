@@ -1,4 +1,7 @@
 <?php
+
+use Doctrine1\Event;
+
 class RecordHookTest extends \Doctrine1\Record
 {
     protected $messages = [];
@@ -7,35 +10,35 @@ class RecordHookTest extends \Doctrine1\Record
     {
         $this->hasColumn('name', 'string', null, ['primary' => true]);
     }
-    public function preSave($event)
+    public function preSave(Event $event): void
     {
         $this->messages[] = __FUNCTION__;
     }
-    public function postSave($event)
+    public function postSave(Event $event): void
     {
         $this->messages[] = __FUNCTION__;
     }
-    public function preInsert($event)
+    public function preInsert(Event $event): void
     {
         $this->messages[] = __FUNCTION__;
     }
-    public function postInsert($event)
+    public function postInsert(Event $event): void
     {
         $this->messages[] = __FUNCTION__;
     }
-    public function preUpdate($event)
+    public function preUpdate(Event $event): void
     {
         $this->messages[] = __FUNCTION__;
     }
-    public function postUpdate($event)
+    public function postUpdate(Event $event): void
     {
         $this->messages[] = __FUNCTION__;
     }
-    public function preDelete($event)
+    public function preDelete(Event $event): void
     {
         $this->messages[] = __FUNCTION__;
     }
-    public function postDelete($event)
+    public function postDelete(Event $event): void
     {
         $this->messages[] = __FUNCTION__;
     }

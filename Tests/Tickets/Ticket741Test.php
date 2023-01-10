@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Tickets {
     use Tests\DoctrineUnitTestCase;
 
@@ -25,6 +26,8 @@ namespace Tests\Tickets {
 }
 
 namespace {
+    use Doctrine1\Event;
+
     class Parent741 extends \Doctrine1\Record
     {
         public function setTableDefinition(): void
@@ -72,7 +75,7 @@ namespace {
             $this->hasOne('Parent741 as Moo', ['local' => 'moo_id', 'foreign' => 'id']);
         }
 
-        public function postInsert($e)
+        public function postInsert(Event $e): void
         {
             $this->Moo->state(\Doctrine1\Record\State::DIRTY);
             //echo "State: ". $this->Moo->state() . " \t Amount: " . $this->Moo->amount . "\n";

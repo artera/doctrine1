@@ -3,6 +3,8 @@
 namespace Doctrine1\Import;
 
 use Doctrine1\Casing;
+use Doctrine1\Column;
+use Doctrine1\Column\Type;
 
 /**
  * @template Connection of \Doctrine1\Connection\Sqlite
@@ -100,40 +102,31 @@ class Sqlite extends \Doctrine1\Import
         return array_keys($result);
     }
 
-    /**
-     * lists table constraints
-     *
-     * @param  string $table database table name
-     * @return array
-     */
-    public function listTableColumns($table)
+    public function listTableColumns(string $table): array
     {
         $sql    = 'PRAGMA table_info(' . $table . ')';
         $result = $this->conn->fetchAll($sql);
+        /** @var \Doctrine1\DataDict\Sqlite $dataDict */
+        $dataDict = $this->conn->dataDict;
 
-        $description = [];
         $columns     = [];
-        foreach ($result as $key => $val) {
+        foreach ($result as $val) {
             $val = array_change_key_case($val, CASE_LOWER);
-            /** @var \Doctrine1\DataDict\Sqlite $dataDict */
-            $dataDict = $this->conn->dataDict;
+
+
             $decl     = $dataDict->getPortableDeclaration($val);
 
-            $description = [
-                    'name'          => $val['name'],
-                    'type'          => $decl['type'][0],
-                    'alltypes'      => $decl['type'],
-                    'notnull'       => (bool) $val['notnull'],
-                    'default'       => $val['dflt_value'],
-                    'primary'       => (bool) $val['pk'],
-                    'length'        => null,
-                    'scale'         => null,
-                    'precision'     => null,
-                    'unsigned'      => null,
-                    'autoincrement' => ($val['pk'] == 1 && $decl['type'][0] == 'integer'),
-                    ];
-            $columns[$val['name']] = $description;
+            $columns[] = new Column(
+                $val['name'],
+                Type::fromNative($decl['type'][0]),
+                // alltypes: $decl['type'],
+                primary: (bool) $val['pk'],
+                default: $val['dflt_value'],
+                notnull: (bool) $val['notnull'],
+                autoincrement: ($val['pk'] == 1 && $decl['type'][0] == 'integer'),
+            );
         }
+
         return $columns;
     }
 

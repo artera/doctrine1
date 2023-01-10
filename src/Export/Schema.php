@@ -9,8 +9,6 @@ use Doctrine1\Relation;
 class Schema
 {
     /**
-     * buildSchema
-     *
      * Build schema array that can be dumped to file
      *
      * @param  string  $directory    The directory of models to build the schema from
@@ -31,7 +29,7 @@ class Schema
      *   }>,
      * }>
      */
-    public function buildSchema($directory = null, $models = [])
+    public function buildSchema(?string $directory = null, array $models = []): array
     {
         if ($directory !== null) {
             $loadedModels = \Doctrine1\Core::filterInvalidModels(\Doctrine1\Core::loadModels($directory));
@@ -107,15 +105,7 @@ class Schema
         return $array;
     }
 
-    /**
-     * exportSchema
-     *
-     * @param  string  $schema
-     * @param  string  $format
-     * @param  string  $directory
-     * @param  array   $models
-     */
-    public function exportSchema($schema, $format = 'yml', $directory = null, $models = []): int|string|null
+    public function exportSchema(string $schema, string $format = 'yml', ?string $directory = null, array $models = []): int|string|null
     {
         $array = $this->buildSchema($directory, $models);
 

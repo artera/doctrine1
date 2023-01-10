@@ -1,6 +1,6 @@
 <?php
-namespace Tests\Core {
 
+namespace Tests\Core {
     use Tests\DoctrineUnitTestCase;
 
     class HydrateTest extends DoctrineUnitTestCase
@@ -41,7 +41,7 @@ namespace Tests\Core {
         public function testHydrateHooks()
         {
             $user = new \User();
-            $user->getTable()->addRecordListener(new \HydrationListener);
+            $user->getTable()->addRecordListener(new \HydrationListener());
 
             $user->name = 'zYne';
             $user->save();
@@ -84,7 +84,7 @@ namespace Tests\Core {
 namespace {
     class HydrationListener extends \Doctrine1\Record\Listener
     {
-        public function preHydrate(\Doctrine1\Event $event)
+        public function preHydrate(\Doctrine1\Event $event): void
         {
             $data = $event->data;
             $data['password'] = 'default pass';
@@ -92,7 +92,7 @@ namespace {
             $event->data = $data;
         }
 
-        public function postHydrate(\Doctrine1\Event $event)
+        public function postHydrate(\Doctrine1\Event $event): void
         {
             foreach ($event->data as $key => $value) {
                 $event->data[$key] = is_string($value) ? strtoupper($value) : $value;

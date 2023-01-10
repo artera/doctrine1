@@ -42,7 +42,7 @@ class User extends Entity
     /**
      * Custom validation
      */
-    public function validate()
+    public function validate(): void
     {
         // Allow only one name!
         if ($this->customValidationEnabled && $this->name !== 'The Saint') {
@@ -50,14 +50,14 @@ class User extends Entity
         }
     }
 
-    public function validateOnInsert()
+    public function validateOnInsert(): void
     {
         if ($this->customValidationEnabled && $this->password !== 'Top Secret') {
             $this->errorStack()->add('password', 'pwNotTopSecret');
         }
     }
 
-    public function validateOnUpdate()
+    public function validateOnUpdate(): void
     {
         if ($this->customValidationEnabled && $this->loginname !== 'Nobody') {
             $this->errorStack()->add('loginname', 'notNobody');

@@ -84,7 +84,14 @@ class QueryDynamicReturnTypeExtension extends AbstractExtension implements Dynam
             // argument used, read value if static
             $argType = $scope->getType($hydrateArg->value);
             if ($argType instanceof EnumCaseObjectType) {
-                $hydrationMode = HydrationMode::from($argType->getEnumCaseName());
+                $hydrationMode = HydrationMode::Record;
+                $hydrationModeName = $argType->getEnumCaseName();
+                foreach (HydrationMode::cases() as $case) {
+                    if ($case->name === $hydrationModeName) {
+                        $hydrationMode = $case;
+                        break;
+                    }
+                }
             } elseif ($argType instanceof NullType) {
                 $hydrationMode = HydrationMode::Record;
             } else {

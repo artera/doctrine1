@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Tickets {
     use Tests\DoctrineUnitTestCase;
 
@@ -23,7 +24,7 @@ namespace Tests\Tickets {
 namespace {
     class Ticket2295_Record extends \Doctrine1\Record
     {
-        public function construct()
+        public function construct(): void
         {
             $this->mapValue('test');
         }

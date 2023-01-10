@@ -1765,6 +1765,9 @@ abstract class AbstractQuery
         ];
     }
 
+    /**
+     * @return $this
+     */
     public function setHydrationMode(HydrationMode $hydrationMode): self
     {
         $this->hydrator->setHydrationMode($hydrationMode);

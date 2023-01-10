@@ -3,6 +3,8 @@
 namespace Doctrine1\Import;
 
 use Doctrine1\Casing;
+use Doctrine1\Column;
+use Doctrine1\Column\Type;
 
 /**
  * @template Connection of \Doctrine1\Connection\Mysql
@@ -79,26 +81,7 @@ class Mysql extends \Doctrine1\Import
         return $result;
     }
 
-    /**
-     * lists table relations
-     *
-     * Expects an array of this format to be returned with all the relationships in it where the key is
-     * the name of the foreign table, and the value is an array containing the local and foreign column
-     * name
-     *
-     * Array
-     * (
-     *   [groups] => Array
-     *     (
-     *        [local] => group_id
-     *        [foreign] => id
-     *     )
-     * )
-     *
-     * @param  string $tableName database table name
-     * @return array
-     */
-    public function listTableRelations($tableName)
+    public function listTableRelations(string $tableName): array
     {
         $tableName = $this->conn->quote($tableName);
         $dbName = $this->conn->quote($this->conn->getDatabaseName());
@@ -123,56 +106,37 @@ class Mysql extends \Doctrine1\Import
         return $relations;
     }
 
-    /**
-     * lists table constraints
-     *
-     * @param  string $table database table name
-     * @return array
-     */
-    public function listTableColumns($table)
+    public function listTableColumns(string $table): array
     {
         $sql    = 'SHOW FULL COLUMNS FROM ' . $this->conn->quoteIdentifier($table, true);
         $result = $this->conn->fetchAssoc($sql);
+        /** @var \Doctrine1\DataDict\Mysql $dataDict */
+        $dataDict = $this->conn->dataDict;
 
-        $description = [];
         $columns     = [];
         foreach ($result as $val) {
             $val = array_change_key_case($val, CASE_LOWER);
 
-            /** @var \Doctrine1\DataDict\Mysql $dataDict */
-            $dataDict = $this->conn->dataDict;
             $decl     = $dataDict->getPortableDeclaration($val);
+            $meta = json_decode($val['comment'], true);
 
-            $val['default'] = $val['default'] === 'CURRENT_TIMESTAMP' ? null : $val['default'];
-
-            $description = [
-                'name'          => $val['field'],
-                'type'          => $decl['type'][0],
-                'alltypes'      => $decl['type'],
-                'length'        => $decl['length'],
-                'fixed'         => (bool) $decl['fixed'],
-                'unsigned'      => (bool) $decl['unsigned'],
-                'values'        => $decl['values'] ?? [],
-                'primary'       => strtolower($val['key']) === 'pri',
-                'default'       => $val['default'],
-                'notnull'       => $val['null'] !== 'YES',
-                'autoincrement' => strpos($val['extra'], 'auto_increment') !== false,
-                'virtual'       => strpos($val['extra'], 'VIRTUAL') !== false,
-                'comment'       => $val['comment'],
-            ];
-            if (isset($decl['scale'])) {
-                $description['scale'] = $decl['scale'];
-            }
-
-            $meta = json_decode($description['comment'], true);
-            if (is_array($meta)) {
-                $description['comment'] = '';
-            } else {
-                $meta = [];
-            }
-            $description['meta'] = $meta;
-
-            $columns[$val['field']] = $description;
+            $columns[] = new Column(
+                $val['field'],
+                Type::fromNative($decl['type'][0]),
+                // alltypes: $decl['type'],
+                length: $decl['length'],
+                fixed: (bool) $decl['fixed'],
+                unsigned: (bool) $decl['unsigned'],
+                values: $decl['values'] ?? [],
+                primary: strtolower($val['key']) === 'pri',
+                default: $val['default'] === 'CURRENT_TIMESTAMP' ? null : $val['default'],
+                notnull: $val['null'] !== 'YES',
+                autoincrement: strpos($val['extra'], 'auto_increment') !== false,
+                virtual: strpos($val['extra'], 'VIRTUAL') !== false,
+                scale: $decl['scale'] ?? 0,
+                meta: is_array($meta) ? $meta : [],
+                comment: is_array($meta) ? '' : $val['comment'],
+            );
         }
 
         return $columns;

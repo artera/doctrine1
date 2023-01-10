@@ -121,13 +121,9 @@ abstract class Task
     abstract public function execute();
 
     /**
-     * validate
-     *
      * Validates that all required fields are present
-     *
-     * @return bool true
      */
-    public function validate()
+    public function validate(): bool
     {
         $requiredArguments = $this->getRequiredArguments();
 

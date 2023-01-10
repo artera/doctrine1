@@ -112,7 +112,7 @@ namespace {
             );
         }
 
-        protected function validate()
+        protected function validate(): void
         {
             // lets get some silly load in the validation:
             // we do not want any child or parent to have the name 'caesar'

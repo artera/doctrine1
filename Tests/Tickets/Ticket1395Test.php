@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Tickets {
     use Tests\DoctrineUnitTestCase;
 
@@ -22,9 +23,9 @@ namespace Tests\Tickets {
         public function testTicket()
         {
             $myModel = static::$conn->getTable('T1395_MyModel')->find(0);
-                $this->assertTrue(isset($myModel->dt_created));
-                $this->assertTrue(isset($myModel->days_old)); // This is a calculated field from within the \T1395_Listener::preHydrate
-                $this->assertTrue(isset($myModel->dt_created_tx)); // This is a calculated field from within the \T1395_Listener::preHydrate
+            $this->assertTrue(isset($myModel->dt_created));
+            $this->assertTrue(isset($myModel->days_old)); // This is a calculated field from within the \T1395_Listener::preHydrate
+            $this->assertTrue(isset($myModel->dt_created_tx)); // This is a calculated field from within the \T1395_Listener::preHydrate
         }
     }
 }
@@ -46,7 +47,7 @@ namespace {
 
     class T1395_Listener extends \Doctrine1\Record\Listener
     {
-        public function preHydrate(\Doctrine1\Event $event)
+        public function preHydrate(\Doctrine1\Event $event): void
         {
             $data = $event->data;
 

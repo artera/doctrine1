@@ -2,6 +2,8 @@
 
 namespace Doctrine1\Import;
 
+use Doctrine1\Column;
+use Doctrine1\Column\Type;
 use Doctrine1\Record;
 
 class Schema
@@ -15,8 +17,6 @@ class Schema
         'connection',
         'attributes',
         'options',
-        'package',
-        'package_custom_path',
         'inheritance',
         'detect_relations',
     ];
@@ -39,9 +39,6 @@ class Schema
      * @var array
      */
     protected $options = [
-        'packagesPrefix'       => 'Package',
-        'packagesPath'         => '',
-        'packagesFolderName'   => 'packages',
         'suffix'               => '.php',
         'generateBaseClasses'  => true,
         'generateTableClasses' => false,
@@ -70,8 +67,6 @@ class Schema
             'indexes',
             'attributes',
             'options',
-            'package',
-            'package_custom_path',
             'inheritance',
             'detect_relations',
             'listeners',
@@ -260,6 +255,64 @@ class Schema
                 continue;
             }
 
+            $columns = [];
+            foreach ($definition['columns'] ?? [] as $options) {
+                $columns[] = new Column(
+                    name: $options['name'],
+                    type: Type::fromNative($options['type']),
+                    length: $options['length'],
+                    owner: $options['owner'] ?? null,
+                    primary: !empty($options['primary']),
+                    default: $options['default'] ?? null,
+                    notnull: !empty($options['notnull']),
+                    values: isset($options['values']) && is_array($options['values']) ? $options['values'] : [],
+                    autoincrement: !empty($options['autoincrement']),
+                    unique: !empty($options['unique']),
+                    protected: !empty($options['protected']),
+                    sequence: $options['sequence'] ?? null,
+                    zerofill: !empty($options['zerofill']),
+                    unsigned: !empty($options['unsigned']),
+                    scale: $options['scale'] ?? 0,
+                    fixed: !empty($options['fixed']),
+                    comment: $options['comment'] ?? null,
+                    charset: $options['charset'] ?? null,
+                    collation: $options['collation'] ?? null,
+                    check: $options['check'] ?? null,
+                    min: $options['min'] ?? null,
+                    max: $options['max'] ?? null,
+                    extra: isset($options['extra']) && is_array($options['extra']) ? $options['extra'] : [],
+                    virtual: !empty($options['virtual']),
+                    meta: isset($options['meta']) && is_array($options['meta']) ? $options['meta'] : [],
+                );
+            }
+
+            $relations = [];
+            foreach ($definition['relations'] ?? [] as $alias => $options) {
+                $relations[] = new Definition\Relation(
+                    alias: $alias,
+                    class: $alias,
+                    local: $options['local'],
+                    foreign: $options['foreign'],
+                    many: $options['foreignType'] ?? '' !== 'one',
+                    refClass: $options['refClass'] ?? null,
+                );
+            }
+
+            $definition = new Definition\Table(
+                $definition['name'] ?? $name,
+                $definition['className'],
+                $columns,
+                $definition['connection'],
+                $relations,
+                $definition['indexes'] ?? [],
+                $definition['attributes'] ?? [],
+                $definition['checks'] ?? [],
+                extends: $definition['inheritance']['extends'] ?? null,
+                tableExtends: $definition['inheritance']['tableExtends'] ?? null,
+                inheritanceType: $definition['inheritance']['type'] ?? null,
+                subclasses: $definition['inheritance']['subclasses'] ?? [],
+            );
+
             $builder->buildRecord($definition);
         }
     }
@@ -285,7 +338,6 @@ class Schema
             'indexes'          => [],
             'attributes'       => [],
             'options'          => [],
-            'package'          => null,
             'inheritance'      => [],
             'detect_relations' => false,
         ];
@@ -413,10 +465,6 @@ class Schema
 
             // Make sure that anything else that is specified in the schema makes it to the final array
             $build[$className] = \Doctrine1\Lib::arrayDeepMerge($table, $build[$className]);
-            assert(is_array($build[$className]));
-
-            // We need to keep track of the className for the connection
-            $build[$className]['connectionClassName'] = $build[$className]['className'];
         }
 
         return $build;
@@ -529,8 +577,6 @@ class Schema
     }
 
     /**
-     * buildRelationships
-     *
      * Loop through an array of schema information and build all the necessary relationship information
      * Will attempt to auto complete relationships and simplify the amount of information required
      * for defining a relationship
@@ -554,8 +600,8 @@ class Schema
 
                             // Set the detected foreign key type and length to the same as the primary key
                             // of the related table
-                            $type                                                    = isset($array[$columnClassName]['columns']['id']['type']) ? $array[$columnClassName]['columns']['id']['type'] : 'integer';
-                            $length                                                  = isset($array[$columnClassName]['columns']['id']['length']) ? $array[$columnClassName]['columns']['id']['length'] : 8;
+                            $type = isset($array[$columnClassName]['columns']['id']['type']) ? $array[$columnClassName]['columns']['id']['type'] : 'integer';
+                            $length = isset($array[$columnClassName]['columns']['id']['length']) ? $array[$columnClassName]['columns']['id']['length'] : 8;
                             $array[$className]['columns'][$column['name']]['type']   = $type;
                             $array[$className]['columns'][$column['name']]['length'] = $length;
                         }

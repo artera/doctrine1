@@ -1,4 +1,5 @@
 <?php
+
 class ClientModel extends \Doctrine1\Record
 {
     public function setTableDefinition(): void
@@ -33,7 +34,7 @@ class ClientToAddressModel extends \Doctrine1\Record
         $this->hasColumn('address_id', 'integer', 11, ['primary' => true]);
     }
 
-    public function construct()
+    public function construct(): void
     {
     }
 
