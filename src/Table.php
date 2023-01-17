@@ -1802,6 +1802,11 @@ class Table extends Configurable implements \Countable
         // Run all custom validators
         $validators = $column->getValidators();
 
+        // Skip rest of validation for empty autoincrement int columns
+        if ($column->type === Type::Integer && $column->autoincrement && empty($value) && !is_numeric($value)) {
+            return $errorStack;
+        }
+
         // Skip rest of validation if value is allowed to be null
         if ($value === null && !isset($validators['notnull']) && !isset($validators['notblank'])) {
             return $errorStack;
