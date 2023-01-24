@@ -177,12 +177,16 @@ class Builder
 
     public function setOption(string $key, mixed $value): void
     {
-        $name = 'set' . Inflector::classify($key);
+        $name = Inflector::classify($key);
+        $setter = "set$name";
+        $property = lcfirst($name);
 
-        if (method_exists($this, $name)) {
-            $this->$name($value);
+        if (method_exists($this, $setter)) {
+            $this->$setter($value);
+        } elseif (property_exists($this, $property)) {
+            $this->$property = $value;
         } else {
-            $this->$key = $value;
+            throw new \Doctrine1\Exception("Unknown property $property on ". $this::class);
         }
     }
 

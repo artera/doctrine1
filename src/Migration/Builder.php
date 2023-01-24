@@ -12,11 +12,6 @@ class Builder
     private string $migrationsPath = '';
 
     /**
-     * File suffix to use when writing class definition
-     */
-    private string $suffix = '.php';
-
-    /**
      * Instance of the migration class for the migration classes directory
      */
     private \Doctrine1\Migration $migration;
@@ -288,7 +283,7 @@ END;
             return $this->buildMigrationClass($className, null, $options, $up, $down);
         } else {
             $next = time() + $this->migration->getNextMigrationClassVersion();
-            $fileName = $next . '_' . \Doctrine1\Inflector::tableize($className) . $this->suffix;
+            $fileName = $next . '_' . \Doctrine1\Inflector::tableize($className) . '.php';
 
             $class = $this->buildMigrationClass($className, $fileName, $options, $up, $down);
 

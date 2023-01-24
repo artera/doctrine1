@@ -39,10 +39,8 @@ class Schema
      * @var array
      */
     protected $options = [
-        'suffix'               => '.php',
         'generateBaseClasses'  => true,
         'generateTableClasses' => false,
-        'generateAccessors'    => false,
         'baseClassFormat'      => 'Base%s',
         'baseClassName'        => Record::class,
     ];
