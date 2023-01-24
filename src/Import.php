@@ -411,32 +411,33 @@ class Import extends Connection\Module
                     );
                 }
 
-                $definitionId = strtolower($definition->className);
-                $definitions[$definitionId] = $definition;
+                $definitions[$definition->className] = $definition;
                 $classes[] = $definition->className;
             }
 
             // Build opposite end of relationships
             foreach ($definitions as $definition) {
                 foreach ($definition->relations as $relation) {
-                    $definitionId = strtolower($relation->class);
+                    if ($relation->many) {
+                        continue;
+                    }
 
                     $column = $definition->getColumn($relation->local);
                     if (!empty($column?->meta['inverse_relation_alias'])) {
                         $alias = $column->meta['inverse_relation_alias'];
-                        if ($definitions[$definitionId]->getRelationByAlias($alias) !== null) {
+                        if ($definitions[$relation->class]->getRelationByAlias($alias) !== null) {
                             throw new Import\Exception('The alias name requested via database meta-comments is already taken by another relation');
                         }
                     } else {
                         $aliasNum = 1;
                         $alias = $definition->className;
-                        while ($definitions[$definitionId]->getRelationByAlias($alias) !== null) {
+                        while ($definitions[$relation->class]->getRelationByAlias($alias) !== null) {
                             $aliasNum++;
                             $alias = "{$definition->className}{$aliasNum}";
                         }
                     }
 
-                    $definitions[$definitionId]->relations[] = new Definition\Relation(
+                    $definitions[$relation->class]->relations[] = new Definition\Relation(
                         $alias,
                         $definition->className,
                         $relation->foreign,
