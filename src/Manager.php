@@ -113,6 +113,7 @@ class Manager extends Configurable implements \Countable, \IteratorAggregate
         $this->clearDeserializers();
         $this->registerDeserializer(new Deserializer\Boolean(), 10);
         $this->registerDeserializer(new Deserializer\Enum(), 20);
+        $this->registerDeserializer(new Deserializer\Set(), 20);
         $this->registerDeserializer(new Deserializer\DateTimeImmutable($timezone), 20);
         $this->registerDeserializer(new Deserializer\JSON(), 40);
     }

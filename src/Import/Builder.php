@@ -316,10 +316,10 @@ class Builder
             $default = $column->hasDefault() ? $column->default : null;
             $values = $column->stringValues();
 
-            if ($default !== null && in_array($column->type, [Type::Set, Type::Enum], true)) {
+            if (in_array($column->type, [Type::Set, Type::Enum], true)) {
                 $columnImplementation = $column->enumImplementation($manager);
 
-                if ($column->type === Type::Set) {
+                if ($default !== null && $column->type === Type::Set) {
                     $default = empty($default) ? [] : explode(',', $default);
                 }
 
@@ -327,10 +327,12 @@ class Builder
                     $enumClassName = $column->enumClassName($manager, $gen->getNamespaceName() ?? $this->namespace);
 
                     if ($enumClassName !== null) {
-                        $default = match ($column->type) {
-                            Type::Enum => new ValueGenerator("\\$enumClassName::" . Inflector::classify($default), ValueGenerator::TYPE_CONSTANT),
-                            Type::Set => array_map(fn ($v) => new ValueGenerator("\\$enumClassName::" . Inflector::classify($v), ValueGenerator::TYPE_CONSTANT), $default),
-                        };
+                        if ($default !== null) {
+                            $default = match ($column->type) {
+                                Type::Enum => new ValueGenerator("\\$enumClassName::" . Inflector::classify($default), ValueGenerator::TYPE_CONSTANT),
+                                Type::Set => array_map(fn ($v) => new ValueGenerator("\\$enumClassName::" . Inflector::classify($v), ValueGenerator::TYPE_CONSTANT), $default),
+                            };
+                        }
                         $values = $enumClassName;
                     }
                 }
