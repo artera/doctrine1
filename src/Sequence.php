@@ -34,7 +34,7 @@ class Sequence extends Connection\Module
      * @param string $table name of the table into which a new row was inserted
      * @param string $field name of the field into which a new row was inserted
      */
-    public function lastInsertId($table = null, $field = null): string|false
+    public function lastInsertId($table = null, $field = null): int|string
     {
         throw new Sequence\Exception('method not implemented');
     }

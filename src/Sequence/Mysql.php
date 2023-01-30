@@ -53,9 +53,9 @@ class Mysql extends \Doctrine1\Sequence
      * @param string $table name of the table into which a new row was inserted
      * @param string $field name of the field into which a new row was inserted
      */
-    public function lastInsertId($table = null, $field = null): string|false
+    public function lastInsertId($table = null, $field = null): int
     {
-        return $this->conn->getDbh()->lastInsertId();
+        return (int) $this->conn->getDbh()->lastInsertId();
     }
 
     /**

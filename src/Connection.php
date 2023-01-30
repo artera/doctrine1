@@ -1180,7 +1180,7 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
      * @param string|null $table name of the table into which a new row was inserted
      * @param string|null $field name of the field into which a new row was inserted
      */
-    public function lastInsertId(?string $table = null, ?string $field = null): string|false
+    public function lastInsertId(?string $table = null, ?string $field = null): int|string
     {
         return $this->sequence->lastInsertId($table, $field);
     }

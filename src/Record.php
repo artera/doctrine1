@@ -2164,7 +2164,7 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
         } else {
             if (is_array($id)) {
                 foreach ($id as $fieldName => $value) {
-                    $this->_id[$fieldName]   = $value;
+                    $this->_id[$fieldName] = $value;
                     $this->_data[$fieldName] = $value;
                 }
             } else {
