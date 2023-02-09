@@ -1722,7 +1722,7 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
                 $curValue = $this->get($fieldName, false);
 
                 if ($this->isValueModified($column, $oldValue, $curValue)) {
-                    $a[$fieldName] = $oldValue;
+                    $a[$fieldName] = $oldValue instanceof None ? null : $oldValue;
                 }
             } else {
                 $a[$fieldName] = $this->_data[$fieldName];
