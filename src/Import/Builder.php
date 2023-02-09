@@ -11,6 +11,7 @@ use Doctrine1\Manager;
 use Doctrine1\Record;
 use Doctrine1\Column;
 use Doctrine1\Column\Type;
+use Doctrine1\Import\Builder\PropertyReadTag;
 use Doctrine1\Relation;
 use Doctrine1\Table;
 use Laminas\Code\Generator\ClassGenerator;
@@ -487,7 +488,10 @@ class Builder
                 $types[] = 'null';
             }
 
-            $docBlock->setTag(new PropertyTag($column->fieldName, $types));
+            $tag = $column->virtual
+                ? new PropertyReadTag($column->fieldName, $types)
+                : new PropertyTag($column->fieldName, $types);
+            $docBlock->setTag($tag);
         }
 
         $relations = $definition->relations;
