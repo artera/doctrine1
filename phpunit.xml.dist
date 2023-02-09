@@ -1,13 +1,13 @@
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.4/phpunit.xsd" bootstrap="Tests/bootstrap.php" colors="true" verbose="true" beStrictAboutTestsThatDoNotTestAnything="false" beStrictAboutOutputDuringTests="false" beStrictAboutChangesToGlobalState="true" testdox="true">
+<?xml version="1.0"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.0/phpunit.xsd" bootstrap="Tests/bootstrap.php" colors="true" beStrictAboutTestsThatDoNotTestAnything="false" beStrictAboutOutputDuringTests="false" beStrictAboutChangesToGlobalState="true" testdox="true" cacheDirectory=".phpunit.cache">
   <php>
-    <const name="PHPUNIT" value="true" />
-    <ini name="memory_limit" value="768M" />
-    <ini name="max_execution_time" value="900" />
-    <ini name="date.timezone" value="GMT+0" />
-    <ini name="assert.exception" value="1" />
-    <ini name="error_reporting" value="E_ALL" />
+    <const name="PHPUNIT" value="true"/>
+    <ini name="memory_limit" value="768M"/>
+    <ini name="max_execution_time" value="900"/>
+    <ini name="date.timezone" value="GMT+0"/>
+    <ini name="assert.exception" value="1"/>
+    <ini name="error_reporting" value="E_ALL"/>
   </php>
-
   <testsuites>
     <testsuite name="Cache">
       <directory>Tests/Cache</directory>
@@ -76,25 +76,21 @@
       <file>Tests/ParserTest.php</file>
     </testsuite>
   </testsuites>
-
   <groups>
     <exclude>
       <group>mysql</group>
     </exclude>
   </groups>
-
   <coverage>
     <include>
       <directory suffix=".php">src</directory>
     </include>
-
     <exclude>
       <directory>src/PHPStan</directory>
     </exclude>
-
     <report>
-      <text outputFile="php://stdout" showOnlySummary="true" />
-      <html outputDirectory="coverage" />
+      <text outputFile="php://stdout" showOnlySummary="true"/>
+      <html outputDirectory="coverage"/>
     </report>
   </coverage>
 </phpunit>
