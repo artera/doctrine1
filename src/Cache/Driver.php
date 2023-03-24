@@ -173,11 +173,9 @@ abstract class Driver implements \Doctrine1\CacheInterface
     public function deleteAll(): int
     {
         $count = 0;
-        if (is_array($keys = $this->getCacheKeys())) {
-            foreach ($keys as $key) {
-                $count++;
-                $this->delete($key);
-            }
+        foreach ($this->getCacheKeys() as $key) {
+            $count++;
+            $this->delete($key);
         }
         return $count;
     }

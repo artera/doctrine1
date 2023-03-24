@@ -946,9 +946,7 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
 
         /** @var Connection\Exception $exc */
         $exc = new $name($message, (int) $e->getCode());
-        if (!isset($e->errorInfo) || !is_array($e->errorInfo)) {
-            $e->errorInfo = [null, null, null, null];
-        }
+        $e->errorInfo ??= [null, null, null, null];
         $exc->processErrorInfo($e->errorInfo);
         throw $exc;
     }

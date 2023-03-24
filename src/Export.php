@@ -28,6 +28,7 @@ use Throwable;
  *   checks?: array,
  *   primary?: string[],
  *   foreignKeys?: mixed[],
+ *   comment?: string,
  * }
  */
 class Export extends Connection\Module
@@ -689,6 +690,7 @@ class Export extends Connection\Module
             }
         }
 
+        // @phpstan-ignore-next-line
         if (!isset($definition['fields']) || !is_array($definition['fields'])) {
             throw new Export\Exception('No columns given for index ' . $name);
         }

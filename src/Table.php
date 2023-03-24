@@ -345,15 +345,7 @@ class Table extends Configurable implements \Countable
                     $this->identifierType = IdentifierType::Autoinc;
 
                     if ($e->sequence !== null) {
-                        if (is_string($e->sequence)) {
-                            $this->sequenceName = $e->sequence;
-                        } else {
-                            if (($sequence = $this->getDefaultSequence()) !== null) {
-                                $this->sequenceName = $sequence;
-                            } else {
-                                $this->sequenceName = $this->connection->formatter->getSequenceName($this->tableName);
-                            }
-                        }
+                        $this->sequenceName = $e->sequence;
                     }
                 }
 
@@ -1552,44 +1544,6 @@ class Table extends Configurable implements \Countable
         $this->data = [];
 
         return $record;
-    }
-
-    /**
-     * Get the classname to return. Most often this is just the options['name'].
-     *
-     * Check the subclasses option and the inheritanceMap for each subclass to see
-     * if all the maps in a subclass is met. If this is the case return that
-     * subclass name. If no subclasses match or if there are no subclasses defined
-     * return the name of the class for this tables record.
-     *
-     * @todo this function could use reflection to check the first time it runs
-     * if the subclassing option is not set.
-     *
-     * @return         string The name of the class to create
-     * @phpstan-return class-string<T>
-     * @deprecated
-     */
-    public function getClassnameToReturn()
-    {
-        if (!isset($this->subclasses)) {
-            return $this->name;
-        }
-        foreach ($this->subclasses as $subclass) {
-            $table          = $this->connection->getTable($subclass);
-            $inheritanceMap = $table->inheritanceMap;
-            $nomatch        = false;
-            foreach ($inheritanceMap as $key => $value) {
-                if (!isset($this->data[$key]) || $this->data[$key] != $value) {
-                    $nomatch = true;
-                    break;
-                }
-            }
-            if (!$nomatch) {
-                /** @phpstan-var class-string<T> */
-                return $table->getComponentName();
-            }
-        }
-        return $this->name;
     }
 
     /**

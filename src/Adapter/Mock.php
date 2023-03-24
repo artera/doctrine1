@@ -232,7 +232,13 @@ class Mock extends PDO
         return true;
     }
 
-    public function sqliteCreateFunction($function_name, $callback, $num_args = -1, int $flags = 0): bool
+    /**
+     * @param string $function_name
+     * @param callable $callback
+     * @param int $num_args
+     * @param int $flags
+     */
+    public function sqliteCreateFunction($function_name, $callback, $num_args = -1, $flags = 0): bool
     {
         return true;
     }

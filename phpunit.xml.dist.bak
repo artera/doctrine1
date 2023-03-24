@@ -1,0 +1,100 @@
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.4/phpunit.xsd" bootstrap="Tests/bootstrap.php" colors="true" verbose="true" beStrictAboutTestsThatDoNotTestAnything="false" beStrictAboutOutputDuringTests="false" beStrictAboutChangesToGlobalState="true" testdox="true">
+  <php>
+    <const name="PHPUNIT" value="true" />
+    <ini name="memory_limit" value="768M" />
+    <ini name="max_execution_time" value="900" />
+    <ini name="date.timezone" value="GMT+0" />
+    <ini name="assert.exception" value="1" />
+    <ini name="error_reporting" value="E_ALL" />
+  </php>
+
+  <testsuites>
+    <testsuite name="Cache">
+      <directory>Tests/Cache</directory>
+    </testsuite>
+    <testsuite name="Connection">
+      <directory>Tests/Connection</directory>
+    </testsuite>
+    <testsuite name="Core">
+      <directory>Tests/Core</directory>
+    </testsuite>
+    <testsuite name="DataDict">
+      <directory>Tests/DataDict</directory>
+    </testsuite>
+    <testsuite name="DataType">
+      <directory>Tests/DataType</directory>
+    </testsuite>
+    <testsuite name="EventListener">
+      <directory>Tests/EventListener</directory>
+    </testsuite>
+    <testsuite name="Export">
+      <directory>Tests/Export</directory>
+    </testsuite>
+    <testsuite name="Expression">
+      <directory>Tests/Expression</directory>
+    </testsuite>
+    <testsuite name="Import">
+      <directory>Tests/Import</directory>
+    </testsuite>
+    <testsuite name="Inheritance">
+      <directory>Tests/Inheritance</directory>
+    </testsuite>
+    <testsuite name="Migration">
+      <directory>Tests/Migration</directory>
+    </testsuite>
+    <testsuite name="Misc">
+      <directory>Tests/Misc</directory>
+    </testsuite>
+    <testsuite name="Query">
+      <directory>Tests/Query</directory>
+    </testsuite>
+    <testsuite name="Record">
+      <directory>Tests/Record</directory>
+    </testsuite>
+    <testsuite name="Relation">
+      <directory>Tests/Relation</directory>
+    </testsuite>
+    <testsuite name="Sequence">
+      <directory>Tests/Sequence</directory>
+    </testsuite>
+    <testsuite name="Tickets">
+      <directory>Tests/Tickets</directory>
+    </testsuite>
+    <testsuite name="Transaction">
+      <directory>Tests/Transaction</directory>
+    </testsuite>
+    <testsuite name="Validator">
+      <directory>Tests/Validator</directory>
+    </testsuite>
+    <testsuite name="Fixture">
+      <file>Tests/FixtureTest.php</file>
+    </testsuite>
+    <testsuite name="Hook">
+      <file>Tests/HookTest.php</file>
+    </testsuite>
+    <testsuite name="Parser">
+      <file>Tests/ParserTest.php</file>
+    </testsuite>
+  </testsuites>
+
+  <groups>
+    <exclude>
+      <group>mysql</group>
+    </exclude>
+  </groups>
+
+  <coverage>
+    <include>
+      <directory suffix=".php">src</directory>
+    </include>
+
+    <exclude>
+      <directory>src/PHPStan</directory>
+    </exclude>
+
+    <report>
+      <text outputFile="php://stdout" showOnlySummary="true" />
+      <html outputDirectory="coverage" />
+    </report>
+  </coverage>
+</phpunit>

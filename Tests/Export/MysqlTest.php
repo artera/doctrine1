@@ -373,7 +373,7 @@ class MysqlTest extends DoctrineUnitTestCase
 
         $options = ['primary' => ['id'],
                          'indexes' => ['myindex' => [
-                                                    'fields' => 'name']]
+                                                    'fields' => ['name']]]
                          ];
 
         static::$conn->export->createTable('sometable', $fields, $options);

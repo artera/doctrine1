@@ -88,10 +88,7 @@ class Mysql extends \Doctrine1\Export
                 $found = false;
                 if (isset($options['indexes'])) {
                     foreach ($options['indexes'] as $definition) {
-                        if (is_string($definition['fields'])) {
-                            // Check if index already exists on the column
-                            $found = $found || ($local == $definition['fields']);
-                        } elseif (in_array($local, $definition['fields']) && count($definition['fields']) === 1) {
+                        if (isset($definition['fields']) && in_array($local, $definition['fields']) && count($definition['fields']) === 1) {
                             // Index already exists on the column
                             $found = true;
                         }
@@ -260,6 +257,7 @@ class Mysql extends \Doctrine1\Export
             $query .= "RENAME TO $change_name";
         }
 
+        // @phpstan-ignore-next-line
         if (!empty($changes['add']) && is_array($changes['add'])) {
             foreach ($changes['add'] as $field) {
                 if ($query) {
@@ -269,6 +267,7 @@ class Mysql extends \Doctrine1\Export
             }
         }
 
+        // @phpstan-ignore-next-line
         if (!empty($changes['remove']) && is_array($changes['remove'])) {
             foreach ($changes['remove'] as $fieldName) {
                 if ($query) {
@@ -280,12 +279,14 @@ class Mysql extends \Doctrine1\Export
         }
 
         $rename = [];
+        // @phpstan-ignore-next-line
         if (!empty($changes['rename']) && is_array($changes['rename'])) {
             foreach ($changes['rename'] as $oldFieldName => $fieldName) {
                 $rename[$fieldName] = $oldFieldName;
             }
         }
 
+        // @phpstan-ignore-next-line
         if (!empty($changes['change']) && is_array($changes['change'])) {
             foreach ($changes['change'] as $fieldName => $field) {
                 if ($query) {
@@ -519,9 +520,6 @@ class Mysql extends \Doctrine1\Export
 
         if (!isset($definition['fields'])) {
             throw new \Doctrine1\Export\Exception('No columns given for index ' . $name);
-        }
-        if (!is_array($definition['fields'])) {
-            $definition['fields'] = [$definition['fields']];
         }
 
         $query = $type . 'INDEX ' . $this->conn->quoteIdentifier($name);

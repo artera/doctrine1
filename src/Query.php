@@ -242,6 +242,7 @@ class Query extends AbstractQuery implements \Countable
             return array_shift($collection);
         }
 
+        // @phpstan-ignore-next-line
         return null;
     }
 

@@ -18,6 +18,7 @@ namespace Tests\Tickets {
         {
             $records = \Doctrine1\Query::create()->query('FROM Parent1713 m');
 
+            $this->assertCount(1, $records);
             foreach ($records as $rec) {
                 $this->assertEquals(get_class($rec), $rec['title']);
             }

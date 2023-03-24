@@ -2658,14 +2658,12 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
     /** @phpstan-param array<class-string<Record>, array<string, mixed>> $map */
     public function setSubclasses(array $map): void
     {
-        $class = get_class($this);
         // Set the inheritance map for subclasses
-        if (isset($map[$class])) {
+        if (isset($map[static::class])) {
             // fix for #1621
-            $mapFieldNames  = $map[$class];
             $mapColumnNames = [];
 
-            foreach ($mapFieldNames as $fieldName => $val) {
+            foreach ($map[static::class] as $fieldName => $val) {
                 $mapColumnNames[$this->getTable()->getColumnName($fieldName)] = $val;
             }
 
