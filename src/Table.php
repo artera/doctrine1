@@ -1074,7 +1074,7 @@ class Table extends Configurable implements \Countable
             throw new Table\Exception("Couldn't get default value. Column $columnName doesn't exist.");
         }
 
-        if (!$this->columns[$columnName]->hasDefault()) {
+        if ($this->columns[$columnName]->virtual || !$this->columns[$columnName]->hasDefault()) {
             return null;
         }
 
@@ -1685,6 +1685,14 @@ class Table extends Configurable implements \Countable
             $errorStack = new Validator\ErrorStack($this->name);
         }
 
+        $columnName = $this->getColumnName($fieldName, false);
+        $column = $this->column($columnName);
+
+        // ignore validation of virtual columns
+        if ($column->virtual) {
+            return $errorStack;
+        }
+
         if ($value === None::instance()) {
             $value = null;
         } elseif ($value instanceof Record && $value->exists()) {
@@ -1697,9 +1705,6 @@ class Table extends Configurable implements \Countable
                 }
             }
         }
-
-        $columnName = $this->getColumnName($fieldName, false);
-        $column = $this->column($columnName);
 
         // Validate field type, if type validation is enabled
         if ($this->getValidate() & Core::VALIDATE_TYPES) {

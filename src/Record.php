@@ -1325,6 +1325,10 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
             $column = $this->_table->getDefinitionOf($fieldName);
             assert($column !== null);
 
+            if ($column->virtual) {
+                return $this;
+            }
+
             if ($value instanceof Record && $column->type !== Type::Object) {
                 $id = $value->getIncremented();
 
@@ -1715,6 +1719,11 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
             $column = $this->_table->getDefinitionOf($fieldName);
             assert($column !== null);
 
+            // ignore virtual columns
+            if ($column->virtual) {
+                continue;
+            }
+
             if ($old) {
                 $oldValue = isset($this->_oldValues[$fieldName])
                     ? $this->_oldValues[$fieldName]
@@ -1776,15 +1785,20 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
         $serializers = $this->getSerializers();
 
         foreach ($modifiedFields as $field) {
+            $column = $this->_table->getDefinitionOf($field);
+            assert($column !== null);
+
+            // skip virtual columns
+            if ($column->virtual) {
+                continue;
+            }
+
             $dataValue = $this->_data[$field];
 
             if ($dataValue instanceof None) {
                 $prepared[$field] = null;
                 continue;
             }
-
-            $column = $this->_table->getDefinitionOf($field);
-            assert($column !== null);
 
             // we cannot use serializers in this case but it should be fine
             if ($dataValue instanceof Record && $column->type !== Type::Object) {
