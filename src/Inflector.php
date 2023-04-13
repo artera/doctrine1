@@ -43,7 +43,7 @@ abstract class Inflector
 
         if (!isset($cache[$word])) {
             $word         = str_replace('$', '', $word);
-            $classify     = preg_replace_callback('~(_?)([-_])([\w])~u', fn ($m) => $m[1] . mb_strtoupper($m[3]), ucfirst($word));
+            $classify     = preg_replace_callback('~(_?)(?:[-_ ]+)([\w])~u', fn ($m) => $m[1] . mb_strtoupper($m[2]), ucfirst($word));
             $cache[$word] = $classify;
         }
         return $cache[$word];
