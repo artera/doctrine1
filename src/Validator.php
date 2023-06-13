@@ -101,7 +101,7 @@ class Validator
             return true;
         } elseif ($var === null) {
             return true;
-        } elseif (is_object($var)) {
+        } elseif (is_object($var) && !$var instanceof \DateTimeInterface) {
             return $type === Type::Object;
         } elseif (is_array($var)) {
             return $type === Type::Array;

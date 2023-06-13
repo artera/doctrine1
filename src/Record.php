@@ -1718,8 +1718,6 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
      */
     public function getModified(bool $old = false, bool $last = false): array
     {
-        $serializers = $this->getSerializers();
-
         $a = [];
         $modified = $last ? $this->_lastModified : $this->_modified;
         foreach ($modified as $fieldName) {
@@ -1789,8 +1787,6 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
         $prepared = [];
         $modifiedFields = $this->_modified;
 
-        $serializers = $this->getSerializers();
-
         foreach ($modifiedFields as $field) {
             $column = $this->_table->getDefinitionOf($field);
             assert($column !== null);
@@ -1816,15 +1812,7 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
                 continue;
             }
 
-            foreach ($serializers as $serializer) {
-                try {
-                    $prepared[$field] = $serializer->serialize($dataValue, $column, $this->_table);
-                    continue 2;
-                } catch (Serializer\Exception\Incompatible) {
-                }
-            }
-
-            $prepared[$field] = $dataValue;
+            $prepared[$field] = $this->_table->serializeColumnValue($dataValue, $column->fieldName);
         }
 
         return $prepared;

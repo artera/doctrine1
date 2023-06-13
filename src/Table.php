@@ -1086,6 +1086,28 @@ class Table extends Configurable implements \Countable
         return $this->deserializeColumnValue($default, $fieldName);
     }
 
+    /** @param Serializer\SerializerInterface[]|null $serializers */
+    public function serializeColumnValue(mixed $value, string $fieldName, ?array $serializers = null): mixed
+    {
+        $column = $this->getColumn($this->getColumnName($fieldName, false));
+        if ($column === null || ($value === null && !$column->notnull)) {
+            return $value;
+        }
+        if ($serializers === null) {
+            $serializers = array_merge(
+                Manager::getInstance()->getSerializers(),
+                $this->getSerializers(),
+            );
+        }
+        foreach ($serializers as $serializer) {
+            try {
+                return $serializer->serialize($value, $column, $this);
+            } catch (Serializer\Exception\Incompatible) {
+            }
+        }
+        return $value;
+    }
+
     /** @param Deserializer\DeserializerInterface[]|null $deserializers */
     public function deserializeColumnValue(mixed $value, string $fieldName, ?array $deserializers = null): mixed
     {

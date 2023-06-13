@@ -8,7 +8,7 @@ class Date extends AbstractValidator
 {
     public function isValid($value)
     {
-        if ($value === null) {
+        if ($value === null || $value instanceof \DateTimeInterface) {
             return true;
         }
         $e = explode('-', $value);
