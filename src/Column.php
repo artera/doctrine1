@@ -86,8 +86,8 @@ class Column
             Type::Date => 10, // YYYY-MM-DD ISO 8601
             Type::Time => 14, // HH:NN:SS+00:00 ISO 8601
             Type::DateTime, Type::Timestamp => 25, // YYYY-MM-DDTHH:MM:SS+00:00 ISO 8601
-            Type::Set => strlen(implode(',', $this->values())) ?: null,
-            Type::Enum => max(...array_map('strlen', $this->values())) ?: null,
+            Type::Set => strlen(implode(',', $this->stringValues())) ?: null,
+            Type::Enum => max(...array_map('strlen', $this->stringValues())) ?: null,
             default => null,
         };
 
@@ -96,6 +96,7 @@ class Column
         }
     }
 
+    /** @return string[] | BackedEnum[] */
     public function values(): array
     {
         if (is_array($this->values)) {
@@ -104,6 +105,7 @@ class Column
         return $this->values::cases();
     }
 
+    /** @return string[] */
     public function stringValues(): array
     {
         if (is_array($this->values)) {
@@ -112,7 +114,7 @@ class Column
 
         $values = [];
         foreach ($this->values() as $case) {
-            $values[] = $case->value;
+            $values[] = is_string($case) ? $case : (string) $case->value;
         }
         return $values;
     }

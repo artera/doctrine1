@@ -1615,9 +1615,9 @@ class Table extends Configurable implements \Countable
      * Retrieves the enum values for a given field.
      *
      * @param  string $fieldName
-     * @return mixed[]
+     * @return string[]
      */
-    public function getEnumValues($fieldName)
+    public function getEnumValues(string $fieldName)
     {
         $columnName = $this->getColumnName($fieldName, false);
         return $this->columns[$columnName]->stringValues();
@@ -1631,9 +1631,9 @@ class Table extends Configurable implements \Countable
      *
      * @param  string                $fieldName
      * @param  integer|None $index     numeric index of the enum
-     * @return mixed
+     * @return false|string
      */
-    public function enumValue($fieldName, $index)
+    public function enumValue(string $fieldName, int|None $index): false|int|string
     {
         if ($index instanceof None) {
             return false;
