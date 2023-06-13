@@ -19,8 +19,7 @@ class Sqlite extends \Doctrine1\DataDict
             case Type::String:
             case Type::Object:
             case Type::Array:
-                $fixed = ($field->fixed || $field->type == 'char') ? true : false;
-                return $fixed ? ($length ? 'CHAR(' . $length . ')' : 'CHAR(' . $this->conn->varchar_max_length . ')')
+                return $field->fixed ? ($length ? 'CHAR(' . $length . ')' : 'CHAR(' . $this->conn->varchar_max_length . ')')
                     : ($length ? 'VARCHAR(' . $length . ')' : 'TEXT');
             case Type::BLOB:
                 if (!empty($length)) {

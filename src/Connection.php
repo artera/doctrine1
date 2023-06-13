@@ -34,7 +34,7 @@ use Throwable;
  */
 abstract class Connection extends Configurable implements \Countable, \IteratorAggregate, \Serializable
 {
-    protected PDO $dbh;
+    protected ?PDO $dbh = null;
 
     public ?Casing $fieldCase = null;
 
@@ -53,11 +53,6 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
      * The name of this connection driver.
      */
     protected string $driverName;
-
-    /**
-     * whether or not a connection has been established
-     */
-    protected bool $isConnected = false;
 
     /**
      * @var array $supported                    an array containing all features this driver supports,
@@ -176,7 +171,6 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
         if ($adapter instanceof PDO) {
             $this->dbh = $adapter;
             $this->dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $this->isConnected = true;
         } elseif (is_array($adapter)) {
             $this->options['dsn']      = $adapter['dsn'];
             $this->options['username'] = $adapter['user'];
@@ -198,7 +192,7 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
      */
     public function isConnected(): bool
     {
-        return $this->isConnected;
+        return $this->dbh !== null;
     }
 
     /**
@@ -238,16 +232,15 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
      */
     public function getAttribute(int $attribute): mixed
     {
-        if ($this->isConnected) {
+        if ($this->isConnected()) {
             try {
-                return $this->dbh->getAttribute($attribute);
+                return $this->getDbh()->getAttribute($attribute);
             } catch (\Throwable $e) {
                 throw new Connection\Exception("Attribute $attribute not found.", previous: $e);
             }
         } else {
             if (!isset($this->pendingAttributes[$attribute])) {
-                $this->connect();
-                $this->dbh->getAttribute($attribute);
+                $this->getDbh()->getAttribute($attribute);
             }
 
             return $this->pendingAttributes[$attribute];
@@ -280,8 +273,8 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
      */
     public function setAttribute(int $attribute, mixed $value): self
     {
-        if ($this->isConnected) {
-            $this->dbh->setAttribute($attribute, $value);
+        if ($this->isConnected()) {
+            $this->getDbh()->setAttribute($attribute, $value);
         } else {
             $this->pendingAttributes[$attribute] = $value;
         }
@@ -363,7 +356,10 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
      */
     public function getDbh(): PDO
     {
-        $this->connect();
+        if ($this->dbh === null) {
+            $this->connect();
+            assert($this->dbh !== null); // @phpstan-ignore-line
+        }
         return $this->dbh;
     }
 
@@ -373,7 +369,7 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
      */
     public function connect(): bool
     {
-        if ($this->isConnected) {
+        if ($this->dbh !== null) {
             return false;
         }
 
@@ -381,24 +377,16 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
 
         $this->getListener()->preConnect($event);
 
-        $e     = explode(':', $this->options['dsn']);
-        $found = false;
-
-        if (extension_loaded('pdo')) {
-            if (in_array($e[0], self::getAvailableDrivers())) {
-                try {
-                    $this->dbh = new PDO(
-                        $this->options['dsn'],
-                        $this->options['username'],
-                        (!$this->options['password'] ? '' : $this->options['password']),
-                        $this->options['other']
-                    );
-                    $this->dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                } catch (PDOException $e) {
-                    throw new Connection\Exception("PDO Connection Error: {$e->getMessage()}", previous: $e);
-                }
-                $found = true;
-            }
+        try {
+            $this->dbh = new PDO(
+                $this->options['dsn'],
+                $this->options['username'],
+                (!$this->options['password'] ? '' : $this->options['password']),
+                $this->options['other']
+            );
+            $this->dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        } catch (PDOException $e) {
+            throw new Connection\Exception("PDO Connection Error: {$e->getMessage()}", previous: $e);
         }
 
         // attach the pending attributes to adapter
@@ -408,8 +396,6 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
             }
             $this->dbh->setAttribute($attr, $value);
         }
-
-        $this->isConnected = true;
 
         $this->getListener()->postConnect($event);
         return true;
@@ -805,7 +791,7 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
             $event = new Event($this, Event::CONN_PREPARE, $statement);
             $this->getListener()->prePrepare($event);
             /** @var Connection\Statement|PDOStatement */
-            $stmt = $this->dbh->prepare($statement);
+            $stmt = $this->getDbh()->prepare($statement);
             $this->getListener()->postPrepare($event);
             if ($stmt instanceof PDOStatement) {
                 $stmt = new Connection\Statement($this, $stmt, $aliases);
@@ -885,7 +871,7 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
                 $event = new Event($this, Event::CONN_QUERY, $query, $params);
                 $this->getListener()->preQuery($event);
                 /** @var Connection\Statement|PDOStatement */
-                $stmt = $this->dbh->query($query);
+                $stmt = $this->getDbh()->query($query);
                 $this->incrementQueryCount();
                 $this->getListener()->postQuery($event);
                 if ($stmt instanceof PDOStatement) {
@@ -916,7 +902,7 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
                 $event = new Event($this, Event::CONN_EXEC, $query, $params);
                 $this->getListener()->preExec($event);
                 /** @var int */
-                $count = $this->dbh->exec($query);
+                $count = $this->getDbh()->exec($query);
                 $this->incrementQueryCount();
                 $this->getListener()->postExec($event);
                 return $count;
@@ -1119,8 +1105,7 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
 
         $this->clear();
 
-        unset($this->dbh);
-        $this->isConnected = false;
+        $this->dbh = null;
 
         $this->getListener()->postClose($event);
     }
@@ -1130,8 +1115,7 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
      */
     public function errorCode(): int|null|string
     {
-        $this->connect();
-        return $this->dbh->errorCode();
+        return $this->getDbh()->errorCode();
     }
 
     /**
@@ -1139,9 +1123,7 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
      */
     public function errorInfo(): array|string
     {
-        $this->connect();
-
-        return $this->dbh->errorInfo();
+        return $this->getDbh()->errorInfo();
     }
 
     /**
@@ -1369,7 +1351,6 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
     {
         $vars = get_object_vars($this);
         $vars['dbh'] = null;
-        $vars['isConnected'] = false;
         return $vars;
     }
 

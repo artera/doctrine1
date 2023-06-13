@@ -320,8 +320,7 @@ class Pgsql extends \Doctrine1\DataDict
             case Type::String:
             case Type::Array:
             case Type::Object:
-                $fixed = ($field->fixed || $field->type == 'char') ? true : false;
-                return $fixed ? ($length ? 'CHAR(' . $length . ')' : 'CHAR(' . $this->conn->varchar_max_length . ')')
+                return $field->fixed ? ($length ? 'CHAR(' . $length . ')' : 'CHAR(' . $this->conn->varchar_max_length . ')')
                     : ($length ? 'VARCHAR(' . $length . ')' : 'TEXT');
 
             case Type::BLOB:

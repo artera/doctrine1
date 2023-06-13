@@ -214,13 +214,10 @@ class Event
      *
      * @param  string $option the name of the option
      * @param  mixed  $value  the value of the given option
-     * @return $this   this object
      */
     public function __set($option, $value)
     {
         $this->options[$option] = $value;
-
-        return $this;
     }
 
     /**

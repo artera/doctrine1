@@ -32,7 +32,7 @@ class Sqlite extends \Doctrine1\Connection
         ];
         parent::__construct($manager, $adapter);
 
-        if ($this->isConnected) {
+        if ($this->dbh !== null) {
             $this->dbh->sqliteCreateFunction('mod', ['\Doctrine1\Expression\Sqlite', 'modImpl'], 2);
             $this->dbh->sqliteCreateFunction('concat', ['\Doctrine1\Expression\Sqlite', 'concatImpl']);
             $this->dbh->sqliteCreateFunction('md5', 'md5', 1);
@@ -42,11 +42,12 @@ class Sqlite extends \Doctrine1\Connection
 
     public function connect(): bool
     {
-        if ($this->isConnected) {
+        if ($this->isConnected()) {
             return false;
         }
 
         if (parent::connect()) {
+            assert($this->dbh !== null);
             $this->dbh->sqliteCreateFunction('mod', ['\Doctrine1\Expression\Sqlite', 'modImpl'], 2);
             $this->dbh->sqliteCreateFunction('concat', ['\Doctrine1\Expression\Sqlite', 'concatImpl']);
             $this->dbh->sqliteCreateFunction('md5', 'md5', 1);
