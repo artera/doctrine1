@@ -2,29 +2,25 @@
 
 namespace Doctrine1\Validator;
 
+use Doctrine1\Record;
+
 /**
- * @phpstan-implements \IteratorAggregate<\Doctrine1\Record>
+ * @phpstan-implements \IteratorAggregate<Record>
  */
 class Exception extends \Doctrine1\Exception implements \Countable, \IteratorAggregate
 {
     /**
-     * @var array $invalid
+     * @param Record[] $invalid
      */
-    private $invalid = [];
-
-    /**
-     * @param array $invalid
-     */
-    public function __construct(array $invalid)
+    public function __construct(private array $invalid, ?\Throwable $previous = null)
     {
-        $this->invalid = $invalid;
-        parent::__construct($this->generateMessage());
+        parent::__construct($this->generateMessage(), previous: $previous);
     }
 
     /**
-     * @return array
+     * @return Record[]
      */
-    public function getInvalidRecords()
+    public function getInvalidRecords(): array
     {
         return $this->invalid;
     }
@@ -34,9 +30,6 @@ class Exception extends \Doctrine1\Exception implements \Countable, \IteratorAgg
         return new \ArrayIterator($this->invalid);
     }
 
-    /**
-     * @return int
-     */
     public function count(): int
     {
         return count($this->invalid);
@@ -44,10 +37,8 @@ class Exception extends \Doctrine1\Exception implements \Countable, \IteratorAgg
 
     /**
      * Generate a message with all classes that have exceptions
-     *
-     * @return string
      */
-    private function generateMessage()
+    private function generateMessage(): string
     {
         $message = '';
         foreach ($this->invalid as $record) {
@@ -62,10 +53,8 @@ class Exception extends \Doctrine1\Exception implements \Countable, \IteratorAgg
      *
      * @param callable $function Either string with function name or array with object,
      *                           functionname. See call_user_func in php manual for more inforamtion
-     *
-     * @return void
      */
-    public function inspect($function)
+    public function inspect($function): void
     {
         foreach ($this->invalid as $record) {
             call_user_func($function, $record->getErrorStack());

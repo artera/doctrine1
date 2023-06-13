@@ -126,7 +126,7 @@ class Transaction extends Connection\Module
         $invalids = array_values(array_unique($invalids));
 
         if (!empty($invalids)) {
-            throw new Validator\Exception($invalids);
+            throw new Validator\Exception($invalids, $savepoint->exception);
         }
 
         if ($savepoint->name() === null) {

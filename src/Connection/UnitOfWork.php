@@ -38,6 +38,8 @@ class UnitOfWork extends \Doctrine1\Connection\Module
             try {
                 $this->saveRelatedLocalKeys($record);
             } catch (\Doctrine1\Validator\Exception $e) {
+                $isValid = false;
+                $savepoint->exception ??= $e;
                 foreach ($e->getInvalidRecords() as $invalid) {
                     $savepoint->addInvalid($invalid);
                 }

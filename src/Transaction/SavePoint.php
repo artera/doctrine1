@@ -14,6 +14,7 @@ class SavePoint
 
     /** @var Record[] */
     protected array $invalid = [];
+    public ?\Throwable $exception = null;
 
     protected bool $active = true;
 
