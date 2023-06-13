@@ -22,6 +22,13 @@ class JSON implements DeserializerInterface
     public function deserialize(mixed $value, Column $column, Table $table): mixed
     {
         $this->checkCompatibility($value, $column->type);
-        return json_decode($value, $this->assoc, flags: JSON_THROW_ON_ERROR);
+        try {
+            return json_decode($value, $this->assoc, flags: JSON_THROW_ON_ERROR);
+        } catch (\JsonException $e) {
+            if (in_array($e->getCode(), [JSON_ERROR_SYNTAX, JSON_ERROR_STATE_MISMATCH, JSON_ERROR_UNSUPPORTED_TYPE])) {
+                throw new Exception\Incompatible();
+            }
+            throw $e;
+        }
     }
 }
