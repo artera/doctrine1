@@ -769,6 +769,7 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
 
         return $vars;
     }
+
     public function __unserialize(array $serialized): void
     {
         $event = new Event($this, Event::RECORD_UNSERIALIZE);
@@ -1299,21 +1300,27 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
      */
     public function set(string $fieldName, mixed $value, bool $load = true, bool $mutators = false): self
     {
-        static $inMutator = [];
+        if ($mutators) {
+            $deserializers = $this->getDeserializers();
+            if (!empty($deserializers)) {
+                $value = $this->_table->deserializeColumnValue($value, $fieldName, $deserializers);
+            }
 
-        if (empty($inMutator[$fieldName]) && $mutators
-        && ($this->_table->getAutoAccessorOverride() || $this->hasMutator($fieldName))) {
-            $componentName = $this->_table->getComponentName();
-            $mutator       = $this->getMutator($fieldName) ?? 'set' . Inflector::classify($fieldName);
+            static $inMutator = [];
 
-            if ($this->hasMutator($fieldName) || method_exists($this, $mutator)) {
-                $this->hasMutator($fieldName, $mutator);
-                $inMutator[$fieldName] = true;
-                try {
-                    $this->$mutator($value, $load, $fieldName);
-                    return $this;
-                } finally {
-                    unset($inMutator[$fieldName]);
+            if (empty($inMutator[$fieldName]) && ($this->_table->getAutoAccessorOverride() || $this->hasMutator($fieldName))) {
+                $componentName = $this->_table->getComponentName();
+                $mutator       = $this->getMutator($fieldName) ?? 'set' . Inflector::classify($fieldName);
+
+                if ($this->hasMutator($fieldName) || method_exists($this, $mutator)) {
+                    $this->hasMutator($fieldName, $mutator);
+                    $inMutator[$fieldName] = true;
+                    try {
+                        $this->$mutator($value, $load, $fieldName);
+                        return $this;
+                    } finally {
+                        unset($inMutator[$fieldName]);
+                    }
                 }
             }
         }
