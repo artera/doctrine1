@@ -57,6 +57,13 @@ class DateTimeImmutable implements DeserializerInterface
         ] as $format) {
             $date = \DateTimeImmutable::createFromFormat($format, $value);
             if ($date !== false) {
+                if (!str_contains($format, 'H')) {
+                    $date = $date->setTime(0, 0);
+                } elseif (!str_contains($format, 'i')) {
+                    $date = $date->setTime((int) $date->format('H'), 0);
+                } elseif (!str_contains($format, 's')) {
+                    $date = $date->setTime((int) $date->format('H'), (int) $date->format('i'));
+                }
                 return $date;
             }
         }
