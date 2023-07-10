@@ -418,7 +418,7 @@ class Builder
 
                     if (file_exists($path)) {
                         $newCode = $enum->generate();
-                        if (!preg_match("/(?:^\s*case [a-z0-9]+ = (?:'[^']+'|\d+);\n)+/im", $newCode, $matches)) {
+                        if (!preg_match("/(?:^\s*case [a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]* = (?:'[^']+'|\d+);\n)+/im", $newCode, $matches)) {
                             throw new Exception("Could not match enum cases in generated code for $enumClassName");
                         }
                         $newCode = $matches[0];
@@ -427,10 +427,10 @@ class Builder
                         }
 
                         // remove all cases from enum's code
-                        $code = preg_replace("/\b\s*case\s+[a-z0-9]+\s*=\s*(?:'[^']+'|\d+)\s*;\s*/i", '', $code) ?? $code;
+                        $code = preg_replace("/\b\s*case\s+[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*\s*=\s*(?:'[^']+'|\d+)\s*;\s*/i", '', $code) ?? $code;
 
                         // add new enum cases at the top of the enum declaration
-                        $code = preg_replace('/^(\s*enum\s+[a-z0-9]+\s*:\s*(?:int|string)\s*\{)(?:\s*(}))?/im', "\$1\n$newCode\$2", $code);
+                        $code = preg_replace('/^(\s*enum\s+[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*\s*:\s*(?:int|string)\s*\{)(?:\s*(}))?/im', "\$1\n$newCode\$2", $code);
                     } else {
                         $code = "<?php\n\n{$enum->generate()}";
                     }
