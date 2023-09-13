@@ -214,6 +214,7 @@ class Event
      *
      * @param  string $option the name of the option
      * @param  mixed  $value  the value of the given option
+     * @return void
      */
     public function __set($option, $value)
     {

@@ -690,7 +690,6 @@ class Export extends Connection\Module
             }
         }
 
-        // @phpstan-ignore-next-line
         if (!isset($definition['fields']) || !is_array($definition['fields'])) {
             throw new Export\Exception('No columns given for index ' . $name);
         }

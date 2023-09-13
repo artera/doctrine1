@@ -257,7 +257,6 @@ class Mysql extends \Doctrine1\Export
             $query .= "RENAME TO $change_name";
         }
 
-        // @phpstan-ignore-next-line
         if (!empty($changes['add']) && is_array($changes['add'])) {
             foreach ($changes['add'] as $field) {
                 if ($query) {
@@ -267,7 +266,6 @@ class Mysql extends \Doctrine1\Export
             }
         }
 
-        // @phpstan-ignore-next-line
         if (!empty($changes['remove']) && is_array($changes['remove'])) {
             foreach ($changes['remove'] as $fieldName) {
                 if ($query) {
@@ -279,14 +277,12 @@ class Mysql extends \Doctrine1\Export
         }
 
         $rename = [];
-        // @phpstan-ignore-next-line
         if (!empty($changes['rename']) && is_array($changes['rename'])) {
             foreach ($changes['rename'] as $oldFieldName => $fieldName) {
                 $rename[$fieldName] = $oldFieldName;
             }
         }
 
-        // @phpstan-ignore-next-line
         if (!empty($changes['change']) && is_array($changes['change'])) {
             foreach ($changes['change'] as $fieldName => $field) {
                 if ($query) {

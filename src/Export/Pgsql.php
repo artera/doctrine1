@@ -120,14 +120,12 @@ class Pgsql extends \Doctrine1\Export
 
         $sql = [];
 
-        // @phpstan-ignore-next-line
         if (isset($changes['add']) && is_array($changes['add'])) {
             foreach ($changes['add'] as $field) {
                 $sql[] = "ALTER TABLE $qName ADD {$this->getDeclaration($field)}";
             }
         }
 
-        // @phpstan-ignore-next-line
         if (isset($changes['remove']) && is_array($changes['remove'])) {
             foreach ($changes['remove'] as $fieldName) {
                 $fieldName = $this->conn->quoteIdentifier($fieldName, true);
@@ -135,7 +133,6 @@ class Pgsql extends \Doctrine1\Export
             }
         }
 
-        // @phpstan-ignore-next-line
         if (isset($changes['change']) && is_array($changes['change'])) {
             foreach ($changes['change'] as $fieldName => $field) {
                 $fieldName = $this->conn->quoteIdentifier($fieldName, true);
@@ -151,7 +148,6 @@ class Pgsql extends \Doctrine1\Export
             }
         }
 
-        // @phpstan-ignore-next-line
         if (isset($changes['rename']) && is_array($changes['rename'])) {
             foreach ($changes['rename'] as $oldFieldName => $fieldName) {
                 $oldFieldName = $this->conn->quoteIdentifier($oldFieldName, true);
