@@ -455,8 +455,6 @@ class Builder
                     if (file_put_contents($path, $code) === false) {
                         throw new Exception("Couldn't write file $path");
                     }
-
-                    exit;
                 }
 
                 $type = match ($columnImplementation) {
