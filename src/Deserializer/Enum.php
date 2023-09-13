@@ -19,6 +19,10 @@ class Enum implements DeserializerInterface
             throw new Exception\Incompatible();
         }
 
+        if ($value === '' && !$column->notnull) {
+            return $enumClass::tryFrom($value);
+        }
+
         return $enumClass::from($value);
     }
 }
