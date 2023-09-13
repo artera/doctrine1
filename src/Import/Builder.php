@@ -397,9 +397,28 @@ class Builder
                 $enumClassName = $column->enumClassName($manager, $gen->getNamespaceName() ?? $this->namespace);
 
                 if (!empty($enumClassName) && $columnImplementation !== null) {
+                    $path = $this->path . DIRECTORY_SEPARATOR . $this->classNameToFileName($enumClassName);
+                    Lib::makeDirectories(dirname($path));
+
+                    $enumCaseNames = [];
+
+                    if (file_exists($path)) {
+                        if (($code = file_get_contents($path)) === false) {
+                            throw new Exception("Couldn't read file $path");
+                        }
+
+                        if (preg_match_all('/^\s*case\s+(\w+)\s+=\s+(?:\'([^\']+)\'|(\d+));/uim', $code, $matchSets, PREG_SET_ORDER)) {
+                            foreach ($matchSets as $matches) {
+                                $k = $matches[1];
+                                $v = $matches[2] ?: $matches[3];
+                                $enumCaseNames[$v] = $k;
+                            }
+                        }
+                    }
+
                     $enumCases = [];
                     foreach ($column->stringValues() as $v) {
-                        $k = Inflector::classify($v);
+                        $k = array_key_exists($v, $enumCaseNames) ? $enumCaseNames[$v] : Inflector::classify($v);
                         if (is_string($v) && !empty($v) && !empty($k)) {
                             $enumCases[$k] = $v;
                         }
@@ -413,14 +432,12 @@ class Builder
                         ],
                     ]);
 
-                    $path = $this->path . DIRECTORY_SEPARATOR . $this->classNameToFileName($enumClassName);
-                    Lib::makeDirectories(dirname($path));
-
                     if (file_exists($path)) {
                         $newCode = $enum->generate();
                         if (!preg_match('/(?:^\s*case\s+\w+\s+=\s+(?:\'[^\']+\'|\d+);\n)+/uim', $newCode, $matches)) {
                             throw new Exception("Could not match enum cases in generated code for $enumClassName");
                         }
+
                         $newCode = $matches[0];
                         if (($code = file_get_contents($path)) === false) {
                             throw new Exception("Couldn't read file $path");
@@ -438,6 +455,8 @@ class Builder
                     if (file_put_contents($path, $code) === false) {
                         throw new Exception("Couldn't write file $path");
                     }
+
+                    exit;
                 }
 
                 $type = match ($columnImplementation) {
