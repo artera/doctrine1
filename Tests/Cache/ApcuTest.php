@@ -1,9 +1,9 @@
 <?php
 namespace Tests\Cache;
 
-/**
- * @requires extension apcu
- */
+use PHPUnit\Framework\Attributes\RequiresPhpExtension;
+
+#[RequiresPhpExtension('apcu')]
 class ApcuTest extends AbstractTestCase
 {
     protected function clearCache()

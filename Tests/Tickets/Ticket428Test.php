@@ -1,6 +1,7 @@
 <?php
 namespace Tests\Tickets;
 
+use PHPUnit\Framework\Attributes\Depends;
 use Tests\DoctrineUnitTestCase;
 
 class Ticket428Test extends DoctrineUnitTestCase
@@ -23,9 +24,7 @@ class Ticket428Test extends DoctrineUnitTestCase
         return $albums;
     }
 
-    /**
-     * @depends testInitData
-     */
+    #[Depends('testInitData')]
     public function testAggregateValueMappingSupportsLeftJoins($albums)
     {
         foreach ($albums as $album) {

@@ -1,11 +1,11 @@
 <?php
 
 namespace Tests\Tickets {
+
+    use PHPUnit\Framework\Attributes\RequiresPhpExtension;
     use Tests\DoctrineUnitTestCase;
 
-    /**
-     * @requires extension mysqli
-     */
+    #[RequiresPhpExtension('mysqli')]
     class Ticket1935Test extends DoctrineUnitTestCase
     {
         protected static ?string $driverName = 'Mysql';

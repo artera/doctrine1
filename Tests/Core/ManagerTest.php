@@ -1,6 +1,8 @@
 <?php
+
 namespace Tests\Core;
 
+use PHPUnit\Framework\Attributes\Depends;
 use Tests\DoctrineUnitTestCase;
 
 class ManagerTest extends DoctrineUnitTestCase
@@ -140,9 +142,7 @@ class ManagerTest extends DoctrineUnitTestCase
         return [$conn1, $conn2];
     }
 
-    /**
-     * @depends testCreateDatabases
-     */
+    #[Depends('testCreateDatabases')]
     public function testDropDatabases(array $connections)
     {
         foreach ($connections as $conn) {
@@ -162,11 +162,7 @@ class ManagerTest extends DoctrineUnitTestCase
         $this->assertEquals($options['dsn'], 'mysql:host=localhost;dbname=db/name');
     }
 
-    public static function prepareData(): void
-    {
-    }
+    public static function prepareData(): void {}
 
-    public static function prepareTables(): void
-    {
-    }
+    public static function prepareTables(): void {}
 }

@@ -3,9 +3,7 @@ namespace Tests\Tickets;
 
 use Tests\DoctrineUnitTestCase;
 
-/**
- * @requires extension pgsql
- */
+#[RequiresPhpExtension('pgsql')]
 class TicketDC521Test extends DoctrineUnitTestCase
 {
     protected static array $tables = ['DC521TestModel', 'DC521IdOnlyTestModel'];

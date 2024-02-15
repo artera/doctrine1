@@ -2,15 +2,14 @@
 
 namespace Tests\Query;
 
+use PHPUnit\Framework\Attributes\Depends;
 use Tests\DoctrineUnitTestCase;
 
 class JoinTest extends DoctrineUnitTestCase
 {
     protected static array $tables = ['Record_Country', 'Record_City', 'Record_District', 'Entity',
                               'User', 'Group', 'Email', 'Phonenumber', 'GroupUser', 'Account'];
-    public static function prepareData(): void
-    {
-    }
+    public static function prepareData(): void {}
 
     public function testInitData(): void
     {
@@ -131,9 +130,7 @@ class JoinTest extends DoctrineUnitTestCase
         $this->assertEquals($q->getSqlQuery(), 'SELECT r.id AS r__id, r.name AS r__name, r2.id AS r2__id, r2.name AS r2__name, r2.country_id AS r2__country_id, r2.district_id AS r2__district_id FROM record__country r INNER JOIN record__city r2 ON r.id = r2.country_id AND (r2.id = 2) WHERE (r.id = ?)');
     }
 
-    /**
-     * @depends testInitData
-     */
+    #[Depends('testInitData')]
     public function testRecordHydrationWorksWithDeeplyNestedStructuresAndArrayFetching(): void
     {
         $q = new \Doctrine1\Query();
@@ -153,9 +150,7 @@ class JoinTest extends DoctrineUnitTestCase
         $this->assertEquals($c['City'][2]['District']['name'], 'District 2');
     }
 
-    /**
-     * @depends testInitData
-     */
+    #[Depends('testInitData')]
     public function testRecordHydrationWorksWithDeeplyNestedStructures(): void
     {
         $q = new \Doctrine1\Query();
@@ -215,9 +210,7 @@ class JoinTest extends DoctrineUnitTestCase
         $q->execute();
     }
 
-    /**
-     * @depends testInitData
-     */
+    #[Depends('testInitData')]
     public function testMapKeywordForQueryWithOneComponent(): void
     {
         $q    = new \Doctrine1\Query();
@@ -228,9 +221,7 @@ class JoinTest extends DoctrineUnitTestCase
         $this->assertTrue(isset($coll['City 3']));
     }
 
-    /**
-     * @depends testInitData
-     */
+    #[Depends('testInitData')]
     public function testMapKeywordSupportsJoins(): void
     {
         $q = new \Doctrine1\Query();

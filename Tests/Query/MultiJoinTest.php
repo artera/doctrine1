@@ -1,15 +1,15 @@
 <?php
+
 namespace Tests\Query;
 
+use PHPUnit\Framework\Attributes\Depends;
 use Tests\DoctrineUnitTestCase;
 
 class MultiJoinTest extends DoctrineUnitTestCase
 {
     protected static array $tables = ['Book', 'Author', 'Album', 'User'];
 
-    public function setUp(): void
-    {
-    }
+    public function setUp(): void {}
 
     public function testInitializeData()
     {
@@ -58,9 +58,7 @@ class MultiJoinTest extends DoctrineUnitTestCase
         $this->assertEquals(count($user->Album[1]->Song), 2);
     }
 
-    /**
-     * @depends testInitializeData
-     */
+    #[Depends('testInitializeData')]
     public function testMultipleOneToManyFetching()
     {
         static::$connection->clear();
@@ -96,9 +94,7 @@ class MultiJoinTest extends DoctrineUnitTestCase
         $this->assertEquals($users[1]->Phonenumber[2]->phonenumber, '789 789');
     }
 
-    /**
-     * @depends testInitializeData
-     */
+    #[Depends('testInitializeData')]
     public function testInitializeMoreData()
     {
         $user                           = static::$connection->getTable('User')->find(4);
@@ -124,9 +120,7 @@ class MultiJoinTest extends DoctrineUnitTestCase
         static::$connection->clear();
     }
 
-    /**
-     * @depends testInitializeData
-     */
+    #[Depends('testInitializeData')]
     public function testMultipleOneToManyFetching2()
     {
         $query = new \Doctrine1\Query();
