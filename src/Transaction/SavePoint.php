@@ -47,6 +47,22 @@ class SavePoint
     }
 
     /**
+     * Run the given function inside this savepoint
+     *
+     * @template T
+     * @phpstan-param (callable(self): T) $callable
+     * @phpstan-return T
+     */
+    public function with(callable $callable): mixed
+    {
+        $result = $callable($this);
+        if ($this->active) {
+            $this->commit();
+        }
+        return $result;
+    }
+
+    /**
      * adds a collection in the internal array of collections
      *
      * at the end of each commit this array is looped over and

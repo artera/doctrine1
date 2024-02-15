@@ -1187,6 +1187,20 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
     }
 
     /**
+     * Run the given callable withing a transaction
+     *
+     * @template T
+     * @phpstan-param (callable(Savepoint): T) $callable
+     * @param string|null $savepoint
+     * @phpstan-return T
+     */
+    public function withTransaction(callable $callable, ?string $savepoint = null): mixed
+    {
+        $savepoint = $this->beginTransaction($savepoint);
+        return $savepoint->with($callable);
+    }
+
+    /**
      * Commit the database changes done during a transaction that is in
      * progress or release a savepoint. This function may only be called when
      * auto-committing is disabled, otherwise it will fail.

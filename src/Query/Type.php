@@ -40,9 +40,8 @@ class Type extends Enum
         return $this->getValue() === self::CREATE;
     }
 
-    public static function from($value): \Doctrine1\Query\Type
+    public static function from($value): self
     {
-        /** @var \Doctrine1\Query\Type */
         return parent::from($value);
     }
 }
