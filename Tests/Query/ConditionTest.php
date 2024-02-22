@@ -21,6 +21,7 @@ class ConditionTest extends DoctrineUnitTestCase
 
         $this->assertEquals($parts, ['item','item','item']);
     }
+
     public function testConditionParser()
     {
         $query = new \Doctrine1\Query(static::$connection);

@@ -103,6 +103,9 @@ abstract class AbstractQuery
         'select'    => [],
         'distinct'  => false,
         'forUpdate' => false,
+        'forShare' => false,
+        'noWait' => false,
+        'skipLocked' => false,
         'from'      => [],
         'set'       => [],
         'join'      => [],
@@ -121,6 +124,9 @@ abstract class AbstractQuery
         'from'      => [],
         'select'    => [],
         'forUpdate' => false,
+        'forShare' => false,
+        'noWait' => false,
+        'skipLocked' => false,
         'set'       => [],
         'join'      => [],
         'where'     => [],
@@ -381,7 +387,7 @@ abstract class AbstractQuery
             throw new Query\Exception('Unknown query part ' . $name);
         }
 
-        if ($name == 'limit' || $name == 'offset' || $name == 'forUpdate') {
+        if (in_array($name, ['limit', 'offset', 'forUpdate', 'forShare', 'noWait', 'skipLocked'], true)) {
             $this->sqlParts[$name] = false;
         } else {
             $this->sqlParts[$name] = [];
@@ -1471,7 +1477,7 @@ abstract class AbstractQuery
      * @return $this
      * @phpstan-return static<Record, Query\Type\Select>
      */
-    public function select(string $select =  null, $params = []): self
+    public function select(string $select = null, $params = []): self
     {
         $this->type = Query\Type::SELECT();
         if ($select) {
@@ -1490,7 +1496,6 @@ abstract class AbstractQuery
     }
 
     /**
-     * distinct
      * Makes the query SELECT DISTINCT.
      * <code>
      * $q->distinct();
@@ -1501,12 +1506,11 @@ abstract class AbstractQuery
      */
     public function distinct(bool $flag = true): self
     {
-        $this->sqlParts['distinct'] = (bool) $flag;
+        $this->sqlParts['distinct'] = $flag;
         return $this;
     }
 
     /**
-     * forUpdate
      * Makes the query SELECT FOR UPDATE.
      *
      * @param  bool $flag Whether or not the SELECT is FOR UPDATE (default true).
@@ -1514,7 +1518,55 @@ abstract class AbstractQuery
      */
     public function forUpdate(bool $flag = true): self
     {
-        $this->sqlParts['forUpdate'] = (bool) $flag;
+        $this->sqlParts['forUpdate'] = $flag;
+        if ($flag) {
+            $this->sqlParts['forShare'] = false;
+        }
+        return $this;
+    }
+
+    /**
+     * Makes the query SELECT FOR SHARE.
+     *
+     * @param  bool $flag Whether or not the SELECT is FOR SHARE (default true).
+     * @return $this
+     */
+    public function forShare(bool $flag = true): self
+    {
+        $this->sqlParts['forShare'] = $flag;
+        if ($flag) {
+            $this->sqlParts['forUpdate'] = false;
+        }
+        return $this;
+    }
+
+    /**
+     * Makes the query SELECT SKIP LOCKED.
+     *
+     * @param  bool $flag Whether or not the SELECT is SKIP LOCKED (default true).
+     * @return $this
+     */
+    public function skipLocked(bool $flag = true): self
+    {
+        $this->sqlParts['skipLocked'] = $flag;
+        if ($flag) {
+            $this->sqlParts['noWait'] = false;
+        }
+        return $this;
+    }
+
+    /**
+     * Makes the query SELECT NOWAIT.
+     *
+     * @param  bool $flag Whether or not the SELECT is NOWAIT (default true).
+     * @return $this
+     */
+    public function noWait(bool $flag = true): self
+    {
+        $this->sqlParts['noWait'] = $flag;
+        if ($flag) {
+            $this->sqlParts['skipLocked'] = false;
+        }
         return $this;
     }
 
@@ -1753,6 +1805,9 @@ abstract class AbstractQuery
             'select'    => [],
             'distinct'  => false,
             'forUpdate' => false,
+            'forShare' => false,
+            'noWait' => false,
+            'skipLocked' => false,
             'from'      => [],
             'set'       => [],
             'join'      => [],

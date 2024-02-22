@@ -317,8 +317,10 @@ class Query extends AbstractQuery implements \Countable
      * @param  string $queryPart the name of the query part; can be:
      *                           array from, containing strings;
      *                           array select, containg string;
-     *                           boolean forUpdate; array set; array
-     *                           join; array where; array groupby;
+     *                           boolean forUpdate; boolean forShare;
+     *                           boolean noWait; boolean skipLocked;
+     *                           array set; array join;
+     *                           array where; array groupby;
      *                           array having; array orderby,
      *                           containing strings such as 'id
      *                           ASC'; array limit, containing
@@ -1126,7 +1128,7 @@ class Query extends AbstractQuery implements \Countable
             }
 
             // FIX #1667: _sqlParts are cleaned inside _processDqlQueryPart.
-            if ($queryPartName !== 'forUpdate' && is_array($queryParts)) {
+            if (!in_array($queryPartName, ['forUpdate', 'forShare', 'noWait', 'skipLocked'], true) && is_array($queryParts)) {
                 $this->processDqlQueryPart($queryPartName, $queryParts);
             }
 
@@ -1309,7 +1311,17 @@ class Query extends AbstractQuery implements \Countable
             $q = $this->connection->modifyLimitQuery($q, $this->sqlParts['limit'], $this->sqlParts['offset'], false);
         }
 
-        $q .= $this->sqlParts['forUpdate'] === true ? ' FOR UPDATE ' : '';
+        if ($this->sqlParts['forUpdate']) {
+            $q .= ' FOR UPDATE';
+        } elseif ($this->sqlParts['forShare']) {
+            $q .= ' FOR SHARE';
+        }
+
+        if ($this->sqlParts['noWait']) {
+            $q .= ' NOWAIT';
+        } elseif ($this->sqlParts['skipLocked']) {
+            $q .= ' SKIP LOCKED';
+        }
 
         $this->sql = $q;
 
