@@ -120,6 +120,11 @@ class Mysql extends \Doctrine1\Import
             $decl     = $dataDict->getPortableDeclaration($val);
             $meta = json_decode($val['comment'], true);
 
+            // fix string literals with character set introducers
+            if (is_string($val['default']) && preg_match("/_[a-z0-9]+\\\\'(.*)\\\\'/", $val['default'], $matches)) {
+                $val['default'] = $matches[1];
+            }
+
             $columns[] = new Column(
                 $val['field'],
                 Type::fromNative($decl['type'][0]),
