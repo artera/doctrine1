@@ -3,6 +3,8 @@
 namespace Doctrine1;
 
 use Doctrine1\Column\Type;
+use Doctrine1\Connection\Exception\SyntaxErrorOrAccessRuleViolation\DuplicateObject;
+use Doctrine1\Connection\Exception\SyntaxErrorOrAccessRuleViolation\DuplicateTable;
 use Doctrine1\Table;
 use Throwable;
 
@@ -56,7 +58,7 @@ class Export extends Connection\Module
      */
     public function dropDatabaseSql($database)
     {
-        throw new Export\Exception('Drop database not supported by this driver.');
+        throw new Export\Exception("Drop database not supported by this driver.");
     }
 
     /**
@@ -68,7 +70,7 @@ class Export extends Connection\Module
      */
     public function dropTableSql($table)
     {
-        return 'DROP TABLE ' . $this->conn->quoteIdentifier($table);
+        return "DROP TABLE " . $this->conn->quoteIdentifier($table);
     }
 
     /**
@@ -106,7 +108,7 @@ class Export extends Connection\Module
     {
         $name = $this->conn->quoteIdentifier($this->conn->formatter->getIndexName($name));
 
-        return 'DROP INDEX ' . $name;
+        return "DROP INDEX " . $name;
     }
 
     /**
@@ -120,9 +122,9 @@ class Export extends Connection\Module
     public function dropConstraint($table, $name, $primary = false)
     {
         $table = $this->conn->quoteIdentifier($table);
-        $name  = $this->conn->quoteIdentifier($name);
+        $name = $this->conn->quoteIdentifier($name);
 
-        return $this->conn->exec('ALTER TABLE ' . $table . ' DROP CONSTRAINT ' . $name);
+        return $this->conn->exec("ALTER TABLE " . $table . " DROP CONSTRAINT " . $name);
     }
 
     /**
@@ -161,7 +163,7 @@ class Export extends Connection\Module
      */
     public function dropSequenceSql($sequenceName)
     {
-        throw new Export\Exception('Drop sequence not supported by this driver.');
+        throw new Export\Exception("Drop sequence not supported by this driver.");
     }
 
     /**
@@ -185,7 +187,7 @@ class Export extends Connection\Module
      */
     public function createDatabaseSql($database)
     {
-        throw new Export\Exception('Create database not supported by this driver.');
+        throw new Export\Exception("Create database not supported by this driver.");
     }
 
     /**
@@ -200,42 +202,41 @@ class Export extends Connection\Module
     public function createTableSql(string $name, array $fields, ?array $options = null): array
     {
         if (!$name) {
-            throw new Export\Exception('no valid table name specified');
+            throw new Export\Exception("no valid table name specified");
         }
 
         if (empty($fields)) {
-            throw new Export\Exception('no fields specified for table ' . $name);
+            throw new Export\Exception("no fields specified for table " . $name);
         }
 
         $queryFields = $this->getFieldDeclarationList($fields);
 
-
-        if (!empty($options['primary'])) {
-            $primaryKeys = array_map([$this->conn, 'quoteIdentifier'], array_values($options['primary']));
-            $queryFields .= ', PRIMARY KEY(' . implode(', ', $primaryKeys) . ')';
+        if (!empty($options["primary"])) {
+            $primaryKeys = array_map([$this->conn, "quoteIdentifier"], array_values($options["primary"]));
+            $queryFields .= ", PRIMARY KEY(" . implode(", ", $primaryKeys) . ")";
         }
 
-        if (!empty($options['indexes'])) {
-            foreach ($options['indexes'] as $index => $definition) {
+        if (!empty($options["indexes"])) {
+            foreach ($options["indexes"] as $index => $definition) {
                 $indexDeclaration = $this->getIndexDeclaration($index, $definition);
-                $queryFields .= ', ' . $indexDeclaration;
+                $queryFields .= ", " . $indexDeclaration;
             }
         }
 
-        $query = 'CREATE TABLE ' . $this->conn->quoteIdentifier($name, true) . ' (' . $queryFields;
+        $query = "CREATE TABLE " . $this->conn->quoteIdentifier($name, true) . " (" . $queryFields;
 
         $check = $this->getCheckDeclaration($fields);
 
         if (!empty($check)) {
-            $query .= ', ' . $check;
+            $query .= ", " . $check;
         }
 
-        $query .= ')';
+        $query .= ")";
 
         $sql[] = $query;
 
-        if (isset($options['foreignKeys'])) {
-            foreach ((array) $options['foreignKeys'] as $k => $definition) {
+        if (isset($options["foreignKeys"])) {
+            foreach ((array) $options["foreignKeys"] as $k => $definition) {
                 if (is_array($definition)) {
                     $sql[] = $this->createForeignKeySql($name, $definition);
                 }
@@ -260,16 +261,17 @@ class Export extends Connection\Module
         // specify primary => true
         $count = 0;
         foreach ($fields as $field) {
-            if (is_array($field)) { // @phpstan-ignore-line
-                throw new \InvalidArgumentException('Fields should be of class \Doctrine1\Column');
+            if (is_array($field)) {
+                // @phpstan-ignore-line
+                throw new \InvalidArgumentException("Fields should be of class \Doctrine1\Column");
             }
 
             if ($field->primary) {
                 if ($count == 0) {
-                    $options['primary'] = [];
+                    $options["primary"] = [];
                 }
                 $count++;
-                $options['primary'][] = $field->name;
+                $options["primary"][] = $field->name;
             }
         }
 
@@ -312,7 +314,7 @@ class Export extends Connection\Module
      */
     public function createSequenceSql($seqName, $start = 1, array $options = [])
     {
-        throw new Export\Exception('Create sequence not supported by this driver.');
+        throw new Export\Exception("Create sequence not supported by this driver.");
     }
 
     /**
@@ -353,20 +355,20 @@ class Export extends Connection\Module
     public function createConstraintSql($table, $name, $definition)
     {
         $table = $this->conn->quoteIdentifier($table);
-        $name  = $this->conn->quoteIdentifier($this->conn->formatter->getIndexName($name));
-        $query = 'ALTER TABLE ' . $table . ' ADD CONSTRAINT ' . $name;
+        $name = $this->conn->quoteIdentifier($this->conn->formatter->getIndexName($name));
+        $query = "ALTER TABLE " . $table . " ADD CONSTRAINT " . $name;
 
-        if (isset($definition['primary']) && $definition['primary']) {
-            $query .= ' PRIMARY KEY';
-        } elseif (isset($definition['unique']) && $definition['unique']) {
-            $query .= ' UNIQUE';
+        if (isset($definition["primary"]) && $definition["primary"]) {
+            $query .= " PRIMARY KEY";
+        } elseif (isset($definition["unique"]) && $definition["unique"]) {
+            $query .= " UNIQUE";
         }
 
         $fields = [];
-        foreach (array_keys($definition['fields']) as $field) {
+        foreach (array_keys($definition["fields"]) as $field) {
             $fields[] = $this->conn->quoteIdentifier((string) $field, true);
         }
-        $query .= ' (' . implode(', ', $fields) . ')';
+        $query .= " (" . implode(", ", $fields) . ")";
 
         return $query;
     }
@@ -407,28 +409,26 @@ class Export extends Connection\Module
     public function createIndexSql($table, $name, array $definition)
     {
         $table = $this->conn->quoteIdentifier($table);
-        $name  = $this->conn->quoteIdentifier($name);
-        $type  = '';
+        $name = $this->conn->quoteIdentifier($name);
+        $type = "";
 
-        if (isset($definition['type'])) {
-            switch (strtolower($definition['type'])) {
-                case 'unique':
-                    $type = strtoupper($definition['type']) . ' ';
+        if (isset($definition["type"])) {
+            switch (strtolower($definition["type"])) {
+                case "unique":
+                    $type = strtoupper($definition["type"]) . " ";
                     break;
                 default:
-                    throw new Export\Exception(
-                        'Unknown type ' . $definition['type'] . ' for index ' . $name . ' in table ' . $table
-                    );
+                    throw new Export\Exception("Unknown type " . $definition["type"] . " for index " . $name . " in table " . $table);
             }
         }
 
-        $query = 'CREATE ' . $type . 'INDEX ' . $name . ' ON ' . $table;
+        $query = "CREATE " . $type . "INDEX " . $name . " ON " . $table;
 
         $fields = [];
-        foreach ($definition['fields'] as $field) {
+        foreach ($definition["fields"] as $field) {
             $fields[] = $this->conn->quoteIdentifier($field);
         }
-        $query .= ' (' . implode(', ', $fields) . ')';
+        $query .= " (" . implode(", ", $fields) . ")";
 
         return $query;
     }
@@ -442,7 +442,7 @@ class Export extends Connection\Module
     public function createForeignKeySql($table, array $definition)
     {
         $table = $this->conn->quoteIdentifier($table);
-        $query = 'ALTER TABLE ' . $table . ' ADD ' . $this->getForeignKeyDeclaration($definition);
+        $query = "ALTER TABLE " . $table . " ADD " . $this->getForeignKeyDeclaration($definition);
 
         return $query;
     }
@@ -533,7 +533,7 @@ class Export extends Connection\Module
      */
     public function alterTableSql($name, array $changes, $check = false)
     {
-        throw new Export\Exception('Alter table not supported by this driver.');
+        throw new Export\Exception("Alter table not supported by this driver.");
     }
 
     /**
@@ -551,7 +551,7 @@ class Export extends Connection\Module
 
             $queryFields[] = $query;
         }
-        return implode(', ', $queryFields);
+        return implode(", ", $queryFields);
     }
 
     /**
@@ -564,13 +564,13 @@ class Export extends Connection\Module
     public function getDeclaration(Column $field): string
     {
         $default = $this->getDefaultFieldDeclaration($field);
-        $charset = $field->charset ? ' ' . $this->getCharsetFieldDeclaration($field->charset) : '';
-        $collation = $field->collation ? ' ' . $this->getCollationFieldDeclaration($field->collation) : '';
+        $charset = $field->charset ? " " . $this->getCharsetFieldDeclaration($field->charset) : "";
+        $collation = $field->collation ? " " . $this->getCollationFieldDeclaration($field->collation) : "";
         $notnull = $this->getNotNullFieldDeclaration($field);
-        $unique = $field->unique ? ' ' . $this->getUniqueFieldDeclaration() : '';
-        $check = $field->check ? ' ' . $field->check : '';
+        $unique = $field->unique ? " " . $this->getUniqueFieldDeclaration() : "";
+        $check = $field->check ? " " . $field->check : "";
 
-        $method = 'get' . $field->type->value . 'Declaration';
+        $method = "get" . $field->type->value . "Declaration";
 
         try {
             if (method_exists($this->conn->dataDict, $method)) {
@@ -579,10 +579,9 @@ class Export extends Connection\Module
                 $dec = $this->conn->dataDict->getNativeDeclaration($field);
             }
 
-            return $this->conn->quoteIdentifier($field->name, true)
-                 . ' ' . $dec . $charset . $default . $notnull . $unique . $check . $collation;
+            return $this->conn->quoteIdentifier($field->name, true) . " " . $dec . $charset . $default . $notnull . $unique . $check . $collation;
         } catch (Throwable $e) {
-            throw new Exception('Around field ' . $field->name . ': ' . $e->getMessage(), previous: $e);
+            throw new Exception("Around field " . $field->name . ": " . $e->getMessage(), previous: $e);
         }
     }
 
@@ -595,17 +594,15 @@ class Export extends Connection\Module
      */
     public function getDefaultFieldDeclaration(Column $field): string
     {
-        $default = '';
+        $default = "";
 
         if ($field->hasDefault()) {
             $default = $field->default;
 
             if (empty($default)) {
-                $default = $field->notnull
-                    ? $field->type->default()
-                    : null;
+                $default = $field->notnull ? $field->type->default() : null;
 
-                if (empty($default) && ($this->conn->getPortability() & Core::PORTABILITY_EMPTY_TO_NULL)) {
+                if (empty($default) && $this->conn->getPortability() & Core::PORTABILITY_EMPTY_TO_NULL) {
                     $default = null;
                 }
             }
@@ -614,16 +611,11 @@ class Export extends Connection\Module
                 $default = $this->conn->convertBooleans($default);
             }
 
-            $default = ' DEFAULT ' . (
-                $default === null
-                    ? 'NULL'
-                    : $this->conn->quote($default, $field->type->value)
-            );
+            $default = " DEFAULT " . ($default === null ? "NULL" : $this->conn->quote($default, $field->type->value));
         }
 
         return $default;
     }
-
 
     /**
      * getNotNullFieldDeclaration
@@ -634,9 +626,8 @@ class Export extends Connection\Module
      */
     public function getNotNullFieldDeclaration(Column $column)
     {
-        return $column->notnull ? ' NOT NULL' : '';
+        return $column->notnull ? " NOT NULL" : "";
     }
-
 
     /**
      * Obtain DBMS specific SQL code portion needed to set a CHECK constraint
@@ -663,7 +654,7 @@ class Export extends Connection\Module
             }
         }
 
-        return implode(', ', $constraints);
+        return implode(", ", $constraints);
     }
 
     /**
@@ -678,25 +669,23 @@ class Export extends Connection\Module
     public function getIndexDeclaration(string $name, array $definition): string
     {
         $name = $this->conn->quoteIdentifier($name);
-        $type = '';
+        $type = "";
 
-        if (isset($definition['type'])) {
-            if (strtolower($definition['type']) == 'unique') {
-                $type = strtoupper($definition['type']) . ' ';
+        if (isset($definition["type"])) {
+            if (strtolower($definition["type"]) == "unique") {
+                $type = strtoupper($definition["type"]) . " ";
             } else {
-                throw new Export\Exception(
-                    'Unknown type ' . $definition['type'] . ' for index ' . $name
-                );
+                throw new Export\Exception("Unknown type " . $definition["type"] . " for index " . $name);
             }
         }
 
-        if (!isset($definition['fields']) || !is_array($definition['fields'])) {
-            throw new Export\Exception('No columns given for index ' . $name);
+        if (!isset($definition["fields"]) || !is_array($definition["fields"])) {
+            throw new Export\Exception("No columns given for index " . $name);
         }
 
-        $query = $type . 'INDEX ' . $name;
+        $query = $type . "INDEX " . $name;
 
-        $query .= ' (' . $this->getIndexFieldDeclarationList($definition['fields']) . ')';
+        $query .= " (" . $this->getIndexFieldDeclarationList($definition["fields"]) . ")";
 
         return $query;
     }
@@ -718,7 +707,7 @@ class Export extends Connection\Module
                 $ret[] = $this->conn->quoteIdentifier($definition);
             }
         }
-        return implode(', ', $ret);
+        return implode(", ", $ret);
     }
 
     /**
@@ -737,7 +726,7 @@ class Export extends Connection\Module
      */
     public function getTemporaryTableQuery()
     {
-        return 'TEMPORARY';
+        return "TEMPORARY";
     }
 
     /**
@@ -798,12 +787,12 @@ class Export extends Connection\Module
      */
     public function getAdvancedForeignKeyOptions(array $definition)
     {
-        $query = '';
-        if (!empty($definition['onUpdate'])) {
-            $query .= ' ON UPDATE ' . $this->getForeignKeyReferentialAction($definition['onUpdate']);
+        $query = "";
+        if (!empty($definition["onUpdate"])) {
+            $query .= " ON UPDATE " . $this->getForeignKeyReferentialAction($definition["onUpdate"]);
         }
-        if (!empty($definition['onDelete'])) {
-            $query .= ' ON DELETE ' . $this->getForeignKeyReferentialAction($definition['onDelete']);
+        if (!empty($definition["onDelete"])) {
+            $query .= " ON DELETE " . $this->getForeignKeyReferentialAction($definition["onDelete"]);
         }
         return $query;
     }
@@ -824,11 +813,11 @@ class Export extends Connection\Module
     {
         $upper = strtoupper($action);
         switch ($upper) {
-            case 'CASCADE':
-            case 'SET NULL':
-            case 'NO ACTION':
-            case 'RESTRICT':
-            case 'SET DEFAULT':
+            case "CASCADE":
+            case "SET NULL":
+            case "NO ACTION":
+            case "RESTRICT":
+            case "SET DEFAULT":
                 return $upper;
             default:
                 throw new Export\Exception('Unknown foreign key referential action \'' . $upper . '\' given.');
@@ -845,33 +834,36 @@ class Export extends Connection\Module
      */
     public function getForeignKeyBaseDeclaration(array $definition)
     {
-        $sql = '';
-        if (isset($definition['name'])) {
-            $sql .= 'CONSTRAINT ' . $this->conn->quoteIdentifier($this->conn->formatter->getForeignKeyName($definition['name'])) . ' ';
+        $sql = "";
+        if (isset($definition["name"])) {
+            $sql .= "CONSTRAINT " . $this->conn->quoteIdentifier($this->conn->formatter->getForeignKeyName($definition["name"])) . " ";
         }
-        $sql .= 'FOREIGN KEY (';
+        $sql .= "FOREIGN KEY (";
 
-        if (!isset($definition['local'])) {
-            throw new Export\Exception('Local reference field missing from definition.');
+        if (!isset($definition["local"])) {
+            throw new Export\Exception("Local reference field missing from definition.");
         }
-        if (!isset($definition['foreign'])) {
-            throw new Export\Exception('Foreign reference field missing from definition.');
+        if (!isset($definition["foreign"])) {
+            throw new Export\Exception("Foreign reference field missing from definition.");
         }
-        if (!isset($definition['foreignTable'])) {
-            throw new Export\Exception('Foreign reference table missing from definition.');
-        }
-
-        if (!is_array($definition['local'])) {
-            $definition['local'] = [$definition['local']];
-        }
-        if (!is_array($definition['foreign'])) {
-            $definition['foreign'] = [$definition['foreign']];
+        if (!isset($definition["foreignTable"])) {
+            throw new Export\Exception("Foreign reference table missing from definition.");
         }
 
-        $sql .= implode(', ', array_map([$this->conn, 'quoteIdentifier'], $definition['local']))
-              . ') REFERENCES '
-              . $this->conn->quoteIdentifier($definition['foreignTable']) . '('
-              . implode(', ', array_map([$this->conn, 'quoteIdentifier'], $definition['foreign'])) . ')';
+        if (!is_array($definition["local"])) {
+            $definition["local"] = [$definition["local"]];
+        }
+        if (!is_array($definition["foreign"])) {
+            $definition["foreign"] = [$definition["foreign"]];
+        }
+
+        $sql .=
+            implode(", ", array_map([$this->conn, "quoteIdentifier"], $definition["local"])) .
+            ") REFERENCES " .
+            $this->conn->quoteIdentifier($definition["foreignTable"]) .
+            "(" .
+            implode(", ", array_map([$this->conn, "quoteIdentifier"], $definition["foreign"])) .
+            ")";
 
         return $sql;
     }
@@ -885,7 +877,7 @@ class Export extends Connection\Module
      */
     public function getUniqueFieldDeclaration()
     {
-        return 'UNIQUE';
+        return "UNIQUE";
     }
 
     /**
@@ -898,7 +890,7 @@ class Export extends Connection\Module
      */
     public function getCharsetFieldDeclaration(string $charset): string
     {
-        return '';
+        return "";
     }
 
     /**
@@ -911,7 +903,7 @@ class Export extends Connection\Module
      */
     public function getCollationFieldDeclaration(string $collation): string
     {
-        return '';
+        return "";
     }
 
     /**
@@ -949,17 +941,17 @@ class Export extends Connection\Module
     {
         $connections = [];
         foreach ($classes as $class) {
-            $connection     = Manager::getInstance()->getConnectionForComponent($class);
+            $connection = Manager::getInstance()->getConnectionForComponent($class);
             $connectionName = $connection->getName();
 
             if (!isset($connections[$connectionName])) {
                 $connections[$connectionName] = [
-                     'create_tables'    => [],
-                     'create_sequences' => [],
-                     'create_indexes'   => [],
-                     'alters'           => [],
-                     'create_triggers'  => [],
-                 ];
+                    "create_tables" => [],
+                    "create_sequences" => [],
+                    "create_indexes" => [],
+                    "alters" => [],
+                    "create_triggers" => [],
+                ];
             }
 
             $sql = $connection->export->exportClassesSql([$class]);
@@ -968,50 +960,48 @@ class Export extends Connection\Module
             // We need these to happen first
             foreach ($sql as $key => $query) {
                 // If create table statement
-                if (substr($query, 0, strlen('CREATE TABLE')) == 'CREATE TABLE') {
-                    $connections[$connectionName]['create_tables'][] = $query;
+                if (substr($query, 0, strlen("CREATE TABLE")) == "CREATE TABLE") {
+                    $connections[$connectionName]["create_tables"][] = $query;
 
                     unset($sql[$key]);
                     continue;
                 }
 
                 // If create sequence statement
-                if (substr($query, 0, strlen('CREATE SEQUENCE')) == 'CREATE SEQUENCE') {
-                    $connections[$connectionName]['create_sequences'][] = $query;
+                if (substr($query, 0, strlen("CREATE SEQUENCE")) == "CREATE SEQUENCE") {
+                    $connections[$connectionName]["create_sequences"][] = $query;
 
                     unset($sql[$key]);
                     continue;
                 }
 
                 // If create index statement
-                if (preg_grep('/CREATE ([^ ]* )?INDEX/', [$query])) {
-                    $connections[$connectionName]['create_indexes'][] = $query;
+                if (preg_grep("/CREATE ([^ ]* )?INDEX/", [$query])) {
+                    $connections[$connectionName]["create_indexes"][] = $query;
 
                     unset($sql[$key]);
                     continue;
                 }
 
                 // If alter table statement
-                if (substr($query, 0, strlen('ALTER TABLE')) == 'ALTER TABLE'
-                    || substr($query, 0, strlen('DECLARE')) == 'DECLARE'
-                ) {
-                    $connections[$connectionName]['alters'][] = $query;
+                if (substr($query, 0, strlen("ALTER TABLE")) == "ALTER TABLE" || substr($query, 0, strlen("DECLARE")) == "DECLARE") {
+                    $connections[$connectionName]["alters"][] = $query;
 
                     unset($sql[$key]);
                     continue;
                 }
 
                 // If create trigger statement
-                if (substr($query, 0, strlen('CREATE TRIGGER')) == 'CREATE TRIGGER') {
-                    $connections[$connectionName]['create_triggers'][] = $query;
+                if (substr($query, 0, strlen("CREATE TRIGGER")) == "CREATE TRIGGER") {
+                    $connections[$connectionName]["create_triggers"][] = $query;
 
                     unset($sql[$key]);
                     continue;
                 }
 
                 // If comment statement
-                if (substr($query, 0, strlen('COMMENT ON')) == 'COMMENT ON') {
-                    $connections[$connectionName]['comments'][] = $query;
+                if (substr($query, 0, strlen("COMMENT ON")) == "COMMENT ON") {
+                    $connections[$connectionName]["comments"][] = $query;
 
                     unset($sql[$key]);
                     continue;
@@ -1022,7 +1012,9 @@ class Export extends Connection\Module
         // Loop over all the sql again to merge everything together so it is in the correct order
         $build = [];
         foreach ($connections as $connectionName => $sql) {
-            $build[$connectionName] = array_unique(array_merge($sql['create_tables'], $sql['create_sequences'], $sql['create_indexes'], $sql['alters'], $sql['create_triggers']));
+            $build[$connectionName] = array_unique(
+                array_merge($sql["create_tables"], $sql["create_sequences"], $sql["create_indexes"], $sql["alters"], $sql["create_triggers"])
+            );
         }
 
         if (!$groupByConnection) {
@@ -1059,10 +1051,10 @@ class Export extends Connection\Module
                 try {
                     $connection->exec($query);
                 } catch (Connection\Exception $e) {
-                    // we only want to silence table already exists errors
-                    if ($e->getPortableCode() !== Core::ERR_ALREADY_EXISTS) {
+                    // we only want to silence table/index already exists errors
+                    if (!($e instanceof DuplicateTable) && !($e instanceof DuplicateObject)) {
                         $savepoint->rollback();
-                        throw new Export\Exception("{$e->getMessage()}. Failing Query: $query", previous: $e);
+                        throw $e;
                     }
                 }
             }
@@ -1087,8 +1079,8 @@ class Export extends Connection\Module
         $sql = [];
 
         foreach ($models as $name) {
-            $record  = new $name();
-            $table   = $record->getTable();
+            $record = new $name();
+            $table = $record->getTable();
 
             // Don't export the tables with attribute EXPORT_NONE'
             if ($table->getExportFlags() === Core::EXPORT_NONE) {
@@ -1097,7 +1089,7 @@ class Export extends Connection\Module
 
             $data = $table->getExportableFormat();
 
-            $query = $this->conn->export->createTableSql($data['tableName'], $data['columns'], $data['options']);
+            $query = $this->conn->export->createTableSql($data["tableName"], $data["columns"], $data["options"]);
             $sql = array_merge($sql, $query);
 
             // DC-474: Remove dummy $record from repository to not pollute it during export
@@ -1153,10 +1145,10 @@ class Export extends Connection\Module
     {
         try {
             $data = $table->getExportableFormat();
-            $this->conn->export->createTable($data['tableName'], $data['columns'], $data['options']);
+            $this->conn->export->createTable($data["tableName"], $data["columns"], $data["options"]);
         } catch (Connection\Exception $e) {
             // we only want to silence table already exists errors
-            if ($e->getPortableCode() !== Core::ERR_ALREADY_EXISTS) {
+            if (!($e instanceof DuplicateTable) && !($e instanceof DuplicateObject)) {
                 throw $e;
             }
         }

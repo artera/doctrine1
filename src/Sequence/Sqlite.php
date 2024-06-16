@@ -2,6 +2,8 @@
 
 namespace Doctrine1\Sequence;
 
+use Doctrine1\Connection\Exception\SyntaxErrorOrAccessRuleViolation\UndefinedTable;
+
 class Sqlite extends \Doctrine1\Sequence
 {
     /**
@@ -13,13 +15,13 @@ class Sqlite extends \Doctrine1\Sequence
     public function nextId($seqName, $onDemand = true): int
     {
         $sequenceName = $this->conn->quoteIdentifier($this->conn->formatter->getSequenceName($seqName), true);
-        $seqcolName   = $this->conn->quoteIdentifier($this->conn->getSequenceColumnName(), true);
-        $query        = 'INSERT INTO ' . $sequenceName . ' (' . $seqcolName . ') VALUES (NULL)';
+        $seqcolName = $this->conn->quoteIdentifier($this->conn->getSequenceColumnName(), true);
+        $query = "INSERT INTO " . $sequenceName . " (" . $seqcolName . ") VALUES (NULL)";
 
         try {
             $this->conn->exec($query);
         } catch (\Doctrine1\Connection\Exception $e) {
-            if ($onDemand && $e->getPortableCode() == \Doctrine1\Core::ERR_NOSUCHTABLE) {
+            if ($onDemand && $e instanceof UndefinedTable) {
                 // Since we are creating the sequence on demand
                 // we know the first id = 1 so initialize the
                 // sequence at 2
@@ -38,7 +40,7 @@ class Sqlite extends \Doctrine1\Sequence
         $value = $this->conn->getDbh()->lastInsertId();
 
         if (is_numeric($value)) {
-            $query = 'DELETE FROM ' . $sequenceName . ' WHERE ' . $seqcolName . ' < ' . $value;
+            $query = "DELETE FROM " . $sequenceName . " WHERE " . $seqcolName . " < " . $value;
             $this->conn->exec($query);
         }
 
@@ -67,9 +69,9 @@ class Sqlite extends \Doctrine1\Sequence
     public function currId($seqName): int
     {
         $sequenceName = $this->conn->quoteIdentifier($this->conn->formatter->getSequenceName($seqName), true);
-        $seqcolName   = $this->conn->quoteIdentifier($this->conn->getSequenceColumnName(), true);
+        $seqcolName = $this->conn->quoteIdentifier($this->conn->getSequenceColumnName(), true);
 
-        $query = 'SELECT MAX(' . $seqcolName . ') FROM ' . $sequenceName;
+        $query = "SELECT MAX(" . $seqcolName . ") FROM " . $sequenceName;
 
         return (int) $this->conn->fetchOne($query);
     }

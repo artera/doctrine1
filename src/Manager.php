@@ -28,33 +28,33 @@ class Manager extends Configurable implements \Countable, \IteratorAggregate
 
     /** @phpstan-var array<string, class-string<ValidatorInterface>|array{class: class-string<ValidatorInterface>, options: array<string, mixed>}>  */
     protected array $validators = [
-        'notnull' => Validator\Notnull::class,
-        'date' => \Laminas\Validator\Date::class,
-        'time' => Validator\Time::class,
-        'timestamp' => Validator\Timestamp::class,
+        "notnull" => Validator\Notnull::class,
+        "date" => \Laminas\Validator\Date::class,
+        "time" => Validator\Time::class,
+        "timestamp" => Validator\Timestamp::class,
 
         // backwards compatibility
-        'range' => [
-            'class' => \Laminas\Validator\Between::class,
-            'options' => [
-                'min' => -2147483648,
-                'max' => 2147483647,
+        "range" => [
+            "class" => \Laminas\Validator\Between::class,
+            "options" => [
+                "min" => -2147483648,
+                "max" => 2147483647,
             ],
         ],
-        'notblank' => \Laminas\Validator\NotEmpty::class,
-        'email' => \Laminas\Validator\EmailAddress::class,
-        'ip' => \Laminas\Validator\Ip::class,
-        'regexp' => [
-            'class' => \Laminas\Validator\Regex::class,
-            'options' => [
-                'pattern' => '/^/',
+        "notblank" => \Laminas\Validator\NotEmpty::class,
+        "email" => \Laminas\Validator\EmailAddress::class,
+        "ip" => \Laminas\Validator\Ip::class,
+        "regexp" => [
+            "class" => \Laminas\Validator\Regex::class,
+            "options" => [
+                "pattern" => "/^/",
             ],
         ],
-        'unsigned' => [
-            'class' => \Laminas\Validator\GreaterThan::class,
-            'options' => [
-                'min' => 0,
-                'inclusive' => true,
+        "unsigned" => [
+            "class" => \Laminas\Validator\GreaterThan::class,
+            "options" => [
+                "min" => 0,
+                "inclusive" => true,
             ],
         ],
     ];
@@ -155,14 +155,14 @@ class Manager extends Configurable implements \Countable, \IteratorAggregate
         foreach ($this->connections as $conn) {
             $conn->close();
         }
-        $this->connections              = [];
-        $this->queryRegistry            = null;
-        $this->bound                    = [];
-        $this->validators               = [];
+        $this->connections = [];
+        $this->queryRegistry = null;
+        $this->bound = [];
+        $this->validators = [];
         $this->loadedValidatorsFromDisk = false;
-        $this->index                    = 0;
-        $this->currIndex                = 0;
-        $this->initialized              = false;
+        $this->index = 0;
+        $this->currIndex = 0;
+        $this->initialized = false;
     }
 
     /**
@@ -227,24 +227,24 @@ class Manager extends Configurable implements \Countable, \IteratorAggregate
             $driverName = $adapter->getAttribute(PDO::ATTR_DRIVER_NAME);
         } elseif (is_array($adapter)) {
             if (!isset($adapter[0])) {
-                throw new Manager\Exception('Empty data source name given.');
+                throw new Manager\Exception("Empty data source name given.");
             }
-            $e = explode(':', $adapter[0]);
+            $e = explode(":", $adapter[0]);
 
-            if ($e[0] == 'uri') {
-                $e[0] = 'odbc';
+            if ($e[0] == "uri") {
+                $e[0] = "odbc";
             }
 
-            $parts['dsn']    = $adapter[0];
-            $parts['scheme'] = $e[0];
-            $parts['user']   = (isset($adapter[1])) ? $adapter[1] : null;
-            $parts['pass']   = (isset($adapter[2])) ? $adapter[2] : null;
-            $driverName      = $e[0];
-            $adapter         = $parts;
+            $parts["dsn"] = $adapter[0];
+            $parts["scheme"] = $e[0];
+            $parts["user"] = isset($adapter[1]) ? $adapter[1] : null;
+            $parts["pass"] = isset($adapter[2]) ? $adapter[2] : null;
+            $driverName = $e[0];
+            $adapter = $parts;
         } else {
-            $parts      = $this->parseDsn($adapter);
-            $driverName = $parts['scheme'];
-            $adapter    = $parts;
+            $parts = $this->parseDsn($adapter);
+            $driverName = $parts["scheme"];
+            $adapter = $parts;
         }
 
         // Decode adapter information
@@ -271,12 +271,12 @@ class Manager extends Configurable implements \Countable, \IteratorAggregate
         }
 
         $className = match ($driverName) {
-            'mysql'  => Connection\Mysql::class,
-            'mysqli' => Connection\Mysql::class,
-            'sqlite' => Connection\Sqlite::class,
-            'pgsql'  => Connection\Pgsql::class,
-            'mock'   => Connection\Mock::class,
-            default  => throw new Manager\Exception('Unknown driver ' . $driverName),
+            "mysql" => Connection\Mysql::class,
+            "mysqli" => Connection\Mysql::class,
+            "sqlite" => Connection\Sqlite::class,
+            "pgsql" => Connection\Pgsql::class,
+            "mock" => Connection\Mock::class,
+            default => throw new Manager\Exception("Unknown driver $driverName"),
         };
 
         $conn = new $className($this, $adapter);
@@ -312,25 +312,25 @@ class Manager extends Configurable implements \Countable, \IteratorAggregate
     public function parsePdoDsn(string $dsn): array
     {
         $parts = [
-            'dsn' => null,
-            'scheme' => null,
-            'host' => null,
-            'port' => null,
-            'user' => null,
-            'pass' => null,
-            'path' => null,
-            'query' => null,
-            'fragment' => null,
-            'unix_socket' => null,
+            "dsn" => null,
+            "scheme" => null,
+            "host" => null,
+            "port" => null,
+            "user" => null,
+            "pass" => null,
+            "path" => null,
+            "query" => null,
+            "fragment" => null,
+            "unix_socket" => null,
         ];
 
-        $e = explode(':', $dsn, 2);
-        $parts['scheme'] = $e[0] ?? '';
-        $parts['dsn'] = $dsn;
+        $e = explode(":", $dsn, 2);
+        $parts["scheme"] = $e[0] ?? "";
+        $parts["dsn"] = $dsn;
 
-        $e = explode(';', $e[1] ?? '');
+        $e = explode(";", $e[1] ?? "");
         foreach ($e as $string) {
-            $e2 = explode('=', $string, 2);
+            $e2 = explode("=", $string, 2);
             if (count($e2) === 2) {
                 $parts[$e2[0]] = $e2[1];
             }
@@ -364,14 +364,14 @@ class Manager extends Configurable implements \Countable, \IteratorAggregate
     protected function buildDsnPartsArray(string $dsn): array
     {
         // fix sqlite dsn so that it will parse correctly
-        $dsn = str_replace('////', '/', $dsn);
-        $dsn = str_replace('\\', '/', $dsn);
+        $dsn = str_replace("////", "/", $dsn);
+        $dsn = str_replace("\\", "/", $dsn);
         $dsn = preg_replace("/\/\/\/(.*):\//", '//$1:/', $dsn) ?? $dsn;
 
         // silence any warnings
         $parts = @parse_url($dsn) ?: [];
 
-        $names = ['dsn', 'scheme', 'host', 'port', 'user', 'pass', 'path', 'query', 'fragment'];
+        $names = ["dsn", "scheme", "host", "port", "user", "pass", "path", "query", "fragment"];
 
         foreach ($names as $name) {
             if (!isset($parts[$name])) {
@@ -379,8 +379,8 @@ class Manager extends Configurable implements \Countable, \IteratorAggregate
             }
         }
 
-        if (count($parts) == 0 || !isset($parts['scheme'])) {
-            throw new Manager\Exception('Could not parse dsn');
+        if (count($parts) == 0 || !isset($parts["scheme"])) {
+            throw new Manager\Exception("Could not parse dsn");
         }
 
         return $parts;
@@ -397,69 +397,67 @@ class Manager extends Configurable implements \Countable, \IteratorAggregate
     {
         $parts = $this->buildDsnPartsArray($dsn);
 
-        switch ($parts['scheme']) {
-            case 'sqlite':
-            case 'sqlite2':
-            case 'sqlite3':
-                if (isset($parts['host']) && $parts['host'] == ':memory') {
-                    $parts['database'] = ':memory:';
-                    $parts['dsn']      = 'sqlite::memory:';
+        switch ($parts["scheme"]) {
+            case "sqlite":
+            case "sqlite2":
+            case "sqlite3":
+                if (isset($parts["host"]) && $parts["host"] == ":memory") {
+                    $parts["database"] = ":memory:";
+                    $parts["dsn"] = "sqlite::memory:";
                 } else {
                     //fix windows dsn we have to add host: to path and set host to null
-                    if (isset($parts['host'])) {
-                        $parts['path'] = $parts['host'] . ':' . $parts['path'];
-                        $parts['host'] = null;
+                    if (isset($parts["host"])) {
+                        $parts["path"] = $parts["host"] . ":" . $parts["path"];
+                        $parts["host"] = null;
                     }
-                    $parts['database'] = $parts['path'];
-                    $parts['dsn']      = $parts['scheme'] . ':' . $parts['path'];
+                    $parts["database"] = $parts["path"];
+                    $parts["dsn"] = $parts["scheme"] . ":" . $parts["path"];
                 }
 
                 break;
 
-            case 'mysql':
-                if (!isset($parts['path']) || $parts['path'] == '/') {
-                    throw new Manager\Exception('No database available in data source name');
+            case "mysql":
+                if (!isset($parts["path"]) || $parts["path"] == "/") {
+                    throw new Manager\Exception("No database available in data source name");
                 }
-                $parts['database'] = substr($parts['path'], 1);
+                $parts["database"] = substr($parts["path"], 1);
 
-                if (!isset($parts['host'])) {
-                    throw new Manager\Exception('No hostname set in data source name');
+                if (!isset($parts["host"])) {
+                    throw new Manager\Exception("No hostname set in data source name");
                 }
 
-                $parts['dsn'] = $parts['scheme'] . ':host='
-                          . $parts['host'] . (isset($parts['port']) ? ';port=' . $parts['port'] : null) . ';dbname='
-                          . $parts['database'];
+                $parts["dsn"] =
+                    $parts["scheme"] . ":host=" . $parts["host"] . (isset($parts["port"]) ? ";port=" . $parts["port"] : null) . ";dbname=" . $parts["database"];
 
-                if (!empty($parts['query'])) {
-                    parse_str($parts['query'], $queryParts);
-                    if (isset($queryParts['charset'])) {
-                        if (is_array($queryParts['charset'])) {
-                            throw new Manager\Exception('Cannot specify charset array in DSN');
+                if (!empty($parts["query"])) {
+                    parse_str($parts["query"], $queryParts);
+                    if (isset($queryParts["charset"])) {
+                        if (is_array($queryParts["charset"])) {
+                            throw new Manager\Exception("Cannot specify charset array in DSN");
                         }
-                        $parts['dsn'] .= ';charset=' . $queryParts['charset'];
-                        unset($queryParts['charset']);
-                        $parts['query'] = http_build_query($queryParts);
+                        $parts["dsn"] .= ";charset=" . $queryParts["charset"];
+                        unset($queryParts["charset"]);
+                        $parts["query"] = http_build_query($queryParts);
                     }
                 }
                 break;
-            case 'pgsql':
-            case 'mock':
-                if (!isset($parts['path']) || $parts['path'] == '/') {
-                    throw new Manager\Exception('No database available in data source name');
+            case "pgsql":
+            case "mock":
+                if (!isset($parts["path"]) || $parts["path"] == "/") {
+                    throw new Manager\Exception("No database available in data source name");
                 }
-                $parts['database'] = substr($parts['path'], 1);
+                $parts["database"] = substr($parts["path"], 1);
 
-                if (!isset($parts['host'])) {
-                    throw new Manager\Exception('No hostname set in data source name');
+                if (!isset($parts["host"])) {
+                    throw new Manager\Exception("No hostname set in data source name");
                 }
 
-                $parts['dsn'] = $parts['scheme'] . ':host='
-                          . $parts['host'] . (isset($parts['port']) ? ';port=' . $parts['port'] : null) . ';dbname='
-                          . $parts['database'];
+                $parts["dsn"] =
+                    $parts["scheme"] . ":host=" . $parts["host"] . (isset($parts["port"]) ? ";port=" . $parts["port"] : null) . ";dbname=" . $parts["database"];
 
                 break;
             default:
-                $parts['dsn'] = $dsn;
+                $parts["dsn"] = $dsn;
         }
 
         return $parts;
@@ -474,7 +472,7 @@ class Manager extends Configurable implements \Countable, \IteratorAggregate
     public function getConnection(string $name): Connection
     {
         if (!isset($this->connections[$name])) {
-            throw new Manager\Exception('Unknown connection: ' . $name);
+            throw new Manager\Exception("Unknown connection: " . $name);
         }
 
         return $this->connections[$name];
@@ -536,8 +534,8 @@ class Manager extends Configurable implements \Countable, \IteratorAggregate
             unset($this->connections[$key]);
 
             if ($key === $this->currIndex) {
-                $key              = key($this->connections);
-                $this->currIndex = ($key !== null) ? $key : 0;
+                $key = key($this->connections);
+                $this->currIndex = $key !== null ? $key : 0;
             }
         }
 
@@ -604,7 +602,7 @@ class Manager extends Configurable implements \Countable, \IteratorAggregate
     {
         $i = $this->currIndex;
         if (!isset($this->connections[$i])) {
-            throw new Connection\Exception('There is no open connection');
+            throw new Connection\Exception("There is no open connection");
         }
         return $this->connections[$i];
     }
@@ -662,8 +660,8 @@ class Manager extends Configurable implements \Countable, \IteratorAggregate
     public function registerValidator(string $alias, string $validatorClass, array $options = []): void
     {
         $this->validators[$alias] = [
-            'class' => $validatorClass,
-            'options' => $options,
+            "class" => $validatorClass,
+            "options" => $options,
         ];
     }
 

@@ -2,6 +2,8 @@
 
 namespace Doctrine1\Sequence;
 
+use Doctrine1\Connection\Exception\SyntaxErrorOrAccessRuleViolation\UndefinedTable;
+
 class Pgsql extends \Doctrine1\Sequence
 {
     /**
@@ -13,12 +15,12 @@ class Pgsql extends \Doctrine1\Sequence
     public function nextId($seqName, $onDemand = true): int
     {
         $sequenceName = $this->conn->quoteIdentifier($this->conn->formatter->getSequenceName($seqName), true);
-        $query        = "SELECT NEXTVAL('" . $sequenceName . "')";
+        $query = "SELECT NEXTVAL('" . $sequenceName . "')";
 
         try {
             $result = (int) $this->conn->fetchOne($query);
         } catch (\Doctrine1\Connection\Exception $e) {
-            if ($onDemand && $e->getPortableCode() == \Doctrine1\Core::ERR_NOSUCHTABLE) {
+            if ($onDemand && $e instanceof UndefinedTable) {
                 try {
                     $result = $this->conn->export->createSequence($seqName);
                 } catch (\Doctrine1\Exception $e) {
@@ -45,7 +47,7 @@ class Pgsql extends \Doctrine1\Sequence
      */
     public function lastInsertId($table = null, $field = null): string
     {
-        $seqName      = $table . (empty($field) ? '' : '_' . $field);
+        $seqName = $table . (empty($field) ? "" : "_" . $field);
         $sequenceName = $this->conn->quoteIdentifier($this->conn->formatter->getSequenceName($seqName), true);
 
         return $this->conn->fetchOne("SELECT CURRVAL('" . $sequenceName . "')");
@@ -61,6 +63,6 @@ class Pgsql extends \Doctrine1\Sequence
     public function currId($seqName): int
     {
         $sequenceName = $this->conn->quoteIdentifier($this->conn->formatter->getSequenceName($seqName), true);
-        return (int) $this->conn->fetchOne('SELECT last_value FROM ' . $sequenceName);
+        return (int) $this->conn->fetchOne("SELECT last_value FROM " . $sequenceName);
     }
 }

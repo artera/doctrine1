@@ -32,7 +32,7 @@ class UnitOfWork extends \Doctrine1\Connection\Module
         $savepoint = $conn->beginInternalTransaction();
 
         try {
-            $event = $record->invokeSaveHooks('pre', 'save');
+            $event = $record->invokeSaveHooks("pre", "save");
             $isValid = true;
 
             try {
@@ -78,7 +78,7 @@ class UnitOfWork extends \Doctrine1\Connection\Module
                 }
                 $record->resetPendingUnlinks();
 
-                $record->invokeSaveHooks('post', 'save', $event);
+                $record->invokeSaveHooks("post", "save", $event);
             } else {
                 $savepoint->addInvalid($record);
             }
@@ -174,7 +174,7 @@ class UnitOfWork extends \Doctrine1\Connection\Module
         try {
             for ($i = count($executionOrder) - 1; $i >= 0; $i--) {
                 $className = $executionOrder[$i];
-                $table     = $this->conn->getTable($className);
+                $table = $this->conn->getTable($className);
 
                 // collect identifiers
                 $identifierMaps = [];
@@ -193,11 +193,11 @@ class UnitOfWork extends \Doctrine1\Connection\Module
                 }
 
                 // extract query parameters (only the identifier values are of interest)
-                $params      = [];
+                $params = [];
                 $columnNames = [];
                 foreach ($identifierMaps as $idMap) {
                     foreach ($idMap as $fieldName => $value) {
-                        $params[]      = $value;
+                        $params[] = $value;
                         $columnNames[] = $table->getColumnName($fieldName);
                     }
                 }
@@ -205,7 +205,7 @@ class UnitOfWork extends \Doctrine1\Connection\Module
 
                 // delete
                 $tableName = $table->getTableName();
-                $sql       = 'DELETE FROM ' . $this->conn->quoteIdentifier($tableName) . ' WHERE ';
+                $sql = "DELETE FROM " . $this->conn->quoteIdentifier($tableName) . " WHERE ";
 
                 if ($table->isIdentifierComposite()) {
                     $sql .= $this->buildSqlCompositeKeyCondition($columnNames, count($identifierMaps));
@@ -245,7 +245,7 @@ class UnitOfWork extends \Doctrine1\Connection\Module
     private function buildSqlSingleKeyCondition(string $columnName, int $numRecords): string
     {
         $idColumn = $this->conn->quoteIdentifier($columnName);
-        return implode(' OR ', array_fill(0, $numRecords, "$idColumn = ?"));
+        return implode(" OR ", array_fill(0, $numRecords, "$idColumn = ?"));
     }
 
     /**
@@ -257,17 +257,17 @@ class UnitOfWork extends \Doctrine1\Connection\Module
      */
     private function buildSqlCompositeKeyCondition(array $columnNames, int $numRecords): string
     {
-        $singleCondition = '';
+        $singleCondition = "";
         foreach ($columnNames as $columnName) {
             $columnName = $this->conn->quoteIdentifier($columnName);
-            if ($singleCondition === '') {
+            if ($singleCondition === "") {
                 $singleCondition .= "($columnName = ?";
             } else {
                 $singleCondition .= " AND $columnName = ?";
             }
         }
-        $singleCondition .= ')';
-        $fullCondition = implode(' OR ', array_fill(0, $numRecords, $singleCondition));
+        $singleCondition .= ")";
+        $fullCondition = implode(" OR ", array_fill(0, $numRecords, $singleCondition));
 
         return $fullCondition;
     }
@@ -294,9 +294,7 @@ class UnitOfWork extends \Doctrine1\Connection\Module
                     $record->refreshRelated($relation->getAlias());
                 }
                 $relatedObjects = $record->get($relation->getAlias());
-                if ($relatedObjects instanceof \Doctrine1\Record && $relatedObjects->exists()
-                    && !isset($deletions[$relatedObjects->getOid()])
-                ) {
+                if ($relatedObjects instanceof \Doctrine1\Record && $relatedObjects->exists() && !isset($deletions[$relatedObjects->getOid()])) {
                     $this->collectDeletions($relatedObjects, $deletions);
                 } elseif ($relatedObjects instanceof \Doctrine1\Collection && count($relatedObjects) > 0) {
                     // cascade the delete to the other objects
@@ -344,7 +342,7 @@ class UnitOfWork extends \Doctrine1\Connection\Module
             foreach ($record->getReferences() as $k => $v) {
                 $rel = $record->getTable()->getRelation($k);
 
-                $local   = $rel->getLocal();
+                $local = $rel->getLocal();
                 $foreign = $rel->getForeign();
 
                 if (!$rel instanceof \Doctrine1\Relation\LocalKey) {
@@ -471,7 +469,7 @@ class UnitOfWork extends \Doctrine1\Connection\Module
      */
     public function update(\Doctrine1\Record $record): bool
     {
-        $event = $record->invokeSaveHooks('pre', 'update');
+        $event = $record->invokeSaveHooks("pre", "update");
 
         if (!$record->isValid(false, false)) {
             return false;
@@ -483,7 +481,7 @@ class UnitOfWork extends \Doctrine1\Connection\Module
         $this->conn->update($table, $array, $identifier);
         $record->assignIdentifier(true);
 
-        $record->invokeSaveHooks('post', 'update', $event);
+        $record->invokeSaveHooks("post", "update", $event);
 
         return true;
     }
@@ -500,7 +498,7 @@ class UnitOfWork extends \Doctrine1\Connection\Module
      */
     public function insert(\Doctrine1\Record $record): bool
     {
-        $event = $record->invokeSaveHooks('pre', 'insert');
+        $event = $record->invokeSaveHooks("pre", "insert");
 
         if (!$record->isValid(false, false)) {
             return false;
@@ -510,7 +508,7 @@ class UnitOfWork extends \Doctrine1\Connection\Module
         $this->processSingleInsert($record);
 
         $table->addRecord($record);
-        $record->invokeSaveHooks('post', 'insert', $event);
+        $record->invokeSaveHooks("post", "insert", $event);
 
         return true;
     }
@@ -530,12 +528,12 @@ class UnitOfWork extends \Doctrine1\Connection\Module
 
         $this->assignSequence($record);
 
-        $saveEvent   = $record->invokeSaveHooks('pre', 'save');
-        $insertEvent = $record->invokeSaveHooks('pre', 'insert');
+        $saveEvent = $record->invokeSaveHooks("pre", "save");
+        $insertEvent = $record->invokeSaveHooks("pre", "insert");
 
-        $table      = $record->getTable();
+        $table = $record->getTable();
         $identifier = (array) $table->getIdentifier();
-        $data       = $record->getPrepared();
+        $data = $record->getPrepared();
 
         foreach ($data as $key => $value) {
             if ($value instanceof \Doctrine1\Expression) {
@@ -545,8 +543,8 @@ class UnitOfWork extends \Doctrine1\Connection\Module
 
         $result = $this->conn->replace($table, $data, $identifier);
 
-        $record->invokeSaveHooks('post', 'insert', $insertEvent);
-        $record->invokeSaveHooks('post', 'save', $saveEvent);
+        $record->invokeSaveHooks("post", "insert", $insertEvent);
+        $record->invokeSaveHooks("post", "save", $saveEvent);
 
         $this->assignIdentifier($record);
 
@@ -562,7 +560,7 @@ class UnitOfWork extends \Doctrine1\Connection\Module
     public function processSingleInsert(\Doctrine1\Record $record): void
     {
         $fields = $record->getPrepared();
-        $table  = $record->getTable();
+        $table = $record->getTable();
 
         // Populate fields with a blank array so that a blank records can be inserted
         if (empty($fields)) {
@@ -606,7 +604,7 @@ class UnitOfWork extends \Doctrine1\Connection\Module
         // build the correct order
         $flushList = [];
         foreach ($classesToOrder as $class) {
-            $table        = $this->conn->getTable($class);
+            $table = $this->conn->getTable($class);
             $currentClass = $table->getComponentName();
 
             $index = array_search($currentClass, $flushList);
@@ -678,7 +676,7 @@ class UnitOfWork extends \Doctrine1\Connection\Module
                     // that are connected through it in the list (since it holds
                     // both fks)
 
-                    $assocTable     = $rel->getAssociationFactory();
+                    $assocTable = $rel->getAssociationFactory();
                     $assocClassName = $assocTable->getComponentName();
 
                     if ($relatedCompIndex !== false) {
@@ -709,7 +707,7 @@ class UnitOfWork extends \Doctrine1\Connection\Module
     protected function assignSequence(\Doctrine1\Record $record, array &$fields = null): ?int
     {
         $table = $record->getTable();
-        $seq   = $table->sequenceName;
+        $seq = $table->sequenceName;
 
         if (!empty($seq)) {
             $id = $this->conn->sequence->nextId($seq);
@@ -731,17 +729,15 @@ class UnitOfWork extends \Doctrine1\Connection\Module
 
     protected function assignIdentifier(\Doctrine1\Record $record): void
     {
-        $table      = $record->getTable();
+        $table = $record->getTable();
         $identifier = $table->getIdentifier();
-        $seq        = $table->sequenceName;
+        $seq = $table->sequenceName;
 
-        if (empty($seq) && !is_array($identifier)
-            && $table->getIdentifierType() != IdentifierType::Natural
-        ) {
+        if (empty($seq) && !is_array($identifier) && $table->getIdentifierType() != IdentifierType::Natural) {
             $id = false;
             if ($record->$identifier == null) {
-                if (($driver = strtolower($this->conn->getDriverName())) == 'pgsql') {
-                    $seq = $table->getTableName() . '_' . $table->getColumnName($identifier);
+                if ($driver = $this->conn instanceof Pgsql) {
+                    $seq = $table->getTableName() . "_" . $table->getColumnName($identifier);
                 }
 
                 $id = $this->conn->sequence->lastInsertId($seq);
@@ -750,7 +746,7 @@ class UnitOfWork extends \Doctrine1\Connection\Module
             }
 
             if (!$id) {
-                throw new \Doctrine1\Connection\Exception("Couldn't get last insert identifier.");
+                throw new \Doctrine1\Exception("Couldn't get last insert identifier.");
             }
             $record->assignIdentifier($id);
         } else {

@@ -2,6 +2,8 @@
 
 namespace Doctrine1;
 
+use Doctrine1\Connection\Mysql;
+use Doctrine1\Connection\Pgsql;
 use Doctrine1\Query\State;
 
 /**
@@ -15,56 +17,56 @@ class Query extends AbstractQuery implements \Countable
      * @var string[] The DQL keywords.
      */
     protected static array $keywords = [
-        'ALL',
-        'AND',
-        'ANY',
-        'AS',
-        'ASC',
-        'AVG',
-        'BETWEEN',
-        'BIT_LENGTH',
-        'BY',
-        'CHARACTER_LENGTH',
-        'CHAR_LENGTH',
-        'CURRENT_DATE',
-        'CURRENT_TIME',
-        'CURRENT_TIMESTAMP',
-        'DELETE',
-        'DESC',
-        'DISTINCT',
-        'EMPTY',
-        'EXISTS',
-        'FALSE',
-        'FETCH',
-        'FROM',
-        'GROUP',
-        'HAVING',
-        'IN',
-        'INDEXBY',
-        'INNER',
-        'IS',
-        'JOIN',
-        'LEFT',
-        'LIKE',
-        'LOWER',
-        'MEMBER',
-        'MOD',
-        'NEW',
-        'NOT',
-        'NULL',
-        'OBJECT',
-        'OF',
-        'OR',
-        'ORDER',
-        'OUTER',
-        'POSITION',
-        'SELECT',
-        'SOME',
-        'TRIM',
-        'TRUE',
-        'UNKNOWN',
-        'UPDATE',
-        'WHERE',
+        "ALL",
+        "AND",
+        "ANY",
+        "AS",
+        "ASC",
+        "AVG",
+        "BETWEEN",
+        "BIT_LENGTH",
+        "BY",
+        "CHARACTER_LENGTH",
+        "CHAR_LENGTH",
+        "CURRENT_DATE",
+        "CURRENT_TIME",
+        "CURRENT_TIMESTAMP",
+        "DELETE",
+        "DESC",
+        "DISTINCT",
+        "EMPTY",
+        "EXISTS",
+        "FALSE",
+        "FETCH",
+        "FROM",
+        "GROUP",
+        "HAVING",
+        "IN",
+        "INDEXBY",
+        "INNER",
+        "IS",
+        "JOIN",
+        "LEFT",
+        "LIKE",
+        "LOWER",
+        "MEMBER",
+        "MOD",
+        "NEW",
+        "NOT",
+        "NULL",
+        "OBJECT",
+        "OF",
+        "OR",
+        "ORDER",
+        "OUTER",
+        "POSITION",
+        "SELECT",
+        "SOME",
+        "TRIM",
+        "TRUE",
+        "UNKNOWN",
+        "UPDATE",
+        "WHERE",
     ];
 
     /**
@@ -141,9 +143,9 @@ class Query extends AbstractQuery implements \Countable
      */
     protected function clear(): void
     {
-        $this->preQueried            = false;
+        $this->preQueried = false;
         $this->pendingJoinConditions = [];
-        $this->state                 = State::Dirty;
+        $this->state = State::Dirty;
     }
 
     /**
@@ -153,15 +155,15 @@ class Query extends AbstractQuery implements \Countable
      */
     public function reset()
     {
-        $this->subqueryAliases     = [];
-        $this->aggregateAliasMap   = [];
-        $this->pendingAggregates   = [];
-        $this->pendingSubqueries   = [];
-        $this->pendingFields       = [];
-        $this->neededTables        = [];
-        $this->expressionMap       = [];
-        $this->subqueryAliases     = [];
-        $this->needsSubquery       = false;
+        $this->subqueryAliases = [];
+        $this->aggregateAliasMap = [];
+        $this->pendingAggregates = [];
+        $this->pendingSubqueries = [];
+        $this->pendingFields = [];
+        $this->neededTables = [];
+        $this->expressionMap = [];
+        $this->subqueryAliases = [];
+        $this->needsSubquery = false;
         $this->isLimitSubqueryUsed = false;
     }
 
@@ -264,7 +266,7 @@ class Query extends AbstractQuery implements \Countable
         } elseif (!($this->connection->getPortability() & Core::PORTABILITY_EXPR)) {
             return $dqlAlias;
         } else {
-            throw new Query\Exception('Unknown aggregate alias: ' . $dqlAlias);
+            throw new Query\Exception("Unknown aggregate alias: " . $dqlAlias);
         }
     }
 
@@ -297,7 +299,7 @@ class Query extends AbstractQuery implements \Countable
 
         // Retrieve already processed values
         $first = array_slice($params, 0, $index);
-        $last  = array_slice($params, $index, count($params) - $index);
+        $last = array_slice($params, $index, count($params) - $index);
 
         // Include array as values splicing the params array
         array_splice($last, 0, 1, $last[0]);
@@ -331,7 +333,7 @@ class Query extends AbstractQuery implements \Countable
     public function getDqlPart($queryPart)
     {
         if (!isset($this->dqlParts[$queryPart])) {
-            throw new Query\Exception('Unknown query part ' . $queryPart);
+            throw new Query\Exception("Unknown query part " . $queryPart);
         }
 
         return $this->dqlParts[$queryPart];
@@ -364,15 +366,12 @@ class Query extends AbstractQuery implements \Countable
     public function processPendingFields($componentAlias)
     {
         $tableAlias = $this->getSqlTableAlias($componentAlias);
-        $table      = $this->queryComponents[$componentAlias]['table'];
+        $table = $this->queryComponents[$componentAlias]["table"];
 
         if (!isset($this->pendingFields[$componentAlias])) {
             if ($this->hydrator->getHydrationMode() != HydrationMode::None) {
                 if (!$this->isSubquery && $componentAlias == $this->getRootAlias()) {
-                    throw new Query\Exception(
-                        "The root class of the query (alias $componentAlias) "
-                        . ' must have at least one field selected.'
-                    );
+                    throw new Query\Exception("The root class of the query (alias $componentAlias) " . " must have at least one field selected.");
                 }
             }
             return null;
@@ -382,17 +381,19 @@ class Query extends AbstractQuery implements \Countable
         // the query (FROM xyz) or its a "fetch join").
 
         // Check that the parent join (if there is one), is a "fetch join", too.
-        if (!$this->isSubquery() && isset($this->queryComponents[$componentAlias]['parent'])) {
-            $parentAlias = $this->queryComponents[$componentAlias]['parent'];
-            if (is_string($parentAlias) && !isset($this->pendingFields[$parentAlias])
-                && $this->hydrator->getHydrationMode() != HydrationMode::None
-                && $this->hydrator->getHydrationMode() != HydrationMode::Scalar
-                && $this->hydrator->getHydrationMode() != HydrationMode::SingleScalar
+        if (!$this->isSubquery() && isset($this->queryComponents[$componentAlias]["parent"])) {
+            $parentAlias = $this->queryComponents[$componentAlias]["parent"];
+            if (
+                is_string($parentAlias) &&
+                !isset($this->pendingFields[$parentAlias]) &&
+                $this->hydrator->getHydrationMode() != HydrationMode::None &&
+                $this->hydrator->getHydrationMode() != HydrationMode::Scalar &&
+                $this->hydrator->getHydrationMode() != HydrationMode::SingleScalar
             ) {
                 throw new Query\Exception(
-                    'The left side of the join between '
-                        . "the aliases '$parentAlias' and '$componentAlias' must have at least"
-                    . ' the primary key field(s) selected.'
+                    "The left side of the join between " .
+                        "the aliases '$parentAlias' and '$componentAlias' must have at least" .
+                        " the primary key field(s) selected."
                 );
             }
         }
@@ -400,7 +401,7 @@ class Query extends AbstractQuery implements \Countable
         $fields = $this->pendingFields[$componentAlias];
 
         // check for wildcards
-        if (in_array('*', $fields)) {
+        if (in_array("*", $fields)) {
             $fields = $table->getFieldNames();
         } elseif ($this->hydrator instanceof Hydrator) {
             $driverClassName = $this->hydrator->getHydratorDriverClassName();
@@ -415,15 +416,16 @@ class Query extends AbstractQuery implements \Countable
         $sql = [];
         foreach ($fields as $fieldAlias => $fieldName) {
             $columnName = $table->getColumnName($fieldName);
-            if (($owner = $table->getColumnOwner($columnName)) !== null
-                && $owner !== $table->getComponentName()
-            ) {
-                $parent      = $this->connection->getTable($owner);
-                $columnName  = $parent->getColumnName($fieldName);
-                $parentAlias = $this->getSqlTableAlias($componentAlias . '.' . $parent->getComponentName());
-                $sql[]       = $this->connection->quoteIdentifier($parentAlias) . '.' . $this->connection->quoteIdentifier($columnName)
-                       . ' AS '
-                       . $this->connection->quoteIdentifier($tableAlias . '__' . $columnName);
+            if (($owner = $table->getColumnOwner($columnName)) !== null && $owner !== $table->getComponentName()) {
+                $parent = $this->connection->getTable($owner);
+                $columnName = $parent->getColumnName($fieldName);
+                $parentAlias = $this->getSqlTableAlias($componentAlias . "." . $parent->getComponentName());
+                $sql[] =
+                    $this->connection->quoteIdentifier($parentAlias) .
+                    "." .
+                    $this->connection->quoteIdentifier($columnName) .
+                    " AS " .
+                    $this->connection->quoteIdentifier($tableAlias . "__" . $columnName);
             } else {
                 // Fix for http://www.doctrine-project.org/jira/browse/DC-585
                 // Take the field alias if available
@@ -431,17 +433,15 @@ class Query extends AbstractQuery implements \Countable
                     $aliasSql = $this->aggregateAliasMap[$fieldAlias];
                 } else {
                     $columnName = $table->getColumnName($fieldName);
-                    $aliasSql   = $this->connection->quoteIdentifier($tableAlias . '__' . $columnName);
+                    $aliasSql = $this->connection->quoteIdentifier($tableAlias . "__" . $columnName);
                 }
-                $sql[] = $this->connection->quoteIdentifier($tableAlias) . '.' . $this->connection->quoteIdentifier($columnName)
-                       . ' AS '
-                       . $aliasSql;
+                $sql[] = $this->connection->quoteIdentifier($tableAlias) . "." . $this->connection->quoteIdentifier($columnName) . " AS " . $aliasSql;
             }
         }
 
         $this->neededTables[] = $tableAlias;
 
-        return implode(', ', $sql);
+        return implode(", ", $sql);
     }
 
     /**
@@ -458,42 +458,39 @@ class Query extends AbstractQuery implements \Countable
      */
     public function parseSelectField($field)
     {
-        $terms = explode('.', $field);
+        $terms = explode(".", $field);
 
         if (isset($terms[1])) {
             $componentAlias = $terms[0];
-            $field          = $terms[1];
+            $field = $terms[1];
         } else {
             reset($this->queryComponents);
             $componentAlias = key($this->queryComponents);
-            $fields         = $terms[0];
+            $fields = $terms[0];
         }
 
         if ($componentAlias === null) {
-            throw new Query\Exception('Missing component alias');
+            throw new Query\Exception("Missing component alias");
         }
 
         $tableAlias = $this->getSqlTableAlias($componentAlias);
-        $table      = $this->queryComponents[$componentAlias]['table'];
-
+        $table = $this->queryComponents[$componentAlias]["table"];
 
         // check for wildcards
-        if ($field === '*') {
+        if ($field === "*") {
             $sql = [];
 
             foreach ($table->getColumnNames() as $field) {
-                $sql[] = $this->parseSelectField($componentAlias . '.' . $field);
+                $sql[] = $this->parseSelectField($componentAlias . "." . $field);
             }
 
-            return implode(', ', $sql);
+            return implode(", ", $sql);
         } else {
             $name = $table->getColumnName($field);
 
             $this->neededTables[] = $tableAlias;
 
-            return $this->connection->quoteIdentifier($tableAlias . '.' . $name)
-                   . ' AS '
-                   . $this->connection->quoteIdentifier($tableAlias . '__' . $name);
+            return $this->connection->quoteIdentifier($tableAlias . "." . $name) . " AS " . $this->connection->quoteIdentifier($tableAlias . "__" . $name);
         }
     }
 
@@ -507,15 +504,15 @@ class Query extends AbstractQuery implements \Countable
      */
     public function getExpressionOwner($expr)
     {
-        if (strtoupper(substr(trim($expr, '( '), 0, 6)) !== 'SELECT') {
+        if (strtoupper(substr(trim($expr, "( "), 0, 6)) !== "SELECT") {
             // Fix for http://www.doctrine-project.org/jira/browse/DC-754
-            $expr = preg_replace('/([\'\"])[^\1]*\1/', '', $expr) ?? $expr;
+            $expr = preg_replace('/([\'\"])[^\1]*\1/', "", $expr) ?? $expr;
             preg_match_all("/[a-z_][a-z0-9_]*\.[a-z_][a-z0-9_]*[\.[a-z0-9]+]*/i", $expr, $matches);
 
             $match = current($matches);
 
             if (isset($match[0])) {
-                $terms = explode('.', $match[0]);
+                $terms = explode(".", $match[0]);
 
                 return $terms[0];
             }
@@ -535,15 +532,15 @@ class Query extends AbstractQuery implements \Countable
      */
     public function parseSelect($dql)
     {
-        $refs = $this->tokenizer->sqlExplode($dql, ',');
+        $refs = $this->tokenizer->sqlExplode($dql, ",");
         $refs[0] = trim($refs[0]);
 
-        $pos = strpos($refs[0], ' ') ?: 0;
+        $pos = strpos($refs[0], " ") ?: 0;
         $first = substr($refs[0], 0, $pos);
 
         // check for DISTINCT keyword
-        if ($first === 'DISTINCT') {
-            $this->sqlParts['distinct'] = true;
+        if ($first === "DISTINCT") {
+            $this->sqlParts["distinct"] = true;
 
             $refs[0] = substr($refs[0], ++$pos);
         }
@@ -557,13 +554,13 @@ class Query extends AbstractQuery implements \Countable
                 continue;
             }
 
-            $terms = $this->tokenizer->sqlExplode($reference, ' ');
-            $pos   = strpos($terms[0], '(');
+            $terms = $this->tokenizer->sqlExplode($reference, " ");
+            $pos = strpos($terms[0], "(");
 
             if (count($terms) > 1 || $pos !== false) {
                 $expression = array_shift($terms);
                 assert(is_string($expression));
-                $alias      = array_pop($terms);
+                $alias = array_pop($terms);
 
                 if (!$alias) {
                     assert($pos !== false);
@@ -571,7 +568,7 @@ class Query extends AbstractQuery implements \Countable
                 }
 
                 // Fix for http://www.doctrine-project.org/jira/browse/DC-706
-                if ($pos !== false && substr($expression, 0, 1) !== "'" && substr($expression, 0, $pos) == '') {
+                if ($pos !== false && substr($expression, 0, 1) !== "'" && substr($expression, 0, $pos) == "") {
                     $queryComponents = $this->queryComponents;
                     reset($queryComponents);
                     $componentAlias = key($queryComponents);
@@ -582,19 +579,19 @@ class Query extends AbstractQuery implements \Countable
                 $expression = $this->parseClause($expression);
 
                 if ($componentAlias === null) {
-                    throw new Query\Exception('Missing component alias');
+                    throw new Query\Exception("Missing component alias");
                 }
                 $tableAlias = $this->getSqlTableAlias($componentAlias);
 
                 $index = count($this->aggregateAliasMap);
 
                 $sqlAlias = $this->connection->quoteIdentifier("{$tableAlias}__$index");
-                $this->sqlParts['select'][] = "$expression AS $sqlAlias";
+                $this->sqlParts["select"][] = "$expression AS $sqlAlias";
 
                 $this->aggregateAliasMap[$alias] = $sqlAlias;
-                $this->expressionMap[$alias][0]  = $expression;
+                $this->expressionMap[$alias][0] = $expression;
 
-                $this->queryComponents[$componentAlias]['agg'][$index] = $alias;
+                $this->queryComponents[$componentAlias]["agg"][$index] = $alias;
 
                 $this->neededTables[] = $tableAlias;
 
@@ -604,15 +601,15 @@ class Query extends AbstractQuery implements \Countable
                     $this->pendingFields[$componentAlias][$alias] = $field[1];
                 }
             } else {
-                $e = explode('.', $terms[0]);
+                $e = explode(".", $terms[0]);
 
                 if (isset($e[1])) {
                     $componentAlias = $e[0];
-                    $field          = $e[1];
+                    $field = $e[1];
                 } else {
                     reset($this->queryComponents);
                     $componentAlias = key($this->queryComponents);
-                    $field          = $e[0];
+                    $field = $e[0];
                 }
 
                 $this->pendingFields[$componentAlias][] = $field;
@@ -644,11 +641,11 @@ class Query extends AbstractQuery implements \Countable
             return (string) $clause;
         }
 
-        $terms = $this->tokenizer->clauseExplode($clause, [' ', '+', '-', '*', '/', '<', '>', '=', '>=', '<=', '&', '|']);
-        $str   = '';
+        $terms = $this->tokenizer->clauseExplode($clause, [" ", "+", "-", "*", "/", "<", ">", "=", ">=", "<=", "&", "|"]);
+        $str = "";
 
         foreach ($terms as $term) {
-            $pos = strpos($term[0], '(');
+            $pos = strpos($term[0], "(");
 
             if ($pos !== false && substr($term[0], 0, 1) !== "'") {
                 $name = substr($term[0], 0, $pos);
@@ -656,14 +653,14 @@ class Query extends AbstractQuery implements \Countable
                 $term[0] = $this->parseFunctionExpression($term[0]);
             } else {
                 if (substr($term[0], 0, 1) !== "'" && substr($term[0], -1) !== "'") {
-                    if (strpos($term[0], '.') !== false) {
+                    if (strpos($term[0], ".") !== false) {
                         if (!is_numeric($term[0])) {
-                            $e = explode('.', $term[0]);
+                            $e = explode(".", $term[0]);
 
                             $field = array_pop($e);
 
                             if ($this->getType()->isSelect()) {
-                                $componentAlias = implode('.', $e);
+                                $componentAlias = implode(".", $e);
 
                                 if (empty($componentAlias)) {
                                     $componentAlias = $this->getRootAlias();
@@ -673,10 +670,10 @@ class Query extends AbstractQuery implements \Countable
 
                                 // check the existence of the component alias
                                 if (!isset($this->queryComponents[$componentAlias])) {
-                                    throw new Query\Exception('Unknown component alias ' . $componentAlias);
+                                    throw new Query\Exception("Unknown component alias " . $componentAlias);
                                 }
 
-                                $table = $this->queryComponents[$componentAlias]['table'];
+                                $table = $this->queryComponents[$componentAlias]["table"];
 
                                 $def = $table->getDefinitionOf($field);
 
@@ -685,7 +682,7 @@ class Query extends AbstractQuery implements \Countable
 
                                 // check column existence
                                 if (!$def) {
-                                    throw new Query\Exception('Unknown column ' . $field);
+                                    throw new Query\Exception("Unknown column " . $field);
                                 }
 
                                 if ($def->owner !== null) {
@@ -695,23 +692,25 @@ class Query extends AbstractQuery implements \Countable
                                 $tableAlias = $this->getSqlTableAlias($componentAlias);
 
                                 // build sql expression
-                                $term[0] = $this->connection->quoteIdentifier($tableAlias)
-                                         . '.'
-                                         . $this->connection->quoteIdentifier($field);
+                                $term[0] = $this->connection->quoteIdentifier($tableAlias) . "." . $this->connection->quoteIdentifier($field);
                             } else {
                                 // build sql expression
-                                $field   = $this->getRoot()->getColumnName($field);
+                                $field = $this->getRoot()->getColumnName($field);
                                 $term[0] = $this->connection->quoteIdentifier($field);
                             }
                         }
                     } else {
-                        if (!empty($term[0]) && !in_array(strtoupper($term[0]), self::$keywords)
-                            && !is_numeric($term[0]) && $term[0] !== '?' && substr($term[0], 0, 1) !== ':'
+                        if (
+                            !empty($term[0]) &&
+                            !in_array(strtoupper($term[0]), self::$keywords) &&
+                            !is_numeric($term[0]) &&
+                            $term[0] !== "?" &&
+                            substr($term[0], 0, 1) !== ":"
                         ) {
                             $componentAlias = $this->getRootAlias();
 
                             $found = false;
-                            $table = $this->queryComponents[$componentAlias]['table'];
+                            $table = $this->queryComponents[$componentAlias]["table"];
 
                             // check column existence
                             if ($table->hasField($term[0])) {
@@ -722,7 +721,6 @@ class Query extends AbstractQuery implements \Countable
                                 // get the actual column name from field name
                                 $term[0] = $table->getColumnName($term[0]);
 
-
                                 if ($def?->owner !== null) {
                                     $componentAlias = "$componentAlias.{$def->owner}";
                                 }
@@ -731,9 +729,7 @@ class Query extends AbstractQuery implements \Countable
 
                                 if ($this->getType()->isSelect()) {
                                     // build sql expression
-                                    $term[0] = $this->connection->quoteIdentifier($tableAlias)
-                                             . '.'
-                                             . $this->connection->quoteIdentifier($term[0]);
+                                    $term[0] = $this->connection->quoteIdentifier($tableAlias) . "." . $this->connection->quoteIdentifier($term[0]);
                                 } else {
                                     // build sql expression
                                     $term[0] = $this->connection->quoteIdentifier($term[0]);
@@ -770,18 +766,18 @@ class Query extends AbstractQuery implements \Countable
      */
     public function parseFunctionExpression($expr, $parseCallback = null)
     {
-        $pos  = strpos($expr, '(');
-        $name = $pos === false ? '' : substr($expr, 0, $pos);
+        $pos = strpos($expr, "(");
+        $name = $pos === false ? "" : substr($expr, 0, $pos);
 
-        if ($name === '') {
+        if ($name === "") {
             return $this->parseSubquery($expr);
         }
 
-        $argStr = substr($expr, ($pos + 1), -1);
-        $args   = [];
+        $argStr = substr($expr, $pos + 1, -1);
+        $args = [];
         // parse args
 
-        foreach ($this->tokenizer->sqlExplode($argStr, ',') as $arg) {
+        foreach ($this->tokenizer->sqlExplode($argStr, ",") as $arg) {
             $args[] = $parseCallback ? call_user_func_array($parseCallback, [$arg]) : $this->parseClause($arg);
         }
 
@@ -789,7 +785,7 @@ class Query extends AbstractQuery implements \Countable
         try {
             $callback = [$this->connection->expression, $name];
             if (!is_callable($callback)) {
-                throw new Query\Exception('Unknown function ' . $name . '.');
+                throw new Query\Exception("Unknown function " . $name . ".");
             }
             $expr = call_user_func_array($callback, $args);
         } catch (Expression\Exception $e) {
@@ -808,15 +804,15 @@ class Query extends AbstractQuery implements \Countable
         $trimmed = trim($this->tokenizer->bracketTrim($subquery));
 
         // check for possible subqueries
-        if (substr($trimmed, 0, 4) == 'FROM' || substr($trimmed, 0, 6) == 'SELECT') {
+        if (substr($trimmed, 0, 4) == "FROM" || substr($trimmed, 0, 6) == "SELECT") {
             // parse subquery
-            $q       = $this->createSubquery()->parseDqlQuery($trimmed);
+            $q = $this->createSubquery()->parseDqlQuery($trimmed);
             $trimmed = $q->getSqlQuery();
             $q->free();
-        } elseif (substr($trimmed, 0, 4) == 'SQL:') {
+        } elseif (substr($trimmed, 0, 4) == "SQL:") {
             $trimmed = substr($trimmed, 4);
         } else {
-            $e = $this->tokenizer->sqlExplode($trimmed, ',');
+            $e = $this->tokenizer->sqlExplode($trimmed, ",");
 
             $value = [];
             $index = false;
@@ -825,12 +821,11 @@ class Query extends AbstractQuery implements \Countable
                 $value[] = $this->parseClause($part);
             }
 
-            $trimmed = implode(', ', $value);
+            $trimmed = implode(", ", $value);
         }
 
-        return '(' . $trimmed . ')';
+        return "(" . $trimmed . ")";
     }
-
 
     /**
      * processes pending subqueries
@@ -855,16 +850,16 @@ class Query extends AbstractQuery implements \Countable
             reset($this->queryComponents);
             $componentAlias = key($this->queryComponents);
             if ($componentAlias === null) {
-                throw new Query\Exception('Missing component alias');
+                throw new Query\Exception("Missing component alias");
             }
-            $tableAlias     = $this->getSqlTableAlias($componentAlias);
+            $tableAlias = $this->getSqlTableAlias($componentAlias);
 
-            $sqlAlias = $tableAlias . '__' . count($this->aggregateAliasMap);
+            $sqlAlias = $tableAlias . "__" . count($this->aggregateAliasMap);
 
-            $this->sqlParts['select'][] = '(' . $sql . ') AS ' . $this->connection->quoteIdentifier($sqlAlias);
+            $this->sqlParts["select"][] = "(" . $sql . ") AS " . $this->connection->quoteIdentifier($sqlAlias);
 
-            $this->aggregateAliasMap[$alias]                 = $sqlAlias;
-            $this->queryComponents[$componentAlias]['agg'][] = $alias;
+            $this->aggregateAliasMap[$alias] = $sqlAlias;
+            $this->queryComponents[$componentAlias]["agg"][] = $alias;
         }
         $this->pendingSubqueries = [];
     }
@@ -890,23 +885,23 @@ class Query extends AbstractQuery implements \Countable
                         continue;
                     }
 
-                    $e = explode('.', $component);
+                    $e = explode(".", $component);
 
-                    $field          = array_pop($e);
-                    $componentAlias = implode('.', $e);
+                    $field = array_pop($e);
+                    $componentAlias = implode(".", $e);
 
                     // check the existence of the component alias
                     if (!isset($this->queryComponents[$componentAlias])) {
-                        throw new Query\Exception('Unknown component alias ' . $componentAlias);
+                        throw new Query\Exception("Unknown component alias " . $componentAlias);
                     }
 
-                    $table = $this->queryComponents[$componentAlias]['table'];
+                    $table = $this->queryComponents[$componentAlias]["table"];
 
                     $field = $table->getColumnName($field);
 
                     // check column existence
                     if (!$table->hasColumn($field)) {
-                        throw new Query\Exception('Unknown column ' . $field);
+                        throw new Query\Exception("Unknown column " . $field);
                     }
 
                     $sqlTableAlias = $this->getSqlTableAlias($componentAlias);
@@ -915,33 +910,33 @@ class Query extends AbstractQuery implements \Countable
 
                     // build sql expression
 
-                    $identifier = $this->connection->quoteIdentifier($sqlTableAlias . '.' . $field);
+                    $identifier = $this->connection->quoteIdentifier($sqlTableAlias . "." . $field);
                     $expression = str_replace($component, $identifier, $expression);
                 }
             }
 
             if (count($tableAliases) !== 1) {
                 $componentAlias = reset($this->tableAliasMap);
-                $tableAlias     = key($this->tableAliasMap);
+                $tableAlias = key($this->tableAliasMap);
             }
 
             if (empty($componentAlias)) {
-                throw new Query\Exception('Missing component alias');
+                throw new Query\Exception("Missing component alias");
             }
 
             if (empty($tableAlias)) {
-                throw new Query\Exception('Missing table alias');
+                throw new Query\Exception("Missing table alias");
             }
 
-            $index    = count($this->aggregateAliasMap);
-            $sqlAlias = $this->connection->quoteIdentifier($tableAlias . '__' . $index);
+            $index = count($this->aggregateAliasMap);
+            $sqlAlias = $this->connection->quoteIdentifier($tableAlias . "__" . $index);
 
-            $this->sqlParts['select'][] = $expression . ' AS ' . $sqlAlias;
+            $this->sqlParts["select"][] = $expression . " AS " . $sqlAlias;
 
             $this->aggregateAliasMap[$alias] = $sqlAlias;
-            $this->expressionMap[$alias][0]  = $expression;
+            $this->expressionMap[$alias][0] = $expression;
 
-            $this->queryComponents[$componentAlias]['agg'][$index] = $alias;
+            $this->queryComponents[$componentAlias]["agg"][$index] = $alias;
 
             $this->neededTables[] = $tableAlias;
         }
@@ -959,16 +954,16 @@ class Query extends AbstractQuery implements \Countable
     protected function buildSqlQueryBase()
     {
         if ($this->type->isDelete()) {
-            return 'DELETE FROM ';
+            return "DELETE FROM ";
         }
         if ($this->type->isUpdate()) {
-            return 'UPDATE ';
+            return "UPDATE ";
         }
         if ($this->type->isSelect()) {
-            $distinct = ($this->sqlParts['distinct']) ? 'DISTINCT ' : '';
-            return 'SELECT ' . $distinct . implode(', ', $this->sqlParts['select']) . ' FROM ';
+            $distinct = $this->sqlParts["distinct"] ? "DISTINCT " : "";
+            return "SELECT " . $distinct . implode(", ", $this->sqlParts["select"]) . " FROM ";
         }
-        return '';
+        return "";
     }
 
     /**
@@ -979,29 +974,27 @@ class Query extends AbstractQuery implements \Countable
      */
     protected function buildSqlFromPart($ignorePending = false)
     {
-        $q = '';
+        $q = "";
 
-        foreach ($this->sqlParts['from'] as $k => $part) {
-            $e = explode(' ', $part);
+        foreach ($this->sqlParts["from"] as $k => $part) {
+            $e = explode(" ", $part);
 
             if ($k === 0) {
                 if (!$ignorePending && $this->type->isSelect()) {
                     // We may still have pending conditions
-                    $alias = count($e) > 1
-                        ? $this->getComponentAlias($e[1])
-                        : null;
+                    $alias = count($e) > 1 ? $this->getComponentAlias($e[1]) : null;
                     $where = $this->processPendingJoinConditions($alias);
 
                     // apply inheritance to WHERE part
                     if (!empty($where)) {
-                        if (count($this->sqlParts['where']) > 0) {
-                            $this->sqlParts['where'][] = 'AND';
+                        if (count($this->sqlParts["where"]) > 0) {
+                            $this->sqlParts["where"][] = "AND";
                         }
 
-                        if (substr($where, 0, 1) === '(' && substr($where, -1) === ')') {
-                            $this->sqlParts['where'][] = $where;
+                        if (substr($where, 0, 1) === "(" && substr($where, -1) === ")") {
+                            $this->sqlParts["where"][] = $where;
                         } else {
-                            $this->sqlParts['where'][] = '(' . $where . ')';
+                            $this->sqlParts["where"][] = "(" . $where . ")";
                         }
                     }
                 }
@@ -1013,14 +1006,11 @@ class Query extends AbstractQuery implements \Countable
 
             // preserve LEFT JOINs only if needed
             // Check if it's JOIN, if not add a comma separator instead of space
-            if (!preg_match('/\bJOIN\b/i', $part) && !isset($this->pendingJoinConditions[$k])) {
-                $q .= ', ' . $part;
+            if (!preg_match("/\bJOIN\b/i", $part) && !isset($this->pendingJoinConditions[$k])) {
+                $q .= ", " . $part;
             } else {
-                if (substr($part, 0, 9) === 'LEFT JOIN') {
-                    $aliases = array_merge(
-                        $this->subqueryAliases,
-                        array_keys($this->neededTables)
-                    );
+                if (substr($part, 0, 9) === "LEFT JOIN") {
+                    $aliases = array_merge($this->subqueryAliases, array_keys($this->neededTables));
 
                     if (!in_array($e[3], $aliases) && !in_array($e[2], $aliases) && !empty($this->pendingFields)) {
                         continue;
@@ -1028,25 +1018,25 @@ class Query extends AbstractQuery implements \Countable
                 }
 
                 if (!$ignorePending && isset($this->pendingJoinConditions[$k])) {
-                    if (strpos($part, ' ON ') !== false) {
-                        $part .= ' AND ';
+                    if (strpos($part, " ON ") !== false) {
+                        $part .= " AND ";
                     } else {
-                        $part .= ' ON ';
+                        $part .= " ON ";
                     }
 
                     $part .= $this->processPendingJoinConditions($k);
                 }
 
                 $componentAlias = $this->getComponentAlias($e[3]);
-                $string         = $this->getInheritanceCondition($componentAlias);
+                $string = $this->getInheritanceCondition($componentAlias);
 
                 if ($string) {
-                    $part = $part . ' AND ' . $string;
+                    $part = $part . " AND " . $string;
                 }
-                $q .= ' ' . $part;
+                $q .= " " . $part;
             }
 
-            $this->sqlParts['from'][$k] = $part;
+            $this->sqlParts["from"][$k] = $part;
         }
         return $q;
     }
@@ -1071,7 +1061,7 @@ class Query extends AbstractQuery implements \Countable
             }
         }
 
-        return (count($parts) > 0 ? '(' . implode(') AND (', $parts) . ')' : '');
+        return count($parts) > 0 ? "(" . implode(") AND (", $parts) . ")" : "";
     }
 
     /**
@@ -1085,7 +1075,7 @@ class Query extends AbstractQuery implements \Countable
     public function getSqlQuery(array $params = [], bool $limitSubquery = true): string
     {
         // Assign building/execution specific params
-        $this->params['exec'] = $params;
+        $this->params["exec"] = $params;
 
         // Initialize prepared parameters array
         $this->execParams = $this->getFlattenedParams();
@@ -1108,7 +1098,7 @@ class Query extends AbstractQuery implements \Countable
     {
         // reset the state
         if (!$this->isSubquery()) {
-            $this->queryComponents   = [];
+            $this->queryComponents = [];
             $this->pendingAggregates = [];
             $this->aggregateAliasMap = [];
         }
@@ -1122,25 +1112,25 @@ class Query extends AbstractQuery implements \Countable
         // this will also populate the $queryComponents.
         foreach ($this->dqlParts as $queryPartName => $queryParts) {
             // If we are parsing FROM clause, we'll need to diff the queryComponents later
-            if ($queryPartName === 'from') {
+            if ($queryPartName === "from") {
                 // Pick queryComponents before processing
                 $queryComponentsBefore = $this->getQueryComponents();
             }
 
             // FIX #1667: _sqlParts are cleaned inside _processDqlQueryPart.
-            if (!in_array($queryPartName, ['forUpdate', 'forShare', 'noWait', 'skipLocked'], true) && is_array($queryParts)) {
+            if (!in_array($queryPartName, ["forUpdate", "forShare", "noWait", "skipLocked"], true) && is_array($queryParts)) {
                 $this->processDqlQueryPart($queryPartName, $queryParts);
             }
 
             // We need to define the root alias
-            if ($queryPartName === 'from') {
+            if ($queryPartName === "from") {
                 // Pick queryComponents aftr processing
                 $queryComponentsAfter = $this->getQueryComponents();
 
                 // Root alias is the key of difference of query components
                 $diffQueryComponents = array_diff_key($queryComponentsAfter, $queryComponentsBefore ?? []);
                 if (empty($diffQueryComponents)) {
-                    throw new Query\Exception('Missing root alias');
+                    throw new Query\Exception("Missing root alias");
                 }
                 $this->rootAlias = key($diffQueryComponents);
             }
@@ -1148,23 +1138,21 @@ class Query extends AbstractQuery implements \Countable
         $this->state = State::Clean;
 
         // Proceed with the generated SQL
-        if (empty($this->sqlParts['from'])) {
-            throw new Query\Exception('Missing from part.');
+        if (empty($this->sqlParts["from"])) {
+            throw new Query\Exception("Missing from part.");
         }
 
         $needsSubQuery = false;
-        $subquery      = '';
-        $map           = $this->getRootDeclaration();
-        $table         = $map['table'];
-        $rootAlias     = $this->getRootAlias();
+        $subquery = "";
+        $map = $this->getRootDeclaration();
+        $table = $map["table"];
+        $rootAlias = $this->getRootAlias();
 
-        if (!empty($this->sqlParts['limit']) && $this->needsSubquery
-            && $table->getLimit() == Limit::Records
-        ) {
+        if (!empty($this->sqlParts["limit"]) && $this->needsSubquery && $table->getLimit() == Limit::Records) {
             // We do not need a limit-subquery if DISTINCT is used
             // and the selected fields are either from the root component or from a localKey relation (hasOne)
             // (i.e. DQL: SELECT DISTINCT u.id FROM User u LEFT JOIN u.phonenumbers LIMIT 5).
-            if (!$this->sqlParts['distinct']) {
+            if (!$this->sqlParts["distinct"]) {
                 $this->isLimitSubqueryUsed = true;
                 $needsSubQuery = true;
             } else {
@@ -1175,9 +1163,7 @@ class Query extends AbstractQuery implements \Countable
                     }
 
                     //no subquery for ONE relations
-                    if (isset($this->queryComponents[$alias]['relation'])
-                        && $this->queryComponents[$alias]['relation']->getType() == Relation::ONE
-                    ) {
+                    if (isset($this->queryComponents[$alias]["relation"]) && $this->queryComponents[$alias]["relation"]->getType() == Relation::ONE) {
                         continue;
                     }
 
@@ -1199,7 +1185,7 @@ class Query extends AbstractQuery implements \Countable
         }
 
         if (!empty($sql)) {
-            array_unshift($this->sqlParts['select'], implode(', ', $sql));
+            array_unshift($this->sqlParts["select"], implode(", ", $sql));
         }
 
         $this->pendingFields = [];
@@ -1208,47 +1194,45 @@ class Query extends AbstractQuery implements \Countable
         $q = $this->buildSqlQueryBase();
         $q .= $this->buildSqlFromPart();
 
-        if (!empty($this->sqlParts['set'])) {
-            $q .= ' SET ' . implode(', ', $this->sqlParts['set']);
+        if (!empty($this->sqlParts["set"])) {
+            $q .= " SET " . implode(", ", $this->sqlParts["set"]);
         }
 
         $string = $this->getInheritanceCondition($this->getRootAlias());
 
         // apply inheritance to WHERE part
         if (!empty($string)) {
-            if (count($this->sqlParts['where']) > 0) {
-                $this->sqlParts['where'][] = 'AND';
+            if (count($this->sqlParts["where"]) > 0) {
+                $this->sqlParts["where"][] = "AND";
             }
 
-            if (substr($string, 0, 1) === '(' && substr($string, -1) === ')') {
-                $this->sqlParts['where'][] = $string;
+            if (substr($string, 0, 1) === "(" && substr($string, -1) === ")") {
+                $this->sqlParts["where"][] = $string;
             } else {
-                $this->sqlParts['where'][] = "($string)";
+                $this->sqlParts["where"][] = "($string)";
             }
         }
 
-        $modifyLimit      = true;
-        $limitSubquerySql = '';
+        $modifyLimit = true;
+        $limitSubquerySql = "";
 
-        if ((!empty($this->sqlParts['limit']) || !empty($this->sqlParts['offset'])) && $needsSubQuery && $limitSubquery) {
+        if ((!empty($this->sqlParts["limit"]) || !empty($this->sqlParts["offset"])) && $needsSubQuery && $limitSubquery) {
             $subquery = $this->getLimitSubquery();
 
             // what about composite keys?
             $idColumnName = $table->getColumnName($table->getIdentifier());
 
             // pgsql/mysql need special nested LIMIT subquery
-            $driverName = $this->connection->getAttribute(\PDO::ATTR_DRIVER_NAME);
-            if ($driverName === 'mysql' || $driverName === 'pgsql') {
-                $subqueryAlias = $this->connection->quoteIdentifier('doctrine_subquery_alias');
+            if ($this->connection instanceof Mysql || $this->connection instanceof Pgsql) {
+                $subqueryAlias = $this->connection->quoteIdentifier("doctrine_subquery_alias");
                 $subquery = "SELECT $subqueryAlias.{$this->connection->quoteIdentifier($idColumnName)} FROM ($subquery) AS $subqueryAlias";
             }
 
-            $field = $this->getSqlTableAlias($rootAlias) . '.' . $idColumnName;
+            $field = $this->getSqlTableAlias($rootAlias) . "." . $idColumnName;
 
             // FIX #1868: If not ID under MySQL is found to be restricted, restrict pk column for null
             //            (which will lead to a return of 0 items)
-            $limitSubquerySql = $this->connection->quoteIdentifier($field)
-                              . (empty($subquery) ? ' IS NULL' : " IN ($subquery)");
+            $limitSubquerySql = $this->connection->quoteIdentifier($field) . (empty($subquery) ? " IS NULL" : " IN ($subquery)");
 
             $modifyLimit = false;
         }
@@ -1256,20 +1240,20 @@ class Query extends AbstractQuery implements \Countable
         // condition is already in the subquery, skip second where
         if (!empty($limitSubquerySql)) {
             $q .= " WHERE $limitSubquerySql";
-        } elseif (!empty($this->sqlParts['where']) && !empty($limitSubquery)) {
-            $where = implode(' ', $this->sqlParts['where']);
-            if (!empty($where) && !(substr($where, 0, 1) === '(' && substr($where, -1) === ')')) {
+        } elseif (!empty($this->sqlParts["where"]) && !empty($limitSubquery)) {
+            $where = implode(" ", $this->sqlParts["where"]);
+            if (!empty($where) && !(substr($where, 0, 1) === "(" && substr($where, -1) === ")")) {
                 $where = "($where)";
             }
             $q .= " WHERE {$limitSubquerySql}{$where}";
         }
 
         // Fix the orderbys so we only have one orderby per value
-        foreach ($this->sqlParts['orderby'] as $k => $orderBy) {
-            $e = explode(', ', $orderBy);
-            unset($this->sqlParts['orderby'][$k]);
+        foreach ($this->sqlParts["orderby"] as $k => $orderBy) {
+            $e = explode(", ", $orderBy);
+            unset($this->sqlParts["orderby"][$k]);
             foreach ($e as $v) {
-                $this->sqlParts['orderby'][] = $v;
+                $this->sqlParts["orderby"][] = $v;
             }
         }
 
@@ -1278,49 +1262,49 @@ class Query extends AbstractQuery implements \Countable
         if ($this->type->isSelect()) {
             foreach ($this->queryComponents as $alias => $map) {
                 $sqlAlias = $this->getSqlTableAlias($alias);
-                if (isset($map['relation'])) {
-                    $orderBy = $map['relation']->getOrderByStatement($sqlAlias, true);
-                    if ($orderBy == $map['relation']['orderBy']) {
-                        if (isset($map['ref']) && isset($map['relation']['refTable'])) {
-                            $orderBy = $map['relation']['refTable']->processOrderBy($sqlAlias, $map['relation']['orderBy'] ?? [], true);
+                if (isset($map["relation"])) {
+                    $orderBy = $map["relation"]->getOrderByStatement($sqlAlias, true);
+                    if ($orderBy == $map["relation"]["orderBy"]) {
+                        if (isset($map["ref"]) && isset($map["relation"]["refTable"])) {
+                            $orderBy = $map["relation"]["refTable"]->processOrderBy($sqlAlias, $map["relation"]["orderBy"] ?? [], true);
                         } else {
                             $orderBy = null;
                         }
                     }
                 } else {
-                    $orderBy = $map['table']->getOrderByStatement($sqlAlias, true);
+                    $orderBy = $map["table"]->getOrderByStatement($sqlAlias, true);
                 }
 
                 if ($orderBy) {
-                    $e = explode(',', $orderBy);
-                    $e = array_map('trim', $e);
+                    $e = explode(",", $orderBy);
+                    $e = array_map("trim", $e);
                     foreach ($e as $v) {
-                        if (!in_array($v, $this->sqlParts['orderby'])) {
-                            $this->sqlParts['orderby'][] = $v;
+                        if (!in_array($v, $this->sqlParts["orderby"])) {
+                            $this->sqlParts["orderby"][] = $v;
                         }
                     }
                 }
             }
         }
 
-        $q .= empty($this->sqlParts['groupby']) ? '' : ' GROUP BY ' . implode(', ', $this->sqlParts['groupby']);
-        $q .= empty($this->sqlParts['having']) ? '' : ' HAVING ' . implode(' AND ', $this->sqlParts['having']);
-        $q .= empty($this->sqlParts['orderby']) ? '' : ' ORDER BY ' . implode(', ', $this->sqlParts['orderby']);
+        $q .= empty($this->sqlParts["groupby"]) ? "" : " GROUP BY " . implode(", ", $this->sqlParts["groupby"]);
+        $q .= empty($this->sqlParts["having"]) ? "" : " HAVING " . implode(" AND ", $this->sqlParts["having"]);
+        $q .= empty($this->sqlParts["orderby"]) ? "" : " ORDER BY " . implode(", ", $this->sqlParts["orderby"]);
 
         if ($modifyLimit) {
-            $q = $this->connection->modifyLimitQuery($q, $this->sqlParts['limit'], $this->sqlParts['offset'], false);
+            $q = $this->connection->modifyLimitQuery($q, $this->sqlParts["limit"], $this->sqlParts["offset"], false);
         }
 
-        if ($this->sqlParts['forUpdate']) {
-            $q .= ' FOR UPDATE';
-        } elseif ($this->sqlParts['forShare']) {
-            $q .= ' FOR SHARE';
+        if ($this->sqlParts["forUpdate"]) {
+            $q .= " FOR UPDATE";
+        } elseif ($this->sqlParts["forShare"]) {
+            $q .= " FOR SHARE";
         }
 
-        if ($this->sqlParts['noWait']) {
-            $q .= ' NOWAIT';
-        } elseif ($this->sqlParts['skipLocked']) {
-            $q .= ' SKIP LOCKED';
+        if ($this->sqlParts["noWait"]) {
+            $q .= " NOWAIT";
+        } elseif ($this->sqlParts["skipLocked"]) {
+            $q .= " SKIP LOCKED";
         }
 
         $this->sql = $q;
@@ -1342,63 +1326,61 @@ class Query extends AbstractQuery implements \Countable
      */
     public function getLimitSubquery()
     {
-        $map            = reset($this->queryComponents);
+        $map = reset($this->queryComponents);
         if ($map === false) {
-            throw new Query\Exception('Missing table component');
+            throw new Query\Exception("Missing table component");
         }
 
-        $table = $map['table'];
+        $table = $map["table"];
         $componentAlias = key($this->queryComponents);
 
         if ($componentAlias === null) {
-            throw new Query\Exception('Missing component alias');
+            throw new Query\Exception("Missing component alias");
         }
 
         // get short alias
         $alias = $this->getSqlTableAlias($componentAlias);
         // what about composite keys?
-        $primaryKey = $alias . '.' . $table->getColumnName($table->getIdentifier());
-
-        $driverName = $this->connection->getAttribute(\PDO::ATTR_DRIVER_NAME);
+        $primaryKey = $alias . "." . $table->getColumnName($table->getIdentifier());
 
         // initialize the base of the subquery
-        $subquery = 'SELECT DISTINCT ' . $this->connection->quoteIdentifier($primaryKey);
+        $subquery = "SELECT DISTINCT " . $this->connection->quoteIdentifier($primaryKey);
 
         // pgsql need the order by fields to be preserved in select clause
         // Technically this isn't required for mysql <= 5.6, but mysql 5.7 with an sql_mode option enabled
         // (only_full_group_by, which is enabled by default in 5.7) will throw SQL errors if this isn't done,
         // so easier to just enable for all of mysql.
-        if ($driverName === 'mysql' || $driverName === 'pgsql') {
-            foreach ($this->sqlParts['orderby'] as $part) {
+        if ($this->connection instanceof Mysql || $this->connection instanceof Pgsql) {
+            foreach ($this->sqlParts["orderby"] as $part) {
                 // Remove identifier quoting if it exists
-                $e = $this->tokenizer->bracketExplode($part, ' ');
+                $e = $this->tokenizer->bracketExplode($part, " ");
                 foreach ($e as $f) {
-                    $partOriginal = str_replace(',', '', trim($f));
-                    $part = trim(implode('.', array_map(fn ($e) => trim($e, '[]`"'), explode('.', $partOriginal))));
+                    $partOriginal = str_replace(",", "", trim($f));
+                    $part = trim(implode(".", array_map(fn($e) => trim($e, '[]`"'), explode(".", $partOriginal))));
 
-                    if (strpos($part, '.') === false) {
+                    if (strpos($part, ".") === false) {
                         continue;
                     }
 
                     // don't add functions
-                    if (strpos($part, '(') !== false) {
+                    if (strpos($part, "(") !== false) {
                         continue;
                     }
 
                     // don't add primarykey column (its already in the select clause)
                     if ($part !== $primaryKey) {
-                        $subquery .= ', ' . $partOriginal;
+                        $subquery .= ", " . $partOriginal;
                     }
                 }
             }
         }
 
-        $orderby = $this->sqlParts['orderby'];
-        $having  = $this->sqlParts['having'];
-        if ($driverName === 'mysql' || $driverName === 'pgsql') {
+        $orderby = $this->sqlParts["orderby"];
+        $having = $this->sqlParts["having"];
+        if ($this->connection instanceof Mysql || $this->connection instanceof Pgsql) {
             foreach ($this->expressionMap as $dqlAlias => $expr) {
                 if (isset($expr[1])) {
-                    $subquery .= ', ' . $expr[0] . ' AS ' . $this->aggregateAliasMap[$dqlAlias];
+                    $subquery .= ", " . $expr[0] . " AS " . $this->aggregateAliasMap[$dqlAlias];
                 }
             }
         } else {
@@ -1408,7 +1390,7 @@ class Query extends AbstractQuery implements \Countable
                         $having[$k] = str_replace($this->aggregateAliasMap[$dqlAlias], $expr[0], $v);
                     }
                     foreach ($orderby as $k => $v) {
-                        $e = explode(' ', $v);
+                        $e = explode(" ", $v);
                         if ($e[0] == $this->aggregateAliasMap[$dqlAlias]) {
                             $orderby[$k] = $expr[0];
                         }
@@ -1418,44 +1400,49 @@ class Query extends AbstractQuery implements \Countable
         }
 
         // Add having fields that got stripped out of select
-        preg_match_all('/`[a-z0-9_]+`\.`[a-z0-9_]+`/i', implode(' ', $having), $matches, PREG_PATTERN_ORDER);
+        preg_match_all("/`[a-z0-9_]+`\.`[a-z0-9_]+`/i", implode(" ", $having), $matches, PREG_PATTERN_ORDER);
         if (count($matches[0]) > 0) {
-            $subquery .= ', ' . implode(', ', array_unique($matches[0]));
+            $subquery .= ", " . implode(", ", array_unique($matches[0]));
         }
 
-        $subquery .= ' FROM';
+        $subquery .= " FROM";
 
-        foreach ($this->sqlParts['from'] as $part) {
+        foreach ($this->sqlParts["from"] as $part) {
             // preserve LEFT JOINs only if needed
-            if (substr($part, 0, 9) === 'LEFT JOIN') {
-                $e = explode(' ', $part);
+            if (substr($part, 0, 9) === "LEFT JOIN") {
+                $e = explode(" ", $part);
                 // Fix for http://www.doctrine-project.org/jira/browse/DC-706
                 // Fix for http://www.doctrine-project.org/jira/browse/DC-594
-                if (empty($this->sqlParts['orderby']) && empty($this->sqlParts['where']) && empty($this->sqlParts['having']) && empty($this->sqlParts['groupby'])) {
+                if (
+                    empty($this->sqlParts["orderby"]) &&
+                    empty($this->sqlParts["where"]) &&
+                    empty($this->sqlParts["having"]) &&
+                    empty($this->sqlParts["groupby"])
+                ) {
                     continue;
                 }
             }
 
-            $subquery .= ' ' . $part;
+            $subquery .= " " . $part;
         }
 
         // all conditions are preserved in the subquery
-        $subquery .= empty($this->sqlParts['where']) ? '' : ' WHERE ' . implode(' ', $this->sqlParts['where']);
-        $subquery .= empty($this->sqlParts['groupby']) ? '' : ' GROUP BY ' . implode(', ', $this->sqlParts['groupby']);
-        $subquery .= empty($having) ? '' : ' HAVING ' . implode(' AND ', $having);
-        $subquery .= empty($orderby) ? '' : ' ORDER BY ' . implode(', ', $orderby);
+        $subquery .= empty($this->sqlParts["where"]) ? "" : " WHERE " . implode(" ", $this->sqlParts["where"]);
+        $subquery .= empty($this->sqlParts["groupby"]) ? "" : " GROUP BY " . implode(", ", $this->sqlParts["groupby"]);
+        $subquery .= empty($having) ? "" : " HAVING " . implode(" AND ", $having);
+        $subquery .= empty($orderby) ? "" : " ORDER BY " . implode(", ", $orderby);
 
         // add driver specific limit clause
-        $subquery = $this->connection->modifyLimitSubquery($table, $subquery, $this->sqlParts['limit'], $this->sqlParts['offset']);
+        $subquery = $this->connection->modifyLimitSubquery($table, $subquery, $this->sqlParts["limit"], $this->sqlParts["offset"]);
 
-        $parts = $this->tokenizer->quoteExplode($subquery, ' ');
+        $parts = $this->tokenizer->quoteExplode($subquery, " ");
 
         foreach ($parts as $k => $part) {
-            if (strpos($part, ' ') !== false) {
+            if (strpos($part, " ") !== false) {
                 continue;
             }
 
-            $part = str_replace(['"', "'", '`'], '', $part);
+            $part = str_replace(['"', "'", "`"], "", $part);
 
             // Fix DC-645, Table aliases ending with ')' where not replaced properly
             preg_match('/^(\(?)(.*?)(\)?)$/', $part, $matches);
@@ -1464,21 +1451,21 @@ class Query extends AbstractQuery implements \Countable
                 continue;
             }
 
-            if (strpos($part, '.') === false) {
+            if (strpos($part, ".") === false) {
                 continue;
             }
 
             preg_match_all("/[a-zA-Z0-9_]+\.[a-z0-9_]+/i", $part, $m);
 
             foreach ($m[0] as $match) {
-                $e = explode('.', $match);
+                $e = explode(".", $match);
 
                 // Rebuild the original part without the newly generate alias and with quoting reapplied
                 $e2 = [];
                 foreach ($e as $k2 => $v2) {
                     $e2[$k2] = $this->connection->quoteIdentifier($v2);
                 }
-                $match = implode('.', $e2);
+                $match = implode(".", $e2);
 
                 // Generate new table alias
                 $e[0] = $this->generateNewSqlTableAlias($e[0]);
@@ -1488,34 +1475,34 @@ class Query extends AbstractQuery implements \Countable
                     $e[$k2] = $this->connection->quoteIdentifier($v2);
                 }
 
-                $replace = implode('.', $e);
+                $replace = implode(".", $e);
 
                 // Replace the original part with the new part with new sql table alias
                 $parts[$k] = str_replace($match, $replace, $parts[$k]);
             }
         }
 
-        if ($driverName === 'mysql' || $driverName === 'pgsql') {
+        if ($this->connection instanceof Mysql || $this->connection instanceof Pgsql) {
             foreach ($parts as $k => $part) {
                 if (strpos($part, "'") !== false) {
                     continue;
                 }
-                if (strpos($part, '__') == false) {
+                if (strpos($part, "__") == false) {
                     continue;
                 }
 
                 preg_match_all("/[a-zA-Z0-9_]+\_\_[a-z0-9_]+/i", $part, $m);
 
                 foreach ($m[0] as $match) {
-                    $e    = explode('__', $match);
+                    $e = explode("__", $match);
                     $e[0] = $this->generateNewSqlTableAlias($e[0]);
 
-                    $parts[$k] = str_replace($match, implode('__', $e), $parts[$k]);
+                    $parts[$k] = str_replace($match, implode("__", $e), $parts[$k]);
                 }
             }
         }
 
-        $subquery = implode(' ', $parts);
+        $subquery = implode(" ", $parts);
         return $subquery;
     }
 
@@ -1538,7 +1525,7 @@ class Query extends AbstractQuery implements \Countable
 
         $query = trim($query);
         $query = str_replace("\r", "\n", str_replace("\r\n", "\n", $query));
-        $query = str_replace("\n", ' ', $query);
+        $query = str_replace("\n", " ", $query);
 
         $parts = $this->tokenizer->tokenizeQuery($query);
 
@@ -1546,37 +1533,37 @@ class Query extends AbstractQuery implements \Countable
             $subParts = trim($subParts);
             $partName = strtolower($partName);
             switch ($partName) {
-                case 'create':
+                case "create":
                     $this->type = Query\Type::CREATE();
                     break;
-                case 'insert':
+                case "insert":
                     $this->type = Query\Type::INSERT();
                     break;
-                case 'delete':
+                case "delete":
                     $this->type = Query\Type::DELETE();
                     break;
-                case 'select':
+                case "select":
                     $this->type = Query\Type::SELECT();
                     $this->addDqlQueryPart($partName, $subParts);
                     break;
-                case 'update':
+                case "update":
                     $this->type = Query\Type::UPDATE();
-                    $partName    = 'from';
-                    // no break
-                case 'from':
+                    $partName = "from";
+                // no break
+                case "from":
                     $this->addDqlQueryPart($partName, $subParts);
                     break;
-                case 'set':
+                case "set":
                     $this->addDqlQueryPart($partName, $subParts, true);
                     break;
-                case 'group':
-                case 'order':
-                    $partName .= 'by';
-                    // no break
-                case 'where':
-                case 'having':
-                case 'limit':
-                case 'offset':
+                case "group":
+                case "order":
+                    $partName .= "by";
+                // no break
+                case "where":
+                case "having":
+                case "limit":
+                case "offset":
                     $this->addDqlQueryPart($partName, $subParts);
                     break;
             }
@@ -1597,7 +1584,7 @@ class Query extends AbstractQuery implements \Countable
             return $this->queryComponents[$path];
         }
 
-        $e = $this->tokenizer->quoteExplode($path, ' INDEXBY ');
+        $e = $this->tokenizer->quoteExplode($path, " INDEXBY ");
 
         $mapWith = null;
         if (count($e) > 1) {
@@ -1607,38 +1594,38 @@ class Query extends AbstractQuery implements \Countable
         }
 
         // parse custom join conditions
-        $e = explode(' ON ', str_ireplace(' on ', ' ON ', $path));
+        $e = explode(" ON ", str_ireplace(" on ", " ON ", $path));
 
-        $joinCondition = '';
+        $joinCondition = "";
 
         if (count($e) > 1) {
             $joinCondition = substr($path, strlen($e[0]) + 4, strlen($e[1]));
-            $path          = substr($path, 0, strlen($e[0]));
+            $path = substr($path, 0, strlen($e[0]));
 
             $overrideJoin = true;
         } else {
-            $e = explode(' WITH ', str_ireplace(' with ', ' WITH ', $path));
+            $e = explode(" WITH ", str_ireplace(" with ", " WITH ", $path));
 
             if (count($e) > 1) {
                 $joinCondition = substr($path, strlen($e[0]) + 6, strlen($e[1]));
-                $path          = substr($path, 0, strlen($e[0]));
+                $path = substr($path, 0, strlen($e[0]));
             }
 
             $overrideJoin = false;
         }
 
-        $tmp            = explode(' ', $path);
-        $componentAlias = $originalAlias = (count($tmp) > 1) ? end($tmp) : null;
+        $tmp = explode(" ", $path);
+        $componentAlias = $originalAlias = count($tmp) > 1 ? end($tmp) : null;
 
-        $e = preg_split('/[.:]/', $tmp[0], -1) ?: [$tmp[0]];
+        $e = preg_split("/[.:]/", $tmp[0], -1) ?: [$tmp[0]];
 
-        $fullPath   = $tmp[0];
-        $parent     = '';
-        $prevPath   = '';
+        $fullPath = $tmp[0];
+        $parent = "";
+        $prevPath = "";
         $fullLength = strlen($fullPath);
 
         if (isset($this->queryComponents[$e[0]])) {
-            $table          = $this->queryComponents[$e[0]]['table'];
+            $table = $this->queryComponents[$e[0]]["table"];
             $componentAlias = $e[0];
 
             $prevPath = $parent = array_shift($e);
@@ -1649,7 +1636,7 @@ class Query extends AbstractQuery implements \Countable
             $length = strlen($prevPath);
 
             // build the current component path
-            $prevPath = $prevPath ? $prevPath . '.' . $name : $name;
+            $prevPath = $prevPath ? $prevPath . "." . $name : $name;
 
             $delimeter = substr($fullPath, $length, 1);
 
@@ -1670,29 +1657,28 @@ class Query extends AbstractQuery implements \Countable
 
                 $table = $this->loadRoot($name, $componentAlias);
             } else {
-                $join = ($delimeter == ':') ? 'INNER JOIN ' : 'LEFT JOIN ';
+                $join = $delimeter == ":" ? "INNER JOIN " : "LEFT JOIN ";
 
-                $relation   = $table->getRelation($name);
+                $relation = $table->getRelation($name);
                 $localTable = $table;
 
-                $table                                   = $relation->getTable();
+                $table = $relation->getTable();
                 $this->queryComponents[$componentAlias] = [
-                    'table'    => $table,
-                    'parent'   => $parent,
-                    'relation' => $relation,
-                    'map'      => null,
+                    "table" => $table,
+                    "parent" => $parent,
+                    "relation" => $relation,
+                    "map" => null,
                 ];
                 // Fix for http://www.doctrine-project.org/jira/browse/DC-701
                 if (!$relation->isOneToOne() && !$this->disableLimitSubquery) {
                     $this->needsSubquery = true;
                 }
 
-                $localAlias   = $this->getSqlTableAlias($parent, $localTable->getTableName());
+                $localAlias = $this->getSqlTableAlias($parent, $localTable->getTableName());
                 $foreignAlias = $this->getSqlTableAlias($componentAlias, $relation->getTable()->getTableName());
 
-                $foreignSql = $this->connection->quoteIdentifier($relation->getTable()->getTableName())
-                              . ' '
-                              . $this->connection->quoteIdentifier($foreignAlias);
+                $foreignSql =
+                    $this->connection->quoteIdentifier($relation->getTable()->getTableName()) . " " . $this->connection->quoteIdentifier($foreignAlias);
 
                 $map = $relation->getTable()->inheritanceMap;
 
@@ -1709,44 +1695,37 @@ class Query extends AbstractQuery implements \Countable
                         $this->subqueryAliases[] = $assocTableName;
                     }
 
-                    $assocPath = $prevPath . '.' . $asf->getComponentName() . ' ' . $componentAlias;
+                    $assocPath = $prevPath . "." . $asf->getComponentName() . " " . $componentAlias;
 
                     $this->queryComponents[$assocPath] = [
-                        'parent'   => $prevPath,
-                        'relation' => $relation,
-                        'table'    => $asf,
-                        'ref'      => true];
+                        "parent" => $prevPath,
+                        "relation" => $relation,
+                        "table" => $asf,
+                        "ref" => true,
+                    ];
 
                     $assocAlias = $this->getSqlTableAlias($assocPath, $asf->getTableName());
 
-                    $queryPart = $join
-                            . $this->connection->quoteIdentifier($assocTableName)
-                            . ' '
-                            . $this->connection->quoteIdentifier($assocAlias);
+                    $queryPart = $join . $this->connection->quoteIdentifier($assocTableName) . " " . $this->connection->quoteIdentifier($assocAlias);
 
-                    $queryPart .= ' ON (' . $this->connection->quoteIdentifier(
-                        $localAlias
-                                . '.'
-                        . $localTable->getColumnName($localTable->getIdentifier())
-                    ) // what about composite keys?
-                                . ' = '
-                                . $this->connection->quoteIdentifier($assocAlias . '.' . $relation->getLocalRefColumnName());
+                    $queryPart .=
+                        " ON (" .
+                        $this->connection->quoteIdentifier($localAlias . "." . $localTable->getColumnName($localTable->getIdentifier())) . // what about composite keys?
+                        " = " .
+                        $this->connection->quoteIdentifier($assocAlias . "." . $relation->getLocalRefColumnName());
 
                     if ($relation->isEqual()) {
                         // equal nest relation needs additional condition
-                        $queryPart .= ' OR '
-                                    . $this->connection->quoteIdentifier(
-                                        $localAlias
-                                        . '.'
-                                        . $table->getColumnName($table->getIdentifier())
-                                    )
-                                    . ' = '
-                                    . $this->connection->quoteIdentifier($assocAlias . '.' . $relation->getForeignRefColumnName());
+                        $queryPart .=
+                            " OR " .
+                            $this->connection->quoteIdentifier($localAlias . "." . $table->getColumnName($table->getIdentifier())) .
+                            " = " .
+                            $this->connection->quoteIdentifier($assocAlias . "." . $relation->getForeignRefColumnName());
                     }
 
-                    $queryPart .= ')';
+                    $queryPart .= ")";
 
-                    $this->sqlParts['from'][] = $queryPart;
+                    $this->sqlParts["from"][] = $queryPart;
 
                     $queryPart = $join . $foreignSql;
 
@@ -1757,7 +1736,7 @@ class Query extends AbstractQuery implements \Countable
                     $queryPart = $this->buildSimpleRelationSql($relation, $foreignAlias, $localAlias, $overrideJoin, $join);
                 }
 
-                $this->sqlParts['from'][$componentAlias] = $queryPart;
+                $this->sqlParts["from"][$componentAlias] = $queryPart;
 
                 if (!empty($joinCondition)) {
                     $this->addPendingJoinCondition($componentAlias, $joinCondition);
@@ -1768,8 +1747,8 @@ class Query extends AbstractQuery implements \Countable
                 $restoreState = false;
 
                 // load fields if necessary
-                if (empty($this->dqlParts['select'])) {
-                    $this->pendingFields[$componentAlias] = ['*'];
+                if (empty($this->dqlParts["select"])) {
+                    $this->pendingFields[$componentAlias] = ["*"];
                 }
             }
 
@@ -1777,10 +1756,10 @@ class Query extends AbstractQuery implements \Countable
         }
 
         if ($componentAlias === null) {
-            throw new Query\Exception('Missing component alias');
+            throw new Query\Exception("Missing component alias");
         }
 
-        $table = $this->queryComponents[$componentAlias]['table'];
+        $table = $this->queryComponents[$componentAlias]["table"];
 
         return $this->buildIndexBy($componentAlias, $mapWith);
     }
@@ -1794,15 +1773,15 @@ class Query extends AbstractQuery implements \Countable
      */
     protected function buildSimpleRelationSql(Relation $relation, $foreignAlias, $localAlias, $overrideJoin, $join)
     {
-        $queryPart = $join . $this->connection->quoteIdentifier($relation->getTable()->getTableName())
-                           . ' '
-                           . $this->connection->quoteIdentifier($foreignAlias);
+        $queryPart =
+            $join . $this->connection->quoteIdentifier($relation->getTable()->getTableName()) . " " . $this->connection->quoteIdentifier($foreignAlias);
 
         if (!$overrideJoin) {
-            $queryPart .= ' ON '
-                       . $this->connection->quoteIdentifier($localAlias . '.' . $relation->getLocalColumnName())
-                       . ' = '
-                       . $this->connection->quoteIdentifier($foreignAlias . '.' . $relation->getForeignColumnName());
+            $queryPart .=
+                " ON " .
+                $this->connection->quoteIdentifier($localAlias . "." . $relation->getLocalColumnName()) .
+                " = " .
+                $this->connection->quoteIdentifier($foreignAlias . "." . $relation->getForeignColumnName());
         }
 
         return $queryPart;
@@ -1815,30 +1794,30 @@ class Query extends AbstractQuery implements \Countable
      */
     protected function buildIndexBy($componentAlias, $mapWith = null)
     {
-        $table = $this->queryComponents[$componentAlias]['table'];
+        $table = $this->queryComponents[$componentAlias]["table"];
 
         $indexBy = null;
-        $column  = false;
+        $column = false;
 
         if (isset($mapWith)) {
-            $terms = explode('.', $mapWith);
+            $terms = explode(".", $mapWith);
 
             if (count($terms) == 1) {
                 $indexBy = $terms[0];
             } elseif (count($terms) == 2) {
-                $column  = true;
+                $column = true;
                 $indexBy = $terms[1];
             }
-        } elseif ($table->getBoundQueryPart('indexBy') !== null) {
-            $indexBy = $table->getBoundQueryPart('indexBy');
+        } elseif ($table->getBoundQueryPart("indexBy") !== null) {
+            $indexBy = $table->getBoundQueryPart("indexBy");
         }
 
         if ($indexBy !== null) {
             if ($column && !$table->hasColumn($table->getColumnName($indexBy))) {
-                throw new Query\Exception("Couldn't use key mapping. Column " . $indexBy . ' does not exist.');
+                throw new Query\Exception("Couldn't use key mapping. Column " . $indexBy . " does not exist.");
             }
 
-            $this->queryComponents[$componentAlias]['map'] = $indexBy;
+            $this->queryComponents[$componentAlias]["map"] = $indexBy;
         }
 
         return $this->queryComponents[$componentAlias];
@@ -1856,27 +1835,29 @@ class Query extends AbstractQuery implements \Countable
     {
         $table = $relation->getTable();
 
-        $queryPart = ' ON ';
+        $queryPart = " ON ";
 
         if ($relation->isEqual()) {
-            $queryPart .= '(';
+            $queryPart .= "(";
         }
 
         $localIdentifier = $table->getColumnName($table->getIdentifier());
 
-        $queryPart .= $this->connection->quoteIdentifier($foreignAlias . '.' . $localIdentifier)
-                    . ' = '
-                    . $this->connection->quoteIdentifier($assocAlias . '.' . $relation->getForeignRefColumnName());
+        $queryPart .=
+            $this->connection->quoteIdentifier($foreignAlias . "." . $localIdentifier) .
+            " = " .
+            $this->connection->quoteIdentifier($assocAlias . "." . $relation->getForeignRefColumnName());
 
         if ($relation->isEqual()) {
-            $queryPart .= ' OR '
-                        . $this->connection->quoteIdentifier($foreignAlias . '.' . $localIdentifier)
-                        . ' = '
-                        . $this->connection->quoteIdentifier($assocAlias . '.' . $relation->getLocalRefColumnName())
-                        . ') AND '
-                        . $this->connection->quoteIdentifier($foreignAlias . '.' . $localIdentifier)
-                        . ' != '
-                        . $this->connection->quoteIdentifier($localAlias . '.' . $localIdentifier);
+            $queryPart .=
+                " OR " .
+                $this->connection->quoteIdentifier($foreignAlias . "." . $localIdentifier) .
+                " = " .
+                $this->connection->quoteIdentifier($assocAlias . "." . $relation->getLocalRefColumnName()) .
+                ") AND " .
+                $this->connection->quoteIdentifier($foreignAlias . "." . $localIdentifier) .
+                " != " .
+                $this->connection->quoteIdentifier($localAlias . "." . $localIdentifier);
         }
 
         return $queryPart;
@@ -1897,7 +1878,7 @@ class Query extends AbstractQuery implements \Countable
             $this->connection = $manager->getConnectionForComponent($name);
         }
 
-        $table     = $this->connection->getTable($name);
+        $table = $this->connection->getTable($name);
         $tableName = $table->getTableName();
 
         // get the short alias for this table
@@ -1906,14 +1887,14 @@ class Query extends AbstractQuery implements \Countable
         $queryPart = $this->connection->quoteIdentifier($tableName);
 
         if ($this->type->isSelect()) {
-            $queryPart .= ' ' . $this->connection->quoteIdentifier($tableAlias);
+            $queryPart .= " " . $this->connection->quoteIdentifier($tableAlias);
         }
 
         $this->tableAliasMap[$tableAlias] = $componentAlias;
 
-        $this->sqlParts['from'][] = $queryPart;
+        $this->sqlParts["from"][] = $queryPart;
 
-        $this->queryComponents[$componentAlias] = ['table' => $table, 'map' => null];
+        $this->queryComponents[$componentAlias] = ["table" => $table, "map" => null];
 
         return $table;
     }
@@ -1932,27 +1913,27 @@ class Query extends AbstractQuery implements \Countable
         $this->getSqlQuery([], false); // this is ugly
 
         // initialize temporary variables
-        $where   = $this->sqlParts['where'];
-        $having  = $this->sqlParts['having'];
-        $groupby = $this->sqlParts['groupby'];
+        $where = $this->sqlParts["where"];
+        $having = $this->sqlParts["having"];
+        $groupby = $this->sqlParts["groupby"];
 
-        $rootAlias  = $this->getRootAlias();
+        $rootAlias = $this->getRootAlias();
         $tableAlias = $this->getSqlTableAlias($rootAlias);
 
         // Build the query base
-        $q = 'SELECT COUNT(*) AS ' . $this->connection->quoteIdentifier('num_results') . ' FROM ';
+        $q = "SELECT COUNT(*) AS " . $this->connection->quoteIdentifier("num_results") . " FROM ";
 
         // Build the from clause
         $from = $this->buildSqlFromPart(true);
 
         // Build the where clause
-        $where = (!empty($where)) ? ' WHERE ' . implode(' ', $where) : '';
+        $where = !empty($where) ? " WHERE " . implode(" ", $where) : "";
 
         // Build the group by clause
-        $groupby = (!empty($groupby)) ? ' GROUP BY ' . implode(', ', $groupby) : '';
+        $groupby = !empty($groupby) ? " GROUP BY " . implode(", ", $groupby) : "";
 
         // Build the having clause
-        $having = (!empty($having)) ? ' HAVING ' . implode(' AND ', $having) : '';
+        $having = !empty($having) ? " HAVING " . implode(" AND ", $having) : "";
 
         // Building the from clause and finishing query
         if (count($this->queryComponents) == 1 && empty($having)) {
@@ -1961,37 +1942,36 @@ class Query extends AbstractQuery implements \Countable
             // Subselect fields will contain only the pk of root entity
             $ta = $this->connection->quoteIdentifier($tableAlias);
 
-            $map           = $this->getRootDeclaration();
-            $idColumnNames = $map['table']->getIdentifierColumnNames();
+            $map = $this->getRootDeclaration();
+            $idColumnNames = $map["table"]->getIdentifierColumnNames();
 
-            $pkFields = $ta . '.' . implode(', ' . $ta . '.', $this->connection->quoteMultipleIdentifier($idColumnNames));
+            $pkFields = $ta . "." . implode(", " . $ta . ".", $this->connection->quoteMultipleIdentifier($idColumnNames));
 
             // We need to do some magic in select fields if the query contain anything in having clause
             $selectFields = $pkFields;
 
             if (!empty($having)) {
                 // For each field defined in select clause
-                foreach ($this->sqlParts['select'] as $field) {
+                foreach ($this->sqlParts["select"] as $field) {
                     // We only include aggregate expressions to count query
                     // This is needed because HAVING clause will use field aliases
-                    if (strpos($field, '(') !== false) {
-                        $selectFields .= ', ' . $field;
+                    if (strpos($field, "(") !== false) {
+                        $selectFields .= ", " . $field;
                     }
                 }
                 // Add having fields that got stripped out of select
-                preg_match_all('/`[a-z0-9_]+`\.`[a-z0-9_]+`/i', $having, $matches, PREG_PATTERN_ORDER);
+                preg_match_all("/`[a-z0-9_]+`\.`[a-z0-9_]+`/i", $having, $matches, PREG_PATTERN_ORDER);
                 if (count($matches[0]) > 0) {
-                    $selectFields .= ', ' . implode(', ', array_unique($matches[0]));
+                    $selectFields .= ", " . implode(", ", array_unique($matches[0]));
                 }
             }
 
             // If we do not have a custom group by, apply the default one
             if (empty($groupby)) {
-                $groupby = ' GROUP BY ' . $pkFields;
+                $groupby = " GROUP BY " . $pkFields;
             }
 
-            $q .= '(SELECT ' . $selectFields . ' FROM ' . $from . $where . $groupby . $having . ') '
-                . $this->connection->quoteIdentifier('dctrn_count_query');
+            $q .= "(SELECT " . $selectFields . " FROM " . $from . $where . $groupby . $having . ") " . $this->connection->quoteIdentifier("dctrn_count_query");
         }
 
         return $q;
@@ -2019,16 +1999,16 @@ class Query extends AbstractQuery implements \Countable
      */
     public function count($params = []): int
     {
-        $q      = $this->getCountSqlQuery();
+        $q = $this->getCountSqlQuery();
         $params = $this->getCountQueryParams($params);
         $params = $this->connection->convertBooleans($params);
         assert(is_array($params));
 
         if ($this->resultCache) {
-            $conn        = $this->getConnection();
+            $conn = $this->getConnection();
             $cacheDriver = $this->getResultCacheDriver();
-            $hash        = $this->getResultCacheHash($params) . '_count';
-            $cached      = ($this->expireResultCache) ? false : $cacheDriver->fetch($hash);
+            $hash = $this->getResultCacheHash($params) . "_count";
+            $cached = $this->expireResultCache ? false : $cacheDriver->fetch($hash);
 
             if ($cached === false) {
                 // cache miss
@@ -2046,7 +2026,7 @@ class Query extends AbstractQuery implements \Countable
         } else {
             if (isset($results[0])) {
                 $results[0] = array_change_key_case($results[0], CASE_LOWER);
-                $count      = $results[0]['num_results'];
+                $count = $results[0]["num_results"];
             } else {
                 $count = 0;
             }
@@ -2079,16 +2059,16 @@ class Query extends AbstractQuery implements \Countable
      */
     public function __clone()
     {
-        $this->parsers  = [];
+        $this->parsers = [];
         $this->hydrator = clone $this->hydrator;
 
         // Subqueries share some information from the parent so it can intermingle
         // with the dql of the main query. So when a subquery is cloned we need to
         // kill those references or it causes problems
         if ($this->isSubquery()) {
-            $this->killReference('params');
-            $this->killReference('tableAliasMap');
-            $this->killReference('queryComponents');
+            $this->killReference("params");
+            $this->killReference("tableAliasMap");
+            $this->killReference("queryComponents");
         }
     }
 
@@ -2118,7 +2098,7 @@ class Query extends AbstractQuery implements \Countable
     public function free(): void
     {
         $this->reset();
-        $this->parsers  = [];
+        $this->parsers = [];
         $this->dqlParts = [];
     }
 }

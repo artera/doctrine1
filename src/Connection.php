@@ -9,6 +9,7 @@ use PDO;
 use PDOException;
 use PDOStatement;
 use Throwable;
+use UnexpectedValueException;
 
 /**
  * From $modules array
@@ -48,11 +49,6 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
      * Name of the connection
      */
     protected string $name;
-
-    /**
-     * The name of this connection driver.
-     */
-    protected string $driverName;
 
     /**
      * @var array $supported                    an array containing all features this driver supports,
@@ -98,36 +94,33 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
      * @see Formatter
      */
     private array $modules = [
-        'transaction' => false,
-        'expression'  => false,
-        'dataDict'    => false,
-        'export'      => false,
-        'import'      => false,
-        'sequence'    => false,
-        'unitOfWork'  => false,
-        'formatter'   => false,
-        'util'        => false,
+        "transaction" => false,
+        "expression" => false,
+        "dataDict" => false,
+        "export" => false,
+        "import" => false,
+        "sequence" => false,
+        "unitOfWork" => false,
+        "formatter" => false,
+        "util" => false,
     ];
 
     /**
      * @var array $properties               an array of connection properties
      */
     protected array $properties = [
-        'sql_comments' => [
-            ['start' => '--', 'end' => "\n", 'escape' => false],
-            ['start' => '/*', 'end' => '*/', 'escape' => false],
+        "sql_comments" => [["start" => "--", "end" => "\n", "escape" => false], ["start" => "/*", "end" => "*/", "escape" => false]],
+        "identifier_quoting" => ["start" => '"', "end" => '"', "escape" => '"'],
+        "string_quoting" => [
+            "start" => "'",
+            "end" => "'",
+            "escape" => false,
+            "escape_pattern" => false,
         ],
-        'identifier_quoting' => ['start' => '"', 'end' => '"','escape' => '"'],
-        'string_quoting'     => [
-            'start'          => "'",
-            'end'            => "'",
-            'escape'         => false,
-            'escape_pattern' => false,
-        ],
-        'wildcards'             => ['%', '_'],
-        'varchar_max_length'    => 255,
-        'sql_file_delimiter'    => ";\n",
-        'max_identifier_length' => 64,
+        "wildcards" => ["%", "_"],
+        "varchar_max_length" => 255,
+        "sql_file_delimiter" => ";\n",
+        "max_identifier_length" => 64,
     ];
 
     protected array $serverInfo = [];
@@ -137,11 +130,7 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
     /**
      * @var array $supportedDrivers         an array containing all supported drivers
      */
-    private static array $supportedDrivers = [
-        'Mysql',
-        'Pgsql',
-        'Sqlite',
-    ];
+    private static array $supportedDrivers = ["Mysql", "Pgsql", "Sqlite"];
 
     protected int $count = 0;
 
@@ -149,8 +138,8 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
      * @var array $usedNames                 array of foreign key names that have been used
      */
     protected array $usedNames = [
-        'foreign_keys' => [],
-        'indexes'      => []
+        "foreign_keys" => [],
+        "indexes" => [],
     ];
 
     /**
@@ -172,13 +161,13 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
             $this->dbh = $adapter;
             $this->dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } elseif (is_array($adapter)) {
-            $this->options['dsn']      = $adapter['dsn'];
-            $this->options['username'] = $adapter['user'];
-            $this->options['password'] = $adapter['pass'];
+            $this->options["dsn"] = $adapter["dsn"];
+            $this->options["username"] = $adapter["user"];
+            $this->options["password"] = $adapter["pass"];
 
-            $this->options['other'] = [];
-            if (isset($adapter['other'])) {
-                $this->options['other'] = [PDO::ATTR_PERSISTENT => $adapter['persistent']];
+            $this->options["other"] = [];
+            if (isset($adapter["other"])) {
+                $this->options["other"] = [PDO::ATTR_PERSISTENT => $adapter["persistent"]];
             }
         }
 
@@ -220,7 +209,6 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
      * @return mixed
      * @phpstan-param T $value
      * @phpstan-return T
-     * @throws Connection\Exception
      */
     public function setOption(string $option, mixed $value): mixed
     {
@@ -236,7 +224,7 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
             try {
                 return $this->getDbh()->getAttribute($attribute);
             } catch (\Throwable $e) {
-                throw new Connection\Exception("Attribute $attribute not found.", previous: $e);
+                throw new UnexpectedValueException("Attribute $attribute not found.", previous: $e);
             }
         } else {
             if (!isset($this->pendingAttributes[$attribute])) {
@@ -298,14 +286,6 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
     }
 
     /**
-     * Gets the name of the instance driver
-     */
-    public function getDriverName(): string
-    {
-        return $this->driverName;
-    }
-
-    /**
      * lazy loads given module and returns it
      *
      * @see    DataDict
@@ -314,7 +294,7 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
      * @see    Transaction
      * @see    Connection::$modules       all availible modules
      * @param  string $name the name of the module to get
-     * @throws Connection\Exception    if trying to get an unknown module
+     * @throws UnexpectedValueException    if trying to get an unknown module
      * @return mixed       connection module
      */
     public function __get(string $name): mixed
@@ -324,18 +304,19 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
         }
 
         if (!isset($this->modules[$name])) {
-            throw new Connection\Exception('Unknown module / property ' . $name);
+            throw new UnexpectedValueException("Unknown module / property " . $name);
         }
         if ($this->modules[$name] === false) {
             switch ($name) {
-                case 'unitOfWork':
+                case "unitOfWork":
                     $this->modules[$name] = new Connection\UnitOfWork($this);
                     break;
-                case 'formatter':
+                case "formatter":
                     $this->modules[$name] = new Formatter($this);
                     break;
                 default:
-                    $class                = __NAMESPACE__ . '\\' . ucwords($name) . '\\' . $this->getDriverName();
+                    $refl = new \ReflectionClass($this);
+                    $class = __NAMESPACE__ . "\\" . ucwords($name) . "\\" . $refl->getShortName();
                     $this->modules[$name] = new $class($this);
             }
         }
@@ -379,14 +360,14 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
 
         try {
             $this->dbh = new PDO(
-                $this->options['dsn'],
-                $this->options['username'],
-                (!$this->options['password'] ? '' : $this->options['password']),
-                $this->options['other']
+                $this->options["dsn"],
+                $this->options["username"],
+                !$this->options["password"] ? "" : $this->options["password"],
+                $this->options["other"]
             );
             $this->dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch (PDOException $e) {
-            throw new Connection\Exception("PDO Connection Error: {$e->getMessage()}", previous: $e);
+            $this->rethrowException($e, $this);
         }
 
         // attach the pending attributes to adapter
@@ -407,21 +388,12 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
     }
 
     /**
-     * converts given driver name
-     */
-    public function driverName(string $name): void
-    {
-    }
-
-    /**
      * @param  string $feature the name of the feature
      * @return bool whether or not this drivers supports given feature
      */
     public function supports(string $feature): bool
     {
-        return (isset($this->supported[$feature])
-                  && ($this->supported[$feature] === 'emulated'
-                   || $this->supported[$feature]));
+        return isset($this->supported[$feature]) && ($this->supported[$feature] === "emulated" || $this->supported[$feature]);
     }
 
     /**
@@ -458,23 +430,23 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
      *                               or unique index fields) for this table
      *
      * @throws Connection\Exception        if this driver doesn't support replace
-     * @throws Connection\Exception        if some of the key values was null
+     * @throws UnexpectedValueException    if some of the key values was null
      * @throws Connection\Exception        if there were no key fields
-     * @throws PDOException                         if something fails at PDO level
-     * @return int                              number of rows affected
+     * @throws PDOException                if something fails at PDO level
+     * @return int                         number of rows affected
      */
     public function replace(Table $table, array $fields, array $keys): int
     {
         if (empty($keys)) {
-            throw new Connection\Exception('Not specified which fields are keys');
+            throw new UnexpectedValueException("Not specified which fields are keys");
         }
         $identifier = (array) $table->getIdentifier();
-        $condition  = [];
+        $condition = [];
 
         foreach ($fields as $fieldName => $value) {
             if (in_array($fieldName, $keys)) {
                 if ($value !== null) {
-                    $condition[]       = $table->getColumnName($fieldName) . ' = ?';
+                    $condition[] = $table->getColumnName($fieldName) . " = ?";
                     $conditionValues[] = $value;
                 }
             }
@@ -482,8 +454,7 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
 
         $affectedRows = 0;
         if (!empty($condition) && !empty($conditionValues)) {
-            $query = 'DELETE FROM ' . $this->quoteIdentifier($table->getTableName())
-                    . ' WHERE ' . implode(' AND ', $condition);
+            $query = "DELETE FROM " . $this->quoteIdentifier($table->getTableName()) . " WHERE " . implode(" AND ", $condition);
 
             $affectedRows = $this->exec($query, $conditionValues);
         }
@@ -508,12 +479,10 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
         $tmp = [];
 
         foreach (array_keys($identifier) as $id) {
-            $tmp[] = $this->quoteIdentifier($table->getColumnName($id)) . ' = ?';
+            $tmp[] = $this->quoteIdentifier($table->getColumnName($id)) . " = ?";
         }
 
-        $query = 'DELETE FROM '
-               . $this->quoteIdentifier($table->getTableName())
-               . ' WHERE ' . implode(' AND ', $tmp);
+        $query = "DELETE FROM " . $this->quoteIdentifier($table->getTableName()) . " WHERE " . implode(" AND ", $tmp);
 
         return $this->exec($query, array_values($identifier));
     }
@@ -537,19 +506,23 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
         $set = [];
         foreach ($fields as $fieldName => $value) {
             if ($value instanceof Expression) {
-                $set[] = $this->quoteIdentifier($table->getColumnName($fieldName)) . ' = ' . $value->getSql();
+                $set[] = $this->quoteIdentifier($table->getColumnName($fieldName)) . " = " . $value->getSql();
                 unset($fields[$fieldName]);
             } else {
-                $set[] = $this->quoteIdentifier($table->getColumnName($fieldName)) . ' = ?';
+                $set[] = $this->quoteIdentifier($table->getColumnName($fieldName)) . " = ?";
             }
         }
 
         $params = array_merge(array_values($fields), array_values($identifier));
 
-        $sql = 'UPDATE ' . $this->quoteIdentifier($table->getTableName())
-              . ' SET ' . implode(', ', $set)
-              . ' WHERE ' . implode(' = ? AND ', $this->quoteMultipleIdentifier($table->getIdentifierColumnNames()))
-              . ' = ?';
+        $sql =
+            "UPDATE " .
+            $this->quoteIdentifier($table->getTableName()) .
+            " SET " .
+            implode(", ", $set) .
+            " WHERE " .
+            implode(" = ? AND ", $this->quoteMultipleIdentifier($table->getIdentifierColumnNames())) .
+            " = ?";
 
         return $this->exec($sql, $params);
     }
@@ -577,14 +550,12 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
                 $a[] = $value->getSql();
                 unset($fields[$fieldName]);
             } else {
-                $a[] = '?';
+                $a[] = "?";
             }
         }
 
         // build the statement
-        $query = 'INSERT INTO ' . $this->quoteIdentifier($tableName)
-                . ' (' . implode(', ', $cols) . ')'
-                . ' VALUES (' . implode(', ', $a) . ')';
+        $query = "INSERT INTO " . $this->quoteIdentifier($tableName) . " (" . implode(", ", $cols) . ")" . " VALUES (" . implode(", ", $a) . ")";
 
         return $this->exec($query, array_values($fields));
     }
@@ -621,11 +592,10 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
     public function quoteIdentifier(string $str, bool $checkOption = true): string
     {
         // quick fix for the identifiers that contain a dot
-        if (strpos($str, '.')) {
-            $e = explode('.', $str);
+        if (strpos($str, ".")) {
+            $e = explode(".", $str);
 
-            return $this->formatter->quoteIdentifier($e[0], $checkOption) . '.'
-                 . $this->formatter->quoteIdentifier($e[1], $checkOption);
+            return $this->formatter->quoteIdentifier($e[0], $checkOption) . "." . $this->formatter->quoteIdentifier($e[1], $checkOption);
         }
         return $this->formatter->quoteIdentifier($str, $checkOption);
     }
@@ -774,7 +744,7 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
     public function query(string $query, array $params = [], ?HydrationMode $hydrationMode = null): Collection
     {
         $parser = Query::create($this);
-        $res    = $parser->query($query, $params, $hydrationMode);
+        $res = $parser->query($query, $params, $hydrationMode);
         $parser->free();
 
         return $res;
@@ -914,27 +884,17 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
 
     /**
      * @throws Connection\Exception
+     * @throws PDOException
      * @return never
      */
     public function rethrowException(PDOException $e, mixed $invoker, ?string $query = null): void
     {
         $event = new Event($this, Event::CONN_ERROR);
-
         $this->getListener()->preError($event);
-
-        /** @var class-string $name */
-        $name = 'Doctrine1\\Connection\\' . $this->driverName . '\\Exception';
-
-        $message = $e->getMessage();
-        if ($query) {
-            $message .= sprintf('. Failing Query: "%s"', $query);
+        if ($e->errorInfo !== null) {
+            throw Connection\Exception::fromPDO($e, $this, $query);
         }
-
-        /** @var Connection\Exception $exc */
-        $exc = new $name($message, (int) $e->getCode());
-        $e->errorInfo ??= [null, null, null, null];
-        $exc->processErrorInfo($e->errorInfo);
-        throw $exc;
+        throw $e;
     }
 
     /**
@@ -948,9 +908,9 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
     /** @phpstan-return class-string<Table> */
     public function getTableClassName(string $name): string
     {
-        $namespace = '';
+        $namespace = "";
         if (class_exists($name)) {
-            if (($pos = strrpos($name, '\\')) !== false) {
+            if (($pos = strrpos($name, "\\")) !== false) {
                 $namespace = substr($name, 0, $pos);
                 $name = substr($name, $pos + 1);
             }
@@ -959,7 +919,7 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
         }
 
         $class = sprintf($this->getTableClassFormat(), $name);
-        $class = trim(trim($namespace, '\\') . "\\$class", '\\');
+        $class = trim(trim($namespace, "\\") . "\\$class", "\\");
 
         if (!class_exists($class) || !in_array(Table::class, class_parents($class) ?: [])) {
             $class = $this->getTableClass();
@@ -1090,7 +1050,7 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
      */
     public function evictTables(): void
     {
-        $this->tables   = [];
+        $this->tables = [];
         $this->exported = [];
     }
 
@@ -1133,7 +1093,7 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
     {
         $resultCache = $this->getResultCache();
         if (!$resultCache) {
-            throw new Exception('Result Cache driver not initialized.');
+            throw new Exception("Result Cache driver not initialized.");
         }
         return $resultCache;
     }
@@ -1145,7 +1105,7 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
     {
         $queryCache = $this->getQueryCache();
         if (!$queryCache) {
-            throw new Exception('Query Cache driver not initialized.');
+            throw new Exception("Query Cache driver not initialized.");
         }
         return $queryCache;
     }
@@ -1235,26 +1195,26 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
 
     /**
      * Issue create database command for this instance of Connection
-     * @throws Connection\Exception
+     * @throws Exception
      */
     public function createDatabase(): void
     {
-        if (!$dsn = $this->getOption('dsn')) {
-            throw new Connection\Exception('You must create your Connection by using a valid Doctrine style dsn in order to use the create/drop database functionality');
+        if (!($dsn = $this->getOption("dsn"))) {
+            throw new Exception("You must create your Connection by using a valid Doctrine style dsn in order to use the create/drop database functionality");
         }
 
         // Parse pdo dsn so we are aware of the connection information parts
         $info = $this->getManager()->parsePdoDsn($dsn);
 
-        if (!isset($info['dbname'])) {
-            throw new Connection\Exception('The connection dsn must specify a dbname in order to use the create/drop database functionality');
+        if (!isset($info["dbname"])) {
+            throw new Exception("The connection dsn must specify a dbname in order to use the create/drop database functionality");
         }
 
         // Get the temporary connection to issue the create database command
         $tmpConnection = $this->getTmpConnection($info);
 
         try {
-            $tmpConnection->export->createDatabase($info['dbname']);
+            $tmpConnection->export->createDatabase($info["dbname"]);
         } finally {
             // Close the temporary connection used to issue the drop database command
             $this->getManager()->closeConnection($tmpConnection);
@@ -1264,25 +1224,26 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
     /**
      * Issue drop database command for this instance of Connection
      * @throws Connection\Exception
+     * @throws Exception
      */
     public function dropDatabase(): void
     {
-        if (!$dsn = $this->getOption('dsn')) {
-            throw new Connection\Exception('You must create your Connection by using a valid Doctrine style dsn in order to use the create/drop database functionality');
+        if (!($dsn = $this->getOption("dsn"))) {
+            throw new Exception("You must create your Connection by using a valid Doctrine style dsn in order to use the create/drop database functionality");
         }
 
         // Parse pdo dsn so we are aware of the connection information parts
         $info = $this->getManager()->parsePdoDsn($dsn);
 
-        if (!isset($info['dbname'])) {
-            throw new Connection\Exception('The connection dsn must specify a dbname in order to use the create/drop database functionality');
+        if (!isset($info["dbname"])) {
+            throw new Exception("The connection dsn must specify a dbname in order to use the create/drop database functionality");
         }
 
         // Get the temporary connection to issue the drop database command
         $tmpConnection = $this->getTmpConnection($info);
 
         try {
-            $tmpConnection->export->dropDatabase($info['dbname']);
+            $tmpConnection->export->dropDatabase($info["dbname"]);
         } finally {
             // Close the temporary connection used to issue the drop database command
             $this->getManager()->closeConnection($tmpConnection);
@@ -1298,28 +1259,28 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
      */
     public function getTmpConnection(array $info): Connection
     {
-        $pdoDsn = $info['scheme'] . ':';
+        $pdoDsn = $info["scheme"] . ":";
 
-        if ($info['unix_socket']) {
-            $pdoDsn .= 'unix_socket=' . $info['unix_socket'] . ';';
+        if ($info["unix_socket"]) {
+            $pdoDsn .= "unix_socket=" . $info["unix_socket"] . ";";
         }
 
-        $pdoDsn .= 'host=' . $info['host'];
+        $pdoDsn .= "host=" . $info["host"];
 
-        if ($info['port']) {
-            $pdoDsn .= ';port=' . $info['port'];
+        if ($info["port"]) {
+            $pdoDsn .= ";port=" . $info["port"];
         }
 
         if (isset($this->export->tmpConnectionDatabase) && $this->export->tmpConnectionDatabase) {
-            $pdoDsn .= ';dbname=' . $this->export->tmpConnectionDatabase;
+            $pdoDsn .= ";dbname=" . $this->export->tmpConnectionDatabase;
         }
 
-        $username = $this->getOption('username');
-        $password = $this->getOption('password');
+        $username = $this->getOption("username");
+        $password = $this->getOption("password");
 
-        $conn = $this->getManager()->openConnection([$pdoDsn, $username, $password], 'doctrine_tmp_connection', false);
-        $conn->setOption('username', $username);
-        $conn->setOption('password', $password);
+        $conn = $this->getManager()->openConnection([$pdoDsn, $username, $password], "doctrine_tmp_connection", false);
+        $conn->setOption("username", $username);
+        $conn->setOption("password", $password);
 
         return $conn;
     }
@@ -1329,7 +1290,7 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
      */
     public function modifyLimitQuery(string $query, ?int $limit = null, ?int $offset = null, bool $isManip = false): string
     {
-        $limit  = (int) $limit;
+        $limit = (int) $limit;
         $offset = (int) $offset;
 
         if (!$limit && !$offset) {
@@ -1364,7 +1325,7 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
     public function __serialize(): array
     {
         $vars = get_object_vars($this);
-        $vars['dbh'] = null;
+        $vars["dbh"] = null;
         return $vars;
     }
 
@@ -1395,16 +1356,11 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
      */
     public function generateUniqueRelationForeignKeyName(Relation $relation): string
     {
-        $parts = [
-            $relation->getLocalTableName(),
-            $relation->getLocalColumnName(),
-            $relation->getForeignTableName(),
-            $relation->getForeignColumnName(),
-        ];
-        $key    = implode('_', array_merge($parts, [$relation['onDelete']], [$relation['onUpdate']]));
+        $parts = [$relation->getLocalTableName(), $relation->getLocalColumnName(), $relation->getForeignTableName(), $relation->getForeignColumnName()];
+        $key = implode("_", array_merge($parts, [$relation["onDelete"]], [$relation["onUpdate"]]));
         $format = $this->getForeignKeyNameFormat();
 
-        return $this->generateUniqueName('foreign_keys', $parts, $key, $format, $this->getMaxIdentifierLength());
+        return $this->generateUniqueName("foreign_keys", $parts, $key, $format, $this->getMaxIdentifierLength());
     }
 
     /**
@@ -1417,12 +1373,12 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
     public function generateUniqueIndexName(string $tableName, string $fields): string
     {
         $fields = (array) $fields;
-        $parts  = [$tableName];
-        $parts  = array_merge($parts, $fields);
-        $key    = implode('_', $parts);
+        $parts = [$tableName];
+        $parts = array_merge($parts, $fields);
+        $key = implode("_", $parts);
         $format = $this->getIndexNameFormat();
 
-        return $this->generateUniqueName('indexes', $parts, $key, $format, $this->getMaxIdentifierLength());
+        return $this->generateUniqueName("indexes", $parts, $key, $format, $this->getMaxIdentifierLength());
     }
 
     /**
@@ -1433,20 +1389,20 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
      * @param  int|null    $maxLength
      * @return string
      */
-    protected function generateUniqueName(string $type, array $parts, string $key, string $format = '%s', ?int $maxLength = null): string
+    protected function generateUniqueName(string $type, array $parts, string $key, string $format = "%s", ?int $maxLength = null): string
     {
         if (isset($this->usedNames[$type][$key])) {
             return $this->usedNames[$type][$key];
         }
         if ($maxLength === null) {
-            $maxLength = $this->properties['max_identifier_length'];
+            $maxLength = $this->properties["max_identifier_length"];
         }
 
-        $generated = implode('_', $parts);
+        $generated = implode("_", $parts);
 
         // If the final length is greater than 64 we need to create an abbreviated fk name
         if (strlen(sprintf($format, $generated)) > $maxLength) {
-            $generated = '';
+            $generated = "";
 
             foreach ($parts as $part) {
                 $generated .= $part[0];
@@ -1458,15 +1414,15 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
         }
 
         while (in_array($name, $this->usedNames[$type])) {
-            $e   = explode('_', $name);
+            $e = explode("_", $name);
             $end = end($e);
 
             if (is_numeric($end)) {
                 unset($e[count($e) - 1]);
-                $fkName = implode('_', $e);
-                $name   = $fkName . '_' . ++$end;
+                $fkName = implode("_", $e);
+                $name = $fkName . "_" . ++$end;
             } else {
-                $name .= '_1';
+                $name .= "_1";
             }
         }
 
@@ -1483,14 +1439,14 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
     {
         $tokens = [];
 
-        if (preg_match_all('/:\w+/', $query, $m)) {
+        if (preg_match_all("/:\w+/", $query, $m)) {
             /** @var array<string, int> */
             $tokens = array_count_values($m[0]);
         }
 
         foreach ($tokens as $token => $count) {
             for ($x = $count; $x > 1; --$x) {
-                $alias = substr($token, 0, 1)."_alias{$x}_".substr($token, 1);
+                $alias = substr($token, 0, 1) . "_alias{$x}_" . substr($token, 1);
                 $aliases[$alias] = $token;
 
                 $ptoken = preg_quote($token);

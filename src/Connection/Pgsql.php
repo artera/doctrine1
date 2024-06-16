@@ -6,43 +6,41 @@ use PDO;
 
 class Pgsql extends \Doctrine1\Connection
 {
-    protected string $driverName = 'Pgsql';
-
     public function __construct(\Doctrine1\Manager $manager, PDO|array $adapter)
     {
         // initialize all driver options
         $this->supported = [
-            'sequences'            => true,
-            'indexes'              => true,
-            'affected_rows'        => true,
-            'summary_functions'    => true,
-            'order_by_text'        => true,
-            'transactions'         => true,
-            'savepoints'           => true,
-            'current_id'           => true,
-            'limit_queries'        => true,
-            'LOBs'                 => true,
-            'replace'              => 'emulated',
-            'sub_selects'          => true,
-            'auto_increment'       => 'emulated',
-            'primary_key'          => true,
-            'result_introspection' => true,
-            'prepared_statements'  => true,
-            'identifier_quoting'   => true,
-            'pattern_escaping'     => true,
+            "sequences" => true,
+            "indexes" => true,
+            "affected_rows" => true,
+            "summary_functions" => true,
+            "order_by_text" => true,
+            "transactions" => true,
+            "savepoints" => true,
+            "current_id" => true,
+            "limit_queries" => true,
+            "LOBs" => true,
+            "replace" => "emulated",
+            "sub_selects" => true,
+            "auto_increment" => "emulated",
+            "primary_key" => true,
+            "result_introspection" => true,
+            "prepared_statements" => true,
+            "identifier_quoting" => true,
+            "pattern_escaping" => true,
         ];
 
-        $this->properties['string_quoting'] = [
-            'start'          => "'",
-            'end'            => "'",
-            'escape'         => "'",
-            'escape_pattern' => '\\'
+        $this->properties["string_quoting"] = [
+            "start" => "'",
+            "end" => "'",
+            "escape" => "'",
+            "escape_pattern" => "\\",
         ];
 
-        $this->properties['identifier_quoting'] = [
-            'start'  => '"',
-            'end'    => '"',
-            'escape' => '"'
+        $this->properties["identifier_quoting"] = [
+            "start" => '"',
+            "end" => '"',
+            "escape" => '"',
         ];
         parent::__construct($manager, $adapter);
     }
@@ -50,7 +48,7 @@ class Pgsql extends \Doctrine1\Connection
     public function setCharset(?string $charset): void
     {
         if ($charset !== null) {
-            $query = 'SET NAMES ' . $this->quote($charset);
+            $query = "SET NAMES " . $this->quote($charset);
             $this->exec($query);
         }
         parent::setCharset($charset);
@@ -61,12 +59,12 @@ class Pgsql extends \Doctrine1\Connection
         if (is_array($item)) {
             foreach ($item as $key => $value) {
                 if (is_bool($value)) {
-                    $item[$key] = ($value) ? 'true' : 'false';
+                    $item[$key] = $value ? "true" : "false";
                 }
             }
         } else {
             if (is_bool($item) || is_numeric($item)) {
-                $item = ($item) ? 'true' : 'false';
+                $item = $item ? "true" : "false";
             }
         }
         return $item;
@@ -77,7 +75,7 @@ class Pgsql extends \Doctrine1\Connection
         if ($limit > 0) {
             $query = rtrim($query);
 
-            if (substr($query, -1) == ';') {
+            if (substr($query, -1) == ";") {
                 $query = substr($query, 0, -1);
             }
 
@@ -87,7 +85,7 @@ class Pgsql extends \Doctrine1\Connection
                 // as PHP implicitly makes the empty array when accessed below. Behavior here probably isn't
                 // working as originally expected
                 $match = [];
-                $from  = $match[2];
+                $from = $match[2];
                 $where = $match[3];
                 $query = "$manip $from WHERE ctid=(SELECT ctid FROM $from $where LIMIT $limit)";
             } else {
@@ -108,31 +106,28 @@ class Pgsql extends \Doctrine1\Connection
      */
     public function getServerVersion(bool $native = false): array|string
     {
-        $query = 'SHOW SERVER_VERSION';
+        $query = "SHOW SERVER_VERSION";
 
         $serverInfo = $this->fetchOne($query);
 
         if (!$native) {
-            $tmp = explode('.', $serverInfo, 3);
+            $tmp = explode(".", $serverInfo, 3);
 
-            if (
-                empty($tmp[2]) && isset($tmp[1])
-                && preg_match('/(\d+)(.*)/', $tmp[1], $tmp2)
-            ) {
+            if (empty($tmp[2]) && isset($tmp[1]) && preg_match("/(\d+)(.*)/", $tmp[1], $tmp2)) {
                 $serverInfo = [
-                    'major'  => $tmp[0],
-                    'minor'  => $tmp2[1],
-                    'patch'  => null,
-                    'extra'  => $tmp2[2],
-                    'native' => $serverInfo,
+                    "major" => $tmp[0],
+                    "minor" => $tmp2[1],
+                    "patch" => null,
+                    "extra" => $tmp2[2],
+                    "native" => $serverInfo,
                 ];
             } else {
                 $serverInfo = [
-                    'major'  => isset($tmp[0]) ? $tmp[0] : null,
-                    'minor'  => isset($tmp[1]) ? $tmp[1] : null,
-                    'patch'  => isset($tmp[2]) ? $tmp[2] : null,
-                    'extra'  => null,
-                    'native' => $serverInfo,
+                    "major" => isset($tmp[0]) ? $tmp[0] : null,
+                    "minor" => isset($tmp[1]) ? $tmp[1] : null,
+                    "patch" => isset($tmp[2]) ? $tmp[2] : null,
+                    "extra" => null,
+                    "native" => $serverInfo,
                 ];
             }
         }
@@ -149,11 +144,7 @@ class Pgsql extends \Doctrine1\Connection
         $a = [];
 
         foreach ($fields as $fieldName => $value) {
-            if (
-                $table->isIdentifier($fieldName)
-                && $table->isIdentifierAutoincrement()
-                && $value == null
-            ) {
+            if ($table->isIdentifier($fieldName) && $table->isIdentifierAutoincrement() && $value == null) {
                 // Autoincrement fields should not be added to the insert statement
                 // if their value is null
                 unset($fields[$fieldName]);
@@ -164,23 +155,17 @@ class Pgsql extends \Doctrine1\Connection
                 $a[] = $value->getSql();
                 unset($fields[$fieldName]);
             } else {
-                $a[] = '?';
+                $a[] = "?";
             }
         }
 
         if (count($fields) == 0) {
             // Real fix #1786 and #2327 (default values when table is just 'id' as PK)
-            return $this->exec(
-                'INSERT INTO ' . $this->quoteIdentifier($tableName)
-                    . ' '
-                    . ' VALUES (DEFAULT)'
-            );
+            return $this->exec("INSERT INTO " . $this->quoteIdentifier($tableName) . " " . " VALUES (DEFAULT)");
         }
 
         // build the statement
-        $query = 'INSERT INTO ' . $this->quoteIdentifier($tableName)
-            . ' (' . implode(', ', $cols) . ')'
-            . ' VALUES (' . implode(', ', $a) . ')';
+        $query = "INSERT INTO " . $this->quoteIdentifier($tableName) . " (" . implode(", ", $cols) . ")" . " VALUES (" . implode(", ", $a) . ")";
 
         return $this->exec($query, array_values($fields));
     }

@@ -1,5 +1,19 @@
 <?xml version="1.0"?>
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.2/phpunit.xsd" bootstrap="Tests/bootstrap.php" colors="true" beStrictAboutTestsThatDoNotTestAnything="false" beStrictAboutOutputDuringTests="false" beStrictAboutChangesToGlobalState="true" testdox="true" cacheDirectory=".phpunit.cache">
+<phpunit
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.2/phpunit.xsd"
+    bootstrap="Tests/bootstrap.php"
+    colors="true"
+    beStrictAboutTestsThatDoNotTestAnything="false"
+    beStrictAboutOutputDuringTests="false"
+    beStrictAboutChangesToGlobalState="true"
+    testdox="false"
+    displayDetailsOnTestsThatTriggerDeprecations="true"
+    displayDetailsOnTestsThatTriggerErrors="true"
+    displayDetailsOnTestsThatTriggerNotices="true"
+    displayDetailsOnTestsThatTriggerWarnings="true"
+    cacheDirectory=".phpunit.cache"
+>
   <php>
     <const name="PHPUNIT" value="true"/>
     <ini name="memory_limit" value="768M"/>

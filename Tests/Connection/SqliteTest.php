@@ -1,88 +1,123 @@
 <?php
 namespace Tests\Connection;
 
+use Doctrine1\Connection\Exception;
+use Doctrine1\Connection\Sqlite\ErrorCode;
+use PDOException;
 use Tests\DoctrineUnitTestCase;
 
 class SqliteTest extends DoctrineUnitTestCase
 {
     protected static $exc;
-    protected static ?string $driverName = 'Sqlite';
 
     public static function setUpBeforeClass(): void
     {
-        static::$exc = new \Doctrine1\Connection\Sqlite\Exception();
         parent::setUpBeforeClass();
+        static::$dbh->query("PRAGMA foreign_keys=1");
+        static::$dbh->query("CREATE TABLE testerrors1 (id int NOT NULL PRIMARY KEY)");
+        static::$dbh->query("CREATE TABLE testerrors2 (name TEXT)");
+        static::$dbh->query("INSERT INTO testerrors1 (id) VALUES (1)");
     }
 
     public function testQuoteIdentifier()
     {
-        $id = static::$connection->quoteIdentifier('identifier', false);
+        $id = static::$connection->quoteIdentifier("identifier", false);
         $this->assertEquals($id, '"identifier"');
     }
 
     public function testNoSuchTableErrorIsSupported()
     {
-        static::$exc->processErrorInfo([0,0, 'no such table: test1']);
-        $this->assertEquals(static::$exc->getPortableCode(), \Doctrine1\Core::ERR_NOSUCHTABLE);
+        try {
+            static::$dbh->query("SELECT * FROM test1");
+        } catch (PDOException $e) {
+            $e = Exception::fromPDO($e, static::$connection);
+        }
+        static::assertInstanceOf(Exception\SyntaxErrorOrAccessRuleViolation\UndefinedTable::class, $e, $e::class);
+        static::assertEquals(ErrorCode::ERROR, $e->getDriverCode());
+        static::assertEquals("no such table: test1", $e->getMessage());
+    }
+
+    public function testNoSuchColumnErrorIsSupported()
+    {
+        try {
+            static::$dbh->query("SELECT * FROM testerrors1 WHERE test1=1");
+        } catch (PDOException $e) {
+            $e = Exception::fromPDO($e, static::$connection);
+        }
+        static::assertInstanceOf(Exception\SyntaxErrorOrAccessRuleViolation\UndefinedColumn::class, $e, $e::class);
+        static::assertEquals(ErrorCode::ERROR, $e->getDriverCode());
+        static::assertEquals("no such column: test1", $e->getMessage());
     }
 
     public function testNoSuchIndexErrorIsSupported()
     {
-        static::$exc->processErrorInfo([0,0, 'no such index: test1']);
-        $this->assertEquals(static::$exc->getPortableCode(), \Doctrine1\Core::ERR_NOT_FOUND);
+        try {
+            static::$dbh->query("DROP INDEX testerrors1.test1");
+        } catch (PDOException $e) {
+            $e = Exception::fromPDO($e, static::$connection);
+        }
+        static::assertInstanceOf(Exception\SyntaxErrorOrAccessRuleViolation\UndefinedObject::class, $e, $e::class);
+        static::assertEquals(ErrorCode::ERROR, $e->getDriverCode());
+        static::assertEquals("no such index: testerrors1.test1", $e->getMessage());
     }
 
-    public function testUniquePrimaryKeyErrorIsSupported()
+    public function testConstraintViolationIsSupported()
     {
-        static::$exc->processErrorInfo([0,0, 'PRIMARY KEY must be unique']);
-        $this->assertEquals(static::$exc->getPortableCode(), \Doctrine1\Core::ERR_CONSTRAINT);
-    }
-
-    public function testIsNotUniqueErrorIsSupported()
-    {
-        static::$exc->processErrorInfo([0,0, 'is not unique']);
-        $this->assertEquals(static::$exc->getPortableCode(), \Doctrine1\Core::ERR_CONSTRAINT);
-    }
-
-    public function testColumnsNotUniqueErrorIsSupported()
-    {
-        static::$exc->processErrorInfo([0,0, 'columns name, id are not unique']);
-        $this->assertEquals(static::$exc->getPortableCode(), \Doctrine1\Core::ERR_CONSTRAINT);
-    }
-
-    public function testUniquenessConstraintErrorIsSupported()
-    {
-        static::$exc->processErrorInfo([0,0, 'uniqueness constraint failed']);
-        $this->assertEquals(static::$exc->getPortableCode(), \Doctrine1\Core::ERR_CONSTRAINT);
+        try {
+            static::$dbh->query("INSERT INTO testerrors1 (id) VALUES (1)");
+        } catch (PDOException $e) {
+            $e = Exception::fromPDO($e, static::$connection);
+        }
+        static::assertInstanceOf(Exception\IntegrityConstraintViolation::class, $e, $e::class);
+        static::assertEquals(ErrorCode::CONSTRAINT, $e->getDriverCode());
+        static::assertEquals("UNIQUE constraint failed: testerrors1.id", $e->getMessage());
     }
 
     public function testNotNullConstraintErrorIsSupported()
     {
-        static::$exc->processErrorInfo([0,0, 'may not be NULL']);
-        $this->assertEquals(static::$exc->getPortableCode(), \Doctrine1\Core::ERR_CONSTRAINT_NOT_NULL);
-    }
-
-    public function testNoSuchFieldErrorIsSupported()
-    {
-        static::$exc->processErrorInfo([0,0, 'no such column: column1']);
-        $this->assertEquals(static::$exc->getPortableCode(), \Doctrine1\Core::ERR_NOSUCHFIELD);
+        try {
+            static::$dbh->query("INSERT INTO testerrors1 (id) VALUES (NULL)");
+        } catch (PDOException $e) {
+            $e = Exception::fromPDO($e, static::$connection);
+        }
+        static::assertInstanceOf(Exception\IntegrityConstraintViolation::class, $e, $e::class);
+        static::assertEquals(ErrorCode::CONSTRAINT, $e->getDriverCode());
+        static::assertEquals("NOT NULL constraint failed: testerrors1.id", $e->getMessage());
     }
 
     public function testColumnNotPresentInTablesErrorIsSupported2()
     {
-        static::$exc->processErrorInfo([0,0, 'column not present in both tables']);
-        $this->assertEquals(static::$exc->getPortableCode(), \Doctrine1\Core::ERR_NOSUCHFIELD);
+        try {
+            static::$dbh->query("SELECT t1.id FROM testerrors1 t1 INNER JOIN testerrors2 t2 USING (id)");
+        } catch (PDOException $e) {
+            $e = Exception::fromPDO($e, static::$connection);
+        }
+        static::assertInstanceOf(Exception\SyntaxErrorOrAccessRuleViolation\UndefinedColumn::class, $e, $e::class);
+        static::assertEquals(ErrorCode::ERROR, $e->getDriverCode());
+        static::assertEquals("cannot join using column id - column not present in both tables", $e->getMessage());
     }
 
-    public function testNearSyntaxErrorIsSupported()
+    public function testSyntaxErrorIsSupported()
     {
-        static::$exc->processErrorInfo([0,0, 'near "SELECT FROM": syntax error']);
-        $this->assertEquals(static::$exc->getPortableCode(), \Doctrine1\Core::ERR_SYNTAX);
+        try {
+            static::$dbh->query("bogus sql");
+        } catch (PDOException $e) {
+            $e = Exception::fromPDO($e, static::$connection);
+        }
+        static::assertInstanceOf(Exception\SyntaxErrorOrAccessRuleViolation\SyntaxError::class, $e, $e::class);
+        static::assertEquals(ErrorCode::ERROR, $e->getDriverCode());
+        static::assertEquals('near "bogus": syntax error', $e->getMessage());
     }
 
     public function testValueCountOnRowErrorIsSupported()
     {
-        static::$exc->processErrorInfo([0,0, '3 values for 2 columns']);
-        $this->assertEquals(static::$exc->getPortableCode(), \Doctrine1\Core::ERR_VALUE_COUNT_ON_ROW);
+        try {
+            static::$dbh->query("INSERT INTO testerrors1 (id) VALUES (1, 2)");
+        } catch (PDOException $e) {
+            $e = Exception::fromPDO($e, static::$connection);
+        }
+        static::assertInstanceOf(Exception\SyntaxErrorOrAccessRuleViolation\SyntaxError::class, $e, $e::class);
+        static::assertEquals(ErrorCode::ERROR, $e->getDriverCode());
+        static::assertEquals("2 values for 1 columns", $e->getMessage());
     }
 }

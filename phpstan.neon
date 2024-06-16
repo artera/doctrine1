@@ -7,8 +7,6 @@ parameters:
   level: 8
   tipsOfTheDay: false
   phpVersion: 80100
-  checkMissingIterableValueType: false
-  checkGenericClassInNonGenericObjectType: false
   inferPrivatePropertyTypeFromConstructor: true
   parallel:
     processTimeout: 300.0
@@ -21,3 +19,5 @@ parameters:
       paths: [Tests/*, Tests/*/*]
     - message: '#has an unused parameter#'
       paths: [Tests/*, Tests/*/*]
+    - identifier: missingType.iterableValue
+    - identifier: missingType.generics

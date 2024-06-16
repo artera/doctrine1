@@ -2,159 +2,101 @@
 namespace Tests\Connection;
 
 use Tests\DoctrineUnitTestCase;
+use Doctrine1\Connection\Exception;
+use Doctrine1\Connection\Mysql\ErrorCode;
+use PDOException;
 
 class MysqlTest extends DoctrineUnitTestCase
 {
-    protected static $exc;
-    protected static ?string $driverName = 'Mysql';
-
-    public static function setUpBeforeClass(): void
-    {
-        static::$exc = new \Doctrine1\Connection\Mysql\Exception();
-        parent::setUpBeforeClass();
-    }
+    protected static ?string $driverName = "Mysql";
 
     public function testQuoteIdentifier()
     {
-        $id = static::$connection->quoteIdentifier('identifier', false);
-        $this->assertEquals($id, '`identifier`');
+        $id = static::$connection->quoteIdentifier("identifier", false);
+        $this->assertEquals("`identifier`", $id);
     }
 
-    public function testNotLockedErrorIsSupported()
+    public function testExceptionInvalidCatalogName()
     {
-        $this->assertTrue(static::$exc->processErrorInfo([0, 1100, '']));
-        $this->assertEquals(static::$exc->getPortableCode(), \Doctrine1\Core::ERR_NOT_LOCKED);
+        $pdo = new \PDO(getenv("MYSQL_DSN"));
+        try {
+            $pdo->query("select * from test");
+        } catch (PDOException $e) {
+            $e = Exception::fromPDO($e, static::$connection);
+        }
+        static::assertInstanceOf(Exception\InvalidCatalogName::class, $e, $e::class);
+        static::assertEquals(ErrorCode::ER_NO_DB_ERROR, $e->getDriverCode());
+        static::assertEquals("No database selected", $e->getMessage());
+        static::assertEquals("000", $e->getSQLStateSubclass());
     }
 
-    public function testNotFoundErrorIsSupported()
+    public function testExceptionClassOverride()
     {
-        $this->assertTrue(static::$exc->processErrorInfo([0, 1091, '']));
-        $this->assertEquals(static::$exc->getPortableCode(), \Doctrine1\Core::ERR_NOT_FOUND);
+        try {
+            $pdo = new \PDO(getenv("MYSQL_DSN") . ";dbname=non_existing");
+        } catch (PDOException $e) {
+            $e = Exception::fromPDO($e, static::$connection);
+        }
+        static::assertInstanceOf(Exception\InvalidCatalogName::class, $e, $e::class);
+        static::assertEquals(ErrorCode::ER_BAD_DB_ERROR, $e->getDriverCode());
+        static::assertEquals("Unknown database 'non_existing'", $e->getMessage());
+        static::assertEquals("000", $e->getSQLStateSubclass());
     }
 
-    public function testSyntaxErrorIsSupported()
+    public function testExceptionSyntaxErrorOrAccessRuleViolation()
     {
-        $this->assertTrue(static::$exc->processErrorInfo([0, 1064, '']));
-        $this->assertEquals(static::$exc->getPortableCode(), \Doctrine1\Core::ERR_SYNTAX);
+        $pdo = new \PDO(getenv("MYSQL_DSN") . ";dbname=intranet_test");
+        try {
+            $pdo->query("select * from test");
+        } catch (PDOException $e) {
+            $e = Exception::fromPDO($e, static::$connection);
+        }
+        static::assertInstanceOf(Exception\SyntaxErrorOrAccessRuleViolation\UndefinedTable::class, $e, $e::class);
+        static::assertEquals(ErrorCode::ER_NO_SUCH_TABLE, $e->getDriverCode());
+        static::assertEquals("Table 'intranet_test.test' doesn't exist", $e->getMessage());
+        static::assertEquals("S02", $e->getSQLStateSubclass());
     }
 
-    public function testNoSuchDbErrorIsSupported()
+    public function testInvalidSyntaxError()
     {
-        $this->assertTrue(static::$exc->processErrorInfo([0, 1049, '']));
-        $this->assertEquals(static::$exc->getPortableCode(), \Doctrine1\Core::ERR_NOSUCHDB);
+        $pdo = new \PDO(getenv("MYSQL_DSN") . ";dbname=intranet_test");
+        try {
+            $pdo->query("bogus sql");
+        } catch (PDOException $e) {
+            $e = Exception::fromPDO($e, static::$connection);
+        }
+        static::assertInstanceOf(Exception\SyntaxErrorOrAccessRuleViolation::class, $e, $e::class);
+        static::assertEquals(ErrorCode::ER_PARSE_ERROR, $e->getDriverCode());
+        static::assertEquals(
+            "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'bogus sql' at line 1",
+            $e->getMessage()
+        );
+        static::assertEquals("000", $e->getSQLStateSubclass());
     }
 
-    public function testNoSuchFieldErrorIsSupported()
+    public function testColumnNotPresentInTablesErrorIsSupported2()
     {
-        $this->assertTrue(static::$exc->processErrorInfo([0, 1054, '']));
-        $this->assertEquals(static::$exc->getPortableCode(), \Doctrine1\Core::ERR_NOSUCHFIELD);
+        $pdo = new \PDO(getenv("MYSQL_DSN") . ";dbname=intranet_test");
+        try {
+            $pdo->query("SELECT t1.id FROM aziende t1 INNER JOIN operatori t2 USING (ragione_sociale)");
+        } catch (PDOException $e) {
+            $e = Exception::fromPDO($e, static::$connection);
+        }
+        static::assertInstanceOf(Exception\SyntaxErrorOrAccessRuleViolation\UndefinedColumn::class, $e, $e::class);
+        static::assertEquals(ErrorCode::ER_BAD_FIELD_ERROR, $e->getDriverCode());
+        static::assertEquals("Unknown column 'ragione_sociale' in 'from clause'", $e->getMessage());
     }
 
-    public function testNoSuchTableErrorIsSupported()
+    public function testCantDropFieldOrKeyIsSupported()
     {
-        $this->assertTrue(static::$exc->processErrorInfo([0, 1051, '']));
-        $this->assertEquals(static::$exc->getPortableCode(), \Doctrine1\Core::ERR_NOSUCHTABLE);
-    }
-
-    public function testNoSuchTableErrorIsSupported2()
-    {
-        $this->assertTrue(static::$exc->processErrorInfo([0, 1146, '']));
-        $this->assertEquals(static::$exc->getPortableCode(), \Doctrine1\Core::ERR_NOSUCHTABLE);
-    }
-
-    public function testConstraintErrorIsSupported()
-    {
-        $this->assertTrue(static::$exc->processErrorInfo([0, 1048, '']));
-        $this->assertEquals(static::$exc->getPortableCode(), \Doctrine1\Core::ERR_CONSTRAINT);
-    }
-
-    public function testConstraintErrorIsSupported2()
-    {
-        $this->assertTrue(static::$exc->processErrorInfo([0, 1216, '']));
-        $this->assertEquals(static::$exc->getPortableCode(), \Doctrine1\Core::ERR_CONSTRAINT);
-    }
-
-    public function testConstraintErrorIsSupported3()
-    {
-        $this->assertTrue(static::$exc->processErrorInfo([0, 1217, '']));
-        $this->assertEquals(static::$exc->getPortableCode(), \Doctrine1\Core::ERR_CONSTRAINT);
-    }
-
-    public function testNoDbSelectedErrorIsSupported()
-    {
-        $this->assertTrue(static::$exc->processErrorInfo([0, 1046, '']));
-        $this->assertEquals(static::$exc->getPortableCode(), \Doctrine1\Core::ERR_NODBSELECTED);
-    }
-
-    public function testAccessViolationErrorIsSupported()
-    {
-        $this->assertTrue(static::$exc->processErrorInfo([0, 1142, '']));
-        $this->assertEquals(static::$exc->getPortableCode(), \Doctrine1\Core::ERR_ACCESS_VIOLATION);
-    }
-
-    public function testAccessViolationErrorIsSupported2()
-    {
-        $this->assertTrue(static::$exc->processErrorInfo([0, 1044, '']));
-        $this->assertEquals(static::$exc->getPortableCode(), \Doctrine1\Core::ERR_ACCESS_VIOLATION);
-    }
-
-    public function testCannotDropErrorIsSupported()
-    {
-        $this->assertTrue(static::$exc->processErrorInfo([0, 1008, '']));
-        $this->assertEquals(static::$exc->getPortableCode(), \Doctrine1\Core::ERR_CANNOT_DROP);
-    }
-
-    public function testCannotCreateErrorIsSupported()
-    {
-        $this->assertTrue(static::$exc->processErrorInfo([0, 1004, '']));
-        $this->assertEquals(static::$exc->getPortableCode(), \Doctrine1\Core::ERR_CANNOT_CREATE);
-    }
-
-    public function testCannotCreateErrorIsSupported2()
-    {
-        $this->assertTrue(static::$exc->processErrorInfo([0, 1005, '']));
-        $this->assertEquals(static::$exc->getPortableCode(), \Doctrine1\Core::ERR_CANNOT_CREATE);
-    }
-
-    public function testCannotCreateErrorIsSupported3()
-    {
-        $this->assertTrue(static::$exc->processErrorInfo([0, 1006, '']));
-        $this->assertEquals(static::$exc->getPortableCode(), \Doctrine1\Core::ERR_CANNOT_CREATE);
-    }
-
-    public function testAlreadyExistsErrorIsSupported()
-    {
-        $this->assertTrue(static::$exc->processErrorInfo([0, 1007, '']));
-        $this->assertEquals(static::$exc->getPortableCode(), \Doctrine1\Core::ERR_ALREADY_EXISTS);
-    }
-
-    public function testAlreadyExistsErrorIsSupported2()
-    {
-        $this->assertTrue(static::$exc->processErrorInfo([0, 1022, '']));
-        $this->assertEquals(static::$exc->getPortableCode(), \Doctrine1\Core::ERR_ALREADY_EXISTS);
-    }
-
-    public function testAlreadyExistsErrorIsSupported3()
-    {
-        $this->assertTrue(static::$exc->processErrorInfo([0, 1050, '']));
-        $this->assertEquals(static::$exc->getPortableCode(), \Doctrine1\Core::ERR_ALREADY_EXISTS);
-    }
-
-    public function testAlreadyExistsErrorIsSupported4()
-    {
-        $this->assertTrue(static::$exc->processErrorInfo([0, 1061, '']));
-        $this->assertEquals(static::$exc->getPortableCode(), \Doctrine1\Core::ERR_ALREADY_EXISTS);
-    }
-
-    public function testAlreadyExistsErrorIsSupported5()
-    {
-        $this->assertTrue(static::$exc->processErrorInfo([0, 1062, '']));
-        $this->assertEquals(static::$exc->getPortableCode(), \Doctrine1\Core::ERR_ALREADY_EXISTS);
-    }
-
-    public function testValueCountOnRowErrorIsSupported()
-    {
-        $this->assertTrue(static::$exc->processErrorInfo([0, 1136, '']));
-        $this->assertEquals(static::$exc->getPortableCode(), \Doctrine1\Core::ERR_VALUE_COUNT_ON_ROW);
+        $pdo = new \PDO(getenv("MYSQL_DSN") . ";dbname=intranet_test");
+        try {
+            $pdo->query("ALTER TABLE aziende DROP KEY non_existing");
+        } catch (PDOException $e) {
+            $e = Exception::fromPDO($e, static::$connection);
+        }
+        static::assertInstanceOf(Exception\SyntaxErrorOrAccessRuleViolation\UndefinedObject::class, $e, $e::class);
+        static::assertEquals(ErrorCode::ER_CANT_DROP_FIELD_OR_KEY, $e->getDriverCode());
+        static::assertEquals("Can't DROP 'non_existing'; check that column/key exists", $e->getMessage());
     }
 }

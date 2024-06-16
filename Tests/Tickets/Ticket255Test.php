@@ -9,18 +9,18 @@ namespace Tests\Tickets {
         public function testTest()
         {
             \Doctrine1\Manager::getInstance()->setValidate(true);
-            $user                = new \Ticket_255_User();
-            $user->username      = 'jwage';
-            $user->email_address = 'jonwage@gmail.com';
-            $user->password      = 'changeme';
+            $user = new \Ticket_255_User();
+            $user->username = "jwage";
+            $user->email_address = "jonwage@gmail.com";
+            $user->password = "changeme";
             $user->save();
 
-            $this->expectExceptionMessage('SQLSTATE[23000]: Integrity constraint violation: 19 UNIQUE constraint failed: ticket_255__user.username, ticket_255__user.email_address');
+            $this->expectExceptionMessage("UNIQUE constraint failed: ticket_255__user.username, ticket_255__user.email_address");
 
-            $user                = new \Ticket_255_User();
-            $user->username      = 'jwage';
-            $user->email_address = 'jonwage@gmail.com';
-            $user->password      = 'changeme';
+            $user = new \Ticket_255_User();
+            $user->username = "jwage";
+            $user->email_address = "jonwage@gmail.com";
+            $user->password = "changeme";
             $user->save();
 
             \Doctrine1\Manager::getInstance()->setValidate(false);
@@ -28,11 +28,14 @@ namespace Tests\Tickets {
 
         public function testTest2()
         {
-            $dbh  = new \Doctrine1\Adapter\Mock('mysql');
+            $dbh = new \Doctrine1\Adapter\Mock("mysql");
             $conn = \Doctrine1\Manager::connection($dbh);
-            $sql  = $conn->export->exportClassesSql([\Ticket_255_User::class]);
+            $sql = $conn->export->exportClassesSql([\Ticket_255_User::class]);
 
-            $this->assertEquals($sql[0], 'CREATE TABLE ticket_255__user (id BIGINT AUTO_INCREMENT, username VARCHAR(255), email_address VARCHAR(255), password VARCHAR(255), UNIQUE INDEX username_email_address_unqidx_idx (username, email_address), PRIMARY KEY(id)) ENGINE = InnoDB');
+            $this->assertEquals(
+                $sql[0],
+                "CREATE TABLE ticket_255__user (id BIGINT AUTO_INCREMENT, username VARCHAR(255), email_address VARCHAR(255), password VARCHAR(255), UNIQUE INDEX username_email_address_unqidx_idx (username, email_address), PRIMARY KEY(id)) ENGINE = InnoDB"
+            );
         }
     }
 }
@@ -42,11 +45,11 @@ namespace {
     {
         public function setTableDefinition(): void
         {
-            $this->hasColumn('username', 'string', 255);
-            $this->hasColumn('email_address', 'string', 255);
-            $this->hasColumn('password', 'string', 255);
+            $this->hasColumn("username", "string", 255);
+            $this->hasColumn("email_address", "string", 255);
+            $this->hasColumn("password", "string", 255);
 
-            $this->unique(['username', 'email_address']);
+            $this->unique(["username", "email_address"]);
         }
     }
 }
