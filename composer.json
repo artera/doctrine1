@@ -1,70 +1,63 @@
 {
-    "name": "artera/doctrine1",
-    "type": "library",
-    "version": "3.2.2",
-    "description": "PHP 8.1+ Database ORM",
-    "keywords": [
-        "orm",
-        "database"
-    ],
-    "license": "LGPL-2.1-or-later",
-    "authors": [
-        {
-            "name": "Massimiliano Torromeo",
-            "email": "massimiliano.torromeo@gmail.com"
-        },
-        {
-            "name": "Konsta Vesterinen",
-            "email": "kvesteri@cc.hut.fi"
-        },
-        {
-            "name": "Jonathan Wage",
-            "email": "jonwage@gmail.com"
-        }
-    ],
-    "autoload": {
-        "psr-4": {
-            "Doctrine1\\": "src"
-        }
+  "name": "artera/doctrine1",
+  "type": "library",
+  "version": "3.3.0",
+  "description": "PHP 8.1+ Database ORM",
+  "keywords": ["orm", "database"],
+  "license": "LGPL-2.1-or-later",
+  "authors": [
+    {
+      "name": "Massimiliano Torromeo",
+      "email": "massimiliano.torromeo@gmail.com"
     },
-    "autoload-dev": {
-        "psr-4": {
-            "Tests\\": "Tests"
-        },
-        "classmap": [
-            "Tests/models"
-        ]
+    {
+      "name": "Konsta Vesterinen",
+      "email": "kvesteri@cc.hut.fi"
     },
-    "replace": {
-        "doctrine/doctrine1": "*"
-    },
-    "require": {
-        "php": "^8.1",
-        "ext-pdo": "*",
-        "myclabs/php-enum": "^1.8",
-        "laminas/laminas-code": ">=2.0,<5",
-        "laminas/laminas-validator": ">=2.0,<5"
-    },
-    "require-dev": {
-        "phpstan/phpstan": "^1",
-        "phpunit/phpunit": "^11.0",
-        "symfony/yaml": "^3.4 || ^4.1 || >=5.0,<8 ",
-        "timeweb/phpstan-enum": "^3.0",
-        "spatie/phpunit-snapshot-assertions": "^5.0"
-    },
-    "suggest": {
-        "symfony/yaml": "For importing/exporting schema and fixtures from/to yaml files"
-    },
-    "scripts": {
-        "test": "php -d zend.assertions=on -d apc.enabled=on -d apc.enable_cli=on vendor/bin/phpunit",
-        "phpstan": "phpstan analyze -c phpstan.neon --no-progress --ansi --memory-limit=768M",
-        "style-check": "php-cs-fixer fix --dry-run -vv"
-    },
-    "extra": {
-        "phpstan": {
-            "includes": [
-                "extension.neon"
-            ]
-        }
+    {
+      "name": "Jonathan Wage",
+      "email": "jonwage@gmail.com"
     }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Doctrine1\\": "src"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\": "Tests"
+    },
+    "classmap": ["Tests/models"]
+  },
+  "replace": {
+    "doctrine/doctrine1": "*"
+  },
+  "require": {
+    "php": "^8.1",
+    "ext-pdo": "*",
+    "myclabs/php-enum": "^1.8",
+    "laminas/laminas-code": ">=2.0,<5",
+    "laminas/laminas-validator": ">=2.0,<5"
+  },
+  "require-dev": {
+    "phpstan/phpstan": "^1",
+    "phpunit/phpunit": "^11.0",
+    "symfony/yaml": "^3.4 || ^4.1 || >=5.0,<8 ",
+    "timeweb/phpstan-enum": "^3.0",
+    "spatie/phpunit-snapshot-assertions": "^5.0"
+  },
+  "suggest": {
+    "symfony/yaml": "For importing/exporting schema and fixtures from/to yaml files"
+  },
+  "scripts": {
+    "test": "php -d zend.assertions=on -d apc.enabled=on -d apc.enable_cli=on vendor/bin/phpunit",
+    "phpstan": "phpstan analyze -c phpstan.neon --no-progress --ansi --memory-limit=768M",
+    "style-check": "php-cs-fixer fix --dry-run -vv"
+  },
+  "extra": {
+    "phpstan": {
+      "includes": ["extension.neon"]
+    }
+  }
 }
