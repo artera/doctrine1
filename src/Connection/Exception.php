@@ -76,13 +76,23 @@ class Exception extends \Doctrine1\Exception
             $code = Mysql\ErrorCode::tryFrom($e->errorInfo[1]);
             $exClass = match ($code) {
                 Mysql\ErrorCode::ER_FUNCTION_NOT_DEFINED => Exception\SyntaxErrorOrAccessRuleViolation\UndefinedFunction::class,
-                Mysql\ErrorCode::ER_RESERVED_SYNTAX,
-                Mysql\ErrorCode::ER_RESERVED_TABLESPACE_NAME
-                    => Exception\SyntaxErrorOrAccessRuleViolation\ReservedName::class,
+                Mysql\ErrorCode::ER_RESERVED_SYNTAX, Mysql\ErrorCode::ER_RESERVED_TABLESPACE_NAME => Exception\SyntaxErrorOrAccessRuleViolation\ReservedName::class,
                 Mysql\ErrorCode::ER_DB_CREATE_EXISTS => Exception\SyntaxErrorOrAccessRuleViolation\DuplicateDatabase::class,
                 Mysql\ErrorCode::ER_TABLE_MUST_HAVE_A_VISIBLE_COLUMN => Exception\SyntaxErrorOrAccessRuleViolation\InvalidTableDefinition::class,
                 Mysql\ErrorCode::ER_BAD_DB_ERROR => Exception\InvalidCatalogName::class,
                 Mysql\ErrorCode::ER_CANT_DROP_FIELD_OR_KEY => Exception\SyntaxErrorOrAccessRuleViolation\UndefinedObject::class,
+                Mysql\ErrorCode::ER_CHECK_CONSTRAINT_VIOLATED => Exception\IntegrityConstraintViolation\CheckViolation::class,
+                Mysql\ErrorCode::ER_DUP_ENTRY,
+                Mysql\ErrorCode::ER_DUP_ENTRY_WITH_KEY_NAME,
+                Mysql\ErrorCode::ER_DUP_UNKNOWN_IN_INDEX,
+                Mysql\ErrorCode::ER_DUP_LIST_ENTRY
+                    => Exception\IntegrityConstraintViolation\UniqueViolation::class,
+                Mysql\ErrorCode::ER_ROW_IS_REFERENCED,
+                Mysql\ErrorCode::ER_ROW_IS_REFERENCED_2,
+                Mysql\ErrorCode::ER_NO_REFERENCED_ROW,
+                Mysql\ErrorCode::ER_NO_REFERENCED_ROW_2
+                    => Exception\IntegrityConstraintViolation\ForeignKeyViolation::class,
+                Mysql\ErrorCode::ER_BAD_NULL_ERROR, Mysql\ErrorCode::ER_WARN_NULL_TO_NOTNULL => Exception\IntegrityConstraintViolation\NotNullViolation::class,
                 Mysql\ErrorCode::ER_WINDOW_NO_GROUP_ORDER_UNUSED,
                 Mysql\ErrorCode::ER_FIELD_IN_GROUPING_NOT_GROUP_BY,
                 Mysql\ErrorCode::ER_GROUPING_ON_TIMESTAMP_IN_DST,
