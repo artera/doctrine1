@@ -10,7 +10,7 @@ class Exception extends \Doctrine1\Exception
     public function __construct(PDOException $e, protected Connection $conn, protected ?string $query = null)
     {
         assert($e->errorInfo !== null);
-        parent::__construct($e->errorInfo[2], $e->errorInfo[1], $e);
+        parent::__construct($e->errorInfo[2] ?? $e->getMessage(), $e->errorInfo[1] ?? 0, $e);
     }
 
     public function getSQLStateSubclass(): string
@@ -73,7 +73,7 @@ class Exception extends \Doctrine1\Exception
             // If driver code matches enum, override sql state class.
             // This is done because the returned sqlstate on mysql
             // does not always respect its own documentation
-            $code = Mysql\ErrorCode::tryFrom($e->errorInfo[1]);
+            $code = Mysql\ErrorCode::tryFrom($e->errorInfo[1] ?? 0);
             $exClass = match ($code) {
                 Mysql\ErrorCode::ER_FUNCTION_NOT_DEFINED => Exception\SyntaxErrorOrAccessRuleViolation\UndefinedFunction::class,
                 Mysql\ErrorCode::ER_RESERVED_SYNTAX, Mysql\ErrorCode::ER_RESERVED_TABLESPACE_NAME => Exception\SyntaxErrorOrAccessRuleViolation\ReservedName::class,
