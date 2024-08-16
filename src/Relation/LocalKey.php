@@ -17,9 +17,7 @@ class LocalKey extends \Doctrine1\Relation
         $loadReferences = $this->definition['table']->getLoadReferences();
 
         if ($loadReferences && $id !== null) {
-            $dql = 'FROM ' . $this->getTable()->getComponentName()
-                 . ' WHERE ' . $this->getCondition() . $this->getOrderBy(null, false);
-
+            $dql = "FROM {$this->getTable()->getComponentName()} WHERE {$this->getCondition()}{$this->getOrderBy(null, false)}";
             $related = $this->getTable()
                 ->getConnection()
                 ->query($dql, [$id])

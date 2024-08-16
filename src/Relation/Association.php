@@ -87,28 +87,20 @@ class Association extends Relation
 
     public function getRelationDql(int $count, string $context = 'record'): string
     {
-        $table     = $this->definition['refTable'];
-        $component = $this->definition['refTable']->getComponentName();
-        $dql       = '';
-
-        switch ($context) {
-            case 'record':
-                $sub = substr(str_repeat('?, ', $count), 0, -2);
-                $dql = 'FROM ' . $this->getTable()->getComponentName();
-                $dql .= '.' . $component;
-                $dql .= ' WHERE ' . $this->getTable()->getComponentName()
-                . '.' . $component . '.' . $this->getLocalRefColumnName() . ' IN (' . $sub . ')';
-                $dql .= $this->getOrderBy($this->getTable()->getComponentName(), false);
-                break;
-            case 'collection':
-                $sub = substr(str_repeat('?, ', $count), 0, -2);
-                $dql = 'FROM ' . $component . '.' . $this->getTable()->getComponentName();
-                $dql .= ' WHERE ' . $component . '.' . $this->getLocalRefColumnName() . ' IN (' . $sub . ')';
-                $dql .= $this->getOrderBy($component, false);
-                break;
+        if ($context === 'record') {
+            $alias = $this->getTable()->getComponentName();
+            $fieldName = $this->definition['refTable']->getComponentName();
+            $where = "$alias.$fieldName";
+        } elseif ($context === 'collection') {
+            $alias = $this->definition['refTable']->getComponentName();
+            $fieldName = $this->getTable()->getComponentName();
+            $where = $alias;
+        } else {
+            return '';
         }
 
-        return $dql;
+        $sub = substr(str_repeat('?, ', $count), 0, -2);
+        return "FROM $alias.$fieldName WHERE $where.{$this->getLocalRefColumnName()} IN ($sub){$this->getOrderBy($alias, false)}";
     }
 
     /**

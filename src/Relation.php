@@ -345,13 +345,8 @@ abstract class Relation implements \ArrayAccess
     public function getRelationDql(int $count): string
     {
         $component = $this->getTable()->getComponentName();
-
-        $dql = 'FROM ' . $component
-              . ' WHERE ' . $component . '.' . $this->definition['foreign']
-              . ' IN (' . substr(str_repeat('?, ', $count), 0, -2) . ')'
-              . $this->getOrderBy($component);
-
-        return $dql;
+        $inParams = implode(', ', array_fill(0, $count, '?'));
+        return "FROM $component WHERE $component.{$this->definition['foreign']} IN ($inParams){$this->getOrderBy($component)}";
     }
 
     /**
@@ -385,7 +380,7 @@ abstract class Relation implements \ArrayAccess
         }
 
         if ($orderBy = $this->getOrderByStatement($alias, $columnNames)) {
-            return ' ORDER BY ' . $orderBy;
+            return " ORDER BY $orderBy";
         }
 
         return null;

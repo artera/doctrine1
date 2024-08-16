@@ -21,21 +21,13 @@ class SelfAssociation extends \Doctrine1\Relation\Association
             $identifierColumnNames = $table->getIdentifierColumnNames();
             $id = array_pop($identifierColumnNames);
 
-            $sub1 = "SELECT {$this->definition['foreign']}
-                     FROM $r
-                     WHERE $local = ?";
+            $sub1 = "SELECT {$this->definition['foreign']} FROM $r WHERE $local = ?";
+            $sub2 = "SELECT $local FROM $r WHERE {$this->definition['foreign']} = ?";
 
-            $sub2 = "SELECT $local
-                     FROM $r
-                     WHERE {$this->definition['foreign']} = ?";
-
-            $order = $this->getOrderBy($t, false);
-
-            return "FROM $t.$r WHERE $t.$id IN ($sub1) || $t.$id IN ($sub2)";
+            return "FROM $t.$r WHERE $t.$id IN ($sub1) OR $t.$id IN ($sub2)";
         }
 
         $sub = substr(str_repeat('?, ', $count), 0, -2);
-        $order = $this->getOrderBy($r, false);
 
         return "FROM $r.$t WHERE $r.$local IN ($sub)";
     }
@@ -61,7 +53,7 @@ class SelfAssociation extends \Doctrine1\Relation\Association
         $sub = "SELECT $foreign FROM $assocTable WHERE $local = ?";
         $sub2 = "SELECT $local FROM $assocTable WHERE $foreign = ?";
 
-        $q->select('{' . $tableName . '.*}, {' . $assocTable . '.*}')
+        $q->select("\{$tableName.*}, \{$assocTable.*}")
             ->from("$tableName INNER JOIN $assocTable ON $tableName.$identifier = $assocTable.$local OR $tableName.$identifier = $assocTable.$foreign")
             ->where("$tableName.$identifier IN ($sub) OR $tableName.$identifier IN ($sub2)");
         $q->addComponent($tableName, $record->getTable()->getComponentName());

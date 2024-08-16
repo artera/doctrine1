@@ -11,7 +11,7 @@ class ForeignKey extends \Doctrine1\Relation
      */
     public function fetchRelatedFor(\Doctrine1\Record $record)
     {
-        $id         = [];
+        $id = [];
         $localTable = $record->getTable();
         foreach ((array) $this->definition['local'] as $local) {
             $value = $record->get($localTable->getFieldName($local));
@@ -20,17 +20,18 @@ class ForeignKey extends \Doctrine1\Relation
             }
         }
         if ($this->isOneToOne()) {
-            if (!$record->exists() || empty($id) || !$this->definition['table']->getLoadReferences()) {
-                $related = $this->getTable()->create();
-            } else {
-                $dql = 'FROM ' . $this->getTable()->getComponentName()
-                      . ' WHERE ' . $this->getCondition() . $this->getOrderBy(null, false);
+            $column = $localTable->getColumn($this->definition['local']);
+            $optional = !$column?->primary && !$column?->notnull;
 
-                $coll    = $this->getTable()->getConnection()->query($dql, $id);
-                $related = $coll[0];
+            if (!$record->exists() || empty($id) || !$this->definition['table']->getLoadReferences()) {
+                $related = $optional ? null : $this->getTable()->create();
+            } else {
+                $dql = "FROM {$this->getTable()->getComponentName()} WHERE {$this->getCondition()}{$this->getOrderBy(null, false)}";
+                $coll = $this->getTable()->getConnection()->query($dql, $id);
+                $related = $coll->contains(0) || !$optional ? $coll[0] : null;
             }
 
-            $related->set(
+            $related?->set(
                 $related->getTable()->getFieldName($this->definition['foreign']),
                 $record,
                 false
@@ -54,7 +55,7 @@ class ForeignKey extends \Doctrine1\Relation
         }
         $conditions = [];
         foreach ((array) $this->definition['foreign'] as $foreign) {
-            $conditions[] = $alias . '.' . $foreign . ' = ?';
+            $conditions[] = "$alias.$foreign = ?";
         }
         return implode(' AND ', $conditions);
     }
