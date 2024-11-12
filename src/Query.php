@@ -219,7 +219,7 @@ class Query extends AbstractQuery implements \Countable
      *
      * @param  mixed[] $params        Query parameters
      * @param  HydrationMode     $hydrationMode Hydration mode: see HydrationModes
-     * @return Record|scalar Array or Record, depending on hydration mode. null if no result.
+     * @return Record|scalar|null Array or Record, depending on hydration mode. null if no result.
      * @phpstan-return Record|array<string,mixed>|scalar|null
      */
     public function fetchOne($params = [], ?HydrationMode $hydrationMode = null)

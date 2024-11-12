@@ -20,19 +20,18 @@ use PHPStan\Analyser\OutOfClassScope;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ObjectTypeMethodReflection;
 use PHPStan\Reflection\ClassReflection;
-use PHPStan\Reflection\BrokerAwareExtension;
+use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Reflection\MethodsClassReflectionExtension;
 use PHPStan\Reflection\Dummy\DummyMethodReflection;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
 
-class TableDynamicReturnTypeExtension extends AbstractExtension implements DynamicMethodReturnTypeExtension, MethodsClassReflectionExtension, BrokerAwareExtension
+class TableDynamicReturnTypeExtension extends AbstractExtension implements DynamicMethodReturnTypeExtension, MethodsClassReflectionExtension
 {
-    private \PHPStan\Broker\Broker $broker;
+    private ReflectionProvider $reflectionProvider;
 
-    public function setBroker(\PHPStan\Broker\Broker $broker): void
-    {
-        $this->broker = $broker;
+    public function __construct(ReflectionProvider $reflectionProvider) {
+        $this->reflectionProvider = $reflectionProvider;
     }
 
     public function getClass(): string
@@ -57,7 +56,7 @@ class TableDynamicReturnTypeExtension extends AbstractExtension implements Dynam
         $class = $this->getClass();
         return $this->isMethodNameSupported($methodName) && (
             $classReflection->getName() === $class
-            || $this->broker->hasClass($class) && $classReflection->isSubclassOf($class)
+            || $this->reflectionProvider->hasClass($class) && $classReflection->isSubclassOf($class)
         );
     }
 
@@ -117,8 +116,8 @@ class TableDynamicReturnTypeExtension extends AbstractExtension implements Dynam
         } else {
             // argument used, read value if static
             $argType = $scope->getType($hydrateArg->value);
-            if ($argType instanceof ConstantBooleanType) {
-                $hydrateArray = $argType->getValue();
+            if ($argType->isTrue()->yes() || $argType->isFalse()->yes()) {
+                $hydrateArray = $argType->isTrue()->yes();
             } else {
                 return $returnType;
             }
@@ -133,7 +132,7 @@ class TableDynamicReturnTypeExtension extends AbstractExtension implements Dynam
             if ($nameArg !== null) {
                 // argument used, read value if static
                 $argType = $scope->getType($nameArg->value);
-                if (!$argType instanceof NullType) {
+                if ($argType->isNull()->yes()) {
                     $allowedObjectType = null;
                 }
             }
@@ -141,11 +140,11 @@ class TableDynamicReturnTypeExtension extends AbstractExtension implements Dynam
 
         $types = [];
         foreach ($returnType->getTypes() as $type) {
-            if ($type instanceof ArrayType) {
+            if ($type->isArray()->yes()) {
                 if ($hydrateArray) {
-                    $types[] = $type;
+                    $types = array_merge($types, $type->getArrays());
                 }
-            } elseif ($type instanceof ObjectType) {
+            } elseif ($type->isObject()->yes()) {
                 if (!$hydrateArray && ($allowedObjectType === null || $allowedObjectType->isSuperTypeOf($type)->yes())) {
                     $types[] = $type;
                 }

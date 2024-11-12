@@ -8,6 +8,7 @@ use PHPStan\Type\Type;
 use PHPStan\Type\DynamicStaticMethodReturnTypeExtension;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\StringType;
+use PHPStan\Type\TypeCombinator;
 use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Reflection\MethodReflection;
 use PhpParser\Node\Expr\StaticCall;
@@ -44,13 +45,17 @@ class CoreDynamicReturnTypeExtension extends AbstractExtension implements Dynami
         if (count($args)) {
             $componentNameArg = $scope->getType($args[0]->value);
 
-            if ($componentNameArg instanceof ConstantStringType) {
-                $basename = $componentNameArg->getValue();
+            $tableClasses = [];
+            foreach ($componentNameArg->getConstantStrings() as $constantComponentName) {
+                $basename = $constantComponentName->getValue();
                 if (($pos = strrpos($basename, '\\')) !== false) {
                     $basename = substr($basename, $pos + 1);
                 }
                 $tableClass = \Doctrine1\Lib::namespaceConcat($this->namespace, sprintf($this->tableFormat, $basename), true);
-                return new ObjectType($tableClass);
+                $tableClasses[] = new ObjectType($tableClass);
+            }
+            if (count($tableClasses) > 0) {
+                return TypeCombinator::union(...$tableClasses);
             }
         }
 

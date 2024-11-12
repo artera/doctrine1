@@ -23,7 +23,6 @@ use PHPStan\Analyser\OutOfClassScope;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ObjectTypeMethodReflection;
 use PHPStan\Reflection\ClassReflection;
-use PHPStan\Reflection\BrokerAwareExtension;
 use PHPStan\Reflection\MethodsClassReflectionExtension;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Reflection\Dummy\DummyMethodReflection;
@@ -77,45 +76,57 @@ class QueryDynamicReturnTypeExtension extends AbstractExtension implements Dynam
         // find the hydrationMode argument by name or position
         $hydrateArg = $this->findArg('hydrationMode', $methodCall, $parameters);
 
+        // consider all possible hydration modes
+        $hydrationModes = [];
+
         if ($hydrateArg === null) {
             // argument not used, imply default of false
-            $hydrationMode = HydrationMode::Record;
+            $hydrationModes[] = HydrationMode::Record;
         } else {
             // argument used, read value if static
             $argType = $scope->getType($hydrateArg->value);
-            if ($argType instanceof EnumCaseObjectType) {
-                $hydrationMode = HydrationMode::Record;
-                $hydrationModeName = $argType->getEnumCaseName();
-                foreach (HydrationMode::cases() as $case) {
-                    if ($case->name === $hydrationModeName) {
-                        $hydrationMode = $case;
-                        break;
-                    }
-                }
-            } elseif ($argType instanceof NullType) {
-                $hydrationMode = HydrationMode::Record;
+
+            if ($argType->isNull()->yes()) {
+                $hydrationModes[] = HydrationMode::Record;
             } else {
-                return $returnType;
+                foreach ($argType->getEnumCases() as $argEnumCase) {
+                    $hydrationMode = HydrationMode::Record;
+                    $hydrationModeName = $argEnumCase->getEnumCaseName();
+                    foreach (HydrationMode::cases() as $case) {
+                        if ($case->name === $hydrationModeName) {
+                            $hydrationMode = $case;
+                            break;
+                        }
+                    }
+                    $hydrationModes[] = $hydrationMode;
+                }
             }
         }
 
-        if (!in_array($hydrationMode, [HydrationMode::Record, HydrationMode::Array, HydrationMode::Scalar, HydrationMode::OnDemand])) {
+        if (!count($hydrationModes)) {
             return $returnType;
         }
 
         $selfType = $scope->getType($methodCall->var);
         if ($methodName === 'execute') {
-            return $this->getExecuteReturnType($selfType, $returnType, $hydrationMode);
+            $returnType = array_map(fn($mode) => $this->getExecuteReturnType($selfType, $returnType, $mode), $hydrationModes);
+        } else {
+            $returnType = array_map(fn($mode) => $this->getFetchOneReturnType($selfType, $returnType, $mode), $hydrationModes);
         }
-        return $this->getFetchOneReturnType($selfType, $returnType, $hydrationMode);
+
+        return TypeCombinator::union(...$returnType);
     }
 
     protected function getFromReturnType(Type $selfType, ?Type $from, Type $returnType): Type
     {
-        if (!$selfType instanceof GenericObjectType || ($from !== null && !$from instanceof ConstantStringType)) {
+        $fromStrings = $from?->getConstantStrings() ?? [];
+
+        // @phpstan-ignore phpstanApi.instanceofType
+        if (!$selfType instanceof GenericObjectType || ($from !== null && empty($fromStrings))) {
             return $returnType;
         }
 
+        // @phpstan-ignore phpstanApi.instanceofType
         if ($returnType instanceof GenericObjectType) {
             $templateTypes = $returnType->getTypes();
         } else {
@@ -123,21 +134,30 @@ class QueryDynamicReturnTypeExtension extends AbstractExtension implements Dynam
         }
 
         if ($from !== null) {
-            $from = $from->getValue();
-            if (!preg_match('/^\s*([a-z0-9_\\\\]+)/i', $from, $matches)) {
+            $from = [];
+            foreach ($fromStrings as $fromString) {
+                $fromString = $fromString->getValue();
+                if (!preg_match('/^\s*([a-z0-9_\\\\]+)/i', $fromString, $matches)) {
+                    continue;
+                }
+                $fromString = $matches[1];
+
+                if (!class_exists($fromString)) {
+                    $fromString = \Doctrine1\Lib::namespaceConcat($this->namespace, $fromString);
+                }
+
+                if (!class_exists($fromString)) {
+                    continue;
+                }
+
+                $from[] = new ObjectType($fromString);
+            }
+
+            if (empty($from)) {
                 return $returnType;
             }
-            $from = $matches[1];
 
-            if (!class_exists($from)) {
-                $from = \Doctrine1\Lib::namespaceConcat($this->namespace, $from);
-            }
-
-            if (!class_exists($from)) {
-                return $returnType;
-            }
-
-            $templateTypes[0] = new ObjectType($from);
+            $templateTypes[0] = TypeCombinator::union(...$from);
         }
 
         return new GenericObjectType($selfType->getClassName(), $templateTypes);
@@ -146,12 +166,15 @@ class QueryDynamicReturnTypeExtension extends AbstractExtension implements Dynam
     protected function getExecuteReturnType(Type $selfType, UnionType $returnType, HydrationMode $hydrationMode): Type
     {
         $select = true;
+        // @phpstan-ignore phpstanApi.instanceofType
         if ($selfType instanceof GenericObjectType) {
             $types = $selfType->getTypes();
-            if (count($types) > 1 && $types[1] instanceof ObjectType) {
-                $queryTypeTemplate = $types[1]->getClassname();
-                if ($queryTypeTemplate !== \Doctrine1\Query\Type\Select::class) {
-                    $select = false;
+            if (count($types) > 1 && $types[1]->isObject()->yes()) {
+                foreach ($types[1]->getObjectClassNames() as $queryTypeTemplate) {
+                    if ($queryTypeTemplate !== \Doctrine1\Query\Type\Select::class) {
+                        $select = false;
+                        break;
+                    }
                 }
             }
         }
@@ -169,19 +192,17 @@ class QueryDynamicReturnTypeExtension extends AbstractExtension implements Dynam
 
         $types = [];
         foreach ($returnType->getTypes() as $type) {
-            if ($type instanceof NullType) {
+            if ($type->isNull()->yes()) {
                 $types[] = $type;
                 continue;
             }
 
             if ($objectType !== null) {
-                if ($type instanceof ObjectType && $objectType->isSuperTypeOf($type)->yes()) {
+                if ($objectType->isSuperTypeOf($type)->yes()) {
                     $types[] = $type;
                 }
             } elseif ($hydrationMode === HydrationMode::Array || $hydrationMode === HydrationMode::Scalar) {
-                if ($type instanceof ArrayType) {
-                    $types[] = $type;
-                }
+                $types = array_merge($types, $type->getArrays());
             }
         }
         return TypeCombinator::union(...$types);
@@ -195,25 +216,24 @@ class QueryDynamicReturnTypeExtension extends AbstractExtension implements Dynam
 
         $types = [];
         foreach ($returnType->getTypes() as $type) {
-            if ($type instanceof NullType) {
+            if ($type->isNull()->yes()) {
                 $types[] = $type;
                 continue;
             }
 
             if ($hydrationMode === HydrationMode::Record) {
-                if ($type instanceof ObjectType) {
+                if ($type->isObject()->yes()) {
                     $types[] = $type;
                 }
             } elseif ($hydrationMode === HydrationMode::Array) {
-                if ($type instanceof ArrayType) {
-                    $types[] = $type;
-                }
+                $types = array_merge($types, $type->getArrays());
             } elseif ($hydrationMode === HydrationMode::Scalar) {
-                if (!$type instanceof ArrayType && !$type instanceof ObjectType) {
+                if ($type->isScalar()->yes() || $type->isScalar()->maybe()) {
                     $types[] = $type;
                 }
             }
         }
+
         return TypeCombinator::union(...$types);
     }
 }

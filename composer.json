@@ -1,7 +1,7 @@
 {
   "name": "artera/doctrine1",
   "type": "library",
-  "version": "3.4.0",
+  "version": "3.5.0",
   "description": "PHP 8.1+ Database ORM",
   "keywords": ["orm", "database"],
   "license": "LGPL-2.1-or-later",
@@ -33,6 +33,12 @@
   "replace": {
     "doctrine/doctrine1": "*"
   },
+  "repositories": [
+    {
+        "type": "git",
+        "url": "https://github.com/timeweb/phpstan-enum.git"
+    }
+  ],
   "require": {
     "php": "^8.1",
     "ext-pdo": "*",
@@ -41,10 +47,10 @@
     "laminas/laminas-validator": ">=2.0,<5"
   },
   "require-dev": {
-    "phpstan/phpstan": "^1",
+    "phpstan/phpstan": "^2",
     "phpunit/phpunit": "^11.0",
     "symfony/yaml": "^3.4 || ^4.1 || >=5.0,<8 ",
-    "timeweb/phpstan-enum": "^3.0",
+    "timeweb/phpstan-enum": "dev-phpstan2 as 3.1.1",
     "spatie/phpunit-snapshot-assertions": "^5.0"
   },
   "suggest": {

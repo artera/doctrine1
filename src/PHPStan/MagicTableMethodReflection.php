@@ -22,10 +22,10 @@ class MagicTableMethodReflection implements MethodReflection
 
     private Type $returnType;
 
-    /** @var string[] */
+    /** @var list<string> */
     private array $parameters = [];
 
-    /** @param string[] $parameters */
+    /** @param list<string> $parameters */
     public function __construct(ClassReflection $declaringClass, string $name, Type $returnType, array $parameters = [])
     {
         $this->declaringClass = $declaringClass;

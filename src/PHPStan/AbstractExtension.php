@@ -55,14 +55,4 @@ abstract class AbstractExtension
 
         return null;
     }
-
-    protected function getSelfClassNameFromScope(MethodCall $methodCall, Scope $scope): ?string
-    {
-        $vartype = $scope->getType($methodCall->var);
-        if ($vartype instanceof StaticType || $vartype instanceof ObjectType) {
-            // this/object var
-            return $vartype->getClassName();
-        }
-        return null;
-    }
 }
