@@ -249,7 +249,7 @@ abstract class Configurable
 
     public function getModelNamespace(): string
     {
-        return $this->modelNamespace?? $this->parent?->getModelNamespace() ?? '\\';
+        return $this->modelNamespace ?? $this->parent?->getModelNamespace() ?? '\\';
     }
 
     public function setModelNamespace(?string $value): void
@@ -528,7 +528,6 @@ abstract class Configurable
     /**
      * @phpstan-param EventListenerInterface|Overloadable<EventListenerInterface> $listener
      * @return $this
-     * @throws EventListener\Exception
      */
     public function setListener(EventListenerInterface|Overloadable|null $listener): self
     {

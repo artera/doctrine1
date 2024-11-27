@@ -98,9 +98,6 @@ class Hydrator
     {
         $driverClass = $this->getHydratorDriverClassName($mode);
         if (is_object($driverClass)) {
-            if (!$driverClass instanceof Hydrator\AbstractHydrator) {
-                throw new Hydrator\Exception('Invalid hydration class specified: ' . get_class($driverClass));
-            }
             $driver = $driverClass;
             $driver->setQueryComponents($this->queryComponents);
             $driver->setTableAliases($tableAliases);

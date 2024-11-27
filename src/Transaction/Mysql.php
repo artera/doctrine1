@@ -39,12 +39,7 @@ class Mysql extends \Doctrine1\Transaction
         return $this->conn->execute($query);
     }
 
-    /**
-     * getTransactionIsolation
-     *
-     * @return string               returns the current session transaction isolation level
-     */
-    public function getIsolation()
+    public function getIsolation(): string
     {
         return $this->conn->fetchOne('SELECT @@tx_isolation');
     }

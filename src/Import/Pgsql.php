@@ -236,10 +236,10 @@ class Pgsql extends \Doctrine1\Import
     /**
      * lists table triggers
      *
-     * @param  string $table database table name
+     * @param  ?string $table database table name
      * @return array
      */
-    public function listTableTriggers($table)
+    public function listTableTriggers(?string $table): array
     {
         $query = 'SELECT trg.tgname AS trigger_name
                     FROM pg_trigger trg,
@@ -272,8 +272,7 @@ class Pgsql extends \Doctrine1\Import
 
         $results = $this->conn->fetchAssoc($sql, $param);
         foreach ($results as $result) {
-            preg_match('/FOREIGN KEY \((.+)\) REFERENCES (.+)\((.+)\)/', $result['condef'], $values);
-            if ((strpos($values[1], ',') === false) && (strpos($values[3], ',') === false)) {
+            if (preg_match('/FOREIGN KEY \((.+)\) REFERENCES (.+)\((.+)\)/', $result['condef'], $values) && (strpos($values[1], ',') === false) && (strpos($values[3], ',') === false)) {
                 $tableName   = trim($values[2], '"');
                 $relations[] = [
                     'table'   => $tableName,

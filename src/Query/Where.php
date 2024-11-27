@@ -32,7 +32,6 @@ class Where extends \Doctrine1\Query\Condition
         if (count($terms) > 1) {
             $leftExpr  = array_shift($terms);
             $rightExpr = array_pop($terms);
-            assert($leftExpr !== null);
             assert($rightExpr !== null);
             $operator  = trim(substr($where, strlen($leftExpr), -strlen($rightExpr)));
 

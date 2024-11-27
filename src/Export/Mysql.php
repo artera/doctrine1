@@ -22,7 +22,7 @@ class Mysql extends \Doctrine1\Export
      * @param  bool   $primary hint if the constraint is primary
      * @return int
      */
-    public function dropConstraint($table, $name, $primary = false)
+    public function dropConstraint(string $table, string $name, bool $primary = false): int
     {
         $table = $this->conn->quoteIdentifier($table);
 
@@ -41,7 +41,7 @@ class Mysql extends \Doctrine1\Export
      * @param  string $name
      * @return string
      */
-    public function createDatabaseSql($name)
+    public function createDatabaseSql(string $name): string
     {
         return 'CREATE DATABASE ' . $this->conn->quoteIdentifier($name, true);
     }
@@ -50,9 +50,9 @@ class Mysql extends \Doctrine1\Export
      * drop an existing database
      *
      * @param  string $name name of the database that should be dropped
-     * @return array
+     * @return string|string[]
      */
-    public function dropDatabaseSql($name)
+    public function dropDatabaseSql(string $name): string|array
     {
         return [
             'SET FOREIGN_KEY_CHECKS = 0',
@@ -68,7 +68,7 @@ class Mysql extends \Doctrine1\Export
      * @param Column[] $fields
      * @param array|null $options An associative array of table options:
      * @phpstan-param ?ExportableOptions $options
-     * @return array
+     * @return string[]
      */
     public function createTableSql(string $name, array $fields, ?array $options = null): array
     {
@@ -213,26 +213,10 @@ class Mysql extends \Doctrine1\Export
         }
     }
 
-    /**
-     * alter an existing table
-     *
-     * @param string  $name    name of the table that is intended to be changed.
-     * @phpstan-param array{
-     *   add?: Column[],
-     *   remove?: string[],
-     *   change?: array<string, Column>,
-     *   rename?: array<string, string>,
-     *   name?: string,
-     * } $changes
-     * @param  boolean $check   indicates whether the function should just check if the DBMS driver
-     *                          can perform the requested table alterations if the value is true or
-     *                          actually perform them otherwise.
-     * @return boolean|string
-     */
-    public function alterTableSql($name, array $changes, $check = false)
+    public function alterTableSql(string $name, array $changes): array
     {
         if (!$name) {
-            throw new \Doctrine1\Export\Exception('no valid table name specified');
+            throw new Exception('no valid table name specified');
         }
         foreach ($changes as $changeName => $change) {
             switch ($changeName) {
@@ -247,17 +231,13 @@ class Mysql extends \Doctrine1\Export
             }
         }
 
-        if ($check) {
-            return true;
-        }
-
         $query = '';
         if (!empty($changes['name'])) {
             $change_name = $this->conn->quoteIdentifier($changes['name']);
             $query .= "RENAME TO $change_name";
         }
 
-        if (!empty($changes['add']) && is_array($changes['add'])) {
+        if (!empty($changes['add'])) {
             foreach ($changes['add'] as $field) {
                 if ($query) {
                     $query .= ', ';
@@ -266,7 +246,7 @@ class Mysql extends \Doctrine1\Export
             }
         }
 
-        if (!empty($changes['remove']) && is_array($changes['remove'])) {
+        if (!empty($changes['remove'])) {
             foreach ($changes['remove'] as $fieldName) {
                 if ($query) {
                     $query .= ', ';
@@ -277,13 +257,13 @@ class Mysql extends \Doctrine1\Export
         }
 
         $rename = [];
-        if (!empty($changes['rename']) && is_array($changes['rename'])) {
+        if (!empty($changes['rename'])) {
             foreach ($changes['rename'] as $oldFieldName => $fieldName) {
                 $rename[$fieldName] = $oldFieldName;
             }
         }
 
-        if (!empty($changes['change']) && is_array($changes['change'])) {
+        if (!empty($changes['change'])) {
             foreach ($changes['change'] as $fieldName => $field) {
                 if ($query) {
                     $query .= ', ';
@@ -299,7 +279,7 @@ class Mysql extends \Doctrine1\Export
             }
         }
 
-        if (!empty($rename) && is_array($rename)) {
+        if (!empty($rename)) {
             foreach ($rename as $oldFieldName => $fieldName) {
                 if ($query) {
                     $query .= ', ';
@@ -311,12 +291,11 @@ class Mysql extends \Doctrine1\Export
         }
 
         if (!$query) {
-            return false;
+            throw new Exception("Invalid alter table.");
         }
 
         $name = $this->conn->quoteIdentifier($name, true);
-
-        return "ALTER TABLE $name $query";
+        return ["ALTER TABLE $name $query"];
     }
 
     /**

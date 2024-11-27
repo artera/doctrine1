@@ -8,11 +8,15 @@ class Json extends AbstractValidator
 {
     public function isValid(mixed $value): bool
     {
-        json_decode($value);
+        if (function_exists('json_validate')) {
+            json_validate($value);
+        } else {
+            json_decode($value);
+        }
         $code = json_last_error();
         if ($code !== JSON_ERROR_NONE) {
             /** @phpstan-ignore-next-line */
-            $this->abstractOptions['messages'][(string) $code] = json_last_error_msg();
+            $this->errorMessages[(string) $code] = json_last_error_msg();
             return false;
         }
         return true;

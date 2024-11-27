@@ -864,9 +864,6 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
     public function refresh(bool $deep = false): ?self
     {
         $id = $this->identifier();
-        if (!is_array($id)) {
-            $id = [$id];
-        }
         if (empty($id)) {
             return null;
         }
@@ -1050,10 +1047,6 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
         // only load the data from database if the Record is in proxy state
         if ($this->exists() && $this->isInProxyState()) {
             $id = $this->identifier();
-
-            if (!is_array($id)) {
-                $id = [$id];
-            }
 
             if (empty($id)) {
                 return false;

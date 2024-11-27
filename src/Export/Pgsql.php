@@ -23,7 +23,7 @@ class Pgsql extends \Doctrine1\Export
      * @param  string $name
      * @return string
      */
-    public function createDatabaseSql($name)
+    public function createDatabaseSql(string $name): string
     {
         $query = 'CREATE DATABASE ' . $this->conn->quoteIdentifier($name);
 
@@ -36,9 +36,9 @@ class Pgsql extends \Doctrine1\Export
      * @param  string $name name of the database that should be dropped
      * @throws PDOException
      * @access public
-     * @return string
+     * @return string|string[]
      */
-    public function dropDatabaseSql($name)
+    public function dropDatabaseSql(string $name): string|array
     {
         $query = 'DROP DATABASE ' . $this->conn->quoteIdentifier($name);
 
@@ -79,25 +79,7 @@ class Pgsql extends \Doctrine1\Export
         return $query;
     }
 
-    /**
-     * generates the sql for altering an existing table on postgresql
-     *
-     * @param  string  $name    name of the table that is intended to be changed.
-     * @phpstan-param array{
-     *   add?: Column[],
-     *   remove?: string[],
-     *   change?: array<string, Column>,
-     *   rename?: array<string, string>,
-     *   name?: string,
-     * } $changes
-     * @param  array   $changes associative array that contains the details of each type      *
-     * @param  boolean $check   indicates whether the function should just check if the DBMS driver
-     *                          can perform the requested table alterations if the value is true or
-     *                          actually perform them otherwise.
-     * @see    \Doctrine1\Export::alterTable()
-     * @return array|true
-     */
-    public function alterTableSql($name, array $changes, $check = false)
+    public function alterTableSql(string $name, array $changes): array
     {
         $qName = $this->conn->quoteIdentifier($name, true);
 
@@ -114,26 +96,22 @@ class Pgsql extends \Doctrine1\Export
             }
         }
 
-        if ($check) {
-            return true;
-        }
-
         $sql = [];
 
-        if (isset($changes['add']) && is_array($changes['add'])) {
+        if (isset($changes['add'])) {
             foreach ($changes['add'] as $field) {
                 $sql[] = "ALTER TABLE $qName ADD {$this->getDeclaration($field)}";
             }
         }
 
-        if (isset($changes['remove']) && is_array($changes['remove'])) {
+        if (isset($changes['remove'])) {
             foreach ($changes['remove'] as $fieldName) {
                 $fieldName = $this->conn->quoteIdentifier($fieldName, true);
                 $sql[] = "ALTER TABLE $qName DROP $fieldName";
             }
         }
 
-        if (isset($changes['change']) && is_array($changes['change'])) {
+        if (isset($changes['change'])) {
             foreach ($changes['change'] as $fieldName => $field) {
                 $fieldName = $this->conn->quoteIdentifier($fieldName, true);
 
@@ -148,7 +126,7 @@ class Pgsql extends \Doctrine1\Export
             }
         }
 
-        if (isset($changes['rename']) && is_array($changes['rename'])) {
+        if (isset($changes['rename'])) {
             foreach ($changes['rename'] as $oldFieldName => $fieldName) {
                 $oldFieldName = $this->conn->quoteIdentifier($oldFieldName, true);
                 $sql[]     = "ALTER TABLE $qName RENAME COLUMN $oldFieldName TO {$this->conn->quoteIdentifier($fieldName, true)}";
@@ -161,71 +139,6 @@ class Pgsql extends \Doctrine1\Export
         }
 
         return $sql;
-    }
-
-    /**
-     * alter an existing table
-     *
-     * @param string  $name    name of the table that is intended to be changed.
-     * @param array   $changes associative array that contains the details of each type
-     *                         of change that is intended to be performed. The types of
-     *                         changes that are currently supported are defined as
-     *                         follows: name New name for the table. add Associative
-     *                         array with the names of fields to be added as indexes of
-     *                         the array. The value of each entry of the array should
-     *                         be set to another associative array with the properties
-     *                         of the fields to be added. The properties of the fields
-     *                         should be the same as defined by the Metabase parser.
-     *                         remove Associative array with the names of fields to be
-     *                         removed as indexes of the array. Currently the values
-     *                         assigned to each entry are ignored. An empty array
-     *                         should be used for future compatibility. rename
-     *                         Associative array with the names of fields to be renamed
-     *                         as indexes of the array. The value of each entry of the
-     *                         array should be set to another associative array with
-     *                         the entry named name with the new field name and the
-     *                         entry named Declaration that is expected to contain the
-     *                         portion of the field declaration already in DBMS
-     *                         specific SQL code as it is used in the CREATE TABLE
-     *                         statement. change Associative array with the names of
-     *                         the fields to be changed as indexes of the array. Keep
-     *                         in mind that if it is intended to change either the name
-     *                         of a field and any other properties, the change array
-     *                         entries should have the new names of the fields as array
-     *                         indexes. The value of each entry of the array should be
-     *                         set to another associative array with the properties of
-     *                         the fields to that are meant to be changed as array
-     *                         entries. These entries should be assigned to the new
-     *                         values of the respective properties. The properties of
-     *                         the fields should be the same as defined by the Metabase
-     *                         parser. Example array( 'name' => 'userlist', 'add' =>
-     *                         array( 'quota' => array( 'type' => 'integer', 'unsigned'
-     *                         => 1 ) ), 'remove' => array( 'file_limit' => array(),
-     *                         'time_limit' => array() ), 'change' => array( 'name' =>
-     *                         array( 'length' => '20', 'definition' => array( 'type'
-     *                         => 'text', 'length' => 20, ), ) ), 'rename' => array(
-     *                         'sex' => array( 'name' => 'gender', 'definition' =>
-     *                         array( 'type' => 'text', 'length' => 1, 'default' =>
-     *                         'M', ), ) ) )
-     *
-     * @param  boolean $check   indicates whether the function should just check if the DBMS driver
-     *                          can perform the requested table alterations if the value is true or
-     *                          actually perform them otherwise.
-     * @throws \Doctrine1\Connection\Exception
-     * @return true|array
-     */
-    public function alterTable($name, array $changes, $check = false)
-    {
-        $sql = $this->alterTableSql($name, $changes, $check);
-
-        if ($check === true) {
-            return $sql;
-        }
-
-        foreach ($sql as $query) {
-            $this->conn->exec($query);
-        }
-        return true;
     }
 
     /**
@@ -247,13 +160,7 @@ class Pgsql extends \Doctrine1\Export
                     ($start < 1 ? ' MINVALUE ' . $start : '') . ' START ' . $start;
     }
 
-    /**
-     * drop existing sequence
-     *
-     * @param  string $sequenceName name of the sequence to be dropped
-     * @return string
-     */
-    public function dropSequenceSql($sequenceName)
+    public function dropSequenceSql(string $sequenceName): string
     {
         $sequenceName = $this->conn->quoteIdentifier($this->conn->formatter->getSequenceName($sequenceName), true);
         return 'DROP SEQUENCE ' . $sequenceName;

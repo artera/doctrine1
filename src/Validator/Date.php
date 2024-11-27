@@ -6,7 +6,7 @@ use Laminas\Validator\AbstractValidator;
 
 class Date extends AbstractValidator
 {
-    public function isValid($value)
+    public function isValid(mixed $value): bool
     {
         if ($value === null || $value instanceof \DateTimeInterface) {
             return true;

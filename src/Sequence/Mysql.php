@@ -40,10 +40,8 @@ class Mysql extends \Doctrine1\Sequence
 
         $value = (int) $this->lastInsertId();
 
-        if (is_numeric($value)) {
-            $query = "DELETE FROM " . $sequenceName . " WHERE " . $seqcolName . " < " . $value;
-            $this->conn->exec($query);
-        }
+        $query = "DELETE FROM " . $sequenceName . " WHERE " . $seqcolName . " < " . $value;
+        $this->conn->exec($query);
 
         return $value;
     }

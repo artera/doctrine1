@@ -70,31 +70,23 @@ class Pgsql extends \Doctrine1\Connection
         return $item;
     }
 
-    public function modifyLimitQuery(string $query, ?int $limit = null, ?int $offset = null, bool $isManip = false): string
+    public function modifyLimitQuery(string $query, ?int $limit = null, ?int $offset = null): string
     {
-        if ($limit > 0) {
-            $query = rtrim($query);
-
-            if (substr($query, -1) == ";") {
-                $query = substr($query, 0, -1);
-            }
-
-            if ($isManip) {
-                $manip = preg_replace('/^(DELETE FROM|UPDATE).*$/', '\\1', $query);
-                // $match was previously undefined, setting as an empty array for static analysis
-                // as PHP implicitly makes the empty array when accessed below. Behavior here probably isn't
-                // working as originally expected
-                $match = [];
-                $from = $match[2];
-                $where = $match[3];
-                $query = "$manip $from WHERE ctid=(SELECT ctid FROM $from $where LIMIT $limit)";
-            } else {
-                $query .= " LIMIT $limit";
-                if (!empty($offset)) {
-                    $query .= " OFFSET $offset";
-                }
-            }
+        if (!$limit || $limit < 0) {
+            return $query;
         }
+
+        $query = rtrim($query);
+
+        if (substr($query, -1) == ";") {
+            $query = substr($query, 0, -1);
+        }
+
+        $query .= " LIMIT $limit";
+        if (!empty($offset)) {
+            $query .= " OFFSET $offset";
+        }
+
         return $query;
     }
 
@@ -123,7 +115,7 @@ class Pgsql extends \Doctrine1\Connection
                 ];
             } else {
                 $serverInfo = [
-                    "major" => isset($tmp[0]) ? $tmp[0] : null,
+                    "major" => $tmp[0],
                     "minor" => isset($tmp[1]) ? $tmp[1] : null,
                     "patch" => isset($tmp[2]) ? $tmp[2] : null,
                     "extra" => null,

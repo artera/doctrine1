@@ -16,7 +16,7 @@ abstract class Task
 
     /**
      * treat as protected
-     * @var string|null
+     * @var class-string<self>|null
      */
     public $taskName = null;
 
@@ -56,7 +56,7 @@ abstract class Task
         $taskName = $this->getTaskName();
 
         //Derive the task name only if it wasn't entered at design-time
-        if ($taskName === null || !strlen($taskName)) {
+        if ($taskName === null) {
             $taskName = self::deriveTaskName(get_class($this));
         }
 
@@ -88,9 +88,8 @@ abstract class Task
 
     public function notify(?string $notification = null): ?string
     {
-        if (is_object($this->dispatcher) && method_exists($this->dispatcher, 'notify')) {
+        if (is_object($this->dispatcher)) {
             $args = func_get_args();
-
             return call_user_func_array([$this->dispatcher, 'notify'], $args);
         } elseif ($notification !== null) {
             return $notification;
@@ -157,7 +156,7 @@ abstract class Task
      */
     public function getArgument($name, $default = null)
     {
-        if (isset($this->arguments[$name]) && $this->arguments[$name] !== null) {
+        if (isset($this->arguments[$name])) {
             return $this->arguments[$name];
         } else {
             return $default;
@@ -190,26 +189,23 @@ abstract class Task
      *
      * @param  string $taskName
      * @return bool
+     * @phpstan-assert-if-true class-string<self> $taskName
      */
-    protected static function validateTaskName($taskName)
+    protected static function validateTaskName(string $taskName): bool
     {
         /*
          * This follows the _apparent_ naming convention.  The key thing is to prevent the use of characters that would
          * break a command string - we definitely can't allow spaces, for example.
          */
-        return (bool) preg_match('/^[a-z0-9][a-z0-9\-]*$/', $taskName);
+        return is_subclass_of($taskName, self::class) && (bool) preg_match('/^[a-z0-9][a-z0-9\-]*$/', $taskName);
     }
 
     /**
      * Sets the name of the task, the name that's used to invoke it through a CLI
      *
-     * @param string $taskName
-     *
      * @throws InvalidArgumentException If the task name is invalid
-     *
-     * @return void
      */
-    protected function setTaskName($taskName)
+    protected function setTaskName(string $taskName): void
     {
         if (!self::validateTaskName($taskName)) {
             throw new InvalidArgumentException(
@@ -221,11 +217,9 @@ abstract class Task
     }
 
     /**
-     * getTaskName
-     *
-     * @return string|null $taskName
+     * @phpstan-return class-string<self>|null $taskName
      */
-    public function getTaskName()
+    public function getTaskName(): ?string
     {
         return $this->taskName;
     }

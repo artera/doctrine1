@@ -542,60 +542,6 @@ class Core
     }
 
     /**
-     * Migrate database to specified $to version. Migrates from current to latest if you do not specify.
-     *
-     * @param string $migrationsPath Path to migrations directory which contains your migration classes
-     * @param int|null    $to             Version you wish to migrate to.
-     *
-     * @throws Migration\Exception
-     */
-    public static function migrate(string $migrationsPath, ?int $to = null): int|bool|null
-    {
-        $migration = new Migration($migrationsPath);
-        return $migration->migrate($to);
-    }
-
-    /**
-     * Generate new migration class skeleton
-     *
-     * @param  string $className      Name of the Migration class to generate
-     * @param  string $migrationsPath Path to directory which contains your migration classes
-     * @return mixed
-     */
-    public static function generateMigrationClass(string $className, string $migrationsPath): mixed
-    {
-        $builder = new Migration\Builder($migrationsPath);
-
-        return $builder->generateMigrationClass($className);
-    }
-
-    /**
-     * Generate a set of migration classes from an existing database
-     *
-     * @param  string $migrationsPath
-     * @return bool
-     * @throws Migration\Exception
-     */
-    public static function generateMigrationsFromDb(string $migrationsPath): bool
-    {
-        $builder = new Migration\Builder($migrationsPath);
-
-        return $builder->generateMigrationsFromDb();
-    }
-
-    /**
-     * Generate a set of migration classes from an existing set of models
-     *
-     * @param  string  $migrationsPath Path to your Doctrine migration classes
-     * @param  string|null  $modelsPath     Path to your Doctrine model classes
-     */
-    public static function generateMigrationsFromModels(string $migrationsPath, ?string $modelsPath = null): bool
-    {
-        $builder = new Migration\Builder($migrationsPath);
-        return $builder->generateMigrationsFromModels($modelsPath);
-    }
-
-    /**
      * Get the Table object for the passed model
      *
      * @phpstan-param class-string<Record> $componentName

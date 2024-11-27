@@ -162,7 +162,7 @@ class Sqlite extends \Doctrine1\Import
      * @param  string $table database table name
      * @return array
      */
-    public function listTableTriggers($table)
+    public function listTableTriggers(?string $table): array
     {
         return [];
     }

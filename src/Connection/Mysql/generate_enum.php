@@ -1,6 +1,10 @@
 #!/usr/bin/env php
 <?php
+
 $file = fopen("php://stdin", "r");
+if (!$file) {
+    return;
+}
 
 $fields_separator = "; ";
 $code = null;
@@ -37,10 +41,10 @@ while (($line = fgets($file)) !== false) {
 
         if (strpos($message, "%") !== false && $message !== "%s") {
             $message = preg_quote($message);
-            $message = preg_replace("/%(?:(?:\\\\\\.)?(?:\\\\\\*)?s|\d{0,2}x)/", "(.*?)", $message);
-            $message = preg_replace("/%(?:l?l?[ud]|zu|\d{0,2}d)/", "(\d+?)", $message);
-            $message = preg_replace("/%f/", "(\d+?(?:.\d+)?)", $message);
-            $message = preg_replace("/%c/", "$1(.)", $message);
+            $message = preg_replace("/%(?:(?:\\\\\\.)?(?:\\\\\\*)?s|\d{0,2}x)/", "(.*?)", $message) ?? $message;
+            $message = preg_replace("/%(?:l?l?[ud]|zu|\d{0,2}d)/", "(\d+?)", $message) ?? $message;
+            $message = preg_replace("/%f/", "(\d+?(?:.\d+)?)", $message) ?? $message;
+            $message = preg_replace("/%c/", "$1(.)", $message) ?? $message;
             $message = var_export($message, true);
             $matchformat .= "            self::$descr => $message,\n";
         }
@@ -69,4 +73,3 @@ echo <<<EOF
 }
 
 EOF;
-

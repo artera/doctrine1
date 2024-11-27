@@ -6,7 +6,7 @@ use Laminas\Validator\AbstractValidator;
 
 class Timestamp extends AbstractValidator
 {
-    public function isValid($value)
+    public function isValid(mixed $value): bool
     {
         if ($value === null || $value instanceof \DateTimeInterface) {
             return true;
@@ -15,7 +15,7 @@ class Timestamp extends AbstractValidator
         $splitChar = false !== strpos($value, 'T') ? 'T' : ' ';
 
         $e    = explode($splitChar, trim($value));
-        $date = isset($e[0]) ? $e[0] : null;
+        $date = $e[0];
         $time = isset($e[1]) ? $e[1] : null;
 
         $dateValidator = new \Doctrine1\Validator\Date();

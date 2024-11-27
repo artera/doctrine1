@@ -1,131 +1,157 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Return type \\(Doctrine1\\\\Adapter\\\\Statement\\\\Mock\\|null\\) of method Doctrine1\\\\Adapter\\\\Mock\\:\\:prepare\\(\\) should be compatible with return type \\(PDOStatement\\|false\\) of method PDO\\:\\:prepare\\(\\)$#"
+			message: '#^Return type \(Doctrine1\\Adapter\\Statement\\Mock\|null\) of method Doctrine1\\Adapter\\Mock\:\:prepare\(\) should be compatible with return type \(PDOStatement\|false\) of method PDO\:\:prepare\(\)$#'
+			identifier: method.childReturnType
 			count: 1
 			path: src/Adapter/Mock.php
 
 		-
-			message: "#^Call to sprintf contains 1 placeholder, 2 values given\\.$#"
+			message: '#^Call to function is_object\(\) with Doctrine1\\Adapter\\Mock will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/Adapter/Statement/Mock.php
+
+		-
+			message: '#^Call to method Doctrine1\\Cli\:\:classIsTask\(\) with class\-string\<Doctrine1\\Task\> will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: src/Cli.php
+
+		-
+			message: '#^Parameter &\$className by\-ref type of method Doctrine1\\Cli\:\:taskNameIsRegistered\(\) expects class\-string\<Doctrine1\\Task\>\|null, string given\.$#'
+			identifier: parameterByRef.type
+			count: 1
+			path: src/Cli.php
+
+		-
+			message: '#^Call to sprintf contains 1 placeholder, 2 values given\.$#'
+			identifier: argument.sprintf
 			count: 1
 			path: src/Cli/Formatter.php
 
 		-
-			message: "#^Constructor of class Doctrine1\\\\Connection\\\\Mock has an unused parameter \\$adapter\\.$#"
+			message: '#^Constructor of class Doctrine1\\Connection\\Mock has an unused parameter \$adapter\.$#'
+			identifier: constructor.unusedParameter
 			count: 1
 			path: src/Connection/Mock.php
 
 		-
-			message: "#^Constructor of class Doctrine1\\\\Connection\\\\Mock has an unused parameter \\$manager\\.$#"
+			message: '#^Constructor of class Doctrine1\\Connection\\Mock has an unused parameter \$manager\.$#'
+			identifier: constructor.unusedParameter
 			count: 1
 			path: src/Connection/Mock.php
 
 		-
-			message: "#^Offset 2 does not exist on array\\{\\}\\.$#"
+			message: '#^Call to function is_array\(\) with Doctrine1\\Column will always evaluate to false\.$#'
+			identifier: function.impossibleType
 			count: 1
-			path: src/Connection/Pgsql.php
+			path: src/Export.php
 
 		-
-			message: "#^Offset 3 does not exist on array\\{\\}\\.$#"
+			message: '#^Method Doctrine1\\Export\:\:createSequenceSql\(\) has Doctrine1\\Connection\\Exception in PHPDoc @throws tag but it''s not thrown\.$#'
+			identifier: throws.unusedType
 			count: 1
-			path: src/Connection/Pgsql.php
+			path: src/Export.php
 
 		-
-			message: "#^Argument of an invalid type array\\|true supplied for foreach, only iterables are supported\\.$#"
+			message: '#^Parameter \#2 \$definition of method Doctrine1\\Export\\Mysql\<Connection of Doctrine1\\Connection\\Mysql\>\:\:getIndexDeclaration\(\) expects array\{type\?\: string, fields\?\: array\<string, array\<mixed\>\|string\>\}, array\{fields\: non\-empty\-array\<int\|string, array\{\}\>\}\|array\{type\?\: string, fields\?\: array\<string\>\} given\.$#'
+			identifier: argument.type
 			count: 1
-			path: src/Export/Pgsql.php
+			path: src/Export/Mysql.php
 
 		-
-			message: "#^Parameter \\#1 \\$string of function strtolower expects string, string\\|null given\\.$#"
+			message: '#^Cannot access an offset on array\|Doctrine1\\None\|Traversable\|null\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Hydrator/Graph.php
+
+		-
+			message: '#^Cannot access offset mixed on array\|Doctrine1\\None\|Traversable\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Hydrator/Graph.php
+
+		-
+			message: '#^Cannot access offset mixed on array\|Doctrine1\\None\|Traversable\|null\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Hydrator/Graph.php
+
+		-
+			message: '#^Method Doctrine1\\Hydrator\\Graph\:\:hydrateResultSet\(\) should return iterable\<\(int\|string\), mixed\>\|Traversable but returns \(Collection of array\|Traversable\)\|Doctrine1\\None\|null\.$#'
+			identifier: return.type
+			count: 2
+			path: src/Hydrator/Graph.php
+
+		-
+			message: '#^Parameter \#1 \$coll of method Doctrine1\\Hydrator\\Graph\<Collection of array\|Traversable,Item\>\:\:getLastKey\(\) expects Collection of array\|Traversable, array\|\(ArrayAccess&Traversable\) given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Hydrator/Graph.php
+
+		-
+			message: '#^Parameter \$values of class Doctrine1\\Column constructor expects class\-string\<BackedEnum\>\|list\<string\>, array\<mixed\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Import/Schema.php
+
+		-
+			message: '#^Parameter \#1 \$string of function strtolower expects string, string\|null given\.$#'
+			identifier: argument.type
 			count: 1
 			path: src/Import/Sqlite.php
 
 		-
-			message: "#^Variable \\$autoincrementColumn might not be defined\\.$#"
-			count: 1
-			path: src/Migration/Base.php
-
-		-
-			message: "#^Variable \\$autoincrementLength might not be defined\\.$#"
-			count: 1
-			path: src/Migration/Base.php
-
-		-
-			message: "#^Variable \\$autoincrementOptions might not be defined\\.$#"
-			count: 1
-			path: src/Migration/Base.php
-
-		-
-			message: "#^Variable \\$autoincrementType might not be defined\\.$#"
-			count: 1
-			path: src/Migration/Base.php
-
-		-
-			message: "#^Parameter \\#1 \\$qualifiedName of method SimpleXMLElement\\:\\:addChild\\(\\) expects string, string\\|null given\\.$#"
-			count: 2
-			path: src/Parser/Xml.php
-
-		-
-			message: "#^Call to function is_int\\(\\) with string\\|null will always evaluate to false\\.$#"
-			count: 1
-			path: src/Parser/Xml.php
-
-		-
-			message: "#^Parameter \\#1 \\$simpleXml of method Doctrine1\\\\Parser\\\\Xml\\:\\:prepareData\\(\\) expects SimpleXMLElement\\|string, SimpleXMLElement\\|false given\\.$#"
-			count: 1
-			path: src/Parser/Xml.php
-
-		-
-			message: "#^Variable \\$func might not be defined\\.$#"
+			message: '#^Variable \$func might not be defined\.$#'
+			identifier: variable.undefined
 			count: 1
 			path: src/Query/Check.php
 
 		-
-			message: "#^Call to an undefined method Doctrine1\\\\Query\\\\Condition\\:\\:load\\(\\)\\.$#"
+			message: '#^Call to an undefined method Doctrine1\\Query\\Condition\:\:load\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/Query/Condition.php
 
 		-
-			message: "#^Result of && is always true\\.$#"
-			count: 1
-			path: src/Query/Groupby.php
-
-		-
-			message: "#^Result of && is always true\\.$#"
-			count: 1
-			path: src/Query/Orderby.php
-
-		-
-			message: "#^Call to an undefined method Doctrine1\\\\Query\\\\Set\\:\\:parseLiteralValue\\(\\)\\.$#"
+			message: '#^Call to an undefined method Doctrine1\\Query\\Set\:\:parseLiteralValue\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/Query/Set.php
 
 		-
-			message: "#^Argument of an invalid type array\\<int, string\\>\\|false supplied for foreach, only iterables are supported\\.$#"
+			message: '#^Call to function is_string\(\) with string will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
 			count: 2
-			path: src/Query/Tokenizer.php
+			path: src/Record.php
 
 		-
-			message: "#^Return type \\(void\\) of method Doctrine1\\\\Record\\\\Filter\\\\Standard\\:\\:filterSet\\(\\) should be compatible with return type \\(Doctrine1\\\\Record\\) of method Doctrine1\\\\Record\\\\Filter\\:\\:filterSet\\(\\)$#"
+			message: '#^Parameter \$values of class Doctrine1\\Column constructor expects class\-string\<BackedEnum\>\|list\<string\>, array\<mixed\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Record.php
+
+		-
+			message: '#^Return type \(void\) of method Doctrine1\\Record\\Filter\\Standard\:\:filterSet\(\) should be compatible with return type \(Doctrine1\\Record\) of method Doctrine1\\Record\\Filter\:\:filterSet\(\)$#'
+			identifier: method.childReturnType
 			count: 1
 			path: src/Record/Filter/Standard.php
 
 		-
-			message: "#^Variable \\$rel in isset\\(\\) always exists and is not nullable\\.$#"
+			message: '#^Call to function array_key_exists\(\) with ''refTable'' and array\{alias\: string, foreign\: string, local\: string, class\: class\-string\<Doctrine1\\Record\>, type\: int, table\: Doctrine1\\Table, localTable\: Doctrine1\\Table, name\?\: string\|null, \.\.\.\} will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/Relation/Association.php
+
+		-
+			message: '#^Variable \$rel in isset\(\) always exists and is not nullable\.$#'
+			identifier: isset.variable
 			count: 1
 			path: src/Relation/Parser.php
 
 		-
-			message: "#^Cannot call method getConfig\\(\\) on Doctrine1\\\\Cli\\|null\\.$#"
+			message: '#^Cannot call method getConfig\(\) on Doctrine1\\Cli\|null\.$#'
+			identifier: method.nonObject
 			count: 1
 			path: src/Task/GenerateModelsDb.php
-
-		-
-			message: "#^Call to function is_array\\(\\) with mixed will always evaluate to false\\.$#"
-			count: 2
-			path: src/Validator.php
-
-		-
-			message: "#^Parameter \\#1 \\$key of function array_key_exists expects int\\|string, bool\\|float\\|int\\|string\\|null given\\.$#"
-			count: 1
-			path: src/Validator/ErrorStack.php

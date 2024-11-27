@@ -140,13 +140,9 @@ class Hook
      *
      * @param  array $params an array containing all fields which the built query
      *                       should be ordered by
-     * @return boolean              whether or not the hooking was successful
      */
-    public function hookOrderby($params)
+    public function hookOrderby(array $params): void
     {
-        if (!is_array($params)) {
-            return false;
-        }
         foreach ($params as $name) {
             $e = explode(' ', $name);
 
@@ -169,7 +165,6 @@ class Hook
                 }
             }
         }
-        return true;
     }
 
     /**

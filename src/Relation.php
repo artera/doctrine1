@@ -206,7 +206,6 @@ abstract class Relation implements \ArrayAccess
     public function offsetSet($offset, $value): void
     {
         if (isset($this->definition[$offset])) {
-            /** @phpstan-ignore-next-line */
             $this->definition[$offset] = $value;
         }
     }

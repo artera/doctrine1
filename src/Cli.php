@@ -11,39 +11,22 @@ use Throwable;
  */
 class Cli
 {
-    /**
-     * The name of the Doctrine Task base class
-     *
-     * @var string
-     */
     public const TASK_BASE_CLASS = Task::class;
 
-    /**
-     * @var string
-     */
-    protected $scriptName = null;
+    protected ?string $scriptName = null;
 
-    /**
-     * @var array
-     */
-    private $config;
+    private array $config = [];
 
-    /**
-     * @var Cli\Formatter
-     */
-    private $formatter;
+    private Cli\Formatter $formatter;
 
     /**
      * An array, keyed on class name, containing task instances
      *
-     * @var array
+     * @phpstan-var array<string, Task>
      */
-    private $registeredTask = [];
+    private array $registeredTask = [];
 
-    /**
-     * @var Task
-     */
-    private $taskInstance;
+    private Task $taskInstance;
 
     public function __construct(array $config = [], ?Cli\Formatter $formatter = null)
     {
@@ -54,10 +37,8 @@ class Cli
 
     /**
      * @param array $config
-     *
-     * @return void
      */
-    public function setConfig(array $config)
+    public function setConfig(array $config): void
     {
         $this->config = $config;
     }
@@ -65,7 +46,7 @@ class Cli
     /**
      * @return array
      */
-    public function getConfig()
+    public function getConfig(): array
     {
         return $this->config;
     }
@@ -83,11 +64,9 @@ class Cli
     /**
      * Returns the specified value from the config, or the default value, if specified
      *
-     * @param  string $name
-     * @return mixed
      * @throws \OutOfBoundsException If the element does not exist in the config
      */
-    public function getConfigValue($name/*, $defaultValue*/)
+    public function getConfigValue(string $name): mixed
     {
         if (!isset($this->config[$name])) {
             if (func_num_args() > 1) {
@@ -107,13 +86,8 @@ class Cli
      * element is not set
      *
      * For strict checking, set $strict to TRUE - the default is FALSE
-     *
-     * @param  string $name
-     * @param  mixed  $value
-     * @param  bool   $strict
-     * @return bool
      */
-    public function hasConfigValue($name, $value = null, $strict = false)
+    public function hasConfigValue(string $name, mixed $value = null, bool $strict = false): bool
     {
         if (isset($this->config[$name])) {
             if (func_num_args() < 2) {
@@ -133,11 +107,9 @@ class Cli
     /**
      * Sets the array of registered tasks
      *
-     * @param array $registeredTask
-     *
-     * @return void
+     * @phpstan-param array<string, Task> $registeredTask
      */
-    public function setRegisteredTasks(array $registeredTask)
+    public function setRegisteredTasks(array $registeredTask): void
     {
         $this->registeredTask = $registeredTask;
     }
@@ -145,9 +117,9 @@ class Cli
     /**
      * Returns an array containing the registered tasks
      *
-     * @return array
+     * @phpstan-return array<string, Task>
      */
-    public function getRegisteredTasks()
+    public function getRegisteredTasks(): array
     {
         return $this->registeredTask;
     }
@@ -158,7 +130,7 @@ class Cli
      * @param  string $className
      * @return bool
      */
-    public function taskClassIsRegistered($className)
+    public function taskClassIsRegistered($className): bool
     {
         return isset($this->registeredTask[$className]);
     }
@@ -173,7 +145,7 @@ class Cli
      * @phpstan-param class-string<Task>|null $className
      * @return      bool
      */
-    public function taskNameIsRegistered($taskName, &$className = null)
+    public function taskNameIsRegistered(string $taskName, string &$className = null): bool
     {
         foreach ($this->getRegisteredTasks() as $currClassName => $task) {
             if ($task->getTaskName() == $taskName) {
@@ -185,20 +157,12 @@ class Cli
         return false;
     }
 
-    /**
-     * @param Task $task Task
-     *
-     * @return void
-     */
-    public function setTaskInstance(Task $task)
+    public function setTaskInstance(Task $task): void
     {
         $this->taskInstance = $task;
     }
 
-    /**
-     * @return Task
-     */
-    public function getTaskInstance()
+    public function getTaskInstance(): Task
     {
         return $this->taskInstance;
     }
@@ -209,10 +173,8 @@ class Cli
      *
      * The second round of registering will pick-up loaded custom Tasks.  Methods are provided that will allow users to
      * register Tasks loaded after creating an instance of Cli.
-     *
-     * @return void
      */
-    protected function includeAndRegisterTaskClasses()
+    protected function includeAndRegisterTaskClasses(): void
     {
         $this->includeAndRegisterDoctrineTaskClasses();
 
@@ -227,11 +189,9 @@ class Cli
      *
      * If no directory is given it looks in the default Doctrine1/Task folder for the core tasks
      *
-     * @param mixed $directories Can be a string path or array of paths
-     *
-     * @return void
+     * @param string|string[] $directories Can be a string path or array of paths
      */
-    protected function includeAndRegisterDoctrineTaskClasses($directories = null)
+    protected function includeAndRegisterDoctrineTaskClasses(string|array $directories = null): void
     {
         if ($directories === null) {
             $directories = Core::getPath() . '/src/Task';
@@ -256,11 +216,10 @@ class Cli
      * This means that a file called "Foo.php", say, will be expected to contain a Task class called
      * "Task\Foo".  Hence the method's name, "include*Doctrine*TaskClasses".
      *
-     * @param  string $directory
-     * @return array $taskClassesIncluded
+     * @phpstan-return list<class-string<Task>> $taskClassesIncluded
      * @throws \InvalidArgumentException If the directory does not exist
      */
-    protected function includeDoctrineTaskClasses($directory)
+    protected function includeDoctrineTaskClasses(string $directory): array
     {
         if (!is_dir($directory)) {
             throw new \InvalidArgumentException("The directory \"{$directory}\" does not exist");
@@ -284,6 +243,7 @@ class Cli
             $expectedClassName = self::TASK_BASE_CLASS . '\\' . $matches[1];
 
             if (class_exists($expectedClassName) && $this->classIsTask($expectedClassName)) {
+                /** @phpstan-var class-string<Task> $expectedClassName */
                 $taskClassesIncluded[] = $expectedClassName;
             }
         }
@@ -294,15 +254,12 @@ class Cli
     /**
      * Registers the specified _included_ task-class
      *
-     * @param string $className
      * @phpstan-param class-string<Task> $className
      *
      * @throws \InvalidArgumentException If the class does not exist or the task-name is blank
      * @throws \DomainException If the class is not a Doctrine Task
-     *
-     * @return void
      */
-    public function registerTaskClass($className)
+    public function registerTaskClass(string $className): void
     {
         // Simply ignore registered classes
         if ($this->taskClassIsRegistered($className)) {
@@ -323,15 +280,12 @@ class Cli
     /**
      * Returns TRUE if the specified class is a Task, or FALSE otherwise
      *
-     * @param  string $className
      * @phpstan-param class-string $className
-     * @phpstan-assert class-string<Task> $className
-     * @return bool
+     * @phpstan-assert-if-true class-string<Task> $className
      */
-    protected function classIsTask($className)
+    protected function classIsTask(string $className): bool
     {
-        $reflectionClass = new \ReflectionClass($className);
-        return (bool) $reflectionClass->isSubclassOf(self::TASK_BASE_CLASS);
+        return is_subclass_of($className, self::TASK_BASE_CLASS);
     }
 
     /**
@@ -339,14 +293,13 @@ class Cli
      *
      * Displays a message, and returns FALSE, if there were problems instantiating the class
      *
-     * @param       string       $className
      * @param       Cli $cli       Cli
      * @return      Task
      * @phpstan-template T of Task
      * @phpstan-param class-string<T> $className
      * @phpstan-return T
      */
-    protected function createTaskInstance($className, Cli $cli)
+    protected function createTaskInstance(string $className, Cli $cli): Task
     {
         return new $className($cli);
     }
@@ -355,10 +308,8 @@ class Cli
      * Registers all loaded classes - by default - or the specified loaded Task classes
      *
      * This method will skip registered task classes, so it can be safely called many times over
-     *
-     * @return void
      */
-    public function registerIncludedTaskClasses()
+    public function registerIncludedTaskClasses(): void
     {
         foreach (get_declared_classes() as $className) {
             if ($this->classIsTask($className)) {
@@ -371,11 +322,10 @@ class Cli
     /**
      * Notify the formatter of a message
      *
-     * @param  string $notification The notification message
+     * @param  ?string $notification The notification message
      * @param  string $style        Style to format the notification with(INFO, ERROR)
-     * @return void
      */
-    public function notify($notification = null, $style = 'HEADER')
+    public function notify(?string $notification = null, string $style = 'HEADER'): void
     {
         $formatter = $this->getFormatter();
 
@@ -385,11 +335,8 @@ class Cli
 
     /**
      * Formats, and then returns, the message in the specified exception
-     *
-     * @param  Throwable $exception
-     * @return string
      */
-    protected function formatExceptionMessage(Throwable $exception)
+    protected function formatExceptionMessage(Throwable $exception): string
     {
         $message = $exception->getMessage();
 
@@ -419,12 +366,11 @@ class Cli
     /**
      * Public function to run the loaded task with the passed arguments
      *
-     * @param  array $args
-     * @return void
+     * @param  string[] $args
      * @throws Cli\Exception
      * @todo   Should know more about what we're attempting to run so feedback can be improved. Continue refactoring.
      */
-    public function run(array $args)
+    public function run(array $args): void
     {
         try {
             $this->scriptName = $args[0];
@@ -467,14 +413,10 @@ class Cli
     /**
      * Executes the task with the specified _prepared_ arguments
      *
-     * @param Task $task              Task
-     * @param array         $preparedArguments
-     *
+     * @param string[]         $preparedArguments
      * @throws Cli\Exception If required arguments are missing
-     *
-     * @return void
      */
-    protected function executeTask(Task $task, array $preparedArguments)
+    protected function executeTask(Task $task, array $preparedArguments): void
     {
         $task->setArguments($preparedArguments);
 
@@ -489,11 +431,11 @@ class Cli
      * Prepare the raw arguments for execution. Combines with the required and optional argument
      * list in order to determine a complete array of arguments for the task
      *
-     * @param  array $args Array of raw arguments
-     * @return array $prepared  Array of prepared arguments
+     * @param  string[] $args Array of raw arguments
+     * @return string[] $prepared  Array of prepared arguments
      * @todo   Continue refactoring for testing
      */
-    protected function prepareArgs(array $args)
+    protected function prepareArgs(array $args): array
     {
         $taskInstance = $this->getTaskInstance();
 
@@ -534,15 +476,8 @@ class Cli
 
     /**
      * Prints an index of all the available tasks in the CLI instance
-     *
-     * @param string|null $taskName
-     * @param bool        $full
-     *
-     * @todo Continue refactoring for testing
-     *
-     * @return void
      */
-    public function printTasks($taskName = null, $full = false)
+    public function printTasks(?string $taskName = null, bool $full = false): void
     {
         $formatter = $this->getFormatter();
         $config    = $this->getConfig();
@@ -550,7 +485,7 @@ class Cli
         $taskIndex = $formatter->format('Doctrine Command Line Interface', 'HEADER') . "\n\n";
 
         foreach ($this->getRegisteredTasks() as $task) {
-            if ($taskName && (strtolower($taskName) != strtolower($task->getTaskName()))) {
+            if ($taskName && strtolower($taskName) != strtolower($task->getTaskName() ?? '')) {
                 continue;
             }
 
@@ -603,16 +538,18 @@ class Cli
      * Used by Cli::loadTasks() and Cli::getLoadedTasks() to re-create their pre-refactoring behaviour
      *
      * @ignore
-     * @param  array $registeredTask
-     * @return array
+     * @phpstan-param array<string, Task> $registeredTask
+     * @phpstan-return array<string, string>
      */
-    private function createOldStyleTaskList(array $registeredTask)
+    private function createOldStyleTaskList(array $registeredTask): array
     {
         $taskNames = [];
 
         foreach ($registeredTask as $className => $task) {
             $taskName             = $task->getTaskName();
-            $taskNames[$taskName] = $taskName;
+            if ($taskName !== null) {
+                $taskNames[$taskName] = $taskName;
+            }
         }
 
         return $taskNames;

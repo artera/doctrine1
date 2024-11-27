@@ -481,24 +481,22 @@ class Mysql extends \Doctrine1\DataDict
                 preg_match_all('/\'((?:\'\'|[^\'])*)\'/', $field['type'], $matches);
                 $length = 0;
                 $fixed  = false;
-                if (is_array($matches)) {
-                    foreach ($matches[1] as &$value) {
-                        $value  = str_replace('\'\'', '\'', $value);
-                        $length = max($length, strlen($value));
-                    }
-                    if ($dbType === 'enum' && $length == '1' && count($matches[1]) == 2) {
-                        $type[] = 'boolean';
-                        if (preg_match('/^(is|has)/', $field['name'])) {
-                            $type = array_reverse($type);
-                        }
-                    }
-
-                    if ($dbType === 'set') {
-                        $length = strlen(implode(',', $matches[1]));
-                    }
-
-                    $values = $matches[1];
+                foreach ($matches[1] as &$value) {
+                    $value  = str_replace('\'\'', '\'', $value);
+                    $length = max($length, strlen($value));
                 }
+                if ($dbType === 'enum' && $length == '1' && count($matches[1]) == 2) {
+                    $type[] = 'boolean';
+                    if (preg_match('/^(is|has)/', $field['name'])) {
+                        $type = array_reverse($type);
+                    }
+                }
+
+                if ($dbType === 'set') {
+                    $length = strlen(implode(',', $matches[1]));
+                }
+
+                $values = $matches[1];
                 $type[] = 'integer';
                 break;
             case 'date':

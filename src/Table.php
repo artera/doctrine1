@@ -253,7 +253,6 @@ class Table extends Configurable implements \Countable
     {
         $class = $this->getComponentName();
         $record = new $class($this);
-        assert($record instanceof Record);
 
         /** @phpstan-var list<class-string<Record>> */
         $parents = array_values(class_parents($class) ?: []);
@@ -393,7 +392,7 @@ class Table extends Configurable implements \Countable
      */
     public function getColumnOwner(string $columnName): string
     {
-        return $this->columns[$columnName]?->owner ?? $this->getComponentName();
+        return $this->columns[$columnName]->owner ?? $this->getComponentName();
     }
 
     /**
@@ -1794,10 +1793,7 @@ class Table extends Configurable implements \Countable
         }
 
         foreach ($validators as $validatorName => $options) {
-            $validator = Validator::getValidator($validatorName);
-            if (!empty($options) && $validator instanceof AbstractValidator) {
-                $validator->setOptions($options);
-            }
+            $validator = Validator::getValidator($validatorName, $options);
             if (!$validator->isValid($value)) {
                 $errorStack->add($fieldName, $validator);
             }

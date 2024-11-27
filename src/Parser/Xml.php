@@ -24,7 +24,7 @@ class Xml extends \Doctrine1\Parser
         }
 
         foreach ($array as $key => $value) {
-            $key = preg_replace('/[^a-z]/i', '', $key);
+            $key = preg_replace('/[^a-z]/i', '', $key) ?? $key;
 
             if (is_array($value) && !empty($value)) {
                 $node = $xml->addChild($key);
@@ -59,6 +59,7 @@ class Xml extends \Doctrine1\Parser
         $contents = $this->doLoad($path);
 
         $simpleXml = simplexml_load_string($contents);
+        assert($simpleXml !== false);
 
         return $this->prepareData($simpleXml);
     }
@@ -81,20 +82,18 @@ class Xml extends \Doctrine1\Parser
         }
 
         foreach ($children as $element => $value) {
-            if ($value instanceof \SimpleXMLElement) {
-                $values = (array) $value->children();
+            $values = (array) $value->children();
 
-                if (count($values) > 0) {
-                    $return[$element] = $this->prepareData($value);
+            if (count($values) > 0) {
+                $return[$element] = $this->prepareData($value);
+            } else {
+                if (!isset($return[$element])) {
+                    $return[$element] = (string) $value;
                 } else {
-                    if (!isset($return[$element])) {
-                        $return[$element] = (string) $value;
+                    if (!is_array($return[$element])) {
+                        $return[$element] = [$return[$element], (string) $value];
                     } else {
-                        if (!is_array($return[$element])) {
-                            $return[$element] = [$return[$element], (string) $value];
-                        } else {
-                            $return[$element][] = (string) $value;
-                        }
+                        $return[$element][] = (string) $value;
                     }
                 }
             }

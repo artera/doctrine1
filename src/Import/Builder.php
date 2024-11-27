@@ -396,7 +396,7 @@ class Builder
                 $columnImplementation = $column->enumImplementation($manager);
                 $enumClassName = $column->enumClassName($manager, $gen->getNamespaceName() ?? $this->namespace);
 
-                if (!empty($enumClassName) && $columnImplementation !== null) {
+                if (!empty($enumClassName)) {
                     $path = $this->path . DIRECTORY_SEPARATOR . $this->classNameToFileName($enumClassName);
                     Lib::makeDirectories(dirname($path));
 
@@ -410,7 +410,7 @@ class Builder
                         if (preg_match_all('/^\s*case\s+(\w+)\s+=\s+(?:\'([^\']+)\'|(\d+));/uim', $code, $matchSets, PREG_SET_ORDER)) {
                             foreach ($matchSets as $matches) {
                                 $k = $matches[1];
-                                $v = $matches[2] ?: $matches[3];
+                                $v = empty($matches[2]) ? ($matches[3] ?? '') : $matches[2];
                                 $enumCaseNames[$v] = $k;
                             }
                         }
@@ -419,7 +419,7 @@ class Builder
                     $enumCases = [];
                     foreach ($column->stringValues() as $v) {
                         $k = array_key_exists($v, $enumCaseNames) ? $enumCaseNames[$v] : Inflector::classify($v);
-                        if (is_string($v) && !empty($v) && !empty($k)) {
+                        if (!empty($v) && !empty($k)) {
                             $enumCases[$k] = $v;
                         }
                     }

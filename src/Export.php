@@ -54,9 +54,9 @@ class Export extends Connection\Module
      * (this method is implemented by the drivers)
      *
      * @param  string $database name of the database that should be dropped
-     * @return string|array
+     * @return string|string[]
      */
-    public function dropDatabaseSql($database)
+    public function dropDatabaseSql(string $database): string|array
     {
         throw new Export\Exception("Drop database not supported by this driver.");
     }
@@ -119,7 +119,7 @@ class Export extends Connection\Module
      * @param  bool   $primary hint if the constraint is primary
      * @return int
      */
-    public function dropConstraint($table, $name, $primary = false)
+    public function dropConstraint(string $table, string $name, bool $primary = false): int
     {
         $table = $this->conn->quoteIdentifier($table);
         $name = $this->conn->quoteIdentifier($name);
@@ -157,11 +157,10 @@ class Export extends Connection\Module
      * dropSequenceSql
      * drop existing sequence
      *
-     * @throws Connection\Exception     if something fails at database level
+     * @throws Export\Exception     if something fails at database level
      * @param  string $sequenceName name of the sequence to be dropped
-     * @return string
      */
-    public function dropSequenceSql($sequenceName)
+    public function dropSequenceSql(string $sequenceName): string
     {
         throw new Export\Exception("Drop sequence not supported by this driver.");
     }
@@ -171,9 +170,8 @@ class Export extends Connection\Module
      * (this method is implemented by the drivers)
      *
      * @param  string $database name of the database that should be created
-     * @return void
      */
-    public function createDatabase($database)
+    public function createDatabase(string $database): void
     {
         $this->conn->execute($this->createDatabaseSql($database));
     }
@@ -182,10 +180,10 @@ class Export extends Connection\Module
      * create a new database
      * (this method is implemented by the drivers)
      *
+     * @throws Export\Exception     if something fails at database level
      * @param  string $database name of the database that should be created
-     * @return string
      */
-    public function createDatabaseSql($database)
+    public function createDatabaseSql(string $database): string
     {
         throw new Export\Exception("Create database not supported by this driver.");
     }
@@ -262,7 +260,6 @@ class Export extends Connection\Module
         $count = 0;
         foreach ($fields as $field) {
             if (is_array($field)) {
-                // @phpstan-ignore-line
                 throw new \InvalidArgumentException("Fields should be of class \Doctrine1\Column");
             }
 
@@ -504,17 +501,17 @@ class Export extends Connection\Module
      *                         'sex' => array( 'name' => 'gender', 'definition' =>
      *                         array( 'type' => 'text', 'length' => 1, 'default' =>
      *                         'M', ), ) ) )
-     *
-     * @param  boolean $check   indicates whether the function should just check if the DBMS driver
-     *                          can perform the requested table alterations if the value is true or
-     *                          actually perform them otherwise.
-     * @return void
+     * @phpstan-param array{
+     *   add?: Column[],
+     *   remove?: string[],
+     *   change?: array<string, Column>,
+     *   rename?: array<string, string>,
+     *   name?: string,
+     * } $changes
      */
-    public function alterTable($name, array $changes, $check = false)
+    public function alterTable(string $name, array $changes): void
     {
-        $sql = $this->alterTableSql($name, $changes, $check);
-
-        if (is_string($sql) && $sql) {
+        foreach ($this->alterTableSql($name, $changes) as $sql) {
             $this->conn->execute($sql);
         }
     }
@@ -524,14 +521,18 @@ class Export extends Connection\Module
      * (this method is implemented by the drivers)
      *
      * @param  string  $name    name of the table that is intended to be changed.
-     * @param  array   $changes associative array that contains the details of each type      *
-     * @param  boolean $check   indicates whether the function should just check if the DBMS driver
-     *                          can perform the requested table alterations if the value is true or
-     *                          actually perform them otherwise.
+     * @param  array   $changes associative array that contains the details of each type
      * @see    Export::alterTable()
-     * @return mixed
+     * @phpstan-param array{
+     *   add?: Column[],
+     *   remove?: string[],
+     *   change?: array<string, Column>,
+     *   rename?: array<string, string>,
+     *   name?: string,
+     * } $changes
+     * @return array
      */
-    public function alterTableSql($name, array $changes, $check = false)
+    public function alterTableSql(string $name, array $changes): array
     {
         throw new Export\Exception("Alter table not supported by this driver.");
     }
@@ -679,7 +680,7 @@ class Export extends Connection\Module
             }
         }
 
-        if (!isset($definition["fields"]) || !is_array($definition["fields"])) {
+        if (!isset($definition["fields"])) {
             throw new Export\Exception("No columns given for index " . $name);
         }
 

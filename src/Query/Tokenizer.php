@@ -357,7 +357,7 @@ class Tokenizer
      */
     private function clauseExplodeNonQuoted(string $str, string $regexp): array
     {
-        $str  = preg_split($regexp, $str, -1, PREG_SPLIT_DELIM_CAPTURE);
+        $str  = preg_split($regexp, $str, -1, PREG_SPLIT_DELIM_CAPTURE) ?: [];
         $terms = [];
         $i    = 0;
 
@@ -448,7 +448,7 @@ class Tokenizer
         // Split by all possible incarnations of a quote
         $split = array_map('preg_quote', ["\\'","''","'", '\\"', '""', '"']);
         $split = '#(' . implode('|', $split) . ')#';
-        $str   = preg_split($split, $str, -1, PREG_SPLIT_DELIM_CAPTURE);
+        $str   = preg_split($split, $str, -1, PREG_SPLIT_DELIM_CAPTURE) ?: [];
 
         $parts = [];
         $mode  = false; // Mode is either ' or " if the loop is inside a string quoted with ' or "

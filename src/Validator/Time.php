@@ -6,7 +6,7 @@ use Laminas\Validator\AbstractValidator;
 
 class Time extends AbstractValidator
 {
-    public function isValid($value)
+    public function isValid(mixed $value): bool
     {
         if ($value === null) {
             return true;
@@ -16,8 +16,8 @@ class Time extends AbstractValidator
             return false;
         }
 
-        $hh    = (isset($matches[1])) ? intval($matches[1]) : 0;
-        $mm    = (isset($matches[2])) ? intval($matches[2]) : 0;
+        $hh    = intval($matches[1]);
+        $mm    = intval($matches[2]);
         $ss    = (isset($matches[4])) ? intval($matches[4]) : 0;
         $ms    = (isset($matches[6])) ? intval($matches[6]) : 0;
         $tz_hh = (isset($matches[7])) ? intval($matches[7]) : 0;

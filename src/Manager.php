@@ -35,7 +35,7 @@ class Manager extends Configurable implements \Countable, \IteratorAggregate
 
         // backwards compatibility
         "range" => [
-            "class" => \Laminas\Validator\Between::class,
+            "class" => Validator\Between::class,
             "options" => [
                 "min" => -2147483648,
                 "max" => 2147483647,
@@ -51,7 +51,7 @@ class Manager extends Configurable implements \Countable, \IteratorAggregate
             ],
         ],
         "unsigned" => [
-            "class" => \Laminas\Validator\GreaterThan::class,
+            "class" => Validator\GreaterThan::class,
             "options" => [
                 "min" => 0,
                 "inclusive" => true,
@@ -325,7 +325,7 @@ class Manager extends Configurable implements \Countable, \IteratorAggregate
         ];
 
         $e = explode(":", $dsn, 2);
-        $parts["scheme"] = $e[0] ?? "";
+        $parts["scheme"] = $e[0];
         $parts["dsn"] = $dsn;
 
         $e = explode(";", $e[1] ?? "");
@@ -596,13 +596,13 @@ class Manager extends Configurable implements \Countable, \IteratorAggregate
     /**
      * Get the current connection instance
      *
-     * @throws Connection\Exception if there are no open connections
+     * @throws Exception if there are no open connections
      */
     public function getCurrentConnection(): Connection
     {
         $i = $this->currIndex;
         if (!isset($this->connections[$i])) {
-            throw new Connection\Exception("There is no open connection");
+            throw new Exception("There is no open connection");
         }
         return $this->connections[$i];
     }

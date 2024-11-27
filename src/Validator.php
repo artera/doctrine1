@@ -73,7 +73,7 @@ class Validator
             Type::Array, Type::Object => strlen(serialize($value)) <= $maximumLength,
             Type::Decimal, Type::Float => strlen(preg_replace('/[^0-9]/', '', $value) ?? $value) <= $maximumLength,
             Type::BLOB => strlen($value) <= $maximumLength,
-            default => (new \Laminas\Validator\StringLength(['max' => $maximumLength]))->isValid($value),
+            default => (new \Laminas\Validator\StringLength(['max' => (int) $maximumLength]))->isValid($value),
         };
     }
 
@@ -112,14 +112,14 @@ class Validator
             Type::Integer => (string) $var == strval(round(floatval($var))),
             Type::String => is_string($var) || is_numeric($var),
             Type::BLOB => is_string($var) || is_resource($var),
-            Type::Array => is_array($var),
+            Type::Array => false,
             Type::Object => is_object($var),
             Type::Boolean => is_bool($var) || (is_numeric($var) && ($var == 0 || $var == 1)),
             Type::Timestamp => (new Validator\Timestamp())->isValid($var),
             Type::Time => (new Validator\Time())->isValid($var),
             Type::Date => (new Validator\Date())->isValid($var),
             Type::Enum => is_string($var) || is_int($var),
-            Type::Set => is_array($var) || is_string($var),
+            Type::Set => is_string($var),
             default => true,
         };
     }

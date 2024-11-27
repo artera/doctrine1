@@ -55,9 +55,9 @@ abstract class Lib
     }
 
     /**
-     * @phpstan-param list<string> $array
+     * @phpstan-param iterable<string> $array
      */
-    public static function arrayCISearch(string $value, array $array): ?string
+    public static function arrayCISearch(string $value, iterable $array): ?string
     {
         $value = strtolower($value);
         foreach ($array as $arrayValue) {
@@ -70,9 +70,9 @@ abstract class Lib
     }
 
     /**
-     * @phpstan-param list<string> $array
+     * @phpstan-param iterable<string> $array
      */
-    public static function arrayCIIsSet(string $value, array $array): bool
+    public static function arrayCIIsSet(string $value, iterable $array): bool
     {
         $value = strtolower($value);
         foreach ($array as $arrayValue) {

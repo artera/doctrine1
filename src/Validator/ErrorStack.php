@@ -75,7 +75,7 @@ class ErrorStack extends \Doctrine1\Access implements \Countable, \IteratorAggre
     /**
      * Check if a field has an error
      *
-     * @param  scalar|null $fieldName
+     * @param  string $fieldName
      * @return boolean
      */
     public function contains($fieldName): bool

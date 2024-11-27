@@ -143,7 +143,7 @@ class Import extends Connection\Module
      * @param  string $table database table name
      * @return array
      */
-    public function listTableTriggers($table)
+    public function listTableTriggers(?string $table): array
     {
         throw new Import\Exception(__FUNCTION__ . ' not supported by this driver.');
     }

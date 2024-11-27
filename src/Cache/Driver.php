@@ -112,14 +112,14 @@ abstract class Driver implements \Doctrine1\CacheInterface
     {
         $count = 0;
         $keys  = $this->getCacheKeys();
-        if (is_array($keys)) {
-            foreach ($keys as $key) {
-                if (preg_match($regex, $key)) {
-                    $count++;
-                    $this->delete($key);
-                }
+
+        foreach ($keys as $key) {
+            if (preg_match($regex, $key)) {
+                $count++;
+                $this->delete($key);
             }
         }
+
         return $count;
     }
 
@@ -133,14 +133,14 @@ abstract class Driver implements \Doctrine1\CacheInterface
     {
         $count = 0;
         $keys  = $this->getCacheKeys();
-        if (is_array($keys)) {
-            foreach ($keys as $key) {
-                if (strpos($key, $prefix) === 0) {
-                    $count++;
-                    $this->delete($key);
-                }
+
+        foreach ($keys as $key) {
+            if (strpos($key, $prefix) === 0) {
+                $count++;
+                $this->delete($key);
             }
         }
+
         return $count;
     }
 
@@ -154,14 +154,14 @@ abstract class Driver implements \Doctrine1\CacheInterface
     {
         $count = 0;
         $keys  = $this->getCacheKeys();
-        if (is_array($keys)) {
-            foreach ($keys as $key) {
-                if (substr($key, -1 * strlen($suffix)) == $suffix) {
-                    $count++;
-                    $this->delete($key);
-                }
+
+        foreach ($keys as $key) {
+            if (substr($key, -1 * strlen($suffix)) == $suffix) {
+                $count++;
+                $this->delete($key);
             }
         }
+
         return $count;
     }
 

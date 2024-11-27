@@ -1,0 +1,7 @@
+#!/bin/bash
+set -e
+temp=$(mktemp --suffix .php)
+cat > "$temp"
+vendor/bin/php-cs-fixer fix -q "$@" -- "$temp"
+cat "$temp"
+rm "$temp"

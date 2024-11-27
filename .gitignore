@@ -1,5 +1,8 @@
 .*
 !.git*
+!/.vscode
+!/.zed
+!/.phpactor.json
 
 /Tests/DbTestCase.php
 /Tests/DoctrineTest/doctrine_tests/*

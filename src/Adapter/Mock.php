@@ -84,9 +84,9 @@ class Mock extends PDO
 
     /** @return \Doctrine1\Adapter\Statement\Mock|null */
     #[\ReturnTypeWillChange]
-    public function prepare(string $query, array $options = []): ?\Doctrine1\Adapter\Statement\Mock
+    public function prepare(string $query, array $options = []): \Doctrine1\Adapter\Statement\Mock|null
     {
-        $mock              = new \Doctrine1\Adapter\Statement\Mock($this);
+        $mock = new \Doctrine1\Adapter\Statement\Mock($this);
         $mock->queryString = $query;
         return $mock;
     }

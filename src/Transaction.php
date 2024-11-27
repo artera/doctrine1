@@ -197,7 +197,6 @@ class Transaction extends Connection\Module
      *                          phantom reads)
      *
      * @throws Transaction\Exception           if the feature is not supported by the driver
-     * @throws \PDOException                             if something fails at the PDO level
      */
     public function setIsolation($isolation): Connection\Statement
     {
@@ -213,10 +212,9 @@ class Transaction extends Connection\Module
      * but not fetching it
      *
      * @throws Transaction\Exception           if the feature is not supported by the driver
-     * @throws \PDOException                             if something fails at the PDO level
      * @return string                                   returns the current session transaction isolation level
      */
-    public function getIsolation()
+    public function getIsolation(): string
     {
         throw new Transaction\Exception('Fetching transaction isolation level not supported by this driver.');
     }

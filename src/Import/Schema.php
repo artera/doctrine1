@@ -291,7 +291,7 @@ class Schema
                     class: $alias,
                     local: $options['local'],
                     foreign: $options['foreign'],
-                    many: $options['foreignType'] ?? '' !== 'one',
+                    many: ($options['foreignType'] ?? '') !== 'one',
                     refClass: $options['refClass'] ?? null,
                 );
             }
@@ -404,7 +404,7 @@ class Schema
 
                     // Support short type(length) syntax: my_column: { type: integer(4) }
                     $e = explode('(', $field['type']);
-                    if (isset($e[0]) && isset($e[1])) {
+                    if (isset($e[1])) {
                         $colDesc['type']   = $e[0];
                         $value             = substr($e[1], 0, strlen($e[1]) - 1);
                         $e                 = explode(',', $value);

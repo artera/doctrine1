@@ -34,17 +34,9 @@ class Sqlite extends \Doctrine1\Export
         }
     }
 
-    /**
-     * createDatabase
-     *
-     * Create sqlite database file
-     *
-     * @param  string $databaseFile Path of the database that should be dropped
-     * @return PDO
-     */
-    public function createDatabase($databaseFile)
+    public function createDatabase(string $databaseFile): void
     {
-        return new PDO('sqlite:' . $databaseFile);
+        new PDO('sqlite:' . $databaseFile);
     }
 
     /**
@@ -248,35 +240,14 @@ class Sqlite extends \Doctrine1\Export
         throw new \Doctrine1\Export\Exception('could not create sequence table');
     }
 
-    /**
-     * drop existing sequence
-     *
-     * @param  string $sequenceName name of the sequence to be dropped
-     * @return string
-     */
-    public function dropSequenceSql($sequenceName)
+    public function dropSequenceSql(string $sequenceName): string
     {
         $sequenceName = $this->conn->quoteIdentifier($this->conn->formatter->getSequenceName($sequenceName), true);
 
         return 'DROP TABLE ' . $sequenceName;
     }
 
-    /**
-     * alter an existing table
-     *
-     * @param string  $name    name of the table that is intended to be changed.
-     * @phpstan-param array{
-     *   add?: Column[],
-     *   remove?: string[],
-     *   rename?: array<string, string>,
-     *   name?: string,
-     * } $changes
-     * @param  boolean $check   indicates whether the function should just check if the DBMS driver
-     *                          can perform the requested table alterations if the value is true or
-     *                          actually perform them otherwise.
-     * @return boolean|string
-     */
-    public function alterTableSql($name, array $changes, $check = false)
+    public function alterTableSql(string $name, array $changes): array
     {
         if (!$name) {
             throw new \Doctrine1\Export\Exception('no valid table name specified');
@@ -294,17 +265,13 @@ class Sqlite extends \Doctrine1\Export
             }
         }
 
-        if ($check) {
-            return true;
-        }
-
         $query = '';
         if (!empty($changes['name'])) {
             $change_name = $this->conn->quoteIdentifier($changes['name']);
             $query .= "RENAME TO $change_name";
         }
 
-        if (!empty($changes['add']) && is_array($changes['add'])) {
+        if (!empty($changes['add'])) {
             foreach ($changes['add'] as $field) {
                 if ($query) {
                     $query .= ', ';
@@ -313,7 +280,7 @@ class Sqlite extends \Doctrine1\Export
             }
         }
 
-        if (!empty($changes['remove']) && is_array($changes['remove'])) {
+        if (!empty($changes['remove'])) {
             foreach ($changes['remove'] as $fieldName) {
                 if ($query) {
                     $query .= ', ';
@@ -324,13 +291,13 @@ class Sqlite extends \Doctrine1\Export
         }
 
         $rename = [];
-        if (!empty($changes['rename']) && is_array($changes['rename'])) {
+        if (!empty($changes['rename'])) {
             foreach ($changes['rename'] as $oldFieldName => $fieldName) {
                 $rename[$fieldName] = $oldFieldName;
             }
         }
 
-        if (!empty($rename) && is_array($rename)) {
+        if (!empty($rename)) {
             foreach ($rename as $oldFieldName => $fieldName) {
                 if ($query) {
                     $query .= ', ';
@@ -341,13 +308,8 @@ class Sqlite extends \Doctrine1\Export
             }
         }
 
-        if (!$query) {
-            return false;
-        }
-
         $name = $this->conn->quoteIdentifier($name, true);
-
-        return "ALTER TABLE $name $query";
+        return ["ALTER TABLE $name $query"];
     }
 
     /**

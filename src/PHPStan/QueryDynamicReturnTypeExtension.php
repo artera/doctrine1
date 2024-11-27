@@ -109,9 +109,9 @@ class QueryDynamicReturnTypeExtension extends AbstractExtension implements Dynam
 
         $selfType = $scope->getType($methodCall->var);
         if ($methodName === 'execute') {
-            $returnType = array_map(fn($mode) => $this->getExecuteReturnType($selfType, $returnType, $mode), $hydrationModes);
+            $returnType = array_map(fn ($mode) => $this->getExecuteReturnType($selfType, $returnType, $mode), $hydrationModes);
         } else {
-            $returnType = array_map(fn($mode) => $this->getFetchOneReturnType($selfType, $returnType, $mode), $hydrationModes);
+            $returnType = array_map(fn ($mode) => $this->getFetchOneReturnType($selfType, $returnType, $mode), $hydrationModes);
         }
 
         return TypeCombinator::union(...$returnType);

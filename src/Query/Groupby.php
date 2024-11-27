@@ -91,9 +91,7 @@ class Groupby extends \Doctrine1\Query\Part
                                 $hasComma = true;
                             }
 
-                            if ($componentAlias !== false
-                                && $componentAlias !== null
-                            ) {
+                            if ($componentAlias) {
                                 $queryComponent = $this->query->getQueryComponent($componentAlias);
 
                                 $table = $queryComponent['table'];

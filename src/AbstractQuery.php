@@ -741,7 +741,7 @@ abstract class AbstractQuery
     public function generateSqlTableAlias(string $componentAlias, string $tableName): string
     {
         preg_match('/([^_|\d])/', $tableName, $matches);
-        $char = strtolower($matches[0]);
+        $char = strtolower($matches[0] ?? '');
 
         $alias = $char;
 
@@ -1095,6 +1095,7 @@ abstract class AbstractQuery
         $this->tableAliasMap = $cached[2];
         $customComponent      = $cached[0];
 
+        /** @var array{table: Table}[] $queryComponents */
         $queryComponents  = [];
         $cachedComponents = $cached[1];
         foreach ($cachedComponents as $alias => $components) {
@@ -1110,7 +1111,6 @@ abstract class AbstractQuery
                 }
                 $component['table'] = $this->connection->getTable($e[0]);
             } else {
-                /** @var array{table: Table} */
                 $parentComponent = $queryComponents[$e[0]];
                 $component['parent']   = $e[0];
                 $component['relation'] = $parentComponent['table']->getRelation($e[1]);
@@ -1347,7 +1347,7 @@ abstract class AbstractQuery
         $params = (array) $params;
 
         // if there's no params, return (else we'll get a WHERE IN (), invalid SQL)
-        if (is_array($params) && count($params) == 0) {
+        if (count($params) == 0) {
             throw new Query\Exception('You must pass at least one parameter when using an IN() condition.');
         }
 

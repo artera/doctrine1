@@ -201,7 +201,7 @@ class UnitOfWork extends \Doctrine1\Connection\Module
                         $columnNames[] = $table->getColumnName($fieldName);
                     }
                 }
-                $columnNames = array_unique($columnNames);
+                $columnNames = array_values(array_unique($columnNames));
 
                 // delete
                 $tableName = $table->getTableName();
@@ -704,7 +704,7 @@ class UnitOfWork extends \Doctrine1\Connection\Module
         return array_values($flushList);
     }
 
-    protected function assignSequence(\Doctrine1\Record $record, array &$fields = null): ?int
+    protected function assignSequence(\Doctrine1\Record $record, array &$fields = []): ?int
     {
         $table = $record->getTable();
         $seq = $table->sequenceName;
@@ -715,12 +715,8 @@ class UnitOfWork extends \Doctrine1\Connection\Module
             if (is_array($seqName)) {
                 throw new \Doctrine1\Exception("Multi column identifiers are not supported in sequences");
             }
-            if ($fields) {
-                $fields[$seqName] = $id;
-            }
-
+            $fields[$seqName] = $id;
             $record->assignIdentifier($id);
-
             return $id;
         }
 

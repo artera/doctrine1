@@ -384,7 +384,6 @@ class Query extends AbstractQuery implements \Countable
         if (!$this->isSubquery() && isset($this->queryComponents[$componentAlias]["parent"])) {
             $parentAlias = $this->queryComponents[$componentAlias]["parent"];
             if (
-                is_string($parentAlias) &&
                 !isset($this->pendingFields[$parentAlias]) &&
                 $this->hydrator->getHydrationMode() != HydrationMode::None &&
                 $this->hydrator->getHydrationMode() != HydrationMode::Scalar &&
@@ -416,7 +415,8 @@ class Query extends AbstractQuery implements \Countable
         $sql = [];
         foreach ($fields as $fieldAlias => $fieldName) {
             $columnName = $table->getColumnName($fieldName);
-            if (($owner = $table->getColumnOwner($columnName)) !== null && $owner !== $table->getComponentName()) {
+            $owner = $table->getColumnOwner($columnName);
+            if ($owner !== $table->getComponentName()) {
                 $parent = $this->connection->getTable($owner);
                 $columnName = $parent->getColumnName($fieldName);
                 $parentAlias = $this->getSqlTableAlias($componentAlias . "." . $parent->getComponentName());
@@ -1292,7 +1292,7 @@ class Query extends AbstractQuery implements \Countable
         $q .= empty($this->sqlParts["orderby"]) ? "" : " ORDER BY " . implode(", ", $this->sqlParts["orderby"]);
 
         if ($modifyLimit) {
-            $q = $this->connection->modifyLimitQuery($q, $this->sqlParts["limit"], $this->sqlParts["offset"], false);
+            $q = $this->connection->modifyLimitQuery($q, $this->sqlParts["limit"], $this->sqlParts["offset"]);
         }
 
         if ($this->sqlParts["forUpdate"]) {
@@ -1356,7 +1356,7 @@ class Query extends AbstractQuery implements \Countable
                 $e = $this->tokenizer->bracketExplode($part, " ");
                 foreach ($e as $f) {
                     $partOriginal = str_replace(",", "", trim($f));
-                    $part = trim(implode(".", array_map(fn($e) => trim($e, '[]`"'), explode(".", $partOriginal))));
+                    $part = trim(implode(".", array_map(fn ($e) => trim($e, '[]`"'), explode(".", $partOriginal))));
 
                     if (strpos($part, ".") === false) {
                         continue;
@@ -1445,8 +1445,7 @@ class Query extends AbstractQuery implements \Countable
             $part = str_replace(['"', "'", "`"], "", $part);
 
             // Fix DC-645, Table aliases ending with ')' where not replaced properly
-            preg_match('/^(\(?)(.*?)(\)?)$/', $part, $matches);
-            if ($this->hasSqlTableAlias($matches[2])) {
+            if (preg_match('/^(\(?)(.*?)(\)?)$/', $part, $matches) && $this->hasSqlTableAlias($matches[2])) {
                 $parts[$k] = $matches[1] . $this->connection->quoteIdentifier($this->generateNewSqlTableAlias($matches[2])) . $matches[3];
                 continue;
             }
@@ -1549,7 +1548,7 @@ class Query extends AbstractQuery implements \Countable
                 case "update":
                     $this->type = Query\Type::UPDATE();
                     $partName = "from";
-                // no break
+                    // no break
                 case "from":
                     $this->addDqlQueryPart($partName, $subParts);
                     break;
@@ -1559,7 +1558,7 @@ class Query extends AbstractQuery implements \Countable
                 case "group":
                 case "order":
                     $partName .= "by";
-                // no break
+                    // no break
                 case "where":
                 case "having":
                 case "limit":

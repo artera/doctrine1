@@ -3,7 +3,10 @@
   "type": "library",
   "version": "3.5.0",
   "description": "PHP 8.1+ Database ORM",
-  "keywords": ["orm", "database"],
+  "keywords": [
+    "orm",
+    "database"
+  ],
   "license": "LGPL-2.1-or-later",
   "authors": [
     {
@@ -28,17 +31,13 @@
     "psr-4": {
       "Tests\\": "Tests"
     },
-    "classmap": ["Tests/models"]
+    "classmap": [
+      "Tests/models"
+    ]
   },
   "replace": {
     "doctrine/doctrine1": "*"
   },
-  "repositories": [
-    {
-        "type": "git",
-        "url": "https://github.com/timeweb/phpstan-enum.git"
-    }
-  ],
   "require": {
     "php": "^8.1",
     "ext-pdo": "*",
@@ -47,11 +46,13 @@
     "laminas/laminas-validator": ">=2.0,<5"
   },
   "require-dev": {
-    "phpstan/phpstan": "^2",
-    "phpunit/phpunit": "^11.0",
+    "phpstan/phpstan": "^2.0",
+    "phpunit/phpunit": "^11.4",
     "symfony/yaml": "^3.4 || ^4.1 || >=5.0,<8 ",
-    "timeweb/phpstan-enum": "dev-phpstan2 as 3.1.1",
-    "spatie/phpunit-snapshot-assertions": "^5.0"
+    "timeweb/phpstan-enum": "^4.0",
+    "spatie/phpunit-snapshot-assertions": "^5.0",
+    "phpstan/phpstan-phpunit": "^2.0",
+    "friendsofphp/php-cs-fixer": "^3.65"
   },
   "suggest": {
     "symfony/yaml": "For importing/exporting schema and fixtures from/to yaml files"
@@ -63,7 +64,9 @@
   },
   "extra": {
     "phpstan": {
-      "includes": ["extension.neon"]
+      "includes": [
+        "extension.neon"
+      ]
     }
   }
 }

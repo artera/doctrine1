@@ -1288,7 +1288,7 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
     /**
      * Some dbms require specific functionality for this. Check the other connection adapters for examples
      */
-    public function modifyLimitQuery(string $query, ?int $limit = null, ?int $offset = null, bool $isManip = false): string
+    public function modifyLimitQuery(string $query, ?int $limit = null, ?int $offset = null): string
     {
         $limit = (int) $limit;
         $offset = (int) $offset;
@@ -1314,9 +1314,9 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
      * Creates dbms specific LIMIT/OFFSET SQL for the subqueries that are used in the
      * context of the limit-subquery algorithm.
      */
-    public function modifyLimitSubquery(Table $rootTable, string $query, ?int $limit = null, ?int $offset = null, bool $isManip = false): string
+    public function modifyLimitSubquery(Table $rootTable, string $query, ?int $limit = null, ?int $offset = null): string
     {
-        return $this->modifyLimitQuery($query, $limit, $offset, $isManip);
+        return $this->modifyLimitQuery($query, $limit, $offset);
     }
 
     /**
@@ -1440,7 +1440,7 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
         $tokens = [];
 
         if (preg_match_all("/:\w+/", $query, $m)) {
-            /** @var array<string, int> */
+            /** @var array<string, int<1, max>> */
             $tokens = array_count_values($m[0]);
         }
 
