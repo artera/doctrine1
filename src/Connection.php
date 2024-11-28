@@ -10,6 +10,9 @@ use PDOException;
 use PDOStatement;
 use Throwable;
 use UnexpectedValueException;
+use Illuminate\Database\Connection as IlluminateConnection;
+use Illuminate\Database\Query\Grammars as QueryGrammars;
+use Illuminate\Database\Query\Builder as QueryBuilder;
 
 /**
  * From $modules array
@@ -147,6 +150,8 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
      */
     protected $parent;
 
+    protected ?IlluminateConnection $illuminate = null;
+
     public array $exported;
 
     /**
@@ -174,6 +179,25 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
         $this->setParent($manager);
 
         $this->getListener()->onOpen($this);
+    }
+
+    protected function illuminateGrammar(): QueryGrammars\Grammar
+    {
+        return new QueryGrammars\MySqlGrammar();
+    }
+
+    public function illuminate(): IlluminateConnection
+    {
+        if ($this->illuminate === null) {
+            $this->illuminate = new IlluminateConnection($this->getDbh());
+            $this->illuminate->setQueryGrammar($this->illuminateGrammar());
+        }
+        return $this->illuminate;
+    }
+
+    public function iquery(): QueryBuilder
+    {
+        return $this->illuminate()->query();
     }
 
     /**
@@ -650,77 +674,77 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
     }
 
     /**
-     * @param  string $statement sql query to be executed
-     * @param  array  $params    prepared statement params
+     * @param  string|QueryBuilder $statement sql query to be executed
+     * @param  array  $params    prepared statement params (unused when called with query builder)
      * @return array[]
      * @phpstan-return array<string, mixed>[]
      */
-    public function fetchAll(string $statement, array $params = []): array
+    public function fetchAll(string|QueryBuilder $statement, array $params = []): array
     {
         return $this->execute($statement, $params)->fetchAll(PDO::FETCH_ASSOC);
     }
 
     /**
-     * @param  string $statement sql query to be executed
-     * @param  array  $params    prepared statement params
+     * @param  string|QueryBuilder $statement sql query to be executed
+     * @param  array  $params    prepared statement params (unused when called with query builder)
      * @param  int    $colnum    0-indexed column number to retrieve
      * @return mixed
      */
-    public function fetchOne(string $statement, array $params = [], int $colnum = 0): mixed
+    public function fetchOne(string|QueryBuilder $statement, array $params = [], int $colnum = 0): mixed
     {
         return $this->execute($statement, $params)->fetchColumn($colnum);
     }
 
     /**
-     * @param  string $statement sql query to be executed
-     * @param  array  $params    prepared statement params
+     * @param  string|QueryBuilder $statement sql query to be executed
+     * @param  array  $params    prepared statement params (unused when called with query builder)
      * @phpstan-return ?array<string, mixed>
      */
-    public function fetchRow(string $statement, array $params = []): ?array
+    public function fetchRow(string|QueryBuilder $statement, array $params = []): ?array
     {
         $row = $this->execute($statement, $params)->fetch(PDO::FETCH_ASSOC);
         return $row === false ? null : $row;
     }
 
     /**
-     * @param  string $statement sql query to be executed
-     * @param  array  $params    prepared statement params
+     * @param  string|QueryBuilder $statement sql query to be executed
+     * @param  array  $params    prepared statement params (unused when called with query builder)
      * @phpstan-return array<int, mixed>
      */
-    public function fetchArray(string $statement, array $params = []): array
+    public function fetchArray(string|QueryBuilder $statement, array $params = []): array
     {
         return $this->execute($statement, $params)->fetch(PDO::FETCH_NUM);
     }
 
     /**
-     * @param  string $statement sql query to be executed
-     * @param  array  $params    prepared statement params
+     * @param  string|QueryBuilder $statement sql query to be executed
+     * @param  array  $params    prepared statement params (unused when called with query builder)
      * @param  int    $colnum    0-indexed column number to retrieve
      * @phpstan-return array<int, mixed>
      */
-    public function fetchColumn(string $statement, array $params = [], int $colnum = 0): array
+    public function fetchColumn(string|QueryBuilder $statement, array $params = [], int $colnum = 0): array
     {
         return $this->execute($statement, $params)->fetchAll(PDO::FETCH_COLUMN, $colnum);
     }
 
     /**
-     * @param  string $statement sql query to be executed
-     * @param  array  $params    prepared statement params
+     * @param  string|QueryBuilder $statement sql query to be executed
+     * @param  array  $params    prepared statement params (unused when called with query builder)
      * @return array[]
      * @phpstan-return array<string, mixed>[]
      */
-    public function fetchAssoc(string $statement, array $params = []): array
+    public function fetchAssoc(string|QueryBuilder $statement, array $params = []): array
     {
         return $this->fetchAll($statement, $params);
     }
 
     /**
-     * @param  string $statement sql query to be executed
-     * @param  array  $params    prepared statement params
+     * @param  string|QueryBuilder $statement sql query to be executed
+     * @param  array  $params    prepared statement params (unused when called with query builder)
      * @return array[]
      * @phpstan-return array<string|int, mixed>[]
      */
-    public function fetchBoth(string $statement, array $params = []): array
+    public function fetchBoth(string|QueryBuilder $statement, array $params = []): array
     {
         return $this->execute($statement, $params)->fetchAll(PDO::FETCH_BOTH);
     }
@@ -816,21 +840,26 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
     }
 
     /**
-     * @param string $query  sql query
-     * @param array  $params query parameters
+     * @param string|QueryBuilder  $query SQL query or query builder
+     * @param array  $params query parameters (unused when called with query builder)
      */
-    public function standaloneQuery(string $query, array $params = []): Connection\Statement
+    public function standaloneQuery(string|QueryBuilder $query, array $params = []): Connection\Statement
     {
         return $this->execute($query, $params);
     }
 
     /**
-     * @param string $query  sql query
-     * @param array  $params query parameters
+     * @param string|QueryBuilder $query  sql query
+     * @param array  $params query parameters (unused when called with query builder)
      */
-    public function execute(string $query, array $params = []): Connection\Statement
+    public function execute(string|QueryBuilder $query, array $params = []): Connection\Statement
     {
         $this->connect();
+
+        if ($query instanceof QueryBuilder) {
+            $params = $query->getBindings();
+            $query = $query->toSql();
+        }
 
         try {
             if (!empty($params)) {
@@ -855,12 +884,17 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
     }
 
     /**
-     * @param string $query  sql query
-     * @param array  $params query parameters
+     * @param string|QueryBuilder  $query SQL query or query builder
+     * @param array  $params query parameters (unused when called with query builder)
      */
-    public function exec(string $query, array $params = []): int
+    public function exec(string|QueryBuilder $query, array $params = []): int
     {
         $this->connect();
+
+        if ($query instanceof QueryBuilder) {
+            $params = $query->getBindings();
+            $query = $query->toSql();
+        }
 
         try {
             if (!empty($params)) {

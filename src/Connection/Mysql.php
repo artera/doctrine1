@@ -59,6 +59,11 @@ class Mysql extends \Doctrine1\Connection
         parent::__construct($manager, $adapter);
     }
 
+    protected function illuminateGrammar(): \Illuminate\Database\Query\Grammars\Grammar
+    {
+        return new \Illuminate\Database\Query\Grammars\MySqlGrammar();
+    }
+
     public function connect(): bool
     {
         $connected = parent::connect();

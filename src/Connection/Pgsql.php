@@ -45,6 +45,11 @@ class Pgsql extends \Doctrine1\Connection
         parent::__construct($manager, $adapter);
     }
 
+    protected function illuminateGrammar(): \Illuminate\Database\Query\Grammars\Grammar
+    {
+        return new \Illuminate\Database\Query\Grammars\PostgresGrammar();
+    }
+
     public function setCharset(?string $charset): void
     {
         if ($charset !== null) {

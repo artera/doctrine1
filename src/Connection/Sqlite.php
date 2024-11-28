@@ -38,6 +38,11 @@ class Sqlite extends \Doctrine1\Connection
         }
     }
 
+    protected function illuminateGrammar(): \Illuminate\Database\Query\Grammars\Grammar
+    {
+        return new \Illuminate\Database\Query\Grammars\SQLiteGrammar();
+    }
+
     public function connect(): bool
     {
         if ($this->isConnected()) {
