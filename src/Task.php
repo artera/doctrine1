@@ -16,7 +16,7 @@ abstract class Task
 
     /**
      * treat as protected
-     * @var class-string<self>|null
+     * @var string|null
      */
     public $taskName = null;
 
@@ -189,7 +189,6 @@ abstract class Task
      *
      * @param  string $taskName
      * @return bool
-     * @phpstan-assert-if-true class-string<self> $taskName
      */
     protected static function validateTaskName(string $taskName): bool
     {
@@ -197,7 +196,7 @@ abstract class Task
          * This follows the _apparent_ naming convention.  The key thing is to prevent the use of characters that would
          * break a command string - we definitely can't allow spaces, for example.
          */
-        return is_subclass_of($taskName, self::class) && (bool) preg_match('/^[a-z0-9][a-z0-9\-]*$/', $taskName);
+        return (bool) preg_match('/^[a-z0-9][a-z0-9\-]*$/', $taskName);
     }
 
     /**
@@ -217,7 +216,7 @@ abstract class Task
     }
 
     /**
-     * @phpstan-return class-string<self>|null $taskName
+     * @phpstan-return string|null $taskName
      */
     public function getTaskName(): ?string
     {
