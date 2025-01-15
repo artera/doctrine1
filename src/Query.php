@@ -130,7 +130,7 @@ class Query extends AbstractQuery implements \Countable
      * @return         Query
      * @phpstan-return Query<Record, Query\Type\Select>
      */
-    public static function create(?Connection $conn = null, string $class = null): Query
+    public static function create(?Connection $conn = null, ?string $class = null): Query
     {
         if (!$class) {
             $class = Manager::getInstance()->getQueryClass();

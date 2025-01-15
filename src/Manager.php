@@ -516,7 +516,7 @@ class Manager extends Configurable implements \Countable, \IteratorAggregate
     /**
      * Check if a component is bound to a connection
      */
-    public function hasConnectionForComponent(string $componentName = null): bool
+    public function hasConnectionForComponent(?string $componentName = null): bool
     {
         return isset($this->bound[$componentName]);
     }

@@ -27,7 +27,7 @@ class RawSql extends AbstractQuery
      * @param Connection        $connection The connection object the query will use.
      * @param Hydrator\AbstractHydrator $hydrator   The hydrator that will be used for generating result sets.
      */
-    public function __construct(Connection $connection = null, Hydrator\AbstractHydrator $hydrator = null)
+    public function __construct(?Connection $connection = null, ?Hydrator\AbstractHydrator $hydrator = null)
     {
         parent::__construct($connection, $hydrator);
 

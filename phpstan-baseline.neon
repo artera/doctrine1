@@ -55,12 +55,6 @@ parameters:
 			path: src/Export.php
 
 		-
-			message: '#^Parameter \#2 \$definition of method Doctrine1\\Export\\Mysql\<Connection of Doctrine1\\Connection\\Mysql\>\:\:getIndexDeclaration\(\) expects array\{type\?\: string, fields\?\: array\<string, array\<mixed\>\|string\>\}, array\{fields\: non\-empty\-array\<int\|string, array\{\}\>\}\|array\{type\?\: string, fields\?\: array\<string\>\} given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Export/Mysql.php
-
-		-
 			message: '#^Cannot access an offset on array\|Doctrine1\\None\|Traversable\|null\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1

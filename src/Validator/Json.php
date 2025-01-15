@@ -9,7 +9,9 @@ class Json extends AbstractValidator
     public function isValid(mixed $value): bool
     {
         if (function_exists('json_validate')) {
-            json_validate($value);
+            if (json_validate($value)) {
+                return true;
+            }
         } else {
             json_decode($value);
         }

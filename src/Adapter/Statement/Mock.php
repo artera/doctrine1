@@ -60,7 +60,7 @@ class Mock extends \Doctrine1\Connection\Statement
         return [];
     }
 
-    public function execute(array $input_parameters = null): bool
+    public function execute(?array $input_parameters = null): bool
     {
         if (is_object($this->mock)) {
             $this->mock->addQuery($this->queryString);

@@ -6,7 +6,7 @@ includes:
 parameters:
   level: 8
   tipsOfTheDay: false
-  phpVersion: 80100
+  phpVersion: 80400
   inferPrivatePropertyTypeFromConstructor: true
   parallel:
     processTimeout: 300.0

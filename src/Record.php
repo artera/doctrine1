@@ -194,7 +194,7 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
      * This is used by caching since we want to serialize references when caching
      * but not when just normally serializing a instance
      */
-    public function serializeReferences(bool $bool = null): bool
+    public function serializeReferences(?bool $bool = null): bool
     {
         if ($bool !== null) {
             $this->_serializeReferences = $bool;
@@ -1651,7 +1651,7 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
      * @throws Exception                    if record is not valid and validation is active
      * @throws Validator\Exception if record is not valid and validation is active
      */
-    public function save(Connection $conn = null): void
+    public function save(?Connection $conn = null): void
     {
         if ($conn === null) {
             $conn = $this->_table->getConnection();
@@ -1668,7 +1668,7 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
      * @param  Connection $conn optional connection parameter
      * @return bool TRUE if the record was saved sucessfully without errors, FALSE otherwise.
      */
-    public function trySave(Connection $conn = null): bool
+    public function trySave(?Connection $conn = null): bool
     {
         try {
             $this->save($conn);
@@ -1694,7 +1694,7 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
      * @throws Connection\Exception        if there were no key fields
      * @throws Connection\Exception        if something fails at database level
      */
-    public function replace(Connection $conn = null): bool
+    public function replace(?Connection $conn = null): bool
     {
         if ($conn === null) {
             $conn = $this->_table->getConnection();
@@ -2045,8 +2045,8 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
                 return false;
             }
 
+            $stateBeforeLock = $this->_state;
             try {
-                $stateBeforeLock = $this->_state;
                 $this->_state = $this->_state->lock();
 
                 foreach ($this->_references as $reference) {
@@ -2098,7 +2098,7 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
      *
      * this event can be listened by the onPreDelete and onDelete listeners
      */
-    public function delete(Connection $conn = null): void
+    public function delete(?Connection $conn = null): void
     {
         if ($conn == null) {
             $conn = $this->_table->getConnection();

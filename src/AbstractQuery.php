@@ -1137,7 +1137,7 @@ abstract class AbstractQuery
      * @param  array|Collection|string $customComponent
      * @return string           serialized string representation of this query
      */
-    public function getCachedForm(array|Collection|string $customComponent = null): string
+    public function getCachedForm(array|Collection|string|null $customComponent = null): string
     {
         $componentInfo = [];
 
@@ -1477,7 +1477,7 @@ abstract class AbstractQuery
      * @return $this
      * @phpstan-return static<Record, Query\Type\Select>
      */
-    public function select(string $select = null, $params = []): self
+    public function select(?string $select = null, $params = []): self
     {
         $this->type = Query\Type::SELECT();
         if ($select) {
@@ -1578,7 +1578,7 @@ abstract class AbstractQuery
      * @return $this
      * @phpstan-return static<Record, Query\Type\Delete>
      */
-    public function delete(string $from = null): self
+    public function delete(?string $from = null): self
     {
         $this->type = Query\Type::DELETE();
         if ($from != null) {
@@ -1595,7 +1595,7 @@ abstract class AbstractQuery
      * @return $this
      * @phpstan-return static<Record, Query\Type\Update>
      */
-    public function update(string $from = null): self
+    public function update(?string $from = null): self
     {
         $this->type = Query\Type::UPDATE();
         if ($from != null) {

@@ -145,7 +145,7 @@ class Cli
      * @phpstan-param class-string<Task>|null $className
      * @return      bool
      */
-    public function taskNameIsRegistered(string $taskName, string &$className = null): bool
+    public function taskNameIsRegistered(string $taskName, ?string &$className = null): bool
     {
         foreach ($this->getRegisteredTasks() as $currClassName => $task) {
             if ($task->getTaskName() == $taskName) {
@@ -191,7 +191,7 @@ class Cli
      *
      * @param string|string[] $directories Can be a string path or array of paths
      */
-    protected function includeAndRegisterDoctrineTaskClasses(string|array $directories = null): void
+    protected function includeAndRegisterDoctrineTaskClasses(string|array|null $directories = null): void
     {
         if ($directories === null) {
             $directories = Core::getPath() . '/src/Task';

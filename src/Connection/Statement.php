@@ -50,7 +50,7 @@ class Statement
         $this->bindAliases = $bindAliases;
     }
 
-    public function execute(array $input_parameters = null): bool
+    public function execute(?array $input_parameters = null): bool
     {
         $input_parameters = $this->filterParams($this->statement->queryString, $input_parameters ?? [], $this->bindAliases);
 

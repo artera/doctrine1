@@ -1697,7 +1697,7 @@ class Table extends Configurable implements \Countable
      *
      * @phpstan-param T $record
      */
-    public function validateField(string $fieldName, $value, Record $record = null): Validator\ErrorStack
+    public function validateField(string $fieldName, $value, ?Record $record = null): Validator\ErrorStack
     {
         if ($record instanceof Record) {
             $errorStack = $record->getErrorStack();
@@ -1844,7 +1844,7 @@ class Table extends Configurable implements \Countable
      * @param  string[]|null $fieldNames
      * @return string[] numeric array
      */
-    public function getColumnNames(array $fieldNames = null): array
+    public function getColumnNames(?array $fieldNames = null): array
     {
         if ($fieldNames === null) {
             return array_keys($this->columns);

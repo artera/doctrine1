@@ -669,7 +669,7 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
      *
      * @param string $format time format
      */
-    public function setDateFormat(string $format = null): void
+    public function setDateFormat(?string $format = null): void
     {
     }
 
