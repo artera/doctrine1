@@ -13,16 +13,16 @@ class Manager extends Configurable implements \Countable, \IteratorAggregate
     use WithSerializers;
     use WithDeserializers;
 
-    /** array containing all the opened connections */
+    /** @var array<string, Connection> list of all the opened connections */
     protected array $connections = [];
 
-    /** array containing all components that have a bound connection */
+    /** @var array<string, string> array containing all components that have a bound connection */
     protected array $bound = [];
 
     protected int $index = 0;
 
     /** the current connection index */
-    protected int|string $currIndex = 0;
+    protected string $currIndex = '0';
 
     protected ?Query\Registry $queryRegistry = null;
 
@@ -75,7 +75,6 @@ class Manager extends Configurable implements \Countable, \IteratorAggregate
     protected bool $loadedValidatorsFromDisk = false;
 
     protected static ?Manager $instance;
-
     private bool $initialized = false;
 
     /**
@@ -161,7 +160,7 @@ class Manager extends Configurable implements \Countable, \IteratorAggregate
         $this->validators = [];
         $this->loadedValidatorsFromDisk = false;
         $this->index = 0;
-        $this->currIndex = 0;
+        $this->currIndex = '0';
         $this->initialized = false;
     }
 
@@ -197,12 +196,12 @@ class Manager extends Configurable implements \Countable, \IteratorAggregate
      * if the adapter parameter is not set this method acts as
      * a short cut for Manager::getInstance()->getCurrentConnection()
      *
-     * @param  PDO|array|string|null $adapter database driver, DSN or array of connection options
+     * @param  null|string|PDO|array<string, string>|(callable(): (PDO|array<string, string>)) $adapter    database driver, DSN or array of connection options
      * @param  string                                           $name    name of the connection, if empty numeric key is used
      * @throws Manager\Exception                          if trying to bind a connection with an existing name
      * @return Connection
      */
-    public static function connection(PDO|array|string|null $adapter = null, $name = null)
+    public static function connection(PDO|array|string|callable|null $adapter = null, ?string $name = null)
     {
         if ($adapter === null) {
             return Manager::getInstance()->getCurrentConnection();
@@ -214,15 +213,21 @@ class Manager extends Configurable implements \Countable, \IteratorAggregate
     /**
      * Opens a new connection and saves it to Manager->connections
      *
-     * @param  PDO|array|string $adapter    database driver, DSN or array of connection options
+     * @param  string|PDO|array<string, string>|(callable(): (PDO|array<string, string>)) $adapter    database driver, DSN or array of connection options
      * @param  string                                      $name       name of the connection, if empty numeric key is used
      * @param  bool                                        $setCurrent
      * @throws Manager\Exception                          if trying to bind a connection with an existing name
      * @throws Manager\Exception                          if trying to open connection for unknown driver
      * @return Connection
      */
-    public function openConnection(PDO|array|string $adapter, $name = null, $setCurrent = true)
+    public function openConnection(PDO|array|string|callable $adapter, ?string $name = null, bool $setCurrent = true)
     {
+        $initiator = null;
+        if (is_callable($adapter)) {
+            $initiator = $adapter;
+            $adapter = $adapter();
+        }
+
         if ($adapter instanceof PDO) {
             $driverName = $adapter->getAttribute(PDO::ATTR_DRIVER_NAME);
         } elseif (is_array($adapter)) {
@@ -237,8 +242,8 @@ class Manager extends Configurable implements \Countable, \IteratorAggregate
 
             $parts["dsn"] = $adapter[0];
             $parts["scheme"] = $e[0];
-            $parts["user"] = isset($adapter[1]) ? $adapter[1] : null;
-            $parts["pass"] = isset($adapter[2]) ? $adapter[2] : null;
+            $parts["user"] = $adapter[1] ?? null;
+            $parts["pass"] = $adapter[2] ?? null;
             $driverName = $e[0];
             $adapter = $parts;
         } else {
@@ -266,7 +271,7 @@ class Manager extends Configurable implements \Countable, \IteratorAggregate
                 return $this->connections[$name];
             }
         } else {
-            $name = $this->index;
+            $name = (string) $this->index;
             $this->index++;
         }
 
@@ -279,7 +284,7 @@ class Manager extends Configurable implements \Countable, \IteratorAggregate
             default => throw new Manager\Exception("Unknown driver $driverName"),
         };
 
-        $conn = new $className($this, $adapter);
+        $conn = new $className($this, $adapter, $initiator);
         $conn->setName((string) $name);
 
         $this->connections[$name] = $conn;
@@ -535,7 +540,7 @@ class Manager extends Configurable implements \Countable, \IteratorAggregate
 
             if ($key === $this->currIndex) {
                 $key = key($this->connections);
-                $this->currIndex = $key !== null ? $key : 0;
+                $this->currIndex = $key ?? '0';
             }
         }
 
@@ -571,7 +576,7 @@ class Manager extends Configurable implements \Countable, \IteratorAggregate
      *
      * @param mixed $key the connection key
      */
-    public function contains($key): bool
+    public function contains(mixed $key): bool
     {
         return isset($this->connections[$key]);
     }

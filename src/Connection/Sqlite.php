@@ -2,11 +2,17 @@
 
 namespace Doctrine1\Connection;
 
+use Doctrine1\Manager;
 use PDO;
 
 class Sqlite extends \Doctrine1\Connection
 {
-    public function __construct(\Doctrine1\Manager $manager, PDO|array $adapter)
+    /**
+     * @param Manager $manager the manager object
+     * @param PDO|array<string, string> $adapter database driver
+     * @param null|(callable(): (PDO|array<string, string>)) $initiator
+     */
+    public function __construct(Manager $manager, PDO|array $adapter, ?callable $initiator = null)
     {
         $this->supported = [
             "sequences" => "emulated",
@@ -28,7 +34,7 @@ class Sqlite extends \Doctrine1\Connection
             "identifier_quoting" => true,
             "pattern_escaping" => false,
         ];
-        parent::__construct($manager, $adapter);
+        parent::__construct($manager, $adapter, $initiator);
 
         if ($this->dbh !== null) {
             $this->dbh->sqliteCreateFunction("mod", ["\Doctrine1\Expression\Sqlite", "modImpl"], 2);

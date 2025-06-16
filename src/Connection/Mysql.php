@@ -2,6 +2,7 @@
 
 namespace Doctrine1\Connection;
 
+use Doctrine1\Manager;
 use Doctrine1\MySQLEngine;
 use PDO;
 use UnexpectedValueException;
@@ -11,7 +12,12 @@ use UnexpectedValueException;
  */
 class Mysql extends \Doctrine1\Connection
 {
-    public function __construct(\Doctrine1\Manager $manager, PDO|array $adapter)
+    /**
+     * @param Manager $manager the manager object
+     * @param PDO|array<string, string> $adapter database driver
+     * @param null|(callable(): (PDO|array<string, string>)) $initiator
+     */
+    public function __construct(Manager $manager, PDO|array $adapter, ?callable $initiator = null)
     {
         $this->setDefaultMySQLEngine(MySQLEngine::InnoDB);
         $this->supported = [
@@ -56,7 +62,7 @@ class Mysql extends \Doctrine1\Connection
 
         $this->properties["varchar_max_length"] = 255;
 
-        parent::__construct($manager, $adapter);
+        parent::__construct($manager, $adapter, $initiator);
     }
 
     protected function illuminateGrammar(): \Illuminate\Database\Query\Grammars\Grammar

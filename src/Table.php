@@ -1582,11 +1582,13 @@ class Table extends Configurable implements \Countable
 
             $params = array_merge([$id], array_values($this->inheritanceMap));
 
-            $this->data = $this->connection->execute($query, $params)->fetch(\PDO::FETCH_ASSOC);
+            $data = $this->connection->execute($query, $params)->fetch(\PDO::FETCH_ASSOC);
 
-            if ($this->data === false) {
+            if ($data === false) {
                 return null;
             }
+
+            $this->data = $data;
         }
         return $this->getRecord();
     }
@@ -1720,7 +1722,6 @@ class Table extends Configurable implements \Countable
             $value = $value->getIncremented();
         } elseif ($value instanceof Record && !$value->exists()) {
             foreach ($this->getRelations() as $relation) {
-                // @phpstan-ignore-next-line
                 if ($fieldName == $relation->getLocalFieldName() && (get_class($value) === $relation->getClass() || is_subclass_of($value, $relation->getClass()))) {
                     return $errorStack;
                 }
