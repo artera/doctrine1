@@ -1134,6 +1134,8 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
 
         $this->dbh = null;
         $this->illuminate = null;
+        $this->modules['transaction'] = false;
+        $this->modules['unitOfWork'] = false;
 
         $this->getListener()->postClose($event);
     }
