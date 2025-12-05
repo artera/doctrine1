@@ -45,6 +45,7 @@ class UnitOfWork extends \Doctrine1\Connection\Module
                 }
             }
 
+            $hasSaved = true;
             if ($state->isTransient()) {
                 if ($replace) {
                     $isValid = $this->replace($record);
@@ -57,6 +58,8 @@ class UnitOfWork extends \Doctrine1\Connection\Module
                 } else {
                     $isValid = $this->update($record);
                 }
+            } else {
+                $hasSaved = false;
             }
 
             $aliasesUnlinkInDb = [];
@@ -78,7 +81,9 @@ class UnitOfWork extends \Doctrine1\Connection\Module
                 }
                 $record->resetPendingUnlinks();
 
-                $record->invokeSaveHooks("post", "save", $event);
+                if ($hasSaved) {
+                    $record->invokeSaveHooks("post", "save", $event);
+                }
             } else {
                 $savepoint->addInvalid($record);
             }
