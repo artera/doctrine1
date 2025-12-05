@@ -42,48 +42,48 @@ class Event
     public const RECORD_VALIDATE    = 30;
 
     /**
-     * @var int $nextSequence        the sequence of the next event that will be created
+     * @var int $nextSequence the sequence of the next event that will be created
      */
     protected static int $nextSequence = 0;
 
     /**
-     * @var int $sequence            the sequence of this event
+     * @var int $sequence the sequence of this event
      */
     protected int $sequence;
 
     /**
-     * @var mixed $invoker             the handler which invoked this event
+     * @var mixed $invoker the handler which invoked this event
      */
     protected $invoker;
 
     /**
-     * @var string|AbstractQuery|null $query              the sql query associated with this event (if any)
+     * @var string|AbstractQuery|null $query the sql query associated with this event (if any)
      */
     protected string|AbstractQuery|null $query;
 
     /**
-     * @var array $params             the parameters associated with the query (if any)
+     * @var array $params the parameters associated with the query (if any)
      */
     protected array $params;
 
     /**
      * @see Event constants
-     * @var int $code              the event code
+     * @var int $code the event code
      */
     protected int $code;
 
     /**
-     * @var float $startedMicrotime  the time point in which this event was started
+     * @var float $startedMicrotime the time point in which this event was started
      */
     protected float $startedMicrotime;
 
     /**
-     * @var float|null $endedMicrotime    the time point in which this event was ended
+     * @var float|null $endedMicrotime the time point in which this event was ended
      */
     protected ?float $endedMicrotime;
 
     /**
-     * @var array<string, mixed> $options             an array of options
+     * @var array<string, mixed> $options an array of options
      */
     protected array $options = [];
 
@@ -102,19 +102,11 @@ class Event
         $this->params   = $params;
     }
 
-    /**
-     * @return string|AbstractQuery|null       returns the query associated with this event (if any)
-     */
     public function getQuery(): string|AbstractQuery|null
     {
         return $this->query;
     }
 
-    /**
-     * returns the name of this event
-     *
-     * @return string|null       the name of this event
-     */
     public function getName(): ?string
     {
         switch ($this->code) {
@@ -177,20 +169,11 @@ class Event
         return null;
     }
 
-    /**
-     * @return int      returns the code associated with this event
-     */
     public function getCode(): int
     {
         return $this->code;
     }
 
-    /**
-     * returns the value of an option
-     *
-     * @param  string $option the name of the option
-     * @return mixed
-     */
     public function __get(string $option): mixed
     {
         if (!isset($this->options[$option])) {
@@ -200,15 +183,19 @@ class Event
         return $this->options[$option];
     }
 
-    /**
-     * sets the value of an option
-     *
-     * @param  string $option the name of the option
-     * @param  mixed  $value  the value of the given option
-     */
-    public function __set(string $option, $value): void
+    public function __set(string $option, mixed $value): void
     {
         $this->options[$option] = $value;
+    }
+
+    public function __isset(string $option): bool
+    {
+        return isset($this->options[$option]);
+    }
+
+    public function __unset(string $option): void
+    {
+        unset($this->options[$option]);
     }
 
     /**
@@ -238,7 +225,7 @@ class Event
      */
     public function hasEnded(): bool
     {
-        return ($this->endedMicrotime != null);
+        return $this->endedMicrotime != null;
     }
 
     /**
