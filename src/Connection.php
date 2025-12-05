@@ -41,7 +41,7 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
 {
     protected ?PDO $dbh = null;
 
-    /** @var null|(callable(): (PDO|array<string, string>)) A callable that provides an initialized PDO connection or the options to create one */
+    /** @var null|(callable(): (PDO|array<string, string|null>)) A callable that provides an initialized PDO connection or the options to create one */
     protected $initiator = null;
 
     public ?Casing $fieldCase = null;
@@ -162,14 +162,15 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
      * the constructor
      *
      * @param Manager $manager the manager object
-     * @param PDO|array<string, string>|null $adapter database driver
-     * @param null|(callable(): (PDO|array<string, string>)) $initiator
+     * @param PDO|array<string, string|null>|null $adapter database driver
+     * @param null|(callable(): (PDO|array<string, string|null>)) $initiator
      */
     public function __construct(Manager $manager, PDO|array|null $adapter, ?callable $initiator = null)
     {
         if ($initiator !== null) {
             $this->initiator = $initiator;
             if ($adapter === null) {
+                /** @var mixed $adapter */
                 $adapter = $initiator();
                 if (!is_array($adapter) && !$adapter instanceof PDO) {
                     throw new UnexpectedValueException("Invalid adapter callable return value, expected PDO or array");
@@ -182,8 +183,8 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
             $this->dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } elseif (is_array($adapter)) {
             $this->options["dsn"] = $adapter["dsn"];
-            $this->options["username"] = $adapter["username"] ?? null;
-            $this->options["password"] = $adapter["password"] ?? null;
+            $this->options["user"] = $adapter["user"] ?? null;
+            $this->options["pass"] = $adapter["pass"] ?? null;
 
             $this->options["other"] = [];
             if (isset($adapter["other"])) {
@@ -417,8 +418,8 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
             $this->illuminate = null;
             $this->dbh = $adapter ?? new PDOExtended(
                 $options["dsn"],
-                $options["username"],
-                !$options["password"] ? "" : $options["password"],
+                $options["user"],
+                !$options["pass"] ? "" : $options["pass"],
                 $options["other"]
             );
             $this->dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -918,6 +919,7 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
     /**
      * @param string|QueryBuilder  $query SQL query or query builder
      * @param array  $params query parameters (unused when called with query builder)
+     * @throws Connection\Exception     if something fails at database level
      */
     public function exec(string|QueryBuilder $query, array $params = []): int
     {
@@ -1345,12 +1347,12 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
             $pdoDsn .= ";dbname=" . $this->export->tmpConnectionDatabase;
         }
 
-        $username = $this->getOption("username");
-        $password = $this->getOption("password");
+        $username = $this->getOption("user");
+        $password = $this->getOption("pass");
 
         $conn = $this->getManager()->openConnection(['dsn' => $pdoDsn, 'user' => $username, 'pass' => $password], "doctrine_tmp_connection", false);
-        $conn->setOption("username", $username);
-        $conn->setOption("password", $password);
+        $conn->setOption("user", $username);
+        $conn->setOption("pass", $password);
 
         return $conn;
     }

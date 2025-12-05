@@ -268,12 +268,12 @@ class Collection extends Access implements \Countable, \IteratorAggregate, \Seri
 
     /**
      * Removes a specified collection element
+     * @param int|string $key
      * @phpstan-return T|null
      */
     public function remove(mixed $key): ?Record
     {
         $removed = $this->data[$key];
-
         unset($this->data[$key]);
         return $removed;
     }
@@ -281,7 +281,7 @@ class Collection extends Access implements \Countable, \IteratorAggregate, \Seri
     /**
      * Whether or not this collection contains a specified element
      *
-     * @param  mixed $key the key of the element
+     * @param int|string $key
      */
     public function contains(mixed $key): bool
     {
@@ -578,7 +578,7 @@ class Collection extends Access implements \Countable, \IteratorAggregate, \Seri
                 }
                 $sub = Collection::create($table);
                 foreach ($coll as $k => $related) {
-                    if ($related->get($local) == $record[$identifier]) {
+                    if (!is_array($identifier) && $related->get($local) == $record->get($identifier)) {
                         $sub->add($related->get($name));
                     }
                 }
@@ -880,7 +880,7 @@ class Collection extends Access implements \Countable, \IteratorAggregate, \Seri
 
         if (isset($this->reference)) {
             $this->reference->free($deep);
-            unset($this->reference);
+            $this->reference = null;
         }
     }
 

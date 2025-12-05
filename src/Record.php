@@ -238,7 +238,7 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
      * </code>
      *
      * @phpstan-param 'post'|'pre' $when
-     * @phpstan-param 'serialize'|'unserialize'|'save'|'delete'|'update'|'insert'|'validate'|'dqlSelect'|'dqlDelete'|'hydrate' $type
+     * @phpstan-param 'serialize'|'unserialize'|'save'|'delete'|'update'|'insert'|'validate'|'dqlSelect'|'dqlUpdate'|'dqlDelete'|'hydrate' $type
      * @param  Event $event event raised
      * @return Event        the event generated using the type, if not specified
      */
@@ -493,6 +493,14 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
     }
 
     /**
+     * Empty template method to provide Record classes with the ability to alter DQL select
+     * queries at runtime
+     */
+    public function postDqlSelect(Event $event): void
+    {
+    }
+
+    /**
      * Empty template method to provide Record classes with the ability to alter DQL update
      * queries at runtime
      */
@@ -501,10 +509,26 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
     }
 
     /**
+     * Empty template method to provide Record classes with the ability to alter DQL update
+     * queries at runtime
+     */
+    public function postDqlUpdate(Event $event): void
+    {
+    }
+
+    /**
      * Empty template method to provide Record classes with the ability to alter DQL delete
      * queries at runtime
      */
     public function preDqlDelete(Event $event): void
+    {
+    }
+
+    /**
+     * Empty template method to provide Record classes with the ability to alter DQL delete
+     * queries at runtime
+     */
+    public function postDqlDelete(Event $event): void
     {
     }
 

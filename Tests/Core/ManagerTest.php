@@ -157,9 +157,9 @@ class ManagerTest extends DoctrineUnitTestCase
         $conn    = \Doctrine1\Manager::connection($dsn);
         $options = $conn->getOptions();
 
-        $this->assertEquals($options['username'], 'test/t');
-        $this->assertEquals($options['password'], 'p@ssword');
-        $this->assertEquals($options['dsn'], 'mysql:host=localhost;dbname=db/name');
+        $this->assertEquals('test/t', $options['user']);
+        $this->assertEquals('p@ssword', $options['pass']);
+        $this->assertEquals('mysql:host=localhost;dbname=db/name', $options['dsn']);
     }
 
     public static function prepareData(): void {}

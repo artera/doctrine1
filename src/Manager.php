@@ -213,7 +213,7 @@ class Manager extends Configurable implements \Countable, \IteratorAggregate
     /**
      * Opens a new connection and saves it to Manager->connections
      *
-     * @param  string|PDO|array<string, string>|(callable(): (PDO|array<string, string>)) $adapter    database driver, DSN or array of connection options
+     * @param  string|PDO|array<string, string|null>|(callable(): (PDO|array<string, string>)) $adapter    database driver, DSN or array of connection options
      * @param  string                                      $name       name of the connection, if empty numeric key is used
      * @param  bool                                        $setCurrent
      * @throws Manager\Exception                          if trying to bind a connection with an existing name
@@ -363,7 +363,16 @@ class Manager extends Configurable implements \Countable, \IteratorAggregate
      *
      * @see    parseDsn()
      * @param  string $dsn
-     * @return array $parts
+     * @return array{
+     *   scheme: string,
+     *   host: ?string,
+     *   port: ?int,
+     *   user: ?string,
+     *   pass: ?string,
+     *   path: ?string,
+     *   query: ?string,
+     *   fragment: ?string,
+     * } $parts
      * @throws Manager\Exception
      */
     protected function buildDsnPartsArray(string $dsn): array
@@ -388,6 +397,18 @@ class Manager extends Configurable implements \Countable, \IteratorAggregate
             throw new Manager\Exception("Could not parse dsn");
         }
 
+        /**
+         * @var array{
+         *   scheme: string,
+         *   host: ?string,
+         *   port: ?int,
+         *   user: ?string,
+         *   pass: ?string,
+         *   path: ?string,
+         *   query: ?string,
+         *   fragment: ?string,
+         * } $parts
+         */
         return $parts;
     }
 

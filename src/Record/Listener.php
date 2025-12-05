@@ -67,6 +67,10 @@ class Listener implements ListenerInterface
     {
     }
 
+    public function postDqlSelect(\Doctrine1\Event $event): void
+    {
+    }
+
     public function preSave(\Doctrine1\Event $event): void
     {
     }
@@ -79,6 +83,10 @@ class Listener implements ListenerInterface
     {
     }
 
+    public function postDqlDelete(\Doctrine1\Event $event): void
+    {
+    }
+
     public function preDelete(\Doctrine1\Event $event): void
     {
     }
@@ -88,6 +96,10 @@ class Listener implements ListenerInterface
     }
 
     public function preDqlUpdate(\Doctrine1\Event $event): void
+    {
+    }
+
+    public function postDqlUpdate(\Doctrine1\Event $event): void
     {
     }
 

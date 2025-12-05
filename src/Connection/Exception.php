@@ -61,11 +61,14 @@ class Exception extends \Doctrine1\Exception
      * @param PDOException $e The original PDOException.
      * @param Connection $conn The database connection driver.
      * @param string $query The query that originated the exception.
-     * @return self An instance of a specific SQL exception class based on the SQL state code.
+     * @return self|PDOException An instance of a specific SQL exception class based on the SQL state code.
      */
-    public static function fromPDO(PDOException $e, Connection $conn, ?string $query = null): self
+    public static function fromPDO(PDOException $e, Connection $conn, ?string $query = null): self|PDOException
     {
-        assert($e->errorInfo !== null);
+        if ($e->errorInfo === null) {
+            return $e;
+        }
+
         $exClass = null;
         $sqlState = $e->errorInfo[0];
 

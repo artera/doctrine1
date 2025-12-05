@@ -25,4 +25,10 @@ interface ListenerInterface
     public function postHydrate(Event $event): void;
     public function preValidate(Event $event): void;
     public function postValidate(Event $event): void;
+    public function preDqlSelect(Event $event): void;
+    public function postDqlSelect(Event $event): void;
+    public function preDqlUpdate(Event $event): void;
+    public function postDqlUpdate(Event $event): void;
+    public function preDqlDelete(Event $event): void;
+    public function postDqlDelete(Event $event): void;
 }

@@ -259,7 +259,8 @@ class Export extends Connection\Module
         // specify primary => true
         $count = 0;
         foreach ($fields as $field) {
-            if (is_array($field)) {
+            // @phpstan-ignore instanceof.alwaysTrue
+            if (!$field instanceof Column) {
                 throw new \InvalidArgumentException("Fields should be of class \Doctrine1\Column");
             }
 
@@ -300,7 +301,7 @@ class Export extends Connection\Module
      * return RDBMS specific create sequence statement
      * (this method is implemented by the drivers)
      *
-     * @throws Connection\Exception     if something fails at database level
+     * @throws Export\Exception
      * @param  string $seqName name of the sequence to be created
      * @param  int    $start   start value of the sequence; default is 1
      * @param  array  $options An associative array of table options:

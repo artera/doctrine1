@@ -51,11 +51,9 @@ class ErrorStack extends \Doctrine1\Access implements \Countable, \IteratorAggre
 
     /**
      * Removes all existing errors for the specified field from the stack.
-     *
-     * @param  scalar|null $fieldName
-     * @return void
+     * @param string $fieldName
      */
-    public function remove($fieldName)
+    public function remove($fieldName): void
     {
         unset($this->errors[$fieldName]);
         unset($this->validators[$fieldName]);
@@ -63,7 +61,6 @@ class ErrorStack extends \Doctrine1\Access implements \Countable, \IteratorAggre
 
     /**
      * Get errors for field
-     *
      * @param string $fieldName
      * @phpstan-return string[]
      */
@@ -74,9 +71,7 @@ class ErrorStack extends \Doctrine1\Access implements \Countable, \IteratorAggre
 
     /**
      * Check if a field has an error
-     *
-     * @param  string $fieldName
-     * @return boolean
+     * @param string $fieldName
      */
     public function contains($fieldName): bool
     {

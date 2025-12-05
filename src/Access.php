@@ -168,7 +168,7 @@ abstract class Access implements \ArrayAccess
      * @param  scalar|null $offset The offset to check
      * @return boolean True if exists otherwise false
      */
-    public function contains($offset)
+    public function contains($offset): bool
     {
         throw new Exception('Contains is not supported for ' . get_class($this));
     }

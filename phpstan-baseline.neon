@@ -31,28 +31,9 @@ parameters:
 			path: src/Cli/Formatter.php
 
 		-
-			message: '#^Constructor of class Doctrine1\\Connection\\Mock has an unused parameter \$adapter\.$#'
+			message: '#^Constructor of class Doctrine1\\Connection\\Mock has an unused parameter#'
 			identifier: constructor.unusedParameter
-			count: 1
 			path: src/Connection/Mock.php
-
-		-
-			message: '#^Constructor of class Doctrine1\\Connection\\Mock has an unused parameter \$manager\.$#'
-			identifier: constructor.unusedParameter
-			count: 1
-			path: src/Connection/Mock.php
-
-		-
-			message: '#^Call to function is_array\(\) with Doctrine1\\Column will always evaluate to false\.$#'
-			identifier: function.impossibleType
-			count: 1
-			path: src/Export.php
-
-		-
-			message: '#^Method Doctrine1\\Export\:\:createSequenceSql\(\) has Doctrine1\\Connection\\Exception in PHPDoc @throws tag but it''s not thrown\.$#'
-			identifier: throws.unusedType
-			count: 1
-			path: src/Export.php
 
 		-
 			message: '#^Cannot access an offset on array\|Doctrine1\\None\|Traversable\|null\.$#'

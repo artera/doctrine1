@@ -187,6 +187,21 @@ class Chain extends \Doctrine1\Access implements \Doctrine1\Record\ListenerInter
         }
     }
 
+    public function postDqlSelect(\Doctrine1\Event $event): void
+    {
+        $disabled = $this->getOption('disabled');
+
+        if ($disabled !== true && !(is_array($disabled) && in_array('postDqlSelect', $disabled))) {
+            foreach ($this->listeners as $listener) {
+                $disabled = $listener->getOption('disabled');
+
+                if ($disabled !== true && !(is_array($disabled) && in_array('postDqlSelect', $disabled))) {
+                    $listener->postDqlSelect($event);
+                }
+            }
+        }
+    }
+
     public function preSave(\Doctrine1\Event $event): void
     {
         $disabled = $this->getOption('disabled');
@@ -232,6 +247,21 @@ class Chain extends \Doctrine1\Access implements \Doctrine1\Record\ListenerInter
         }
     }
 
+    public function postDqlDelete(\Doctrine1\Event $event): void
+    {
+        $disabled = $this->getOption('disabled');
+
+        if ($disabled !== true && !(is_array($disabled) && in_array('postDqlDelete', $disabled))) {
+            foreach ($this->listeners as $listener) {
+                $disabled = $listener->getOption('disabled');
+
+                if ($disabled !== true && !(is_array($disabled) && in_array('postDqlDelete', $disabled))) {
+                    $listener->postDqlDelete($event);
+                }
+            }
+        }
+    }
+
     public function preDelete(\Doctrine1\Event $event): void
     {
         $disabled = $this->getOption('disabled');
@@ -272,6 +302,21 @@ class Chain extends \Doctrine1\Access implements \Doctrine1\Record\ListenerInter
 
                 if ($disabled !== true && !(is_array($disabled) && in_array('preDqlUpdate', $disabled))) {
                     $listener->preDqlUpdate($event);
+                }
+            }
+        }
+    }
+
+    public function postDqlUpdate(\Doctrine1\Event $event): void
+    {
+        $disabled = $this->getOption('disabled');
+
+        if ($disabled !== true && !(is_array($disabled) && in_array('postDqlUpdate', $disabled))) {
+            foreach ($this->listeners as $listener) {
+                $disabled = $listener->getOption('disabled');
+
+                if ($disabled !== true && !(is_array($disabled) && in_array('postDqlUpdate', $disabled))) {
+                    $listener->postDqlUpdate($event);
                 }
             }
         }

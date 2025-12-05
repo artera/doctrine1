@@ -1489,10 +1489,12 @@ abstract class AbstractQuery
                 $this->params['select'][] = $params;
             }
 
-            return $this->addDqlQueryPart('select', $select);
+            $q = $this->addDqlQueryPart('select', $select);
         } else {
-            return $this;
+            $q = $this;
         }
+        /** @var static<Record, Query\Type\Select> */
+        return $q;
     }
 
     /**
@@ -1582,9 +1584,12 @@ abstract class AbstractQuery
     {
         $this->type = Query\Type::DELETE();
         if ($from != null) {
-            return $this->addDqlQueryPart('from', $from);
+            $q = $this->addDqlQueryPart('from', $from);
+        } else {
+            $q = $this;
         }
-        return $this;
+        /** @var static<Record, Query\Type\Delete> */
+        return $q;
     }
 
     /**
@@ -1599,9 +1604,12 @@ abstract class AbstractQuery
     {
         $this->type = Query\Type::UPDATE();
         if ($from != null) {
-            return $this->addDqlQueryPart('from', $from);
+            $q = $this->addDqlQueryPart('from', $from);
+        } else {
+            $q = $this;
         }
-        return $this;
+        /** @var static<Record, Query\Type\Update> */
+        return $q;
     }
 
     /**
