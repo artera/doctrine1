@@ -12,6 +12,9 @@ use UnexpectedValueException;
  */
 class Mysql extends \Doctrine1\Connection
 {
+    /** @var class-string<\Illuminate\Database\Query\Grammars\Grammar> */
+    protected const ILLUMINATE_GRAMMAR_CLASS = \Illuminate\Database\Query\Grammars\MySqlGrammar::class;
+
     /**
      * @param Manager $manager the manager object
      * @param PDO|array<string, string|null> $adapter database driver
@@ -63,11 +66,6 @@ class Mysql extends \Doctrine1\Connection
         $this->properties["varchar_max_length"] = 255;
 
         parent::__construct($manager, $adapter, $initiator);
-    }
-
-    protected function illuminateGrammar(): \Illuminate\Database\Query\Grammars\Grammar
-    {
-        return new \Illuminate\Database\Query\Grammars\MySqlGrammar();
     }
 
     public function connect(): bool

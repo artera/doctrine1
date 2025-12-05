@@ -4,8 +4,6 @@ namespace Doctrine1\Connection;
 
 class MariaDb extends Mysql
 {
-    protected function illuminateGrammar(): \Illuminate\Database\Query\Grammars\Grammar
-    {
-        return new \Illuminate\Database\Query\Grammars\MariaDbGrammar();
-    }
+    /** @var class-string<\Illuminate\Database\Query\Grammars\Grammar> */
+    protected const ILLUMINATE_GRAMMAR_CLASS = \Illuminate\Database\Query\Grammars\MariaDbGrammar::class;
 }

@@ -39,6 +39,9 @@ use Illuminate\Database\Query\Builder as QueryBuilder;
  */
 abstract class Connection extends Configurable implements \Countable, \IteratorAggregate, \Serializable
 {
+    /** @var class-string<QueryGrammars\Grammar> */
+    protected const ILLUMINATE_GRAMMAR_CLASS = QueryGrammars\MySqlGrammar::class;
+
     protected ?PDO $dbh = null;
 
     /** @var null|(callable(): (PDO|array<string, string|null>)) A callable that provides an initialized PDO connection or the options to create one */
@@ -197,16 +200,18 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
         $this->getListener()->onOpen($this);
     }
 
-    protected function illuminateGrammar(): QueryGrammars\Grammar
-    {
-        return new QueryGrammars\MySqlGrammar();
-    }
-
     public function illuminate(): IlluminateConnection
     {
         if ($this->illuminate === null) {
             $this->illuminate = new IlluminateConnection($this->getDbh());
-            $this->illuminate->setQueryGrammar($this->illuminateGrammar());
+            $refl = new \ReflectionClass(static::ILLUMINATE_GRAMMAR_CLASS);
+            if ($refl->getConstructor() === null) {
+                // @phpstan-ignore arguments.count
+                $grammar = new (static::ILLUMINATE_GRAMMAR_CLASS)();
+            } else {
+                $grammar = new (static::ILLUMINATE_GRAMMAR_CLASS)($this->illuminate);
+            }
+            $this->illuminate->setQueryGrammar($grammar);
         }
         return $this->illuminate;
     }

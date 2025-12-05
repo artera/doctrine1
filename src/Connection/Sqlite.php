@@ -7,6 +7,9 @@ use PDO;
 
 class Sqlite extends \Doctrine1\Connection
 {
+    /** @var class-string<\Illuminate\Database\Query\Grammars\Grammar> */
+    protected const ILLUMINATE_GRAMMAR_CLASS = \Illuminate\Database\Query\Grammars\SQLiteGrammar::class;
+
     /**
      * @param Manager $manager the manager object
      * @param PDO|array<string, string|null> $adapter database driver
@@ -42,11 +45,6 @@ class Sqlite extends \Doctrine1\Connection
             $this->dbh->sqliteCreateFunction("md5", "md5", 1);
             $this->dbh->sqliteCreateFunction("now", ["\Doctrine1\Expression\Sqlite", "nowImpl"], 0);
         }
-    }
-
-    protected function illuminateGrammar(): \Illuminate\Database\Query\Grammars\Grammar
-    {
-        return new \Illuminate\Database\Query\Grammars\SQLiteGrammar();
     }
 
     public function connect(): bool

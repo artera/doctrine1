@@ -7,6 +7,9 @@ use PDO;
 
 class Pgsql extends \Doctrine1\Connection
 {
+    /** @var class-string<\Illuminate\Database\Query\Grammars\Grammar> */
+    protected const ILLUMINATE_GRAMMAR_CLASS = \Illuminate\Database\Query\Grammars\PostgresGrammar::class;
+
     /**
      * @param Manager $manager the manager object
      * @param PDO|array<string, string|null> $adapter database driver
@@ -49,11 +52,6 @@ class Pgsql extends \Doctrine1\Connection
             "escape" => '"',
         ];
         parent::__construct($manager, $adapter, $initiator);
-    }
-
-    protected function illuminateGrammar(): \Illuminate\Database\Query\Grammars\Grammar
-    {
-        return new \Illuminate\Database\Query\Grammars\PostgresGrammar();
     }
 
     public function setCharset(?string $charset): void
