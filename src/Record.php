@@ -1317,6 +1317,10 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
      */
     public function set(string $fieldName, mixed $value, bool $load = true, bool $mutators = false): self
     {
+        if ($value instanceof None) {
+            $value = null;
+        }
+
         if ($mutators) {
             $deserializers = $this->getDeserializers();
             if (!empty($deserializers)) {
