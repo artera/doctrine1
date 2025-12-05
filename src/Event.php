@@ -42,14 +42,14 @@ class Event
     public const RECORD_VALIDATE    = 30;
 
     /**
-     * @var mixed $nextSequence        the sequence of the next event that will be created
+     * @var int $nextSequence        the sequence of the next event that will be created
      */
-    protected static $nextSequence = 0;
+    protected static int $nextSequence = 0;
 
     /**
-     * @var mixed $sequence            the sequence of this event
+     * @var int $sequence            the sequence of this event
      */
-    protected $sequence;
+    protected int $sequence;
 
     /**
      * @var mixed $invoker             the handler which invoked this event
@@ -59,43 +59,41 @@ class Event
     /**
      * @var string|AbstractQuery|null $query              the sql query associated with this event (if any)
      */
-    protected $query;
+    protected string|AbstractQuery|null $query;
 
     /**
      * @var array $params             the parameters associated with the query (if any)
      */
-    protected $params;
+    protected array $params;
 
     /**
      * @see Event constants
-     * @var integer $code              the event code
+     * @var int $code              the event code
      */
-    protected $code;
+    protected int $code;
 
     /**
      * @var float $startedMicrotime  the time point in which this event was started
      */
-    protected $startedMicrotime;
+    protected float $startedMicrotime;
 
     /**
      * @var float|null $endedMicrotime    the time point in which this event was ended
      */
-    protected $endedMicrotime;
+    protected ?float $endedMicrotime;
 
     /**
-     * @var array $options             an array of options
+     * @var array<string, mixed> $options             an array of options
      */
-    protected $options = [];
+    protected array $options = [];
 
     /**
-     * constructor
-     *
      * @param Connection|Connection\Statement|Connection\UnitOfWork|Transaction|Record|null $invoker the handler which invoked this event
      * @param integer                                                                                                                    $code    the event code
      * @param string|AbstractQuery                                                                                             $query   the sql query associated with this event (if any)
      * @param array                                                                                                                      $params
      */
-    public function __construct($invoker, $code, $query = null, $params = [])
+    public function __construct($invoker, int $code, string|AbstractQuery|null $query = null, array $params = [])
     {
         $this->sequence = self::$nextSequence++;
         $this->invoker  = $invoker;
@@ -105,22 +103,19 @@ class Event
     }
 
     /**
-     * getQuery
-     *
      * @return string|AbstractQuery|null       returns the query associated with this event (if any)
      */
-    public function getQuery()
+    public function getQuery(): string|AbstractQuery|null
     {
         return $this->query;
     }
 
     /**
-     * getName
      * returns the name of this event
      *
      * @return string|null       the name of this event
      */
-    public function getName()
+    public function getName(): ?string
     {
         switch ($this->code) {
             case self::CONN_QUERY:
@@ -183,23 +178,20 @@ class Event
     }
 
     /**
-     * getCode
-     *
-     * @return integer      returns the code associated with this event
+     * @return int      returns the code associated with this event
      */
-    public function getCode()
+    public function getCode(): int
     {
         return $this->code;
     }
 
     /**
-     * getOption
      * returns the value of an option
      *
      * @param  string $option the name of the option
      * @return mixed
      */
-    public function __get($option)
+    public function __get(string $option): mixed
     {
         if (!isset($this->options[$option])) {
             return null;
@@ -209,27 +201,24 @@ class Event
     }
 
     /**
-     * setOption
      * sets the value of an option
      *
      * @param  string $option the name of the option
      * @param  mixed  $value  the value of the given option
-     * @return void
      */
-    public function __set($option, $value)
+    public function __set(string $option, $value): void
     {
         $this->options[$option] = $value;
     }
 
     /**
-     * setOption
      * sets the value of an option by reference
      *
      * @param  string $option the name of the option
      * @param  mixed  $value  the value of the given option
      * @return $this   this object
      */
-    public function set($option, &$value)
+    public function set(string $option, &$value): self
     {
         $this->options[$option] = & $value;
 
@@ -237,34 +226,27 @@ class Event
     }
 
     /**
-     * start
      * starts the internal timer of this event
-     *
-     * @return void
      */
-    public function start()
+    public function start(): void
     {
         $this->startedMicrotime = microtime(true);
     }
 
     /**
-     * hasEnded
      * whether or not this event has ended
-     *
-     * @return boolean
      */
-    public function hasEnded()
+    public function hasEnded(): bool
     {
         return ($this->endedMicrotime != null);
     }
 
     /**
-     * end
      * ends the internal timer of this event
      *
      * @return $this   this object
      */
-    public function end()
+    public function end(): self
     {
         $this->endedMicrotime = microtime(true);
 
@@ -272,46 +254,37 @@ class Event
     }
 
     /**
-     * getSequence
      * returns the sequence of this event
-     *
-     * @return integer
      */
-    public function getSequence()
+    public function getSequence(): int
     {
         return $this->sequence;
     }
 
     /**
-     * getInvoker
      * returns the handler that invoked this event
      *
      * @return mixed   the handler that invoked this event
      */
-    public function getInvoker()
+    public function getInvoker(): mixed
     {
         return $this->invoker;
     }
 
     /**
-     * setInvoker
      * Defines new invoker (used in Hydrator)
-     *
-     * @param  mixed $invoker
-     * @return void
      */
-    public function setInvoker($invoker)
+    public function setInvoker(mixed $invoker): void
     {
         $this->invoker = $invoker;
     }
 
     /**
-     * getParams
      * returns the parameters of the query
      *
      * @return array   parameters of the query
      */
-    public function getParams()
+    public function getParams(): array
     {
         return $this->params;
     }
@@ -325,6 +298,6 @@ class Event
         if ($this->endedMicrotime === null) {
             return null;
         }
-        return ($this->endedMicrotime - $this->startedMicrotime);
+        return $this->endedMicrotime - $this->startedMicrotime;
     }
 }

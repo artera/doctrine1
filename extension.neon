@@ -2,6 +2,8 @@ parameters:
   doctrine1:
     namespace: null
     tableFormat: null
+  universalObjectCratesClasses:
+    - Doctrine1\Event
 
 services:
   - class: Doctrine1\PHPStan\TableDynamicReturnTypeExtension
