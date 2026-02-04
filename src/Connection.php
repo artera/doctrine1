@@ -12,7 +12,7 @@ use PDOStatement;
 use Throwable;
 use UnexpectedValueException;
 use Illuminate\Database\Connection as IlluminateConnection;
-use Staudenmeir\LaravelCte\Query\Builder as QueryBuilder;
+use Illuminate\Database\Query\Builder as QueryBuilder;
 
 /**
  * From $modules array
@@ -215,10 +215,10 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
         return $this->illuminate;
     }
 
-    public function iquery(): QueryBuilder
+    public function iquery(): \Staudenmeir\LaravelCte\Query\Builder
     {
         $connection = $this->illuminate();
-        return new QueryBuilder(
+        return new \Staudenmeir\LaravelCte\Query\Builder(
             $connection, $connection->getQueryGrammar(), $connection->getPostProcessor()
         );
     }
