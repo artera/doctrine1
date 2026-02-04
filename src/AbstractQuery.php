@@ -251,6 +251,9 @@ abstract class AbstractQuery
         $this->connection = $connection;
     }
 
+    /**
+     * @throws Query\Exception
+     */
     public function setOption(string $name, string $value): void
     {
         if (!isset($this->options[$name])) {
@@ -590,7 +593,8 @@ abstract class AbstractQuery
      * smart enough to check if an alias already exists for given component (componentAlias)
      *
      * @param  string $componentAlias the alias for the query component to search table alias for
-     * @param  string $tableName      the table name from which the table alias is being created
+     * @param  ?string $tableName     the table name from which the table alias is being created
+     * @throws Query\Exception        if table name is null and no alias exists for the component
      * @return string                   the generated / fetched short alias
      */
     public function getSqlTableAlias(string $componentAlias, ?string $tableName = null): string
@@ -663,6 +667,7 @@ abstract class AbstractQuery
      * get the declaration for given component alias
      *
      * @param  string $componentAlias the component alias the retrieve the declaration from
+     * @throws Query\Exception        if the component alias is unknown
      * @return array                    the alias declaration
      * @phpstan-return QueryComponent
      */
@@ -719,6 +724,7 @@ abstract class AbstractQuery
     /**
      * returns the root component for this object
      *
+     * @throws Query\Exception if the root component is unitialized
      * @return Table       root components table
      */
     public function getRoot(): Table
@@ -765,6 +771,7 @@ abstract class AbstractQuery
      * get component alias associated with given table alias
      *
      * @param  string $sqlTableAlias the SQL table alias that identifies the component alias
+     * @throws Query\Exception if the component alias is unknown
      * @return string               component alias
      */
     public function getComponentAlias(string $sqlTableAlias): string
@@ -899,6 +906,7 @@ abstract class AbstractQuery
     /**
      * executes the query and populates the data set
      *
+     * @throws Query\Exception if the query has no from clause
      * @phpstan-param HydrationMode|class-string<Hydrator\AbstractHydrator>|null $hydrationMode
      * @phpstan-return Collection<Record>|Collection\OnDemand<Record>|array|scalar
      */
@@ -1173,7 +1181,7 @@ abstract class AbstractQuery
      * </code>
      *
      * @param  string $select Query SELECT part
-     * @param  array|scalar|null $params
+     * @param  array|scalar|Expression|\Stringable|null $params
      * @return $this
      */
     public function addSelect(string $select, $params = []): self
@@ -1216,7 +1224,7 @@ abstract class AbstractQuery
      * Alias for @see andWhere().
      *
      * @param  string            $where
-     * @param  array|scalar|null $params
+     * @param  array|scalar|Expression|\Stringable|null $params
      * @return $this   this object
      */
     public function addWhere(string $where, $params = []): self
@@ -1231,7 +1239,7 @@ abstract class AbstractQuery
      * </code>
      *
      * @param  string            $where  Query WHERE part
-     * @param  array|scalar|null $params An array of parameters or a simple scalar
+     * @param  array|scalar|Expression|\Stringable|null $params An array of parameters or a simple scalar
      * @return $this
      */
     public function andWhere(string $where, $params = []): self
@@ -1256,7 +1264,7 @@ abstract class AbstractQuery
      * </code>
      *
      * @param  string            $where  Query WHERE part
-     * @param  array|scalar|null $params An array of parameters or a simple scalar
+     * @param  array|scalar|Expression|\Stringable|null $params An array of parameters or a simple scalar
      * @return $this
      */
     public function orWhere(string $where, $params = []): self
@@ -1278,7 +1286,7 @@ abstract class AbstractQuery
      * Adds IN condition to the query WHERE part. Alias to @see andWhereIn().
      *
      * @param  string       $expr   the operand of the IN
-     * @param  array|scalar $params an array of parameters or a simple scalar
+     * @param  array|scalar|Expression|\Stringable $params an array of parameters or a simple scalar
      * @param  boolean      $not    whether or not to use NOT in front of IN
      * @return $this
      */
@@ -1294,7 +1302,7 @@ abstract class AbstractQuery
      * </code>
      *
      * @param  string       $expr   The operand of the IN
-     * @param  array|scalar $params An array of parameters or a simple scalar
+     * @param  array|scalar|Expression|\Stringable $params An array of parameters or a simple scalar
      * @param  boolean      $not    Whether or not to use NOT in front of IN. Defaults to false (simple IN clause)
      * @return $this   this object.
      */
@@ -1321,7 +1329,7 @@ abstract class AbstractQuery
      * </code>
      *
      * @param  string       $expr   The operand of the IN
-     * @param  array|scalar $params An array of parameters or a simple scalar
+     * @param  array|scalar|Expression|\Stringable $params An array of parameters or a simple scalar
      * @param  boolean      $not    Whether or not to use NOT in front of IN
      * @return $this
      */
@@ -1340,15 +1348,16 @@ abstract class AbstractQuery
     }
 
     /**
-     * @param  array|scalar $params An array of parameters or a simple scalar
+     * @param  array|scalar|Expression|\Stringable $params An array of parameters or a simple scalar
+     * @phpstan-param non-empty-array<scalar|Expression|\Stringable>|scalar|Expression|\Stringable $params
      */
-    protected function processWhereIn(string $expr, $params = [], bool $not = false): string
+    protected function processWhereIn(string $expr, $params, bool $not = false): string
     {
         $params = (array) $params;
 
         // if there's no params, return (else we'll get a WHERE IN (), invalid SQL)
         if (count($params) == 0) {
-            throw new Query\Exception('You must pass at least one parameter when using an IN() condition.');
+            throw new \InvalidArgumentException('You must pass at least one parameter when using an IN() condition.');
         }
 
         $a = [];
@@ -1375,12 +1384,12 @@ abstract class AbstractQuery
      * </code>
      *
      * @param  string       $expr   the operand of the NOT IN
-     * @param  array|scalar $params an array of parameters or a simple scalar
+     * @param  array|scalar|Expression|\Stringable $params an array of parameters or a simple scalar
      * @return $this       this object
      */
     public function whereNotIn(string $expr, $params = []): self
     {
-        return $this->whereIn($expr, $params, true);
+        return $this->andWhereIn($expr, $params, true);
     }
 
     /**
@@ -1388,7 +1397,7 @@ abstract class AbstractQuery
      * Alias for @see whereNotIn().
      *
      * @param  string       $expr   The operand of the NOT IN
-     * @param  array|scalar $params An array of parameters or a simple scalar
+     * @param  array|scalar|Expression|\Stringable $params An array of parameters or a simple scalar
      * @return $this
      */
     public function andWhereNotIn(string $expr, $params = []): self
@@ -1400,7 +1409,7 @@ abstract class AbstractQuery
      * Adds NOT IN condition to the query WHERE part
      *
      * @param  string       $expr   The operand of the NOT IN
-     * @param  array|scalar $params An array of parameters or a simple scalar
+     * @param  array|scalar|Expression|\Stringable $params An array of parameters or a simple scalar
      * @return $this
      */
     public function orWhereNotIn(string $expr, $params = []): self
@@ -1415,7 +1424,7 @@ abstract class AbstractQuery
      * </code>
      *
      * @param  string $groupby Query GROUP BY part
-     * @param  array|scalar $params an array of parameters or a simple scalar
+     * @param  array|scalar|Expression|\Stringable $params an array of parameters or a simple scalar
      * @return $this
      */
     public function addGroupBy(string $groupby, $params = []): self
@@ -1438,7 +1447,7 @@ abstract class AbstractQuery
      * </code>
      *
      * @param  string       $having Query HAVING part
-     * @param  array|scalar $params an array of parameters or a simple scalar
+     * @param  array|scalar|Expression|\Stringable $params an array of parameters or a simple scalar
      * @return $this
      */
     public function addHaving(string $having, $params = []): self
@@ -1456,7 +1465,7 @@ abstract class AbstractQuery
      * adds fields to the ORDER BY part of the query
      *
      * @param  string $orderby Query ORDER BY part
-     * @param  array|scalar $params an array of parameters or a simple scalar
+     * @param  array|scalar|Expression|\Stringable $params an array of parameters or a simple scalar
      * @return $this
      */
     public function addOrderBy(string $orderby, $params = []): self
@@ -1473,7 +1482,7 @@ abstract class AbstractQuery
      * sets the SELECT part of the query
      *
      * @param  string $select Query SELECT part
-     * @param  array|scalar $params an array of parameters or a simple scalar
+     * @param  array|scalar|Expression|\Stringable $params an array of parameters or a simple scalar
      * @return $this
      * @phpstan-return static<Record, Query\Type\Select>
      */
@@ -1618,7 +1627,7 @@ abstract class AbstractQuery
      *
      * @param  array|string $key
      * @param  mixed        $value
-     * @param  array|scalar $params
+     * @param  array|scalar|Expression|\Stringable $params
      * @return $this
      */
     public function set($key, $value = null, $params = null): self
@@ -1661,7 +1670,7 @@ abstract class AbstractQuery
      * appends an INNER JOIN to the FROM part of the query
      *
      * @param  string       $join   Query INNER JOIN
-     * @param  array|scalar $params
+     * @param  array|scalar|Expression|\Stringable $params
      * @return $this
      */
     public function innerJoin(string $join, $params = []): self
@@ -1680,7 +1689,7 @@ abstract class AbstractQuery
      * appends a LEFT JOIN to the FROM part of the query
      *
      * @param  string       $join   Query LEFT JOIN
-     * @param  array|scalar $params
+     * @param  array|scalar|Expression|\Stringable $params
      * @return $this
      */
     public function leftJoin(string $join, $params = []): self
@@ -1699,7 +1708,7 @@ abstract class AbstractQuery
      * sets the GROUP BY part of the query
      *
      * @param  string $groupby Query GROUP BY part
-     * @param  array|scalar|null $params an array of parameters or a simple scalar
+     * @param  array|scalar|Expression|\Stringable|null $params an array of parameters or a simple scalar
      * @return $this
      */
     public function groupBy(string $groupby, $params = []): self
@@ -1720,7 +1729,7 @@ abstract class AbstractQuery
      * sets the WHERE part of the query
      *
      * @param  string            $where  Query WHERE part
-     * @param  array|scalar|null $params an array of parameters or a simple scalar
+     * @param  array|scalar|Expression|\Stringable|null $params an array of parameters or a simple scalar
      * @return $this
      */
     public function where(string $where, $params = []): self
@@ -1741,7 +1750,7 @@ abstract class AbstractQuery
      * sets the HAVING part of the query
      *
      * @param  string       $having Query HAVING part
-     * @param  array|scalar $params an array of parameters or a simple scalar
+     * @param  array|scalar|Expression|\Stringable $params an array of parameters or a simple scalar
      * @return $this
      */
     public function having(string $having, $params = []): self
@@ -1764,7 +1773,7 @@ abstract class AbstractQuery
      * </code>
      *
      * @param  string $orderby Query ORDER BY part
-     * @param  array|scalar $params an array of parameters or a simple scalar
+     * @param  array|scalar|Expression|\Stringable $params an array of parameters or a simple scalar
      * @return $this
      */
     public function orderBy(string $orderby, $params = []): self
@@ -2061,6 +2070,7 @@ abstract class AbstractQuery
     /**
      * @param string $queryPartName the name of the query part
      * @param string[] $queryParts an array containing the query part data
+     * @throws Query\Exception   if trying to add unknown query part
      */
     protected function processDqlQueryPart(string $queryPartName, array $queryParts): void
     {
