@@ -13,7 +13,7 @@ use UnexpectedValueException;
 class Mysql extends \Doctrine1\Connection
 {
     /** @var class-string<\Illuminate\Database\Query\Grammars\Grammar> */
-    protected const ILLUMINATE_GRAMMAR_CLASS = \Illuminate\Database\Query\Grammars\MySqlGrammar::class;
+    protected const ILLUMINATE_GRAMMAR_CLASS = \Staudenmeir\LaravelCte\Query\Grammars\MySqlGrammar::class;
 
     /**
      * @param Manager $manager the manager object

@@ -8,7 +8,7 @@ use PDO;
 class Pgsql extends \Doctrine1\Connection
 {
     /** @var class-string<\Illuminate\Database\Query\Grammars\Grammar> */
-    protected const ILLUMINATE_GRAMMAR_CLASS = \Illuminate\Database\Query\Grammars\PostgresGrammar::class;
+    protected const ILLUMINATE_GRAMMAR_CLASS = \Staudenmeir\LaravelCte\Query\Grammars\PostgresGrammar::class;
 
     /**
      * @param Manager $manager the manager object

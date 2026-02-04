@@ -12,8 +12,7 @@ use PDOStatement;
 use Throwable;
 use UnexpectedValueException;
 use Illuminate\Database\Connection as IlluminateConnection;
-use Illuminate\Database\Query\Grammars as QueryGrammars;
-use Illuminate\Database\Query\Builder as QueryBuilder;
+use Staudenmeir\LaravelCte\Query\Builder as QueryBuilder;
 
 /**
  * From $modules array
@@ -39,8 +38,8 @@ use Illuminate\Database\Query\Builder as QueryBuilder;
  */
 abstract class Connection extends Configurable implements \Countable, \IteratorAggregate, \Serializable
 {
-    /** @var class-string<QueryGrammars\Grammar> */
-    protected const ILLUMINATE_GRAMMAR_CLASS = QueryGrammars\MySqlGrammar::class;
+    /** @var class-string<\Illuminate\Database\Query\Grammars\Grammar> */
+    protected const ILLUMINATE_GRAMMAR_CLASS = \Staudenmeir\LaravelCte\Query\Grammars\MySqlGrammar::class;
 
     protected ?PDO $dbh = null;
 
@@ -218,7 +217,10 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
 
     public function iquery(): QueryBuilder
     {
-        return $this->illuminate()->query();
+        $connection = $this->illuminate();
+        return new QueryBuilder(
+            $connection, $connection->getQueryGrammar(), $connection->getPostProcessor()
+        );
     }
 
     /**
