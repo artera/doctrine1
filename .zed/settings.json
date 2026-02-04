@@ -5,11 +5,8 @@
 {
   "languages": {
     "PHP": {
-      "formatter": {
-        "external": {
-          "command": ".zed/php-cs-fixer-stdin"
-        }
-      }
-    }
-  }
+      "tab_size": 4,
+      "formatter": "language_server",
+    },
+  },
 }
