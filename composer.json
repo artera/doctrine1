@@ -61,7 +61,7 @@
   },
   "scripts": {
     "test": "php -d zend.assertions=on -d apc.enabled=on -d apc.enable_cli=on vendor/bin/phpunit",
-    "phpstan": "phpstan analyze -c phpstan.neon --no-progress --ansi --memory-limit=768M",
+    "phpstan": "phpstan analyze -c phpstan.neon --no-progress --ansi --memory-limit=768M -v",
     "style-check": "php-cs-fixer fix --dry-run -vv"
   },
   "extra": {
