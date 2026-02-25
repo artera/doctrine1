@@ -36,7 +36,7 @@ class Sqlite extends \Doctrine1\Export
 
     public function createDatabase(string $databaseFile): void
     {
-        new PDO('sqlite:' . $databaseFile);
+        new PDO\Sqlite('sqlite:' . $databaseFile);
     }
 
     /**

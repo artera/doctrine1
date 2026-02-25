@@ -18,7 +18,7 @@ class MysqlTest extends DoctrineUnitTestCase
 
     public function testExceptionInvalidCatalogName()
     {
-        $pdo = new \PDO(getenv("MYSQL_DSN"));
+        $pdo = new \PDO\Mysql(getenv("MYSQL_DSN"));
         try {
             $pdo->query("select * from test");
         } catch (PDOException $e) {
@@ -33,7 +33,7 @@ class MysqlTest extends DoctrineUnitTestCase
     public function testExceptionClassOverride()
     {
         try {
-            $pdo = new \PDO(getenv("MYSQL_DSN") . ";dbname=non_existing");
+            $pdo = new \PDO\Mysql(getenv("MYSQL_DSN") . ";dbname=non_existing");
         } catch (PDOException $e) {
             $e = Exception::fromPDO($e, static::$connection);
         }
@@ -45,7 +45,7 @@ class MysqlTest extends DoctrineUnitTestCase
 
     public function testExceptionSyntaxErrorOrAccessRuleViolation()
     {
-        $pdo = new \PDO(getenv("MYSQL_DSN") . ";dbname=intranet_test");
+        $pdo = new \PDO\Mysql(getenv("MYSQL_DSN") . ";dbname=intranet_test");
         try {
             $pdo->query("select * from test");
         } catch (PDOException $e) {
@@ -59,7 +59,7 @@ class MysqlTest extends DoctrineUnitTestCase
 
     public function testInvalidSyntaxError()
     {
-        $pdo = new \PDO(getenv("MYSQL_DSN") . ";dbname=intranet_test");
+        $pdo = new \PDO\Mysql(getenv("MYSQL_DSN") . ";dbname=intranet_test");
         try {
             $pdo->query("bogus sql");
         } catch (PDOException $e) {
@@ -76,7 +76,7 @@ class MysqlTest extends DoctrineUnitTestCase
 
     public function testColumnNotPresentInTablesErrorIsSupported2()
     {
-        $pdo = new \PDO(getenv("MYSQL_DSN") . ";dbname=intranet_test");
+        $pdo = new \PDO\Mysql(getenv("MYSQL_DSN") . ";dbname=intranet_test");
         try {
             $pdo->query("SELECT t1.id FROM aziende t1 INNER JOIN operatori t2 USING (ragione_sociale)");
         } catch (PDOException $e) {
@@ -89,7 +89,7 @@ class MysqlTest extends DoctrineUnitTestCase
 
     public function testCantDropFieldOrKeyIsSupported()
     {
-        $pdo = new \PDO(getenv("MYSQL_DSN") . ";dbname=intranet_test");
+        $pdo = new \PDO\Mysql(getenv("MYSQL_DSN") . ";dbname=intranet_test");
         try {
             $pdo->query("ALTER TABLE aziende DROP KEY non_existing");
         } catch (PDOException $e) {

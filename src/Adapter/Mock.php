@@ -238,7 +238,7 @@ class Mock extends PDO
      * @param int $num_args
      * @param int $flags
      */
-    public function sqliteCreateFunction($function_name, $callback, $num_args = -1, $flags = 0): bool
+    public function createFunction($function_name, $callback, $num_args = -1, $flags = 0): bool
     {
         return true;
     }

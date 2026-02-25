@@ -74,8 +74,8 @@ class DoctrineUnitTestCase extends TestCase
             static::$manager->setListener(static::$listener);
         } catch (Manager\Exception $e) {
             if (static::$driverName == "main") {
-                static::$dbh = new \PDO("sqlite::memory:");
-                static::$dbh->sqliteCreateFunction("trim", "trim", 1);
+                static::$dbh = new \PDO\Sqlite("sqlite::memory:");
+                static::$dbh->createFunction("trim", "trim", 1);
             } else {
                 static::$dbh = static::$adapter = new \Doctrine1\Adapter\Mock(static::$driverName);
             }

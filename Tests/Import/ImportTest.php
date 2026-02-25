@@ -17,7 +17,7 @@ class ImportTest extends DoctrineUnitTestCase
 
     public function testImport()
     {
-        static::$dbh = new \PDO('sqlite::memory:');
+        static::$dbh = new \PDO\Sqlite('sqlite::memory:');
 
         static::$dbh->exec('CREATE TABLE import_test_user (id INTEGER PRIMARY KEY, name TEXT)');
 

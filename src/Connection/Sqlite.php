@@ -12,10 +12,10 @@ class Sqlite extends \Doctrine1\Connection
 
     /**
      * @param Manager $manager the manager object
-     * @param PDO|array<string, string|null> $adapter database driver
+     * @param PDO\Sqlite|array<string, string|null> $adapter database driver
      * @param null|(callable(): (PDO|array<string, string|null>)) $initiator
      */
-    public function __construct(Manager $manager, PDO|array $adapter, ?callable $initiator = null)
+    public function __construct(Manager $manager, PDO\Sqlite|array $adapter, ?callable $initiator = null)
     {
         $this->supported = [
             "sequences" => "emulated",
@@ -39,11 +39,11 @@ class Sqlite extends \Doctrine1\Connection
         ];
         parent::__construct($manager, $adapter, $initiator);
 
-        if ($this->dbh !== null) {
-            $this->dbh->sqliteCreateFunction("mod", ["\Doctrine1\Expression\Sqlite", "modImpl"], 2);
-            $this->dbh->sqliteCreateFunction("concat", ["\Doctrine1\Expression\Sqlite", "concatImpl"]);
-            $this->dbh->sqliteCreateFunction("md5", "md5", 1);
-            $this->dbh->sqliteCreateFunction("now", ["\Doctrine1\Expression\Sqlite", "nowImpl"], 0);
+        if ($this->dbh instanceof PDO\Sqlite) {
+            $this->dbh->createFunction("mod", ["\Doctrine1\Expression\Sqlite", "modImpl"], 2);
+            $this->dbh->createFunction("concat", ["\Doctrine1\Expression\Sqlite", "concatImpl"]);
+            $this->dbh->createFunction("md5", "md5", 1);
+            $this->dbh->createFunction("now", ["\Doctrine1\Expression\Sqlite", "nowImpl"], 0);
         }
     }
 
@@ -54,11 +54,11 @@ class Sqlite extends \Doctrine1\Connection
         }
 
         if (parent::connect()) {
-            assert($this->dbh !== null);
-            $this->dbh->sqliteCreateFunction("mod", ["\Doctrine1\Expression\Sqlite", "modImpl"], 2);
-            $this->dbh->sqliteCreateFunction("concat", ["\Doctrine1\Expression\Sqlite", "concatImpl"]);
-            $this->dbh->sqliteCreateFunction("md5", "md5", 1);
-            $this->dbh->sqliteCreateFunction("now", ["\Doctrine1\Expression\Sqlite", "nowImpl"], 0);
+            assert($this->dbh instanceof PDO\Sqlite);
+            $this->dbh->createFunction("mod", ["\Doctrine1\Expression\Sqlite", "modImpl"], 2);
+            $this->dbh->createFunction("concat", ["\Doctrine1\Expression\Sqlite", "concatImpl"]);
+            $this->dbh->createFunction("md5", "md5", 1);
+            $this->dbh->createFunction("now", ["\Doctrine1\Expression\Sqlite", "nowImpl"], 0);
             return true;
         }
 

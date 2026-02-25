@@ -16,7 +16,7 @@ class PgsqlTest extends DoctrineUnitTestCase
 
     public function testExceptionInvalidCatalogName()
     {
-        $pdo = new \PDO("pgsql:host=localhost");
+        $pdo = new \PDO\Pgsql("pgsql:host=localhost");
         try {
             $pdo->query("select * from test");
         } catch (\PDOException $e) {
@@ -35,7 +35,7 @@ LINE 1: select * from test
     public function testExceptionClassOverride()
     {
         try {
-            $pdo = new \PDO("pgsql:host=localhost;dbname=non_existing");
+            $pdo = new \PDO\Pgsql("pgsql:host=localhost;dbname=non_existing");
         } catch (\PDOException $e) {
             $e = Exception::fromPDO($e, static::$connection);
         }
@@ -46,7 +46,7 @@ LINE 1: select * from test
 
     public function testExceptionSyntaxErrorOrAccessRuleViolation()
     {
-        $pdo = new \PDO("pgsql:host=localhost;dbname=mtorromeo");
+        $pdo = new \PDO\Pgsql("pgsql:host=localhost;dbname=mtorromeo");
         try {
             $pdo->query("select * from test");
         } catch (\PDOException $e) {
@@ -64,7 +64,7 @@ LINE 1: select * from test
 
     public function testInvalidSyntaxError()
     {
-        $pdo = new \PDO("pgsql:host=localhost;dbname=mtorromeo");
+        $pdo = new \PDO\Pgsql("pgsql:host=localhost;dbname=mtorromeo");
         try {
             $pdo->query("bogus sql");
         } catch (\PDOException $e) {

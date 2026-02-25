@@ -8,11 +8,11 @@ namespace Tests\Tickets {
         {
             // Establish two new \individual connections
             $dsn = 'sqlite::memory:';
-            $dbh = new \PDO($dsn);
+            $dbh = new \PDO\Sqlite($dsn);
             static::$manager->openConnection($dbh, 'conn1', false);
 
             $dsn = 'sqlite::memory:';
-            $dbh = new \PDO($dsn);
+            $dbh = new \PDO\Sqlite($dsn);
             static::$manager->openConnection($dbh, 'conn2', false);
         }
 

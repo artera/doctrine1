@@ -275,18 +275,30 @@ class Manager extends Configurable implements \Countable, \IteratorAggregate
             $this->index++;
         }
 
-        $className = match ($driverName) {
-            "mysql" => Connection\Mysql::class,
-            "mysqli" => Connection\Mysql::class,
-            "sqlite" => Connection\Sqlite::class,
-            "pgsql" => Connection\Pgsql::class,
-            "mock" => Connection\Mock::class,
-            default => throw new Manager\Exception("Unknown driver $driverName"),
-        };
+        if ($adapter instanceof PDO) {
+            if ($adapter instanceof PDO\Sqlite) {
+                $conn = new Connection\Sqlite($this, $adapter, $initiator);
+            } elseif ($adapter instanceof PDO\Mysql) {
+                $conn = new Connection\Mysql($this, $adapter, $initiator);
+            } elseif ($adapter instanceof PDO\Pgsql) {
+                $conn = new Connection\Pgsql($this, $adapter, $initiator);
+            } elseif ($driverName === 'mock') {
+                $conn = new Connection\Mock($this, $adapter, $initiator);
+            } else {
+                throw new Manager\Exception("Unknown PDO adapter");
+            }
+        } else {
+            $conn = match ($driverName) {
+                "mysql" => new Connection\Mysql($this, $adapter, $initiator),
+                "mysqli" => new Connection\Mysql($this, $adapter, $initiator),
+                "sqlite" => new Connection\Sqlite($this, $adapter, $initiator),
+                "pgsql" => new Connection\Pgsql($this, $adapter, $initiator),
+                "mock" => new Connection\Mock($this, $adapter, $initiator),
+                default => throw new Manager\Exception("Unknown driver $driverName"),
+            };
+        }
 
-        $conn = new $className($this, $adapter, $initiator);
         $conn->setName((string) $name);
-
         $this->connections[$name] = $conn;
 
         if ($setCurrent) {
