@@ -423,7 +423,7 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
             }
 
             $this->illuminate = null;
-            $this->dbh = $adapter ?? new PDOExtended(
+            $this->dbh = $adapter ?? PDOExtended::extendedConnect(
                 $options["dsn"],
                 $options["user"],
                 !$options["pass"] ? "" : $options["pass"],

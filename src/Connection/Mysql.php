@@ -17,8 +17,8 @@ class Mysql extends \Doctrine1\Connection
 
     /**
      * @param Manager $manager the manager object
-     * @param PDO|array<string, string|null> $adapter database driver
-     * @param null|(callable(): (PDO|array<string, string|null>)) $initiator
+     * @param PDO\Mysql|array<string, string|null> $adapter database driver
+     * @param null|(callable(): (PDO\Mysql|array<string, string|null>)) $initiator
      */
     public function __construct(Manager $manager, PDO|array $adapter, ?callable $initiator = null)
     {
@@ -66,6 +66,15 @@ class Mysql extends \Doctrine1\Connection
         $this->properties["varchar_max_length"] = 255;
 
         parent::__construct($manager, $adapter, $initiator);
+    }
+
+    /** @return PDO\Mysql */
+    public function getDbh(): PDO
+    {
+        $dbh = parent::getDbh();
+        assert($dbh instanceof PDO\Mysql || $dbh instanceof \Doctrine1\Adapter\Mock);
+        // @phpstan-ignore return.type
+        return $dbh;
     }
 
     public function connect(): bool

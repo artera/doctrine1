@@ -13,9 +13,9 @@ class Sqlite extends \Doctrine1\Connection
     /**
      * @param Manager $manager the manager object
      * @param PDO\Sqlite|array<string, string|null> $adapter database driver
-     * @param null|(callable(): (PDO|array<string, string|null>)) $initiator
+     * @param null|(callable(): (PDO\Sqlite|array<string, string|null>)) $initiator
      */
-    public function __construct(Manager $manager, PDO\Sqlite|array $adapter, ?callable $initiator = null)
+    public function __construct(Manager $manager, PDO|array $adapter, ?callable $initiator = null)
     {
         $this->supported = [
             "sequences" => "emulated",
@@ -45,6 +45,15 @@ class Sqlite extends \Doctrine1\Connection
             $this->dbh->createFunction("md5", "md5", 1);
             $this->dbh->createFunction("now", ["\Doctrine1\Expression\Sqlite", "nowImpl"], 0);
         }
+    }
+
+    /** @return PDO\Sqlite */
+    public function getDbh(): PDO
+    {
+        $dbh = parent::getDbh();
+        assert($dbh instanceof PDO\Sqlite || $dbh instanceof \Doctrine1\Adapter\Mock);
+        // @phpstan-ignore return.type
+        return $dbh;
     }
 
     public function connect(): bool

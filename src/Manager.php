@@ -275,25 +275,26 @@ class Manager extends Configurable implements \Countable, \IteratorAggregate
             $this->index++;
         }
 
-        if ($adapter instanceof PDO) {
-            if ($adapter instanceof PDO\Sqlite) {
-                $conn = new Connection\Sqlite($this, $adapter, $initiator);
-            } elseif ($adapter instanceof PDO\Mysql) {
-                $conn = new Connection\Mysql($this, $adapter, $initiator);
-            } elseif ($adapter instanceof PDO\Pgsql) {
-                $conn = new Connection\Pgsql($this, $adapter, $initiator);
-            } elseif ($driverName === 'mock') {
-                $conn = new Connection\Mock($this, $adapter, $initiator);
-            } else {
-                throw new Manager\Exception("Unknown PDO adapter");
-            }
+        if ($adapter instanceof PDO\Sqlite) {
+            /** @var callable(): (PDO\Sqlite|array<string, string|null>) $initiator */
+            $conn = new Connection\Sqlite($this, $adapter, $initiator);
+        } elseif ($adapter instanceof PDO\Mysql) {
+            /** @var callable(): (PDO\Mysql|array<string, string|null>) $initiator */
+            $conn = new Connection\Mysql($this, $adapter, $initiator);
+        } elseif ($adapter instanceof PDO\Pgsql) {
+            /** @var callable(): (PDO\Pgsql|array<string, string|null>) $initiator */
+            $conn = new Connection\Pgsql($this, $adapter, $initiator);
+        } elseif ($driverName === "mock") {
+            $conn = new Connection\Mock($this, $adapter, $initiator);
+        } elseif ($adapter instanceof PDO && !$adapter instanceof Adapter\Mock) {
+            throw new Manager\Exception("Unsupported base instance of PDO: " . get_class($adapter));
         } else {
+            /** @var null $initiator */
             $conn = match ($driverName) {
                 "mysql" => new Connection\Mysql($this, $adapter, $initiator),
                 "mysqli" => new Connection\Mysql($this, $adapter, $initiator),
                 "sqlite" => new Connection\Sqlite($this, $adapter, $initiator),
                 "pgsql" => new Connection\Pgsql($this, $adapter, $initiator),
-                "mock" => new Connection\Mock($this, $adapter, $initiator),
                 default => throw new Manager\Exception("Unknown driver $driverName"),
             };
         }

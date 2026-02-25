@@ -12,8 +12,8 @@ class Pgsql extends \Doctrine1\Connection
 
     /**
      * @param Manager $manager the manager object
-     * @param PDO|array<string, string|null> $adapter database driver
-     * @param null|(callable(): (PDO|array<string, string|null>)) $initiator
+     * @param PDO\Pgsql|array<string, string|null> $adapter database driver
+     * @param null|(callable(): (PDO\Pgsql|array<string, string|null>)) $initiator
      */
     public function __construct(Manager $manager, PDO|array $adapter, ?callable $initiator = null)
     {
@@ -52,6 +52,15 @@ class Pgsql extends \Doctrine1\Connection
             "escape" => '"',
         ];
         parent::__construct($manager, $adapter, $initiator);
+    }
+
+    /** @return PDO\Pgsql */
+    public function getDbh(): PDO
+    {
+        $dbh = parent::getDbh();
+        assert($dbh instanceof PDO\Pgsql || $dbh instanceof \Doctrine1\Adapter\Mock);
+        // @phpstan-ignore return.type
+        return $dbh;
     }
 
     public function setCharset(?string $charset): void
