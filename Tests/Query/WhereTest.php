@@ -1,6 +1,7 @@
 <?php
 namespace Tests\Query;
 
+use InvalidArgumentException;
 use Tests\DoctrineUnitTestCase;
 
 class WhereTest extends DoctrineUnitTestCase
@@ -80,7 +81,7 @@ class WhereTest extends DoctrineUnitTestCase
 
     public function testExceptionIsThrownWhenParameterIsNull()
     {
-        $this->expectException(\Doctrine1\Query\Exception::class);
+        $this->expectException(InvalidArgumentException::class);
         \Doctrine1\Query::create()->delete('User')->whereIn('User.id', null)->execute();
     }
 
