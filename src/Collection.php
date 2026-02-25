@@ -319,7 +319,7 @@ class Collection extends Access implements \Countable, \IteratorAggregate, \Seri
      */
     public function get(mixed $key): Record
     {
-        if (!isset($this->data[$key])) {
+        if ($key === null || !isset($this->data[$key])) {
             $record = $this->table->create();
 
             if (isset($this->referenceField) && $this->reference !== null) {
