@@ -215,10 +215,10 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
         return $this->illuminate;
     }
 
-    public function iquery(): \Staudenmeir\LaravelCte\Query\Builder
+    public function iquery(): Query\Builder
     {
         $connection = $this->illuminate();
-        return new \Staudenmeir\LaravelCte\Query\Builder(
+        return new Query\Builder(
             $connection, $connection->getQueryGrammar(), $connection->getPostProcessor()
         );
     }
