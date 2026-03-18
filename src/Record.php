@@ -70,21 +70,25 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
 
     /**
      * Collection of objects needing to be deleted on save
+     * @phpstan-var list<Record|Collection>
      */
     protected array $_pendingDeletes = [];
 
     /**
      * Array of pending un links in format alias => keys to be executed after save
+     * @var array<string, bool[]>
      */
     protected array $_pendingUnlinks = [];
 
     /**
      * Array of custom accessors for cache
+     * @phpstan-var array<class-string<Record>, array<string, string>>
      */
     protected static array $_customAccessors = [];
 
     /**
      * Array of custom mutators for cache
+     * @phpstan-var array<class-string<Record>, array<string, string>>
      */
     protected static array $_customMutators = [];
 
@@ -648,7 +652,7 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
      * any values of 'null' to objects of type None.
      *
      * @param  array $data data array to be cleaned
-     * @return array values cleaned from data
+     * @return array<string, mixed> values cleaned from data
      */
     public function cleanData(array &$data, bool $deserialize = true): array
     {
@@ -1161,6 +1165,7 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
 
     /**
      * gets all accessors for this component instance
+     * @phpstan-return array<string, string>
      */
     public function getAccessors(): array
     {
@@ -1208,6 +1213,7 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
 
     /**
      * gets all custom mutators for this component instance
+     * @phpstan-return array<string, string>
      */
     public function getMutators(): array
     {
@@ -1645,7 +1651,7 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
     }
 
     /**
-     * returns Record instances which need to be deleted on save
+     * @return list<Record|Collection> Record instances which need to be deleted on save
      */
     public function getPendingDeletes(): array
     {
@@ -1653,7 +1659,7 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
     }
 
     /**
-     * returns Record instances which need to be unlinked (deleting the relation) on save
+     * @return array<string, bool[]> Record instances which need to be unlinked (deleting the relation) on save
      */
     public function getPendingUnlinks(): array
     {
@@ -1770,6 +1776,7 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
      * returns an array of the modified fields from the last transaction.
      *
      * @param  boolean $old pick the old values (instead of the new ones)
+     * @phpstan-return array<string, mixed>
      */
     public function getLastModified(bool $old = false): array
     {
@@ -1797,7 +1804,7 @@ abstract class Record implements \Countable, \IteratorAggregate, \Serializable, 
     /**
      * Retrieves data prepared for a sql transaction.
      *
-     * Returns an array of modified fields and values with data preparation;
+     * @return array<string, mixed> an array of modified fields and values with data preparation;
      * adds column aggregation inheritance and converts Records into primary
      * key values.
      *

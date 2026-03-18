@@ -162,7 +162,7 @@ class Core
     private static bool $debug = false;
 
     /**
-     * Array of all the loaded models and the path to each one for autoloading
+     * @var array<string, string|null> $loadedModelFiles  an array of all the loaded models and the path to each one for autoloading
      */
     private static array $loadedModelFiles = [];
 
@@ -181,6 +181,7 @@ class Core
 
     /**
      * Returns an array of all the loaded models and the path where each of them exists
+     * @phpstan-return array<string, string|null>
      */
     public static function getLoadedModelFiles(): array
     {
@@ -392,6 +393,7 @@ class Core
      * @param  string $directory   Directory to write your models to
      * @param  array  $connections Array of connection names to generate models for
      * @throws \Throwable
+     * @phpstan-return list<class-string<Record>>
      */
     public static function generateModelsFromDb(string $directory, array $connections = [], array $options = []): array
     {

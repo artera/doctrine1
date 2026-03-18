@@ -335,6 +335,7 @@ class Import extends Connection\Module
      * @param  string $directory
      * @param  array $connections Array of connection names to generate models for
      * @return array the names of the imported classes
+     * @phpstan-return list<class-string<Record>>
      */
     public function importSchema(string $directory, array $connections = [], array $options = []): array
     {
@@ -358,6 +359,7 @@ class Import extends Connection\Module
             $definitions = [];
 
             foreach ($connection->import->listTables() as $table) {
+                /** @phpstan-var class-string<Record> */
                 $tableClassName = Inflector::classify(Inflector::tableize($table));
                 $definition = new Definition\Table(
                     name: $table,

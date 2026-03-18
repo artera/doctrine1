@@ -43,8 +43,14 @@ class Apcu extends Driver
         $ci   = apcu_cache_info();
         $keys = [];
 
+        if (!$ci) {
+            return $keys;
+        }
+
         foreach ($ci['cache_list'] as $entry) {
-            $keys[] = $entry['info'];
+            if ($entry['info'] ?? null) {
+                $keys[] = (string) $entry['info'];
+            }
         }
 
         return $keys;

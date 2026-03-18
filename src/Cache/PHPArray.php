@@ -5,7 +5,7 @@ namespace Doctrine1\Cache;
 class PHPArray extends Driver
 {
     /**
-     * @var array $data         an array of cached data
+     * @var array<string, mixed> $data         an array of cached data
      */
     protected $data = [];
 
@@ -51,11 +51,6 @@ class PHPArray extends Driver
         return $exists;
     }
 
-    /**
-     * Fetch an array of all keys stored in cache
-     *
-     * @return array Returns the array of cache keys
-     */
     protected function getCacheKeys(): array
     {
         return array_keys($this->data);

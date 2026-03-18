@@ -27,7 +27,10 @@ trait WithDeserializers
         unset($this->deserializers[$deserializerClass]);
     }
 
-    /** @return DeserializerInterface[] */
+    /**
+     * @return DeserializerInterface[]
+     * @phpstan-return array<class-string<DeserializerInterface>, DeserializerInterface>
+     */
     public function getDeserializers(): array
     {
         return array_map(fn($s) => $s[0], $this->deserializers);

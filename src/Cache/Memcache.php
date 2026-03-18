@@ -78,11 +78,6 @@ class Memcache extends Driver
         return $this->memcache->delete($id);
     }
 
-    /**
-     * Fetch an array of all keys stored in cache
-     *
-     * @return array Returns the array of cache keys
-     */
     protected function getCacheKeys(): array
     {
         $keys     = [];
@@ -98,6 +93,6 @@ class Memcache extends Driver
                 }
             }
         }
-        return $keys;
+        return array_map('strval', $keys);
     }
 }

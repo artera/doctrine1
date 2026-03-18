@@ -96,7 +96,7 @@ class Column
         }
     }
 
-    /** @return string[] | BackedEnum[] */
+    /** @return list<string> | list<BackedEnum> */
     public function values(): array
     {
         if (is_array($this->values)) {
@@ -105,7 +105,7 @@ class Column
         return $this->values::cases();
     }
 
-    /** @return string[] */
+    /** @return list<string> */
     public function stringValues(): array
     {
         if (is_array($this->values)) {

@@ -7,7 +7,7 @@ class Data
     /**
      * array of formats data can be in
      *
-     * @phpstan-var string[]
+     * @var list<string>
      */
     protected array $formats = ['csv', 'yml', 'xml'];
 
@@ -25,7 +25,7 @@ class Data
 
     /**
      * specified array of models to use
-     * @phpstan-var class-string<Record>[]
+     * @phpstan-var list<class-string<Record>>
      */
     protected array $models = [];
 
@@ -53,7 +53,7 @@ class Data
     /**
      * Get array of available formats
      *
-     * @phpstan-return string[]
+     * @return list<string>
      */
     public function getFormats(): array
     {
@@ -78,15 +78,17 @@ class Data
 
     /**
      * Set the array of specified models to work with
+     * @phpstan-param list<class-string<Record>> $models
      */
     public function setModels(array $models): void
     {
-        $this->models = $models;
+        // @phpstan-ignore arrayValues.list
+        $this->models = array_values($models);
     }
 
     /**
      * Get the array of specified models to work with
-     * @phpstan-return class-string<Record>[]
+     * @phpstan-return list<class-string<Record>>
      */
     public function getModels(): array
     {
@@ -106,6 +108,7 @@ class Data
 
     /**
      * Interface for importing data from fixture files to Doctrine models
+     * @phpstan-param list<class-string<Record>> $models
      */
     public function importData(string $directory, string $format = 'yml', array $models = [], bool $append = false): void
     {

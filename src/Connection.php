@@ -49,7 +49,7 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
     public ?Casing $fieldCase = null;
 
     /**
-     * @var array $tables                       an array containing all the initialized Table objects
+     * @var array<string, Table> $tables                       an array containing all the initialized Table objects
      *                                          keys representing Table component names and values as Table objects
      */
     protected array $tables = [];
@@ -219,7 +219,9 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
     {
         $connection = $this->illuminate();
         return new Query\Builder(
-            $connection, $connection->getQueryGrammar(), $connection->getPostProcessor()
+            $connection,
+            $connection->getQueryGrammar(),
+            $connection->getPostProcessor()
         );
     }
 
@@ -284,17 +286,21 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
 
     /**
      * returns an array of available PDO drivers
+     * @return list<string>
      */
     public static function getAvailableDrivers(): array
     {
+        /** @var list<string> */
         return PDO::getAvailableDrivers();
     }
 
     /**
      * Returns an array of supported drivers by Doctrine
+     * @return list<string>
      */
     public static function getSupportedDrivers(): array
     {
+        /** @var list<string> */
         return self::$supportedDrivers;
     }
 
@@ -749,7 +755,7 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
     /**
      * @param  string|QueryBuilder $statement sql query to be executed
      * @param  array  $params    prepared statement params (unused when called with query builder)
-     * @phpstan-return array<int, mixed>
+     * @return list<mixed>
      */
     public function fetchArray(string|QueryBuilder $statement, array $params = []): array
     {
@@ -760,10 +766,11 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
      * @param  string|QueryBuilder $statement sql query to be executed
      * @param  array  $params    prepared statement params (unused when called with query builder)
      * @param  int    $colnum    0-indexed column number to retrieve
-     * @phpstan-return array<int, mixed>
+     * @return list<mixed>
      */
     public function fetchColumn(string|QueryBuilder $statement, array $params = [], int $colnum = 0): array
     {
+        /** @var list<mixed> */
         return $this->execute($statement, $params)->fetchAll(PDO::FETCH_COLUMN, $colnum);
     }
 
@@ -1020,6 +1027,7 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
 
     /**
      * returns an array of all initialized tables
+     * @return array<string, Table>
      */
     public function getTables(): array
     {
@@ -1159,9 +1167,11 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
 
     /**
      * Fetch extended error information associated with the last operation on the database handle
+     * @return array{0: string, 1: int, 2: string}
      */
-    public function errorInfo(): array|string
+    public function errorInfo(): array
     {
+        /** @var array{0: string, 1: int, 2: string} */
         return $this->getDbh()->errorInfo();
     }
 

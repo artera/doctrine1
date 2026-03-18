@@ -71,10 +71,7 @@ class UnitOfWork extends \Doctrine1\Connection\Module
                 }
 
                 foreach ($record->getPendingUnlinks() as $alias => $ids) {
-                    if ($ids === false) {
-                        $record->unlinkInDb($alias, []);
-                        $aliasesUnlinkInDb[] = $alias;
-                    } elseif ($ids) {
+                    if ($ids) {
                         $record->unlinkInDb($alias, array_keys($ids));
                         $aliasesUnlinkInDb[] = $alias;
                     }

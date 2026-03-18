@@ -56,8 +56,12 @@ class Tokenizer
                 case 'group':
                     $i = ($index + 1);
                     if (isset($tokens[$i]) && strtolower($tokens[$i]) === 'by') {
-                        $p             = $token;
+                        $p = $token;
                         $parts[$token] = '';
+                    } elseif ($p === null) {
+                        throw new \Doctrine1\Query\Tokenizer\Exception(
+                            "Couldn't tokenize query. Encountered invalid token: '$token'."
+                        );
                     } else {
                         $parts[$p] .= "$token ";
                     }
@@ -114,7 +118,7 @@ class Tokenizer
      * @param string|array $d   Delimeter which explodes the string
      * @param string       $e1  First bracket, usually '('
      * @param string       $e2  Second bracket, usually ')'
-     * @return string[]
+     * @return list<string>
      */
     public function bracketExplode(string $str, string|array $d = ' ', string $e1 = '(', string $e2 = ')'): array
     {
@@ -148,7 +152,7 @@ class Tokenizer
      *
      * @param string $str String to be quote exploded
      * @param string|array $d   Delimeter which explodes the string
-     * @return string[]
+     * @return list<string>
      */
     public function quoteExplode(string $str, string|array $d = ' '): array
     {
@@ -191,7 +195,7 @@ class Tokenizer
      * @param string|array $d   Delimeter which explodes the string
      * @param string       $e1  First bracket, usually '('
      * @param string       $e2  Second bracket, usually ')'
-     * @return string[]
+     * @return list<string>
      */
     public function sqlExplode(string $str, string|array $d = ' ', string $e1 = '(', string $e2 = ')'): array
     {
@@ -232,7 +236,7 @@ class Tokenizer
      * @param array  $d   Delimeter which explodes the string
      * @param string $e1  First bracket, usually '('
      * @param string $e2  Second bracket, usually ')'
-     * @phpstan-return Term[]
+     * @phpstan-return list<Term>
      */
     public function clauseExplode(string $str, array $d, string $e1 = '(', string $e2 = ')'): array
     {
@@ -264,7 +268,7 @@ class Tokenizer
 
     /**
      * Same as clauseExplode, but you give a regexp, which splits the string
-     * @phpstan-return Term[]
+     * @phpstan-return list<Term>
      */
     private function clauseExplodeRegExp(string $str, string $regexp, string $e1 = '(', string $e2 = ')'): array
     {
@@ -272,16 +276,17 @@ class Tokenizer
         $terms = $this->mergeBracketTerms($terms);
 
         // This is only here to comply with the old function signature
-        foreach ($terms as & $val) {
+        foreach ($terms as &$val) {
             unset($val[2]);
         }
 
+        /** @var list<Term> */
         return $terms;
     }
 
     /**
      * this function is like clauseExplode, but it doesn't merge bracket terms
-     * @phpstan-return Term[]
+     * @phpstan-return list<Term>
      */
     private function clauseExplodeCountBrackets(string $str, string $regexp, string $e1 = '(', string $e2 = ')'): array
     {
@@ -329,6 +334,7 @@ class Tokenizer
             }
         }
 
+        /** @var list<Term> */
         return $terms;
     }
 
@@ -353,7 +359,7 @@ class Tokenizer
      *        array("'(c", '+', 0),
      *        array("d))'", '', 0)
      *     );
-     * @phpstan-return Term[]
+     * @phpstan-return list<Term>
      */
     private function clauseExplodeNonQuoted(string $str, string $regexp): array
     {
@@ -368,11 +374,12 @@ class Tokenizer
                 $term = [$val, '', 0];
                 $terms[$i] = $term;
             } else {
-                /** @phpstan-var Term[] $terms */
+                /** @phpstan-var list<Term> $terms */
                 $terms[$i++][1] = $val;
             }
         }
 
+        /** @var list<Term> */
         return $terms;
     }
 
@@ -400,8 +407,8 @@ class Tokenizer
      *         array('(2+3)', '-', 0),
      *         array('5'    , '' , 0)
      *     );
-     * @phpstan-return Term[] $terms
-     * @phpstan-return Term[]
+     * @phpstan-param Term[] $terms
+     * @phpstan-return list<Term>
      */
     private function mergeBracketTerms(array $terms): array
     {
@@ -423,6 +430,7 @@ class Tokenizer
             }
         }
 
+        /** @var list<Term> */
         return $res;
     }
 
@@ -441,7 +449,7 @@ class Tokenizer
      * Note the trailing empty string. In the result, all even elements are quoted strings.
      *
      * @param string $str the string to split
-     * @return string[]
+     * @return list<string>
      */
     public function quotedStringExplode(string $str): array
     {
@@ -483,6 +491,7 @@ class Tokenizer
             }
         }
 
+        /** @var list<string> */
         return $parts;
     }
 }

@@ -9,10 +9,10 @@ use Doctrine1\Transaction;
 
 class SavePoint
 {
-    /** @var Collection[] */
+    /** @var list<Collection> */
     protected array $collections = [];
 
-    /** @var Record[] */
+    /** @var list<Record> */
     protected array $invalid = [];
     public ?\Throwable $exception = null;
 
@@ -89,7 +89,7 @@ class SavePoint
         $this->invalid[] = $record;
     }
 
-    /** @return Record[] */
+    /** @return list<Record> */
     public function getInvalids(): array
     {
         return array_splice($this->invalid, 0);

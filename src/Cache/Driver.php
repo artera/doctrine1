@@ -237,7 +237,7 @@ abstract class Driver implements \Doctrine1\CacheInterface
     /**
      * Fetch an array of all keys stored in cache
      *
-     * @return array Returns the array of cache keys
+     * @return list<string> Returns the array of cache keys
      */
     abstract protected function getCacheKeys(): array;
 }

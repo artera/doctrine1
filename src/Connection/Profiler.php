@@ -2,15 +2,17 @@
 
 namespace Doctrine1\Connection;
 
+use Doctrine1\Event;
+
 class Profiler implements \Doctrine1\Overloadable, \IteratorAggregate, \Countable
 {
     /**
-     * all listened events
+     * @var list<Event> all listened events
      */
     private array $events = [];
 
     /**
-     * sequences of all listened events as keys
+     * @var array<int, bool> sequences of all listened events as keys
      */
     private array $eventSequences = [];
 
@@ -37,7 +39,7 @@ class Profiler implements \Doctrine1\Overloadable, \IteratorAggregate, \Countabl
         $event = $a[0] ?? null;
 
         // first argument should be an instance of \Doctrine1\Event
-        if (!$event instanceof \Doctrine1\Event) {
+        if (!$event instanceof Event) {
             throw new Profiler\Exception("Couldn't listen event. Event should be an instance of \Doctrine1\Event.");
         }
 
@@ -59,7 +61,7 @@ class Profiler implements \Doctrine1\Overloadable, \IteratorAggregate, \Countabl
     /**
      * @param mixed $key
      */
-    public function get($key): ?\Doctrine1\Event
+    public function get($key): ?Event
     {
         if (isset($this->events[$key])) {
             return $this->events[$key];
@@ -70,7 +72,7 @@ class Profiler implements \Doctrine1\Overloadable, \IteratorAggregate, \Countabl
     /**
      * returns all profiled events as an array
      *
-     * @return array all events in an array
+     * @return list<Event> all events in an array
      */
     public function getAll(): array
     {
@@ -93,7 +95,7 @@ class Profiler implements \Doctrine1\Overloadable, \IteratorAggregate, \Countabl
     /**
      * pop the last event from the event stack
      */
-    public function pop(): \Doctrine1\Event
+    public function pop(): ?Event
     {
         $event = array_pop($this->events);
         if ($event !== null) {
@@ -106,7 +108,7 @@ class Profiler implements \Doctrine1\Overloadable, \IteratorAggregate, \Countabl
      * Get the \Doctrine1\Event object for the last query that was run, regardless if it has
      * ended or not. If the event has not ended, it's end time will be None.
      */
-    public function lastEvent(): ?\Doctrine1\Event
+    public function lastEvent(): ?Event
     {
         if (empty($this->events)) {
             return null;

@@ -345,7 +345,7 @@ class Collection extends Access implements \Countable, \IteratorAggregate, \Seri
     /**
      * Get array of primary keys for all the records in the collection
      *
-     * @return array<int, mixed>                an array containing all primary keys
+     * @return list<mixed>                an array containing all primary keys
      */
     public function getPrimaryKeys(): array
     {
@@ -366,7 +366,7 @@ class Collection extends Access implements \Countable, \IteratorAggregate, \Seri
     /**
      * Get all keys of the data in the collection
      *
-     * @return array<int,int|string>
+     * @return list<int|string>
      */
     public function getKeys(): array
     {
@@ -681,7 +681,6 @@ class Collection extends Access implements \Countable, \IteratorAggregate, \Seri
      */
     public function fromArray(array $array, bool $deep = true): void
     {
-        $data = [];
         foreach ($array as $rowKey => $row) {
             $this[$rowKey]->fromArray($row, $deep);
         }

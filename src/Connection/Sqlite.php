@@ -83,6 +83,11 @@ class Sqlite extends \Doctrine1\Connection
         }
 
         $info = $this->getManager()->parseDsn($dsn);
+        if (empty($info["database"])) {
+            throw new \Doctrine1\Exception(
+                "You must create your \Doctrine1\Connection by using a valid Doctrine style dsn in order to use the create/drop database functionality"
+            );
+        }
 
         $this->export->createDatabase($info["database"]);
     }
@@ -96,6 +101,11 @@ class Sqlite extends \Doctrine1\Connection
         }
 
         $info = $this->getManager()->parseDsn($dsn);
+        if (empty($info["database"])) {
+            throw new \Doctrine1\Exception(
+                "You must create your \Doctrine1\Connection by using a valid Doctrine style dsn in order to use the create/drop database functionality"
+            );
+        }
 
         $this->export->dropDatabase($info["database"]);
     }

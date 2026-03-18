@@ -10,6 +10,7 @@ class Table
     public string $topLevelClassName;
 
     /**
+     * @phpstan-param class-string<Record> $className
      * @phpstan-param list<Column> $columns
      * @phpstan-param list<Relation> $relations
      * @phpstan-param class-string<Record>|null $extends

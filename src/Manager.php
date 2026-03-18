@@ -291,10 +291,10 @@ class Manager extends Configurable implements \Countable, \IteratorAggregate
         } else {
             /** @var null $initiator */
             $conn = match ($driverName) {
-                "mysql" => new Connection\Mysql($this, $adapter, $initiator),
-                "mysqli" => new Connection\Mysql($this, $adapter, $initiator),
-                "sqlite" => new Connection\Sqlite($this, $adapter, $initiator),
-                "pgsql" => new Connection\Pgsql($this, $adapter, $initiator),
+                "mysql" => new Connection\Mysql($this, $adapter, $initiator), // @phpstan-ignore argument.type
+                "mysqli" => new Connection\Mysql($this, $adapter, $initiator), // @phpstan-ignore argument.type
+                "sqlite" => new Connection\Sqlite($this, $adapter, $initiator), // @phpstan-ignore argument.type
+                "pgsql" => new Connection\Pgsql($this, $adapter, $initiator), // @phpstan-ignore argument.type
                 default => throw new Manager\Exception("Unknown driver $driverName"),
             };
         }
@@ -385,7 +385,7 @@ class Manager extends Configurable implements \Countable, \IteratorAggregate
      *   path: ?string,
      *   query: ?string,
      *   fragment: ?string,
-     * } $parts
+     * }
      * @throws Manager\Exception
      */
     protected function buildDsnPartsArray(string $dsn): array
@@ -429,8 +429,19 @@ class Manager extends Configurable implements \Countable, \IteratorAggregate
      * Parse a Doctrine style dsn string in to an array of parts
      *
      * @param  string $dsn
-     * @return array Parsed contents of DSN
      * @throws Manager\Exception
+     * @return array{
+     *   scheme: string,
+     *   host: ?string,
+     *   port: ?int,
+     *   user: ?string,
+     *   pass: ?string,
+     *   path: ?string,
+     *   query: ?string,
+     *   fragment: ?string,
+     *   dsn: string,
+     *   database?: string|null,
+     * } Parsed contents of DSN
      */
     public function parseDsn(string $dsn): array
     {

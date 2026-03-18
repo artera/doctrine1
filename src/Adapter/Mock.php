@@ -8,31 +8,27 @@ class Mock extends PDO
 {
     /**
      * Name of the dbms to mock
-     *
-     * @var string
      */
     private string $name;
 
     /**
      * Array of queries executed through this instance of the mock adapter
      *
-     * @var array $queries
+     * @var list<string> $queries
      */
     private $queries = [];
 
     /**
      * Array of exceptions thrown
      *
-     * @var array $exception
+     * @var array{0: string, 1: string, 2: int} | null $exception
      */
-    private $exception = [];
+    private ?array $exception = null;
 
     /**
      * Bool true/false variable for whether or not the last insert failed
-     *
-     * @var boolean $lastInsertIdFail
      */
-    private $lastInsertIdFail = false;
+    private bool $lastInsertIdFail = false;
 
     /**
      * Doctrine mock adapter constructor
@@ -40,9 +36,6 @@ class Mock extends PDO
      * <code>
      * $conn = new \Doctrine1\Adapter\Mock('mysql');
      * </code>
-     *
-     * @param  string $name
-     * @return void
      */
     public function __construct(string $name)
     {
@@ -62,7 +55,7 @@ class Mock extends PDO
     /**
      * Pop the last executed query from the array of executed queries and return it
      *
-     * @return string $sql Last executed sql string
+     * @return string|null $sql Last executed sql string
      */
     public function pop()
     {
@@ -74,7 +67,7 @@ class Mock extends PDO
      *
      * @param  string  $name    Name of exception
      * @param  string  $message Message for the exception
-     * @param  integer $code    Code of the exception
+     * @param  int $code    Code of the exception
      * @return void
      */
     public function forceException($name, $message = '', $code = 0): void
@@ -104,10 +97,10 @@ class Mock extends PDO
 
         $e = $this->exception;
 
-        if (!empty($e)) {
+        if ($e !== null) {
             $name = $e[0];
 
-            $this->exception = [];
+            $this->exception = null;
 
             /** @var \Throwable $exception */
             $exception = new $name($e[1], $e[2]);
@@ -121,6 +114,7 @@ class Mock extends PDO
         return $stmt;
     }
 
+    /** @return list<string> */
     public function getAll(): array
     {
         return $this->queries;
@@ -141,7 +135,7 @@ class Mock extends PDO
         if (!empty($e)) {
             $name = $e[0];
 
-            $this->exception = [];
+            $this->exception = null;
 
             /** @var \Throwable $exception */
             $exception = new $name($e[1], $e[2]);

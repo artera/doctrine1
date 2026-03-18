@@ -84,7 +84,7 @@ class Table extends Configurable implements \Countable
     /**
      * Array of unique sets of fields. These values are validated on save
      *
-     * @var mixed[] $uniques
+     * @var list<array{0: string[], 1: mixed[]}>
      */
     protected array $uniques = [];
 
@@ -97,7 +97,6 @@ class Table extends Configurable implements \Countable
     protected array $fieldNames = [];
 
     /**
-     *
      * @var string[] $columnNames an array of column names
      *                             keys are field names and values column names.
      *                             used to look up column names from field names.
@@ -1843,7 +1842,7 @@ class Table extends Configurable implements \Countable
      * Returns an array containing all the column names.
      *
      * @param  string[]|null $fieldNames
-     * @return string[] numeric array
+     * @return list<string> numeric array
      */
     public function getColumnNames(?array $fieldNames = null): array
     {
@@ -1861,7 +1860,7 @@ class Table extends Configurable implements \Countable
     /**
      * Returns an array with all the identifier column names.
      *
-     * @return string[] numeric array
+     * @return list<string> numeric array
      */
     public function getIdentifierColumnNames(): array
     {
@@ -1871,19 +1870,17 @@ class Table extends Configurable implements \Countable
     /**
      * Returns an array with all the identifier column names.
      *
-     * @return Column[] numeric array
+     * @return list<Column> numeric array
      */
     public function getIdentifierColumns(): array
     {
-        return array_filter(array_map(fn ($name) => $this->getColumn($name), $this->getIdentifierColumnNames()));
+        return array_values(array_filter(array_map(fn ($name) => $this->getColumn($name), $this->getIdentifierColumnNames())));
     }
 
     /**
      * Gets the array of unique fields sets.
      *
-     * @see $uniques;
-     *
-     * @return mixed[] numeric array
+     * @return list<array{0: string[], 1: mixed[]}> numeric array
      */
     public function getUniques()
     {
@@ -1893,7 +1890,7 @@ class Table extends Configurable implements \Countable
     /**
      * Returns an array containing all the field names.
      *
-     * @return string[] numeric array
+     * @return list<string> numeric array
      */
     public function getFieldNames()
     {

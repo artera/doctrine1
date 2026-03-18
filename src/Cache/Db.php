@@ -147,19 +147,14 @@ class Db extends Driver
         return pack('H*', $hex);
     }
 
-    /**
-     * Fetch an array of all keys stored in cache
-     *
-     * @return array Returns the array of cache keys
-     */
     protected function getCacheKeys(): array
     {
         $sql     = "SELECT id FROM {$this->options['tableName']}";
         $keys    = [];
-        /** @phpstan-var array<int, mixed>[] */
+        /** @phpstan-var list<int|string>[] */
         $results = $this->getConnection()->execute($sql)->fetchAll(\PDO::FETCH_NUM);
         for ($i = 0, $count = count($results); $i < $count; $i++) {
-            $keys[] = $results[$i][0];
+            $keys[] = (string) $results[$i][0];
         }
         return $keys;
     }
