@@ -279,10 +279,6 @@ class Mysql extends \Doctrine1\DataDict
 
     public function getNativeDeclaration(Column $field): string
     {
-        if (!isset($field->type)) {
-            throw new \Doctrine1\DataDict\Exception('Missing column type.');
-        }
-
         $length = $field->length;
 
         switch ($field->type) {
@@ -318,9 +314,8 @@ class Mysql extends \Doctrine1\DataDict
                 }
 
                 $length = $field->length <= $this->conn->varchar_max_length ? $field->length : false;
-                $fixed  = isset($field->fixed) ? $field->fixed : false;
 
-                return $fixed ? ('CHAR(' . ($length ?? 255) . ')')
+                return $field->fixed ? ('CHAR(' . ($length ?? 255) . ')')
                     : ($length ? "VARCHAR($length)" : 'TEXT');
             case Type::Array:
             case Type::Object:

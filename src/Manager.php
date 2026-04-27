@@ -406,7 +406,7 @@ class Manager extends Configurable implements \Countable, \IteratorAggregate
             }
         }
 
-        if (count($parts) == 0 || !isset($parts["scheme"])) {
+        if (!isset($parts["scheme"])) {
             throw new Manager\Exception("Could not parse dsn");
         }
 

@@ -25,7 +25,7 @@ parameters:
 			path: src/Cli.php
 
 		-
-			message: '#^Call to sprintf contains 1 placeholder, 2 values given\.$#'
+			message: '#^Call to sprintf contains an invalid placeholder\.$#'
 			identifier: argument.sprintf
 			count: 1
 			path: src/Cli/Formatter.php

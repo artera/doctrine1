@@ -261,9 +261,7 @@ class Builder
             ]);
 
             $row = "\$this->$hasMethod({$this->varExport($class)}, {$this->varExport($relExport)});\n";
-
-            $sortBy = $relation->alias ?? $relation->class;
-            $ret[$sortBy] = $row;
+            $ret[$relation->alias] = $row;
         }
 
         ksort($ret);

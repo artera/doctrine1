@@ -352,13 +352,11 @@ class Table extends Configurable implements \Countable
                 }
             }
 
-            if (isset($pk)) {
-                if (!isset($this->identifierType)) {
-                    $this->identifierType = IdentifierType::Natural;
-                }
-                $this->identifier = [$pk];
-                return $this->identifierType;
+            if (!isset($this->identifierType)) {
+                $this->identifierType = IdentifierType::Natural;
             }
+            $this->identifier = [$pk];
+            return $this->identifierType;
         }
 
         $identifierOptions = $this->getDefaultIdentifierOptions();

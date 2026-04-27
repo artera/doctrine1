@@ -702,7 +702,7 @@ class UnitOfWork extends \Doctrine1\Connection\Module
             }
         }
 
-        return array_values($flushList);
+        return $flushList;
     }
 
     protected function assignSequence(\Doctrine1\Record $record, array &$fields = []): ?int
