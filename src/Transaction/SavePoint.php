@@ -3,6 +3,7 @@
 namespace Doctrine1\Transaction;
 
 use Doctrine1\Collection;
+use Doctrine1\Connection\Exception\SyntaxErrorOrAccessRuleViolation;
 use Doctrine1\Event;
 use Doctrine1\Record;
 use Doctrine1\Transaction;
@@ -167,7 +168,11 @@ class SavePoint
     public function rollbackUncommitted(): void
     {
         if ($this->active) {
-            $this->rollback();
+            try {
+                $this->rollback();
+            } catch (SyntaxErrorOrAccessRuleViolation) {
+                // ignore "savepoint ... does not exists"
+            }
         }
     }
 

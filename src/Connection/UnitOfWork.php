@@ -111,9 +111,8 @@ class UnitOfWork extends \Doctrine1\Connection\Module
                 }
             }
         } catch (\Throwable $e) {
-            // Make sure we roll back our internal transaction
             //$record->state($state);
-            $savepoint->rollback();
+            $savepoint->rollbackUncommitted();
             throw $e;
         }
 

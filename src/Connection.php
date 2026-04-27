@@ -1105,14 +1105,7 @@ abstract class Connection extends Configurable implements \Countable, \IteratorA
      */
     public function flush(): void
     {
-        $savepoint = $this->beginInternalTransaction();
-        try {
-            $this->unitOfWork->saveAll();
-            $savepoint->commit();
-        } catch (Throwable $e) {
-            $savepoint->rollback();
-            throw $e;
-        }
+        $this->beginInternalTransaction()->with(fn () => $this->unitOfWork->saveAll());
     }
 
     /**
