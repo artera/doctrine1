@@ -154,4 +154,73 @@ class FetchModeTest extends DoctrineUnitTestCase
         $res = $q->execute([$u->id], HydrationMode::None);
         $this->assertEquals(1, $res[0][0]);
     }
+
+    public function testOnDemandArrayReturnsIterator(): void
+    {
+        $q = new \Doctrine1\Query();
+        $q->select('u.*')->from('User u');
+
+        $result = $q->execute([], HydrationMode::OnDemandArray);
+
+        $this->assertInstanceOf(\Doctrine1\Collection\OnDemand::class, $result);
+    }
+
+    public function testOnDemandArrayYieldsArrays(): void
+    {
+        $q = new \Doctrine1\Query();
+        $q->select('u.*')->from('User u');
+
+        foreach ($q->execute([], HydrationMode::OnDemandArray) as $row) {
+            $this->assertIsArray($row);
+            $this->assertArrayHasKey('id', $row);
+            $this->assertArrayHasKey('name', $row);
+        }
+    }
+
+    public function testOnDemandArrayMatchesArrayHydrator(): void
+    {
+        $q = new \Doctrine1\Query();
+        $q->select('u.*')->from('User u');
+
+        $expected = $q->execute([], HydrationMode::Array);
+
+        $actual = [];
+        foreach ($q->execute([], HydrationMode::OnDemandArray) as $row) {
+            $actual[] = $row;
+        }
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function testOnDemandArrayWithOneToManyJoin(): void
+    {
+        $q = new \Doctrine1\Query();
+        $q->select('u.*, p.*')->from('User u')->innerJoin('u.Phonenumber p')->where("u.name = 'Jean Reno'");
+
+        $expected = $q->execute([], HydrationMode::Array);
+
+        $actual = [];
+        foreach ($q->execute([], HydrationMode::OnDemandArray) as $row) {
+            $actual[] = $row;
+        }
+
+        $this->assertCount(1, $actual);
+        $this->assertCount(3, $actual[0]['Phonenumber']);
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function testOnDemandArrayWithOneToOneJoin(): void
+    {
+        $q = new \Doctrine1\Query();
+        $q->select('u.*, e.*')->from('User u')->innerJoin('u.Email e');
+
+        $expected = $q->execute([], HydrationMode::Array);
+
+        $actual = [];
+        foreach ($q->execute([], HydrationMode::OnDemandArray) as $row) {
+            $actual[] = $row;
+        }
+
+        $this->assertEquals($expected, $actual);
+    }
 }

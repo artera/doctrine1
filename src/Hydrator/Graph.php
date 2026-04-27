@@ -9,7 +9,7 @@ use Doctrine1\HydrationMode;
  * @phpstan-template Collection of \Traversable|array
  * @phpstan-template Item
  */
-abstract class Graph extends \Doctrine1\Hydrator\AbstractHydrator
+abstract class Graph extends AbstractHydrator
 {
     /**
      * This was previously undefined, setting to protected to match \Doctrine1\Hydrator
@@ -80,7 +80,7 @@ abstract class Graph extends \Doctrine1\Hydrator\AbstractHydrator
 
         $event = new \Doctrine1\Event(null, \Doctrine1\Event::HYDRATE, null);
 
-        if ($this->hydrationMode == HydrationMode::OnDemand) {
+        if ($this->hydrationMode === HydrationMode::OnDemand || $this->hydrationMode === HydrationMode::OnDemandArray) {
             if ($this->priorRow !== null) {
                 $data            = $this->priorRow;
                 $this->priorRow = null;
@@ -109,7 +109,7 @@ abstract class Graph extends \Doctrine1\Hydrator\AbstractHydrator
             $nonemptyComponents = [];
             $rowData = $this->gatherRowData($data, $cache, $id, $nonemptyComponents);
 
-            if ($this->hydrationMode == HydrationMode::OnDemand) {
+            if ($this->hydrationMode === HydrationMode::OnDemand || $this->hydrationMode === HydrationMode::OnDemandArray) {
                 if (!isset($activeRootIdentifier)) {
                     // first row for this record
                     $activeRootIdentifier = $id[$rootAlias];

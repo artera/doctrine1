@@ -2,7 +2,7 @@
 
 namespace Doctrine1\Hydrator;
 
-class ArrayShallowDriver extends \Doctrine1\Hydrator\ScalarDriver
+class ArrayShallowDriver extends ScalarDriver
 {
     public function hydrateResultSet(\Doctrine1\Connection\Statement $stmt): array
     {

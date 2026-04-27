@@ -69,6 +69,7 @@ class Manager extends Configurable implements \Countable, \IteratorAggregate
         Hydrator\ScalarDriver::class,
         Hydrator\SingleScalarDriver::class,
         Hydrator\RecordDriver::class,
+        Hydrator\ArrayDriver::class,
     ];
 
     /** Whether or not the validators from disk have been loaded */

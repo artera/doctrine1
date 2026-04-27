@@ -908,7 +908,7 @@ abstract class AbstractQuery
      *
      * @throws Query\Exception if the query has no from clause
      * @phpstan-param HydrationMode|class-string<Hydrator\AbstractHydrator>|null $hydrationMode
-     * @phpstan-return Collection<Record>|Collection\OnDemand<Record>|array|scalar
+     * @phpstan-return ($hydrationMode is HydrationMode::OnDemandArray ? Collection\OnDemand<array<string, mixed>> : ($hydrationMode is HydrationMode::OnDemand ? Collection\OnDemand<Record> : ($hydrationMode is HydrationMode::Record ? Collection<Record> : ($hydrationMode is HydrationMode::Array ? array<array<string, mixed>> : Collection<Record>|Collection\OnDemand<Record|array<string, mixed>>|array|scalar))))
      */
     public function execute(array $params = [], HydrationMode|string|null $hydrationMode = null): Collection|Collection\OnDemand|array|int|string|float|bool
     {
@@ -958,9 +958,9 @@ abstract class AbstractQuery
 
                 $this->hydrator->setQueryComponents($this->queryComponents);
                 if ($this->hydrator instanceof Hydrator) {
-                    if ($this->type->isSelect() && $hydrationMode == HydrationMode::OnDemand) {
+                    if ($this->type->isSelect() && ($hydrationMode === HydrationMode::OnDemand || $hydrationMode === HydrationMode::OnDemandArray)) {
                         $hydrationDriver = $this->hydrator->getHydratorDriver($hydrationMode, $this->tableAliasMap);
-                        /** @var Collection\OnDemand<Record> */
+                        /** @var Collection\OnDemand<Record|array<string, mixed>> */
                         $result = new Collection\OnDemand($stmt, $hydrationDriver, $this->tableAliasMap);
                         return $result;
                     }

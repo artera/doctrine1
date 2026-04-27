@@ -4,7 +4,7 @@ namespace Doctrine1\Hydrator;
 
 use PDO;
 
-class NoneDriver extends \Doctrine1\Hydrator\AbstractHydrator
+class NoneDriver extends AbstractHydrator
 {
     public function hydrateResultSet(\Doctrine1\Connection\Statement $stmt): array
     {

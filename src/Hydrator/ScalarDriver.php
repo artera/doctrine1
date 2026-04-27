@@ -4,7 +4,7 @@ namespace Doctrine1\Hydrator;
 
 use Doctrine1\Column\Type;
 
-class ScalarDriver extends \Doctrine1\Hydrator\AbstractHydrator
+class ScalarDriver extends AbstractHydrator
 {
     public function hydrateResultSet(\Doctrine1\Connection\Statement $stmt): array
     {

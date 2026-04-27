@@ -2,8 +2,8 @@
 
 namespace Doctrine1\Hydrator;
 
-/** @phpstan-extends \Doctrine1\Hydrator\Graph<array, array> */
-class ArrayDriver extends \Doctrine1\Hydrator\Graph
+/** @phpstan-extends Graph<array, array> */
+class ArrayDriver extends Graph
 {
     public function getElementCollection(string $component): array
     {

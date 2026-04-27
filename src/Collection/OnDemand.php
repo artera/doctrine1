@@ -3,7 +3,7 @@
 namespace Doctrine1\Collection;
 
 /**
- * @template T of \Doctrine1\Record
+ * @template T
  * @implements \Iterator<T>
  */
 class OnDemand implements \Iterator

@@ -11,4 +11,5 @@ enum HydrationMode: int
     case Scalar = 4;
     case SingleScalar = 5;
     case OnDemand = 6;
+    case OnDemandArray = 7;
 }

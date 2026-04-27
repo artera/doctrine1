@@ -5,8 +5,8 @@ namespace Doctrine1\Hydrator;
 use Doctrine1\Collection;
 use Doctrine1\None;
 
-/** @extends \Doctrine1\Hydrator\Graph<\Doctrine1\Collection<\Doctrine1\Record>, \Doctrine1\Record> */
-class RecordDriver extends \Doctrine1\Hydrator\Graph
+/** @extends Graph<\Doctrine1\Collection<\Doctrine1\Record>, \Doctrine1\Record> */
+class RecordDriver extends Graph
 {
     /**
      * @phpstan-var \Doctrine1\Collection[]

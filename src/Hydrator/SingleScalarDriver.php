@@ -2,7 +2,7 @@
 
 namespace Doctrine1\Hydrator;
 
-class SingleScalarDriver extends \Doctrine1\Hydrator\AbstractHydrator
+class SingleScalarDriver extends AbstractHydrator
 {
     /**
      * @param \Doctrine1\Connection\Statement $stmt
