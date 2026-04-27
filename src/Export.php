@@ -1046,22 +1046,18 @@ class Export extends Connection\Module
 
         foreach ($queries as $connectionName => $sql) {
             $connection = Manager::getInstance()->getConnection($connectionName);
-
-            $savepoint = $connection->beginTransaction();
-
-            foreach ($sql as $query) {
-                try {
-                    $connection->exec($query);
-                } catch (Connection\Exception $e) {
-                    // we only want to silence table/index already exists errors
-                    if (!($e instanceof DuplicateTable) && !($e instanceof DuplicateObject)) {
-                        $savepoint->rollback();
-                        throw $e;
+            $connection->withTransaction(static function () use ($sql, $connection) {
+                foreach ($sql as $query) {
+                    try {
+                        $connection->exec($query);
+                    } catch (Connection\Exception $e) {
+                        // we only want to silence table/index already exists errors
+                        if (!($e instanceof DuplicateTable) && !($e instanceof DuplicateObject)) {
+                            throw $e;
+                        }
                     }
                 }
-            }
-
-            $savepoint->commit();
+            });
         }
     }
 

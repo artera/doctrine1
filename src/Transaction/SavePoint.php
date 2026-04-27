@@ -55,7 +55,12 @@ class SavePoint
      */
     public function with(callable $callable): mixed
     {
-        $result = $callable($this);
+        try {
+            $result = $callable($this);
+        } catch (\Throwable $e) {
+            $this->rollbackUncommitted();
+            throw $e;
+        }
         if ($this->active) {
             $this->commit();
         }
@@ -156,6 +161,13 @@ class SavePoint
             $conn->execute($query);
 
             $listener->postSavepointRollback($event);
+        }
+    }
+
+    public function rollbackUncommitted(): void
+    {
+        if ($this->active) {
+            $this->rollback();
         }
     }
 
