@@ -908,26 +908,28 @@ abstract class AbstractQuery
      *
      * @throws Query\Exception if the query has no from clause
      * @phpstan-param HydrationMode|class-string<Hydrator\AbstractHydrator>|null $hydrationMode
-     * @phpstan-return ($hydrationMode is HydrationMode::OnDemandArray ? Collection\OnDemand<array<string, mixed>> : ($hydrationMode is HydrationMode::OnDemand ? Collection\OnDemand<Record> : ($hydrationMode is HydrationMode::Record ? Collection<Record> : ($hydrationMode is HydrationMode::Array ? array<array<string, mixed>> : Collection<Record>|Collection\OnDemand<Record|array<string, mixed>>|array|scalar))))
+     * @phpstan-return ($hydrationMode is HydrationMode::OnDemandArray ? Collection\OnDemand<array<string, mixed>> : ($hydrationMode is HydrationMode::OnDemand ? Collection\OnDemand<Record> : ($hydrationMode is HydrationMode::Record ? Collection<Record> : ($hydrationMode is HydrationMode::Array ? array<array<string, mixed>> : Collection<Record>|Collection\OnDemand<Record>|Collection\OnDemand<array<string, mixed>>|array|scalar))))
      */
     public function execute(array $params = [], HydrationMode|string|null $hydrationMode = null): Collection|Collection\OnDemand|array|int|string|float|bool
     {
+        $prevMode = null;
+
+        // Clean any possible processed params
+        $this->execParams = [];
+
+        if (empty($this->dqlParts['from']) && empty($this->sqlParts['from'])) {
+            throw new Query\Exception('You must have at least one component specified in your from.');
+        }
+
+        $dqlParams = $this->getFlattenedParams($params);
+
+        $this->invokePreQuery($dqlParams);
+
         try {
-            // Clean any possible processed params
-            $this->execParams = [];
-
-            if (empty($this->dqlParts['from']) && empty($this->sqlParts['from'])) {
-                throw new Query\Exception('You must have at least one component specified in your from.');
-            }
-
-            $dqlParams = $this->getFlattenedParams($params);
-
-            $this->invokePreQuery($dqlParams);
-
             if ($hydrationMode !== null) {
+                $prevMode = $this->hydrator->getHydrationMode();
                 $this->hydrator->setHydrationMode($hydrationMode);
             }
-
             $hydrationMode = $this->hydrator->getHydrationMode();
 
             if ($this->resultCache && $this->type->isSelect()) {
@@ -940,7 +942,11 @@ abstract class AbstractQuery
                     $stmt = $this->doExecute($params);
                     assert($stmt instanceof Connection\Statement);
                     $this->hydrator->setQueryComponents($this->queryComponents);
-                    $result = $this->hydrator->hydrateResultSet($stmt, $this->hydrator instanceof Hydrator ? $this->tableAliasMap : []);
+                    if ($this->hydrator instanceof Hydrator) {
+                        $result = $this->hydrator->getHydratorDriver($hydrationMode, $this->tableAliasMap)->hydrateResultSet($stmt);
+                    } else {
+                        $result = $this->hydrator->hydrateResultSet($stmt);
+                    }
 
                     $cached = $this->getCachedForm($result);
                     $cacheDriver->save($hash, $cached, $this->getResultCacheLifeSpan());
@@ -960,16 +966,19 @@ abstract class AbstractQuery
                 if ($this->hydrator instanceof Hydrator) {
                     if ($this->type->isSelect() && ($hydrationMode === HydrationMode::OnDemand || $hydrationMode === HydrationMode::OnDemandArray)) {
                         $hydrationDriver = $this->hydrator->getHydratorDriver($hydrationMode, $this->tableAliasMap);
-                        /** @var Collection\OnDemand<Record|array<string, mixed>> */
+                        /** @var Collection\OnDemand<Record>|Collection\OnDemand<array<string, mixed>> */
                         $result = new Collection\OnDemand($stmt, $hydrationDriver, $this->tableAliasMap);
                         return $result;
                     }
-                    return $this->hydrator->hydrateResultSet($stmt, $this->tableAliasMap);
+                    return $this->hydrator->getHydratorDriver($hydrationMode, $this->tableAliasMap)->hydrateResultSet($stmt);
                 }
 
                 return $this->hydrator->hydrateResultSet($stmt);
             }
         } finally {
+            if ($prevMode !== null) {
+                $this->hydrator->setHydrationMode($prevMode);
+            }
             if ($this->getConnection()->getAutoFreeQueryObjects()) {
                 $this->free();
             }
@@ -1484,7 +1493,7 @@ abstract class AbstractQuery
      * @param  string $select Query SELECT part
      * @param  array|scalar|Expression|\Stringable $params an array of parameters or a simple scalar
      * @return $this
-     * @phpstan-return static<Record, Query\Type\Select>
+     * @phpstan-self-out static<Record, Query\Type\Select>
      */
     public function select(?string $select = null, $params = []): self
     {
@@ -1498,12 +1507,9 @@ abstract class AbstractQuery
                 $this->params['select'][] = $params;
             }
 
-            $q = $this->addDqlQueryPart('select', $select);
-        } else {
-            $q = $this;
+            $this->addDqlQueryPart('select', $select);
         }
-        /** @var static<Record, Query\Type\Select> */
-        return $q;
+        return $this;
     }
 
     /**
@@ -1587,18 +1593,15 @@ abstract class AbstractQuery
      *
      * @param  string $from
      * @return $this
-     * @phpstan-return static<Record, Query\Type\Delete>
+     * @phpstan-self-out static<Record, Query\Type\Delete>
      */
     public function delete(?string $from = null): self
     {
         $this->type = Query\Type::DELETE();
         if ($from != null) {
-            $q = $this->addDqlQueryPart('from', $from);
-        } else {
-            $q = $this;
+            $this->addDqlQueryPart('from', $from);
         }
-        /** @var static<Record, Query\Type\Delete> */
-        return $q;
+        return $this;
     }
 
     /**
@@ -1607,18 +1610,15 @@ abstract class AbstractQuery
      *
      * @param  string $from
      * @return $this
-     * @phpstan-return static<Record, Query\Type\Update>
+     * @phpstan-self-out static<Record, Query\Type\Update>
      */
     public function update(?string $from = null): self
     {
         $this->type = Query\Type::UPDATE();
         if ($from != null) {
-            $q = $this->addDqlQueryPart('from', $from);
-        } else {
-            $q = $this;
+            $this->addDqlQueryPart('from', $from);
         }
-        /** @var static<Record, Query\Type\Update> */
-        return $q;
+        return $this;
     }
 
     /**
@@ -1838,9 +1838,9 @@ abstract class AbstractQuery
     }
 
     /**
-     * @return $this
+     * @phpstan-self-out ($hydrationMode is HydrationMode::OnDemandArray ? static<Record, Type, Collection\OnDemand<array<string, mixed>>> : ($hydrationMode is HydrationMode::OnDemand ? static<Record, Type, Collection\OnDemand<Record>> : ($hydrationMode is HydrationMode::Record ? static<Record, Type, Collection<Record>> : ($hydrationMode is HydrationMode::Array ? static<Record, Type, array<array<string, mixed>>> : static<Record, Type, Collection<Record>|Collection\OnDemand<Record>|Collection\OnDemand<array<string, mixed>>|array|int|float|string|bool>))))
      */
-    public function setHydrationMode(HydrationMode $hydrationMode): self
+    public function setHydrationMode(HydrationMode $hydrationMode): static
     {
         $this->hydrator->setHydrationMode($hydrationMode);
         return $this;

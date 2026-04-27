@@ -8,7 +8,7 @@ use Doctrine1\Query\State;
 
 /**
  * @template Record of Record
- * @template Type of Query\Type
+ * @template Type of Query\Type = Query\Type\Select
  * @extends AbstractQuery<Record, Type>
  */
 class Query extends AbstractQuery implements \Countable
@@ -128,7 +128,7 @@ class Query extends AbstractQuery implements \Countable
      *
      * @phpstan-param  class-string<Query> $class
      * @return         Query
-     * @phpstan-return Query<Record, Query\Type\Select>
+     * @phpstan-return Query<Record>
      */
     public static function create(?Connection $conn = null, ?string $class = null): Query
     {
@@ -169,7 +169,7 @@ class Query extends AbstractQuery implements \Countable
 
     /**
      * @return static
-     * @phpstan-return Query<Record, Query\Type\Select>
+     * @phpstan-return static<\Doctrine1\Record>
      */
     public function createSubquery(): self
     {
