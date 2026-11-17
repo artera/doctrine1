@@ -19,7 +19,7 @@ class Mysql extends \Doctrine1\Import
         'listDatabases'   => 'SHOW DATABASES',
         'listTableFields' => 'SHOW FULL COLUMNS FROM %s',
         'listSequences'   => 'SHOW TABLES',
-        'listTables'      => 'SHOW TABLES',
+        'listTables'      => "SHOW FULL TABLES WHERE Table_type = 'BASE TABLE'",
         'listUsers'       => 'SELECT DISTINCT USER FROM USER',
         'listViews'       => "SHOW FULL TABLES %s WHERE Table_type = 'VIEW'",
     ];
